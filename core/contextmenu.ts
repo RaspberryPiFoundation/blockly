@@ -59,6 +59,15 @@ export function setCurrentBlock(block: Block | null) {
 let menu_: Menu | null = null;
 
 /**
+ * Gets Menu instance.
+ *
+ * @returns menu instance.
+ */
+export function getMenu(): Menu | null {
+  return menu_;
+}
+
+/**
  * Construct the menu based on the list of options and show the menu.
  *
  * @param e Mouse event.
