@@ -258,6 +258,13 @@ suite('Variable Map', function () {
         assert.deepEqual(newTypeVariables, [variable]);
         assert.equal(variable.getType(), '');
       });
+
+      test('removes the type from the map when the last instance is changed', function () {
+        const var1 = this.variableMap.createVariable('name1', 'type1');
+        const var2 = this.variableMap.createVariable('name2', 'type2');
+        this.variableMap.changeVariableType(var1, 'type2');
+        assert.deepEqual(this.variableMap.getTypes(), ['type2']);
+      });
     },
   );
 

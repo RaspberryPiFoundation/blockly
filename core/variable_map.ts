@@ -112,7 +112,11 @@ export class VariableMap
     const oldType = variable.getType();
     if (oldType === newType) return variable;
 
-    this.variableMap.get(variable.getType())?.delete(variable.getId());
+    const oldTypeVariables = this.variableMap.get(oldType);
+    oldTypeVariables?.delete(variable.getId());
+    if (oldTypeVariables?.size === 0) {
+      this.variableMap.delete(oldType);
+    }
     variable.setType(newType);
     const newTypeVariables =
       this.variableMap.get(newType) ??
