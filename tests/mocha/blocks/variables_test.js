@@ -32,9 +32,10 @@ suite('Variables', function () {
         ],
       },
     ]);
-    this.workspace.createVariable('foo', 'type1', '1');
-    this.workspace.createVariable('bar', 'type1', '2');
-    this.workspace.createVariable('baz', 'type1', '3');
+    this.variableMap = this.workspace.getVariableMap();
+    this.variableMap.createVariable('foo', 'type1', '1');
+    this.variableMap.createVariable('bar', 'type1', '2');
+    this.variableMap.createVariable('baz', 'type1', '3');
   });
 
   teardown(function () {
@@ -116,12 +117,11 @@ suite('Variables', function () {
       );
     });
   });
-
   suite('getVariable', function () {
     test('By ID', function () {
-      const var1 = this.workspace.createVariable('name1', 'type1', 'id1');
-      const var2 = this.workspace.createVariable('name2', 'type1', 'id2');
-      const var3 = this.workspace.createVariable('name3', 'type2', 'id3');
+      const var1 = this.variableMap.createVariable('name1', 'type1', 'id1');
+      const var2 = this.variableMap.createVariable('name2', 'type1', 'id2');
+      const var3 = this.variableMap.createVariable('name3', 'type2', 'id3');
       const result1 = Blockly.Variables.getVariable(this.workspace, 'id1');
       const result2 = Blockly.Variables.getVariable(this.workspace, 'id2');
       const result3 = Blockly.Variables.getVariable(this.workspace, 'id3');
@@ -132,9 +132,9 @@ suite('Variables', function () {
     });
 
     test('By name and type', function () {
-      const var1 = this.workspace.createVariable('name1', 'type1', 'id1');
-      const var2 = this.workspace.createVariable('name2', 'type1', 'id2');
-      const var3 = this.workspace.createVariable('name3', 'type2', 'id3');
+      const var1 = this.variableMap.createVariable('name1', 'type1', 'id1');
+      const var2 = this.variableMap.createVariable('name2', 'type1', 'id2');
+      const var3 = this.variableMap.createVariable('name3', 'type2', 'id3');
       const result1 = Blockly.Variables.getVariable(
         this.workspace,
         null,
@@ -161,9 +161,9 @@ suite('Variables', function () {
     });
 
     test('Bad ID with name and type fallback', function () {
-      const var1 = this.workspace.createVariable('name1', 'type1', 'id1');
-      const var2 = this.workspace.createVariable('name2', 'type1', 'id2');
-      const var3 = this.workspace.createVariable('name3', 'type2', 'id3');
+      const var1 = this.variableMap.createVariable('name1', 'type1', 'id1');
+      const var2 = this.variableMap.createVariable('name2', 'type1', 'id2');
+      const var3 = this.variableMap.createVariable('name3', 'type2', 'id3');
       const result1 = Blockly.Variables.getVariable(
         this.workspace,
         'badId',

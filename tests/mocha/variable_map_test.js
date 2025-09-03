@@ -428,7 +428,6 @@ suite('Variable Map', function () {
             'test id',
           );
           this.variableMap.renameVariable(variable, 'new test name');
-
           assertEventFired(
             this.eventSpy,
             Blockly.Events.VarRename,
