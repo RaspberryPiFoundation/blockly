@@ -180,7 +180,7 @@ export function testAWorkspace() {
       test('Same type rename variable with id1 to name2', function () {
         this.variableMap.createVariable('name2', 'type1', 'id2');
         createVarBlocksNoEvents(this.workspace, ['id1', 'id2']);
-        
+
         this.variableMap.renameVariableById('id1', 'name2');
 
         // The second variable should remain unchanged.
@@ -233,7 +233,7 @@ export function testAWorkspace() {
       test('Different type different capitalization rename variable with id1 to Name2', function () {
         this.variableMap.createVariable('name2', 'type2', 'id2');
         createVarBlocksNoEvents(this.workspace, ['id1', 'id2']);
-        
+
         this.variableMap.renameVariableById('id1', 'Name2');
 
         // Variables with different type are allowed to have the same name.
@@ -1558,7 +1558,11 @@ export function testAWorkspace() {
           });
 
           test('Same type with usages rename variable with id1 to name2', function () {
-            var variable = this.variableMap.createVariable('name2', 'type1', 'id2');
+            var variable = this.variableMap.createVariable(
+              'name2',
+              'type1',
+              'id2',
+            );
             createVarBlocksNoEvents(this.workspace, ['id1', 'id2']);
             this.variableMap.renameVariableById('id1', 'name2');
             this.clock.runAll();

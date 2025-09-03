@@ -2427,9 +2427,8 @@ suite('Blocks', function () {
         assertCollapsed(blockA);
       });
     });
-    
+
     suite('Renaming Vars', function () {
-      
       test('Simple Rename', function () {
         const blockA = createRenderedBlock(this.workspace, 'variable_block');
 
