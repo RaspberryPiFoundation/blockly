@@ -114,12 +114,17 @@ export class FlyoutButton
     this.id = idGenerator.getNextUniqueId();
     this.svgGroup = dom.createSvgElement(
       Svg.G,
-      {'id': this.id, 'class': cssClass},
+      {'id': this.id, 'class': cssClass, 'tabindex': '-1'},
       this.workspace.getCanvas(),
     );
 
-    aria.setRole(this.svgGroup, aria.Role.BUTTON);
-    aria.setState(this.svgGroup, aria.State.LABEL, 'Button');
+    // Set the accessibility role. All child nodes will be set to `presentation`
+    // to avoid extraneous "group" narration on VoiceOver.
+    if (this.isFlyoutLabel) {
+      aria.setRole(this.svgGroup, aria.Role.TREEITEM);
+    } else {
+      aria.setRole(this.svgGroup, aria.Role.BUTTON);
+    }
 
     let shadow;
     if (!this.isFlyoutLabel) {
@@ -135,6 +140,7 @@ export class FlyoutButton
         },
         this.svgGroup!,
       );
+      aria.setRole(shadow, aria.Role.PRESENTATION);
     }
     // Background rectangle.
     const rect = dom.createSvgElement(
@@ -148,6 +154,7 @@ export class FlyoutButton
       },
       this.svgGroup!,
     );
+    aria.setRole(rect, aria.Role.PRESENTATION);
 
     const svgText = dom.createSvgElement(
       Svg.TEXT,
@@ -159,6 +166,9 @@ export class FlyoutButton
       },
       this.svgGroup!,
     );
+    if (!this.isFlyoutLabel) {
+      aria.setRole(svgText, aria.Role.PRESENTATION);
+    }
     let text = parsing.replaceMessageReferences(this.text);
     if (this.workspace.RTL) {
       // Force text to be RTL by adding an RLM.
@@ -406,10 +416,13 @@ export class FlyoutButton
     const xy = this.getPosition();
     const bounds = new Rect(xy.y, xy.y + this.height, xy.x, xy.x + this.width);
     this.workspace.scrollBoundsIntoView(bounds);
+    aria.setState(this.svgGroup, aria.State.SELECTED, true);
   }
 
   /** See IFocusableNode.onNodeBlur. */
-  onNodeBlur(): void {}
+  onNodeBlur(): void {
+    aria.setState(this.svgGroup, aria.State.SELECTED, false);
+  }
 
   /** See IFocusableNode.canBeFocused. */
   canBeFocused(): boolean {
