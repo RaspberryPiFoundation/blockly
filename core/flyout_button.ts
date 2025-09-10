@@ -416,13 +416,10 @@ export class FlyoutButton
     const xy = this.getPosition();
     const bounds = new Rect(xy.y, xy.y + this.height, xy.x, xy.x + this.width);
     this.workspace.scrollBoundsIntoView(bounds);
-    aria.setState(this.svgGroup, aria.State.SELECTED, true);
   }
 
   /** See IFocusableNode.onNodeBlur. */
-  onNodeBlur(): void {
-    aria.setState(this.svgGroup, aria.State.SELECTED, false);
-  }
+  onNodeBlur(): void {}
 
   /** See IFocusableNode.canBeFocused. */
   canBeFocused(): boolean {
