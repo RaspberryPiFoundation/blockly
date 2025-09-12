@@ -241,12 +241,14 @@ export class BlockSvg
       // Shadow blocks are best represented directly by their field since they
       // effectively operate like a field does for keyboard navigation purposes.
       const field = Array.from(this.getFields())[0];
-      let label = 'Unknown?';
       try {
-        label =
-          aria.getState(field.getFocusableElement(), aria.State.LABEL) ?? label;
-      } catch {}
-      return label;
+        return (
+          aria.getState(field.getFocusableElement(), aria.State.LABEL) ??
+          'Unknown?'
+        );
+      } catch {
+        return 'Unknown?';
+      }
     }
 
     const fieldLabels = [];
