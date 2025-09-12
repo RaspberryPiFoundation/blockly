@@ -224,9 +224,6 @@ export class BlockSvg
     this.currentConnectionCandidate = null;
 
     this.doInit_();
-
-    // Note: This must be done after initialization of the block's fields.
-    this.recomputeAriaLabel();
   }
 
   private recomputeAriaLabel() {
@@ -239,15 +236,17 @@ export class BlockSvg
 
   private computeAriaLabel(): string {
     // Guess the block's aria label based on its field labels.
-    if (this.isShadow()) {
+    if (this.isShadow() || this.isSimpleReporter()) {
       // TODO: Shadows may have more than one field.
       // Shadow blocks are best represented directly by their field since they
       // effectively operate like a field does for keyboard navigation purposes.
       const field = Array.from(this.getFields())[0];
-      return (
-        aria.getState(field.getFocusableElement(), aria.State.LABEL) ??
-        'Unknown?'
-      );
+      let label = 'Unknown?';
+      try {
+        label =
+          aria.getState(field.getFocusableElement(), aria.State.LABEL) ?? label;
+      } catch {}
+      return label;
     }
 
     const fieldLabels = [];
@@ -306,6 +305,8 @@ export class BlockSvg
     if (!svg.parentNode) {
       this.workspace.getCanvas().appendChild(svg);
     }
+    // Note: This must be done after initialization of the block's fields.
+    this.recomputeAriaLabel();
     this.initialized = true;
   }
 
