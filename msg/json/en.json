@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2025-09-09 09:40:56.729862",
+		"lastupdated": "2025-09-22 11:22:54.733649",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -396,6 +396,7 @@
 	"PROCEDURES_IFRETURN_WARNING": "Warning: This block may be used only within a function definition.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Say something...",
 	"WORKSPACE_ARIA_LABEL": "Blockly Workspace",
+	"TOOLBOX_ARIA_LABEL": "Toolbox",
 	"COLLAPSED_WARNINGS_WARNING": "Collapsed blocks contain warnings.",
 	"DIALOG_OK": "OK",
 	"DIALOG_CANCEL": "Cancel",

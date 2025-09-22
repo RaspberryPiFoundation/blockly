@@ -1608,6 +1608,11 @@ Blockly.Msg.WORKSPACE_COMMENT_DEFAULT_TEXT = 'Say something...';
 Blockly.Msg.WORKSPACE_ARIA_LABEL = 'Blockly Workspace';
 
 /** @type {string} */
+/// This text is read out when a user navigates to the toolbox while using a
+/// screen reader.
+Blockly.Msg.TOOLBOX_ARIA_LABEL = 'Toolbox';
+
+/** @type {string} */
 /// warning - This appears if the user collapses a block, and blocks inside
 /// that block have warnings attached to them. It should inform the user that the
 /// block they collapsed contains blocks that have warnings.
@@ -1629,7 +1634,7 @@ Blockly.Msg.EDIT_BLOCK_CONTENTS = 'Edit Block contents';
 /// menu label - Contextual menu item that starts a keyboard-driven block move.
 Blockly.Msg.MOVE_BLOCK = 'Move Block';
 /** @type {string} */
-/// Name of the Microsoft Windows operating system displayed in a list of 
+/// Name of the Microsoft Windows operating system displayed in a list of
 /// keyboard shortcuts.
 Blockly.Msg.WINDOWS = 'Windows';
 /** @type {string} */

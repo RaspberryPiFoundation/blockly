@@ -35,6 +35,7 @@ import {isSelectableToolboxItem} from '../interfaces/i_selectable_toolbox_item.j
 import type {IStyleable} from '../interfaces/i_styleable.js';
 import type {IToolbox} from '../interfaces/i_toolbox.js';
 import type {IToolboxItem} from '../interfaces/i_toolbox_item.js';
+import {Msg} from '../msg.js';
 import * as registry from '../registry.js';
 import type {KeyboardShortcut} from '../shortcut_registry.js';
 import * as Touch from '../touch.js';
@@ -154,6 +155,7 @@ export class Toolbox
     this.flyout.init(workspace);
 
     aria.setRole(this.HtmlDiv, aria.Role.TREE);
+    aria.setState(this.HtmlDiv, aria.State.LABEL, Msg['TOOLBOX_ARIA_LABEL']);
 
     this.render(this.toolboxDef_);
     const themeManager = workspace.getThemeManager();
