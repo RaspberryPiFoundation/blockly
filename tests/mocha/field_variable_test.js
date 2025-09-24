@@ -495,7 +495,7 @@ suite('Variable Fields', function () {
     });
     test('Rename & Get New ID', function () {
       const variableMap = this.workspace.getVariableMap();
-      const variable = variableMap.createVariable('name2', null, 'id2');
+      variableMap.createVariable('name2', null, 'id2');
       variableMap.renameVariable(variableMap.getVariableById('id1'), 'name2');
       assert.equal(this.variableField.getText(), 'name2');
       assert.equal(this.variableField.getValue(), 'id2');

@@ -25,7 +25,6 @@ export function testAWorkspace() {
         ],
       },
     ]);
-    console.log(this.workspace);
     this.variableMap = this.workspace.getVariableMap();
   });
 
@@ -1558,7 +1557,7 @@ export function testAWorkspace() {
           });
 
           test('Same type with usages rename variable with id1 to name2', function () {
-            var variable = this.variableMap.createVariable(
+            const variable = this.variableMap.createVariable(
               'name2',
               'type1',
               'id2',
