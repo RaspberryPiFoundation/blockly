@@ -52,7 +52,7 @@ export class MenuItem {
   constructor(
     private readonly content: string | HTMLElement,
     private readonly opt_value?: string,
-    private readonly opt_ariaLabel?: string
+    private readonly opt_ariaLabel?: string,
   ) {}
 
   /**

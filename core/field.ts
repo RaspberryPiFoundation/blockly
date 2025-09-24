@@ -284,12 +284,14 @@ export abstract class Field<T = any>
   }
 
   getAriaName(): string | null {
-    return this.configuredAriaName
-      ?? this.configuredName
-      ?? this.configuredType
-      ?? this.getSourceBlock()?.type
-      ?? this.name
-      ?? null;
+    return (
+      this.configuredAriaName ??
+      this.configuredName ??
+      this.configuredType ??
+      this.getSourceBlock()?.type ??
+      this.name ??
+      null
+    );
   }
 
   /**
@@ -1438,8 +1440,8 @@ export abstract class Field<T = any>
  * Extra configuration options for the base field.
  */
 export interface FieldConfig {
-  type: string,
-  name?: string,
+  type: string;
+  name?: string;
   tooltip?: string;
   optAriaName?: string;
 }

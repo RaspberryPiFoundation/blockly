@@ -25,7 +25,7 @@ import * as fieldRegistry from './field_registry.js';
 import {Menu} from './menu.js';
 import {MenuSeparator} from './menu_separator.js';
 import {MenuItem} from './menuitem.js';
-import { idGenerator } from './utils.js';
+import {idGenerator} from './utils.js';
 import * as aria from './utils/aria.js';
 import {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
@@ -217,7 +217,11 @@ export class FieldDropdown extends Field<string> {
 
     // Ensure the selected item has its correct label presented since it may be
     // different than the actual text presented to the user.
-    aria.setState(this.getTextElement(), aria.State.LABEL, this.computeLabelForOption(this.selectedOption));
+    aria.setState(
+      this.getTextElement(),
+      aria.State.LABEL,
+      this.computeLabelForOption(this.selectedOption),
+    );
   }
 
   /**
@@ -348,7 +352,11 @@ export class FieldDropdown extends Field<string> {
         }
         return label;
       })();
-      const menuItem = new MenuItem(content, value, this.computeLabelForOption(option));
+      const menuItem = new MenuItem(
+        content,
+        value,
+        this.computeLabelForOption(option),
+      );
       menuItem.setRole(aria.Role.OPTION);
       menuItem.setRightToLeft(block.RTL);
       menuItem.setCheckable(true);
@@ -371,7 +379,12 @@ export class FieldDropdown extends Field<string> {
     }
     const [label, value, optionalAriaLabel] = option;
     const altText = isImageProperties(label) ? label.alt : null;
-    return altText ?? optionalAriaLabel ?? this.computeHumanReadableText(option) ?? String(value);
+    return (
+      altText ??
+      optionalAriaLabel ??
+      this.computeHumanReadableText(option) ??
+      String(value)
+    );
   }
 
   /**
@@ -566,11 +579,7 @@ export class FieldDropdown extends Field<string> {
     }
     const imageElement = this.imageElement!;
     imageElement.style.display = '';
-    imageElement.setAttributeNS(
-      dom.XLINK_NS,
-      'xlink:href',
-      imageJson.src,
-    );
+    imageElement.setAttributeNS(dom.XLINK_NS, 'xlink:href', imageJson.src);
     imageElement.setAttribute('height', String(imageJson.height));
     imageElement.setAttribute('width', String(imageJson.width));
 

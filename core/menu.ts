@@ -14,7 +14,7 @@
 import * as browserEvents from './browser_events.js';
 import type {MenuSeparator} from './menu_separator.js';
 import {MenuItem} from './menuitem.js';
-import { idGenerator } from './utils.js';
+import {idGenerator} from './utils.js';
 import * as aria from './utils/aria.js';
 import {Coordinate} from './utils/coordinate.js';
 import type {Size} from './utils/size.js';

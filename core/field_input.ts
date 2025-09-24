@@ -37,7 +37,6 @@ import {Size} from './utils/size.js';
 import * as userAgent from './utils/useragent.js';
 import * as WidgetDiv from './widgetdiv.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
-import { idGenerator } from './utils.js';
 
 /**
  * Supported types for FieldInput subclasses.
@@ -168,7 +167,8 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
     const block = this.getSourceBlock();
     if (!block) throw new UnattachedFieldError();
     super.initView();
-    if (!this.textElement_) throw new Error('Initialization failed for FieldInput');
+    if (!this.textElement_)
+      throw new Error('Initialization failed for FieldInput');
 
     if (this.isFullBlockField()) {
       this.clickTarget_ = (this.sourceBlock_ as BlockSvg).getSvgRoot();
