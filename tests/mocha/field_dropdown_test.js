@@ -230,9 +230,9 @@ suite('Dropdown Fields', function () {
       assert.deepEqual(this.field.prefixField, 'a');
       assert.deepEqual(this.field.suffixField, 'b');
       assert.deepEqual(this.field.getOptions(), [
-        ['d', 'D'],
-        ['e', 'E'],
-        ['f', 'F'],
+        ['d', 'D', undefined],
+        ['e', 'E', undefined],
+        ['f', 'F', undefined],
       ]);
     });
     test('With an empty array of options throws', function () {

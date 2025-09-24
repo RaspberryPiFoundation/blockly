@@ -201,9 +201,7 @@ suite('Variable Fields', function () {
         Blockly.FieldVariable.dropdownCreate.call(fieldVariable);
       // Expect variable options, a rename option, and a delete option.
       assert.lengthOf(dropdownOptions, expectedVarOptions.length + 2);
-      for (let i = 0, option; (option = expectedVarOptions[i]); i++) {
-        assert.deepEqual(dropdownOptions[i], option);
-      }
+      assert.deepEqual(dropdownOptions.slice(0, -2), expectedVarOptions);
       assert.include(dropdownOptions[dropdownOptions.length - 2][0], 'Rename');
 
       assert.include(dropdownOptions[dropdownOptions.length - 1][0], 'Delete');
@@ -217,8 +215,8 @@ suite('Variable Fields', function () {
         new Blockly.FieldVariable('name2'),
       );
       assertDropdownContents(fieldVariable, [
-        ['name1', 'id1'],
-        ['name2', 'id2'],
+        ['name1', 'id1', "Variable 'name1'"],
+        ['name2', 'id2', "Variable 'name2'"],
       ]);
     });
     test('Contains variables created after field', function () {
@@ -230,8 +228,8 @@ suite('Variable Fields', function () {
       // Expect that variables created after field creation will show up too.
       this.workspace.createVariable('name2', '', 'id2');
       assertDropdownContents(fieldVariable, [
-        ['name1', 'id1'],
-        ['name2', 'id2'],
+        ['name1', 'id1', "Variable 'name1'"],
+        ['name2', 'id2', "Variable 'name2'"],
       ]);
     });
     test('Contains variables created before and after field', function () {
@@ -245,9 +243,9 @@ suite('Variable Fields', function () {
       // Expect that variables created after field creation will show up too.
       this.workspace.createVariable('name3', '', 'id3');
       assertDropdownContents(fieldVariable, [
-        ['name1', 'id1'],
-        ['name2', 'id2'],
-        ['name3', 'id3'],
+        ['name1', 'id1', "Variable 'name1'"],
+        ['name2', 'id2', "Variable 'name2'"],
+        ['name3', 'id3', "Variable 'name3'"],
       ]);
     });
   });

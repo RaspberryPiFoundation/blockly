@@ -172,6 +172,13 @@ export function setState(
   element.setAttribute(attrStateName, `${value}`);
 }
 
+/**
+ * Clears the specified ARIA state by removing any related attributes from the
+ * specified element that have been set using setState().
+ *
+ * @param element The element whose ARIA state may be changed.
+ * @param stateName The state to clear from the provided element.
+ */
 export function clearState(element: Element, stateName: State) {
   element.removeAttribute(ARIA_PREFIX + stateName);
 }
