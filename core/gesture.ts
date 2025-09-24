@@ -467,6 +467,15 @@ export class Gesture {
         /* opt_noCaptureIdentifier */ true,
       ),
     );
+    this.boundEvents.push(
+      browserEvents.conditionalBind(
+        document,
+        'pointercancel',
+        null,
+        this.handleUp.bind(this),
+        /* opt_noCaptureIdentifier */ true,
+      ),
+    );
 
     e.preventDefault();
     e.stopPropagation();

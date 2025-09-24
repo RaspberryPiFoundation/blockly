@@ -98,6 +98,7 @@ function copyPlaygroundDeps() {
       './node_modules/@blockly/dev-tools/dist/index.js',
       './node_modules/@blockly/theme-modern/dist/index.js',
       './node_modules/@blockly/block-test/dist/index.js',
+      './node_modules/@blockly/keyboard-navigation/dist/index.js',
   ];
   return gulp.src(playgroundDeps, {base: '.'}).pipe(gulp.dest(demoStaticTmpDir));
 }

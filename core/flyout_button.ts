@@ -42,9 +42,11 @@ export class FlyoutButton
   /** The radius of the flyout button's borders. */
   static BORDER_RADIUS = 4;
 
+  /** The key to the function called when this button is activated. */
+  readonly callbackKey: string;
+
   private readonly text: string;
   private readonly position: Coordinate;
-  private readonly callbackKey: string;
   private readonly cssClass: string | null;
 
   /** Mouse up event data. */
@@ -90,12 +92,13 @@ export class FlyoutButton
 
     this.position = new Coordinate(0, 0);
 
-    /** The key to the function called when this button is clicked. */
+    /**
+     * The key to the function called when this button is activated.
+     * Check both the uppercase and lowercase version, because the docs
+     * say `callbackKey` but the type says `callbackkey`.
+     */
     this.callbackKey =
-      (json as AnyDuringMigration)[
-        'callbackKey'
-      ] /* Check the lower case version
-                                                   too to satisfy IE */ ||
+      (json as AnyDuringMigration)['callbackKey'] ||
       (json as AnyDuringMigration)['callbackkey'];
 
     /** If specified, a CSS class to add to this button. */

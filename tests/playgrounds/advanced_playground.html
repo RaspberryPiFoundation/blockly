@@ -18,6 +18,11 @@
       await loadScript(
         '../../node_modules/@blockly/theme-modern/dist/index.js',
       );
+      await loadScript(
+        '../../node_modules/@blockly/keyboard-navigation/dist/index.js',
+      );
+
+      let kbNavigation;
 
       function start() {
         setBackgroundColour();
@@ -47,6 +52,28 @@
             // Refresh theme.
             ws.setTheme(ws.getTheme());
           });
+
+        // Keyboard navigation options.
+        const kbOptions = {
+          'Enable keyboard navigation': false,
+        };
+        gui.remember(kbOptions);
+        gui.add(kbOptions, 'Enable keyboard navigation').onChange((enabled) => {
+          setupKeyboardNav(enabled, playground);
+        });
+
+        // Set up keyboard navigation on page load
+        setupKeyboardNav(kbOptions['Enable keyboard navigation'], playground);
+      }
+
+      function setupKeyboardNav(enabled, playground) {
+        if (enabled) {
+          kbNavigation = new KeyboardNavigation(playground.getWorkspace());
+        } else {
+          if (kbNavigation) {
+            kbNavigation.dispose();
+          }
+        }
       }
 
       function initPlayground() {
@@ -101,6 +128,8 @@
         };
 
         Blockly.ContextMenuItems.registerCommentOptions();
+        KeyboardNavigation.registerKeyboardNavigationStyles();
+        // TODO: register the navigation-deferring toolbox.
 
         createPlayground(
           document.getElementById('root'),
@@ -153,6 +182,7 @@
     </style>
   </head>
   <body>
+    <div id="shortcuts"></div>
     <div id="root"></div>
   </body>
 </html>

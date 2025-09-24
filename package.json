@@ -1,6 +1,6 @@
 {
   "name": "blockly",
-  "version": "12.3.0",
+  "version": "12.3.1",
   "description": "Blockly is a library for building visual programming editors.",
   "keywords": [
     "blockly"
@@ -102,6 +102,7 @@
   "devDependencies": {
     "@blockly/block-test": "^7.0.2",
     "@blockly/dev-tools": "^9.0.2",
+    "@blockly/keyboard-navigation": "^3.0.1",
     "@blockly/theme-modern": "^7.0.1",
     "@hyperjump/browser": "^1.1.4",
     "@hyperjump/json-schema": "^1.5.0",

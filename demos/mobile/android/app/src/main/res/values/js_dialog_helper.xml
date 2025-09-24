@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- Title for a JavaScript dialog. "The page at <url of current page> says:" -->
-    <string name="js_dialog_title">The page at \"<xliff:g id="title">%s</xliff:g>\" says:</string>
-    <!-- Default title for a javascript dialog -->
-    <string name="js_dialog_title_default">JavaScript</string>
-</resources>
