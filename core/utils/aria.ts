@@ -51,6 +51,8 @@ export enum Role {
   BUTTON = 'button',
   CHECKBOX = 'checkbox',
   TEXTBOX = 'textbox',
+  COMBOBOX = 'combobox',
+  SPINBUTTON = 'spinbutton',
 }
 
 /**
@@ -99,6 +101,8 @@ export enum State {
   // ARIA property for slider minimum value. Value: number.
   VALUEMIN = 'valuemin',
 
+  VALUENOW = 'valuenow',
+
   // ARIA property for live region chattiness.
   // Value: one of {polite, assertive, off}.
   LIVE = 'live',
@@ -109,6 +113,9 @@ export enum State {
 
   ROLEDESCRIPTION = 'roledescription',
   OWNS = 'owns',
+  HASPOPUP = 'haspopup',
+  CONTROLS = 'controls',
+  CHECKED = 'checked',
 }
 
 /**
@@ -163,6 +170,10 @@ export function setState(
   }
   const attrStateName = ARIA_PREFIX + stateName;
   element.setAttribute(attrStateName, `${value}`);
+}
+
+export function clearState(element: Element, stateName: State) {
+  element.removeAttribute(ARIA_PREFIX + stateName);
 }
 
 /**

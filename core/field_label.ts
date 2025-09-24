@@ -79,11 +79,7 @@ export class FieldLabel extends Field<string> {
       dom.addClass(this.fieldGroup_, 'blocklyLabelField');
     }
 
-    this.recomputeAriaLabel();
-  }
-
-  private recomputeAriaLabel() {
-    aria.setState(this.getFocusableElement(), aria.State.LABEL, this.getText());
+    aria.setState(this.getFocusableElement(), aria.State.HIDDEN, true);
   }
 
   /**
@@ -120,9 +116,6 @@ export class FieldLabel extends Field<string> {
 
   override setValue(newValue: any, fireChangeEvent?: boolean): void {
     super.setValue(newValue, fireChangeEvent);
-    if (this.fieldGroup_) {
-      this.recomputeAriaLabel();
-    }
   }
 
   /**

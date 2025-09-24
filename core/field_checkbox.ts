@@ -113,13 +113,14 @@ export class FieldCheckbox extends Field<CheckboxBool> {
     dom.addClass(this.fieldGroup_!, 'blocklyCheckboxField');
     textElement.style.display = this.value_ ? 'block' : 'none';
 
+    this.recomputeAria();
+  }
+
+  private recomputeAria() {
     const element = this.getFocusableElement();
     aria.setRole(element, aria.Role.CHECKBOX);
-    aria.setState(
-      element,
-      aria.State.LABEL,
-      this.name ? `Checkbox ${this.name}` : 'Checkbox',
-    );
+    aria.setState(element, aria.State.LABEL, this.getAriaName() ?? 'Checkbox');
+    aria.setState(element, aria.State.CHECKED, !!this.value_);
   }
 
   override render_() {
@@ -147,6 +148,7 @@ export class FieldCheckbox extends Field<CheckboxBool> {
   /** Toggle the state of the checkbox on click. */
   protected override showEditor_() {
     this.setValue(!this.value_);
+    this.recomputeAria();
   }
 
   /**

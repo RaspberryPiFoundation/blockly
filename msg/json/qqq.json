@@ -39,6 +39,7 @@
 	"CHANGE_VALUE_TITLE": "prompt - This message is seen on mobile devices and the Opera browser.  With most browsers, users can edit numeric values in blocks by just clicking and typing.  Opera does not allow this and mobile browsers may have issues with in-line textareas. So we prompt users with this message (usually a popup) to change a value.",
 	"RENAME_VARIABLE": "dropdown choice - When the user clicks on a variable block, this is one of the dropdown menu choices.  It is used to rename the current variable.  See [https://github.com/google/blockly/wiki/Variables#dropdown-menu https://github.com/google/blockly/wiki/Variables#dropdown-menu].",
 	"RENAME_VARIABLE_TITLE": "prompt - Prompts the user to enter the new name for the selected variable.  See [https://github.com/google/blockly/wiki/Variables#dropdown-menu https://github.com/google/blockly/wiki/Variables#dropdown-menu].\n\nParameters:\n* %1 - the name of the variable to be renamed.",
+	"ARIA_LABEL_FOR_VARIABLE_NAME": "dropdown choice - Provides screen reader users with a label that contextualizes a variable as an actual variable with its name.",
 	"NEW_VARIABLE": "button text - Text on the button used to launch the variable creation dialogue.",
 	"NEW_STRING_VARIABLE": "button text - Text on the button used to launch the variable creation dialogue.",
 	"NEW_NUMBER_VARIABLE": "button text - Text on the button used to launch the variable creation dialogue.",

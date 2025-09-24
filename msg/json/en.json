@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2025-09-22 11:22:54.733649",
+		"lastupdated": "2025-09-23 23:27:37.312782",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -32,6 +32,7 @@
 	"CHANGE_VALUE_TITLE": "Change value:",
 	"RENAME_VARIABLE": "Rename variable...",
 	"RENAME_VARIABLE_TITLE": "Rename all '%1' variables to:",
+	"ARIA_LABEL_FOR_VARIABLE_NAME": "Variable '%1'",
 	"NEW_VARIABLE": "Create variable...",
 	"NEW_STRING_VARIABLE": "Create string variable...",
 	"NEW_NUMBER_VARIABLE": "Create number variable...",

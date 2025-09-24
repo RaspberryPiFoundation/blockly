@@ -596,22 +596,25 @@ export class FieldVariable extends FieldDropdown {
     }
     variableModelList.sort(Variables.compareByName);
 
-    const options: [string, string][] = [];
+    const options: [string, string, string?][] = [];
     for (let i = 0; i < variableModelList.length; i++) {
       // Set the UUID as the internal representation of the variable.
       options[i] = [
         variableModelList[i].getName(),
         variableModelList[i].getId(),
+        Msg['ARIA_LABEL_FOR_VARIABLE_NAME'].replace('%1', variableModelList[i].getName()),
       ];
     }
     options.push([
       Msg['RENAME_VARIABLE'],
       internalConstants.RENAME_VARIABLE_ID,
+      Msg['RENAME_VARIABLE'],
     ]);
     if (Msg['DELETE_VARIABLE']) {
       options.push([
         Msg['DELETE_VARIABLE'].replace('%1', name),
         internalConstants.DELETE_VARIABLE_ID,
+        Msg['DELETE_VARIABLE'].replace('%1', name),
       ]);
     }
 

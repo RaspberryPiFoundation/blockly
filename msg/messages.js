@@ -9,13 +9,13 @@
  *
  * After modifying this file, run:
  *
- *     npm run generate:langfiles
+ *     npm run messages
  *
  * to regenerate json/{en,qqq,constants,synonyms}.json.
  *
  * To convert all of the json files to .js files, run:
  *
- *     npm run build:langfiles
+ *     npm run langfiles
  */
 'use strict';
 
@@ -146,6 +146,9 @@ Blockly.Msg.RENAME_VARIABLE = 'Rename variable...';
 /** @type {string} */
 /// prompt - Prompts the user to enter the new name for the selected variable.  See [https://github.com/google/blockly/wiki/Variables#dropdown-menu https://github.com/google/blockly/wiki/Variables#dropdown-menu].\n\nParameters:\n* %1 - the name of the variable to be renamed.
 Blockly.Msg.RENAME_VARIABLE_TITLE = 'Rename all "%1" variables to:';
+/** @type {string} */
+/// dropdown choice - Provides screen reader users with a label that contextualizes a variable as an actual variable with its name.
+Blockly.Msg.ARIA_LABEL_FOR_VARIABLE_NAME = 'Variable "%1"';
 
 // Variable creation
 /** @type {string} */

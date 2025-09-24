@@ -164,7 +164,7 @@ export class FieldImage extends Field<string> {
     aria.setState(
       element,
       aria.State.LABEL,
-      this.name ? `Image ${this.name}` : 'Image',
+      this.altText ?? this.getAriaName(),
     );
   }
 

@@ -25,6 +25,7 @@ import * as fieldRegistry from './field_registry.js';
 import {Menu} from './menu.js';
 import {MenuSeparator} from './menu_separator.js';
 import {MenuItem} from './menuitem.js';
+import { idGenerator } from './utils.js';
 import * as aria from './utils/aria.js';
 import {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
@@ -198,13 +199,25 @@ export class FieldDropdown extends Field<string> {
       dom.addClass(this.fieldGroup_, 'blocklyDropdownField');
     }
 
+    this.recomputeAria();
+  }
+
+  private recomputeAria() {
+    if (!this.fieldGroup_) return; // There's no element to set currently.
     const element = this.getFocusableElement();
-    aria.setRole(element, aria.Role.LISTBOX);
-    aria.setState(
-      element,
-      aria.State.LABEL,
-      this.name ? `Item ${this.name}` : 'Item',
-    );
+    aria.setRole(element, aria.Role.COMBOBOX);
+    aria.setState(element, aria.State.HASPOPUP, aria.Role.LISTBOX);
+    aria.setState(element, aria.State.EXPANDED, !!this.menu_);
+    if (this.menu_) {
+      aria.setState(element, aria.State.CONTROLS, this.menu_.id);
+    } else {
+      aria.clearState(element, aria.State.CONTROLS);
+    }
+    aria.setState(element, aria.State.LABEL, this.getAriaName() ?? 'Dropdown');
+
+    // Ensure the selected item has its correct label presented since it may be
+    // different than the actual text presented to the user.
+    aria.setState(this.getTextElement(), aria.State.LABEL, this.computeLabelForOption(this.selectedOption));
   }
 
   /**
@@ -335,7 +348,7 @@ export class FieldDropdown extends Field<string> {
         }
         return label;
       })();
-      const menuItem = new MenuItem(content, value);
+      const menuItem = new MenuItem(content, value, this.computeLabelForOption(option));
       menuItem.setRole(aria.Role.OPTION);
       menuItem.setRightToLeft(block.RTL);
       menuItem.setCheckable(true);
@@ -346,6 +359,19 @@ export class FieldDropdown extends Field<string> {
       }
       menuItem.onAction(this.handleMenuActionEvent, this);
     }
+
+    this.recomputeAria();
+  }
+
+  private computeLabelForOption(option: MenuOption): string {
+    if (option === FieldDropdown.SEPARATOR) {
+      return ''; // Separators don't need labels.
+    } else if (!Array.isArray(option)) {
+      return ''; // Certain dynamic options aren't iterable. TODO: Figure this out. It breaks when opening certain test toolbox categories in the advanced playground.
+    }
+    const [label, value, optionalAriaLabel] = option;
+    const altText = isImageProperties(label) ? label.alt : null;
+    return altText ?? optionalAriaLabel ?? this.computeHumanReadableText(option) ?? String(value);
   }
 
   /**
@@ -358,6 +384,7 @@ export class FieldDropdown extends Field<string> {
     this.menu_ = null;
     this.selectedMenuItem = null;
     this.applyColour();
+    this.recomputeAria();
   }
 
   /**
@@ -378,6 +405,11 @@ export class FieldDropdown extends Field<string> {
    */
   protected onItemSelected_(menu: Menu, menuItem: MenuItem) {
     this.setValue(menuItem.getValue());
+  }
+
+  override setValue(newValue: AnyDuringMigration, fireChangeEvent = true) {
+    super.setValue(newValue, fireChangeEvent);
+    this.recomputeAria();
   }
 
   /**
@@ -532,14 +564,15 @@ export class FieldDropdown extends Field<string> {
     if (!block) {
       throw new UnattachedFieldError();
     }
-    this.imageElement!.style.display = '';
-    this.imageElement!.setAttributeNS(
+    const imageElement = this.imageElement!;
+    imageElement.style.display = '';
+    imageElement.setAttributeNS(
       dom.XLINK_NS,
       'xlink:href',
       imageJson.src,
     );
-    this.imageElement!.setAttribute('height', String(imageJson.height));
-    this.imageElement!.setAttribute('width', String(imageJson.width));
+    imageElement.setAttribute('height', String(imageJson.height));
+    imageElement.setAttribute('width', String(imageJson.width));
 
     const imageHeight = Number(imageJson.height);
     const imageWidth = Number(imageJson.width);
@@ -567,15 +600,24 @@ export class FieldDropdown extends Field<string> {
     let arrowX = 0;
     if (block.RTL) {
       const imageX = xPadding + arrowWidth;
-      this.imageElement!.setAttribute('x', `${imageX}`);
+      imageElement.setAttribute('x', `${imageX}`);
     } else {
       arrowX = imageWidth + arrowWidth;
       this.getTextElement().setAttribute('text-anchor', 'end');
-      this.imageElement!.setAttribute('x', `${xPadding}`);
+      imageElement.setAttribute('x', `${xPadding}`);
     }
-    this.imageElement!.setAttribute('y', String(height / 2 - imageHeight / 2));
+    imageElement.setAttribute('y', String(height / 2 - imageHeight / 2));
 
     this.positionTextElement_(arrowX + xPadding, imageWidth + arrowWidth);
+
+    if (imageElement.id === '') {
+      imageElement.id = idGenerator.getNextUniqueId();
+      const element = this.getFocusableElement();
+      aria.setState(element, aria.State.ACTIVEDESCENDANT, imageElement.id);
+    }
+
+    aria.setRole(imageElement, aria.Role.IMAGE);
+    aria.setState(imageElement, aria.State.LABEL, imageJson.alt);
   }
 
   /** Renders the selected option, which must be text. */
@@ -585,6 +627,14 @@ export class FieldDropdown extends Field<string> {
     const textElement = this.getTextElement();
     dom.addClass(textElement, 'blocklyDropdownText');
     textElement.setAttribute('text-anchor', 'start');
+    // The field's text should be visible to readers since it will be read out
+    // as static text as part of the combobox (per the ARIA combobox pattern).
+    if (textElement.id === '') {
+      textElement.id = idGenerator.getNextUniqueId();
+      const element = this.getFocusableElement();
+      aria.setState(element, aria.State.ACTIVEDESCENDANT, textElement.id);
+    }
+    aria.setState(textElement, aria.State.HIDDEN, false);
 
     // Height and width include the border rect.
     const hasBorder = !!this.borderRect_;
@@ -654,7 +704,11 @@ export class FieldDropdown extends Field<string> {
     if (!this.selectedOption) {
       return null;
     }
-    const option = this.selectedOption[0];
+    return this.computeHumanReadableText(this.selectedOption);
+  }
+
+  private computeHumanReadableText(menuOption: MenuOption): string | null {
+    const option = menuOption[0];
     if (isImageProperties(option)) {
       return option.alt;
     } else if (
@@ -689,7 +743,7 @@ export class FieldDropdown extends Field<string> {
       throw new Error(
         'options are required for the dropdown field. The ' +
           'options property must be assigned an array of ' +
-          '[humanReadableValue, languageNeutralValue] tuples.',
+          '[humanReadableValue, languageNeutralValue, opt_ariaLabel] tuples.',
       );
     }
     // `this` might be a subclass of FieldDropdown if that class doesn't
@@ -713,9 +767,9 @@ export class FieldDropdown extends Field<string> {
         return option;
       }
 
-      const [label, value] = option;
+      const [label, value, opt_ariaLabel] = option;
       if (typeof label === 'string') {
-        return [parsing.replaceMessageReferences(label), value];
+        return [parsing.replaceMessageReferences(label), value, opt_ariaLabel];
       }
 
       hasNonTextContent = true;
@@ -724,14 +778,14 @@ export class FieldDropdown extends Field<string> {
       const imageLabel = isImageProperties(label)
         ? {...label, alt: parsing.replaceMessageReferences(label.alt)}
         : label;
-      return [imageLabel, value];
+      return [imageLabel, value, opt_ariaLabel];
     });
 
     if (hasNonTextContent || options.length < 2) {
       return {options: trimmedOptions};
     }
 
-    const stringOptions = trimmedOptions as [string, string][];
+    const stringOptions = trimmedOptions as [string, string, string?][];
     const stringLabels = stringOptions.map(([label]) => label);
 
     const shortest = utilsString.shortestStringLength(stringLabels);
@@ -770,13 +824,14 @@ export class FieldDropdown extends Field<string> {
    * @returns A new array with all of the option text trimmed.
    */
   private applyTrim(
-    options: [string, string][],
+    options: [string, string, string?][],
     prefixLength: number,
     suffixLength: number,
   ): MenuOption[] {
-    return options.map(([text, value]) => [
+    return options.map(([text, value, opt_ariaLabel]) => [
       text.substring(prefixLength, text.length - suffixLength),
       value,
+      opt_ariaLabel,
     ]);
   }
 
@@ -868,7 +923,7 @@ export interface ImageProperties {
  * the language-neutral value.
  */
 export type MenuOption =
-  | [string | ImageProperties | HTMLElement, string]
+  | [string | ImageProperties | HTMLElement, string, string?]
   | 'separator';
 
 /**

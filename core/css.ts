@@ -509,7 +509,7 @@ input[type=number] {
   outline: none;
 }
 
-#blocklyAriaAnnounce {
+.hiddenForAria {
   position: absolute;
   left: -9999px;
   width: 1px;

@@ -52,6 +52,7 @@ export class MenuItem {
   constructor(
     private readonly content: string | HTMLElement,
     private readonly opt_value?: string,
+    private readonly opt_ariaLabel?: string
   ) {}
 
   /**
@@ -98,6 +99,9 @@ export class MenuItem {
       (this.checkable && this.checked) || false,
     );
     aria.setState(element, aria.State.DISABLED, !this.enabled);
+    if (this.opt_ariaLabel) {
+      aria.setState(element, aria.State.LABEL, this.opt_ariaLabel);
+    }
 
     return element;
   }
