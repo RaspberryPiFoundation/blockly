@@ -488,13 +488,15 @@ suite('Variable Fields', function () {
       this.variableField = this.variableBlock.getField('VAR');
     });
     test('Rename & Keep Old ID', function () {
-      this.workspace.renameVariableById('id1', 'name2');
+      const variableMap = this.workspace.getVariableMap();
+      variableMap.renameVariable(variableMap.getVariableById('id1'), 'name2');
       assert.equal(this.variableField.getText(), 'name2');
       assert.equal(this.variableField.getValue(), 'id1');
     });
     test('Rename & Get New ID', function () {
-      this.workspace.createVariable('name2', null, 'id2');
-      this.workspace.renameVariableById('id1', 'name2');
+      const variableMap = this.workspace.getVariableMap();
+      variableMap.createVariable('name2', null, 'id2');
+      variableMap.renameVariable(variableMap.getVariableById('id1'), 'name2');
       assert.equal(this.variableField.getText(), 'name2');
       assert.equal(this.variableField.getValue(), 'id2');
     });
