@@ -13,6 +13,7 @@ import type {Connection} from './connection.js';
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
 import {getFocusManager} from './focus_manager.js';
+import {JsonBlockDefinition} from './interfaces/i_json_block_definition.js';
 import {ISelectable, isSelectable} from './interfaces/i_selectable.js';
 import {ShortcutRegistry} from './shortcut_registry.js';
 import type {Workspace} from './workspace.js';
@@ -238,7 +239,7 @@ export function getBlockTypeCounts(
  * @returns A function that calls jsonInit with the correct value
  *     of jsonDef.
  */
-function jsonInitFactory(jsonDef: AnyDuringMigration): () => void {
+function jsonInitFactory(jsonDef: JsonBlockDefinition): () => void {
   return function (this: Block) {
     this.jsonInit(jsonDef);
   };
@@ -250,14 +251,14 @@ function jsonInitFactory(jsonDef: AnyDuringMigration): () => void {
  *
  * @param jsonArray An array of JSON block definitions.
  */
-export function defineBlocksWithJsonArray(jsonArray: AnyDuringMigration[]) {
+export function defineBlocksWithJsonArray(jsonArray: JsonBlockDefinition[]) {
   TEST_ONLY.defineBlocksWithJsonArrayInternal(jsonArray);
 }
 
 /**
  * Private version of defineBlocksWithJsonArray for stubbing in tests.
  */
-function defineBlocksWithJsonArrayInternal(jsonArray: AnyDuringMigration[]) {
+function defineBlocksWithJsonArrayInternal(jsonArray: JsonBlockDefinition[]) {
   defineBlocks(createBlockDefinitionsFromJsonArray(jsonArray));
 }
 
@@ -270,7 +271,7 @@ function defineBlocksWithJsonArrayInternal(jsonArray: AnyDuringMigration[]) {
  *     definitions created.
  */
 export function createBlockDefinitionsFromJsonArray(
-  jsonArray: AnyDuringMigration[],
+  jsonArray: JsonBlockDefinition[],
 ): {[key: string]: BlockDefinition} {
   const blocks: {[key: string]: BlockDefinition} = {};
   for (let i = 0; i < jsonArray.length; i++) {
@@ -279,7 +280,7 @@ export function createBlockDefinitionsFromJsonArray(
       console.warn(`Block definition #${i} in JSON array is ${elem}. Skipping`);
       continue;
     }
-    const type = elem['type'];
+    const type = elem.type;
     if (!type) {
       console.warn(
         `Block definition #${i} in JSON array is missing a type attribute. ` +

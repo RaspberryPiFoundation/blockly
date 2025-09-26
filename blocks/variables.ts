@@ -60,6 +60,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
     ],
     'previousStatement': null,
     'nextStatement': null,
+    'output': null,
     'style': 'variable_blocks',
     'tooltip': '%{BKY_VARIABLES_SET_TOOLTIP}',
     'helpUrl': '%{BKY_VARIABLES_SET_HELPURL}',

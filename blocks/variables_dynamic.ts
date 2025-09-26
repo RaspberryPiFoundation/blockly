@@ -59,6 +59,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'name': 'VALUE',
       },
     ],
+    'output': null,
     'previousStatement': null,
     'nextStatement': null,
     'style': 'variable_dynamic_blocks',
