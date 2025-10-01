@@ -19,7 +19,7 @@ import './events/events_theme_change.js';
 import './events/events_viewport.js';
 
 import type {Block} from './block.js';
-import type {BlockSvg} from './block_svg.js';
+import {BlockSvg} from './block_svg.js';
 import type {BlocklyOptions} from './blockly_options.js';
 import * as browserEvents from './browser_events.js';
 import {TextInputBubble} from './bubbles/textinput_bubble.js';
@@ -42,7 +42,7 @@ import {Abstract as AbstractEvent} from './events/events.js';
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
 import {Flyout} from './flyout_base.js';
-import type {FlyoutButton} from './flyout_button.js';
+import {FlyoutButton} from './flyout_button.js';
 import {getFocusManager} from './focus_manager.js';
 import {Gesture} from './gesture.js';
 import {Grid} from './grid.js';
@@ -2947,10 +2947,39 @@ export class WorkspaceSvg
   }
 
   recomputeAriaTree() {
-    // TODO: Do this efficiently (probably incrementally).
-    this.getTopBlocks(false).forEach((block) =>
-      this.recomputeAriaTreeItemDetailsRecursively(block),
-    );
+    // Flyout workspaces require special arrangement to account for items.
+    const flyout = this.targetWorkspace?.getFlyout();
+    if (this.isFlyout && flyout) {
+      const focusableItems = flyout
+        .getContents()
+        .map((item) => item.getElement())
+        .filter((item) => isFocusableNode(item) && item.canBeFocused());
+      focusableItems.forEach((item, index) => {
+        // This is rather hacky and may need more thought, but it's a
+        // consequence of actual button (non-label) FlyoutButtons requiring two
+        // distinct roles (a parent treeitem and a child button that actually
+        // holds focus).
+        const treeItemElem =
+          item instanceof FlyoutButton
+            ? item.getSvgRoot()
+            : item.getFocusableElement();
+        aria.setState(treeItemElem, aria.State.POSINSET, index + 1);
+        aria.setState(treeItemElem, aria.State.SETSIZE, focusableItems.length);
+        aria.setState(treeItemElem, aria.State.LEVEL, 1); // They are always top-level.
+        if (item instanceof BlockSvg) {
+          item
+            .getChildren(false)
+            .forEach((child) =>
+              this.recomputeAriaTreeItemDetailsRecursively(child),
+            );
+        }
+      });
+    } else {
+      // TODO: Do this efficiently (probably incrementally).
+      this.getTopBlocks(false).forEach((block) =>
+        this.recomputeAriaTreeItemDetailsRecursively(block),
+      );
+    }
   }
 
   private recomputeAriaTreeItemDetailsRecursively(block: BlockSvg) {

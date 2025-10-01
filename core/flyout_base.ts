@@ -534,7 +534,9 @@ export abstract class Flyout
    */
   setContents(contents: FlyoutItem[]): void {
     this.contents = contents;
+    this.workspace_.recomputeAriaTree();
   }
+
   /**
    * Update the display property of the flyout based whether it thinks it should
    * be visible and whether its containing workspace is visible.

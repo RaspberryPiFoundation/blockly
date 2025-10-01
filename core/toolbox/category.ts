@@ -30,7 +30,6 @@ import type {
   StaticCategoryInfo,
 } from '../utils/toolbox.js';
 import * as toolbox from '../utils/toolbox.js';
-import {Toolbox} from './toolbox.js';
 import {ToolboxItem} from './toolbox_item.js';
 
 /**
@@ -193,7 +192,6 @@ export class ToolboxCategory
     aria.setRole(this.htmlDiv_, aria.Role.TREEITEM);
     aria.setState(this.htmlDiv_, aria.State.SELECTED, false);
     aria.setState(this.htmlDiv_, aria.State.LEVEL, this.level_ + 1);
-    (this.parentToolbox_ as Toolbox).recomputeAriaOwners();
 
     this.rowDiv_ = this.createRowContainer_();
     this.rowDiv_.style.pointerEvents = 'auto';

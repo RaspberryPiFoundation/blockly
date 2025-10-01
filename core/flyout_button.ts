@@ -60,7 +60,13 @@ export class FlyoutButton
   height = 0;
 
   /** The root SVG group for the button or label. */
-  private svgGroup: SVGGElement;
+  private svgContainerGroup: SVGGElement;
+
+  /** The root SVG group for the button's or label's contents. */
+  private svgContentGroup: SVGGElement;
+
+  /** The SVG group that can hold focus for this button or label. */
+  private svgFocusableGroup: SVGGElement;
 
   /** The SVG element with the text of the label or button. */
   private svgText: SVGTextElement | null = null;
@@ -112,19 +118,27 @@ export class FlyoutButton
     }
 
     this.id = idGenerator.getNextUniqueId();
-    this.svgGroup = dom.createSvgElement(
+    this.svgContainerGroup = dom.createSvgElement(
       Svg.G,
-      {'id': this.id, 'class': cssClass, 'tabindex': '-1'},
+      {'class': cssClass},
       this.workspace.getCanvas(),
     );
+    this.svgContentGroup = dom.createSvgElement(
+      Svg.G,
+      {},
+      this.svgContainerGroup,
+    );
 
-    // Set the accessibility role. All child nodes will be set to `presentation`
-    // to avoid extraneous "group" narration on VoiceOver.
+    aria.setRole(this.svgContainerGroup, aria.Role.TREEITEM);
     if (this.isFlyoutLabel) {
-      aria.setRole(this.svgGroup, aria.Role.TREEITEM);
+      aria.setRole(this.svgContentGroup, aria.Role.PRESENTATION);
+      this.svgFocusableGroup = this.svgContainerGroup;
     } else {
-      aria.setRole(this.svgGroup, aria.Role.BUTTON);
+      aria.setRole(this.svgContentGroup, aria.Role.BUTTON);
+      this.svgFocusableGroup = this.svgContentGroup;
     }
+    this.svgFocusableGroup.id = this.id;
+    this.svgFocusableGroup.tabIndex = -1;
 
     let shadow;
     if (!this.isFlyoutLabel) {
@@ -138,7 +152,7 @@ export class FlyoutButton
           'x': 1,
           'y': 1,
         },
-        this.svgGroup!,
+        this.svgContentGroup,
       );
       aria.setRole(shadow, aria.Role.PRESENTATION);
     }
@@ -152,7 +166,7 @@ export class FlyoutButton
         'rx': FlyoutButton.BORDER_RADIUS,
         'ry': FlyoutButton.BORDER_RADIUS,
       },
-      this.svgGroup!,
+      this.svgContentGroup,
     );
     aria.setRole(rect, aria.Role.PRESENTATION);
 
@@ -164,7 +178,7 @@ export class FlyoutButton
         'y': 0,
         'text-anchor': 'middle',
       },
-      this.svgGroup!,
+      this.svgContentGroup,
     );
     if (!this.isFlyoutLabel) {
       aria.setRole(svgText, aria.Role.PRESENTATION);
@@ -181,6 +195,7 @@ export class FlyoutButton
         .getThemeManager()
         .subscribe(this.svgText, 'flyoutForegroundColour', 'fill');
     }
+    aria.setState(this.svgFocusableGroup, aria.State.LABEL, text);
 
     const fontSize = style.getComputedStyle(svgText, 'fontSize');
     const fontWeight = style.getComputedStyle(svgText, 'fontWeight');
@@ -217,13 +232,13 @@ export class FlyoutButton
     this.updateTransform();
 
     this.onMouseDownWrapper = browserEvents.conditionalBind(
-      this.svgGroup,
+      this.svgContentGroup,
       'pointerdown',
       this,
       this.onMouseDown,
     );
     this.onMouseUpWrapper = browserEvents.conditionalBind(
-      this.svgGroup,
+      this.svgContentGroup,
       'pointerup',
       this,
       this.onMouseUp,
@@ -233,18 +248,18 @@ export class FlyoutButton
   createDom(): SVGElement {
     // No-op, now handled in constructor. Will be removed in followup refactor
     // PR that updates the flyout classes to use inflaters.
-    return this.svgGroup;
+    return this.svgContainerGroup;
   }
 
   /** Correctly position the flyout button and make it visible. */
   show() {
     this.updateTransform();
-    this.svgGroup!.setAttribute('display', 'block');
+    this.svgContainerGroup!.setAttribute('display', 'block');
   }
 
   /** Update SVG attributes to match internal state. */
   private updateTransform() {
-    this.svgGroup!.setAttribute(
+    this.svgContainerGroup!.setAttribute(
       'transform',
       'translate(' + this.position.x + ',' + this.position.y + ')',
     );
@@ -330,8 +345,8 @@ export class FlyoutButton
   dispose() {
     browserEvents.unbind(this.onMouseDownWrapper);
     browserEvents.unbind(this.onMouseUpWrapper);
-    if (this.svgGroup) {
-      dom.removeNode(this.svgGroup);
+    if (this.svgContainerGroup) {
+      dom.removeNode(this.svgContainerGroup);
     }
     if (this.svgText) {
       this.workspace.getThemeManager().unsubscribe(this.svgText);
@@ -349,8 +364,8 @@ export class FlyoutButton
       this.cursorSvg = null;
       return;
     }
-    if (this.svgGroup) {
-      this.svgGroup.appendChild(cursorSvg);
+    if (this.svgContainerGroup) {
+      this.svgContentGroup.appendChild(cursorSvg);
       this.cursorSvg = cursorSvg;
     }
   }
@@ -398,12 +413,12 @@ export class FlyoutButton
    * @returns The root SVG element of this rendered element.
    */
   getSvgRoot() {
-    return this.svgGroup;
+    return this.svgContainerGroup;
   }
 
   /** See IFocusableNode.getFocusableElement. */
   getFocusableElement(): HTMLElement | SVGElement {
-    return this.svgGroup;
+    return this.svgFocusableGroup;
   }
 
   /** See IFocusableNode.getFocusableTree. */

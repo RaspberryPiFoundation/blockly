@@ -262,7 +262,7 @@ export class BlockSvg
 
   collectSiblingBlocks(surroundParent: BlockSvg | null): BlockSvg[] {
     // NOTE TO DEVELOPERS: it's very important that these are NOT sorted. The
-    // returned list needs to be relatively stable for consistency block indexes
+    // returned list needs to be relatively stable for consistent block indexes
     // read out to users via screen readers.
     if (surroundParent) {
       // Start from the first sibling and iterate in navigation order.

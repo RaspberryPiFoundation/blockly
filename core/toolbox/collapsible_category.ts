@@ -20,7 +20,6 @@ import * as dom from '../utils/dom.js';
 import * as toolbox from '../utils/toolbox.js';
 import {ToolboxCategory} from './category.js';
 import {ToolboxSeparator} from './separator.js';
-import {Toolbox} from './toolbox.js';
 
 /**
  * Class for a category in a toolbox that can be collapsed.
@@ -136,8 +135,7 @@ export class CollapsibleToolboxCategory
     this.htmlDiv_!.appendChild(this.subcategoriesDiv_);
     this.closeIcon_(this.iconDom_);
     aria.setState(this.htmlDiv_ as HTMLDivElement, aria.State.EXPANDED, false);
-
-    aria.setRole(this.htmlDiv_!, aria.Role.GROUP);
+    aria.setRole(this.htmlDiv_!, aria.Role.TREEITEM);
 
     // Ensure this group has properly set children.
     const selectableChildren =
@@ -150,7 +148,6 @@ export class CollapsibleToolboxCategory
       aria.State.OWNS,
       [...new Set(focusableChildIds)].join(' '),
     );
-    (this.parentToolbox_ as Toolbox).recomputeAriaOwners();
 
     return this.htmlDiv_!;
   }
@@ -194,6 +191,7 @@ export class CollapsibleToolboxCategory
         newCategory.getClickTarget()?.setAttribute('id', newCategory.getId());
       }
     }
+    aria.setRole(contentsContainer, aria.Role.GROUP);
     return contentsContainer;
   }
 

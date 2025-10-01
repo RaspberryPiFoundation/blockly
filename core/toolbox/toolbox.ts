@@ -369,6 +369,7 @@ export class Toolbox
     this.renderContents_(toolboxDef['contents']);
     this.position();
     this.handleToolboxItemResize();
+    this.recomputeAriaOwners();
   }
 
   /**
@@ -445,6 +446,7 @@ export class Toolbox
         this.addToolboxItem_(child);
       }
     }
+    this.recomputeAriaOwners();
   }
 
   /**
