@@ -155,12 +155,14 @@ export class FieldImage extends Field<string> {
       dom.addClass(this.fieldGroup_, 'blocklyImageField');
     }
 
+    const element = this.getFocusableElement();
     if (this.clickHandler) {
       this.imageElement.style.cursor = 'pointer';
+      aria.setRole(element, aria.Role.BUTTON);
+    } else {
+      aria.setRole(element, aria.Role.IMAGE);
     }
 
-    const element = this.getFocusableElement();
-    aria.setRole(element, aria.Role.IMAGE);
     aria.setState(
       element,
       aria.State.LABEL,

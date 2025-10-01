@@ -199,9 +199,7 @@ export abstract class Field<T = any>
   /** The unique ID of this field. */
   private id_: string | null = null;
 
-  private configuredAriaName: string | null = null;
-  private configuredName: string | null = null;
-  private configuredType: string | null = null;
+  private config: FieldConfig | null = null;
 
   /**
    * @param value The initial value of the field.
@@ -255,13 +253,7 @@ export abstract class Field<T = any>
     if (config.tooltip) {
       this.setTooltip(parsing.replaceMessageReferences(config.tooltip));
     }
-    this.configuredType = config.type;
-    if (config.name) {
-      this.configuredName = config.name;
-    }
-    if (config.optAriaName) {
-      this.configuredAriaName = config.optAriaName;
-    }
+    this.config = config;
   }
 
   /**
@@ -285,9 +277,9 @@ export abstract class Field<T = any>
 
   getAriaName(): string | null {
     return (
-      this.configuredAriaName ??
-      this.configuredName ??
-      this.configuredType ??
+      this.config?.ariaName ??
+      this.config?.name ??
+      this.config?.type ??
       this.getSourceBlock()?.type ??
       this.name ??
       null
@@ -1443,7 +1435,7 @@ export interface FieldConfig {
   type: string;
   name?: string;
   tooltip?: string;
-  optAriaName?: string;
+  ariaName?: string;
 }
 
 /**

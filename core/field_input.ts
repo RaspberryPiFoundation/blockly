@@ -184,7 +184,7 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
 
     const element = this.getFocusableElement();
     aria.setRole(element, aria.Role.TEXTBOX);
-    aria.setState(element, aria.State.LABEL, this.getAriaName() ?? 'Field');
+    aria.setState(element, aria.State.LABEL, this.getAriaName() ?? 'Text');
   }
 
   override isFullBlockField(): boolean {
