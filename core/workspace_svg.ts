@@ -52,10 +52,7 @@ import type {IBoundedElement} from './interfaces/i_bounded_element.js';
 import {IContextMenu} from './interfaces/i_contextmenu.js';
 import type {IDragTarget} from './interfaces/i_drag_target.js';
 import type {IFlyout} from './interfaces/i_flyout.js';
-import {
-  isFocusableNode,
-  type IFocusableNode,
-} from './interfaces/i_focusable_node.js';
+import {type IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
 import {hasBubble} from './interfaces/i_has_bubble.js';
 import type {IMetricsManager} from './interfaces/i_metrics_manager.js';
@@ -2745,10 +2742,7 @@ export class WorkspaceSvg
         return (
           flyout
             .getContents()
-            .find((flyoutItem) => {
-              const element = flyoutItem.getElement();
-              return isFocusableNode(element) && element.canBeFocused();
-            })
+            .find((flyoutItem) => flyoutItem.getElement().canBeFocused())
             ?.getElement() ?? null
         );
       }
@@ -2805,11 +2799,7 @@ export class WorkspaceSvg
     if (this.isFlyout && flyout) {
       for (const flyoutItem of flyout.getContents()) {
         const elem = flyoutItem.getElement();
-        if (
-          isFocusableNode(elem) &&
-          elem.canBeFocused() &&
-          elem.getFocusableElement().id === id
-        ) {
+        if (elem.canBeFocused() && elem.getFocusableElement().id === id) {
           return elem;
         }
       }
@@ -2953,12 +2943,15 @@ export class WorkspaceSvg
       const focusableItems = flyout
         .getContents()
         .map((item) => item.getElement())
-        .filter((item) => isFocusableNode(item) && item.canBeFocused());
+        .filter((item) => item.canBeFocused());
       focusableItems.forEach((item, index) => {
         // This is rather hacky and may need more thought, but it's a
         // consequence of actual button (non-label) FlyoutButtons requiring two
         // distinct roles (a parent treeitem and a child button that actually
         // holds focus).
+        // TODO: Figure out how to generalize this for arbitrary FlyoutItems
+        // that may require special handling like this (i.e. a treeitem wrapping
+        // an actual focusable element).
         const treeItemElem =
           item instanceof FlyoutButton
             ? item.getSvgRoot()
