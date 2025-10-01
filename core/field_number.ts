@@ -20,6 +20,11 @@ import {
 import * as fieldRegistry from './field_registry.js';
 import * as dom from './utils/dom.js';
 
+// TODO: Figure out how to either design this to be a 'number' input with proper
+// 'valuemin' and 'valuemax' ARIA properties, build it so that subtypes can do
+// this properly, or consider a separate field type altogether that handles that
+// case properly. See: https://github.com/google/blockly/pull/9384#discussion_r2395601092.
+
 /**
  * Class for an editable number field.
  */
