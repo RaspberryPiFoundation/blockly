@@ -32,6 +32,15 @@ body:
         2. 
         3.
   - type: textarea
+    id: priority
+    attributes:
+      label: Priority
+      description: Please help us understand the priority for this issue. The more information provided will help the team better assess urgency and complexity.
+      placeholder: |
+        Work effort: Is this a quick fix or will it require a significant amount of work? Is there a clear path to a solution or is further investigation required?
+        Impact: Which part of the service is impacted? How many users are experencing this issue?
+        Is there a known workaround for this issue? If so, please describe. If not, does it prevent a user from doing a core task?
+  - type: textarea
     id: stack-trace
     attributes:
       label: Stack trace
