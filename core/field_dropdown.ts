@@ -217,11 +217,13 @@ export class FieldDropdown extends Field<string> {
 
     // Ensure the selected item has its correct label presented since it may be
     // different than the actual text presented to the user.
-    aria.setState(
-      this.getTextElement(),
-      aria.State.LABEL,
-      this.computeLabelForOption(this.selectedOption),
-    );
+    if (this.textElement_) {
+      aria.setState(
+        this.textElement_,
+        aria.State.LABEL,
+        this.computeLabelForOption(this.selectedOption),
+      );
+    }
   }
 
   /**
