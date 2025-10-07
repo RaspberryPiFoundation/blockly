@@ -74,7 +74,7 @@ export abstract class Icon implements IIcon {
     (this.svgRoot as any).tooltip = this;
     tooltip.bindMouseEvents(this.svgRoot);
 
-    aria.setRole(this.svgRoot, aria.Role.FIGURE);
+    aria.setRole(this.svgRoot, aria.Role.BUTTON);
     aria.setState(this.svgRoot, aria.State.LABEL, 'Icon');
   }
 
