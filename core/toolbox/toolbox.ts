@@ -154,9 +154,6 @@ export class Toolbox
     this.setVisible(true);
     this.flyout.init(workspace);
 
-    aria.setRole(this.HtmlDiv, aria.Role.TREE);
-    aria.setState(this.HtmlDiv, aria.State.LABEL, Msg['TOOLBOX_ARIA_LABEL']);
-
     this.render(this.toolboxDef_);
     const themeManager = workspace.getThemeManager();
     themeManager.subscribe(
@@ -208,6 +205,12 @@ export class Toolbox
     toolboxContainer.setAttribute('layout', this.isHorizontal() ? 'h' : 'v');
     dom.addClass(toolboxContainer, 'blocklyToolbox');
     toolboxContainer.setAttribute('dir', this.RTL ? 'RTL' : 'LTR');
+    aria.setRole(toolboxContainer, aria.Role.REGION);
+    aria.setState(
+      toolboxContainer,
+      aria.State.LABEL,
+      Msg['TOOLBOX_ARIA_LABEL'],
+    );
     return toolboxContainer;
   }
 
@@ -222,6 +225,7 @@ export class Toolbox
     if (this.isHorizontal()) {
       contentsContainer.style.flexDirection = 'row';
     }
+    aria.setRole(contentsContainer, aria.Role.TREE);
     return contentsContainer;
   }
 

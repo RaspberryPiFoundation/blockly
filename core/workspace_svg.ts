@@ -31,7 +31,6 @@ import {WorkspaceComment} from './comments/workspace_comment.js';
 import * as common from './common.js';
 import {ComponentManager} from './component_manager.js';
 import {ConnectionDB} from './connection_db.js';
-import {ConnectionType} from './connection_type.js';
 import * as ContextMenu from './contextmenu.js';
 import {
   ContextMenuOption,
@@ -763,19 +762,15 @@ export class WorkspaceSvg
     });
 
     let ariaLabel = null;
-    if (injectionDiv) {
-      ariaLabel = Msg['WORKSPACE_ARIA_LABEL'];
-    } else if (this.isFlyout) {
+    if (this.isFlyout) {
       ariaLabel = 'Flyout';
     } else if (this.isMutator) {
-      ariaLabel = 'Mutator';
+      ariaLabel = 'Mutator Workspace';
     } else {
-      // This case can happen in some test scenarios.
-      // TODO: Figure out when this can happen in non-test scenarios (if ever).
-      ariaLabel = 'Workspace';
+      ariaLabel = Msg['WORKSPACE_ARIA_LABEL'];
     }
+    aria.setRole(this.svgGroup_, aria.Role.REGION);
     aria.setState(this.svgGroup_, aria.State.LABEL, ariaLabel);
-    aria.setRole(this.svgGroup_, aria.Role.TREE);
 
     // Note that a <g> alone does not receive mouse events--it must have a
     // valid target inside it.  If no background class is specified, as in the
@@ -803,7 +798,10 @@ export class WorkspaceSvg
     this.svgBlockCanvas_ = this.layerManager.getBlockLayer();
     this.svgBubbleCanvas_ = this.layerManager.getBubbleLayer();
 
-    if (!this.isFlyout) {
+    if (this.isFlyout) {
+      // Use the block canvas as the primary tree parent for flyout blocks.
+      aria.setRole(this.svgBlockCanvas_, aria.Role.TREE);
+    } else {
       browserEvents.conditionalBind(
         this.svgGroup_,
         'pointerdown',
@@ -2959,60 +2957,8 @@ export class WorkspaceSvg
         aria.setState(treeItemElem, aria.State.POSINSET, index + 1);
         aria.setState(treeItemElem, aria.State.SETSIZE, focusableItems.length);
         aria.setState(treeItemElem, aria.State.LEVEL, 1); // They are always top-level.
-        if (item instanceof BlockSvg) {
-          item
-            .getChildren(false)
-            .forEach((child) =>
-              this.recomputeAriaTreeItemDetailsRecursively(child),
-            );
-        }
       });
-    } else {
-      // TODO: Do this efficiently (probably incrementally).
-      this.getTopBlocks(false).forEach((block) =>
-        this.recomputeAriaTreeItemDetailsRecursively(block),
-      );
     }
-  }
-
-  private recomputeAriaTreeItemDetailsRecursively(block: BlockSvg) {
-    const elem = block.getFocusableElement();
-    const connection = block.currentConnectionCandidate;
-    let childPosition: number;
-    let parentsChildCount: number;
-    let hierarchyDepth: number;
-    if (connection) {
-      // If the block is being inserted into a new location, the position is hypothetical.
-      // TODO: Figure out how to deal with output connections.
-      let surroundParent: BlockSvg | null;
-      let siblingBlocks: BlockSvg[];
-      if (connection.type === ConnectionType.INPUT_VALUE) {
-        surroundParent = connection.sourceBlock_;
-        siblingBlocks = block.collectSiblingBlocks(surroundParent);
-        // The block is being added as a child since it's input.
-        // TODO: Figure out how to compute the correct position.
-        childPosition = 0;
-      } else {
-        surroundParent = connection.sourceBlock_.getSurroundParent();
-        siblingBlocks = block.collectSiblingBlocks(surroundParent);
-        // The block is being added after the connected block.
-        childPosition = siblingBlocks.indexOf(connection.sourceBlock_) + 1;
-      }
-      parentsChildCount = siblingBlocks.length + 1;
-      hierarchyDepth = surroundParent?.computeLevelInWorkspace() ?? 0;
-    } else {
-      const surroundParent = block.getSurroundParent();
-      const siblingBlocks = block.collectSiblingBlocks(surroundParent);
-      childPosition = siblingBlocks.indexOf(block);
-      parentsChildCount = siblingBlocks.length;
-      hierarchyDepth = block.computeLevelInWorkspace();
-    }
-    aria.setState(elem, aria.State.POSINSET, childPosition + 1);
-    aria.setState(elem, aria.State.SETSIZE, parentsChildCount);
-    aria.setState(elem, aria.State.LEVEL, hierarchyDepth + 1);
-    block
-      .getChildren(false)
-      .forEach((child) => this.recomputeAriaTreeItemDetailsRecursively(child));
   }
 }
 

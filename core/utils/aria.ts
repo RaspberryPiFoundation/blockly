@@ -53,6 +53,7 @@ export enum Role {
   TEXTBOX = 'textbox',
   COMBOBOX = 'combobox',
   SPINBUTTON = 'spinbutton',
+  REGION = 'region',
 }
 
 /**

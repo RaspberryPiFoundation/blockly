@@ -285,40 +285,16 @@ export class BlockSvg
   private computeAriaRole() {
     if (this.isSimpleReporter()) {
       aria.setRole(this.pathObject.svgPath, aria.Role.BUTTON);
-    } else {
-      // This isn't read out by VoiceOver and it will read in the wrong place
-      // as a duplicate in ChromeVox due to the other changes in this branch.
-      // aria.setState(
-      //   this.pathObject.svgPath,
-      //   aria.State.ROLEDESCRIPTION,
-      //   'block',
-      // );
+    } else if (this.workspace.isFlyout) {
       aria.setRole(this.pathObject.svgPath, aria.Role.TREEITEM);
-    }
-  }
-
-  collectSiblingBlocks(surroundParent: BlockSvg | null): BlockSvg[] {
-    // NOTE TO DEVELOPERS: it's very important that these are NOT sorted. The
-    // returned list needs to be relatively stable for consistent block indexes
-    // read out to users via screen readers.
-    if (surroundParent) {
-      // Start from the first sibling and iterate in navigation order.
-      const firstSibling: BlockSvg = surroundParent.getChildren(false)[0];
-      const siblings: BlockSvg[] = [firstSibling];
-      let nextSibling: BlockSvg | null = firstSibling;
-      while ((nextSibling = nextSibling?.getNextBlock())) {
-        siblings.push(nextSibling);
-      }
-      return siblings;
     } else {
-      // For top-level blocks, simply return those from the workspace.
-      return this.workspace.getTopBlocks(false);
+      aria.setState(
+        this.pathObject.svgPath,
+        aria.State.ROLEDESCRIPTION,
+        'block',
+      );
+      aria.setRole(this.pathObject.svgPath, aria.Role.FIGURE);
     }
-  }
-
-  computeLevelInWorkspace(): number {
-    const surroundParent = this.getSurroundParent();
-    return surroundParent ? surroundParent.computeLevelInWorkspace() + 1 : 0;
   }
 
   /**
