@@ -304,6 +304,20 @@ export class Input {
   }
 
   /**
+   * Returns a label for this input's row on its parent block.
+   *
+   * Generally this consists of the labels/values of the preceding fields, and
+   * is intended for accessibility descriptions.
+   * @internal
+   * @returns A description of this input's row on its parent block.
+   */
+  getFieldRowLabel() {
+    return this.fieldRow.reduce((label, field) => {
+      return `${label} ${field.EDITABLE ? field.getAriaName() : field.getValue()}`;
+    }, '');
+  }
+
+  /**
    * Constructs a connection based on the type of this input's source block.
    * Properly handles constructing headless connections for headless blocks
    * and rendered connections for rendered blocks.

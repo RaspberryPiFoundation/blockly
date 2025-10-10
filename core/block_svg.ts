@@ -39,6 +39,7 @@ import {IconType} from './icons/icon_types.js';
 import {MutatorIcon} from './icons/mutator_icon.js';
 import {WarningIcon} from './icons/warning_icon.js';
 import type {Input} from './inputs/input.js';
+import {inputTypes} from './inputs/input_types.js';
 import type {IBoundedElement} from './interfaces/i_bounded_element.js';
 import {IContextMenu} from './interfaces/i_contextmenu.js';
 import type {ICopyable} from './interfaces/i_copyable.js';
@@ -267,6 +268,20 @@ export class BlockSvg
       blockTypeText = 'C-shaped block';
     }
 
+    let prefix = '';
+    const parentInput = (
+      this.previousConnection ?? this.outputConnection
+    )?.targetConnection?.getParentInput();
+    if (parentInput && parentInput.type === inputTypes.STATEMENT) {
+      prefix = `Begin ${parentInput.getFieldRowLabel()}, `;
+    } else if (
+      parentInput &&
+      parentInput.type === inputTypes.VALUE &&
+      this.getParent()?.statementInputCount
+    ) {
+      prefix = `${parentInput.getFieldRowLabel()} `;
+    }
+
     let additionalInfo = blockTypeText;
     if (inputSummary && !nestedStatementBlockCount) {
       additionalInfo = `${additionalInfo} with ${inputSummary}`;
@@ -279,7 +294,7 @@ export class BlockSvg
       }
     }
 
-    return blockSummary + ', ' + additionalInfo;
+    return prefix + blockSummary + ', ' + additionalInfo;
   }
 
   private computeAriaRole() {

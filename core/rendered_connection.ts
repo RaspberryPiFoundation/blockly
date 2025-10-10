@@ -20,6 +20,7 @@ import {ConnectionType} from './connection_type.js';
 import * as ContextMenu from './contextmenu.js';
 import {ContextMenuRegistry} from './contextmenu_registry.js';
 import * as eventUtils from './events/utils.js';
+import {inputTypes} from './inputs/input_types.js';
 import {IContextMenu} from './interfaces/i_contextmenu.js';
 import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
@@ -334,7 +335,30 @@ export class RenderedConnection
     if (highlightSvg) {
       highlightSvg.style.display = '';
       aria.setRole(highlightSvg, aria.Role.FIGURE);
-      aria.setState(highlightSvg, aria.State.LABEL, 'Open connection');
+      aria.setState(highlightSvg, aria.State.ROLEDESCRIPTION, 'Connection');
+      if (this.type === ConnectionType.NEXT_STATEMENT) {
+        const parentInput =
+          this.getParentInput() ??
+          this.getSourceBlock()
+            .getTopStackBlock()
+            .previousConnection?.targetConnection?.getParentInput();
+        if (parentInput && parentInput.type === inputTypes.STATEMENT) {
+          aria.setState(
+            highlightSvg,
+            aria.State.LABEL,
+            `${this.getParentInput() ? 'Begin' : 'End'} ${parentInput.getFieldRowLabel()}`,
+          );
+        }
+      } else if (
+        this.type === ConnectionType.INPUT_VALUE &&
+        this.getSourceBlock().statementInputCount
+      ) {
+        aria.setState(
+          highlightSvg,
+          aria.State.LABEL,
+          `${this.getParentInput()?.getFieldRowLabel()}`,
+        );
+      }
     }
   }
 

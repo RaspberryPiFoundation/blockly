@@ -125,6 +125,13 @@ function getBlockNavigationCandidates(
   for (const input of block.inputList) {
     if (!input.isVisible()) continue;
     candidates.push(...input.fieldRow);
+    if (
+      input.connection?.type === ConnectionType.NEXT_STATEMENT &&
+      !input.connection.targetBlock()
+    ) {
+      candidates.push(input.connection as RenderedConnection);
+    }
+
     if (input.connection?.targetBlock()) {
       const connectedBlock = input.connection.targetBlock() as BlockSvg;
       if (input.connection.type === ConnectionType.NEXT_STATEMENT && !forward) {
@@ -140,6 +147,15 @@ function getBlockNavigationCandidates(
     } else if (input.connection?.type === ConnectionType.INPUT_VALUE) {
       candidates.push(input.connection as RenderedConnection);
     }
+  }
+
+  if (
+    block.nextConnection &&
+    !block.nextConnection.targetBlock() &&
+    (block.lastConnectionInStack(true) !== block.nextConnection ||
+      !!block.getSurroundParent())
+  ) {
+    candidates.push(block.nextConnection);
   }
 
   return candidates;

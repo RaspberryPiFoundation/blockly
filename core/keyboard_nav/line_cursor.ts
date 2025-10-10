@@ -15,11 +15,23 @@
 
 import {BlockSvg} from '../block_svg.js';
 import {RenderedWorkspaceComment} from '../comments/rendered_workspace_comment.js';
+import {ConnectionType} from '../connection_type.js';
 import {getFocusManager} from '../focus_manager.js';
 import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
 import * as registry from '../registry.js';
+import {RenderedConnection} from '../rendered_connection.js';
 import type {WorkspaceSvg} from '../workspace_svg.js';
 import {Marker} from './marker.js';
+
+/**
+ * Representation of the direction of travel within a navigation context.
+ */
+export enum NavigationDirection {
+  NEXT,
+  PREVIOUS,
+  IN,
+  OUT,
+}
 
 /**
  * Class for a line cursor.
@@ -51,13 +63,7 @@ export class LineCursor extends Marker {
     }
     const newNode = this.getNextNode(
       curNode,
-      (candidate: IFocusableNode | null) => {
-        return (
-          (candidate instanceof BlockSvg &&
-            !candidate.outputConnection?.targetBlock()) ||
-          candidate instanceof RenderedWorkspaceComment
-        );
-      },
+      this.getValidationFunction(NavigationDirection.NEXT),
       true,
     );
 
@@ -80,7 +86,11 @@ export class LineCursor extends Marker {
       return null;
     }
 
-    const newNode = this.getNextNode(curNode, () => true, true);
+    const newNode = this.getNextNode(
+      curNode,
+      this.getValidationFunction(NavigationDirection.IN),
+      true,
+    );
 
     if (newNode) {
       this.setCurNode(newNode);
@@ -101,13 +111,7 @@ export class LineCursor extends Marker {
     }
     const newNode = this.getPreviousNode(
       curNode,
-      (candidate: IFocusableNode | null) => {
-        return (
-          (candidate instanceof BlockSvg &&
-            !candidate.outputConnection?.targetBlock()) ||
-          candidate instanceof RenderedWorkspaceComment
-        );
-      },
+      this.getValidationFunction(NavigationDirection.PREVIOUS),
       true,
     );
 
@@ -130,7 +134,11 @@ export class LineCursor extends Marker {
       return null;
     }
 
-    const newNode = this.getPreviousNode(curNode, () => true, true);
+    const newNode = this.getPreviousNode(
+      curNode,
+      this.getValidationFunction(NavigationDirection.OUT),
+      true,
+    );
 
     if (newNode) {
       this.setCurNode(newNode);
@@ -147,15 +155,14 @@ export class LineCursor extends Marker {
   atEndOfLine(): boolean {
     const curNode = this.getCurNode();
     if (!curNode) return false;
-    const inNode = this.getNextNode(curNode, () => true, true);
+    const inNode = this.getNextNode(
+      curNode,
+      this.getValidationFunction(NavigationDirection.IN),
+      true,
+    );
     const nextNode = this.getNextNode(
       curNode,
-      (candidate: IFocusableNode | null) => {
-        return (
-          candidate instanceof BlockSvg &&
-          !candidate.outputConnection?.targetBlock()
-        );
-      },
+      this.getValidationFunction(NavigationDirection.NEXT),
       true,
     );
 
@@ -296,6 +303,82 @@ export class LineCursor extends Marker {
       newNode = nextNode;
     }
     return this.getRightMostChild(newNode, stopIfFound);
+  }
+
+  /**
+   * Returns a function that will be used to determine whether a candidate for
+   * navigation is valid.
+   *
+   * @param direction The direction in which the user is navigating.
+   * @returns A function that takes a proposed navigation candidate and returns
+   *     true if navigation should be allowed to proceed to it, or false to find
+   *     a different candidate.
+   */
+  getValidationFunction(
+    direction: NavigationDirection,
+  ): (node: IFocusableNode | null) => boolean {
+    switch (direction) {
+      case NavigationDirection.IN:
+      case NavigationDirection.OUT:
+        return () => true;
+      case NavigationDirection.NEXT:
+      case NavigationDirection.PREVIOUS:
+        return (candidate: IFocusableNode | null) => {
+          if (
+            (candidate instanceof BlockSvg &&
+              !candidate.outputConnection?.targetBlock()) ||
+            candidate instanceof RenderedWorkspaceComment ||
+            (candidate instanceof RenderedConnection &&
+              (candidate.type === ConnectionType.NEXT_STATEMENT ||
+                (candidate.type === ConnectionType.INPUT_VALUE &&
+                  candidate.getSourceBlock().statementInputCount &&
+                  candidate.getSourceBlock().inputList[0] !==
+                    candidate.getParentInput())))
+          ) {
+            return true;
+          }
+
+          const current = this.getSourceBlockFromNode(this.getCurNode());
+          if (candidate instanceof BlockSvg && current instanceof BlockSvg) {
+            // If the candidate's parent uses inline inputs, disallow the
+            // candidate; it follows that it must be on the same row as its
+            // parent.
+            if (candidate.outputConnection?.targetBlock()?.getInputsInline()) {
+              return false;
+            }
+
+            const candidateParents = new Set<BlockSvg>();
+            let parent = candidate.getParent();
+            while (parent) {
+              // If the candidate block is an (in)direct child of the current
+              // block, disallow it; it cannot be on a different row than the
+              // current block.
+              if (parent === current && current === this.getCurNode()) {
+                return false;
+              }
+              candidateParents.add(parent);
+              parent = parent.getParent();
+            }
+
+            const currentParents = new Set<BlockSvg>();
+            parent = current.getParent();
+            while (parent) {
+              currentParents.add(parent);
+              parent = parent.getParent();
+            }
+
+            const sharedParents = currentParents.intersection(candidateParents);
+            // Allow the candidate if it and the current block have no parents
+            // in common, or if they have a shared parent with external inputs.
+            const result =
+              !sharedParents.size ||
+              sharedParents.values().some((block) => !block.getInputsInline());
+            return result;
+          }
+
+          return false;
+        };
+    }
   }
 
   /**
