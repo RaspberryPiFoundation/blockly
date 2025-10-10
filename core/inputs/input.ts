@@ -308,6 +308,7 @@ export class Input {
    *
    * Generally this consists of the labels/values of the preceding fields, and
    * is intended for accessibility descriptions.
+   *
    * @internal
    * @returns A description of this input's row on its parent block.
    */
