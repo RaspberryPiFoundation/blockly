@@ -358,6 +358,8 @@ export class RenderedConnection
           aria.State.LABEL,
           `${this.getParentInput()?.getFieldRowLabel()}`,
         );
+      } else {
+        aria.setState(highlightSvg, aria.State.LABEL, 'Open connection');
       }
     }
   }
