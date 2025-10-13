@@ -347,25 +347,18 @@ export class LineCursor extends Marker {
               return false;
             }
 
-            const candidateParents = new Set<BlockSvg>();
-            let parent = candidate.getParent();
-            while (parent) {
-              // If the candidate block is an (in)direct child of the current
-              // block, disallow it; it cannot be on a different row than the
-              // current block.
-              if (parent === current && current === this.getCurNode()) {
-                return false;
-              }
-              candidateParents.add(parent);
-              parent = parent.getParent();
+            const candidateParents = this.getParents(candidate);
+            // If the candidate block is an (in)direct child of the current
+            // block, disallow it; it cannot be on a different row than the
+            // current block.
+            if (
+              current === this.getCurNode() &&
+              candidateParents.has(current)
+            ) {
+              return false;
             }
 
-            const currentParents = new Set<BlockSvg>();
-            parent = current.getParent();
-            while (parent) {
-              currentParents.add(parent);
-              parent = parent.getParent();
-            }
+            const currentParents = this.getParents(current);
 
             const sharedParents = currentParents.intersection(candidateParents);
             // Allow the candidate if it and the current block have no parents
@@ -379,6 +372,23 @@ export class LineCursor extends Marker {
           return false;
         };
     }
+  }
+
+  /**
+   * Returns a set of all of the parent blocks of the given block.
+   *
+   * @param block The block to retrieve the parents of.
+   * @returns A set of the parents of the given block.
+   */
+  private getParents(block: BlockSvg): Set<BlockSvg> {
+    const parents = new Set<BlockSvg>();
+    let parent = block.getParent();
+    while (parent) {
+      parents.add(parent);
+      parent = parent.getParent();
+    }
+
+    return parents;
   }
 
   /**
