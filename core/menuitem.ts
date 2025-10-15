@@ -75,10 +75,12 @@ export class MenuItem {
 
     const content = document.createElement('div');
     content.className = 'blocklyMenuItemContent';
+    aria.setRole(content, aria.Role.PRESENTATION);
     // Add a checkbox for checkable menu items.
     if (this.checkable) {
       const checkbox = document.createElement('div');
       checkbox.className = 'blocklyMenuItemCheckbox ';
+      aria.setRole(checkbox, aria.Role.PRESENTATION);
       content.appendChild(checkbox);
     }
 

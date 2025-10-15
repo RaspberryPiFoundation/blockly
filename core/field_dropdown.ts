@@ -202,7 +202,7 @@ export class FieldDropdown extends Field<string> {
     this.recomputeAria();
   }
 
-  private recomputeAria() {
+  protected recomputeAria() {
     if (!this.fieldGroup_) return; // There's no element to set currently.
     const element = this.getFocusableElement();
     aria.setRole(element, aria.Role.COMBOBOX);
@@ -213,17 +213,11 @@ export class FieldDropdown extends Field<string> {
     } else {
       aria.clearState(element, aria.State.CONTROLS);
     }
-    aria.setState(element, aria.State.LABEL, this.getAriaName() ?? 'Dropdown');
-
-    // Ensure the selected item has its correct label presented since it may be
-    // different than the actual text presented to the user.
-    if (this.textElement_) {
-      aria.setState(
-        this.textElement_,
-        aria.State.LABEL,
-        this.computeLabelForOption(this.selectedOption),
-      );
-    }
+    aria.setState(
+      element,
+      aria.State.LABEL,
+      this.computeLabelForOption(this.selectedOption),
+    );
   }
 
   /**
@@ -645,7 +639,6 @@ export class FieldDropdown extends Field<string> {
       const element = this.getFocusableElement();
       aria.setState(element, aria.State.ACTIVEDESCENDANT, textElement.id);
     }
-    aria.setState(textElement, aria.State.HIDDEN, false);
 
     // Height and width include the border rect.
     const hasBorder = !!this.borderRect_;

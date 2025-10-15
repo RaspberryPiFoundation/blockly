@@ -196,9 +196,6 @@ export abstract class Field<T = any>
    */
   SERIALIZABLE = false;
 
-  /** The unique ID of this field. */
-  private id_: string | null = null;
-
   private config: FieldConfig | null = null;
 
   /**
@@ -272,7 +269,6 @@ export abstract class Field<T = any>
           `problems with focus: ${block.id}.`,
       );
     }
-    this.id_ = `${block.id}_field_${idGenerator.getNextUniqueId()}`;
   }
 
   getAriaName(): string | null {
@@ -327,11 +323,8 @@ export abstract class Field<T = any>
       // Field has already been initialized once.
       return;
     }
-    const id = this.id_;
-    if (!id) throw new Error('Expected ID to be defined prior to init.');
-    this.fieldGroup_ = dom.createSvgElement(Svg.G, {
-      'id': id,
-    });
+
+    this.fieldGroup_ = dom.createSvgElement(Svg.G, {});
     if (!this.isVisible()) {
       this.fieldGroup_.style.display = 'none';
     }
@@ -343,6 +336,14 @@ export abstract class Field<T = any>
     this.bindEvents_();
     this.initModel();
     this.applyColour();
+
+    const id =
+      this.isFullBlockField() &&
+      this.isCurrentlyEditable() &&
+      this.sourceBlock_?.isSimpleReporter()
+        ? idGenerator.getNextUniqueId()
+        : `${this.sourceBlock_?.id}_field_${idGenerator.getNextUniqueId()}`;
+    this.fieldGroup_.setAttribute('id', id);
   }
 
   /**

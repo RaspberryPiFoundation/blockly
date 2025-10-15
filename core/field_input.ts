@@ -178,13 +178,23 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
       dom.addClass(this.fieldGroup_, 'blocklyInputField');
     }
 
-    // Showing the text-based value with the input's textbox ensures that the
-    // input's value is correctly read out by screen readers with its role.
-    aria.setState(this.textElement_, aria.State.HIDDEN, false);
+    const element = this.getFocusableElement();
+    aria.setRole(element, aria.Role.BUTTON);
+    this.recomputeAriaLabel();
+  }
+
+  /**
+   * Updates the ARIA label for this field.
+   */
+  protected recomputeAriaLabel() {
+    if (!this.fieldGroup_) return;
 
     const element = this.getFocusableElement();
-    aria.setRole(element, aria.Role.TEXTBOX);
-    aria.setState(element, aria.State.LABEL, this.getAriaName() ?? 'Text');
+    aria.setState(
+      element,
+      aria.State.LABEL,
+      `${this.getAriaName() ?? 'Text'} ${this.getValue()}`,
+    );
   }
 
   override isFullBlockField(): boolean {
@@ -248,6 +258,7 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
     this.isDirty_ = true;
     this.isTextValid_ = true;
     this.value_ = newValue;
+    this.recomputeAriaLabel();
   }
 
   /**

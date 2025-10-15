@@ -227,6 +227,11 @@ export class BlockSvg
   }
 
   private recomputeAriaLabel() {
+    if (this.isSimpleReporter()) {
+      const field = Array.from(this.getFields())[0];
+      if (field.isFullBlockField() && field.isCurrentlyEditable()) return;
+    }
+
     aria.setState(
       this.getFocusableElement(),
       aria.State.LABEL,
@@ -240,32 +245,40 @@ export class BlockSvg
       ? ` ${inputCount} ${inputCount > 1 ? 'inputs' : 'input'}`
       : '';
 
-    let currentBlock: Block | null = null;
+    let currentBlock: BlockSvg | null = null;
     let nestedStatementBlockCount = 0;
-    // This won't work well for if/else blocks.
-    this.inputList.forEach((input) => {
+
+    for (const input of this.inputList) {
       if (
         input.connection &&
         input.connection.type === ConnectionType.NEXT_STATEMENT
       ) {
-        currentBlock = input.connection.targetBlock();
+        currentBlock = input.connection.targetBlock() as BlockSvg | null;
+        while (currentBlock) {
+          nestedStatementBlockCount++;
+          currentBlock = currentBlock.getNextBlock();
+        }
       }
-    });
-    // The type is poorly inferred here.
-    while (currentBlock as Block | null) {
-      nestedStatementBlockCount++;
-      // The type is poorly inferred here.
-      // If currentBlock is null, we can't enter this while loop...
-      currentBlock = currentBlock!.getNextBlock();
     }
 
     let blockTypeText = 'block';
     if (this.isShadow()) {
-      blockTypeText = 'input block';
-    } else if (this.outputConnection) {
       blockTypeText = 'replacable block';
+    } else if (this.outputConnection) {
+      blockTypeText = 'input block';
     } else if (this.statementInputCount) {
       blockTypeText = 'C-shaped block';
+    }
+
+    const modifiers = [];
+    if (!this.isEnabled()) {
+      modifiers.push('disabled');
+    }
+    if (this.isCollapsed()) {
+      modifiers.push('collapsed');
+    }
+    if (modifiers.length) {
+      blockTypeText = `${modifiers.join(' ')} ${blockTypeText}`;
     }
 
     let prefix = '';
@@ -298,9 +311,7 @@ export class BlockSvg
   }
 
   private computeAriaRole() {
-    if (this.isSimpleReporter()) {
-      aria.setRole(this.pathObject.svgPath, aria.Role.BUTTON);
-    } else if (this.workspace.isFlyout) {
+    if (this.workspace.isFlyout) {
       aria.setRole(this.pathObject.svgPath, aria.Role.TREEITEM);
     } else {
       aria.setState(
@@ -335,8 +346,6 @@ export class BlockSvg
     if (!svg.parentNode) {
       this.workspace.getCanvas().appendChild(svg);
     }
-    // Note: This must be done after initialization of the block's fields.
-    this.recomputeAriaLabel();
     this.initialized = true;
   }
 
@@ -672,6 +681,7 @@ export class BlockSvg
       this.removeInput(collapsedInputName);
       dom.removeClass(this.svgGroup, 'blocklyCollapsed');
       this.setWarningText(null, BlockSvg.COLLAPSED_WARNING_ID);
+      this.recomputeAriaLabel();
       return;
     }
 
@@ -693,6 +703,8 @@ export class BlockSvg
       this.getInput(collapsedInputName) ||
       this.appendDummyInput(collapsedInputName);
     input.appendField(new FieldLabel(text), collapsedFieldName);
+
+    this.recomputeAriaLabel();
   }
 
   /**
@@ -1108,6 +1120,8 @@ export class BlockSvg
     for (const child of this.getChildren(false)) {
       child.updateDisabled();
     }
+
+    this.recomputeAriaLabel();
   }
 
   /**
@@ -1752,8 +1766,6 @@ export class BlockSvg
    * settings.
    */
   render() {
-    this.recomputeAriaLabel();
-
     this.queueRender();
     renderManagement.triggerQueuedRenders();
   }
@@ -1765,8 +1777,6 @@ export class BlockSvg
    * @internal
    */
   renderEfficiently() {
-    this.recomputeAriaLabel();
-
     dom.startTextWidthCache();
 
     if (this.isCollapsed()) {
@@ -1948,6 +1958,12 @@ export class BlockSvg
 
   /** See IFocusableNode.getFocusableElement. */
   getFocusableElement(): HTMLElement | SVGElement {
+    if (this.isSimpleReporter()) {
+      const field = Array.from(this.getFields())[0];
+      if (field && field.isFullBlockField() && field.isCurrentlyEditable()) {
+        return field.getFocusableElement();
+      }
+    }
     return this.pathObject.svgPath;
   }
 
@@ -1958,6 +1974,7 @@ export class BlockSvg
 
   /** See IFocusableNode.onNodeFocus. */
   onNodeFocus(): void {
+    this.recomputeAriaLabel();
     this.select();
     this.workspace.scrollBoundsIntoView(
       this.getBoundingRectangleWithoutChildren(),
@@ -2038,6 +2055,7 @@ function buildBlockSummary(block: BlockSvg): BlockSummary {
     return block.inputList
       .flatMap((input) => {
         const fields = input.fieldRow.map((field) => {
+          if (!field.isVisible()) return [];
           // If the block is a full block field, we only want to know if it's an
           // editable field if we're not directly on it.
           if (field.EDITABLE && !field.isFullBlockField() && !isNestedInput) {
@@ -2046,6 +2064,7 @@ function buildBlockSummary(block: BlockSvg): BlockSummary {
           return [field.getText() ?? field.getValue()];
         });
         if (
+          input.isVisible() &&
           input.connection &&
           input.connection.type === ConnectionType.INPUT_VALUE
         ) {
