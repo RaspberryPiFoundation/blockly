@@ -226,7 +226,12 @@ export class BlockSvg
     this.computeAriaRole();
   }
 
-  private recomputeAriaLabel() {
+  /**
+   * Updates the ARIA label of this block to reflect its current configuration.
+   *
+   * @internal
+   */
+  recomputeAriaLabel() {
     if (this.isSimpleReporter()) {
       const field = Array.from(this.getFields())[0];
       if (field.isFullBlockField() && field.isCurrentlyEditable()) return;

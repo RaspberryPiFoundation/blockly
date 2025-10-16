@@ -193,6 +193,9 @@ export class Input {
         child.getSvgRoot().style.display = visible ? 'block' : 'none';
       }
     }
+    if (this.sourceBlock.rendered) {
+      (this.sourceBlock as BlockSvg).recomputeAriaLabel();
+    }
     return renderList;
   }
 
