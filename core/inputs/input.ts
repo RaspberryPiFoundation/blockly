@@ -315,10 +315,20 @@ export class Input {
    * @internal
    * @returns A description of this input's row on its parent block.
    */
-  getFieldRowLabel() {
-    return this.fieldRow.reduce((label, field) => {
-      return `${label} ${field.EDITABLE ? field.getAriaName() : field.getValue()}`;
-    }, '');
+  getFieldRowLabel(): string {
+    const fieldRowLabel = this.fieldRow
+      .reduce((label, field) => {
+        return `${label} ${field.getValue()}`;
+      }, '')
+      .trim();
+    if (!fieldRowLabel) {
+      const inputs = this.getSourceBlock().inputList;
+      const index = inputs.indexOf(this);
+      if (index > 0) {
+        return inputs[index - 1].getFieldRowLabel();
+      }
+    }
+    return fieldRowLabel;
   }
 
   /**
