@@ -190,11 +190,11 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
     if (!this.fieldGroup_) return;
 
     const element = this.getFocusableElement();
-    aria.setState(
-      element,
-      aria.State.LABEL,
-      `${this.getAriaName() ?? 'Text'} ${this.getValue()}`,
-    );
+    const label = [this.getValue(), this.getAriaName()]
+      .filter((item) => !!item)
+      .join(', ');
+
+    aria.setState(element, aria.State.LABEL, label);
   }
 
   override isFullBlockField(): boolean {

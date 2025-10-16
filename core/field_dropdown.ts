@@ -213,11 +213,15 @@ export class FieldDropdown extends Field<string> {
     } else {
       aria.clearState(element, aria.State.CONTROLS);
     }
-    aria.setState(
-      element,
-      aria.State.LABEL,
+
+    const label = [
       this.computeLabelForOption(this.selectedOption),
-    );
+      this.getAriaName(),
+    ]
+      .filter((item) => !!item)
+      .join(', ');
+
+    aria.setState(element, aria.State.LABEL, label);
   }
 
   /**

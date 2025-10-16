@@ -163,11 +163,10 @@ export class FieldImage extends Field<string> {
       aria.setRole(element, aria.Role.IMAGE);
     }
 
-    aria.setState(
-      element,
-      aria.State.LABEL,
-      this.altText ?? this.getAriaName(),
-    );
+    const label = [this.altText, this.getAriaName()]
+      .filter((item) => !!item)
+      .join(', ');
+    aria.setState(element, aria.State.LABEL, label);
   }
 
   override updateSize_() {}
