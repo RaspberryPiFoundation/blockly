@@ -150,7 +150,7 @@
     "yargs": "^17.2.1"
   },
   "dependencies": {
-    "jsdom": "26.1.0"
+    "jsdom": "27.0.1"
   },
   "engines": {
     "node": ">=18"
