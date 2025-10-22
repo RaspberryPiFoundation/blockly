@@ -1,10 +1,8 @@
-<p align="center">
-	<img src="https://developers.google.com/static/blockly/images/logos/logo_standard.svg" alt="Blockly logo">
-</p>
+# Blockly
 
 Google's Blockly is a library that adds a visual code editor to web and mobile apps. The Blockly editor uses interlocking, graphical blocks to represent code concepts like variables, logical expressions, loops, and more. It allows users to apply programming principles without having to worry about syntax or the intimidation of a blinking cursor on the command line. All code is [free and open source](https://github.com/google/blockly/blob/develop/LICENSE).
 
-![Example](./example.svg)
+![Sample](./sample.svg)
 
 ## Getting Started with Blockly
 
@@ -34,7 +32,7 @@ For more information on installing and using Blockly, see the [Getting Started a
 
 ### blockly-samples
 
-We have a number of resources such as [examples](https://github.com/google/blockly-samples/tree/master/examples), [codelabs](https://github.com/google/blockly-samples/tree/master/codelabs), and [plugins](https://github.com/google/blockly-samples/tree/master/plugins) in another repository called [blockly-samples](https://github.com/google/blockly-samples). A plugin is a self-contained piece of code that adds functionality to Blockly. Plugins can add fields, define themes, create renderers, and much more. For more information, see the [Plugins documentation](https://developers.google.com/blockly/guides/plugins/overview).
+We have a number of resources such as [examples](https://github.com/google/blockly-samples/tree/master/examples), [codelabs](https://github.com/google/blockly-samples/tree/master/codelabs), and [plugins](https://github.com/google/blockly-samples/tree/master/plugins) in another repository called [blockly-samples](https://github.com/google/blockly-samples). A plugin is a self-contained piece of code that adds functionality to Blockly. Plugins can add fields, define themes, create renderers, and much more. For more information, see the [Plugins documentation](https://developers.google.com/blockly/guides/programming/plugin_overview).
 
 ## Contributing to Blockly
 
