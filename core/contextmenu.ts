@@ -58,14 +58,6 @@ export function setCurrentBlock(block: Block | null) {
  */
 let menu_: Menu | null = null;
 
-export function getCurrentMenu(): Menu | null {
-  return menu_;
-}
-
-export function setCurrentMeny(menu: Menu | null) {
-  menu_ = menu;
-}
-
 /**
  * Gets Menu instance.
  *
