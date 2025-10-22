@@ -66,7 +66,6 @@ export function setCurrentMeny(menu: Menu | null) {
   menu_ = menu;
 }
 
-
 /**
  * Gets Menu instance.
  *
