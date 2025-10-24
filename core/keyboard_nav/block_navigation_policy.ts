@@ -137,9 +137,9 @@ function getBlockNavigationCandidates(
           .lastConnectionInStack(false)
           ?.getSourceBlock();
         if (lastStackBlock) {
-          // When navigating backward, the last block in a stack in a statement
-          // input is navigable.
-          candidates.push(lastStackBlock);
+          // When navigating backward, the last next connection in a stack in a
+          // statement input is navigable.
+          candidates.push(lastStackBlock.nextConnection);
         }
       } else {
         // When navigating forward, a child block connected to a statement
@@ -198,9 +198,13 @@ export function navigateStacks(current: ISelectable, delta: number) {
   }
 
   // When navigating to a previous block stack, our previous sibling is the last
-  // block in it.
+  // block or nested next connection in it.
   if (delta < 0 && result instanceof BlockSvg) {
-    return result.lastConnectionInStack(false)?.getSourceBlock() ?? result;
+    result = result.lastConnectionInStack(false)?.getSourceBlock() ?? result;
+
+    if (result instanceof BlockSvg && result.statementInputCount > 0) {
+      result = getBlockNavigationCandidates(result, false).at(-1) ?? result;
+    }
   }
 
   return result;

@@ -338,8 +338,43 @@ export class LineCursor extends Marker {
             return true;
           }
 
-          const current = this.getSourceBlockFromNode(this.getCurNode());
-          if (candidate instanceof BlockSvg && current instanceof BlockSvg) {
+          const currentNode = this.getCurNode();
+          if (direction === NavigationDirection.PREVIOUS) {
+            // Don't visit rightmost/nested blocks in statement blocks when
+            // navigating to the previous block.
+            if (
+              currentNode instanceof RenderedConnection &&
+              currentNode.type === ConnectionType.NEXT_STATEMENT &&
+              !currentNode.getParentInput() &&
+              candidate !== currentNode.getSourceBlock()
+            ) {
+              return false;
+            }
+
+            // Don't visit the first value/input block in a block with statement
+            // inputs when navigating to the previous block. This is consistent
+            // with the behavior when navigating to the next block and avoids
+            // duplicative screen reader narration.
+            if (
+              candidate instanceof BlockSvg &&
+              candidate.outputConnection?.targetConnection
+            ) {
+              const parentInput =
+                candidate.outputConnection.targetConnection.getParentInput();
+              if (
+                parentInput?.getSourceBlock().statementInputCount &&
+                parentInput?.getSourceBlock().inputList[0] === parentInput
+              ) {
+                return false;
+              }
+            }
+          }
+
+          const currentBlock = this.getSourceBlockFromNode(currentNode);
+          if (
+            candidate instanceof BlockSvg &&
+            currentBlock instanceof BlockSvg
+          ) {
             // If the candidate's parent uses inline inputs, disallow the
             // candidate; it follows that it must be on the same row as its
             // parent.
@@ -352,13 +387,13 @@ export class LineCursor extends Marker {
             // block, disallow it; it cannot be on a different row than the
             // current block.
             if (
-              current === this.getCurNode() &&
-              candidateParents.has(current)
+              currentBlock === this.getCurNode() &&
+              candidateParents.has(currentBlock)
             ) {
               return false;
             }
 
-            const currentParents = this.getParents(current);
+            const currentParents = this.getParents(currentBlock);
 
             const sharedParents = currentParents.intersection(candidateParents);
             // Allow the candidate if it and the current block have no parents
