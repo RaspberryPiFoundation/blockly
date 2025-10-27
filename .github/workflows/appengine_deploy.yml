@@ -24,7 +24,7 @@ jobs:
           npm run prepareDemos
 
       - name: Upload
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: appengine_files
           path: _deploy/
