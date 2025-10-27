@@ -354,7 +354,8 @@ export class LineCursor extends Marker {
             // Don't visit the first value/input block in a block with statement
             // inputs when navigating to the previous block. This is consistent
             // with the behavior when navigating to the next block and avoids
-            // duplicative screen reader narration.
+            // duplicative screen reader narration. Also don't visit value
+            // blocks nested in non-statement inputs.
             if (
               candidate instanceof BlockSvg &&
               candidate.outputConnection?.targetConnection
@@ -362,7 +363,7 @@ export class LineCursor extends Marker {
               const parentInput =
                 candidate.outputConnection.targetConnection.getParentInput();
               if (
-                parentInput?.getSourceBlock().statementInputCount &&
+                !parentInput?.getSourceBlock().statementInputCount ||
                 parentInput?.getSourceBlock().inputList[0] === parentInput
               ) {
                 return false;
