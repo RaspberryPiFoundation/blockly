@@ -16,6 +16,7 @@ import {isDeletable as isIDeletable} from './interfaces/i_deletable.js';
 import {isDraggable} from './interfaces/i_draggable.js';
 import {IFocusableNode} from './interfaces/i_focusable_node.js';
 import {KeyboardShortcut, ShortcutRegistry} from './shortcut_registry.js';
+import * as aria from './utils/aria.js';
 import {Coordinate} from './utils/coordinate.js';
 import {KeyCodes} from './utils/keycodes.js';
 import {Rect} from './utils/rect.js';
@@ -33,6 +34,7 @@ export enum names {
   PASTE = 'paste',
   UNDO = 'undo',
   REDO = 'redo',
+  TOGGLE_SYNTHESIS_MODE = 'toggle_synthesis_mode',
 }
 
 /**
@@ -386,6 +388,29 @@ export function registerRedo() {
   ShortcutRegistry.registry.register(redoShortcut);
 }
 
+function registerToggleSynthesisMode() {
+  const ctrlAltS = ShortcutRegistry.registry.createSerializedKey(KeyCodes.S, [
+    KeyCodes.CTRL,
+    KeyCodes.ALT,
+  ]);
+  const toggleSynthesisModeShortcut: KeyboardShortcut = {
+    name: names.TOGGLE_SYNTHESIS_MODE,
+    preconditionFn(workspace) {
+      return (
+        !workspace.isDragging() &&
+        !workspace.isReadOnly() &&
+        !getFocusManager().ephemeralFocusTaken()
+      );
+    },
+    callback() {
+      aria.toggleSynthesisMode();
+      return true;
+    },
+    keyCodes: [ctrlAltS],
+  };
+  ShortcutRegistry.registry.register(toggleSynthesisModeShortcut);
+}
+
 /**
  * Registers all default keyboard shortcut item. This should be called once per
  * instance of KeyboardShortcutRegistry.
@@ -400,6 +425,7 @@ export function registerDefaultShortcuts() {
   registerPaste();
   registerUndo();
   registerRedo();
+  registerToggleSynthesisMode();
 }
 
 registerDefaultShortcuts();

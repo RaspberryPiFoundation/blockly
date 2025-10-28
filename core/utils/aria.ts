@@ -119,6 +119,9 @@ export enum State {
   CHECKED = 'checked',
 }
 
+const trackedElements: Set<Element> = new Set();
+var bypassScreenreaderPrefix = "";
+
 /**
  * Updates the specific role for the specified element.
  *
@@ -127,9 +130,23 @@ export enum State {
  *     should be cleared.
  */
 export function setRole(element: Element, roleName: Role | null) {
+  trackedElements.add(element);
   if (roleName) {
-    element.setAttribute(ROLE_ATTRIBUTE, roleName);
-  } else element.removeAttribute(ROLE_ATTRIBUTE);
+    element.setAttribute(maybePrefixAttribute(ROLE_ATTRIBUTE), roleName);
+    if (isInSynthesisMode()) {
+      element.setAttribute(ROLE_ATTRIBUTE, Role.PRESENTATION);
+    }
+  } else element.removeAttribute(maybePrefixAttribute(ROLE_ATTRIBUTE));
+}
+
+export function maybeAnnounceFocusedNode(element: Element, interrupt: boolean = true) {
+  // TODO: Add role-specific announcements here.
+  // TODO: This requires a lot more to do correctly such as considering active descendants, labelled by, etc.
+  const label = getState(element, State.LABEL);
+  if (isInSynthesisMode() && label) {
+    if (interrupt) speechSynthesis.cancel();
+    speechSynthesis.speak(new SpeechSynthesisUtterance(label));
+  }
 }
 
 /**
@@ -142,7 +159,7 @@ export function setRole(element: Element, roleName: Role | null) {
 export function getRole(element: Element): Role | null {
   // This is an unsafe cast which is why it needs to be checked to ensure that
   // it references a valid role.
-  const currentRoleName = element.getAttribute(ROLE_ATTRIBUTE) as Role;
+  const currentRoleName = element.getAttribute(maybePrefixAttribute(ROLE_ATTRIBUTE)) as Role;
   if (Object.values(Role).includes(currentRoleName)) {
     return currentRoleName;
   }
@@ -166,11 +183,12 @@ export function setState(
   stateName: State,
   value: string | boolean | number | string[],
 ) {
+  trackedElements.add(element);
   if (Array.isArray(value)) {
     value = value.join(' ');
   }
   const attrStateName = ARIA_PREFIX + stateName;
-  element.setAttribute(attrStateName, `${value}`);
+  element.setAttribute(maybePrefixAttribute(attrStateName), `${value}`);
 }
 
 /**
@@ -181,7 +199,7 @@ export function setState(
  * @param stateName The state to clear from the provided element.
  */
 export function clearState(element: Element, stateName: State) {
-  element.removeAttribute(ARIA_PREFIX + stateName);
+  element.removeAttribute(maybePrefixAttribute(ARIA_PREFIX + stateName));
 }
 
 /**
@@ -198,7 +216,12 @@ export function clearState(element: Element, stateName: State) {
  */
 export function getState(element: Element, stateName: State): string | null {
   const attrStateName = ARIA_PREFIX + stateName;
-  return element.getAttribute(attrStateName);
+  return element.getAttribute(maybePrefixAttribute(attrStateName));
+}
+
+function getStates(element: Element): Map<State, string> {
+  const states = Object.values(State).filter((stateName) => element.hasAttribute(maybePrefixAttribute(ARIA_PREFIX + stateName)));
+  return new Map(states.map((stateName) => [stateName, element.getAttribute(maybePrefixAttribute(ARIA_PREFIX + stateName))!]));
 }
 
 /**
@@ -223,4 +246,60 @@ export function announceDynamicAriaState(text: string) {
     throw new Error('Expected element with id blocklyAriaAnnounce to exist.');
   }
   ariaAnnouncementSpan.innerHTML = text;
+}
+
+function isInSynthesisMode() {
+  return bypassScreenreaderPrefix.length !== 0;
+}
+
+export function toggleSynthesisMode() {
+  if (!isInSynthesisMode()) {
+    resetSynthesisMode(true);
+  } else resetSynthesisMode(false);
+}
+
+function maybePrefixAttribute(attributeName: string, inSynthesisMode: boolean = isInSynthesisMode()): string {
+  return inSynthesisMode ? bypassScreenreaderPrefix + attributeName : attributeName;
+}
+
+function resetSynthesisMode(isEnabling: boolean) {
+  trimTrackedElements();
+  for (const element of trackedElements) {
+    // Replace the element's old role and ARIA states with the new ones.
+    updateSynthesisPrefix(!isEnabling);
+    const role = getRole(element);
+    const states = getStates(element);
+    setRole(element, null);
+    for (const stateName of states.keys()) clearState(element, stateName);
+    updateSynthesisPrefix(isEnabling);
+    setRole(element, role);
+    for (const [stateName, value] of states) setState(element, stateName, value);
+  }
+  updateSynthesisPrefix(isEnabling);
+  if (isEnabling) {
+    speechSynthesis.speak(new SpeechSynthesisUtterance("Enabling Blockly speech synthesis."));
+    if (document.activeElement && trackedElements.has(document.activeElement)) {
+      maybeAnnounceFocusedNode(document.activeElement, false);
+    }
+  } else {
+    speechSynthesis.speak(new SpeechSynthesisUtterance("Disabling Blockly speech synthesis."));
+  }
+}
+
+function updateSynthesisPrefix(isEnabling: boolean) {
+  if (isEnabling) {
+    bypassScreenreaderPrefix = "blockly-synthesis-";
+  } else bypassScreenreaderPrefix = "";
+}
+
+function trimTrackedElements() {
+  const elementsToRemove = [];
+  for (const element of trackedElements) {
+    if (!element.parentNode) {
+      elementsToRemove.push(element);
+    }
+  }
+  for (const element of elementsToRemove) {
+    trackedElements.delete(element);
+  }
 }

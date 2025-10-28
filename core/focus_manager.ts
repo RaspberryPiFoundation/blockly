@@ -6,6 +6,7 @@
 
 import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
+import * as aria from './utils/aria.js';
 import * as dom from './utils/dom.js';
 import {FocusableTreeTraverser} from './utils/focusable_tree_traverser.js';
 
@@ -579,6 +580,7 @@ export class FocusManager {
 
     this.setNodeToVisualActiveFocus(node);
     elem.focus({preventScroll: true});
+    aria.maybeAnnounceFocusedNode(elem);
   }
 
   /**
