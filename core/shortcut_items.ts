@@ -393,6 +393,10 @@ function registerToggleSynthesisMode() {
     KeyCodes.CTRL,
     KeyCodes.ALT,
   ]);
+  const metaAltS = ShortcutRegistry.registry.createSerializedKey(KeyCodes.S, [
+    KeyCodes.META,
+    KeyCodes.ALT,
+  ]);
   const toggleSynthesisModeShortcut: KeyboardShortcut = {
     name: names.TOGGLE_SYNTHESIS_MODE,
     preconditionFn(workspace) {
@@ -406,7 +410,7 @@ function registerToggleSynthesisMode() {
       aria.toggleSynthesisMode();
       return true;
     },
-    keyCodes: [ctrlAltS],
+    keyCodes: [ctrlAltS, metaAltS],
   };
   ShortcutRegistry.registry.register(toggleSynthesisModeShortcut);
 }
