@@ -9,10 +9,10 @@ jobs:
     permissions:
       pull-requests: write
     steps:
-      - uses: actions/first-interaction@v3
+      - uses: actions/first-interaction@v2
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          pr_message: >
+          pr-message: >
             Welcome! It looks like this is your first pull request in Blockly,
             so here are a couple of tips:
 
