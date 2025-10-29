@@ -20,6 +20,10 @@ updates:
     target-branch: 'develop'
     schedule:
       interval: 'weekly'
+    ignore:
+      # See notes in welcome_new_contributors.yml for details on this.
+      - dependency-name: "actions/first-interaction"
+        versions: ["*"]
     commit-message:
       prefix: 'chore(deps)'
     labels:
