@@ -32,6 +32,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'field_number',
         'name': 'NUM',
         'value': 0,
+        'ariaName': 'Number',
       },
     ],
     'output': 'Number',

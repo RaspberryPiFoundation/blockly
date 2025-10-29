@@ -87,6 +87,10 @@ export class TextInputBubble extends Bubble {
     this.setSize(this.DEFAULT_SIZE, true);
   }
 
+  protected override getAriaLabel(): string | null {
+    return 'Comment Bubble';
+  }
+
   /** @returns the text of this bubble. */
   getText(): string {
     return this.editor.getText();

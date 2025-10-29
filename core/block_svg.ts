@@ -268,7 +268,7 @@ export class BlockSvg
 
     let blockTypeText = 'block';
     if (this.isShadow()) {
-      blockTypeText = 'replacable block';
+      blockTypeText = 'replaceable block';
     } else if (this.outputConnection) {
       blockTypeText = 'input block';
     } else if (this.statementInputCount) {

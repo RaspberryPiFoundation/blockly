@@ -144,6 +144,8 @@ export abstract class Bubble implements IBubble, ISelectable, IFocusableNode {
     this.focusableElement = overriddenFocusableElement ?? this.svgRoot;
     this.focusableElement.setAttribute('id', this.id);
     aria.setRole(this.focusableElement, aria.Role.GROUP);
+    const label = this.getAriaLabel();
+    if (label) aria.setState(this.focusableElement, aria.State.LABEL, label);
 
     browserEvents.conditionalBind(
       this.background,
@@ -164,6 +166,13 @@ export abstract class Bubble implements IBubble, ISelectable, IFocusableNode {
   dispose() {
     dom.removeNode(this.svgRoot);
     this.disposed = true;
+  }
+
+  /**
+   * @returns The ARIA label to use for this bubble, or null if none should be used.
+   */
+  protected getAriaLabel(): string | null {
+    return null;
   }
 
   /**
