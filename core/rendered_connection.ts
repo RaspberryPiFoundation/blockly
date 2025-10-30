@@ -362,6 +362,8 @@ export class RenderedConnection
         aria.setState(highlightSvg, aria.State.LABEL, 'Open connection');
       }
     }
+
+    this.sourceBlock_.recomputeAriaLabel();
   }
 
   /** Remove the highlighting around this connection. */
@@ -373,6 +375,8 @@ export class RenderedConnection
     if (highlightSvg) {
       highlightSvg.style.display = 'none';
     }
+
+    this.sourceBlock_.recomputeAriaLabel();
   }
 
   /** Returns true if this connection is highlighted, false otherwise. */
