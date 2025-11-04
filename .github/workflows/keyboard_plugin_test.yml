@@ -37,7 +37,7 @@ jobs:
           path: blockly-keyboard-experimentation
 
       - name: Use Node.js 20.x
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 20.x
 

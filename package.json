@@ -1,6 +1,6 @@
 {
   "name": "blockly",
-  "version": "12.3.0",
+  "version": "12.3.1",
   "description": "Blockly is a library for building visual programming editors.",
   "keywords": [
     "blockly"
@@ -104,6 +104,8 @@
     "@blockly/dev-tools": "^9.0.2",
     "@blockly/keyboard-navigation": "^4.0.0-beta.0",
     "@blockly/theme-modern": "^7.0.1",
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
     "@hyperjump/browser": "^1.1.4",
     "@hyperjump/json-schema": "^1.5.0",
     "@microsoft/api-documenter": "7.22.4",
@@ -120,7 +122,7 @@
     "eslint-plugin-prettier": "^5.2.1",
     "glob": "^11.0.1",
     "globals": "^16.0.0",
-    "google-closure-compiler": "^20250709.0.0",
+    "google-closure-compiler": "^20251015.0.0",
     "gulp": "^5.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-gzip": "^1.4.2",

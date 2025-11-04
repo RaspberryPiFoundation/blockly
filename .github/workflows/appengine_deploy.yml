@@ -24,7 +24,7 @@ jobs:
           npm run prepareDemos
 
       - name: Upload
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: appengine_files
           path: _deploy/
@@ -36,13 +36,13 @@ jobs:
     needs: prepare
     steps:
       - name: Download prepared files
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: appengine_files
           path: _deploy/
 
       - name: Deploy to App Engine
-        uses: google-github-actions/deploy-appengine@v2.1.7
+        uses: google-github-actions/deploy-appengine@v3.0.1
         # For parameters see:
         # https://github.com/google-github-actions/deploy-appengine#inputs
         with:

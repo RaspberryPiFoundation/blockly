@@ -904,19 +904,20 @@ suite('Events', function () {
 
   suite('Variable events', function () {
     setup(function () {
-      this.variable = this.workspace.createVariable('name1', 'type1', 'id1');
+      this.variableMap = this.workspace.getVariableMap();
+      this.variable = this.variableMap.createVariable('name1', 'type1', 'id1');
     });
 
     /**
      * Check if a variable with the given values exists.
-     * @param {Blockly.Workspace|Blockly.VariableMap} container The workspace  or
-     *     variableMap the checked variable belongs to.
+     * @param {Blockly.VariableMap} variableMap The variableMap
+     *     the checked variable belongs to.
      * @param {!string} name The expected name of the variable.
      * @param {!string} type The expected type of the variable.
      * @param {!string} id The expected id of the variable.
      */
-    function checkVariableValues(container, name, type, id) {
-      const variable = container.getVariableById(id);
+    function checkVariableValues(variableMap, name, type, id) {
+      const variable = variableMap.getVariableById(id);
       assert.isDefined(variable);
       assert.equal(name, variable.name);
       assert.equal(type, variable.type);
@@ -994,7 +995,7 @@ suite('Events', function () {
           varName: 'name2',
         };
         const event = eventUtils.fromJson(json, this.workspace);
-        const x = this.workspace.getVariableById('id2');
+        const x = this.variableMap.getVariableById('id2');
         assert.isNull(x);
         event.run(true);
         assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
@@ -1002,22 +1003,22 @@ suite('Events', function () {
 
       test('Var delete', function () {
         const event = new Blockly.Events.VarDelete(this.variable);
-        assert.isNotNull(this.workspace.getVariableById('id1'));
+        assert.isNotNull(this.variableMap.getVariableById('id1'));
         event.run(true);
-        assert.isNull(this.workspace.getVariableById('id1'));
+        assert.isNull(this.variableMap.getVariableById('id1'));
       });
 
       test('Var rename', function () {
         const event = new Blockly.Events.VarRename(this.variable, 'name2');
         event.run(true);
-        assert.isNull(this.workspace.getVariable('name1'));
-        checkVariableValues(this.workspace, 'name2', 'type1', 'id1');
+        assert.isNull(this.variableMap.getVariable('name1'));
+        checkVariableValues(this.variableMap, 'name2', 'type1', 'id1');
       });
     });
     suite('Run Backward', function () {
       test('Var create', function () {
         const event = new Blockly.Events.VarCreate(this.variable);
-        assert.isNotNull(this.workspace.getVariableById('id1'));
+        assert.isNotNull(this.variableMap.getVariableById('id1'));
         event.run(false);
       });
 
@@ -1029,16 +1030,16 @@ suite('Events', function () {
           varName: 'name2',
         };
         const event = eventUtils.fromJson(json, this.workspace);
-        assert.isNull(this.workspace.getVariableById('id2'));
+        assert.isNull(this.variableMap.getVariableById('id2'));
         event.run(false);
-        assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
+        assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
       });
 
       test('Var rename', function () {
         const event = new Blockly.Events.VarRename(this.variable, 'name2');
         event.run(false);
-        assert.isNull(this.workspace.getVariable('name2'));
-        checkVariableValues(this.workspace, 'name1', 'type1', 'id1');
+        assert.isNull(this.variableMap.getVariable('name2'));
+        checkVariableValues(this.variableMap, 'name1', 'type1', 'id1');
       });
     });
   });
@@ -1431,7 +1432,9 @@ suite('Events', function () {
         );
 
         // Expect the workspace to not have a variable with ID 'test_block_id'.
-        assert.isNull(this.workspace.getVariableById(TEST_BLOCK_ID));
+        assert.isNull(
+          this.workspace.getVariableMap().getVariableById(TEST_BLOCK_ID),
+        );
       } finally {
         workspaceTeardown.call(this, workspaceSvg);
       }
@@ -1481,7 +1484,9 @@ suite('Events', function () {
       );
 
       // Expect the workspace to have a variable with ID 'test_var_id'.
-      assert.isNotNull(this.workspace.getVariableById(TEST_VAR_ID));
+      assert.isNotNull(
+        this.workspace.getVariableMap().getVariableById(TEST_VAR_ID),
+      );
     });
 
     test('New block new var xml', function () {

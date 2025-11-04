@@ -3,8 +3,30 @@ on:
     types:
       - opened
       - edited
-name: conventional-release-labels
+name: commit lint & label
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    env:
+      PR_TITLE: ${{ github.event.pull_request.title }}
+    permissions:
+      pull-requests: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Setup node
+        uses: actions/setup-node@v5
+        with:
+          node-version: lts/*
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Check PR title
+        id: check-pr-title
+        run: echo "$PR_TITLE" | npx commitlint --verbose
+
   label:
     runs-on: ubuntu-latest
     permissions:

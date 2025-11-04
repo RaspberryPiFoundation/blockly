@@ -119,6 +119,7 @@ suite('XML', function () {
   suite('blockToDom', function () {
     setup(function () {
       this.workspace = new Blockly.Workspace();
+      this.variableMap = this.workspace.getVariableMap();
     });
     teardown(function () {
       workspaceTeardown.call(this, this.workspace);
@@ -296,7 +297,7 @@ suite('XML', function () {
           ]);
         });
         test('Variable Trivial', function () {
-          this.workspace.createVariable('name1', '', 'id1');
+          this.variableMap.createVariable('name1', '', 'id1');
           const block = new Blockly.Block(
             this.workspace,
             'field_variable_test_block',
@@ -306,7 +307,7 @@ suite('XML', function () {
           assertVariableDomField(resultFieldDom, 'VAR', null, 'id1', 'name1');
         });
         test('Variable Typed', function () {
-          this.workspace.createVariable('name1', 'string', 'id1');
+          this.variableMap.createVariable('name1', 'string', 'id1');
           const block = new Blockly.Block(
             this.workspace,
             'field_variable_test_block',
@@ -323,7 +324,7 @@ suite('XML', function () {
         });
         test('Variable Default Case', function () {
           createGenUidStubWithReturns('1');
-          this.workspace.createVariable('name1');
+          this.variableMap.createVariable('name1');
 
           Blockly.Events.disable();
           const block = new Blockly.Block(
@@ -439,13 +440,14 @@ suite('XML', function () {
           ],
         },
       ]);
+      this.variableMap = this.workspace.getVariableMap();
     });
     teardown(function () {
       workspaceTeardown.call(this, this.workspace);
     });
     test('One Variable', function () {
       createGenUidStubWithReturns('1');
-      this.workspace.createVariable('name1');
+      this.variableMap.createVariable('name1');
       const resultDom = Blockly.Xml.variablesToDom(
         this.workspace.getAllVariables(),
       );
@@ -456,8 +458,8 @@ suite('XML', function () {
       assert.equal(resultVariableDom.getAttribute('id'), '1');
     });
     test('Two Variable one block', function () {
-      this.workspace.createVariable('name1', '', 'id1');
-      this.workspace.createVariable('name2', 'type2', 'id2');
+      this.variableMap.createVariable('name1', '', 'id1');
+      this.variableMap.createVariable('name2', 'type2', 'id2');
       // If events are enabled during block construction, it will create a
       // default variable.
       Blockly.Events.disable();

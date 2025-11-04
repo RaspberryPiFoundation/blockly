@@ -33,6 +33,7 @@ suite('Procedures', function () {
       'preCreatedTypedVarId',
     );
     defineRowBlock();
+    this.variableMap = this.workspace.getVariableMap();
   });
 
   teardown(function () {
@@ -453,7 +454,7 @@ suite('Procedures', function () {
       mutatorIcon.setBubbleVisible(false);
 
       const variable = this.workspace.getVariable('param1', '');
-      this.workspace.renameVariableById(variable.getId(), 'new name');
+      this.variableMap.renameVariable(variable, 'new name');
 
       assert.isNotNull(
         defBlock.getField('PARAMS'),
@@ -480,7 +481,7 @@ suite('Procedures', function () {
       this.clock.runAll();
 
       const variable = this.workspace.getVariable('param1', '');
-      this.workspace.renameVariableById(variable.getId(), 'new name');
+      this.variableMap.renameVariable(variable, 'new name');
 
       assert.equal(
         paramBlock.getFieldValue('NAME'),
@@ -506,7 +507,7 @@ suite('Procedures', function () {
       mutatorIcon.setBubbleVisible(false);
 
       const variable = this.workspace.getVariable('param1', '');
-      this.workspace.renameVariableById(variable.getId(), 'new name');
+      this.variableMap.renameVariable(variable, 'new name');
 
       assert.isNotNull(
         callBlock.getInput('ARG0'),
@@ -535,7 +536,7 @@ suite('Procedures', function () {
       mutatorIcon.setBubbleVisible(false);
 
       const variable = this.workspace.getVariable('param1', '');
-      this.workspace.renameVariableById(variable.getId(), 'preCreatedVar');
+      this.variableMap.renameVariable(variable, 'preCreatedVar');
 
       assert.isNotNull(
         defBlock.getField('PARAMS'),
@@ -562,7 +563,7 @@ suite('Procedures', function () {
       this.clock.runAll();
 
       const variable = this.workspace.getVariable('param1', '');
-      this.workspace.renameVariableById(variable.getId(), 'preCreatedVar');
+      this.variableMap.renameVariable(variable, 'preCreatedVar');
 
       assert.equal(
         paramBlock.getFieldValue('NAME'),
@@ -588,7 +589,7 @@ suite('Procedures', function () {
       mutatorIcon.setBubbleVisible(false);
 
       const variable = this.workspace.getVariable('param1', '');
-      this.workspace.renameVariableById(variable.getId(), 'preCreatedVar');
+      this.variableMap.renameVariable(variable, 'preCreatedVar');
 
       assert.isNotNull(
         callBlock.getInput('ARG0'),

@@ -154,12 +154,15 @@ def findRgbVal(colour):
 
 # Get info on the input file
 def getFileInfo():
+   from pathlib import Path
    if (len(sys.argv) < 2):
       print("Please provide a filename")
       sys.exit()
    fileName = sys.argv[1]
    try:
       jsonFile = open(fileName).read()
+      fileName = str(Path(fileName).parent / f"new_{Path(fileName).stem}.json")
+      fileName = Path(fileName)
    except IOError as err:
       print('Could not find that file name')
       sys.exit()
@@ -174,7 +177,7 @@ def createColourMap():
    for key in jsonData.keys():
       rgbVal = findRgbVal(jsonData[key])
       colourObj[key] = findOtherColours(rgbVal)
-      f= open("new_" + fileName,"w+")
+      f= open(fileName,"w+")
       f.write(json.dumps(colourObj, indent=2, sort_keys=True))
       f.close()
 

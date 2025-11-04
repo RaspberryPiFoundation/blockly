@@ -726,21 +726,21 @@ const PROCEDURES_MUTATORARGUMENT = {
     if (sourceBlock.isInFlyout) {
       return varName;
     }
-
-    const model = outerWs.getVariable(varName, '');
+    const variableMap = outerWs.getVariableMap();
+    const model = variableMap.getVariable(varName, '');
     if (model && model.getName() !== varName) {
       // Rename the variable (case change)
-      outerWs.renameVariableById(model.getId(), varName);
+      variableMap.renameVariable(model, varName);
     }
     if (!model) {
       if (this.editingInteractively) {
         if (!this.editingVariable) {
-          this.editingVariable = outerWs.createVariable(varName, '');
+          this.editingVariable = variableMap.createVariable(varName, '');
         } else {
-          outerWs.renameVariableById(this.editingVariable.getId(), varName);
+          variableMap.renameVariable(this.editingVariable, varName);
         }
       } else {
-        outerWs.createVariable(varName, '');
+        variableMap.createVariable(varName, '');
       }
     }
     return varName;
