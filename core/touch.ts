@@ -46,7 +46,6 @@ export const TOUCH_MAP: {[key: string]: string[]} = {
   'mouseup': ['pointerup', 'pointercancel'],
   'touchend': ['pointerup'],
   'touchcancel': ['pointercancel'],
-  'pointerup': ['pointerup', 'pointercancel'],
 };
 
 /** PID of queued long-press task. */

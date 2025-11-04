@@ -9,7 +9,12 @@ jobs:
     permissions:
       pull-requests: write
     steps:
-      - uses: actions/first-interaction@v3
+      # NOTE TO DEVELOPER: Per #9447 this is pinned to v1.3.0 and all updates
+      # have been disabled for it. There are some largely incompatibilities on
+      # v2 and v3 of the action that, without resolution, will break the first
+      # interaction experience for new contributors. This dependency should not
+      # be upgraded until those issues are resolved.
+      - uses: actions/first-interaction@v1.3.0
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           pr-message: >

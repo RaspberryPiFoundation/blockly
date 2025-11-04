@@ -14,6 +14,7 @@
 
 import {BlockSvg} from '../block_svg.js';
 import {Field} from '../field.js';
+import {Icon} from '../icons/icon.js';
 import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
 import {RenderedConnection} from '../rendered_connection.js';
 
@@ -66,6 +67,8 @@ export class Marker {
       return node.getSourceBlock() as BlockSvg;
     } else if (node instanceof RenderedConnection) {
       return node.getSourceBlock();
+    } else if (node instanceof Icon) {
+      return node.getSourceBlock() as BlockSvg;
     }
 
     return null;

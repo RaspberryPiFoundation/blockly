@@ -1,8 +1,8 @@
 # Blockly
 
-Google's Blockly is a library that adds a visual code editor to web and mobile apps. The Blockly editor uses interlocking, graphical blocks to represent code concepts like variables, logical expressions, loops, and more. It allows users to apply programming principles without having to worry about syntax or the intimidation of a blinking cursor on the command line. All code is free and open source.
+Google's Blockly is a library that adds a visual code editor to web and mobile apps. The Blockly editor uses interlocking, graphical blocks to represent code concepts like variables, logical expressions, loops, and more. It allows users to apply programming principles without having to worry about syntax or the intimidation of a blinking cursor on the command line. All code is [free and open source](https://github.com/google/blockly/blob/develop/LICENSE).
 
-![](https://developers.google.com/blockly/images/sample.png)
+![Sample](./sample.svg)
 
 ## Getting Started with Blockly
 
@@ -13,13 +13,11 @@ Blockly has many resources for learning how to use the library. Start at our [Go
 - [More codelabs](https://blocklycodelabs.dev/)
 - [Demos and plugins](https://google.github.io/blockly-samples/)
 
-Help us focus our development efforts by telling us [what you are doing with
-Blockly](https://developers.google.com/blockly/registration). The questionnaire only takes
-a few minutes and will help us better support the Blockly community.
+Help us focus our development efforts by telling us [what you are doing with Blockly](https://developers.google.com/blockly/registration). The questionnaire only takes a few minutes and will help us better support the Blockly community.
 
 ### Installing Blockly
 
-Blockly is [available on npm](https://www.npmjs.com/package/blockly).
+Blockly is [available on npm](https://www.npmjs.com/package/blockly):
 
 ```bash
 npm install blockly
@@ -34,7 +32,7 @@ For more information on installing and using Blockly, see the [Getting Started a
 
 ### blockly-samples
 
-We have a number of resources such as example code, demos, and plugins in another repository called [blockly-samples](https://github.com/google/blockly-samples/). A plugin is a self-contained piece of code that adds functionality to Blockly. Plugins can add fields, define themes, create renderers, and much more. For more information, see the [Plugins documentation](https://developers.google.com/blockly/guides/plugins/overview).
+We have a number of resources such as [examples](https://github.com/google/blockly-samples/tree/master/examples), [codelabs](https://github.com/google/blockly-samples/tree/master/codelabs), and [plugins](https://github.com/google/blockly-samples/tree/master/plugins) in another repository called [blockly-samples](https://github.com/google/blockly-samples). A plugin is a self-contained piece of code that adds functionality to Blockly. Plugins can add fields, define themes, create renderers, and much more. For more information, see the [Plugins documentation](https://developers.google.com/blockly/guides/programming/plugin_overview).
 
 ## Contributing to Blockly
 

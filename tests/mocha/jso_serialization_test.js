@@ -33,6 +33,7 @@ suite('JSO Serialization', function () {
     defineStatementBlock();
 
     createGenUidStubWithReturns(new Array(10).fill().map((_, i) => 'id' + i));
+    this.variableMap = this.workspace.getVariableMap();
   });
 
   teardown(function () {
@@ -834,7 +835,7 @@ suite('JSO Serialization', function () {
 
   suite('Variables', function () {
     test('Without type', function () {
-      this.workspace.createVariable('testVar', '', 'testId');
+      this.variableMap.createVariable('testVar', '', 'testId');
       const jso = Blockly.serialization.workspaces.save(this.workspace);
       const variable = jso['variables'][0];
       assertProperty(variable, 'name', 'testVar');
@@ -843,7 +844,7 @@ suite('JSO Serialization', function () {
     });
 
     test('With type', function () {
-      this.workspace.createVariable('testVar', 'testType', 'testId');
+      this.variableMap.createVariable('testVar', 'testType', 'testId');
       const jso = Blockly.serialization.workspaces.save(this.workspace);
       const variable = jso['variables'][0];
       assertProperty(variable, 'name', 'testVar');

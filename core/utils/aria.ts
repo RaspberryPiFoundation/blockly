@@ -202,20 +202,20 @@ export function getState(element: Element, stateName: State): string | null {
 }
 
 /**
- * Softly requests that the specified text be read to the user if a screen
+ * Assertively requests that the specified text be read to the user if a screen
  * reader is currently active.
  *
- * This relies on a centrally managed ARIA live region that should not interrupt
- * existing announcements (that is, this is what's considered a polite
- * announcement).
+ * This relies on a centrally managed ARIA live region that is hidden from the
+ * visual DOM. This live region is assertive, meaning it will interrupt other
+ * text being read.
  *
  * Callers should use this judiciously. It's often considered bad practice to
- * over announce information that can be inferred from other sources on the
- * page, so this ought to only be used when certain context cannot be easily
+ * over-announce information that can be inferred from other sources on the
+ * page, so this ought to be used only when certain context cannot be easily
  * determined (such as dynamic states that may not have perfect ARIA
  * representations or indications).
  *
- * @param text The text to politely read to the user.
+ * @param text The text to read to the user.
  */
 export function announceDynamicAriaState(text: string) {
   const ariaAnnouncementSpan = document.getElementById('blocklyAriaAnnounce');

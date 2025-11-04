@@ -2088,6 +2088,7 @@ suite('Blocks', function () {
           ],
         },
       ]);
+      this.variableMap = this.workspace.getVariableMap();
     });
     teardown(function () {
       eventUtils.enable();
@@ -2426,13 +2427,14 @@ suite('Blocks', function () {
         assertCollapsed(blockA);
       });
     });
+
     suite('Renaming Vars', function () {
       test('Simple Rename', function () {
         const blockA = createRenderedBlock(this.workspace, 'variable_block');
 
         blockA.setCollapsed(true);
         const variable = this.workspace.getVariable('x', '');
-        this.workspace.renameVariableById(variable.getId(), 'y');
+        this.variableMap.renameVariable(variable, 'y');
 
         this.clock.runAll();
         assertCollapsed(blockA, 'y');
@@ -2441,8 +2443,8 @@ suite('Blocks', function () {
         const blockA = createRenderedBlock(this.workspace, 'variable_block');
 
         blockA.setCollapsed(true);
-        const variable = this.workspace.createVariable('y');
-        this.workspace.renameVariableById(variable.getId(), 'X');
+        const variable = this.variableMap.createVariable('y');
+        this.variableMap.renameVariable(variable, 'X');
 
         this.clock.runAll();
         assertCollapsed(blockA, 'X');

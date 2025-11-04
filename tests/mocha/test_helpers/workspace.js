@@ -25,6 +25,7 @@ export function testAWorkspace() {
         ],
       },
     ]);
+    this.variableMap = this.workspace.getVariableMap();
   });
 
   teardown(function () {
@@ -68,13 +69,13 @@ export function testAWorkspace() {
   suite('clear', function () {
     test('Trivial', function () {
       sinon.stub(eventUtils.TEST_ONLY, 'setGroupInternal').returns(null);
-      this.workspace.createVariable('name1', 'type1', 'id1');
-      this.workspace.createVariable('name2', 'type2', 'id2');
+      this.variableMap.createVariable('name1', 'type1', 'id1');
+      this.variableMap.createVariable('name2', 'type2', 'id2');
       this.workspace.newBlock('');
 
       this.workspace.clear();
       assert.equal(this.workspace.getTopBlocks(false).length, 0);
-      const varMapLength = this.workspace.getVariableMap().variableMap.size;
+      const varMapLength = this.variableMap.variableMap.size;
       assert.equal(varMapLength, 0);
     });
 
@@ -84,7 +85,7 @@ export function testAWorkspace() {
 
       this.workspace.clear();
       assert.equal(this.workspace.getTopBlocks(false).length, 0);
-      const varMapLength = this.workspace.getVariableMap().variableMap.size;
+      const varMapLength = this.variableMap.variableMap.size;
       assert.equal(varMapLength, 0);
     });
   });
@@ -92,8 +93,8 @@ export function testAWorkspace() {
   suite('deleteVariable', function () {
     setup(function () {
       // Create two variables of different types.
-      this.var1 = this.workspace.createVariable('name1', 'type1', 'id1');
-      this.var2 = this.workspace.createVariable('name2', 'type2', 'id2');
+      this.var1 = this.variableMap.createVariable('name1', 'type1', 'id1');
+      this.var2 = this.variableMap.createVariable('name2', 'type2', 'id2');
       // Create blocks to refer to both of them.
       createVarBlocksNoEvents(this.workspace, ['id1', 'id1', 'id2']);
     });
@@ -101,12 +102,12 @@ export function testAWorkspace() {
     test('deleteVariableById(id2) one usage', function () {
       // Deleting variable one usage should not trigger confirm dialog.
       const stub = sinon.stub(window, 'confirm').returns(true);
-      this.workspace.deleteVariableById('id2');
+      this.variableMap.deleteVariableById('id2');
 
       sinon.assert.notCalled(stub);
-      const variable = this.workspace.getVariableById('id2');
+      const variable = this.variableMap.getVariableById('id2');
       assert.isNull(variable);
-      assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
+      assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
       assertBlockVarModelName(this.workspace, 0, 'name1');
 
       stub.restore();
@@ -115,12 +116,12 @@ export function testAWorkspace() {
     test('deleteVariableById(id1) multiple usages confirm', function () {
       // Deleting variable with multiple usages triggers confirm dialog.
       const stub = sinon.stub(window, 'confirm').returns(true);
-      this.workspace.deleteVariableById('id1');
+      this.variableMap.deleteVariableById('id1');
 
       sinon.assert.calledOnce(stub);
-      const variable = this.workspace.getVariableById('id1');
+      const variable = this.variableMap.getVariableById('id1');
       assert.isNull(variable);
-      assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
+      assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
       assertBlockVarModelName(this.workspace, 0, 'name2');
 
       stub.restore();
@@ -129,11 +130,11 @@ export function testAWorkspace() {
     test('deleteVariableById(id1) multiple usages cancel', function () {
       // Deleting variable with multiple usages triggers confirm dialog.
       const stub = sinon.stub(window, 'confirm').returns(false);
-      this.workspace.deleteVariableById('id1');
+      this.variableMap.deleteVariableById('id1');
 
       sinon.assert.calledOnce(stub);
-      assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
-      assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
+      assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
+      assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
       assertBlockVarModelName(this.workspace, 0, 'name1');
       assertBlockVarModelName(this.workspace, 1, 'name1');
       assertBlockVarModelName(this.workspace, 2, 'name2');
@@ -144,50 +145,50 @@ export function testAWorkspace() {
 
   suite('renameVariableById', function () {
     setup(function () {
-      this.workspace.createVariable('name1', 'type1', 'id1');
+      this.variableMap.createVariable('name1', 'type1', 'id1');
     });
 
     test('No references rename to name2', function () {
-      this.workspace.renameVariableById('id1', 'name2');
-      assertVariableValues(this.workspace, 'name2', 'type1', 'id1');
+      this.variableMap.renameVariableById('id1', 'name2');
+      assertVariableValues(this.variableMap, 'name2', 'type1', 'id1');
       // Renaming should not have created a new variable.
-      assert.equal(this.workspace.getAllVariables().length, 1);
+      assert.equal(this.variableMap.getAllVariables().length, 1);
     });
 
     test('Reference exists rename to name2', function () {
       createVarBlocksNoEvents(this.workspace, ['id1']);
 
-      this.workspace.renameVariableById('id1', 'name2');
-      assertVariableValues(this.workspace, 'name2', 'type1', 'id1');
+      this.variableMap.renameVariableById('id1', 'name2');
+      assertVariableValues(this.variableMap, 'name2', 'type1', 'id1');
       // Renaming should not have created a new variable.
-      assert.equal(this.workspace.getAllVariables().length, 1);
+      assert.equal(this.variableMap.getAllVariables().length, 1);
       assertBlockVarModelName(this.workspace, 0, 'name2');
     });
 
     test('Reference exists different capitalization rename to Name1', function () {
       createVarBlocksNoEvents(this.workspace, ['id1']);
 
-      this.workspace.renameVariableById('id1', 'Name1');
-      assertVariableValues(this.workspace, 'Name1', 'type1', 'id1');
+      this.variableMap.renameVariableById('id1', 'Name1');
+      assertVariableValues(this.variableMap, 'Name1', 'type1', 'id1');
       // Renaming should not have created a new variable.
-      assert.equal(this.workspace.getAllVariables().length, 1);
+      assert.equal(this.variableMap.getAllVariables().length, 1);
       assertBlockVarModelName(this.workspace, 0, 'Name1');
     });
 
     suite('Two variables rename overlap', function () {
       test('Same type rename variable with id1 to name2', function () {
-        this.workspace.createVariable('name2', 'type1', 'id2');
+        this.variableMap.createVariable('name2', 'type1', 'id2');
         createVarBlocksNoEvents(this.workspace, ['id1', 'id2']);
 
-        this.workspace.renameVariableById('id1', 'name2');
+        this.variableMap.renameVariableById('id1', 'name2');
 
         // The second variable should remain unchanged.
         assertVariableValues(this.workspace, 'name2', 'type1', 'id2');
         // The first variable should have been deleted.
-        const variable = this.workspace.getVariableById('id1');
+        const variable = this.variableMap.getVariableById('id1');
         assert.isNull(variable);
         // There should only be one variable left.
-        assert.equal(this.workspace.getAllVariables().length, 1);
+        assert.equal(this.variableMap.getAllVariables().length, 1);
 
         // Both blocks should now reference variable with name2.
         assertBlockVarModelName(this.workspace, 0, 'name2');
@@ -195,14 +196,14 @@ export function testAWorkspace() {
       });
 
       test('Different type rename variable with id1 to name2', function () {
-        this.workspace.createVariable('name2', 'type2', 'id2');
+        this.variableMap.createVariable('name2', 'type2', 'id2');
         createVarBlocksNoEvents(this.workspace, ['id1', 'id2']);
 
-        this.workspace.renameVariableById('id1', 'name2');
+        this.variableMap.renameVariableById('id1', 'name2');
 
         // Variables with different type are allowed to have the same name.
-        assertVariableValues(this.workspace, 'name2', 'type1', 'id1');
-        assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
+        assertVariableValues(this.variableMap, 'name2', 'type1', 'id1');
+        assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
 
         // Both blocks should now reference variable with name2.
         assertBlockVarModelName(this.workspace, 0, 'name2');
@@ -210,18 +211,18 @@ export function testAWorkspace() {
       });
 
       test('Same type different capitalization rename variable with id1 to Name2', function () {
-        this.workspace.createVariable('name2', 'type1', 'id2');
+        this.variableMap.createVariable('name2', 'type1', 'id2');
         createVarBlocksNoEvents(this.workspace, ['id1', 'id2']);
 
-        this.workspace.renameVariableById('id1', 'Name2');
+        this.variableMap.renameVariableById('id1', 'Name2');
 
         // The second variable should be updated.
-        assertVariableValues(this.workspace, 'Name2', 'type1', 'id2');
+        assertVariableValues(this.variableMap, 'Name2', 'type1', 'id2');
         // The first variable should have been deleted.
-        const variable = this.workspace.getVariableById('id1');
+        const variable = this.variableMap.getVariableById('id1');
         assert.isNull(variable);
         // There should only be one variable left.
-        assert.equal(this.workspace.getAllVariables().length, 1);
+        assert.equal(this.variableMap.getAllVariables().length, 1);
 
         // Both blocks should now reference variable with Name2.
         assertBlockVarModelName(this.workspace, 0, 'Name2');
@@ -229,15 +230,15 @@ export function testAWorkspace() {
       });
 
       test('Different type different capitalization rename variable with id1 to Name2', function () {
-        this.workspace.createVariable('name2', 'type2', 'id2');
+        this.variableMap.createVariable('name2', 'type2', 'id2');
         createVarBlocksNoEvents(this.workspace, ['id1', 'id2']);
 
-        this.workspace.renameVariableById('id1', 'Name2');
+        this.variableMap.renameVariableById('id1', 'Name2');
 
         // Variables with different type are allowed to have the same name.
-        assertVariableValues(this.workspace, 'Name2', 'type1', 'id1');
+        assertVariableValues(this.variableMap, 'Name2', 'type1', 'id1');
         // Second variable should remain unchanged.
-        assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
+        assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
 
         // Only first block should use new capitalization.
         assertBlockVarModelName(this.workspace, 0, 'Name2');
@@ -1477,180 +1478,184 @@ export function testAWorkspace() {
 
       suite('renameVariableById', function () {
         setup(function () {
-          this.workspace.createVariable('name1', 'type1', 'id1');
+          this.variableMap.createVariable('name1', 'type1', 'id1');
         });
 
         test('Reference exists no usages rename to name2', function () {
-          this.workspace.renameVariableById('id1', 'name2');
+          this.variableMap.renameVariableById('id1', 'name2');
           this.clock.runAll();
 
           this.workspace.undo();
           this.clock.runAll();
-          assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
+          assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
 
           this.workspace.undo(true);
           this.clock.runAll();
-          assertVariableValues(this.workspace, 'name2', 'type1', 'id1');
+          assertVariableValues(this.variableMap, 'name2', 'type1', 'id1');
         });
 
         test('Reference exists with usages rename to name2', function () {
           createVarBlocksNoEvents(this.workspace, ['id1']);
-          this.workspace.renameVariableById('id1', 'name2');
+          this.variableMap.renameVariableById('id1', 'name2');
           this.clock.runAll();
 
           this.workspace.undo();
           this.clock.runAll();
           assertBlockVarModelName(this.workspace, 0, 'name1');
-          assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
+          assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
 
           this.workspace.undo(true);
           this.clock.runAll();
           assertBlockVarModelName(this.workspace, 0, 'name2');
-          assertVariableValues(this.workspace, 'name2', 'type1', 'id1');
+          assertVariableValues(this.variableMap, 'name2', 'type1', 'id1');
         });
 
         test('Reference exists different capitalization no usages rename to Name1', function () {
-          this.workspace.renameVariableById('id1', 'Name1');
+          this.variableMap.renameVariableById('id1', 'Name1');
           this.clock.runAll();
 
           this.workspace.undo();
           this.clock.runAll();
-          assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
+          assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
 
           this.workspace.undo(true);
           this.clock.runAll();
-          assertVariableValues(this.workspace, 'Name1', 'type1', 'id1');
+          assertVariableValues(this.variableMap, 'Name1', 'type1', 'id1');
         });
 
         test('Reference exists different capitalization with usages rename to Name1', function () {
           createVarBlocksNoEvents(this.workspace, ['id1']);
-          this.workspace.renameVariableById('id1', 'Name1');
+          this.variableMap.renameVariableById('id1', 'Name1');
           this.clock.runAll();
 
           this.workspace.undo();
           this.clock.runAll();
           assertBlockVarModelName(this.workspace, 0, 'name1');
-          assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
+          assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
 
           this.workspace.undo(true);
           this.clock.runAll();
           assertBlockVarModelName(this.workspace, 0, 'Name1');
-          assertVariableValues(this.workspace, 'Name1', 'type1', 'id1');
+          assertVariableValues(this.variableMap, 'Name1', 'type1', 'id1');
         });
 
         suite('Two variables rename overlap', function () {
           test('Same type no usages rename variable with id1 to name2', function () {
-            this.workspace.createVariable('name2', 'type1', 'id2');
-            this.workspace.renameVariableById('id1', 'name2');
+            this.variableMap.createVariable('name2', 'type1', 'id2');
+            this.variableMap.renameVariableById('id1', 'name2');
             this.clock.runAll();
 
             this.workspace.undo();
             this.clock.runAll();
-            assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
-            assertVariableValues(this.workspace, 'name2', 'type1', 'id2');
+            assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
+            assertVariableValues(this.variableMap, 'name2', 'type1', 'id2');
 
             this.workspace.undo(true);
             this.clock.runAll();
-            assertVariableValues(this.workspace, 'name2', 'type1', 'id2');
-            assert.isNull(this.workspace.getVariableById('id1'));
+            assertVariableValues(this.variableMap, 'name2', 'type1', 'id2');
+            assert.isNull(this.variableMap.getVariableById('id1'));
           });
 
           test('Same type with usages rename variable with id1 to name2', function () {
-            this.workspace.createVariable('name2', 'type1', 'id2');
+            const variable = this.variableMap.createVariable(
+              'name2',
+              'type1',
+              'id2',
+            );
             createVarBlocksNoEvents(this.workspace, ['id1', 'id2']);
-            this.workspace.renameVariableById('id1', 'name2');
+            this.variableMap.renameVariableById('id1', 'name2');
             this.clock.runAll();
 
             this.workspace.undo();
             this.clock.runAll();
             assertBlockVarModelName(this.workspace, 0, 'name1');
             assertBlockVarModelName(this.workspace, 1, 'name2');
-            assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
-            assertVariableValues(this.workspace, 'name2', 'type1', 'id2');
+            assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
+            assertVariableValues(this.variableMap, 'name2', 'type1', 'id2');
 
             this.workspace.undo(true);
             this.clock.runAll();
-            assertVariableValues(this.workspace, 'name2', 'type1', 'id2');
-            assert.isNull(this.workspace.getVariableById('id1'));
+            assertVariableValues(this.variableMap, 'name2', 'type1', 'id2');
+            assert.isNull(this.variableMap.getVariableById('id1'));
           });
 
           test('Same type different capitalization no usages rename variable with id1 to Name2', function () {
-            this.workspace.createVariable('name2', 'type1', 'id2');
-            this.workspace.renameVariableById('id1', 'Name2');
+            this.variableMap.createVariable('name2', 'type1', 'id2');
+            this.variableMap.renameVariableById('id1', 'Name2');
             this.clock.runAll();
 
             this.workspace.undo();
             this.clock.runAll();
-            assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
-            assertVariableValues(this.workspace, 'name2', 'type1', 'id2');
+            assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
+            assertVariableValues(this.variableMap, 'name2', 'type1', 'id2');
 
             this.workspace.undo(true);
             this.clock.runAll();
-            assertVariableValues(this.workspace, 'Name2', 'type1', 'id2');
-            assert.isNull(this.workspace.getVariable('name1'));
+            assertVariableValues(this.variableMap, 'Name2', 'type1', 'id2');
+            assert.isNull(this.variableMap.getVariable('name1'));
           });
 
           test('Same type different capitalization with usages rename variable with id1 to Name2', function () {
             this.workspace.createVariable('name2', 'type1', 'id2');
             createVarBlocksNoEvents(this.workspace, ['id1', 'id2']);
-            this.workspace.renameVariableById('id1', 'Name2');
+            this.variableMap.renameVariableById('id1', 'Name2');
             this.clock.runAll();
 
             this.workspace.undo();
             this.clock.runAll();
             assertBlockVarModelName(this.workspace, 0, 'name1');
             assertBlockVarModelName(this.workspace, 1, 'name2');
-            assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
-            assertVariableValues(this.workspace, 'name2', 'type1', 'id2');
+            assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
+            assertVariableValues(this.variableMap, 'name2', 'type1', 'id2');
 
             this.workspace.undo(true);
             this.clock.runAll();
-            assertVariableValues(this.workspace, 'Name2', 'type1', 'id2');
-            assert.isNull(this.workspace.getVariableById('id1'));
+            assertVariableValues(this.variableMap, 'Name2', 'type1', 'id2');
+            assert.isNull(this.variableMap.getVariableById('id1'));
             assertBlockVarModelName(this.workspace, 0, 'Name2');
             assertBlockVarModelName(this.workspace, 1, 'Name2');
           });
 
           test('Different type no usages rename variable with id1 to name2', function () {
-            this.workspace.createVariable('name2', 'type2', 'id2');
-            this.workspace.renameVariableById('id1', 'name2');
+            this.variableMap.createVariable('name2', 'type2', 'id2');
+            this.variableMap.renameVariableById('id1', 'name2');
             this.clock.runAll();
 
             this.workspace.undo();
             this.clock.runAll();
-            assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
-            assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
+            assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
+            assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
 
             this.workspace.undo(true);
             this.clock.runAll();
-            assertVariableValues(this.workspace, 'name2', 'type1', 'id1');
-            assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
+            assertVariableValues(this.variableMap, 'name2', 'type1', 'id1');
+            assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
           });
 
           test('Different type with usages rename variable with id1 to name2', function () {
-            this.workspace.createVariable('name2', 'type2', 'id2');
+            this.variableMap.createVariable('name2', 'type2', 'id2');
             createVarBlocksNoEvents(this.workspace, ['id1', 'id2']);
-            this.workspace.renameVariableById('id1', 'name2');
+            this.variableMap.renameVariableById('id1', 'name2');
             this.clock.runAll();
 
             this.workspace.undo();
             this.clock.runAll();
-            assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
-            assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
+            assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
+            assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
             assertBlockVarModelName(this.workspace, 0, 'name1');
             assertBlockVarModelName(this.workspace, 1, 'name2');
 
             this.workspace.undo(true);
             this.clock.runAll();
-            assertVariableValues(this.workspace, 'name2', 'type1', 'id1');
-            assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
+            assertVariableValues(this.variableMap, 'name2', 'type1', 'id1');
+            assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
             assertBlockVarModelName(this.workspace, 0, 'name2');
             assertBlockVarModelName(this.workspace, 1, 'name2');
           });
 
           test('Different type different capitalization no usages rename variable with id1 to Name2', function () {
-            this.workspace.createVariable('name2', 'type2', 'id2');
-            this.workspace.renameVariableById('id1', 'Name2');
+            this.variableMap.createVariable('name2', 'type2', 'id2');
+            this.variableMap.renameVariableById('id1', 'Name2');
             this.clock.runAll();
 
             this.workspace.undo();
@@ -1660,27 +1665,27 @@ export function testAWorkspace() {
 
             this.workspace.undo(true);
             this.clock.runAll();
-            assertVariableValues(this.workspace, 'Name2', 'type1', 'id1');
-            assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
+            assertVariableValues(this.variableMap, 'Name2', 'type1', 'id1');
+            assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
           });
 
           test('Different type different capitalization with usages rename variable with id1 to Name2', function () {
-            this.workspace.createVariable('name2', 'type2', 'id2');
+            this.variableMap.createVariable('name2', 'type2', 'id2');
             createVarBlocksNoEvents(this.workspace, ['id1', 'id2']);
-            this.workspace.renameVariableById('id1', 'Name2');
+            this.variableMap.renameVariableById('id1', 'Name2');
             this.clock.runAll();
 
             this.workspace.undo();
             this.clock.runAll();
-            assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
-            assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
+            assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
+            assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
             assertBlockVarModelName(this.workspace, 0, 'name1');
             assertBlockVarModelName(this.workspace, 1, 'name2');
 
             this.workspace.undo(true);
             this.clock.runAll();
-            assertVariableValues(this.workspace, 'Name2', 'type1', 'id1');
-            assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
+            assertVariableValues(this.variableMap, 'Name2', 'type1', 'id1');
+            assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
             assertBlockVarModelName(this.workspace, 0, 'Name2');
             assertBlockVarModelName(this.workspace, 1, 'name2');
           });
