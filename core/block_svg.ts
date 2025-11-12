@@ -264,7 +264,14 @@ export class BlockSvg
           }
         }
         for (const connection of this.getConnections_(true)) {
-          if (connection.canBeFocused() && connection.isHighlighted()) {
+          // TODO: Somehow it's possible for a connection to be highlighted but
+          // have no focusable element. This might be some sort of race
+          // condition or perhaps dispose-esque situation happening.
+          if (
+            connection.canBeFocused() &&
+            connection.isHighlighted() &&
+            connection.findHighlightSvg() !== null
+          ) {
             childElemIds.push(connection.getFocusableElement().id);
           }
         }
@@ -274,7 +281,9 @@ export class BlockSvg
 
     if (this.isSimpleReporter()) {
       const field = Array.from(this.getFields())[0];
-      if (field.isFullBlockField() && field.isCurrentlyEditable()) return;
+      if (field && field.isFullBlockField() && field.isCurrentlyEditable()) {
+        return;
+      }
     }
 
     aria.setState(

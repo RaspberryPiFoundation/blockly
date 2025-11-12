@@ -692,7 +692,8 @@ export class RenderedConnection
     return true;
   }
 
-  private findHighlightSvg(): SVGPathElement | null {
+  // TODO: Figure out how to make this private again.
+  findHighlightSvg(): SVGPathElement | null {
     // This cast is valid as TypeScript's definition is wrong. See:
     // https://github.com/microsoft/TypeScript/issues/60996.
     return document.getElementById(this.id) as
