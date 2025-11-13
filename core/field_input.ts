@@ -227,6 +227,7 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
       const oldValue = this.value_;
       // Revert value when the text becomes invalid.
       this.value_ = this.valueWhenEditorWasOpened_;
+      this.recomputeAriaLabel();
       if (
         this.sourceBlock_ &&
         eventUtils.isEnabled() &&
