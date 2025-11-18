@@ -156,17 +156,18 @@ export class FieldImage extends Field<string> {
     }
 
     const element = this.getFocusableElement();
-    if (this.clickHandler) {
+    if (this.isClickable()) {
       this.imageElement.style.cursor = 'pointer';
       aria.setRole(element, aria.Role.BUTTON);
-    } else {
-      aria.setRole(element, aria.Role.IMAGE);
-    }
 
-    const label = [this.altText, this.getAriaName()]
-      .filter((item) => !!item)
-      .join(', ');
-    aria.setState(element, aria.State.LABEL, label);
+      const label = [this.altText, this.getAriaName()]
+        .filter((item) => !!item)
+        .join(', ');
+      aria.setState(element, aria.State.LABEL, label);
+    } else {
+      // The field isn't navigable unless it's clickable.
+      aria.setRole(element, aria.Role.PRESENTATION);
+    }
   }
 
   override updateSize_() {}
