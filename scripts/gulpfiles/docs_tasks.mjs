@@ -1,5 +1,4 @@
 import {execSync} from 'child_process';
-import {Extractor} from 'markdown-tables-to-json';
 import * as fs from 'fs';
 import * as gulp from 'gulp';
 import header from 'gulp-header';
@@ -87,7 +86,14 @@ const buildAlternatePathsMap = function(allFiles) {
  * in the TOC for the left nav bar to remain correct after drilling down into a
  * sub-page.
  */
-const createToc = function(done) {
+const createToc = async function(done) {
+  // Use dynamic import to avoid ESM/CommonJS compatibility issues
+  const {Extractor} = await import('markdown-tables-to-json');
+  // Initialize the markdown module if needed
+  if (Extractor.init) {
+    await Extractor.init();
+  }
+  
   const fileContent = fs.readFileSync(`${DOCS_DIR}/blockly.md`, 'utf8');
   // Create the TOC file. The file should not yet exist; if it does, this
   // operation will fail.

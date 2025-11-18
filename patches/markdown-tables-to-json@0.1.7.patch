@@ -1,0 +1,69 @@
+diff --git a/dist/index.js b/dist/index.js
+index 2eaf468422142b3591b6527554637831f7eb9479..0a88976ea81aa5e4b802f0237176912bf7ff0816 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -14,7 +14,31 @@ var __extends = (this && this.__extends) || (function () {
+ })();
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Extractor = void 0;
+-var markdown_1 = require("@ts-stack/markdown");
++// Use dynamic import to load ES module @ts-stack/markdown
++// This will be loaded asynchronously when needed
++var markdown_1 = null;
++var markdownModulePromise = null;
++function getMarkdownSync() {
++    if (!markdown_1) {
++        throw new Error("Markdown module not loaded. This package requires async initialization. Please use the patched version that supports async loading.");
++    }
++    return markdown_1;
++}
++// Initialize markdown module asynchronously
++function initMarkdown() {
++    if (markdown_1) {
++        return Promise.resolve();
++    }
++    if (markdownModulePromise) {
++        return markdownModulePromise;
++    }
++    markdownModulePromise = Promise.resolve().then(function () { return import("@ts-stack/markdown"); }).then(function (md) {
++        markdown_1 = md;
++        markdownModulePromise = null;
++        return md;
++    });
++    return markdownModulePromise;
++}
+ var Extractor = (function (_super) {
+     __extends(Extractor, _super);
+     function Extractor(mode, lowercaseKeys) {
+@@ -88,8 +112,9 @@ var Extractor = (function (_super) {
+     };
+     Extractor.createExtractor = function (markdown, mode, lowercaseKeys) {
+         var extractor = new Extractor(mode, lowercaseKeys);
+-        markdown_1.Marked.setOptions({ renderer: extractor });
+-        markdown_1.Marked.parse(markdown);
++        var md = getMarkdownSync();
++        md.Marked.setOptions({ renderer: extractor });
++        md.Marked.parse(markdown);
+         return extractor;
+     };
+     Extractor.extractObject = function (markdown, mode, lowercaseKeys) {
+@@ -117,5 +142,18 @@ var Extractor = (function (_super) {
+         return extractor.objects.map(function (obj) { return JSON.stringify(obj); });
+     };
+     return Extractor;
+-}(markdown_1.Renderer));
++}(function () {
++    // Dummy Renderer class - will be replaced when markdown module loads
++    function DummyRenderer() {
++    }
++    return DummyRenderer;
++}()));
++// Export initialization function
++Extractor.init = function () {
++    return initMarkdown().then(function (md) {
++        // Update the Extractor's prototype to use the loaded Renderer
++        Object.setPrototypeOf(Extractor.prototype, md.Renderer.prototype);
++        return md;
++    });
++};
+ exports.Extractor = Extractor;
