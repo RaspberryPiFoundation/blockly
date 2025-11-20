@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Blockly Tab Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        #blocklyDiv {
+            width: 800px;
+            height: 600px;
+            border: 1px solid #ccc;
+        }
+        .controls {
+            margin: 20px 0;
+        }
+        button {
+            margin: 0 10px 0 0;
+            padding: 5px 15px;
+            font-size: 14px;
+        }
+    </style>
+    <script src="dist/blockly_compressed.js"></script>
+    <script src="dist/blocks_compressed.js"></script>
+    <script src="dist/javascript_compressed.js"></script>
+</head>
+<body>
+    <h1>Blockly Tab Test</h1>
+    <div class="controls">
+        <button id="newTabBtn">新建标签页</button>
+        <button id="closeTabBtn">关闭当前标签页</button>
+        <button id="nextTabBtn">下一个标签页</button>
+        <button id="prevTabBtn">上一个标签页</button>
+    </div>
+    <div id="blocklyDiv"></div>
+    <div id="debugInfo"></div>
+
+    <script>
+        // 创建默认工具箱
+        const toolbox = {
+            "kind": "flyoutToolbox",
+            "contents": [
+                {
+                    "kind": "block",
+                    "type": "controls_if"
+                },
+                {
+                    "kind": "block",
+                    "type": "logic_compare"
+                },
+                {
+                    "kind": "block",
+                    "type": "math_number"
+                },
+                {
+                    "kind": "block",
+                    "type": "text"
+                }
+            ]
+        };
+
+        // 注入Blockly
+        console.log('开始注入Blockly...');
+        const tabManager = Blockly.inject('blocklyDiv', {
+            toolbox: toolbox,
+            trashcan: true,
+            zoom: {
+                controls: true,
+                wheel: true,
+                startScale: 1.0,
+                maxScale: 3.0,
+                minScale: 0.3,
+                scaleSpeed: 1.2
+            }
+        });
+        console.log('Blockly注入成功，tabManager:', tabManager);
+
+        // 显示调试信息
+        const debugInfo = document.getElementById('debugInfo');
+        debugInfo.innerHTML = '<h3>调试信息</h3>';
+        debugInfo.innerHTML += `<p>tabManager类型: ${typeof tabManager}</p>`;
+        debugInfo.innerHTML += `<p>tabManager属性: ${Object.keys(tabManager).join(', ')}</p>`;
+        debugInfo.innerHTML += `<p>是否有createTab方法: ${typeof tabManager.createTab === 'function'}</p>`;
+
+        // 测试创建新标签页
+        document.getElementById('newTabBtn').addEventListener('click', () => {
+            console.log('创建新标签页...');
+            const newTab = tabManager.createTab();
+            console.log('新标签页创建成功:', newTab);
+        });
+
+        // 测试关闭当前标签页
+        document.getElementById('closeTabBtn').addEventListener('click', () => {
+            console.log('关闭当前标签页...');
+            tabManager.closeTab(tabManager.activeTab.id);
+        });
+
+        // 测试下一个标签页
+        document.getElementById('nextTabBtn').addEventListener('click', () => {
+            console.log('切换到下一个标签页...');
+            tabManager.nextTab();
+        });
+
+        // 测试上一个标签页
+        document.getElementById('prevTabBtn').addEventListener('click', () => {
+            console.log('切换到上一个标签页...');
+            tabManager.previousTab();
+        });
+
+        // 测试快捷键
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 't') {
+                e.preventDefault();
+                console.log('Ctrl+T 按下，创建新标签页...');
+                const newTab = tabManager.createTab();
+                console.log('新标签页创建成功:', newTab);
+            } else if (e.ctrlKey && e.key === 'w') {
+                e.preventDefault();
+                console.log('Ctrl+W 按下，关闭当前标签页...');
+                tabManager.closeTab(tabManager.activeTab.id);
+            } else if (e.ctrlKey && e.key === 'Tab') {
+                e.preventDefault();
+                console.log('Ctrl+Tab 按下，切换标签页...');
+                if (e.shiftKey) {
+                    tabManager.previousTab();
+                } else {
+                    tabManager.nextTab();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

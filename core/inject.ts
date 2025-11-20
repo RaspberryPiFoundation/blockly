@@ -21,21 +21,22 @@ import * as dom from './utils/dom.js';
 import {Svg} from './utils/svg.js';
 import * as WidgetDiv from './widgetdiv.js';
 import {WorkspaceSvg} from './workspace_svg.js';
+import {TabManager} from './tab_manager.js';
 
 /**
  * Inject a Blockly editor into the specified container element (usually a div).
  *
  * @param container Containing element, or its ID, or a CSS selector.
  * @param opt_options Optional dictionary of options.
- * @returns Newly created main workspace.
+ * @returns Newly created TabManager.
  */
 export function inject(
   container: Element | string,
   opt_options?: BlocklyOptions,
-): WorkspaceSvg {
+): TabManager {
   let containerElement: Element | null = null;
   if (typeof container === 'string') {
-    containerElement =
+    containerElement = 
       document.getElementById(container) || document.querySelector(container);
   } else {
     containerElement = container;
@@ -48,27 +49,29 @@ export function inject(
     throw Error('Error: container is not in current document');
   }
   const options = new Options(opt_options || ({} as BlocklyOptions));
-  const subContainer = document.createElement('div');
-  dom.addClass(subContainer, 'injectionDiv');
-  if (opt_options?.rtl) {
-    dom.addClass(subContainer, 'blocklyRTL');
-  }
-
-  containerElement!.appendChild(subContainer);
+  
+  // Create tab manager
+  const tabManager = new TabManager(containerElement! as HTMLElement);
+  
+  // Create first tab with workspace
+  const firstTab = tabManager.createTab(opt_options);
+  const workspace = firstTab.workspace;
+  const subContainer = firstTab.container;
+  
+  // Initialize workspace
   const svg = createDom(subContainer, options);
-
-  const workspace = createMainWorkspace(subContainer, svg, options);
-
-  init(workspace);
+  const mainWorkspace = createMainWorkspace(subContainer, svg, options);
+  
+  init(mainWorkspace);
 
   // Keep focus on the first workspace so entering keyboard navigation looks
   // correct.
-  common.setMainWorkspace(workspace);
+  common.setMainWorkspace(mainWorkspace);
 
-  common.svgResize(workspace);
+  common.svgResize(mainWorkspace);
 
   subContainer.addEventListener('focusin', function () {
-    common.setMainWorkspace(workspace);
+    common.setMainWorkspace(mainWorkspace);
   });
 
   browserEvents.conditionalBind(
@@ -78,7 +81,7 @@ export function inject(
     common.globalShortcutHandler,
   );
 
-  return workspace;
+  return tabManager;
 }
 
 /**
@@ -88,7 +91,10 @@ export function inject(
  * @param options Dictionary of options.
  * @returns Newly created SVG image.
  */
-function createDom(container: HTMLElement, options: Options): SVGElement {
+export function createDom(
+  container: HTMLElement,
+  options: Options,
+): SVGElement {
   // Sadly browsers (Chrome vs Firefox) are currently inconsistent in laying
   // out content in RTL mode.  Therefore Blockly forces the use of LTR,
   // then manually positions content in RTL as needed.
@@ -142,11 +148,12 @@ function createDom(container: HTMLElement, options: Options): SVGElement {
 /**
  * Create a main workspace and add it to the SVG.
  *
+ * @param injectionDiv Containing div for SVG.
  * @param svg SVG element with pattern defined.
  * @param options Dictionary of options.
  * @returns Newly created main workspace.
  */
-function createMainWorkspace(
+export function createMainWorkspace(
   injectionDiv: HTMLElement,
   svg: SVGElement,
   options: Options,

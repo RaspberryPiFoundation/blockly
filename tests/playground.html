@@ -238,10 +238,17 @@
         if (sessionStorage) {
           sessionStorage.setItem('logEvents', Number(state));
         }
+        console.log('workspace:', workspace);
+        console.log('workspace.removeChangeListener:', workspace.removeChangeListener);
+        console.log('logger:', logger);
         if (state) {
           workspace.addChangeListener(logger);
         } else {
-          workspace.removeChangeListener(logger);
+          if (workspace.removeChangeListener) {
+            workspace.removeChangeListener(logger);
+          } else {
+            console.error('workspace.removeChangeListener is not a function');
+          }
         }
       }
 
