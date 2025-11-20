@@ -624,9 +624,6 @@ export class FieldDropdown extends Field<string> {
       const element = this.getFocusableElement();
       aria.setState(element, aria.State.ACTIVEDESCENDANT, imageElement.id);
     }
-
-    aria.setRole(imageElement, aria.Role.IMAGE);
-    aria.setState(imageElement, aria.State.LABEL, imageJson.alt);
   }
 
   /** Renders the selected option, which must be text. */
