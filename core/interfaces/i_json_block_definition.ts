@@ -4,25 +4,32 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export interface JsonBlockDefinition {
-  type?: string;
-  style?: string;
-  colour?: string | number;
-  output: string | string[] | null;
-  previousStatement?: string | string[] | null;
-  nextStatement?: string | string[] | null;
-  outputShape?: number;
-  inputsInline?: boolean;
-  tooltip?: string;
-  helpUrl?: string;
-  extensions?: string[];
-  mutator?: string;
-  enableContextMenu?: boolean;
-  suppressPrefixSuffix?: boolean;
+import { FieldCheckboxFromJsonConfig } from "../field_checkbox"
+import { FieldDropdownFromJsonConfig } from "../field_dropdown"
+import { FieldImageFromJsonConfig } from "../field_image"
+import { FieldNumberFromJsonConfig } from "../field_number"
+import { FieldTextInputFromJsonConfig } from "../field_textinput"
+import { FieldVariableFromJsonConfig } from "../field_variable"
 
-  [key: `message${number}`]: string | undefined;
-  [key: `args${number}`]: BlockArg[] | undefined;
-  [key: `implicitAlign${number}`]: string | undefined;
+export interface JsonBlockDefinition {
+  type?: string
+  style?: string
+  colour?: string | number
+  output?: string | string[] | null
+  previousStatement?: string | string[] | null
+  nextStatement?: string | string[] | null
+  outputShape?: number
+  inputsInline?: boolean
+  tooltip?: string
+  helpUrl?: string
+  extensions?: string[]
+  mutator?: string
+  enableContextMenu?: boolean
+  suppressPrefixSuffix?: boolean
+
+  [key: `message${number}`]: string | undefined
+  [key: `args${number}`]: BlockArg[] | undefined
+  [key: `implicitAlign${number}`]: string | undefined
 }
 
 /** Block Arg */
@@ -35,63 +42,54 @@ export type BlockArg =
   | FieldDropdownArg
   | FieldCheckboxArg
   | FieldImageArg
-  | FieldVariableArg;
-
-/** Common Arg  */
-interface CommonArg {
-  name?: string;
-}
+  | FieldVariableArg
 
 /** Input Args */
-interface InputValueArg extends CommonArg {
-  type: 'input_value';
-  check?: string | string[];
+interface InputValueArg {
+  name:  string
+  type: 'input_value'
+  check?: string | string[]
   align?: FieldsAlign
 }
-interface InputStatementArg extends CommonArg {
-  type: 'input_statement';
-  check?: string | string[];
+interface InputStatementArg {
+  name: string
+  type: 'input_statement'
+  check?: string | string[]
 }
-interface InputDummyArg extends CommonArg {
-  type: 'input_dummy';
+interface InputDummyArg {
+  name: string
+  type: 'input_dummy'
 }
 
 /** Field Args */
-interface FieldInputArg extends CommonArg{
+interface FieldInputArg extends FieldTextInputFromJsonConfig {
+  name: string
   type: 'field_input'
-  text: string
 }
 
-interface FieldNumberArg extends CommonArg {
-  type: 'field_number';
-  value?: number;
-  min?: number;
-  max?: number;
-  precision?: number;
+interface FieldNumberArg extends FieldNumberFromJsonConfig {
+  name: string
+  type: 'field_number'
 }
 
-interface FieldDropdownArg extends CommonArg {
-  type: 'field_dropdown';
-  options: [string, string][];
+interface FieldDropdownArg extends FieldDropdownFromJsonConfig {
+  name: string
+  type: 'field_dropdown'
 }
 
-interface FieldCheckboxArg extends CommonArg {
-  type: 'field_checkbox';
-  checked?: boolean | 'TRUE' | 'FALSE';
+interface FieldCheckboxArg extends FieldCheckboxFromJsonConfig {
+  name: string
+  type: 'field_checkbox'
 }
 
-interface FieldImageArg {
-  type: 'field_image';
-  src: string;
-  width: number;
-  height: number;
-  alt?: string;
-  flipRtl?: boolean | 'TRUE' | 'FALSE';
+interface FieldImageArg extends FieldImageFromJsonConfig {
+  name: string
+  type: 'field_image'
 }
 
-interface FieldVariableArg extends CommonArg {
+interface FieldVariableArg extends FieldVariableFromJsonConfig {
+  name: string
   type: 'field_variable'
-  variable: string | null
 }
 
 export type FieldsAlign = 'LEFT' | 'RIGHT' | 'CENTRE' 
