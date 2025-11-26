@@ -801,6 +801,7 @@ export class WorkspaceSvg
     if (this.isFlyout) {
       // Use the block canvas as the primary tree parent for flyout blocks.
       aria.setRole(this.svgBlockCanvas_, aria.Role.TREE);
+      aria.setState(this.svgBlockCanvas_, aria.State.LABEL, ariaLabel);
     } else {
       browserEvents.conditionalBind(
         this.svgGroup_,
