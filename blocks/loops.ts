@@ -92,10 +92,9 @@ export const blocks = createBlockDefinitionsFromJsonArray([
       {
         'type': 'field_dropdown',
         'name': 'MODE',
-        'ariaTypeName': 'Repeat type',
         'options': [
-          ['%{BKY_CONTROLS_WHILEUNTIL_OPERATOR_WHILE}', 'WHILE', 'While'],
-          ['%{BKY_CONTROLS_WHILEUNTIL_OPERATOR_UNTIL}', 'UNTIL', 'Until'],
+          ['%{BKY_CONTROLS_WHILEUNTIL_OPERATOR_WHILE}', 'WHILE'],
+          ['%{BKY_CONTROLS_WHILEUNTIL_OPERATOR_UNTIL}', 'UNTIL'],
         ],
       },
       {
@@ -200,18 +199,9 @@ export const blocks = createBlockDefinitionsFromJsonArray([
       {
         'type': 'field_dropdown',
         'name': 'FLOW',
-        'ariaTypeName': 'Continue type',
         'options': [
-          [
-            '%{BKY_CONTROLS_FLOW_STATEMENTS_OPERATOR_BREAK}',
-            'BREAK',
-            'Break loop',
-          ],
-          [
-            '%{BKY_CONTROLS_FLOW_STATEMENTS_OPERATOR_CONTINUE}',
-            'CONTINUE',
-            'Continue loop',
-          ],
+          ['%{BKY_CONTROLS_FLOW_STATEMENTS_OPERATOR_BREAK}', 'BREAK'],
+          ['%{BKY_CONTROLS_FLOW_STATEMENTS_OPERATOR_CONTINUE}', 'CONTINUE'],
         ],
       },
     ],

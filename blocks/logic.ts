@@ -35,7 +35,6 @@ export const blocks = createBlockDefinitionsFromJsonArray([
       {
         'type': 'field_dropdown',
         'name': 'BOOL',
-        'ariaTypeName': 'Boolean',
         'options': [
           ['%{BKY_LOGIC_BOOLEAN_TRUE}', 'TRUE'],
           ['%{BKY_LOGIC_BOOLEAN_FALSE}', 'FALSE'],
@@ -118,14 +117,13 @@ export const blocks = createBlockDefinitionsFromJsonArray([
       {
         'type': 'field_dropdown',
         'name': 'OP',
-        'ariaTypeName': 'Operator',
         'options': [
-          ['=', 'EQ', 'Equals'],
-          ['\u2260', 'NEQ', 'Does not equal'],
-          ['\u200F<', 'LT', 'Less than'],
-          ['\u200F\u2264', 'LTE', 'Less than or equal to'],
-          ['\u200F>', 'GT', 'Greater than'],
-          ['\u200F\u2265', 'GTE', 'Greater than or equal to'],
+          ['=', 'EQ'],
+          ['\u2260', 'NEQ'],
+          ['\u200F<', 'LT'],
+          ['\u200F\u2264', 'LTE'],
+          ['\u200F>', 'GT'],
+          ['\u200F\u2265', 'GTE'],
         ],
       },
       {
@@ -152,10 +150,9 @@ export const blocks = createBlockDefinitionsFromJsonArray([
       {
         'type': 'field_dropdown',
         'name': 'OP',
-        'ariaTypeName': 'Boolean operator',
         'options': [
-          ['%{BKY_LOGIC_OPERATION_AND}', 'AND', 'And'],
-          ['%{BKY_LOGIC_OPERATION_OR}', 'OR', 'Or'],
+          ['%{BKY_LOGIC_OPERATION_AND}', 'AND'],
+          ['%{BKY_LOGIC_OPERATION_OR}', 'OR'],
         ],
       },
       {
