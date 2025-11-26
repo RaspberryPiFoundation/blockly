@@ -89,6 +89,10 @@ export class MiniWorkspaceBubble extends Bubble {
     this.updateBubbleSize();
   }
 
+  protected override getAriaLabel(): string | null {
+    return 'Mutator Bubble';
+  }
+
   dispose() {
     this.miniWorkspace.dispose();
     super.dispose();

@@ -30,6 +30,10 @@ export class TextBubble extends Bubble {
     dom.addClass(this.svgRoot, 'blocklyTextBubble');
   }
 
+  protected override getAriaLabel(): string | null {
+    return 'Warning Bubble';
+  }
+
   /** @returns the current text of this text bubble. */
   getText(): string {
     return this.text;
