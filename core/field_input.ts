@@ -183,11 +183,6 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
     this.recomputeAriaLabel();
   }
 
-  override getAriaValue(): string {
-    // TODO: Figure out if this is actually sufficiently correct for conversion + null cases (probably not).
-    return String(this.getValue());
-  }
-
   /**
    * Updates the ARIA label for this field.
    */

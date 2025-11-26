@@ -284,9 +284,20 @@ export abstract class Field<T = any>
   /**
    * Gets a an ARIA-friendly label representation of this field's value.
    *
-   * @returns An ARIA representation of the field's value.
+   * Note that implementations should generally always override this value to
+   * ensure a non-null value is returned since the default implementation relies
+   * on 'getValue' which may return null, and a null return value for this
+   * function will prompt ARIA label generation to skip the field's value
+   * entirely when there may be a better contextual placeholder to use, instead,
+   * specific to the field.
+   *
+   * @returns An ARIA representation of the field's value, or null if no value
+   *     is currently defined or known for the field.
    */
-  abstract getAriaValue(): string;
+  getAriaValue(): string | null {
+    const currentValue = this.getValue();
+    return currentValue !== null ? String(currentValue) : null;
+  }
 
   /**
    * Computes a descriptive ARIA label to represent this field with configurable
@@ -306,6 +317,11 @@ export abstract class Field<T = any>
    * on other context to convey information like the field's value. Example:
    * checkboxes represent their checked/non-checked status (i.e. value) through
    * a separate ARIA property.
+   *
+   * It's possible this returns an empty string if the field doesn't supply type
+   * or value information for certain cases (such as a null value). This will
+   * lead to the field being potentially COMPLETELY HIDDEN for screen reader
+   * navigation.
    *
    * @param verbose Whether to include the field's type information in the
    *     returned label, if available.

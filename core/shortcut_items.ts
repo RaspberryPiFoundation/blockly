@@ -389,17 +389,13 @@ export function registerRedo() {
   ShortcutRegistry.registry.register(redoShortcut);
 }
 
-// A version of solving the 'where am I?' problem. Read out a more detailed
-// summary of the current selected block.
+/**
+ * Registeres a keyboard shortcut for re-reading the current selected block's
+ * summary with additional verbosity to help provide context on where the user
+ * is currently navigated (for screen reader users only).
+ */
 export function registerReadFullBlockSummary() {
-  const ctrlShiftI = ShortcutRegistry.registry.createSerializedKey(KeyCodes.I, [
-    KeyCodes.CTRL,
-    KeyCodes.SHIFT,
-  ]);
-  const metaShiftI = ShortcutRegistry.registry.createSerializedKey(KeyCodes.I, [
-    KeyCodes.META,
-    KeyCodes.SHIFT,
-  ]);
+  const i = ShortcutRegistry.registry.createSerializedKey(KeyCodes.I, null);
   const readFullBlockSummaryShortcut: KeyboardShortcut = {
     name: names.READ_FULL_BLOCK_SUMMARY,
     preconditionFn(workspace) {
@@ -410,27 +406,25 @@ export function registerReadFullBlockSummary() {
         getFocusManager().getFocusedNode() instanceof BlockSvg
       );
     },
-    callback(workspace, e) {
+    callback(_, e) {
       const selectedBlock = getFocusManager().getFocusedNode() as BlockSvg;
       const blockSummary = selectedBlock.computeAriaLabel(true);
       aria.announceDynamicAriaState(`Current block: ${blockSummary}`);
       e.preventDefault();
       return true;
     },
-    keyCodes: [ctrlShiftI, metaShiftI],
+    keyCodes: [i],
   };
   ShortcutRegistry.registry.register(readFullBlockSummaryShortcut);
 }
 
-// A version of solving the 'where am I?' problem. Read the current block's
-// parent block.
+/**
+ * Registeres a keyboard shortcut for re-reading the current selected block's
+ * parent block summary with additional verbosity to help provide context on
+ * where the user is currently navigated (for screen reader users only).
+ */
 export function registerReadBlockParentSummary() {
-  const ctrlShiftP = ShortcutRegistry.registry.createSerializedKey(KeyCodes.P, [
-    KeyCodes.CTRL,
-    KeyCodes.SHIFT,
-  ]);
-  const metaShiftP = ShortcutRegistry.registry.createSerializedKey(KeyCodes.P, [
-    KeyCodes.META,
+  const shiftI = ShortcutRegistry.registry.createSerializedKey(KeyCodes.I, [
     KeyCodes.SHIFT,
   ]);
   const readBlockParentSummaryShortcut: KeyboardShortcut = {
@@ -443,7 +437,7 @@ export function registerReadBlockParentSummary() {
         getFocusManager().getFocusedNode() instanceof BlockSvg
       );
     },
-    callback(workspace, e) {
+    callback(_, e) {
       const selectedBlock = getFocusManager().getFocusedNode() as BlockSvg;
       const parentBlock = selectedBlock.getParent();
       if (parentBlock) {
@@ -455,7 +449,7 @@ export function registerReadBlockParentSummary() {
       e.preventDefault();
       return true;
     },
-    keyCodes: [ctrlShiftP, metaShiftP],
+    keyCodes: [shiftI],
   };
   ShortcutRegistry.registry.register(readBlockParentSummaryShortcut);
 }

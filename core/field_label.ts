@@ -118,10 +118,6 @@ export class FieldLabel extends Field<string> {
     super.setValue(newValue, fireChangeEvent);
   }
 
-  override getAriaValue(): string {
-    return String(this.getValue());
-  }
-
   /**
    * Construct a FieldLabel from a JSON arg object,
    * dereferencing any string table references.
