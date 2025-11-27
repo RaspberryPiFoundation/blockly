@@ -966,8 +966,13 @@ export class Block {
    * @param mustBeEditable Whether the evaluated field must be editable.
    * @internal
    */
-  isSimpleReporter(mustBeFullBlock: boolean = false, mustBeEditable: boolean = false): boolean {
-    return this.getSingletonFullBlockField(mustBeFullBlock, mustBeEditable) !== null;
+  isSimpleReporter(
+    mustBeFullBlock: boolean = false,
+    mustBeEditable: boolean = false,
+  ): boolean {
+    return (
+      this.getSingletonFullBlockField(mustBeFullBlock, mustBeEditable) !== null
+    );
   }
 
   /**
@@ -981,7 +986,10 @@ export class Block {
    * @returns The only full-block, maybe editable field of this block, or null.
    * @internal
    */
-  getSingletonFullBlockField(mustBeFullBlock: boolean, mustBeEditable: boolean): Field<any> | null {
+  getSingletonFullBlockField(
+    mustBeFullBlock: boolean,
+    mustBeEditable: boolean,
+  ): Field<any> | null {
     if (!this.outputConnection) return null;
     for (const input of this.inputList) if (input.connection) return null;
     const matchingFields = Array.from(this.getFields()).filter((field) => {
