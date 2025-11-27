@@ -762,14 +762,19 @@ export class WorkspaceSvg
     });
 
     let ariaLabel = null;
+    let role: aria.Role | null = null;
     if (this.isFlyout) {
       ariaLabel = 'Flyout';
+      // Default to region, but this may change during flyout initialization.
+      role = aria.Role.REGION;
     } else if (this.isMutator) {
       ariaLabel = 'Mutator Workspace';
+      role = aria.Role.GENERIC;
     } else {
       ariaLabel = Msg['WORKSPACE_ARIA_LABEL'];
+      role = aria.Role.REGION;
     }
-    aria.setRole(this.svgGroup_, aria.Role.REGION);
+    aria.setRole(this.svgGroup_, role);
     aria.setState(this.svgGroup_, aria.State.LABEL, ariaLabel);
 
     // Note that a <g> alone does not receive mouse events--it must have a
