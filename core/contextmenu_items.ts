@@ -26,12 +26,6 @@ import {Coordinate} from './utils/coordinate.js';
 import * as svgMath from './utils/svg_math.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 
-function isFullBlockField(block?: BlockSvg) {
-  if (!block || !block.isSimpleReporter()) return false;
-  const firstField = block.getFields().next().value;
-  return firstField?.isFullBlockField();
-}
-
 /**
  * Option to undo previous action.
  */
@@ -377,7 +371,7 @@ export function registerComment() {
         // Either block already has a comment so let us remove it,
         // or the block isn't just one full-block field block, which
         // shouldn't be allowed to have comments as there's no way to read them.
-        (block.hasIcon(CommentIcon.TYPE) || !isFullBlockField(block))
+        (block.hasIcon(CommentIcon.TYPE) || !block.isSimpleReporter(true))
       ) {
         return 'enabled';
       }

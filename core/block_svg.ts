@@ -233,10 +233,7 @@ export class BlockSvg
    * @internal
    */
   recomputeAriaLabel() {
-    if (this.isSimpleReporter()) {
-      const field = Array.from(this.getFields())[0];
-      if (field.isFullBlockField() && field.isCurrentlyEditable()) return;
-    }
+    if (this.isSimpleReporter(true, true)) return;
 
     aria.setState(
       this.getFocusableElement(),
@@ -1964,13 +1961,8 @@ export class BlockSvg
 
   /** See IFocusableNode.getFocusableElement. */
   getFocusableElement(): HTMLElement | SVGElement {
-    if (this.isSimpleReporter()) {
-      const field = Array.from(this.getFields())[0];
-      if (field && field.isFullBlockField() && field.isCurrentlyEditable()) {
-        return field.getFocusableElement();
-      }
-    }
-    return this.pathObject.svgPath;
+    const singletonField = this.getSingletonFullBlockField(true, true);
+    return singletonField?.getFocusableElement() ?? this.pathObject.svgPath;
   }
 
   /** See IFocusableNode.getFocusableTree. */
