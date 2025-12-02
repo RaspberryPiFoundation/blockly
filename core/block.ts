@@ -963,6 +963,7 @@ export class Block {
 
   /**
    * @returns True if this block is a value block with a full block field.
+   * @param mustBeFullBlock Whether the evaluated field must be 'full-block'.
    * @param mustBeEditable Whether the evaluated field must be editable.
    * @internal
    */
@@ -976,7 +977,7 @@ export class Block {
   }
 
   /**
-   * Determies and returns the only field of this block, or null if there isn't
+   * Determines and returns the only field of this block, or null if there isn't
    * one and this block can't be considered a simple reporter. Null will also be
    * returned if the singleton block doesn't match additional criteria, if set,
    * such as being full-block or editable.
