@@ -248,22 +248,6 @@ export class BlockSvg
       ? ` ${inputCount} ${inputCount > 1 ? 'inputs' : 'input'}`
       : '';
 
-    let currentBlock: BlockSvg | null = null;
-    let nestedStatementBlockCount = 0;
-
-    for (const input of this.inputList) {
-      if (
-        input.connection &&
-        input.connection.type === ConnectionType.NEXT_STATEMENT
-      ) {
-        currentBlock = input.connection.targetBlock() as BlockSvg | null;
-        while (currentBlock) {
-          nestedStatementBlockCount++;
-          currentBlock = currentBlock.getNextBlock();
-        }
-      }
-    }
-
     let blockTypeText = 'block';
     if (this.isShadow()) {
       blockTypeText = 'replaceable block';
@@ -299,15 +283,8 @@ export class BlockSvg
     }
 
     let additionalInfo = blockTypeText;
-    if (inputSummary && !nestedStatementBlockCount) {
+    if (inputSummary) {
       additionalInfo = `${additionalInfo} with ${inputSummary}`;
-    } else if (nestedStatementBlockCount) {
-      const childBlockSummary = `${nestedStatementBlockCount} child ${nestedStatementBlockCount > 1 ? 'blocks' : 'block'}`;
-      if (inputSummary) {
-        additionalInfo = `${additionalInfo} with ${inputSummary} and ${childBlockSummary}`;
-      } else {
-        additionalInfo = `${additionalInfo} with ${childBlockSummary}`;
-      }
     }
 
     return prefix + blockSummary + ', ' + additionalInfo;
