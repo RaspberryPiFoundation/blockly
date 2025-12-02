@@ -244,9 +244,7 @@ export class BlockSvg
 
   private computeAriaLabel(): string {
     const {blockSummary, inputCount} = buildBlockSummary(this);
-    const inputSummary = inputCount
-      ? ` ${inputCount} ${inputCount > 1 ? 'inputs' : 'input'}`
-      : '';
+    const inputSummary = inputCount >= 1 ? 'has inputs' : '';
 
     let currentBlock: BlockSvg | null = null;
     let nestedStatementBlockCount = 0;
@@ -300,11 +298,11 @@ export class BlockSvg
 
     let additionalInfo = blockTypeText;
     if (inputSummary && !nestedStatementBlockCount) {
-      additionalInfo = `${additionalInfo} with ${inputSummary}`;
+      additionalInfo = `${additionalInfo}, ${inputSummary}`;
     } else if (nestedStatementBlockCount) {
       const childBlockSummary = `${nestedStatementBlockCount} child ${nestedStatementBlockCount > 1 ? 'blocks' : 'block'}`;
       if (inputSummary) {
-        additionalInfo = `${additionalInfo} with ${inputSummary} and ${childBlockSummary}`;
+        additionalInfo = `${additionalInfo}, ${inputSummary} and ${childBlockSummary}`;
       } else {
         additionalInfo = `${additionalInfo} with ${childBlockSummary}`;
       }
