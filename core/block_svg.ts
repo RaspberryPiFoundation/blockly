@@ -244,7 +244,12 @@ export class BlockSvg
 
   private computeAriaLabel(): string {
     const {blockSummary, inputCount} = buildBlockSummary(this);
-    const inputSummary = inputCount >= 1 ? 'has inputs' : '';
+    let inputSummary = '';
+    if (inputCount > 1) {
+      inputSummary = 'has inputs';
+    } else if (inputCount === 1) {
+      inputSummary = 'has input';
+    }
 
     let currentBlock: BlockSvg | null = null;
     let nestedStatementBlockCount = 0;
