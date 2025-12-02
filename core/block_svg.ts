@@ -301,6 +301,10 @@ export class BlockSvg
       prefix = `${parentInput.getFieldRowLabel()} `;
     }
 
+    if (this.getRootBlock() === this) {
+      prefix = 'Begin stack, ' + prefix;
+    }
+
     let additionalInfo = blockTypeText;
     if (inputSummary && !nestedStatementBlockCount) {
       additionalInfo = `${additionalInfo} with ${inputSummary}`;
