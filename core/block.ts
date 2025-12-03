@@ -962,16 +962,43 @@ export class Block {
   }
 
   /**
-   * @returns True if this block is a value block with a single editable field.
+   * @returns True if this block is a value block with a full block field.
+   * @param mustBeFullBlock Whether the evaluated field must be 'full-block'.
+   * @param mustBeEditable Whether the evaluated field must be editable.
    * @internal
    */
-  isSimpleReporter(): boolean {
-    if (!this.outputConnection) return false;
+  isSimpleReporter(
+    mustBeFullBlock: boolean = false,
+    mustBeEditable: boolean = false,
+  ): boolean {
+    return (
+      this.getSingletonFullBlockField(mustBeFullBlock, mustBeEditable) !== null
+    );
+  }
 
-    for (const input of this.inputList) {
-      if (input.connection || input.fieldRow.length > 1) return false;
-    }
-    return true;
+  /**
+   * Determines and returns the only field of this block, or null if there isn't
+   * one and this block can't be considered a simple reporter. Null will also be
+   * returned if the singleton block doesn't match additional criteria, if set,
+   * such as being full-block or editable.
+   *
+   * @param mustBeFullBlock Whether the returned field must be 'full-block'.
+   * @param mustBeEditable Whether the returned field must be editable.
+   * @returns The only full-block, maybe editable field of this block, or null.
+   * @internal
+   */
+  getSingletonFullBlockField(
+    mustBeFullBlock: boolean,
+    mustBeEditable: boolean,
+  ): Field<any> | null {
+    if (!this.outputConnection) return null;
+    for (const input of this.inputList) if (input.connection) return null;
+    const matchingFields = Array.from(this.getFields()).filter((field) => {
+      if (mustBeFullBlock && !field.isFullBlockField()) return false;
+      if (mustBeEditable && !field.isCurrentlyEditable()) return false;
+      return true;
+    });
+    return matchingFields.length === 1 ? matchingFields[0] : null;
   }
 
   /**

@@ -389,12 +389,9 @@ export abstract class Field<T = any>
     this.initModel();
     this.applyColour();
 
-    const id =
-      this.isFullBlockField() &&
-      this.isCurrentlyEditable() &&
-      this.sourceBlock_?.isSimpleReporter()
-        ? idGenerator.getNextUniqueId()
-        : `${this.sourceBlock_?.id}_field_${idGenerator.getNextUniqueId()}`;
+    const id = this.sourceBlock_?.isSimpleReporter(true, true)
+      ? idGenerator.getNextUniqueId()
+      : `${this.sourceBlock_?.id}_field_${idGenerator.getNextUniqueId()}`;
     this.fieldGroup_.setAttribute('id', id);
   }
 

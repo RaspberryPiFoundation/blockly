@@ -226,6 +226,11 @@ export class Toolbox
       contentsContainer.style.flexDirection = 'row';
     }
     aria.setRole(contentsContainer, aria.Role.TREE);
+    aria.setState(
+      contentsContainer,
+      aria.State.LABEL,
+      Msg['TOOLBOX_ARIA_LABEL'],
+    );
     return contentsContainer;
   }
 

@@ -233,10 +233,7 @@ export class BlockSvg
    * @internal
    */
   recomputeAriaLabel() {
-    if (this.isSimpleReporter()) {
-      const field = Array.from(this.getFields())[0];
-      if (field.isFullBlockField() && field.isCurrentlyEditable()) return;
-    }
+    if (this.isSimpleReporter(true, true)) return;
 
     aria.setState(
       this.getFocusableElement(),
@@ -245,26 +242,16 @@ export class BlockSvg
     );
   }
 
-  computeAriaLabel(verbose: boolean = false): string {
-    const {blockSummary, inputCount} = buildBlockSummary(this, verbose);
-    const inputSummary = inputCount
-      ? ` ${inputCount} ${inputCount > 1 ? 'inputs' : 'input'}`
-      : '';
-
-    let currentBlock: BlockSvg | null = null;
-    let nestedStatementBlockCount = 0;
-
-    for (const input of this.inputList) {
-      if (
-        input.connection &&
-        input.connection.type === ConnectionType.NEXT_STATEMENT
-      ) {
-        currentBlock = input.connection.targetBlock() as BlockSvg | null;
-        while (currentBlock) {
-          nestedStatementBlockCount++;
-          currentBlock = currentBlock.getNextBlock();
-        }
-      }
+  private computeAriaLabel(verbose: boolean = false): string {
+    const {commaSeparatedSummary, inputCount} = buildBlockSummary(
+      this,
+      verbose,
+    );
+    let inputSummary = '';
+    if (inputCount > 1) {
+      inputSummary = 'has inputs';
+    } else if (inputCount === 1) {
+      inputSummary = 'has input';
     }
 
     let blockTypeText = 'block';
@@ -301,19 +288,16 @@ export class BlockSvg
       prefix = `${parentInput.getFieldRowLabel()} `;
     }
 
-    let additionalInfo = blockTypeText;
-    if (inputSummary && !nestedStatementBlockCount) {
-      additionalInfo = `${additionalInfo} with ${inputSummary}`;
-    } else if (nestedStatementBlockCount) {
-      const childBlockSummary = `${nestedStatementBlockCount} child ${nestedStatementBlockCount > 1 ? 'blocks' : 'block'}`;
-      if (inputSummary) {
-        additionalInfo = `${additionalInfo} with ${inputSummary} and ${childBlockSummary}`;
-      } else {
-        additionalInfo = `${additionalInfo} with ${childBlockSummary}`;
-      }
+    if (this.getRootBlock() === this) {
+      prefix = 'Begin stack, ' + prefix;
     }
 
-    return prefix + blockSummary + ', ' + additionalInfo;
+    let additionalInfo = blockTypeText;
+    if (inputSummary) {
+      additionalInfo = `${additionalInfo}, ${inputSummary}`;
+    }
+
+    return prefix + commaSeparatedSummary + ', ' + additionalInfo;
   }
 
   private computeAriaRole() {
@@ -1964,13 +1948,8 @@ export class BlockSvg
 
   /** See IFocusableNode.getFocusableElement. */
   getFocusableElement(): HTMLElement | SVGElement {
-    if (this.isSimpleReporter()) {
-      const field = Array.from(this.getFields())[0];
-      if (field && field.isFullBlockField() && field.isCurrentlyEditable()) {
-        return field.getFocusableElement();
-      }
-    }
-    return this.pathObject.svgPath;
+    const singletonField = this.getSingletonFullBlockField(true, true);
+    return singletonField?.getFocusableElement() ?? this.pathObject.svgPath;
   }
 
   /** See IFocusableNode.getFocusableTree. */
@@ -2049,57 +2028,111 @@ export class BlockSvg
 
 interface BlockSummary {
   blockSummary: string;
+  commaSeparatedSummary: string;
   inputCount: number;
 }
 
 function buildBlockSummary(block: BlockSvg, verbose: boolean): BlockSummary {
   let inputCount = 0;
+
+  // Produce structured segments
+  // For example, the block:
+  //   "create list with item foo repeated 5 times"
+  // becomes:
+  //   LABEL("create list with item"),
+  //   INPUT("foo"),
+  //   LABEL("repeated")
+  //   INPUT("5"),
+  //   LABEL("times")
+  type SummarySegment =
+    | {kind: 'label'; text: string}
+    | {kind: 'input'; text: string};
+
   function recursiveInputSummary(
     block: BlockSvg,
     isNestedInput: boolean = false,
-  ): string {
-    return block.inputList
-      .flatMap((input) => {
-        const fields = input.fieldRow
-          .filter((field) => {
-            if (!field.isVisible()) return false;
-            if (field instanceof FieldImage && field.isClickable()) {
-              return false;
-            }
-            return true;
-          })
-          .map((field) => {
-            // If the block is a full block field, we only want to know if it's an
-            // editable field if we're not directly on it.
-            if (field.EDITABLE && !field.isFullBlockField() && !isNestedInput) {
-              inputCount++;
-            }
-            return field.computeAriaLabel(verbose);
-          });
-        if (
-          input.isVisible() &&
-          input.connection &&
-          input.connection.type === ConnectionType.INPUT_VALUE
-        ) {
-          if (!isNestedInput) {
+  ): SummarySegment[] {
+    return block.inputList.flatMap((input) => {
+      const fields: SummarySegment[] = input.fieldRow
+        .filter((field) => {
+          if (!field.isVisible()) return false;
+          if (field instanceof FieldImage && field.isClickable()) {
+            return false;
+          }
+          return true;
+        })
+        .map((field) => {
+          const text = field.computeAriaLabel(verbose);
+          // If the block is a full block field, we only want to know if it's an
+          // editable field if we're not directly on it.
+          if (field.EDITABLE && !field.isFullBlockField() && !isNestedInput) {
             inputCount++;
+            return {kind: 'input', text};
           }
-          const targetBlock = input.connection.targetBlock();
-          if (targetBlock) {
-            return [
-              ...fields,
-              recursiveInputSummary(targetBlock as BlockSvg, true),
-            ];
-          }
+
+          return {kind: 'label', text};
+        });
+
+      if (
+        input.isVisible() &&
+        input.connection &&
+        input.connection.type === ConnectionType.INPUT_VALUE
+      ) {
+        if (!isNestedInput) {
+          inputCount++;
         }
-        return fields;
-      })
-      .join(' ');
+
+        const targetBlock = input.connection.targetBlock();
+        if (targetBlock) {
+          const nestedSegments = recursiveInputSummary(
+            targetBlock as BlockSvg,
+            true,
+          );
+
+          if (!isNestedInput) {
+            // treat the whole nested summary as a single input segment
+            const nestedText = nestedSegments.map((s) => s.text).join(' ');
+            return [...fields, {kind: 'input', text: nestedText}];
+          }
+
+          return [...fields, ...nestedSegments];
+        }
+      }
+
+      return fields;
+    });
   }
 
-  const blockSummary = recursiveInputSummary(block);
+  const segments = recursiveInputSummary(block);
+
+  const blockSummary = segments.map((s) => s.text).join(' ');
+
+  const spokenParts: string[] = [];
+  let labelRun: string[] = [];
+
+  // create runs of labels, flush when hitting an input
+  const flushLabels = () => {
+    if (!labelRun.length) return;
+    spokenParts.push(labelRun.join(' '));
+    labelRun = [];
+  };
+
+  for (const seg of segments) {
+    if (seg.kind === 'label') {
+      labelRun.push(seg.text);
+    } else {
+      flushLabels();
+      spokenParts.push(seg.text);
+    }
+  }
+  flushLabels();
+
+  // comma-separate label runs and inputs
+  const commaSeparatedSummary = spokenParts.join(', ');
+
   return {
     blockSummary,
+    commaSeparatedSummary,
     inputCount,
   };
 }
