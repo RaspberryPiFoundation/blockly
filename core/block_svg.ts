@@ -242,7 +242,7 @@ export class BlockSvg
     );
   }
 
-  private computeAriaLabel(verbose: boolean = false): string {
+  computeAriaLabel(verbose: boolean = false): string {
     const {commaSeparatedSummary, inputCount} = buildBlockSummary(
       this,
       verbose,
