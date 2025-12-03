@@ -390,7 +390,7 @@ export function registerRedo() {
 }
 
 /**
- * Registeres a keyboard shortcut for re-reading the current selected block's
+ * Registers a keyboard shortcut for re-reading the current selected block's
  * summary with additional verbosity to help provide context on where the user
  * is currently navigated (for screen reader users only).
  */
@@ -419,7 +419,7 @@ export function registerReadFullBlockSummary() {
 }
 
 /**
- * Registeres a keyboard shortcut for re-reading the current selected block's
+ * Registers a keyboard shortcut for re-reading the current selected block's
  * parent block summary with additional verbosity to help provide context on
  * where the user is currently navigated (for screen reader users only).
  */
