@@ -307,6 +307,7 @@ export class ToolboxCategory
     if (className) {
       dom.addClass(toolboxLabel, className);
     }
+    aria.setState(toolboxLabel, aria.State.LABEL, `${name} blocks`);
     return toolboxLabel;
   }
 
