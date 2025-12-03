@@ -335,7 +335,10 @@ export class RenderedConnection
     if (highlightSvg) {
       highlightSvg.style.display = '';
       aria.setRole(highlightSvg, aria.Role.FIGURE);
-      aria.setState(highlightSvg, aria.State.ROLEDESCRIPTION, 'Connection');
+      const connectionType =
+        this.type === ConnectionType.INPUT_VALUE ? 'value' : 'statement';
+      const roleDescription = `${connectionType} block position`;
+      aria.setState(highlightSvg, aria.State.ROLEDESCRIPTION, roleDescription);
       if (this.type === ConnectionType.NEXT_STATEMENT) {
         const parentInput =
           this.getParentInput() ??
@@ -359,7 +362,7 @@ export class RenderedConnection
           `${this.getParentInput()?.getFieldRowLabel()}`,
         );
       } else {
-        aria.setState(highlightSvg, aria.State.LABEL, 'Open connection');
+        aria.setState(highlightSvg, aria.State.LABEL, 'Empty');
       }
     }
   }
