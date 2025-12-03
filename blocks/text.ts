@@ -142,9 +142,10 @@ export const blocks = createBlockDefinitionsFromJsonArray([
       {
         'type': 'field_dropdown',
         'name': 'END',
+        'ariaTypeName': 'Search direction',
         'options': [
-          ['%{BKY_TEXT_INDEXOF_OPERATOR_FIRST}', 'FIRST'],
-          ['%{BKY_TEXT_INDEXOF_OPERATOR_LAST}', 'LAST'],
+          ['%{BKY_TEXT_INDEXOF_OPERATOR_FIRST}', 'FIRST', 'First'],
+          ['%{BKY_TEXT_INDEXOF_OPERATOR_LAST}', 'LAST', 'Last'],
         ],
       },
       {
@@ -171,12 +172,13 @@ export const blocks = createBlockDefinitionsFromJsonArray([
       {
         'type': 'field_dropdown',
         'name': 'WHERE',
+        'ariaTypeName': 'Search operation',
         'options': [
-          ['%{BKY_TEXT_CHARAT_FROM_START}', 'FROM_START'],
-          ['%{BKY_TEXT_CHARAT_FROM_END}', 'FROM_END'],
-          ['%{BKY_TEXT_CHARAT_FIRST}', 'FIRST'],
-          ['%{BKY_TEXT_CHARAT_LAST}', 'LAST'],
-          ['%{BKY_TEXT_CHARAT_RANDOM}', 'RANDOM'],
+          ['%{BKY_TEXT_CHARAT_FROM_START}', 'FROM_START', 'From string start'],
+          ['%{BKY_TEXT_CHARAT_FROM_END}', 'FROM_END', 'From string end'],
+          ['%{BKY_TEXT_CHARAT_FIRST}', 'FIRST', 'First character'],
+          ['%{BKY_TEXT_CHARAT_LAST}', 'LAST', 'Last character'],
+          ['%{BKY_TEXT_CHARAT_RANDOM}', 'RANDOM', 'Random character'],
         ],
       },
     ],
