@@ -243,7 +243,7 @@ export class BlockSvg
   }
 
   private computeAriaLabel(): string {
-    const {blockSummary, inputCount} = buildBlockSummary(this);
+    const {commaSeparatedSummary, inputCount} = buildBlockSummary(this);
     const inputSummary = inputCount
       ? ` ${inputCount} ${inputCount > 1 ? 'inputs' : 'input'}`
       : '';
@@ -310,7 +310,7 @@ export class BlockSvg
       }
     }
 
-    return prefix + blockSummary + ', ' + additionalInfo;
+    return prefix + commaSeparatedSummary + ', ' + additionalInfo;
   }
 
   private computeAriaRole() {
@@ -2041,57 +2041,114 @@ export class BlockSvg
 
 interface BlockSummary {
   blockSummary: string;
+  commaSeparatedSummary: string;
   inputCount: number;
 }
 
 function buildBlockSummary(block: BlockSvg): BlockSummary {
   let inputCount = 0;
+
+  // Produce structured segments
+  // For example, the block:
+  //   "create list with item foo repeated 5 times"
+  // becomes:
+  //   LABEL("create list with item"),
+  //   INPUT("foo"),
+  //   LABEL("repeated")
+  //   INPUT("5"),
+  //   LABEL("times")
+  type SummarySegment =
+    | {kind: 'label'; text: string}
+    | {kind: 'input'; text: string};
+
   function recursiveInputSummary(
     block: BlockSvg,
     isNestedInput: boolean = false,
-  ): string {
-    return block.inputList
-      .flatMap((input) => {
-        const fields = input.fieldRow
-          .filter((field) => {
-            if (!field.isVisible()) return false;
-            if (field instanceof FieldImage && field.isClickable()) {
-              return false;
-            }
-            return true;
-          })
-          .map((field) => {
-            // If the block is a full block field, we only want to know if it's an
-            // editable field if we're not directly on it.
-            if (field.EDITABLE && !field.isFullBlockField() && !isNestedInput) {
-              inputCount++;
-            }
-            return [field.getText() ?? field.getValue()];
-          });
-        if (
-          input.isVisible() &&
-          input.connection &&
-          input.connection.type === ConnectionType.INPUT_VALUE
-        ) {
-          if (!isNestedInput) {
+  ): SummarySegment[] {
+    return block.inputList.flatMap((input) => {
+      const fields: SummarySegment[] = input.fieldRow
+        .filter((field) => {
+          if (!field.isVisible()) return false;
+          if (field instanceof FieldImage && field.isClickable()) {
+            return false;
+          }
+          return true;
+        })
+        .map((field) => {
+          const text = field.getText() ?? field.getValue();
+          // If the block is a full block field, we only want to know if it's an
+          // editable field if we're not directly on it.
+          if (field.EDITABLE && !field.isFullBlockField() && !isNestedInput) {
             inputCount++;
+            return {kind: 'input', text};
           }
-          const targetBlock = input.connection.targetBlock();
-          if (targetBlock) {
-            return [
-              ...fields,
-              recursiveInputSummary(targetBlock as BlockSvg, true),
-            ];
-          }
+
+          return {kind: 'label', text};
+        });
+
+      if (
+        input.isVisible() &&
+        input.connection &&
+        input.connection.type === ConnectionType.INPUT_VALUE
+      ) {
+        if (!isNestedInput) {
+          inputCount++;
         }
-        return fields;
-      })
-      .join(' ');
+
+        const targetBlock = input.connection.targetBlock();
+        if (targetBlock) {
+          const nestedSegments = recursiveInputSummary(
+            targetBlock as BlockSvg,
+            true,
+          );
+
+          if (!isNestedInput) {
+            // treat the whole nested summary as a single input segment
+            const nestedText = nestedSegments.map((s) => s.text).join(' ');
+            return [...fields, {kind: 'input', text: nestedText}];
+          }
+
+          return [...fields, ...nestedSegments];
+        }
+      }
+
+      return fields;
+    });
   }
 
-  const blockSummary = recursiveInputSummary(block);
+  const segments = recursiveInputSummary(block);
+
+  const blockSummary = segments.map((s) => s.text).join(' ');
+
+  const spokenParts: string[] = [];
+  let labelRun: string[] = [];
+
+  // create runs of labels, flush when hitting an input
+  const flushLabels = () => {
+    if (!labelRun.length) return;
+    spokenParts.push(labelRun.join(' '));
+    labelRun = [];
+  };
+
+  for (const seg of segments) {
+    if (seg.kind === 'label') {
+      labelRun.push(seg.text);
+    } else {
+      flushLabels();
+      spokenParts.push(seg.text);
+    }
+  }
+  flushLabels();
+
+  // comma separate label runs and inputs
+  const commaSeparatedSummary =
+    spokenParts.length <= 1
+      ? (spokenParts[0] ?? '')
+      : spokenParts[0] + ', ' + spokenParts.slice(1).join(', ');
+
   return {
     blockSummary,
+    commaSeparatedSummary,
     inputCount,
   };
 }
