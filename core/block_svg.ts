@@ -245,7 +245,7 @@ export class BlockSvg
   private computeAriaLabel(): string {
     const labelComponents = [];
 
-    if (this.getRootBlock() === this) {
+    if (!this.workspace.isFlyout && this.getRootBlock() === this) {
       labelComponents.push('Begin stack');
     }
 
