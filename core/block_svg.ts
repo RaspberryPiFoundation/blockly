@@ -2140,11 +2140,8 @@ function buildBlockSummary(block: BlockSvg): BlockSummary {
   }
   flushLabels();
 
-  // comma separate label runs and inputs
-  const commaSeparatedSummary =
-    spokenParts.length <= 1
-      ? (spokenParts[0] ?? '')
-      : spokenParts[0] + ', ' + spokenParts.slice(1).join(', ');
+  // comma-separate label runs and inputs
+  const commaSeparatedSummary = spokenParts.join(', ');
 
   return {
     blockSummary,
