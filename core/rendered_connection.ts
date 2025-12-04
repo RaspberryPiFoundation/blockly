@@ -349,7 +349,7 @@ export class RenderedConnection
           aria.setState(
             highlightSvg,
             aria.State.LABEL,
-            `${this.getParentInput() ? 'Begin' : 'End'} ${parentInput.getFieldRowLabel()}`,
+            `End ${parentInput.getFieldRowLabel()}`,
           );
         }
       } else if (
