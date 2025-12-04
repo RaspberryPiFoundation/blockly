@@ -132,6 +132,10 @@ export class FieldImage extends Field<string> {
     }
   }
 
+  override getAriaValue(): string {
+    return this.altText;
+  }
+
   /**
    * Create the block UI for this image.
    */
@@ -159,11 +163,7 @@ export class FieldImage extends Field<string> {
     if (this.isClickable()) {
       this.imageElement.style.cursor = 'pointer';
       aria.setRole(element, aria.Role.BUTTON);
-
-      const label = [this.altText, this.getAriaName()]
-        .filter((item) => !!item)
-        .join(', ');
-      aria.setState(element, aria.State.LABEL, label);
+      aria.setState(element, aria.State.LABEL, super.computeAriaLabel(true));
     } else {
       // The field isn't navigable unless it's clickable.
       aria.setRole(element, aria.Role.PRESENTATION);

@@ -242,10 +242,10 @@ export class BlockSvg
     );
   }
 
-  private computeAriaLabel(): string {
+  computeAriaLabel(verbose: boolean = false): string {
     const labelComponents = [];
 
-    if (this.getRootBlock() === this) {
+    if (!this.workspace.isFlyout && this.getRootBlock() === this) {
       labelComponents.push('Begin stack');
     }
 
@@ -262,7 +262,10 @@ export class BlockSvg
       labelComponents.push(`${parentInput.getFieldRowLabel()}`);
     }
 
-    const {commaSeparatedSummary, inputCount} = buildBlockSummary(this);
+    const {commaSeparatedSummary, inputCount} = buildBlockSummary(
+      this,
+      verbose,
+    );
     labelComponents.push(commaSeparatedSummary);
 
     if (!this.isEnabled()) {
@@ -2034,7 +2037,7 @@ interface BlockSummary {
   inputCount: number;
 }
 
-function buildBlockSummary(block: BlockSvg): BlockSummary {
+function buildBlockSummary(block: BlockSvg, verbose: boolean): BlockSummary {
   let inputCount = 0;
 
   // Produce structured segments
@@ -2064,7 +2067,7 @@ function buildBlockSummary(block: BlockSvg): BlockSummary {
           return true;
         })
         .map((field) => {
-          const text = field.getText() ?? field.getValue();
+          const text = field.computeAriaLabel(verbose);
           // If the block is a full block field, we only want to know if it's an
           // editable field if we're not directly on it.
           if (field.EDITABLE && !field.isFullBlockField() && !isNestedInput) {

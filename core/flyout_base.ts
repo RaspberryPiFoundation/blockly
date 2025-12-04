@@ -338,6 +338,9 @@ export abstract class Flyout
   init(targetWorkspace: WorkspaceSvg) {
     this.targetWorkspace = targetWorkspace;
     this.workspace_.targetWorkspace = targetWorkspace;
+    if (this.targetWorkspace.isMutator) {
+      aria.setRole(this.workspace_.getFocusableElement(), aria.Role.GENERIC);
+    }
 
     this.workspace_.scrollbar = new ScrollbarPair(
       this.workspace_,
