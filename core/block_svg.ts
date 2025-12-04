@@ -274,6 +274,9 @@ export class BlockSvg
     if (this.isCollapsed()) {
       labelComponents.push('collapsed');
     }
+    if (this.isShadow()) {
+      labelComponents.push('replaceable');
+    }
 
     if (inputCount > 1) {
       labelComponents.push('has inputs');
@@ -307,9 +310,7 @@ export class BlockSvg
    * @returns The ARIA roledescription for this block.
    */
   protected getAriaRoleDescription() {
-    if (this.isShadow()) {
-      return 'replaceable block';
-    } else if (this.outputConnection) {
+    if (this.outputConnection) {
       return 'value block';
     } else if (this.statementInputCount) {
       return 'container block';
