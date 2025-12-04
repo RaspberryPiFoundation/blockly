@@ -188,13 +188,8 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
    */
   protected recomputeAriaLabel() {
     if (!this.fieldGroup_) return;
-
     const element = this.getFocusableElement();
-    const label = [this.getValue(), this.getAriaName()]
-      .filter((item) => item !== null)
-      .join(', ');
-
-    aria.setState(element, aria.State.LABEL, label);
+    aria.setState(element, aria.State.LABEL, super.computeAriaLabel());
   }
 
   override isFullBlockField(): boolean {

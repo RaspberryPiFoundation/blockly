@@ -116,10 +116,18 @@ export class FieldCheckbox extends Field<CheckboxBool> {
     this.recomputeAria();
   }
 
+  override getAriaValue(): string {
+    return this.value_ ? 'checked' : 'not checked';
+  }
+
   private recomputeAria() {
     const element = this.getFocusableElement();
     aria.setRole(element, aria.Role.CHECKBOX);
-    aria.setState(element, aria.State.LABEL, this.getAriaName() ?? 'Checkbox');
+    aria.setState(
+      element,
+      aria.State.LABEL,
+      this.getAriaTypeName() ?? 'Checkbox',
+    );
     aria.setState(element, aria.State.CHECKED, !!this.value_);
   }
 
