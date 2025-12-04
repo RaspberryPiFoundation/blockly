@@ -108,7 +108,7 @@
     "@commitlint/config-conventional": "^20.0.0",
     "@hyperjump/browser": "^1.1.4",
     "@hyperjump/json-schema": "^1.5.0",
-    "@microsoft/api-documenter": "7.22.4",
+    "@microsoft/api-documenter": "7.28.1",
     "@microsoft/api-extractor": "^7.29.5",
     "ajv": "^8.17.1",
     "async-done": "^2.0.0",
