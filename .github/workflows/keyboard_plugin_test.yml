@@ -7,7 +7,7 @@ on:
   pull_request:
   push:
     branches:
-      - develop
+      - main
 
 permissions:
   contents: read
@@ -50,7 +50,7 @@ jobs:
           npm install
           cd ..
 
-      - name: Link latest core develop with plugin
+      - name: Link latest core main with plugin
         run: |
           cd core-blockly
           npm run package
