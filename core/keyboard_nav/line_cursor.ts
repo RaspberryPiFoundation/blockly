@@ -222,6 +222,7 @@ export class LineCursor extends Marker {
   getNextNode(
     node: IFocusableNode | null,
     isValid: (p1: IFocusableNode | null) => boolean,
+    // TODO: Consider deprecating and removing this argument.
     loop: boolean,
   ): IFocusableNode | null {
     const originalLoop = this.getNavigationLoops();
@@ -286,6 +287,7 @@ export class LineCursor extends Marker {
   getPreviousNode(
     node: IFocusableNode | null,
     isValid: (p1: IFocusableNode | null) => boolean,
+    // TODO: Consider deprecating and removing this argument.
     loop: boolean,
   ): IFocusableNode | null {
     const originalLoop = this.getNavigationLoops();
