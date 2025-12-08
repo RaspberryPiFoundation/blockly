@@ -163,7 +163,7 @@ export class WorkspaceAudio {
   /**
    * Returns whether or not playing sounds is currently allowed.
    *
-   * @returns False is audio is muted or a sound has just been played, otherwise
+   * @returns False if audio is muted or a sound has just been played, otherwise
    *     true.
    */
   private isPlayingAllowed() {
