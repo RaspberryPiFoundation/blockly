@@ -692,11 +692,10 @@ export class RenderedConnection
 
   /** See IFocusableNode.canBeFocused. */
   canBeFocused(): boolean {
-    return true;
+    return this.findHighlightSvg() !== null;
   }
 
-  // TODO: Figure out how to make this private again.
-  findHighlightSvg(): SVGPathElement | null {
+  private findHighlightSvg(): SVGPathElement | null {
     // This cast is valid as TypeScript's definition is wrong. See:
     // https://github.com/microsoft/TypeScript/issues/60996.
     return document.getElementById(this.id) as

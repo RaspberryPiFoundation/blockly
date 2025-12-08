@@ -265,14 +265,7 @@ export class BlockSvg
           }
         }
         for (const connection of this.getConnections_(true)) {
-          // TODO: Somehow it's possible for a connection to be highlighted but
-          // have no focusable element. This might be some sort of race
-          // condition or perhaps dispose-esque situation happening.
-          if (
-            connection.canBeFocused() &&
-            connection.isHighlighted() &&
-            connection.findHighlightSvg() !== null
-          ) {
+          if (connection.canBeFocused()) {
             childElemIds.push(connection.getFocusableElement().id);
           }
         }
