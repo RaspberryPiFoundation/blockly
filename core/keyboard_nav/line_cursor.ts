@@ -542,6 +542,17 @@ export class LineCursor extends Marker {
    * @param newNode The new location of the cursor.
    */
   setCurNode(newNode: IFocusableNode) {
+    const oldBlock = this.getSourceBlock();
+    const newBlock = this.getSourceBlockFromNode(newNode);
+    if (
+      oldBlock &&
+      newBlock &&
+      oldBlock.getNestingLevel() !== newBlock.getNestingLevel()
+    ) {
+      newBlock.workspace
+        .getAudioManager()
+        .beep(400 + newBlock.getNestingLevel() * 40);
+    }
     getFocusManager().focusNode(newNode);
   }
 

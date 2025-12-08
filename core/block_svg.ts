@@ -1983,6 +1983,22 @@ export class BlockSvg
   }
 
   /**
+   * Returns how deeply nested this block is in parent C-shaped blocks.
+   *
+   * @internal
+   * @returns The nesting level of this block, starting at 0 for root blocks.
+   */
+  getNestingLevel(): number {
+    // Don't consider value blocks to be nested.
+    if (this.outputConnection) {
+      return this.getParent()?.getNestingLevel() ?? 0;
+    }
+
+    const surroundParent = this.getSurroundParent();
+    return surroundParent ? surroundParent.getNestingLevel() + 1 : 0;
+  }
+
+  /**
    * Announces the current dynamic state of the specified block, if any.
    *
    * An example of dynamic state is whether the block is currently being moved,
