@@ -181,7 +181,8 @@ function getBlockNavigationCandidates(
  * `delta` relative to the current element's stack when navigating backwards.
  */
 export function navigateStacks(current: ISelectable, delta: number) {
-  const stacks: IFocusableNode[] = (current.workspace as WorkspaceSvg)
+  const workspace = current.workspace as WorkspaceSvg;
+  const stacks: IFocusableNode[] = workspace
     .getTopBoundedElements(true)
     .filter((element: IBoundedElement) => isFocusableNode(element));
   const currentIndex = stacks.indexOf(
@@ -189,12 +190,15 @@ export function navigateStacks(current: ISelectable, delta: number) {
   );
   const targetIndex = currentIndex + delta;
   let result: IFocusableNode | null = null;
+  const loop = workspace.getCursor().getNavigationLoops();
   if (targetIndex >= 0 && targetIndex < stacks.length) {
     result = stacks[targetIndex];
-  } else if (targetIndex < 0) {
+  } else if (loop && targetIndex < 0) {
     result = stacks[stacks.length - 1];
-  } else if (targetIndex >= stacks.length) {
+  } else if (loop && targetIndex >= stacks.length) {
     result = stacks[0];
+  } else {
+    return null;
   }
 
   // When navigating to a previous block stack, our previous sibling is the last

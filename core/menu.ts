@@ -280,7 +280,7 @@ export class Menu {
    */
   highlightNext() {
     const index = this.highlightedItem
-      ? this.menuItems.indexOf(this.highlightedItem)
+      ? this.getMenuItems().indexOf(this.highlightedItem)
       : -1;
     this.highlightHelper(index, 1);
   }
@@ -293,7 +293,7 @@ export class Menu {
    */
   highlightPrevious() {
     const index = this.highlightedItem
-      ? this.menuItems.indexOf(this.highlightedItem)
+      ? this.getMenuItems().indexOf(this.highlightedItem)
       : -1;
     this.highlightHelper(index < 0 ? this.menuItems.length : index, -1);
   }

@@ -42,6 +42,9 @@ export class LineCursor extends Marker {
   /** Locations to try moving the cursor to after a deletion. */
   private potentialNodes: IFocusableNode[] | null = null;
 
+  /** Whether or not navigation loops around when reaching the end. */
+  private navigationLoops = true;
+
   /**
    * @param workspace The workspace this cursor belongs to.
    */
@@ -64,7 +67,7 @@ export class LineCursor extends Marker {
     const newNode = this.getNextNode(
       curNode,
       this.getValidationFunction(NavigationDirection.NEXT),
-      true,
+      this.getNavigationLoops(),
     );
 
     if (newNode) {
@@ -89,7 +92,7 @@ export class LineCursor extends Marker {
     const newNode = this.getNextNode(
       curNode,
       this.getValidationFunction(NavigationDirection.IN),
-      true,
+      this.getNavigationLoops(),
     );
 
     if (newNode) {
@@ -112,7 +115,7 @@ export class LineCursor extends Marker {
     const newNode = this.getPreviousNode(
       curNode,
       this.getValidationFunction(NavigationDirection.PREVIOUS),
-      true,
+      this.getNavigationLoops(),
     );
 
     if (newNode) {
@@ -137,7 +140,7 @@ export class LineCursor extends Marker {
     const newNode = this.getPreviousNode(
       curNode,
       this.getValidationFunction(NavigationDirection.OUT),
-      true,
+      this.getNavigationLoops(),
     );
 
     if (newNode) {
@@ -158,12 +161,12 @@ export class LineCursor extends Marker {
     const inNode = this.getNextNode(
       curNode,
       this.getValidationFunction(NavigationDirection.IN),
-      true,
+      this.getNavigationLoops(),
     );
     const nextNode = this.getNextNode(
       curNode,
       this.getValidationFunction(NavigationDirection.NEXT),
-      true,
+      this.getNavigationLoops(),
     );
 
     return inNode === nextNode;
@@ -219,11 +222,22 @@ export class LineCursor extends Marker {
   getNextNode(
     node: IFocusableNode | null,
     isValid: (p1: IFocusableNode | null) => boolean,
+    // TODO: Consider deprecating and removing this argument.
     loop: boolean,
   ): IFocusableNode | null {
-    if (!node || (!loop && this.getLastNode() === node)) return null;
+    const originalLoop = this.getNavigationLoops();
+    this.setNavigationLoops(loop);
 
-    return this.getNextNodeImpl(node, isValid);
+    let result: IFocusableNode | null;
+    if (!node || (!loop && this.getLastNode() === node)) {
+      result = null;
+    } else {
+      result = this.getNextNodeImpl(node, isValid);
+    }
+
+    this.setNavigationLoops(originalLoop);
+
+    return result;
   }
 
   /**
@@ -273,11 +287,22 @@ export class LineCursor extends Marker {
   getPreviousNode(
     node: IFocusableNode | null,
     isValid: (p1: IFocusableNode | null) => boolean,
+    // TODO: Consider deprecating and removing this argument.
     loop: boolean,
   ): IFocusableNode | null {
-    if (!node || (!loop && this.getFirstNode() === node)) return null;
+    const originalLoop = this.getNavigationLoops();
+    this.setNavigationLoops(loop);
 
-    return this.getPreviousNodeImpl(node, isValid);
+    let result: IFocusableNode | null;
+    if (!node || (!loop && this.getFirstNode() === node)) {
+      result = null;
+    } else {
+      result = this.getPreviousNodeImpl(node, isValid);
+    }
+
+    this.setNavigationLoops(originalLoop);
+
+    return result;
   }
 
   /**
@@ -537,6 +562,24 @@ export class LineCursor extends Marker {
   getLastNode(): IFocusableNode | null {
     const first = this.getFirstNode();
     return this.getPreviousNode(first, () => true, true);
+  }
+
+  /**
+   * Sets whether or not navigation should loop around when reaching the end
+   * of the workspace.
+   *
+   * @param loops True if navigation should loop around, otherwise false.
+   */
+  setNavigationLoops(loops: boolean) {
+    this.navigationLoops = loops;
+  }
+
+  /**
+   * Returns whether or not navigation loops around when reaching the end of
+   * the workspace.
+   */
+  getNavigationLoops(): boolean {
+    return this.navigationLoops;
   }
 }
 

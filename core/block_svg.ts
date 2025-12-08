@@ -296,73 +296,87 @@ export class BlockSvg
   }
 
   computeAriaLabel(verbose: boolean = false): string {
-    const {commaSeparatedSummary, inputCount} = buildBlockSummary(
-      this,
-      verbose,
-    );
-    let inputSummary = '';
-    if (inputCount > 1) {
-      inputSummary = 'has inputs';
-    } else if (inputCount === 1) {
-      inputSummary = 'has input';
+    const labelComponents = [];
+
+    if (!this.workspace.isFlyout && this.getRootBlock() === this) {
+      labelComponents.push('Begin stack');
     }
 
-    let blockTypeText = 'block';
-    if (this.isShadow()) {
-      blockTypeText = 'replaceable block';
-    } else if (this.outputConnection) {
-      blockTypeText = 'input block';
-    } else if (this.statementInputCount) {
-      blockTypeText = 'C-shaped block';
-    }
-
-    const modifiers = [];
-    if (!this.isEnabled()) {
-      modifiers.push('disabled');
-    }
-    if (this.isCollapsed()) {
-      modifiers.push('collapsed');
-    }
-    if (modifiers.length) {
-      blockTypeText = `${modifiers.join(' ')} ${blockTypeText}`;
-    }
-
-    let prefix = '';
     const parentInput = (
       this.previousConnection ?? this.outputConnection
     )?.targetConnection?.getParentInput();
-    if (parentInput && parentInput.type === inputTypes.STATEMENT) {
-      prefix = `Begin ${parentInput.getFieldRowLabel()}, `;
+    if (
+      parentInput &&
+      parentInput.type === inputTypes.STATEMENT &&
+      // The first statement input is redundant with the parent block's label.
+      parentInput !==
+        parentInput
+          .getSourceBlock()
+          .inputList.find((input) => input.type === inputTypes.STATEMENT)
+    ) {
+      labelComponents.push(`Begin ${parentInput.getFieldRowLabel()}`);
     } else if (
       parentInput &&
       parentInput.type === inputTypes.VALUE &&
       this.getParent()?.statementInputCount
     ) {
-      prefix = `${parentInput.getFieldRowLabel()} `;
+      labelComponents.push(`${parentInput.getFieldRowLabel()}`);
     }
 
-    if (this.getRootBlock() === this) {
-      prefix = 'Begin stack, ' + prefix;
+    const {commaSeparatedSummary, inputCount} = buildBlockSummary(
+      this,
+      verbose,
+    );
+    labelComponents.push(commaSeparatedSummary);
+
+    if (!this.isEnabled()) {
+      labelComponents.push('disabled');
+    }
+    if (this.isCollapsed()) {
+      labelComponents.push('collapsed');
+    }
+    if (this.isShadow()) {
+      labelComponents.push('replaceable');
     }
 
-    let additionalInfo = blockTypeText;
-    if (inputSummary) {
-      additionalInfo = `${additionalInfo}, ${inputSummary}`;
+    if (inputCount > 1) {
+      labelComponents.push('has inputs');
+    } else if (inputCount === 1) {
+      labelComponents.push('has input');
     }
 
-    return prefix + commaSeparatedSummary + ', ' + additionalInfo;
+    return labelComponents.join(', ');
   }
 
   private computeAriaRole() {
     if (this.workspace.isFlyout) {
       aria.setRole(this.pathObject.svgPath, aria.Role.TREEITEM);
     } else {
+      const roleDescription = this.getAriaRoleDescription();
       aria.setState(
         this.pathObject.svgPath,
         aria.State.ROLEDESCRIPTION,
-        'block',
+        roleDescription,
       );
       aria.setRole(this.pathObject.svgPath, aria.Role.FIGURE);
+    }
+  }
+
+  /**
+   * Returns the ARIA role description for this block.
+   *
+   * Block definitions may override this method via a mixin to customize
+   * their role description.
+   *
+   * @returns The ARIA roledescription for this block.
+   */
+  protected getAriaRoleDescription() {
+    if (this.outputConnection) {
+      return 'value block';
+    } else if (this.statementInputCount) {
+      return 'container block';
+    } else {
+      return 'statement block';
     }
   }
 

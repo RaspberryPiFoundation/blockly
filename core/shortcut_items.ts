@@ -393,9 +393,11 @@ export function registerRedo() {
  * Registers a keyboard shortcut for re-reading the current selected block's
  * summary with additional verbosity to help provide context on where the user
  * is currently navigated (for screen reader users only).
+ *
+ * This works when a block is selected, or some other part of a block
+ * such as a field or icon.
  */
 export function registerReadFullBlockSummary() {
-  const i = ShortcutRegistry.registry.createSerializedKey(KeyCodes.I, null);
   const readFullBlockSummaryShortcut: KeyboardShortcut = {
     name: names.READ_FULL_BLOCK_SUMMARY,
     preconditionFn(workspace) {
@@ -403,17 +405,19 @@ export function registerReadFullBlockSummary() {
         !workspace.isDragging() &&
         !getFocusManager().ephemeralFocusTaken() &&
         !!getFocusManager().getFocusedNode() &&
-        getFocusManager().getFocusedNode() instanceof BlockSvg
+        // Either a block or something that has a parent block is focused
+        !!workspace.getCursor().getSourceBlock()
       );
     },
-    callback(_, e) {
-      const selectedBlock = getFocusManager().getFocusedNode() as BlockSvg;
+    callback(workspace, e) {
+      const selectedBlock = workspace.getCursor().getSourceBlock();
+      if (!selectedBlock) return false;
       const blockSummary = selectedBlock.computeAriaLabel(true);
       aria.announceDynamicAriaState(`Current block: ${blockSummary}`);
       e.preventDefault();
       return true;
     },
-    keyCodes: [i],
+    keyCodes: [KeyCodes.I],
   };
   ShortcutRegistry.registry.register(readFullBlockSummaryShortcut);
 }
@@ -434,11 +438,13 @@ export function registerReadBlockParentSummary() {
         !workspace.isDragging() &&
         !getFocusManager().ephemeralFocusTaken() &&
         !!getFocusManager().getFocusedNode() &&
-        getFocusManager().getFocusedNode() instanceof BlockSvg
+        // Either a block or something that has a parent block is focused
+        !!workspace.getCursor().getSourceBlock()
       );
     },
-    callback(_, e) {
-      const selectedBlock = getFocusManager().getFocusedNode() as BlockSvg;
+    callback(workspace, e) {
+      const selectedBlock = workspace.getCursor().getSourceBlock();
+      if (!selectedBlock) return false;
       const parentBlock = selectedBlock.getParent();
       if (parentBlock) {
         const blockSummary = parentBlock.computeAriaLabel(true);

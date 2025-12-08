@@ -124,20 +124,11 @@ export class WorkspaceAudio {
    * @param opt_volume Volume of sound (0-1).
    */
   play(name: string, opt_volume?: number) {
-    if (this.muted) {
-      return;
-    }
+    if (!this.isPlayingAllowed()) return;
+
     const sound = this.sounds.get(name);
     if (sound) {
-      // Don't play one sound on top of another.
-      const now = new Date();
-      if (
-        this.lastSound !== null &&
-        now.getTime() - this.lastSound.getTime() < SOUND_LIMIT
-      ) {
-        return;
-      }
-      this.lastSound = now;
+      this.lastSound = new Date();
       let mySound;
       if (userAgent.IPAD || userAgent.ANDROID) {
         // Creating a new audio node causes lag in Android and iPad.  Android
@@ -167,5 +158,51 @@ export class WorkspaceAudio {
    */
   getMuted(): boolean {
     return this.muted;
+  }
+
+  /**
+   * Returns whether or not playing sounds is currently allowed.
+   *
+   * @returns False if audio is muted or a sound has just been played, otherwise
+   *     true.
+   */
+  private isPlayingAllowed() {
+    const now = new Date();
+
+    if (
+      this.getMuted() ||
+      (this.lastSound !== null &&
+        now.getTime() - this.lastSound.getTime() < SOUND_LIMIT)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Plays a brief beep at the given frequency.
+   *
+   * @param tone The frequency of the beep to play.
+   */
+  beep(tone: number) {
+    if (!this.isPlayingAllowed()) return;
+    this.lastSound = new Date();
+
+    const context = new AudioContext();
+
+    const oscillator = context.createOscillator();
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(tone, context.currentTime);
+
+    const gainNode = context.createGain();
+    gainNode.gain.setValueAtTime(0, context.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.5, context.currentTime + 0.01); // Fade in
+    gainNode.gain.linearRampToValueAtTime(0, context.currentTime + 0.2); // Fade out
+
+    oscillator.connect(gainNode);
+    gainNode.connect(context.destination);
+
+    oscillator.start(context.currentTime);
+    oscillator.stop(context.currentTime + 0.2);
   }
 }
