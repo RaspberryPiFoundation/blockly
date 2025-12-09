@@ -56,6 +56,8 @@ import {RenderedConnection} from './rendered_connection.js';
 import type {IPathObject} from './renderers/common/i_path_object.js';
 import * as blocks from './serialization/blocks.js';
 import type {BlockStyle} from './theme.js';
+import {ToolboxCategory} from './toolbox/category.js';
+import {Toolbox} from './toolbox/toolbox.js';
 import * as Tooltip from './tooltip.js';
 import {idGenerator} from './utils.js';
 import * as aria from './utils/aria.js';
@@ -2140,6 +2142,38 @@ function buildBlockSummary(block: BlockSvg, verbose: boolean): BlockSummary {
     }
   }
   flushLabels();
+
+  if (verbose) {
+    const toolbox = block.workspace.getToolbox();
+    let parentCategory: ToolboxCategory | undefined = undefined;
+    let colourMatchingCategory: ToolboxCategory | undefined = undefined;
+    if (toolbox instanceof Toolbox) {
+      for (const category of toolbox.getToolboxItems()) {
+        if (!(category instanceof ToolboxCategory)) continue;
+        if (category.getColour() === block.getColour()) {
+          colourMatchingCategory = category;
+        }
+        const contents = category.getContents();
+        if (!Array.isArray(contents)) break;
+        for (const item of contents) {
+          if (
+            item.kind.toLowerCase() === 'block' &&
+            'type' in item &&
+            item.type === block.type
+          ) {
+            parentCategory = category;
+            break;
+          }
+        }
+        if (parentCategory) break;
+      }
+    }
+    if (parentCategory || colourMatchingCategory) {
+      spokenParts.push(
+        `${(parentCategory ?? colourMatchingCategory)?.getName()} category`,
+      );
+    }
+  }
 
   // comma-separate label runs and inputs
   const commaSeparatedSummary = spokenParts.join(', ');
