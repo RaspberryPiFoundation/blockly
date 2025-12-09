@@ -264,10 +264,14 @@ export class BlockSvg
             childElemIds.push(icon.getFocusableElement().id);
           }
         }
-        for (const connection of this.getConnections_(true)) {
-          if (connection.canBeFocused()) {
-            childElemIds.push(connection.getFocusableElement().id);
-          }
+        const connection = input.connection as RenderedConnection | null;
+        if (
+          connection &&
+          connection.canBeFocused() &&
+          (connection.type === ConnectionType.INPUT_VALUE ||
+            connection.type === ConnectionType.NEXT_STATEMENT)
+        ) {
+          childElemIds.push(connection.getFocusableElement().id);
         }
       }
       aria.setState(this.getBlockSvgFocusElem(), aria.State.OWNS, childElemIds);
