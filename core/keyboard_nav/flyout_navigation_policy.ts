@@ -60,6 +60,9 @@ export class FlyoutNavigationPolicy<T> implements INavigationPolicy<T> {
     if (index === -1) return null;
     index++;
     if (index >= flyoutContents.length) {
+      if (!this.flyout.getWorkspace().getCursor().getNavigationLoops()) {
+        return null;
+      }
       index = 0;
     }
 
@@ -83,6 +86,9 @@ export class FlyoutNavigationPolicy<T> implements INavigationPolicy<T> {
     if (index === -1) return null;
     index--;
     if (index < 0) {
+      if (!this.flyout.getWorkspace().getCursor().getNavigationLoops()) {
+        return null;
+      }
       index = flyoutContents.length - 1;
     }
 
