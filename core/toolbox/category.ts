@@ -383,6 +383,7 @@ export class ToolboxCategory
 
   /**
    * Returns the colour of this category.
+   *
    * @internal
    */
   getColour() {
