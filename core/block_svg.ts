@@ -56,8 +56,7 @@ import {RenderedConnection} from './rendered_connection.js';
 import type {IPathObject} from './renderers/common/i_path_object.js';
 import * as blocks from './serialization/blocks.js';
 import type {BlockStyle} from './theme.js';
-import {ToolboxCategory} from './toolbox/category.js';
-import {Toolbox} from './toolbox/toolbox.js';
+import type {ToolboxCategory} from './toolbox/category.js';
 import * as Tooltip from './tooltip.js';
 import {idGenerator} from './utils.js';
 import * as aria from './utils/aria.js';
@@ -2147,9 +2146,22 @@ function buildBlockSummary(block: BlockSvg, verbose: boolean): BlockSummary {
     const toolbox = block.workspace.getToolbox();
     let parentCategory: ToolboxCategory | undefined = undefined;
     let colourMatchingCategory: ToolboxCategory | undefined = undefined;
-    if (toolbox instanceof Toolbox) {
+    if (
+      toolbox &&
+      'getToolboxItems' in toolbox &&
+      typeof toolbox.getToolboxItems === 'function'
+    ) {
       for (const category of toolbox.getToolboxItems()) {
-        if (!(category instanceof ToolboxCategory)) continue;
+        if (
+          !(
+            'getColour' in category &&
+            typeof category.getColour === 'function' &&
+            'getContents' in category &&
+            typeof category.getContents === 'function'
+          )
+        ) {
+          continue;
+        }
         if (category.getColour() === block.getColour()) {
           colourMatchingCategory = category;
         }
