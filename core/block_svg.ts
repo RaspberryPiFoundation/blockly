@@ -2150,13 +2150,13 @@ enum CoordinateShift {
   MOVE_SOUTHEAST,
   MOVE_SOUTHWEST,
   MOVE_NORTHWEST,
-  STAY_STILL
+  STAY_STILL,
 }
 
 enum AxisShift {
   SMALLER,
   SAME,
-  LARGER
+  LARGER,
 }
 
 interface BlockSummary {
