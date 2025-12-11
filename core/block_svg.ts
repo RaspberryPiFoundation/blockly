@@ -56,6 +56,7 @@ import {RenderedConnection} from './rendered_connection.js';
 import type {IPathObject} from './renderers/common/i_path_object.js';
 import * as blocks from './serialization/blocks.js';
 import type {BlockStyle} from './theme.js';
+import type {ToolboxCategory} from './toolbox/category.js';
 import * as Tooltip from './tooltip.js';
 import {idGenerator} from './utils.js';
 import * as aria from './utils/aria.js';
@@ -2048,6 +2049,22 @@ export class BlockSvg
   }
 
   /**
+   * Returns how deeply nested this block is in parent C-shaped blocks.
+   *
+   * @internal
+   * @returns The nesting level of this block, starting at 0 for root blocks.
+   */
+  getNestingLevel(): number {
+    // Don't consider value blocks to be nested.
+    if (this.outputConnection) {
+      return this.getParent()?.getNestingLevel() ?? 0;
+    }
+
+    const surroundParent = this.getSurroundParent();
+    return surroundParent ? surroundParent.getNestingLevel() + 1 : 0;
+  }
+
+  /**
    * Announces the current dynamic state of the specified block, if any.
    *
    * An example of dynamic state is whether the block is currently being moved,
@@ -2197,6 +2214,51 @@ function buildBlockSummary(block: BlockSvg, verbose: boolean): BlockSummary {
     }
   }
   flushLabels();
+
+  if (verbose) {
+    const toolbox = block.workspace.getToolbox();
+    let parentCategory: ToolboxCategory | undefined = undefined;
+    let colourMatchingCategory: ToolboxCategory | undefined = undefined;
+    if (
+      toolbox &&
+      'getToolboxItems' in toolbox &&
+      typeof toolbox.getToolboxItems === 'function'
+    ) {
+      for (const category of toolbox.getToolboxItems()) {
+        if (
+          !(
+            'getColour' in category &&
+            typeof category.getColour === 'function' &&
+            'getContents' in category &&
+            typeof category.getContents === 'function'
+          )
+        ) {
+          continue;
+        }
+        if (category.getColour() === block.getColour()) {
+          colourMatchingCategory = category;
+        }
+        const contents = category.getContents();
+        if (!Array.isArray(contents)) break;
+        for (const item of contents) {
+          if (
+            item.kind.toLowerCase() === 'block' &&
+            'type' in item &&
+            item.type === block.type
+          ) {
+            parentCategory = category;
+            break;
+          }
+        }
+        if (parentCategory) break;
+      }
+    }
+    if (parentCategory || colourMatchingCategory) {
+      spokenParts.push(
+        `${(parentCategory ?? colourMatchingCategory)?.getName()} category`,
+      );
+    }
+  }
 
   // comma-separate label runs and inputs
   const commaSeparatedSummary = spokenParts.join(', ');

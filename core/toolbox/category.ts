@@ -382,6 +382,15 @@ export class ToolboxCategory
   }
 
   /**
+   * Returns the colour of this category.
+   *
+   * @internal
+   */
+  getColour() {
+    return this.colour_;
+  }
+
+  /**
    * Gets the HTML element that is clickable.
    * The parent toolbox element receives clicks. The parent toolbox will add an
    * ID to this element so it can pass the onClick event to the correct

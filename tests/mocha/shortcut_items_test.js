@@ -560,4 +560,363 @@ suite('Keyboard Shortcut Items', function () {
       ]),
     );
   });
+
+  const blockJson = {
+    'blocks': {
+      'languageVersion': 0,
+      'blocks': [
+        {
+          'type': 'controls_repeat_ext',
+          'id': 'controls_repeat_1',
+          'x': 63,
+          'y': 88,
+          'inputs': {
+            'TIMES': {
+              'shadow': {
+                'type': 'math_number',
+                'id': 'math_number_1',
+                'fields': {
+                  'NUM': 10,
+                },
+              },
+            },
+            'DO': {
+              'block': {
+                'type': 'controls_forEach',
+                'id': 'controls_forEach_1',
+                'fields': {
+                  'VAR': {
+                    'id': '/wU7DoTDScBz~6hbq-[E',
+                  },
+                },
+                'inputs': {
+                  'LIST': {
+                    'block': {
+                      'type': 'lists_repeat',
+                      'id': 'lists_repeat_1',
+                      'inputs': {
+                        'ITEM': {
+                          'block': {
+                            'type': 'lists_getIndex',
+                            'id': 'lists_getIndex_1',
+                            'fields': {
+                              'MODE': 'GET',
+                              'WHERE': 'FROM_START',
+                            },
+                            'inputs': {
+                              'VALUE': {
+                                'block': {
+                                  'type': 'variables_get',
+                                  'id': 'Lhk_B9iVsV%BhhJ%h]m$',
+                                  'fields': {
+                                    'VAR': {
+                                      'id': '.*~ZjUJ#Sua{h6xyVp7`',
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                        'NUM': {
+                          'shadow': {
+                            'type': 'math_number',
+                            'id': 'math_number_2',
+                            'fields': {
+                              'NUM': 5,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          'type': 'controls_forEach',
+          'id': 'controls_forEach_2',
+          'x': 63,
+          'y': 288,
+          'fields': {
+            'VAR': {
+              'id': '+rcR|2HqfZ=vK}N8L{RU',
+            },
+          },
+          'inputs': {
+            'DO': {
+              'block': {
+                'type': 'controls_repeat_ext',
+                'id': 'controls_repeat_2',
+                'inputs': {
+                  'TIMES': {
+                    'shadow': {
+                      'type': 'math_number',
+                      'id': 'math_number_3',
+                      'fields': {
+                        'NUM': 10,
+                      },
+                    },
+                  },
+                },
+                'next': {
+                  'block': {
+                    'type': 'text_print',
+                    'id': 'text_print_1',
+                    'inputs': {
+                      'TEXT': {
+                        'block': {
+                          'type': 'text',
+                          'id': 'text_1',
+                          'fields': {
+                            'TEXT': 'last block inside a loop',
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          'next': {
+            'block': {
+              'type': 'text_print',
+              'id': 'text_print_2',
+              'inputs': {
+                'TEXT': {
+                  'block': {
+                    'type': 'text',
+                    'id': 'text_2',
+                    'fields': {
+                      'TEXT': 'last block on workspace',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      ],
+    },
+  };
+
+  suite('Jump shortcuts', function () {
+    setup(function () {
+      this.getFocusedNodeStub = sinon.stub(
+        Blockly.getFocusManager(),
+        'getFocusedNode',
+      );
+      this.focusNodeSpy = sinon.stub(Blockly.getFocusManager(), 'focusNode');
+      Blockly.serialization.workspaces.load(blockJson, this.workspace);
+    });
+
+    test('Home focuses current block if block is focused', function () {
+      const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
+      this.getFocusedNodeStub.returns(inListBlock);
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.HOME),
+      );
+      sinon.assert.calledWith(this.focusNodeSpy, inListBlock);
+    });
+
+    test('Home focuses owning block if field is focused', function () {
+      const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
+      const fieldToFocus = inListBlock.getField('MODE');
+      this.getFocusedNodeStub.returns(fieldToFocus);
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.HOME),
+      );
+      sinon.assert.calledWith(this.focusNodeSpy, inListBlock);
+    });
+
+    test('End focuses last input on owning block', function () {
+      const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
+      const fieldToFocus = inListBlock.getField('MODE');
+      this.getFocusedNodeStub.returns(fieldToFocus);
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.END),
+      );
+      const expectedFocus = inListBlock.getInput('AT').connection;
+      sinon.assert.calledWith(this.focusNodeSpy, expectedFocus);
+    });
+
+    test('End has no effect if block has no inputs', function () {
+      const textBlock = this.workspace.getBlockById('text_1');
+      this.getFocusedNodeStub.returns(textBlock);
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.END),
+      );
+      sinon.assert.notCalled(this.focusNodeSpy);
+    });
+
+    test('CtrlHome focuses top block in workspace if block is focused', function () {
+      const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
+      this.getFocusedNodeStub.returns(inListBlock);
+      const topBlock = this.workspace.getBlockById('controls_repeat_1');
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.HOME, [
+          Blockly.utils.KeyCodes.CTRL,
+        ]),
+      );
+      sinon.assert.calledWith(this.focusNodeSpy, topBlock);
+    });
+
+    test('CtrlHome focuses top block in workspace if field is focused', function () {
+      const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
+      const fieldToFocus = inListBlock.getField('MODE');
+      this.getFocusedNodeStub.returns(fieldToFocus);
+      const topBlock = this.workspace.getBlockById('controls_repeat_1');
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.HOME, [
+          Blockly.utils.KeyCodes.CTRL,
+        ]),
+      );
+      sinon.assert.calledWith(this.focusNodeSpy, topBlock);
+    });
+
+    test('CtrlHome focuses top block in workspace if workspace is focused', function () {
+      this.getFocusedNodeStub.returns(this.workspace);
+      const topBlock = this.workspace.getBlockById('controls_repeat_1');
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.HOME, [
+          Blockly.utils.KeyCodes.CTRL,
+        ]),
+      );
+      sinon.assert.calledWith(this.focusNodeSpy, topBlock);
+    });
+
+    test('CtrlEnd focuses last block in workspace if block is focused', function () {
+      const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
+      this.getFocusedNodeStub.returns(inListBlock);
+      const lastBlock = this.workspace.getBlockById('text_2');
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.END, [
+          Blockly.utils.KeyCodes.CTRL,
+        ]),
+      );
+      sinon.assert.calledWith(this.focusNodeSpy, lastBlock);
+    });
+
+    test('CtrlEnd focuses last block in workspace if field is focused', function () {
+      const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
+      const fieldToFocus = inListBlock.getField('MODE');
+      this.getFocusedNodeStub.returns(fieldToFocus);
+      const lastBlock = this.workspace.getBlockById('text_2');
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.END, [
+          Blockly.utils.KeyCodes.CTRL,
+        ]),
+      );
+      sinon.assert.calledWith(this.focusNodeSpy, lastBlock);
+    });
+
+    test('CtrlEnd focuses last block in workspace if workspace is focused', function () {
+      this.getFocusedNodeStub.returns(this.workspace);
+      const lastBlock = this.workspace.getBlockById('text_2');
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.END, [
+          Blockly.utils.KeyCodes.CTRL,
+        ]),
+      );
+      sinon.assert.calledWith(this.focusNodeSpy, lastBlock);
+    });
+
+    test('PageUp focuses on first block in stack', function () {
+      const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
+      const fieldToFocus = inListBlock.getField('MODE');
+      this.getFocusedNodeStub.returns(fieldToFocus);
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.PAGE_UP),
+      );
+      const expectedFocus = this.workspace.getBlockById('controls_repeat_1');
+      sinon.assert.calledWith(this.focusNodeSpy, expectedFocus);
+    });
+
+    test('PageDown focuses on last block in stack with nested row blocks', function () {
+      const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
+      const fieldToFocus = inListBlock.getField('MODE');
+      this.getFocusedNodeStub.returns(fieldToFocus);
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.PAGE_DOWN),
+      );
+      const expectedFocus = this.workspace.getBlockById('math_number_2');
+      sinon.assert.calledWith(this.focusNodeSpy, expectedFocus);
+    });
+
+    test('PageDown focuses on last block in stack with many stack blocks', function () {
+      const blockToFocus = this.workspace.getBlockById('text_1');
+      this.getFocusedNodeStub.returns(blockToFocus);
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.PAGE_DOWN),
+      );
+      const expectedFocus = this.workspace.getBlockById('text_2');
+      sinon.assert.calledWith(this.focusNodeSpy, expectedFocus);
+    });
+
+    suite('in flyout', function () {
+      test('Home has no effect', function () {
+        this.workspace.internalIsFlyout = true;
+        const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
+        this.getFocusedNodeStub.returns(inListBlock);
+        this.injectionDiv.dispatchEvent(
+          createKeyDownEvent(Blockly.utils.KeyCodes.HOME),
+        );
+        sinon.assert.notCalled(this.focusNodeSpy);
+      });
+      test('End has no effect', function () {
+        this.workspace.internalIsFlyout = true;
+        const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
+        this.getFocusedNodeStub.returns(inListBlock);
+        this.injectionDiv.dispatchEvent(
+          createKeyDownEvent(Blockly.utils.KeyCodes.END),
+        );
+        sinon.assert.notCalled(this.focusNodeSpy);
+      });
+      test('CtrlHome focuses top block in flyout workspace', function () {
+        this.workspace.internalIsFlyout = true;
+        const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
+        this.getFocusedNodeStub.returns(inListBlock);
+        const topBlock = this.workspace.getBlockById('controls_repeat_1');
+        this.injectionDiv.dispatchEvent(
+          createKeyDownEvent(Blockly.utils.KeyCodes.HOME, [
+            Blockly.utils.KeyCodes.CTRL,
+          ]),
+        );
+        sinon.assert.calledWith(this.focusNodeSpy, topBlock);
+      });
+      test('CtrlEnd focuses last block in flyout workspace', function () {
+        this.workspace.internalIsFlyout = true;
+        const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
+        this.getFocusedNodeStub.returns(inListBlock);
+        const lastBlock = this.workspace.getBlockById('text_2');
+        this.injectionDiv.dispatchEvent(
+          createKeyDownEvent(Blockly.utils.KeyCodes.END, [
+            Blockly.utils.KeyCodes.CTRL,
+          ]),
+        );
+        sinon.assert.calledWith(this.focusNodeSpy, lastBlock);
+      });
+      test('PageUp has no effect', function () {
+        this.workspace.internalIsFlyout = true;
+        const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
+        this.getFocusedNodeStub.returns(inListBlock);
+        this.injectionDiv.dispatchEvent(
+          createKeyDownEvent(Blockly.utils.KeyCodes.PAGE_UP),
+        );
+        sinon.assert.notCalled(this.focusNodeSpy);
+      });
+      test('PageDown has no effect', function () {
+        this.workspace.internalIsFlyout = true;
+        const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
+        this.getFocusedNodeStub.returns(inListBlock);
+        this.injectionDiv.dispatchEvent(
+          createKeyDownEvent(Blockly.utils.KeyCodes.PAGE_DOWN),
+        );
+        sinon.assert.notCalled(this.focusNodeSpy);
+      });
+    });
+  });
 });
