@@ -708,7 +708,11 @@ export abstract class Flyout
       }
     }
 
-    return this.normalizeSeparators(contents);
+    // TODO: Optimize this.
+    return this.normalizeSeparators(contents).map((item) => {
+      // aria.setRole(item.getElement().getFocusableElement(), aria.Role.MENUITEM);
+      return item;
+    });
   }
 
   /**

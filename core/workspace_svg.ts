@@ -804,8 +804,8 @@ export class WorkspaceSvg
     this.svgBubbleCanvas_ = this.layerManager.getBubbleLayer();
 
     if (this.isFlyout) {
-      // Use the block canvas as the primary tree parent for flyout blocks.
-      aria.setRole(this.svgBlockCanvas_, aria.Role.TREE);
+      // Use the block canvas as the primary menu for nesting.
+      aria.setRole(this.svgBlockCanvas_, aria.Role.MENU);
       aria.setState(this.svgBlockCanvas_, aria.State.LABEL, ariaLabel);
     } else {
       browserEvents.conditionalBind(

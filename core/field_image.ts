@@ -159,13 +159,14 @@ export class FieldImage extends Field<string> {
       dom.addClass(this.fieldGroup_, 'blocklyImageField');
     }
 
+    const isInFlyout = this.getSourceBlock()?.workspace?.isFlyout || false;
     const element = this.getFocusableElement();
-    if (this.isClickable()) {
+    if (!isInFlyout && this.isClickable()) {
       this.imageElement.style.cursor = 'pointer';
       aria.setRole(element, aria.Role.BUTTON);
       aria.setState(element, aria.State.LABEL, super.computeAriaLabel(true));
     } else {
-      // The field isn't navigable unless it's clickable.
+      // The field isn't navigable unless it's clickable and outside the flyout.
       aria.setRole(element, aria.Role.PRESENTATION);
     }
   }

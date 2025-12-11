@@ -283,7 +283,9 @@ export class BlockSvg
     aria.setState(
       this.getFocusableElement(),
       aria.State.LABEL,
-      this.computeAriaLabel(),
+      !this.isInFlyout
+        ? this.computeAriaLabel()
+        : this.computeAriaLabelForFlyoutBlock(),
     );
   }
 
@@ -291,6 +293,10 @@ export class BlockSvg
     // Note that this deviates from getFocusableElement() to ensure that
     // single field blocks are properly set up in the hierarchy.
     return this.pathObject.svgPath;
+  }
+
+  private computeAriaLabelForFlyoutBlock(): string {
+    return `${this.computeAriaLabel(true)}, block`;
   }
 
   computeAriaLabel(verbose: boolean = false): string {
@@ -348,7 +354,7 @@ export class BlockSvg
 
   private computeAriaRole() {
     if (this.workspace.isFlyout) {
-      aria.setRole(this.pathObject.svgPath, aria.Role.TREEITEM);
+      aria.setRole(this.pathObject.svgPath, aria.Role.MENUITEM);
     } else {
       const roleDescription = this.getAriaRoleDescription();
       aria.setState(

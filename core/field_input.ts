@@ -178,8 +178,6 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
       dom.addClass(this.fieldGroup_, 'blocklyInputField');
     }
 
-    const element = this.getFocusableElement();
-    aria.setRole(element, aria.Role.BUTTON);
     this.recomputeAriaLabel();
   }
 
@@ -189,7 +187,13 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
   protected recomputeAriaLabel() {
     if (!this.fieldGroup_) return;
     const element = this.getFocusableElement();
-    aria.setState(element, aria.State.LABEL, super.computeAriaLabel());
+    const isInFlyout = this.getSourceBlock()?.workspace?.isFlyout || false;
+    if (!isInFlyout) {
+      aria.setRole(element, aria.Role.BUTTON);
+      aria.setState(element, aria.State.LABEL, super.computeAriaLabel());
+    } else {
+      aria.setState(element, aria.State.HIDDEN, true);
+    }
   }
 
   override isFullBlockField(): boolean {

@@ -122,13 +122,18 @@ export class FieldCheckbox extends Field<CheckboxBool> {
 
   private recomputeAria() {
     const element = this.getFocusableElement();
-    aria.setRole(element, aria.Role.CHECKBOX);
-    aria.setState(
-      element,
-      aria.State.LABEL,
-      this.getAriaTypeName() ?? 'Checkbox',
-    );
-    aria.setState(element, aria.State.CHECKED, !!this.value_);
+    const isInFlyout = this.getSourceBlock()?.workspace?.isFlyout || false;
+    if (!isInFlyout) {
+      aria.setRole(element, aria.Role.CHECKBOX);
+      aria.setState(
+        element,
+        aria.State.LABEL,
+        this.getAriaTypeName() ?? 'Checkbox',
+      );
+      aria.setState(element, aria.State.CHECKED, !!this.value_);
+    } else {
+      aria.setState(element, aria.State.HIDDEN, true);
+    }
   }
 
   override render_() {
