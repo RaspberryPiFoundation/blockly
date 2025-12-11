@@ -450,10 +450,38 @@ export function registerReadBlockParentSummary() {
     callback(workspace, e) {
       const selectedBlock = workspace.getCursor().getSourceBlock();
       if (!selectedBlock) return false;
-      const parentBlock = selectedBlock.getParent();
-      if (parentBlock) {
-        const blockSummary = parentBlock.computeAriaLabel(true);
-        aria.announceDynamicAriaState(`Parent block: ${blockSummary}`);
+
+      const toAnnounce = [];
+      // First go up the chain of output connections and start finding parents from there
+      // because the outputs of a block are read anyway, so we don't need to repeat them
+
+      let startBlock = selectedBlock;
+      while (startBlock.outputConnection?.isConnected()) {
+        startBlock = startBlock.getParent()!;
+      }
+
+      if (startBlock !== selectedBlock) {
+        toAnnounce.push(
+          startBlock.computeAriaLabel(false, true, selectedBlock),
+        );
+      }
+
+      let parent = startBlock.getParent();
+      while (parent) {
+        toAnnounce.push(parent.computeAriaLabel(false, true));
+        parent = parent.getParent();
+      }
+
+      if (toAnnounce.length) {
+        toAnnounce.reverse();
+        if (!selectedBlock.outputConnection?.isConnected()) {
+          // The current block was already read out earlier if it has an output connection
+          toAnnounce.push(
+            `Current block: ${selectedBlock.computeAriaLabel(false, true)}`,
+          );
+        }
+
+        aria.announceDynamicAriaState(`Parent blocks: ${toAnnounce.join(',')}`);
       } else {
         aria.announceDynamicAriaState('Current block has no parent');
       }
