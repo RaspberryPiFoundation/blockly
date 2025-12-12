@@ -5,7 +5,7 @@
  */
 
 import {assert} from '../../node_modules/chai/index.js';
-import { createRenderedBlock } from './test_helpers/block_definitions.js';
+import {createRenderedBlock} from './test_helpers/block_definitions.js';
 import {
   sharedTestSetup,
   sharedTestTeardown,
@@ -89,12 +89,27 @@ suite('Navigation', function () {
     ]);
     this.workspace = Blockly.inject('blocklyDiv', {});
     this.navigator = this.workspace.getNavigator();
-    const statementInput1 = createRenderedBlock(this.workspace, 'input_statement');
-    const statementInput2 = createRenderedBlock(this.workspace, 'input_statement');
-    const statementInput3 = createRenderedBlock(this.workspace, 'input_statement');
-    const statementInput4 = createRenderedBlock(this.workspace, 'input_statement');
+    const statementInput1 = createRenderedBlock(
+      this.workspace,
+      'input_statement',
+    );
+    const statementInput2 = createRenderedBlock(
+      this.workspace,
+      'input_statement',
+    );
+    const statementInput3 = createRenderedBlock(
+      this.workspace,
+      'input_statement',
+    );
+    const statementInput4 = createRenderedBlock(
+      this.workspace,
+      'input_statement',
+    );
     const fieldWithOutput = createRenderedBlock(this.workspace, 'field_input');
-    const doubleValueInput = createRenderedBlock(this.workspace, 'double_value_input');
+    const doubleValueInput = createRenderedBlock(
+      this.workspace,
+      'double_value_input',
+    );
     const valueInput = createRenderedBlock(this.workspace, 'value_input');
 
     statementInput1.nextConnection.connect(statementInput2.previousConnection);
@@ -355,11 +370,23 @@ suite('Navigation', function () {
           'helpUrl': '',
         },
       ]);
-      const noNextConnection = createRenderedBlock(this.workspace, 'top_connection');
-      const fieldAndInputs = createRenderedBlock(this.workspace, 'fields_and_input');
+      const noNextConnection = createRenderedBlock(
+        this.workspace,
+        'top_connection',
+      );
+      const fieldAndInputs = createRenderedBlock(
+        this.workspace,
+        'fields_and_input',
+      );
       const twoFields = createRenderedBlock(this.workspace, 'two_fields');
-      const fieldAndInputs2 = createRenderedBlock(this.workspace, 'fields_and_input2');
-      const noPrevConnection = createRenderedBlock(this.workspace, 'start_block');
+      const fieldAndInputs2 = createRenderedBlock(
+        this.workspace,
+        'fields_and_input2',
+      );
+      const noPrevConnection = createRenderedBlock(
+        this.workspace,
+        'start_block',
+      );
       const hiddenField = createRenderedBlock(this.workspace, 'hidden_field');
       const hiddenInput = createRenderedBlock(this.workspace, 'hidden_input');
       this.blocks.noNextConnection = noNextConnection;
@@ -374,27 +401,46 @@ suite('Navigation', function () {
       hiddenInput.inputList[1].setVisible(false);
 
       const dummyInput = createRenderedBlock(this.workspace, 'dummy_input');
-      const dummyInputValue = createRenderedBlock(this.workspace, 'dummy_inputValue');
-      const fieldWithOutput2 = createRenderedBlock(this.workspace, 'field_input');
+      const dummyInputValue = createRenderedBlock(
+        this.workspace,
+        'dummy_inputValue',
+      );
+      const fieldWithOutput2 = createRenderedBlock(
+        this.workspace,
+        'field_input',
+      );
       this.blocks.dummyInput = dummyInput;
       this.blocks.dummyInputValue = dummyInputValue;
       this.blocks.fieldWithOutput2 = fieldWithOutput2;
 
-      const secondBlock = createRenderedBlock(this.workspace, 'input_statement');
-      const outputNextBlock = createRenderedBlock(this.workspace, 'output_next');
+      const secondBlock = createRenderedBlock(
+        this.workspace,
+        'input_statement',
+      );
+      const outputNextBlock = createRenderedBlock(
+        this.workspace,
+        'output_next',
+      );
       this.blocks.secondBlock = secondBlock;
       this.blocks.outputNextBlock = outputNextBlock;
 
-      const buttonBlock = createRenderedBlock(this.workspace, 'buttons', 'button_block');
-      const buttonInput1 = createRenderedBlock(this.workspace,
+      const buttonBlock = createRenderedBlock(
+        this.workspace,
+        'buttons',
+        'button_block',
+      );
+      const buttonInput1 = createRenderedBlock(
+        this.workspace,
         'field_input',
         'button_input1',
       );
-      const buttonInput2 = createRenderedBlock(this.workspace,
+      const buttonInput2 = createRenderedBlock(
+        this.workspace,
         'field_input',
         'button_input2',
       );
-      const buttonNext = createRenderedBlock(this.workspace,
+      const buttonNext = createRenderedBlock(
+        this.workspace,
         'input_statement',
         'button_next',
       );
