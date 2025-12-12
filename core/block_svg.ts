@@ -311,7 +311,7 @@ export class BlockSvg
 
   private computeAriaRole() {
     if (this.workspace.isFlyout) {
-      aria.setRole(this.pathObject.svgPath, aria.Role.MENUITEM);
+      aria.setRole(this.pathObject.svgPath, aria.Role.LISTITEM);
     } else {
       const roleDescription = this.getAriaRoleDescription();
       aria.setState(

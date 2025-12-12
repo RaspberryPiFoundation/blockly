@@ -133,12 +133,12 @@ export class FlyoutButton
     );
 
     if (this.isFlyoutLabel) {
-      aria.setRole(this.svgContainerGroup, aria.Role.MENUITEM);
+      aria.setRole(this.svgContainerGroup, aria.Role.LISTITEM);
       aria.setRole(this.svgContentGroup, aria.Role.PRESENTATION);
       this.svgFocusableGroup = this.svgContainerGroup;
     } else {
       aria.setRole(this.svgContainerGroup, aria.Role.PRESENTATION);
-      aria.setRole(this.svgContentGroup, aria.Role.MENUITEM);
+      aria.setRole(this.svgContentGroup, aria.Role.LISTITEM);
       this.svgFocusableGroup = this.svgContentGroup;
     }
     this.svgFocusableGroup.id = this.id;
