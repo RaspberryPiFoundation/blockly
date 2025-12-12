@@ -196,8 +196,8 @@ export function createTestBlock() {
   };
 }
 
-export function createRenderedBlock(workspaceSvg, type) {
-  const block = workspaceSvg.newBlock(type);
+export function createRenderedBlock(workspaceSvg, type, opt_id) {
+  const block = workspaceSvg.newBlock(type, opt_id);
   block.initSvg();
   block.render();
   return block;
