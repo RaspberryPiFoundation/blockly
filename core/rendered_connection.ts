@@ -688,7 +688,7 @@ export class RenderedConnection
 
   /** See IFocusableNode.canBeFocused. */
   canBeFocused(): boolean {
-    return this.findHighlightSvg() !== null;
+    return true;
   }
 
   private findHighlightSvg(): SVGPathElement | null {

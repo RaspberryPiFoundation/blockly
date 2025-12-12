@@ -234,73 +234,13 @@ export class BlockSvg
    * @internal
    */
   recomputeAriaLabel() {
-    if (this.initialized) {
-      const childElemIds: string[] = [];
-      for (const input of this.inputList) {
-        const connection = input.connection as RenderedConnection | null;
-        if (input.isVisible() && connection) {
-          if (connection.type === ConnectionType.NEXT_STATEMENT) {
-            let currentBlock: BlockSvg | null = connection.targetBlock();
-            while (currentBlock) {
-              if (currentBlock.canBeFocused()) {
-                childElemIds.push(currentBlock.getBlockSvgFocusElem().id);
-              }
-              currentBlock = currentBlock.getNextBlock();
-            }
-          } else if (connection.type === ConnectionType.INPUT_VALUE) {
-            const inpBlock = connection.targetBlock() as BlockSvg | null;
-            if (inpBlock && inpBlock.canBeFocused()) {
-              childElemIds.push(inpBlock.getBlockSvgFocusElem().id);
-            }
-            if (connection.canBeFocused()) {
-              childElemIds.push(connection.getFocusableElement().id);
-            }
-          }
-        }
-        for (const field of input.fieldRow) {
-          if (field.getSvgRoot() && field.canBeFocused()) {
-            // Only track the field if it's been initialized.
-            childElemIds.push(field.getFocusableElement().id);
-          }
-        }
-        for (const icon of this.icons) {
-          if (icon.canBeFocused()) {
-            childElemIds.push(icon.getFocusableElement().id);
-          }
-        }
-      }
-
-      const nextConnection = this.nextConnection as RenderedConnection | null;
-      if (
-        nextConnection &&
-        nextConnection.canBeFocused() &&
-        nextConnection.type === ConnectionType.NEXT_STATEMENT
-      ) {
-        childElemIds.push(nextConnection.getFocusableElement().id);
-      }
-
-      aria.setState(this.getBlockSvgFocusElem(), aria.State.OWNS, childElemIds);
-    }
-
     if (this.isSimpleReporter(true, true)) return;
 
     aria.setState(
       this.getFocusableElement(),
       aria.State.LABEL,
-      !this.isInFlyout
-        ? this.computeAriaLabel()
-        : this.computeAriaLabelForFlyoutBlock(),
+      this.computeAriaLabel(),
     );
-  }
-
-  private getBlockSvgFocusElem(): Element {
-    // Note that this deviates from getFocusableElement() to ensure that
-    // single field blocks are properly set up in the hierarchy.
-    return this.pathObject.svgPath;
-  }
-
-  private computeAriaLabelForFlyoutBlock(): string {
-    return `${this.computeAriaLabel(true)}, block`;
   }
 
   computeAriaLabel(
@@ -365,7 +305,7 @@ export class BlockSvg
 
   private computeAriaRole() {
     if (this.workspace.isFlyout) {
-      aria.setRole(this.pathObject.svgPath, aria.Role.MENUITEM);
+      aria.setRole(this.pathObject.svgPath, aria.Role.TREEITEM);
     } else {
       const roleDescription = this.getAriaRoleDescription();
       aria.setState(
@@ -419,7 +359,6 @@ export class BlockSvg
       this.workspace.getCanvas().appendChild(svg);
     }
     this.initialized = true;
-    this.recomputeAriaLabel();
   }
 
   /**
@@ -524,12 +463,6 @@ export class BlockSvg
     this.applyColour();
 
     this.workspace.recomputeAriaTree();
-    this.recomputeAriaLabelRecursive();
-  }
-
-  private recomputeAriaLabelRecursive() {
-    this.recomputeAriaLabel();
-    this.parentBlock_?.recomputeAriaLabelRecursive();
   }
 
   /**
