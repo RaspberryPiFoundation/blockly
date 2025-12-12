@@ -342,7 +342,7 @@ suite('Cursor', function () {
     });
     suite('one empty block', function () {
       setup(function () {
-        this.blockA = this.workspace.newBlock('empty_block');
+        this.blockA = createRenderedBlock(this.workspace, 'empty_block');
       });
       teardown(function () {
         this.workspace.clear();
@@ -359,7 +359,7 @@ suite('Cursor', function () {
 
     suite('one stack block', function () {
       setup(function () {
-        this.blockA = this.workspace.newBlock('stack_block');
+        this.blockA = createRenderedBlock(this.workspace, 'stack_block');
       });
       teardown(function () {
         this.workspace.clear();
@@ -376,7 +376,7 @@ suite('Cursor', function () {
 
     suite('one row block', function () {
       setup(function () {
-        this.blockA = this.workspace.newBlock('row_block');
+        this.blockA = createRenderedBlock(this.workspace, 'row_block');
       });
       teardown(function () {
         this.workspace.clear();
@@ -392,7 +392,7 @@ suite('Cursor', function () {
     });
     suite('one c-hat block', function () {
       setup(function () {
-        this.blockA = this.workspace.newBlock('c_hat_block');
+        this.blockA = createRenderedBlock(this.workspace, 'c_hat_block');
       });
       teardown(function () {
         this.workspace.clear();

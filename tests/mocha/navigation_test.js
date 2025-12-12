@@ -5,10 +5,10 @@
  */
 
 import {assert} from '../../node_modules/chai/index.js';
+import {createRenderedBlock} from './test_helpers/block_definitions.js';
 import {
   sharedTestSetup,
   sharedTestTeardown,
-  workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
 suite('Navigation', function () {
@@ -89,13 +89,28 @@ suite('Navigation', function () {
     ]);
     this.workspace = Blockly.inject('blocklyDiv', {});
     this.navigator = this.workspace.getNavigator();
-    const statementInput1 = this.workspace.newBlock('input_statement');
-    const statementInput2 = this.workspace.newBlock('input_statement');
-    const statementInput3 = this.workspace.newBlock('input_statement');
-    const statementInput4 = this.workspace.newBlock('input_statement');
-    const fieldWithOutput = this.workspace.newBlock('field_input');
-    const doubleValueInput = this.workspace.newBlock('double_value_input');
-    const valueInput = this.workspace.newBlock('value_input');
+    const statementInput1 = createRenderedBlock(
+      this.workspace,
+      'input_statement',
+    );
+    const statementInput2 = createRenderedBlock(
+      this.workspace,
+      'input_statement',
+    );
+    const statementInput3 = createRenderedBlock(
+      this.workspace,
+      'input_statement',
+    );
+    const statementInput4 = createRenderedBlock(
+      this.workspace,
+      'input_statement',
+    );
+    const fieldWithOutput = createRenderedBlock(this.workspace, 'field_input');
+    const doubleValueInput = createRenderedBlock(
+      this.workspace,
+      'double_value_input',
+    );
+    const valueInput = createRenderedBlock(this.workspace, 'value_input');
 
     statementInput1.nextConnection.connect(statementInput2.previousConnection);
     statementInput1.inputList[0].connection.connect(
@@ -355,13 +370,25 @@ suite('Navigation', function () {
           'helpUrl': '',
         },
       ]);
-      const noNextConnection = this.workspace.newBlock('top_connection');
-      const fieldAndInputs = this.workspace.newBlock('fields_and_input');
-      const twoFields = this.workspace.newBlock('two_fields');
-      const fieldAndInputs2 = this.workspace.newBlock('fields_and_input2');
-      const noPrevConnection = this.workspace.newBlock('start_block');
-      const hiddenField = this.workspace.newBlock('hidden_field');
-      const hiddenInput = this.workspace.newBlock('hidden_input');
+      const noNextConnection = createRenderedBlock(
+        this.workspace,
+        'top_connection',
+      );
+      const fieldAndInputs = createRenderedBlock(
+        this.workspace,
+        'fields_and_input',
+      );
+      const twoFields = createRenderedBlock(this.workspace, 'two_fields');
+      const fieldAndInputs2 = createRenderedBlock(
+        this.workspace,
+        'fields_and_input2',
+      );
+      const noPrevConnection = createRenderedBlock(
+        this.workspace,
+        'start_block',
+      );
+      const hiddenField = createRenderedBlock(this.workspace, 'hidden_field');
+      const hiddenInput = createRenderedBlock(this.workspace, 'hidden_input');
       this.blocks.noNextConnection = noNextConnection;
       this.blocks.fieldAndInputs = fieldAndInputs;
       this.blocks.twoFields = twoFields;
@@ -373,28 +400,47 @@ suite('Navigation', function () {
       hiddenField.inputList[0].fieldRow[1].setVisible(false);
       hiddenInput.inputList[1].setVisible(false);
 
-      const dummyInput = this.workspace.newBlock('dummy_input');
-      const dummyInputValue = this.workspace.newBlock('dummy_inputValue');
-      const fieldWithOutput2 = this.workspace.newBlock('field_input');
+      const dummyInput = createRenderedBlock(this.workspace, 'dummy_input');
+      const dummyInputValue = createRenderedBlock(
+        this.workspace,
+        'dummy_inputValue',
+      );
+      const fieldWithOutput2 = createRenderedBlock(
+        this.workspace,
+        'field_input',
+      );
       this.blocks.dummyInput = dummyInput;
       this.blocks.dummyInputValue = dummyInputValue;
       this.blocks.fieldWithOutput2 = fieldWithOutput2;
 
-      const secondBlock = this.workspace.newBlock('input_statement');
-      const outputNextBlock = this.workspace.newBlock('output_next');
+      const secondBlock = createRenderedBlock(
+        this.workspace,
+        'input_statement',
+      );
+      const outputNextBlock = createRenderedBlock(
+        this.workspace,
+        'output_next',
+      );
       this.blocks.secondBlock = secondBlock;
       this.blocks.outputNextBlock = outputNextBlock;
 
-      const buttonBlock = this.workspace.newBlock('buttons', 'button_block');
-      const buttonInput1 = this.workspace.newBlock(
+      const buttonBlock = createRenderedBlock(
+        this.workspace,
+        'buttons',
+        'button_block',
+      );
+      const buttonInput1 = createRenderedBlock(
+        this.workspace,
         'field_input',
         'button_input1',
       );
-      const buttonInput2 = this.workspace.newBlock(
+      const buttonInput2 = createRenderedBlock(
+        this.workspace,
         'field_input',
         'button_input2',
       );
-      const buttonNext = this.workspace.newBlock(
+      const buttonNext = createRenderedBlock(
+        this.workspace,
         'input_statement',
         'button_next',
       );
@@ -420,15 +466,6 @@ suite('Navigation', function () {
       this.workspace.cleanUp();
     });
     suite('Next', function () {
-      setup(function () {
-        this.singleBlockWorkspace = new Blockly.Workspace();
-        const singleBlock = this.singleBlockWorkspace.newBlock('two_fields');
-        this.blocks.singleBlock = singleBlock;
-      });
-      teardown(function () {
-        workspaceTeardown.call(this, this.singleBlockWorkspace);
-      });
-
       test('fromPreviousToBlock', function () {
         const prevConnection = this.blocks.statementInput1.previousConnection;
         const nextNode = this.navigator.getNextSibling(prevConnection);
@@ -471,8 +508,6 @@ suite('Navigation', function () {
       });
       test('fromFieldToNestedBlock', function () {
         const field = this.blocks.statementInput1.inputList[0].fieldRow[1];
-        const inputConnection =
-          this.blocks.statementInput1.inputList[0].connection;
         const nextNode = this.navigator.getNextSibling(field);
         assert.equal(nextNode, this.blocks.fieldWithOutput);
       });
@@ -576,7 +611,6 @@ suite('Navigation', function () {
         const prevNode = this.navigator.getPreviousSibling(
           this.blocks.fieldWithOutput,
         );
-        const outputConnection = this.blocks.fieldWithOutput.outputConnection;
         assert.equal(prevNode, [...this.blocks.statementInput1.getFields()][1]);
       });
       test('fromNextToBlock', function () {
@@ -617,14 +651,12 @@ suite('Navigation', function () {
         assert.isNull(prevNode);
       });
       test('fromFieldToInput', function () {
-        const outputBlock = this.workspace.newBlock('field_input');
+        const outputBlock = createRenderedBlock(this.workspace, 'field_input');
         this.blocks.fieldAndInputs2.inputList[0].connection.connect(
           outputBlock.outputConnection,
         );
 
         const field = this.blocks.fieldAndInputs2.inputList[1].fieldRow[0];
-        const inputConnection =
-          this.blocks.fieldAndInputs2.inputList[0].connection;
         const prevNode = this.navigator.getPreviousSibling(field);
         assert.equal(prevNode, outputBlock);
       });
@@ -701,18 +733,13 @@ suite('Navigation', function () {
     });
 
     suite('In', function () {
-      setup(function () {
-        this.emptyWorkspace = Blockly.inject(document.createElement('div'), {});
-      });
-      teardown(function () {
-        workspaceTeardown.call(this, this.emptyWorkspace);
-      });
-
       test('fromInputToOutput', function () {
+        // The first child is the connected block since the connection itself
+        // cannot be navigated to directly.
         const input = this.blocks.statementInput1.inputList[0];
         const inNode = this.navigator.getFirstChild(input.connection);
-        const outputConnection = this.blocks.fieldWithOutput.outputConnection;
-        assert.equal(inNode, outputConnection);
+        const connectedBlock = this.blocks.fieldWithOutput;
+        assert.equal(inNode, connectedBlock);
       });
       test('fromInputToNull', function () {
         const input = this.blocks.statementInput2.inputList[0];

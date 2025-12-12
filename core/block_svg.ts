@@ -237,20 +237,23 @@ export class BlockSvg
     if (this.initialized) {
       const childElemIds: string[] = [];
       for (const input of this.inputList) {
-        if (input.isVisible() && input.connection) {
-          if (input.connection.type === ConnectionType.NEXT_STATEMENT) {
-            let currentBlock: BlockSvg | null =
-              input.connection.targetBlock() as BlockSvg | null;
+        const connection = input.connection as RenderedConnection | null;
+        if (input.isVisible() && connection) {
+          if (connection.type === ConnectionType.NEXT_STATEMENT) {
+            let currentBlock: BlockSvg | null = connection.targetBlock();
             while (currentBlock) {
               if (currentBlock.canBeFocused()) {
                 childElemIds.push(currentBlock.getBlockSvgFocusElem().id);
               }
               currentBlock = currentBlock.getNextBlock();
             }
-          } else if (input.connection.type === ConnectionType.INPUT_VALUE) {
-            const inpBlock = input.connection.targetBlock() as BlockSvg | null;
+          } else if (connection.type === ConnectionType.INPUT_VALUE) {
+            const inpBlock = connection.targetBlock() as BlockSvg | null;
             if (inpBlock && inpBlock.canBeFocused()) {
               childElemIds.push(inpBlock.getBlockSvgFocusElem().id);
+            }
+            if (connection.canBeFocused()) {
+              childElemIds.push(connection.getFocusableElement().id);
             }
           }
         }
@@ -265,16 +268,17 @@ export class BlockSvg
             childElemIds.push(icon.getFocusableElement().id);
           }
         }
-        const connection = input.connection as RenderedConnection | null;
-        if (
-          connection &&
-          connection.canBeFocused() &&
-          (connection.type === ConnectionType.INPUT_VALUE ||
-            connection.type === ConnectionType.NEXT_STATEMENT)
-        ) {
-          childElemIds.push(connection.getFocusableElement().id);
-        }
       }
+
+      const nextConnection = this.nextConnection as RenderedConnection | null;
+      if (
+        nextConnection &&
+        nextConnection.canBeFocused() &&
+        nextConnection.type === ConnectionType.NEXT_STATEMENT
+      ) {
+        childElemIds.push(nextConnection.getFocusableElement().id);
+      }
+
       aria.setState(this.getBlockSvgFocusElem(), aria.State.OWNS, childElemIds);
     }
 
