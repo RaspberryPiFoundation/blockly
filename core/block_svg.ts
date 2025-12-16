@@ -271,11 +271,7 @@ export class BlockSvg
       }
 
       const nextConnection = this.nextConnection as RenderedConnection | null;
-      if (
-        nextConnection &&
-        nextConnection.canBeFocused() &&
-        nextConnection.type === ConnectionType.NEXT_STATEMENT
-      ) {
+      if (nextConnection && nextConnection.canBeFocused()) {
         childElemIds.push(nextConnection.getFocusableElement().id);
       }
 
