@@ -208,17 +208,21 @@ export class FieldDropdown extends Field<string> {
 
   protected recomputeAria() {
     if (!this.fieldGroup_) return; // There's no element to set currently.
+    const isInFlyout = this.getSourceBlock()?.workspace?.isFlyout || false;
     const element = this.getFocusableElement();
-    aria.setRole(element, aria.Role.COMBOBOX);
-    aria.setState(element, aria.State.HASPOPUP, aria.Role.LISTBOX);
-    aria.setState(element, aria.State.EXPANDED, !!this.menu_);
-    if (this.menu_) {
-      aria.setState(element, aria.State.CONTROLS, this.menu_.id);
+    if (!isInFlyout) {
+      aria.setRole(element, aria.Role.COMBOBOX);
+      aria.setState(element, aria.State.HASPOPUP, aria.Role.LISTBOX);
+      aria.setState(element, aria.State.EXPANDED, !!this.menu_);
+      if (this.menu_) {
+        aria.setState(element, aria.State.CONTROLS, this.menu_.id);
+      } else {
+        aria.clearState(element, aria.State.CONTROLS);
+      }
+      aria.setState(element, aria.State.LABEL, super.computeAriaLabel(true));
     } else {
-      aria.clearState(element, aria.State.CONTROLS);
+      aria.setState(element, aria.State.HIDDEN, true);
     }
-
-    aria.setState(element, aria.State.LABEL, super.computeAriaLabel(true));
   }
 
   /**

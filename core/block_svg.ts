@@ -287,7 +287,9 @@ export class BlockSvg
     aria.setState(
       this.getFocusableElement(),
       aria.State.LABEL,
-      this.computeAriaLabel(),
+      !this.isInFlyout
+        ? this.computeAriaLabel()
+        : this.computeAriaLabelForFlyoutBlock(),
     );
   }
 
@@ -295,6 +297,10 @@ export class BlockSvg
     // Note that this deviates from getFocusableElement() to ensure that
     // single field blocks are properly set up in the hierarchy.
     return this.pathObject.svgPath;
+  }
+
+  private computeAriaLabelForFlyoutBlock(): string {
+    return `${this.computeAriaLabel(true)}, block`;
   }
 
   computeAriaLabel(
@@ -359,7 +365,7 @@ export class BlockSvg
 
   private computeAriaRole() {
     if (this.workspace.isFlyout) {
-      aria.setRole(this.pathObject.svgPath, aria.Role.TREEITEM);
+      aria.setRole(this.pathObject.svgPath, aria.Role.LISTITEM);
     } else {
       const roleDescription = this.getAriaRoleDescription();
       aria.setState(
@@ -1962,33 +1968,37 @@ export class BlockSvg
 
   /** Starts a drag on the block. */
   startDrag(e?: PointerEvent): void {
+    const location = this.getRelativeToSurfaceXY();
     this.dragStrategy.startDrag(e);
     const dragStrategy = this.dragStrategy as BlockDragStrategy;
     const candidate = dragStrategy.connectionCandidate?.neighbour ?? null;
     this.currentConnectionCandidate = candidate;
-    this.announceDynamicAriaState(true, false);
+    this.announceDynamicAriaState(true, false, location);
   }
 
   /** Drags the block to the given location. */
   drag(newLoc: Coordinate, e?: PointerEvent): void {
+    const prevLocation = this.getRelativeToSurfaceXY();
     this.dragStrategy.drag(newLoc, e);
     const dragStrategy = this.dragStrategy as BlockDragStrategy;
     const candidate = dragStrategy.connectionCandidate?.neighbour ?? null;
     this.currentConnectionCandidate = candidate;
-    this.announceDynamicAriaState(true, false, newLoc);
+    this.announceDynamicAriaState(true, false, prevLocation, newLoc);
   }
 
   /** Ends the drag on the block. */
   endDrag(e?: PointerEvent): void {
+    const location = this.getRelativeToSurfaceXY();
     this.dragStrategy.endDrag(e);
     this.currentConnectionCandidate = null;
-    this.announceDynamicAriaState(false, false);
+    this.announceDynamicAriaState(false, false, location);
   }
 
   /** Moves the block back to where it was at the start of a drag. */
   revertDrag(): void {
+    const location = this.getRelativeToSurfaceXY();
     this.dragStrategy.revertDrag();
-    this.announceDynamicAriaState(false, true);
+    this.announceDynamicAriaState(false, true, location);
   }
 
   /**
@@ -2085,11 +2095,14 @@ export class BlockSvg
    *
    * @param isMoving Whether the specified block is currently being moved.
    * @param isCanceled Whether the previous movement operation has been canceled.
+   * @param prevLoc Either the current location of the block, or its previous
+   *     location if it's been moved (and a newLoc is provided).
    * @param newLoc The new location the block is moving to (if unconstrained).
    */
   private announceDynamicAriaState(
     isMoving: boolean,
     isCanceled: boolean,
+    prevLoc: Coordinate,
     newLoc?: Coordinate,
   ) {
     if (isCanceled) {
@@ -2118,11 +2131,99 @@ export class BlockSvg
       aria.announceDynamicAriaState(announcementContext.join(' '));
     } else if (newLoc) {
       // The block is being freely dragged.
-      aria.announceDynamicAriaState(
-        `Moving unconstrained to coordinate x ${Math.round(newLoc.x)} and y ${Math.round(newLoc.y)}.`,
-      );
+      const direction = this.diff(prevLoc, newLoc);
+      if (direction === CoordinateShift.MOVE_NORTH) {
+        aria.announceDynamicAriaState('Moved block up.');
+      } else if (direction === CoordinateShift.MOVE_EAST) {
+        aria.announceDynamicAriaState('Moved block right.');
+      } else if (direction === CoordinateShift.MOVE_SOUTH) {
+        aria.announceDynamicAriaState('Moved block down.');
+      } else if (direction === CoordinateShift.MOVE_WEST) {
+        aria.announceDynamicAriaState('Moved block left.');
+      } else if (direction === CoordinateShift.MOVE_NORTHEAST) {
+        aria.announceDynamicAriaState('Moved block up and right.');
+      } else if (direction === CoordinateShift.MOVE_SOUTHEAST) {
+        aria.announceDynamicAriaState('Moved block down and right.');
+      } else if (direction === CoordinateShift.MOVE_SOUTHWEST) {
+        aria.announceDynamicAriaState('Moved block down and left.');
+      } else if (direction === CoordinateShift.MOVE_NORTHWEST) {
+        aria.announceDynamicAriaState('Moved block up and left.');
+      }
+      // Else don't announce anything because the block didn't move.
     }
   }
+
+  private diff(fromCoord: Coordinate, toCoord: Coordinate): CoordinateShift {
+    const xDiff = this.diffAxis(fromCoord.x, toCoord.x);
+    const yDiff = this.diffAxis(fromCoord.y, toCoord.y);
+    if (xDiff === AxisShift.SAME && yDiff == AxisShift.SAME) {
+      return CoordinateShift.STAY_STILL;
+    }
+    if (xDiff === AxisShift.SAME) {
+      // Move vertically.
+      if (yDiff === AxisShift.SMALLER) {
+        return CoordinateShift.MOVE_NORTH;
+      } else {
+        return CoordinateShift.MOVE_SOUTH;
+      }
+    } else if (yDiff === AxisShift.SAME) {
+      // Move horizontally.
+      if (xDiff === AxisShift.SMALLER) {
+        return CoordinateShift.MOVE_WEST;
+      } else {
+        return CoordinateShift.MOVE_EAST;
+      }
+    } else {
+      // Move diagonally.
+      if (xDiff === AxisShift.SMALLER) {
+        // Move left.
+        if (yDiff === AxisShift.SMALLER) {
+          return CoordinateShift.MOVE_NORTHWEST;
+        } else {
+          return CoordinateShift.MOVE_SOUTHWEST;
+        }
+      } else {
+        // Move right.
+        if (yDiff === AxisShift.SMALLER) {
+          return CoordinateShift.MOVE_NORTHEAST;
+        } else {
+          return CoordinateShift.MOVE_SOUTHEAST;
+        }
+      }
+    }
+  }
+
+  private diffAxis(fromX: number, toX: number): AxisShift {
+    if (this.isEqual(fromX, toX)) {
+      return AxisShift.SAME;
+    } else if (toX > fromX) {
+      return AxisShift.LARGER;
+    } else {
+      return AxisShift.SMALLER;
+    }
+  }
+
+  private isEqual(x: number, y: number): boolean {
+    return Math.abs(x - y) < 1e-10;
+  }
+}
+
+enum CoordinateShift {
+  MOVE_NORTH,
+  MOVE_EAST,
+  MOVE_SOUTH,
+  MOVE_WEST,
+  MOVE_NORTHEAST,
+  MOVE_SOUTHEAST,
+  MOVE_SOUTHWEST,
+  MOVE_NORTHWEST,
+  STAY_STILL,
+}
+
+enum AxisShift {
+  SMALLER,
+  SAME,
+  LARGER,
 }
 
 interface BlockSummary {

@@ -28,6 +28,7 @@ export enum Role {
 
   // ARIA role for menu item elements.
   MENUITEM = 'menuitem',
+
   // ARIA role for option items that are  children of combobox, listbox, menu,
   // radiogroup, or tree elements.
   OPTION = 'option',
@@ -55,6 +56,8 @@ export enum Role {
   SPINBUTTON = 'spinbutton',
   REGION = 'region',
   GENERIC = 'generic',
+  LIST = 'list',
+  LISTITEM = 'listitem',
 }
 
 /**

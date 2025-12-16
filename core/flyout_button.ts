@@ -132,12 +132,13 @@ export class FlyoutButton
       this.svgContainerGroup,
     );
 
-    aria.setRole(this.svgContainerGroup, aria.Role.TREEITEM);
     if (this.isFlyoutLabel) {
+      aria.setRole(this.svgContainerGroup, aria.Role.LISTITEM);
       aria.setRole(this.svgContentGroup, aria.Role.PRESENTATION);
       this.svgFocusableGroup = this.svgContainerGroup;
     } else {
-      aria.setRole(this.svgContentGroup, aria.Role.BUTTON);
+      aria.setRole(this.svgContainerGroup, aria.Role.PRESENTATION);
+      aria.setRole(this.svgContentGroup, aria.Role.LISTITEM);
       this.svgFocusableGroup = this.svgContentGroup;
     }
     this.svgFocusableGroup.id = this.id;
@@ -183,9 +184,7 @@ export class FlyoutButton
       },
       this.svgContentGroup,
     );
-    if (!this.isFlyoutLabel) {
-      aria.setRole(svgText, aria.Role.PRESENTATION);
-    }
+    aria.setRole(svgText, aria.Role.PRESENTATION);
     let text = parsing.replaceMessageReferences(this.text);
     if (this.workspace.RTL) {
       // Force text to be RTL by adding an RLM.
@@ -198,7 +197,15 @@ export class FlyoutButton
         .getThemeManager()
         .subscribe(this.svgText, 'flyoutForegroundColour', 'fill');
     }
-    aria.setState(this.svgFocusableGroup, aria.State.LABEL, text);
+    if (this.isFlyoutLabel) {
+      aria.setState(this.svgFocusableGroup, aria.State.LABEL, text);
+    } else {
+      aria.setState(
+        this.svgFocusableGroup,
+        aria.State.LABEL,
+        `${text}, button`,
+      );
+    }
 
     const fontSize = style.getComputedStyle(svgText, 'fontSize');
     const fontWeight = style.getComputedStyle(svgText, 'fontWeight');
