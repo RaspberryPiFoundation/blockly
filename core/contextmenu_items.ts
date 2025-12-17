@@ -636,7 +636,6 @@ export function registerCommentCreate() {
       if (!workspace) return;
       eventUtils.setGroup(true);
       const comment = new RenderedWorkspaceComment(workspace);
-      comment.setPlaceholderText(Msg['WORKSPACE_COMMENT_DEFAULT_TEXT']);
       comment.moveTo(
         svgMath.screenToWsCoordinates(
           workspace,

@@ -1,25 +1,23 @@
 # Blockly
 
-Google's Blockly is a library that adds a visual code editor to web and mobile apps. The Blockly editor uses interlocking, graphical blocks to represent code concepts like variables, logical expressions, loops, and more. It allows users to apply programming principles without having to worry about syntax or the intimidation of a blinking cursor on the command line. All code is free and open source.
+Blockly is a library that adds a visual code editor to web and mobile apps. The Blockly editor uses interlocking, graphical blocks to represent code concepts like variables, logical expressions, loops, and more. It allows users to apply programming principles without having to worry about syntax or the intimidation of a blinking cursor on the command line. All code is [free and open source](https://github.com/raspberrypifoundation/blockly/blob/develop/LICENSE).
 
-![](https://developers.google.com/blockly/images/sample.png)
+![Sample](./sample.svg)
 
 ## Getting Started with Blockly
 
-Blockly has many resources for learning how to use the library. Start at our [Google Developers Site](https://developers.google.com/blockly) to read the documentation on how to get started, configure Blockly, and integrate it into your application. The developers site also contains links to:
+Blockly has many resources for learning how to use the library. Start at our [Developers Site](https://developers.google.com/blockly) to read the documentation on how to get started, configure Blockly, and integrate it into your application. The developers site also contains links to:
 
 - [Getting Started article](https://developers.google.com/blockly/guides/get-started/web)
 - [Getting Started codelab](https://blocklycodelabs.dev/codelabs/getting-started/index.html#0)
 - [More codelabs](https://blocklycodelabs.dev/)
-- [Demos and plugins](https://google.github.io/blockly-samples/)
+- [Demos and plugins](https://raspberrypifoundation.github.io/blockly-samples/)
 
-Help us focus our development efforts by telling us [what you are doing with
-Blockly](https://developers.google.com/blockly/registration). The questionnaire only takes
-a few minutes and will help us better support the Blockly community.
+Help us focus our development efforts by telling us [what you are doing with Blockly](https://developers.google.com/blockly/registration). The questionnaire only takes a few minutes and will help us better support the Blockly community.
 
 ### Installing Blockly
 
-Blockly is [available on npm](https://www.npmjs.com/package/blockly).
+Blockly is [available on npm](https://www.npmjs.com/package/blockly):
 
 ```bash
 npm install blockly
@@ -34,15 +32,15 @@ For more information on installing and using Blockly, see the [Getting Started a
 
 ### blockly-samples
 
-We have a number of resources such as example code, demos, and plugins in another repository called [blockly-samples](https://github.com/google/blockly-samples/). A plugin is a self-contained piece of code that adds functionality to Blockly. Plugins can add fields, define themes, create renderers, and much more. For more information, see the [Plugins documentation](https://developers.google.com/blockly/guides/plugins/overview).
+We have a number of resources such as [examples](https://github.com/raspberrypifoundation/blockly-samples/tree/main/examples), [codelabs](https://github.com/raspberrypifoundation/blockly-samples/tree/main/codelabs), and [plugins](https://github.com/raspberrypifoundation/blockly-samples/tree/main/plugins) in another repository called [blockly-samples](https://github.com/raspberrypifoundation/blockly-samples). A plugin is a self-contained piece of code that adds functionality to Blockly. Plugins can add fields, define themes, create renderers, and much more. For more information, see the [Plugins documentation](https://developers.google.com/blockly/guides/programming/plugin_overview).
 
 ## Contributing to Blockly
 
-Want to make Blockly better? We welcome contributions to Blockly in the form of pull requests, bug reports, documentation, answers on the forum, and more! Check out our [Contributing Guidelines](https://developers.google.com/blockly/guides/modify/contributing) for more information. You might also want to look for issues tagged "[Help Wanted](https://github.com/google/blockly/labels/help%20wanted)" which are issues we think would be great for external contributors to help with.
+Want to make Blockly better? We welcome contributions to Blockly in the form of pull requests, bug reports, documentation, answers on the forum, and more! Check out our [Contributing Guidelines](https://developers.google.com/blockly/guides/modify/contributing) for more information. You might also want to look for issues tagged "[Help Wanted](https://github.com/raspberrypifoundation/blockly/labels/help%20wanted)" which are issues we think would be great for external contributors to help with.
 
 ## Releases
 
-We release by pushing the latest code to the master branch, followed by updating the npm package, our [docs](https://developers.google.com/blockly), and [demo pages](https://google.github.io/blockly-samples/). If there are breaking bugs, such as a crash when performing a standard action or a rendering issue that makes Blockly unusable, we will cherry-pick fixes to master between releases to fix them. The [releases page](https://github.com/google/blockly/releases) has a list of all releases.
+We release new versions on npm and GitHub releases, and then update our [docs](https://developers.google.com/blockly) and [demo pages](https://raspberrypifoundation.github.io/blockly-samples/). If there are breaking regressions, such as a crash when performing a standard action or a rendering issue that makes Blockly unusable, we will cherry-pick fixes into patch releases. The [releases page](https://github.com/raspberrypifoundation/blockly/releases) has a list of all releases.
 
 We use [semantic versioning](https://semver.org/). Releases that have breaking changes or are otherwise not backwards compatible will have a new major version. Patch versions are reserved for bug-fix patches between scheduled releases.
 
@@ -56,19 +54,15 @@ As it is a beta channel, it may be less stable, and the APIs there are subject t
 
 ### Branches
 
-There are two main branches for Blockly.
+Most development happens in the **[main](https://github.com/raspberrypifoundation/blockly/tree/main)** branch. Pull requests should typically be made against main. This branch should be stable; features that aren't ready yet should be merged to a feature branch instead. Once something is in main we expect it to be part of the next release. However, features and APIs here are subject to change until they are released. If you're working on a production application using Blockly, you should use the release from npm or the GitHub release page, not the `main` branch.
 
-**[master](https://github.com/google/blockly)** - This is the (mostly) stable current release of Blockly.
-
-**[develop](https://github.com/google/blockly/tree/develop)** - This is where most of our work happens. Pull requests should always be made against develop. This branch will generally be usable, but may be less stable than the master branch. Once something is in develop we expect it to merge to master in the next release.
-
-**other branches:** - Larger changes may have their own branches until they are good enough for people to try out. These will be developed separately until we think they are almost ready for release. These branches typically get merged into develop immediately after a release to allow extra time for testing.
+Larger changes may have their own branches until they are good enough for people to try out. These will be developed separately until we think they are almost ready for release. They will be merged into main when ready.
 
 ### New APIs
 
-Once a new API is merged into master it is considered beta until the following release. We generally try to avoid changing an API after it has been merged to master, but sometimes we need to make changes after seeing how an API is used. If an API has been around for at least two releases we'll do our best to avoid breaking it.
+Once a new API is released, it is considered beta until the following release. We generally try to avoid changing an API after it has been released, but sometimes we need to make changes after seeing how an API is used. If an API has been around for at least two releases we'll do our best to avoid breaking it.
 
-Unreleased APIs may change radically. Anything that is in `develop` but not `master` is subject to change without warning.
+Unreleased APIs may change radically. Anything that is in `main` but not released is subject to change without warning.
 
 ## Issues and Milestones
 
