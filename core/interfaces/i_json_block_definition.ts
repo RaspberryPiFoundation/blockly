@@ -11,9 +11,28 @@ import {FieldNumberFromJsonConfig} from '../field_number';
 import {FieldTextInputFromJsonConfig} from '../field_textinput';
 import {FieldVariableFromJsonConfig} from '../field_variable';
 
+/**
+ * Defines the JSON structure for a block definition in Blockly.
+ *
+ * @example
+ * ```typescript
+ * const blockDef:  JsonBlockDefinition = {
+ *   type: 'custom_block',
+ *   message0: 'move %1 steps',
+ *   args0: [
+ *     {
+ *       'type': 'field_number',
+ *       'name': 'INPUT',
+ *     },
+ *   ],
+ *   previousStatement: null,
+ *   nextStatement: null,
+ * };
+ * ```
+ */
 export interface JsonBlockDefinition {
-  type?: string;
-  style?: string;
+  type: string;
+  style?: string | null;
   colour?: string | number;
   output?: string | string[] | null;
   previousStatement?: string | string[] | null;
@@ -46,50 +65,50 @@ export type BlockArg =
 
 /** Input Args */
 interface InputValueArg {
-  name: string;
   type: 'input_value';
+  name?: string;
   check?: string | string[];
   align?: FieldsAlign;
 }
 interface InputStatementArg {
-  name: string;
   type: 'input_statement';
+  name?: string;
   check?: string | string[];
 }
 interface InputDummyArg {
-  name?: string;
   type: 'input_dummy';
+  name?: string;
 }
 
 /** Field Args */
 interface FieldInputArg extends FieldTextInputFromJsonConfig {
-  name: string;
   type: 'field_input';
+  name?: string;
 }
 
 interface FieldNumberArg extends FieldNumberFromJsonConfig {
-  name: string;
   type: 'field_number';
+  name?: string;
 }
 
 interface FieldDropdownArg extends FieldDropdownFromJsonConfig {
-  name: string;
   type: 'field_dropdown';
+  name?: string;
 }
 
 interface FieldCheckboxArg extends FieldCheckboxFromJsonConfig {
-  name: string;
   type: 'field_checkbox';
+  name?: string;
 }
 
 interface FieldImageArg extends FieldImageFromJsonConfig {
-  name: string;
   type: 'field_image';
+  name?: string;
 }
 
 interface FieldVariableArg extends FieldVariableFromJsonConfig {
-  name: string;
   type: 'field_variable';
+  name?: string;
 }
 
 export type FieldsAlign = 'LEFT' | 'RIGHT' | 'CENTRE';

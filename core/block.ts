@@ -42,6 +42,10 @@ import {StatementInput} from './inputs/statement_input.js';
 import {ValueInput} from './inputs/value_input.js';
 import {isCommentIcon} from './interfaces/i_comment_icon.js';
 import {type IIcon} from './interfaces/i_icon.js';
+import {
+  BlockArg,
+  JsonBlockDefinition,
+} from './interfaces/i_json_block_definition.js';
 import type {
   IVariableModel,
   IVariableState,
@@ -54,7 +58,6 @@ import * as idGenerator from './utils/idgenerator.js';
 import * as parsing from './utils/parsing.js';
 import {Size} from './utils/size.js';
 import type {Workspace} from './workspace.js';
-import { BlockArg, JsonBlockDefinition } from './interfaces/i_json_block_definition.js'
 
 /**
  * Class for one block.
@@ -1733,6 +1736,13 @@ export class Block {
     }
 
     // Set basic properties of block.
+    // Handle legacy style object format for backwards compatibility
+    if (json.style && typeof json.style === 'object') {
+      this.hat = (json.style as {hat?: string}).hat;
+      // Must set to null so it doesn't error when checking for style and
+      // colour.
+      json.style = null;
+    }
     if (json.style && json.colour) {
       throw Error(warningPrefix + 'Must not have both a colour and a style.');
     } else if (json.style) {
@@ -1747,7 +1757,8 @@ export class Block {
       this.interpolate(
         json[`message${i}`]!,
         json[`args${i}`] || [],
-        json[`implicitAlign${i}`],
+        // Backwards compatibility: lastDummyAlign aliases implicitAlign.
+        json[`implicitAlign${i}`] || (json as any)[`lastDummyAlign${i}`],
         warningPrefix,
       );
       i++;
@@ -1819,7 +1830,7 @@ export class Block {
    * @param warningPrefix Warning prefix string identifying block.
    */
   private jsonInitColour(json: JsonBlockDefinition, warningPrefix: string) {
-    if (json.colour) {
+    if ('colour' in json) {
       if (json.colour === undefined) {
         console.warn(warningPrefix + 'Undefined colour value.');
       } else {
@@ -1840,7 +1851,7 @@ export class Block {
    * @param warningPrefix Warning prefix string identifying block.
    */
   private jsonInitStyle(json: JsonBlockDefinition, warningPrefix: string) {
-    const blockStyleName = json.style!
+    const blockStyleName = json.style!;
     try {
       this.setStyle(blockStyleName);
     } catch {

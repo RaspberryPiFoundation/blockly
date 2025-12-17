@@ -6,21 +6,21 @@
 
 // Former goog.module ID: Blockly.libraryBlocks.variables
 
-import type { Block } from '../core/block.js'
+import type {Block} from '../core/block.js';
 import {
   createBlockDefinitionsFromJsonArray,
   defineBlocks,
-} from '../core/common.js'
-import * as ContextMenu from '../core/contextmenu.js'
+} from '../core/common.js';
+import * as ContextMenu from '../core/contextmenu.js';
 import type {
   ContextMenuOption,
   LegacyContextMenuOption,
-} from '../core/contextmenu_registry.js'
-import * as Extensions from '../core/extensions.js'
-import '../core/field_label.js'
-import { FieldVariable } from '../core/field_variable.js'
-import { Msg } from '../core/msg.js'
-import * as Variables from '../core/variables.js'
+} from '../core/contextmenu_registry.js';
+import * as Extensions from '../core/extensions.js';
+import '../core/field_label.js';
+import {FieldVariable} from '../core/field_variable.js';
+import {Msg} from '../core/msg.js';
+import * as Variables from '../core/variables.js';
 
 /**
  * A dictionary of the block definitions provided by this module.
@@ -60,19 +60,18 @@ export const blocks = createBlockDefinitionsFromJsonArray([
     ],
     'previousStatement': null,
     'nextStatement': null,
-    'output': null,
     'style': 'variable_blocks',
     'tooltip': '%{BKY_VARIABLES_SET_TOOLTIP}',
     'helpUrl': '%{BKY_VARIABLES_SET_HELPURL}',
     'extensions': ['contextMenu_variableSetterGetter'],
   },
-])
+]);
 
 /** Type of a block that has CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MIXIN */
-type VariableBlock = Block & VariableMixin
-interface VariableMixin extends VariableMixinType { }
+type VariableBlock = Block & VariableMixin;
+interface VariableMixin extends VariableMixinType {}
 type VariableMixinType =
-  typeof CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MIXIN
+  typeof CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MIXIN;
 
 /**
  * Mixin to add context menu items to create getter/setter blocks for this
@@ -90,28 +89,28 @@ const CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MIXIN = {
     options: Array<ContextMenuOption | LegacyContextMenuOption>,
   ) {
     if (!this.isInFlyout) {
-      let oppositeType
-      let contextMenuMsg
+      let oppositeType;
+      let contextMenuMsg;
       // Getter blocks have the option to create a setter block, and vice versa.
       if (this.type === 'variables_get') {
-        oppositeType = 'variables_set'
-        contextMenuMsg = Msg['VARIABLES_GET_CREATE_SET']
+        oppositeType = 'variables_set';
+        contextMenuMsg = Msg['VARIABLES_GET_CREATE_SET'];
       } else {
-        oppositeType = 'variables_get'
-        contextMenuMsg = Msg['VARIABLES_SET_CREATE_GET']
+        oppositeType = 'variables_get';
+        contextMenuMsg = Msg['VARIABLES_SET_CREATE_GET'];
       }
 
-      const varField = this.getField('VAR')!
+      const varField = this.getField('VAR')!;
       const newVarBlockState = {
         type: oppositeType,
-        fields: { VAR: varField.saveState(true) },
-      }
+        fields: {VAR: varField.saveState(true)},
+      };
 
       options.push({
         enabled: this.workspace.remainingCapacity() > 0,
         text: contextMenuMsg.replace('%1', varField.getText()),
         callback: ContextMenu.callbackFactory(this, newVarBlockState),
-      })
+      });
       // Getter blocks have the option to rename or delete that variable.
     } else {
       if (
@@ -122,19 +121,19 @@ const CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MIXIN = {
           text: Msg['RENAME_VARIABLE'],
           enabled: true,
           callback: renameOptionCallbackFactory(this),
-        }
-        const name = this.getField('VAR')!.getText()
+        };
+        const name = this.getField('VAR')!.getText();
         const deleteOption = {
           text: Msg['DELETE_VARIABLE'].replace('%1', name),
           enabled: true,
           callback: deleteOptionCallbackFactory(this),
-        }
-        options.unshift(renameOption)
-        options.unshift(deleteOption)
+        };
+        options.unshift(renameOption);
+        options.unshift(deleteOption);
       }
     }
   },
-}
+};
 
 /**
  * Factory for callbacks for rename variable dropdown menu option
@@ -147,12 +146,12 @@ const renameOptionCallbackFactory = function (
   block: VariableBlock,
 ): () => void {
   return function () {
-    const workspace = block.workspace
-    const variableField = block.getField('VAR') as FieldVariable
-    const variable = variableField.getVariable()!
-    Variables.renameVariable(workspace, variable)
-  }
-}
+    const workspace = block.workspace;
+    const variableField = block.getField('VAR') as FieldVariable;
+    const variable = variableField.getVariable()!;
+    Variables.renameVariable(workspace, variable);
+  };
+};
 
 /**
  * Factory for callbacks for delete variable dropdown menu option
@@ -165,18 +164,18 @@ const deleteOptionCallbackFactory = function (
   block: VariableBlock,
 ): () => void {
   return function () {
-    const variableField = block.getField('VAR') as FieldVariable
-    const variable = variableField.getVariable()
+    const variableField = block.getField('VAR') as FieldVariable;
+    const variable = variableField.getVariable();
     if (variable) {
-      Variables.deleteVariable(variable.getWorkspace(), variable, block)
+      Variables.deleteVariable(variable.getWorkspace(), variable, block);
     }
-  }
-}
+  };
+};
 
 Extensions.registerMixin(
   'contextMenu_variableSetterGetter',
   CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MIXIN,
-)
+);
 
 // Register provided blocks.
-defineBlocks(blocks)
+defineBlocks(blocks);

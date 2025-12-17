@@ -13,7 +13,7 @@ import type {Connection} from './connection.js';
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
 import {getFocusManager} from './focus_manager.js';
-import {JsonBlockDefinition} from './interfaces/i_json_block_definition.js';
+import type {JsonBlockDefinition} from './interfaces/i_json_block_definition.js';
 import {ISelectable, isSelectable} from './interfaces/i_selectable.js';
 import {ShortcutRegistry} from './shortcut_registry.js';
 import type {Workspace} from './workspace.js';
