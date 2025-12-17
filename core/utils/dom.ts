@@ -64,7 +64,7 @@ export function createSvgElement<T extends SVGElement>(
     opt_parent.appendChild(e);
   }
   if (name === Svg.SVG || name === Svg.G) {
-    aria.setRole(e, aria.Role.PRESENTATION);
+    aria.setRole(e, aria.Role.GENERIC);
   }
   return e;
 }

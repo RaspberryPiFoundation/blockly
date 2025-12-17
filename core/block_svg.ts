@@ -275,7 +275,7 @@ export class BlockSvg
         childElemIds.push(nextConnection.getFocusableElement().id);
       }
 
-      aria.setState(this.getBlockSvgFocusElem(), aria.State.OWNS, childElemIds);
+      // aria.setState(this.getBlockSvgFocusElem(), aria.State.OWNS, childElemIds);
     }
 
     if (this.isSimpleReporter(true, true)) return;
