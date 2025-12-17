@@ -208,7 +208,6 @@ export const blocks = createBlockDefinitionsFromJsonArray([
     ],
     'previousStatement': null,
     'nextStatement': null,
-    'output': null,
     'style': 'variable_blocks',
     'helpUrl': '%{BKY_MATH_CHANGE_HELPURL}',
     'extensions': ['math_change_tooltip'],

@@ -53,7 +53,6 @@ export const blocks = createBlockDefinitionsFromJsonArray([
     ],
     'previousStatement': null,
     'nextStatement': null,
-    'output': null,
     'style': 'loop_blocks',
     'tooltip': '%{BKY_CONTROLS_REPEAT_TOOLTIP}',
     'helpUrl': '%{BKY_CONTROLS_REPEAT_HELPURL}',
@@ -81,7 +80,6 @@ export const blocks = createBlockDefinitionsFromJsonArray([
     ],
     'previousStatement': null,
     'nextStatement': null,
-    'output': null,
     'style': 'loop_blocks',
     'tooltip': '%{BKY_CONTROLS_REPEAT_TOOLTIP}',
     'helpUrl': '%{BKY_CONTROLS_REPEAT_HELPURL}',
@@ -114,7 +112,6 @@ export const blocks = createBlockDefinitionsFromJsonArray([
     ],
     'previousStatement': null,
     'nextStatement': null,
-    'output': null,
     'style': 'loop_blocks',
     'helpUrl': '%{BKY_CONTROLS_WHILEUNTIL_HELPURL}',
     'extensions': ['controls_whileUntil_tooltip'],
@@ -127,7 +124,6 @@ export const blocks = createBlockDefinitionsFromJsonArray([
       {
         'type': 'field_variable',
         'name': 'VAR',
-        'variable': null,
       },
       {
         'type': 'input_value',
@@ -158,7 +154,6 @@ export const blocks = createBlockDefinitionsFromJsonArray([
     'inputsInline': true,
     'previousStatement': null,
     'nextStatement': null,
-    'output': null,
     'style': 'loop_blocks',
     'helpUrl': '%{BKY_CONTROLS_FOR_HELPURL}',
     'extensions': ['contextMenu_newGetVariableBlock', 'controls_for_tooltip'],
@@ -171,7 +166,6 @@ export const blocks = createBlockDefinitionsFromJsonArray([
       {
         'type': 'field_variable',
         'name': 'VAR',
-        'variable': null,
       },
       {
         'type': 'input_value',
@@ -188,7 +182,6 @@ export const blocks = createBlockDefinitionsFromJsonArray([
     ],
     'previousStatement': null,
     'nextStatement': null,
-    'output': null,
     'style': 'loop_blocks',
     'helpUrl': '%{BKY_CONTROLS_FOREACH_HELPURL}',
     'extensions': [
@@ -211,7 +204,6 @@ export const blocks = createBlockDefinitionsFromJsonArray([
       },
     ],
     'previousStatement': null,
-    'output': null,
     'style': 'loop_blocks',
     'helpUrl': '%{BKY_CONTROLS_FLOW_STATEMENTS_HELPURL}',
     'suppressPrefixSuffix': true,

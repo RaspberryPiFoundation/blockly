@@ -57,7 +57,7 @@ interface InputStatementArg {
   check?: string | string[]
 }
 interface InputDummyArg {
-  name: string
+  name?: string
   type: 'input_dummy'
 }
 
