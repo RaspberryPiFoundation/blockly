@@ -1714,10 +1714,10 @@ export class Block {
    * @param json Structured data describing the block.
    */
   jsonInit(json: JsonBlockDefinition) {
-    const warningPrefix = json.type ? 'Block "' + json.type + '": ' : '';
+    const warningPrefix = json['type'] ? 'Block "' + json['type'] + '": ' : '';
 
     // Validate inputs.
-    if (json.output && json.previousStatement) {
+    if (json['output'] && json['previousStatement']) {
       throw Error(
         warningPrefix + 'Must not have both an output and a previousStatement.',
       );
@@ -1737,15 +1737,15 @@ export class Block {
 
     // Set basic properties of block.
     // Handle legacy style object format for backwards compatibility
-    if (json.style && typeof json.style === 'object') {
-      this.hat = (json.style as {hat?: string}).hat;
+    if (json['style'] && typeof json['style'] === 'object') {
+      this.hat = (json['style'] as {hat?: string}).hat;
       // Must set to null so it doesn't error when checking for style and
       // colour.
-      json.style = null;
+      json['style'] = null;
     }
-    if (json.style && json.colour) {
+    if (json['style'] && json['colour']) {
       throw Error(warningPrefix + 'Must not have both a colour and a style.');
-    } else if (json.style) {
+    } else if (json['style']) {
       this.jsonInitStyle(json, warningPrefix);
     } else {
       this.jsonInitColour(json, warningPrefix);
@@ -1764,58 +1764,58 @@ export class Block {
       i++;
     }
 
-    if (json.inputsInline !== undefined) {
+    if (json['inputsInline'] !== undefined) {
       eventUtils.disable();
-      this.setInputsInline(json.inputsInline);
+      this.setInputsInline(json['inputsInline']);
       eventUtils.enable();
     }
 
     // Set output and previous/next connections.
-    if (json.output !== undefined) {
-      this.setOutput(true, json.output);
+    if (json['output'] !== undefined) {
+      this.setOutput(true, json['output']);
     }
-    if (json.outputShape !== undefined) {
-      this.setOutputShape(json.outputShape);
+    if (json['outputShape'] !== undefined) {
+      this.setOutputShape(json['outputShape']);
     }
-    if (json.previousStatement !== undefined) {
-      this.setPreviousStatement(true, json.previousStatement);
+    if (json['previousStatement'] !== undefined) {
+      this.setPreviousStatement(true, json['previousStatement']);
     }
-    if (json.nextStatement !== undefined) {
-      this.setNextStatement(true, json.nextStatement);
+    if (json['nextStatement'] !== undefined) {
+      this.setNextStatement(true, json['nextStatement']);
     }
-    if (json.tooltip !== undefined) {
-      const rawValue = json.tooltip;
+    if (json['tooltip'] !== undefined) {
+      const rawValue = json['tooltip'];
       const localizedText = parsing.replaceMessageReferences(rawValue);
       this.setTooltip(localizedText);
     }
-    if (json.enableContextMenu !== undefined) {
-      this.contextMenu = !!json.enableContextMenu;
+    if (json['enableContextMenu'] !== undefined) {
+      this.contextMenu = !!json['enableContextMenu'];
     }
-    if (json.suppressPrefixSuffix !== undefined) {
-      this.suppressPrefixSuffix = !!json.suppressPrefixSuffix;
+    if (json['suppressPrefixSuffix'] !== undefined) {
+      this.suppressPrefixSuffix = !!json['suppressPrefixSuffix'];
     }
-    if (json.helpUrl !== undefined) {
-      const rawValue = json.helpUrl;
+    if (json['helpUrl'] !== undefined) {
+      const rawValue = json['helpUrl'];
       const localizedValue = parsing.replaceMessageReferences(rawValue);
       this.setHelpUrl(localizedValue);
     }
-    if (typeof json.extensions === 'string') {
+    if (typeof json['extensions'] === 'string') {
       console.warn(
         warningPrefix +
           "JSON attribute 'extensions' should be an array of" +
           " strings. Found raw string in JSON for '" +
-          json.type +
+          json['type'] +
           "' block.",
       );
-      json.extensions = [json.extensions]; // Correct and continue.
+      json['extensions'] = [json['extensions']]; // Correct and continue.
     }
 
     // Add the mutator to the block.
-    if (json.mutator !== undefined) {
-      Extensions.apply(json.mutator, this, true);
+    if (json['mutator'] !== undefined) {
+      Extensions.apply(json['mutator'], this, true);
     }
 
-    const extensionNames = json.extensions;
+    const extensionNames = json['extensions'];
     if (Array.isArray(extensionNames)) {
       for (let j = 0; j < extensionNames.length; j++) {
         Extensions.apply(extensionNames[j], this, false);
@@ -1831,10 +1831,10 @@ export class Block {
    */
   private jsonInitColour(json: JsonBlockDefinition, warningPrefix: string) {
     if ('colour' in json) {
-      if (json.colour === undefined) {
+      if (json['colour'] === undefined) {
         console.warn(warningPrefix + 'Undefined colour value.');
       } else {
-        const rawValue = json.colour;
+        const rawValue = json['colour'];
         try {
           this.setColour(rawValue);
         } catch {
@@ -1851,7 +1851,7 @@ export class Block {
    * @param warningPrefix Warning prefix string identifying block.
    */
   private jsonInitStyle(json: JsonBlockDefinition, warningPrefix: string) {
-    const blockStyleName = json.style!;
+    const blockStyleName = json['style']!;
     try {
       this.setStyle(blockStyleName);
     } catch {
