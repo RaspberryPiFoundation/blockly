@@ -13,7 +13,6 @@ import type {Connection} from './connection.js';
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
 import {getFocusManager} from './focus_manager.js';
-import type {JsonBlockDefinition} from './interfaces/i_json_block_definition.js';
 import {ISelectable, isSelectable} from './interfaces/i_selectable.js';
 import {ShortcutRegistry} from './shortcut_registry.js';
 import type {Workspace} from './workspace.js';
@@ -239,7 +238,7 @@ export function getBlockTypeCounts(
  * @returns A function that calls jsonInit with the correct value
  *     of jsonDef.
  */
-function jsonInitFactory(jsonDef: JsonBlockDefinition): () => void {
+function jsonInitFactory(jsonDef: AnyDuringMigration): () => void {
   return function (this: Block) {
     this.jsonInit(jsonDef);
   };
@@ -251,14 +250,14 @@ function jsonInitFactory(jsonDef: JsonBlockDefinition): () => void {
  *
  * @param jsonArray An array of JSON block definitions.
  */
-export function defineBlocksWithJsonArray(jsonArray: JsonBlockDefinition[]) {
+export function defineBlocksWithJsonArray(jsonArray: AnyDuringMigration[]) {
   TEST_ONLY.defineBlocksWithJsonArrayInternal(jsonArray);
 }
 
 /**
  * Private version of defineBlocksWithJsonArray for stubbing in tests.
  */
-function defineBlocksWithJsonArrayInternal(jsonArray: JsonBlockDefinition[]) {
+function defineBlocksWithJsonArrayInternal(jsonArray: AnyDuringMigration[]) {
   defineBlocks(createBlockDefinitionsFromJsonArray(jsonArray));
 }
 
@@ -271,7 +270,7 @@ function defineBlocksWithJsonArrayInternal(jsonArray: JsonBlockDefinition[]) {
  *     definitions created.
  */
 export function createBlockDefinitionsFromJsonArray(
-  jsonArray: JsonBlockDefinition[],
+  jsonArray: AnyDuringMigration[],
 ): {[key: string]: BlockDefinition} {
   const blocks: {[key: string]: BlockDefinition} = {};
   for (let i = 0; i < jsonArray.length; i++) {

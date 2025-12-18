@@ -42,10 +42,6 @@ import {StatementInput} from './inputs/statement_input.js';
 import {ValueInput} from './inputs/value_input.js';
 import {isCommentIcon} from './interfaces/i_comment_icon.js';
 import {type IIcon} from './interfaces/i_icon.js';
-import {
-  BlockArg,
-  JsonBlockDefinition,
-} from './interfaces/i_json_block_definition.js';
 import type {
   IVariableModel,
   IVariableState,
@@ -1713,7 +1709,7 @@ export class Block {
    *
    * @param json Structured data describing the block.
    */
-  jsonInit(json: JsonBlockDefinition) {
+  jsonInit(json: AnyDuringMigration) {
     const warningPrefix = json['type'] ? 'Block "' + json['type'] + '": ' : '';
 
     // Validate inputs.
@@ -1829,7 +1825,7 @@ export class Block {
    * @param json Structured data describing the block.
    * @param warningPrefix Warning prefix string identifying block.
    */
-  private jsonInitColour(json: JsonBlockDefinition, warningPrefix: string) {
+  private jsonInitColour(json: AnyDuringMigration, warningPrefix: string) {
     if ('colour' in json) {
       if (json['colour'] === undefined) {
         console.warn(warningPrefix + 'Undefined colour value.');
@@ -1850,7 +1846,7 @@ export class Block {
    * @param json Structured data describing the block.
    * @param warningPrefix Warning prefix string identifying block.
    */
-  private jsonInitStyle(json: JsonBlockDefinition, warningPrefix: string) {
+  private jsonInitStyle(json: AnyDuringMigration, warningPrefix: string) {
     const blockStyleName = json['style']!;
     try {
       this.setStyle(blockStyleName);
@@ -1904,7 +1900,7 @@ export class Block {
    */
   private interpolate(
     message: string,
-    args: BlockArg[],
+    args: AnyDuringMigration[],
     implicitAlign: string | undefined,
     warningPrefix: string,
   ) {
