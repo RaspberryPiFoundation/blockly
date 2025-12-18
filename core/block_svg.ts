@@ -234,50 +234,6 @@ export class BlockSvg
    * @internal
    */
   recomputeAriaLabel() {
-    if (this.initialized) {
-      const childElemIds: string[] = [];
-      for (const input of this.inputList) {
-        const connection = input.connection as RenderedConnection | null;
-        if (input.isVisible() && connection) {
-          if (connection.type === ConnectionType.NEXT_STATEMENT) {
-            let currentBlock: BlockSvg | null = connection.targetBlock();
-            while (currentBlock) {
-              if (currentBlock.canBeFocused()) {
-                childElemIds.push(currentBlock.getBlockSvgFocusElem().id);
-              }
-              currentBlock = currentBlock.getNextBlock();
-            }
-          } else if (connection.type === ConnectionType.INPUT_VALUE) {
-            const inpBlock = connection.targetBlock() as BlockSvg | null;
-            if (inpBlock && inpBlock.canBeFocused()) {
-              childElemIds.push(inpBlock.getBlockSvgFocusElem().id);
-            }
-            if (connection.canBeFocused()) {
-              childElemIds.push(connection.getFocusableElement().id);
-            }
-          }
-        }
-        for (const field of input.fieldRow) {
-          if (field.getSvgRoot() && field.canBeFocused()) {
-            // Only track the field if it's been initialized.
-            childElemIds.push(field.getFocusableElement().id);
-          }
-        }
-        for (const icon of this.icons) {
-          if (icon.canBeFocused()) {
-            childElemIds.push(icon.getFocusableElement().id);
-          }
-        }
-      }
-
-      const nextConnection = this.nextConnection as RenderedConnection | null;
-      if (nextConnection && nextConnection.canBeFocused()) {
-        childElemIds.push(nextConnection.getFocusableElement().id);
-      }
-
-      // aria.setState(this.getBlockSvgFocusElem(), aria.State.OWNS, childElemIds);
-    }
-
     if (this.isSimpleReporter(true, true)) return;
 
     aria.setState(
@@ -287,12 +243,6 @@ export class BlockSvg
         ? this.computeAriaLabel()
         : this.computeAriaLabelForFlyoutBlock(),
     );
-  }
-
-  private getBlockSvgFocusElem(): Element {
-    // Note that this deviates from getFocusableElement() to ensure that
-    // single field blocks are properly set up in the hierarchy.
-    return this.pathObject.svgPath;
   }
 
   private computeAriaLabelForFlyoutBlock(): string {
@@ -520,12 +470,6 @@ export class BlockSvg
     this.applyColour();
 
     this.workspace.recomputeAriaTree();
-    this.recomputeAriaLabelRecursive();
-  }
-
-  private recomputeAriaLabelRecursive() {
-    this.recomputeAriaLabel();
-    this.parentBlock_?.recomputeAriaLabelRecursive();
   }
 
   /**
