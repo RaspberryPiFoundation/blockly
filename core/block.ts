@@ -1751,7 +1751,7 @@ export class Block {
     let i = 0;
     while (json[`message${i}`] !== undefined) {
       this.interpolate(
-        json[`message${i}`]!,
+        json[`message${i}`] || '',
         json[`args${i}`] || [],
         // Backwards compatibility: lastDummyAlign aliases implicitAlign.
         json[`implicitAlign${i}`] || (json as any)[`lastDummyAlign${i}`],
@@ -1847,7 +1847,7 @@ export class Block {
    * @param warningPrefix Warning prefix string identifying block.
    */
   private jsonInitStyle(json: AnyDuringMigration, warningPrefix: string) {
-    const blockStyleName = json['style']!;
+    const blockStyleName = json['style'];
     try {
       this.setStyle(blockStyleName);
     } catch {

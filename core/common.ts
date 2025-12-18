@@ -279,7 +279,7 @@ export function createBlockDefinitionsFromJsonArray(
       console.warn(`Block definition #${i} in JSON array is ${elem}. Skipping`);
       continue;
     }
-    const type = elem.type;
+    const type = elem['type'];
     if (!type) {
       console.warn(
         `Block definition #${i} in JSON array is missing a type attribute. ` +
