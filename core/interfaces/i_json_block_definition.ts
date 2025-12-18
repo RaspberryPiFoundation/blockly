@@ -56,6 +56,7 @@ export type BlockArg =
   | InputValueArg
   | InputStatementArg
   | InputDummyArg
+  | InputEndRowArg
   | FieldInputArg
   | FieldNumberArg
   | FieldDropdownArg
@@ -77,6 +78,10 @@ interface InputStatementArg {
 }
 interface InputDummyArg {
   type: 'input_dummy';
+  name?: string;
+}
+interface InputEndRowArg {
+  type: 'input_end_row';
   name?: string;
 }
 
