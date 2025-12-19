@@ -108,6 +108,7 @@ export class Toolbox
   /** The workspace this toolbox is on. */
   protected readonly workspace_: WorkspaceSvg;
 
+  /** Whether the mouse is currently being clicked. */
   private mouseDown = false;
 
   /** @param workspace The workspace in which to create new blocks. */
