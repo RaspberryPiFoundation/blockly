@@ -616,6 +616,7 @@ export abstract class Flyout
    */
   show(flyoutDef: toolbox.FlyoutDefinition | string) {
     this.workspace_.setResizesEnabled(false);
+    eventUtils.setRecordUndo(false);
     this.hide();
     this.clearOldBlocks();
 
@@ -641,6 +642,7 @@ export abstract class Flyout
       this.width_ = 0;
     }
     this.reflow();
+    eventUtils.setRecordUndo(true);
     this.workspace_.setResizesEnabled(true);
 
     // Listen for block change events, and reflow the flyout in response. This
