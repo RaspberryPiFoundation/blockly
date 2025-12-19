@@ -108,6 +108,8 @@ export class Toolbox
   /** The workspace this toolbox is on. */
   protected readonly workspace_: WorkspaceSvg;
 
+  private mouseDown = false;
+
   /** @param workspace The workspace in which to create new blocks. */
   constructor(workspace: WorkspaceSvg) {
     super();
@@ -243,6 +245,16 @@ export class Toolbox
     );
     this.boundEvents_.push(clickEvent);
 
+    const mouseUpEvent = browserEvents.bind(
+      container,
+      'pointerup',
+      this,
+      () => {
+        this.mouseDown = false;
+      },
+    );
+    this.boundEvents_.push(mouseUpEvent);
+
     const keyDownEvent = browserEvents.conditionalBind(
       contentsContainer,
       'keydown',
@@ -259,6 +271,7 @@ export class Toolbox
    * @param e Click event to handle.
    */
   protected onClick_(e: PointerEvent) {
+    this.mouseDown = true;
     if (browserEvents.isRightButton(e) || e.target === this.HtmlDiv) {
       // Close flyout.
       (common.getMainWorkspace() as WorkspaceSvg).hideChaff(false);
@@ -1134,7 +1147,7 @@ export class Toolbox
   ): void {
     if (node !== this) {
       // Only select the item if it isn't already selected so as to not toggle.
-      if (this.getSelectedItem() !== node) {
+      if (this.getSelectedItem() !== node && !this.mouseDown) {
         this.setSelectedItem(node as IToolboxItem);
       }
     } else {
