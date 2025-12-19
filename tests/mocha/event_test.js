@@ -639,10 +639,6 @@ suite('Events', function () {
           type: 'create',
           group: '',
           blockId: thisObj.block.id,
-          xml:
-            '<block xmlns="https://developers.google.com/blockly/xml"' +
-            ' type="simple_test_block" id="testBlockId1" x="0" y="0">' +
-            '</block>',
           ids: [thisObj.block.id],
           json: {
             'type': 'simple_test_block',
@@ -660,10 +656,6 @@ suite('Events', function () {
           type: 'create',
           group: '',
           blockId: thisObj.shadowBlock.id,
-          xml:
-            '<shadow xmlns="https://developers.google.com/blockly/xml"' +
-            ' type="simple_test_block" id="testBlockId2" x="0" y="0">' +
-            '</shadow>',
           ids: [thisObj.shadowBlock.id],
           json: {
             'type': 'simple_test_block',
@@ -682,10 +674,6 @@ suite('Events', function () {
           type: 'delete',
           group: '',
           blockId: thisObj.block.id,
-          oldXml:
-            '<block xmlns="https://developers.google.com/blockly/xml"' +
-            ' type="simple_test_block" id="testBlockId1" x="0" y="0">' +
-            '</block>',
           ids: [thisObj.block.id],
           wasShadow: false,
           oldJson: {
@@ -704,10 +692,6 @@ suite('Events', function () {
           type: 'delete',
           group: '',
           blockId: thisObj.shadowBlock.id,
-          oldXml:
-            '<shadow xmlns="https://developers.google.com/blockly/xml"' +
-            ' type="simple_test_block" id="testBlockId2" x="0" y="0">' +
-            '</shadow>',
           ids: [thisObj.shadowBlock.id],
           wasShadow: true,
           oldJson: {
@@ -765,11 +749,6 @@ suite('Events', function () {
           type: 'comment_create',
           group: '',
           commentId: thisObj.comment.id,
-          // TODO: Before merging, is this a dumb change detector?
-          xml: Blockly.Xml.domToText(
-            Blockly.Xml.saveWorkspaceComment(thisObj.comment),
-            {addCoordinates: true},
-          ),
           json: {
             height: 100,
             width: 120,
@@ -788,11 +767,6 @@ suite('Events', function () {
           type: 'comment_delete',
           group: '',
           commentId: thisObj.comment.id,
-          // TODO: Before merging, is this a dumb change detector?
-          xml: Blockly.Xml.domToText(
-            Blockly.Xml.saveWorkspaceComment(thisObj.comment),
-            {addCoordinates: true},
-          ),
           json: {
             height: 100,
             width: 120,
@@ -1405,7 +1379,6 @@ suite('Events', function () {
         const block = workspaceSvg.newBlock('');
         block.initSvg();
         block.setCommentText('test comment');
-        const expectedOldXml = Blockly.Xml.blockToDomWithXY(block);
         const expectedId = block.id;
 
         // Run all queued events.
@@ -1426,7 +1399,7 @@ suite('Events', function () {
           this.eventsFireSpy,
           0,
           Blockly.Events.BlockDelete,
-          {oldXml: expectedOldXml, group: ''},
+          {group: ''},
           workspaceSvg.id,
           expectedId,
         );

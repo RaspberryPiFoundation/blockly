@@ -14,9 +14,7 @@
 import type {Block} from '../block.js';
 import * as registry from '../registry.js';
 import * as blocks from '../serialization/blocks.js';
-import * as utilsXml from '../utils/xml.js';
 import {Workspace} from '../workspace.js';
-import * as Xml from '../xml.js';
 import {BlockBase, BlockBaseJson} from './events_block_base.js';
 import {EventType} from './type.js';
 import * as eventUtils from './utils.js';
@@ -26,9 +24,6 @@ import * as eventUtils from './utils.js';
  * deleted.
  */
 export class BlockDelete extends BlockBase {
-  /** The XML representation of the deleted block(s). */
-  oldXml?: Element | DocumentFragment;
-
   /** The JSON respresentation of the deleted block(s). */
   oldJson?: blocks.State;
 
@@ -56,7 +51,6 @@ export class BlockDelete extends BlockBase {
       this.recordUndo = false;
     }
 
-    this.oldXml = Xml.blockToDomWithXY(opt_block);
     this.ids = eventUtils.getDescendantIds(opt_block);
     this.wasShadow = opt_block.isShadow();
     this.oldJson = blocks.save(opt_block, {
@@ -71,12 +65,6 @@ export class BlockDelete extends BlockBase {
    */
   override toJson(): BlockDeleteJson {
     const json = super.toJson() as BlockDeleteJson;
-    if (!this.oldXml) {
-      throw new Error(
-        'The old block XML is undefined. Either pass a block ' +
-          'to the constructor, or call fromJson',
-      );
-    }
     if (!this.ids) {
       throw new Error(
         'The block IDs are undefined. Either pass a block to ' +
@@ -95,7 +83,6 @@ export class BlockDelete extends BlockBase {
           'to the constructor, or call fromJson',
       );
     }
-    json['oldXml'] = Xml.domToText(this.oldXml);
     json['ids'] = this.ids;
     json['wasShadow'] = this.wasShadow;
     json['oldJson'] = this.oldJson;
@@ -124,10 +111,8 @@ export class BlockDelete extends BlockBase {
       workspace,
       event ?? new BlockDelete(),
     ) as BlockDelete;
-    newEvent.oldXml = utilsXml.textToDom(json['oldXml']);
     newEvent.ids = json['ids'];
-    newEvent.wasShadow =
-      json['wasShadow'] || newEvent.oldXml.tagName.toLowerCase() === 'shadow';
+    newEvent.wasShadow = json['wasShadow'];
     newEvent.oldJson = json['oldJson'];
     if (json['recordUndo'] !== undefined) {
       newEvent.recordUndo = json['recordUndo'];
@@ -172,7 +157,6 @@ export class BlockDelete extends BlockBase {
 }
 
 export interface BlockDeleteJson extends BlockBaseJson {
-  oldXml: string;
   ids: string[];
   wasShadow: boolean;
   oldJson: blocks.State;
