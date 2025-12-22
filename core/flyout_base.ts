@@ -136,6 +136,12 @@ export abstract class Flyout
   private reflowWrapper: ((e: AbstractEvent) => void) | null = null;
 
   /**
+   * If true, prevents the reflow wrapper from running. Used to prevent infinite
+   * recursion.
+   */
+  private inhibitReflowWrapper = false;
+
+  /**
    * List of flyout elements.
    */
   protected contents: FlyoutItem[] = [];
@@ -647,6 +653,7 @@ export abstract class Flyout
     // accommodates e.g. resizing a non-autoclosing flyout in response to the
     // user typing long strings into fields on the blocks in the flyout.
     this.reflowWrapper = (event) => {
+      if (this.inhibitReflowWrapper) return;
       if (
         event.type === EventType.BLOCK_CHANGE ||
         event.type === EventType.BLOCK_FIELD_INTERMEDIATE_CHANGE
@@ -844,13 +851,9 @@ export abstract class Flyout
    * Reflow flyout contents.
    */
   reflow() {
-    if (this.reflowWrapper) {
-      this.workspace_.removeChangeListener(this.reflowWrapper);
-    }
+    this.inhibitReflowWrapper = true;
     this.reflowInternal_();
-    if (this.reflowWrapper) {
-      this.workspace_.addChangeListener(this.reflowWrapper);
-    }
+    this.inhibitReflowWrapper = false;
   }
 
   /**
