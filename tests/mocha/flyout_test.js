@@ -43,6 +43,26 @@ suite('Flyout', function () {
     sharedTestTeardown.call(this);
   });
 
+  suite('workspace change listeners', function () {
+    test('are triggered when a child block changes', function () {
+      let listenerTriggered = false;
+      const listener = (e) => {
+        if (e.type === Blockly.Events.BLOCK_CHANGE) {
+          listenerTriggered = true;
+        }
+      };
+      this.workspace.getFlyout().getWorkspace().addChangeListener(listener);
+      const boolBlock = this.workspace
+        .getFlyout()
+        .getWorkspace()
+        .getBlocksByType('logic_compare')[0];
+      boolBlock.getField('OP').setValue('LTE');
+      this.clock.tick(1000);
+      assert.isTrue(listenerTriggered);
+      this.workspace.getFlyout().getWorkspace().removeChangeListener(listener);
+    });
+  });
+
   suite('position', function () {
     suite('vertical flyout', function () {
       suite('simple flyout', function () {
