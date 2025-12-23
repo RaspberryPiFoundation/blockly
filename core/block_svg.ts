@@ -300,9 +300,12 @@ export class BlockSvg
 
     const oldXY = this.getRelativeToSurfaceXY();
     const focusedNode = getFocusManager().getFocusedNode();
-    const restoreFocus = this.getSvgRoot().contains(
-      focusedNode?.getFocusableElement() ?? null,
-    );
+    let element = focusedNode?.getFocusableElement() ?? null;
+    // Make sure the element is of Node type
+    if (!(element instanceof Node)) {
+      element = null;
+    }
+    const restoreFocus = this.getSvgRoot().contains(element);
     if (newParent) {
       (newParent as BlockSvg).getSvgRoot().appendChild(svgRoot);
       // appendChild() clears focus state, so re-focus the previously focused
@@ -870,11 +873,12 @@ export class BlockSvg
     // If this block (or a descendant) was focused, focus its parent or
     // workspace instead.
     const focusManager = getFocusManager();
-    if (
-      this.getSvgRoot().contains(
-        focusManager.getFocusedNode()?.getFocusableElement() ?? null,
-      )
-    ) {
+    let element = focusManager.getFocusedNode()?.getFocusableElement() ?? null;
+    // Make sure the element is of Node type
+    if (!(element instanceof Node)) {
+      element = null;
+    }
+    if (this.getSvgRoot().contains(element)) {
       let parent: BlockSvg | undefined | null = this.getParent();
       if (!parent) {
         // In some cases, blocks are disconnected from their parents before

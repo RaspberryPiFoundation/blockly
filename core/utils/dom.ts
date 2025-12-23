@@ -76,10 +76,16 @@ export function createSvgElement<T extends SVGElement>(
  */
 export function addClass(element: Element, className: string): boolean {
   const classNames = className.split(' ');
-  if (classNames.every((name) => element.classList.contains(name))) {
+  if (
+    classNames.every(
+      (name) => !!element.classList && element.classList.contains(name),
+    )
+  ) {
     return false;
   }
-  element.classList.add(...classNames);
+  if (element.classList) {
+    element.classList.add(...classNames);
+  }
   return true;
 }
 
@@ -90,7 +96,9 @@ export function addClass(element: Element, className: string): boolean {
  * @param classNames A string of one or multiple class names for an element.
  */
 export function removeClasses(element: Element, classNames: string) {
-  element.classList.remove(...classNames.split(' '));
+  if (element.classList) {
+    element.classList.remove(...classNames.split(' '));
+  }
 }
 
 /**
@@ -104,10 +112,16 @@ export function removeClasses(element: Element, classNames: string) {
  */
 export function removeClass(element: Element, className: string): boolean {
   const classNames = className.split(' ');
-  if (classNames.every((name) => !element.classList.contains(name))) {
+  if (
+    classNames.every(
+      (name) => !element.classList || !element.classList.contains(name),
+    )
+  ) {
     return false;
   }
-  element.classList.remove(...classNames);
+  if (element.classList) {
+    element.classList.remove(...classNames);
+  }
   return true;
 }
 
@@ -119,7 +133,7 @@ export function removeClass(element: Element, className: string): boolean {
  * @returns True if class exists, false otherwise.
  */
 export function hasClass(element: Element, className: string): boolean {
-  return element.classList.contains(className);
+  return !!element.classList && element.classList.contains(className);
 }
 
 /**

@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {getFocusManager} from './focus_manager.js';
 import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import {IRenderedElement} from './interfaces/i_rendered_element.js';
 import * as layerNums from './layers.js';
@@ -104,11 +103,14 @@ export class LayerManager {
   moveToDragLayer(elem: IRenderedElement & IFocusableNode) {
     this.dragLayer?.appendChild(elem.getSvgRoot());
 
-    if (elem.canBeFocused()) {
-      // Since moving the element to the drag layer will cause it to lose focus,
-      // ensure it regains focus (to ensure proper highlights & sent events).
-      getFocusManager().focusNode(elem);
-    }
+    // // TODO: This will break multiselect plugin, as multiselect plugin will
+    // // implicitly call this method as well, we should not change the focus to individual
+    // // block and move away from `MultiselectDraggable` at this time.
+    // if (elem.canBeFocused()) {
+    //   // Since moving the element to the drag layer will cause it to lose focus,
+    //   // ensure it regains focus (to ensure proper highlights & sent events).
+    //   getFocusManager().focusNode(elem);
+    // }
   }
 
   /**
@@ -119,11 +121,14 @@ export class LayerManager {
   moveOffDragLayer(elem: IRenderedElement & IFocusableNode, layerNum: number) {
     this.append(elem, layerNum);
 
-    if (elem.canBeFocused()) {
-      // Since moving the element off the drag layer will cause it to lose focus,
-      // ensure it regains focus (to ensure proper highlights & sent events).
-      getFocusManager().focusNode(elem);
-    }
+    // // TODO: This will break multiselect plugin, as multiselect plugin will
+    // // implicitly call this method as well, we should not change the focus to individual
+    // // block and move away from `MultiselectDraggable` at this time.
+    // if (elem.canBeFocused()) {
+    //   // Since moving the element off the drag layer will cause it to lose focus,
+    //   // ensure it regains focus (to ensure proper highlights & sent events).
+    //   getFocusManager().focusNode(elem);
+    // }
   }
 
   /**

@@ -322,13 +322,18 @@ export class FocusManager {
       this.isUpdatingFocusedNode = true;
     }
 
-    // Double check that state wasn't desynchronized in the background. See:
-    // https://github.com/google/blockly-keyboard-experimentation/issues/87.
-    // This is only done for the case where the same node is being focused twice
-    // since other cases should automatically correct (due to the rest of the
-    // routine running as normal).
-    const prevFocusedElement = this.focusedNode?.getFocusableElement();
-    const hasDesyncedState = prevFocusedElement !== document.activeElement;
+    // // TODO: This will break multiselect plugin as it will make the
+    // // selected `MultiselectDraggable` (has already assigned to `this.focusedNode`)
+    // // to lose focus (get changed to the actual focused one managed by Blockly core).
+    // // Double check that state wasn't desynchronized in the background. See:
+    // // https://github.com/google/blockly-keyboard-experimentation/issues/87.
+    // // This is only done for the case where the same node is being focused twice
+    // // since other cases should automatically correct (due to the rest of the
+    // // routine running as normal).
+    // const prevFocusedElement = this.focusedNode?.getFocusableElement();
+    // const hasDesyncedState = prevFocusedElement !== document.activeElement;
+    const hasDesyncedState = false;
+
     if (this.focusedNode === focusableNode && !hasDesyncedState) {
       if (mustRestoreUpdatingNode) {
         // Reenable state syncing from DOM events.
