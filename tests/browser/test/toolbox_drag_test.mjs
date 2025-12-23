@@ -207,4 +207,13 @@ suite('Open toolbox categories', function () {
     );
     await openCategories(this.browser, testCategories, screenDirection.RTL);
   });
+
+  test('clicking the toolbox itself does not open the flyout', async function () {
+    this.browser = await testSetup(testFileLocations.PLAYGROUND);
+    await this.browser.$('.blocklyToolbox').click();
+    const flyoutOpen = await this.browser.execute(() => {
+      return Blockly.getMainWorkspace().getFlyout().isVisible();
+    });
+    chai.assert.isFalse(flyoutOpen);
+  });
 });
