@@ -1148,6 +1148,9 @@ export class Toolbox
   ): void {
     if (node !== this) {
       // Only select the item if it isn't already selected so as to not toggle.
+      // Also require that the mouse not be down, i.e. that the focusing of
+      // the toolbox was keyboard-driven, to avoid opening the flyout when
+      // clicking on an empty part of the toolbox.
       if (this.getSelectedItem() !== node && !this.mouseDown) {
         this.setSelectedItem(node as IToolboxItem);
       }
