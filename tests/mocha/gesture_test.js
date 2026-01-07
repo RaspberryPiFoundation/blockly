@@ -13,6 +13,7 @@ import {
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
 import {dispatchPointerEvent} from './test_helpers/user_input.js';
+import {getProperSimpleJson} from './test_helpers/toolbox_definitions.js';
 
 suite('Gesture', function () {
   function testGestureIsFieldClick(block, isFieldClick, eventsFireStub) {
@@ -54,8 +55,12 @@ suite('Gesture', function () {
   setup(function () {
     sharedTestSetup.call(this);
     defineBasicBlockWithField();
-    const toolbox = document.getElementById('gesture-test-toolbox');
-    this.workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+    const toolbox = getProperSimpleJson();
+    toolbox.contents.unshift({
+        'kind': 'block',
+        'type': 'test_field_block',
+		});
+    this.workspace = Blockly.inject('blocklyDiv', {toolbox});
   });
 
   teardown(function () {
@@ -94,4 +99,33 @@ suite('Gesture', function () {
     const block = getTopFlyoutBlock(flyout);
     testGestureIsFieldClick(block, true, this.eventsFireStub);
   });
+  
+  test('Clicking on shadow block does not select it', function () {
+		const flyout = this.workspace.getFlyout(true);
+		flyout.createBlock(flyout.getWorkspace().getBlocksByType('logic_compare')[0]);
+		const block = this.workspace.getBlocksByType('logic_compare')[0];
+		const shadowBlock = block.getInput('A').connection.targetBlock();
+		
+    this.eventsFireStub.resetHistory();
+		const eventTarget = shadowBlock.getSvgRoot();
+    dispatchPointerEvent(eventTarget, 'pointerdown');
+    dispatchPointerEvent(eventTarget, 'pointerup');
+    dispatchPointerEvent(eventTarget, 'click');
+
+	// The shadow block should not be selected, even though it was clicked.
+    assertEventNotFired(
+      this.eventsFireStub,
+      Blockly.Events.Selected,
+      {newElementId: shadowBlock.id, type: EventType.SELECTED},
+      this.workspace.id,
+    );
+    
+		// Its parent block should be selected, however.
+    assertEventFired(
+      this.eventsFireStub,
+      Blockly.Events.Selected,
+      {newElementId: block.id, type: EventType.SELECTED},
+      this.workspace.id,
+    );
+  })
 });
