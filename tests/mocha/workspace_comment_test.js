@@ -168,8 +168,10 @@ suite('Workspace comment', function () {
         this.workspace.id,
       );
     });
+  });
 
-    test('focuses the workspace when deleted', function () {
+  suite('Focus', function () {
+    test('moves to the workspace when deleted', function () {
       const comment = new Blockly.comments.RenderedWorkspaceComment(
         this.workspace,
       );
@@ -177,6 +179,19 @@ suite('Workspace comment', function () {
       assert.equal(Blockly.getFocusManager().getFocusedNode(), comment);
       comment.view.getCommentBarButtons()[1].performAction();
       assert.equal(Blockly.getFocusManager().getFocusedNode(), this.workspace);
+    });
+
+    test('does not change the layer', function () {
+      const comment = new Blockly.comments.RenderedWorkspaceComment(
+        this.workspace,
+      );
+
+      this.workspace.getLayerManager()?.moveToDragLayer(comment);
+      Blockly.getFocusManager().focusNode(comment);
+      assert.equal(
+        comment.getSvgRoot().parentElement,
+        this.workspace.getLayerManager()?.getDragLayer(),
+      );
     });
   });
 });

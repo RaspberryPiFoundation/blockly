@@ -2883,4 +2883,50 @@ suite('Blocks', function () {
       assert.equal(block.inputList[1].fieldRow[0].getValue(), 'Row2');
     });
   });
+
+  suite('Dragging', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv');
+      this.blocks = createTestBlocks(this.workspace, false);
+      for (const block of Object.values(this.blocks)) {
+        block.initSvg();
+        block.render();
+      }
+    });
+    test('Bubbles are moved to drag layer along with their blocks', async function () {
+      this.blocks.A.setCommentText('a');
+      this.blocks.B.setCommentText('b');
+      this.blocks.C.setCommentText('c');
+      const v1 = this.blocks.A.getIcon(
+        Blockly.icons.IconType.COMMENT,
+      ).setBubbleVisible(true);
+      const v2 = this.blocks.B.getIcon(
+        Blockly.icons.IconType.COMMENT,
+      ).setBubbleVisible(true);
+      const v3 = this.blocks.C.getIcon(
+        Blockly.icons.IconType.COMMENT,
+      ).setBubbleVisible(true);
+
+      this.clock.tick(1000);
+      await Promise.all([v1, v2, v3]);
+
+      this.blocks.B.startDrag();
+
+      // Block A stays put and should have its comment stay on the bubble layer.
+      assert.equal(
+        this.blocks.A.getIcon(Blockly.icons.IconType.COMMENT)
+          .getBubble()
+          .getSvgRoot().parentElement,
+        this.blocks.A.workspace.getLayerManager()?.getBubbleLayer(),
+      );
+
+      // Block B moves to the drag layer and its comment should follow.
+      assert.equal(
+        this.blocks.B.getIcon(Blockly.icons.IconType.COMMENT)
+          .getBubble()
+          .getSvgRoot().parentElement,
+        this.blocks.B.workspace.getLayerManager()?.getDragLayer(),
+      );
+    });
+  });
 });

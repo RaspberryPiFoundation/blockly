@@ -215,4 +215,13 @@ export class LayerManager {
   getBubbleLayer(): SVGGElement {
     return this.layers.get(layerNums.BUBBLE)!;
   }
+
+  /**
+   * Returns the drag layer.
+   *
+   * @internal
+   */
+  getDragLayer(): SVGGElement | undefined {
+    return this.dragLayer;
+  }
 }
