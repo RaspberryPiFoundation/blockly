@@ -281,7 +281,7 @@
 	"LISTS_INDEX_OF_FIRST": "寻找第一次出现的项",
 	"LISTS_INDEX_OF_LAST": "寻找最后一次出现的项",
 	"LISTS_INDEX_OF_TOOLTIP": "返回在列表中的第一/最后一个匹配项的索引值。如果找不到项目则返回%1。",
-	"LISTS_GET_INDEX_HELPURL": "https://github.com/google/blockly/wiki/Lists#getting-items-from-a-list",
+	"LISTS_GET_INDEX_HELPURL": "https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-items-from-a-list",
 	"LISTS_GET_INDEX_GET": "取得",
 	"LISTS_GET_INDEX_GET_REMOVE": "取得并移除",
 	"LISTS_GET_INDEX_REMOVE": "移除",

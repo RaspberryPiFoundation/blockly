@@ -270,7 +270,7 @@
 	"LISTS_INDEX_OF_FIRST": "encontrar la primera aparición del elemento",
 	"LISTS_INDEX_OF_LAST": "encontrar la última aparición del elemento",
 	"LISTS_INDEX_OF_TOOLTIP": "Devuelve el índice de la primera/última aparición del elemento en la lista. Devuelve %1 si el elemento no se encuentra.",
-	"LISTS_GET_INDEX_HELPURL": "https://github.com/google/blockly/wiki/Lists#getting-items-from-a-list",
+	"LISTS_GET_INDEX_HELPURL": "https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-items-from-a-list",
 	"LISTS_GET_INDEX_GET": "obtener",
 	"LISTS_GET_INDEX_GET_REMOVE": "obtener y eliminar",
 	"LISTS_GET_INDEX_REMOVE": "eliminar",
