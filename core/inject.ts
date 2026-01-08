@@ -388,6 +388,7 @@ function loadSounds(pathToMedia: string, workspace: WorkspaceSvg) {
       null,
       unbindSounds,
       true,
+      {passive: true},
     ),
   );
 }

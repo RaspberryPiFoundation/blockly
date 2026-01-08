@@ -357,6 +357,8 @@ export abstract class Flyout
         'wheel',
         this,
         this.wheel_,
+        false,
+        {passive: false},
       ),
     );
 

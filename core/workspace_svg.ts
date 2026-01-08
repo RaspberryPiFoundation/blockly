@@ -809,12 +809,16 @@ export class WorkspaceSvg
       // which otherwise prevents zoom/scroll events from being observed in
       // Safari. Once that bug is fixed it should be removed.
       this.dummyWheelListener = () => {};
-      document.body.addEventListener('wheel', this.dummyWheelListener);
+      document.body.addEventListener('wheel', this.dummyWheelListener, {
+        passive: true,
+      });
       browserEvents.conditionalBind(
         this.svgGroup_,
         'wheel',
         this,
         this.onMouseWheel,
+        false,
+        {passive: false},
       );
     }
 
