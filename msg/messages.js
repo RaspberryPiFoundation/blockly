@@ -138,10 +138,10 @@ Blockly.Msg.REDO = 'Redo';
 /// prompt - This message is seen on mobile devices and the Opera browser.  With most browsers, users can edit numeric values in blocks by just clicking and typing.  Opera does not allow this and mobile browsers may have issues with in-line textareas. So we prompt users with this message (usually a popup) to change a value.
 Blockly.Msg.CHANGE_VALUE_TITLE = 'Change value:';
 /** @type {string} */
-/// dropdown choice - When the user clicks on a variable block, this is one of the dropdown menu choices.  It is used to rename the current variable.  See [https://github.com/google/blockly/wiki/Variables#dropdown-menu https://github.com/google/blockly/wiki/Variables#dropdown-menu].
+/// dropdown choice - When the user clicks on a variable block, this is one of the dropdown menu choices.  It is used to rename the current variable.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Variables#dropdown-menu https://github.com/RaspberryPiFoundation/blockly/wiki/Variables#dropdown-menu].
 Blockly.Msg.RENAME_VARIABLE = 'Rename variable...';
 /** @type {string} */
-/// prompt - Prompts the user to enter the new name for the selected variable.  See [https://github.com/google/blockly/wiki/Variables#dropdown-menu https://github.com/google/blockly/wiki/Variables#dropdown-menu].\n\nParameters:\n* %1 - the name of the variable to be renamed.
+/// prompt - Prompts the user to enter the new name for the selected variable.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Variables#dropdown-menu https://github.com/RaspberryPiFoundation/blockly/wiki/Variables#dropdown-menu].\n\nParameters:\n* %1 - the name of the variable to be renamed.
 Blockly.Msg.RENAME_VARIABLE_TITLE = 'Rename all "%1" variables to:';
 
 // Variable creation
@@ -161,7 +161,7 @@ Blockly.Msg.NEW_COLOUR_VARIABLE = 'Create colour variable...';
 /// prompt - Prompts the user to enter the type for a variable.
 Blockly.Msg.NEW_VARIABLE_TYPE_TITLE = 'New variable type:';
 /** @type {string} */
-/// prompt - Prompts the user to enter the name for a new variable.  See [https://github.com/google/blockly/wiki/Variables#dropdown-menu https://github.com/google/blockly/wiki/Variables#dropdown-menu].
+/// prompt - Prompts the user to enter the name for a new variable.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Variables#dropdown-menu https://github.com/RaspberryPiFoundation/blockly/wiki/Variables#dropdown-menu].
 Blockly.Msg.NEW_VARIABLE_TITLE = 'New variable name:';
 /** @type {string} */
 /// alert - Tells the user that the name they entered is already in use.
@@ -189,7 +189,7 @@ Blockly.Msg.DELETE_VARIABLE = 'Delete the "%1" variable';
 /// {{Optional}} url - Information about colour.
 Blockly.Msg.COLOUR_PICKER_HELPURL = 'https://en.wikipedia.org/wiki/Color';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Colour#picking-a-colour-from-a-palette https://github.com/google/blockly/wiki/Colour#picking-a-colour-from-a-palette].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#picking-a-colour-from-a-palette https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#picking-a-colour-from-a-palette].
 Blockly.Msg.COLOUR_PICKER_TOOLTIP = 'Choose a colour from the palette.';
 /** @type {string} */
 /// {{Optional}} url - A link that displays a random colour each time you visit it.
@@ -198,25 +198,25 @@ Blockly.Msg.COLOUR_RANDOM_HELPURL = 'http://randomcolour.com';
 /// block text - Title of block that generates a colour at random.
 Blockly.Msg.COLOUR_RANDOM_TITLE = 'random colour';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Colour#generating-a-random-colour https://github.com/google/blockly/wiki/Colour#generating-a-random-colour].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#generating-a-random-colour https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#generating-a-random-colour].
 Blockly.Msg.COLOUR_RANDOM_TOOLTIP = 'Choose a colour at random.';
 /** @type {string} */
 /// {{Optional}} url - A link for colour codes with percentages (0-100%) for each component, instead of the more common 0-255, which may be more difficult for beginners.
 Blockly.Msg.COLOUR_RGB_HELPURL = 'https://www.december.com/html/spec/colorpercompact.html';
 /** @type {string} */
-/// block text - Title of block for [https://github.com/google/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components https://github.com/google/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components].
+/// block text - Title of block for [https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components].
 Blockly.Msg.COLOUR_RGB_TITLE = 'colour with';
 /** @type {string} */
-/// block input text - The amount of red (from 0 to 100) to use when [https://github.com/google/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components https://github.com/google/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components].\n{{Identical|Red}}
+/// block input text - The amount of red (from 0 to 100) to use when [https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components].\n{{Identical|Red}}
 Blockly.Msg.COLOUR_RGB_RED = 'red';
 /** @type {string} */
-/// block input text - The amount of green (from 0 to 100) to use when [https://github.com/google/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components https://github.com/google/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components].
+/// block input text - The amount of green (from 0 to 100) to use when [https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components].
 Blockly.Msg.COLOUR_RGB_GREEN = 'green';
 /** @type {string} */
-/// block input text - The amount of blue (from 0 to 100) to use when [https://github.com/google/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components https://github.com/google/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components].\n{{Identical|Blue}}
+/// block input text - The amount of blue (from 0 to 100) to use when [https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components].\n{{Identical|Blue}}
 Blockly.Msg.COLOUR_RGB_BLUE = 'blue';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components https://github.com/google/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#creating-a-colour-from-red-green-and-blue-components].
 Blockly.Msg.COLOUR_RGB_TOOLTIP = 'Create a colour with the specified amount of red, green, and blue. All values must be between 0 and 100.';
 /** @type {string} */
 /// {{Optional}} url - A useful link that displays blending of two colours.
@@ -225,16 +225,16 @@ Blockly.Msg.COLOUR_BLEND_HELPURL = 'https://meyerweb.com/eric/tools/color-blend/
 /// block text - A verb for blending two shades of paint.
 Blockly.Msg.COLOUR_BLEND_TITLE = 'blend';
 /** @type {string} */
-/// block input text - The first of two colours to [https://github.com/google/blockly/wiki/Colour#blending-colours blend].
+/// block input text - The first of two colours to [https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#blending-colours blend].
 Blockly.Msg.COLOUR_BLEND_COLOUR1 = 'colour 1';
 /** @type {string} */
-/// block input text - The second of two colours to [https://github.com/google/blockly/wiki/Colour#blending-colours blend].
+/// block input text - The second of two colours to [https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#blending-colours blend].
 Blockly.Msg.COLOUR_BLEND_COLOUR2 = 'colour 2';
 /** @type {string} */
-/// block input text - The proportion of the [https://github.com/google/blockly/wiki/Colour#blending-colours blend] containing the first colour; the remaining proportion is of the second colour.  For example, if the first colour is red and the second colour blue, a ratio of 1 would yield pure red, a ratio of .5 would yield purple (equal amounts of red and blue), and a ratio of 0 would yield pure blue.\n{{Identical|Ratio}}
+/// block input text - The proportion of the [https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#blending-colours blend] containing the first colour; the remaining proportion is of the second colour.  For example, if the first colour is red and the second colour blue, a ratio of 1 would yield pure red, a ratio of .5 would yield purple (equal amounts of red and blue), and a ratio of 0 would yield pure blue.\n{{Identical|Ratio}}
 Blockly.Msg.COLOUR_BLEND_RATIO = 'ratio';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Colour#blending-colours https://github.com/google/blockly/wiki/Colour#blending-colours].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#blending-colours https://github.com/RaspberryPiFoundation/blockly/wiki/Colour#blending-colours].
 Blockly.Msg.COLOUR_BLEND_TOOLTIP = 'Blends two colours together with a given ratio (0.0 - 1.0).';
 
 // Loop Blocks.
@@ -242,45 +242,45 @@ Blockly.Msg.COLOUR_BLEND_TOOLTIP = 'Blends two colours together with a given rat
 /// {{Optional}} url - Describes 'repeat loops' in computer programs; consider using the translation of the page [https://en.wikipedia.org/wiki/Control_flow https://en.wikipedia.org/wiki/Control_flow].
 Blockly.Msg.CONTROLS_REPEAT_HELPURL = 'https://en.wikipedia.org/wiki/For_loop';
 /** @type {string} */
-/// block input text - Title of [https://github.com/google/blockly/wiki/Loops#repeat repeat block].\n\nParameters:\n* %1 - the number of times the body of the loop should be repeated.
+/// block input text - Title of [https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#repeat repeat block].\n\nParameters:\n* %1 - the number of times the body of the loop should be repeated.
 Blockly.Msg.CONTROLS_REPEAT_TITLE = 'repeat %1 times';
 /** @type {string} */
-/// block text - Preceding the blocks in the body of the loop.  See [https://github.com/google/blockly/wiki/Loops https://github.com/google/blockly/wiki/Loops].\n{{Identical|Do}}
+/// block text - Preceding the blocks in the body of the loop.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Loops https://github.com/RaspberryPiFoundation/blockly/wiki/Loops].\n{{Identical|Do}}
 Blockly.Msg.CONTROLS_REPEAT_INPUT_DO = 'do';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Loops#repeat https://github.com/google/blockly/wiki/Loops#repeat].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#repeat https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#repeat].
 Blockly.Msg.CONTROLS_REPEAT_TOOLTIP = 'Do some statements several times.';
 /** @type {string} */
 /// {{Optional}} url - Describes 'while loops' in computer programs; consider using the translation of [https://en.wikipedia.org/wiki/While_loop https://en.wikipedia.org/wiki/While_loop], if present, or [https://en.wikipedia.org/wiki/Control_flow https://en.wikipedia.org/wiki/Control_flow].
-Blockly.Msg.CONTROLS_WHILEUNTIL_HELPURL = 'https://github.com/google/blockly/wiki/Loops#repeat';
+Blockly.Msg.CONTROLS_WHILEUNTIL_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#repeat';
 /** @type {string} */
 Blockly.Msg.CONTROLS_WHILEUNTIL_INPUT_DO = Blockly.Msg.CONTROLS_REPEAT_INPUT_DO;
 /** @type {string} */
-/// dropdown - Specifies that a loop should [https://github.com/google/blockly/wiki/Loops#repeat-while repeat while] the following condition is true.
+/// dropdown - Specifies that a loop should [https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#repeat-while repeat while] the following condition is true.
 Blockly.Msg.CONTROLS_WHILEUNTIL_OPERATOR_WHILE = 'repeat while';
 /** @type {string} */
-/// dropdown - Specifies that a loop should [https://github.com/google/blockly/wiki/Loops#repeat-until repeat until] the following condition becomes true.
+/// dropdown - Specifies that a loop should [https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#repeat-until repeat until] the following condition becomes true.
 Blockly.Msg.CONTROLS_WHILEUNTIL_OPERATOR_UNTIL = 'repeat until';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Loops#repeat-while Loops#repeat-while https://github.com/google/blockly/wiki/Loops#repeat-while Loops#repeat-while].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#repeat-while Loops#repeat-while https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#repeat-while Loops#repeat-while].
 Blockly.Msg.CONTROLS_WHILEUNTIL_TOOLTIP_WHILE = 'While a value is true, then do some statements.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Loops#repeat-until https://github.com/google/blockly/wiki/Loops#repeat-until].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#repeat-until https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#repeat-until].
 Blockly.Msg.CONTROLS_WHILEUNTIL_TOOLTIP_UNTIL = 'While a value is false, then do some statements.';
 
 /** @type {string} */
 /// {{Optional}} url - Describes 'for loops' in computer programs.  Consider using your language's translation of [https://en.wikipedia.org/wiki/For_loop https://en.wikipedia.org/wiki/For_loop], if present.
-Blockly.Msg.CONTROLS_FOR_HELPURL = 'https://github.com/google/blockly/wiki/Loops#count-with';
+Blockly.Msg.CONTROLS_FOR_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#count-with';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Loops#count-with https://github.com/google/blockly/wiki/Loops#count-with].\n\nParameters:\n* %1 - the name of the loop variable.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#count-with https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#count-with].\n\nParameters:\n* %1 - the name of the loop variable.
 Blockly.Msg.CONTROLS_FOR_TOOLTIP = 'Have the variable "%1" take on the values from the start number to the end number, counting by the specified interval, and do the specified blocks.';
 /** @type {string} */
 /// block text - Repeatedly counts a variable (%1)
 /// starting with a (usually lower) number in a range (%2),
 /// ending with a (usually higher) number in a range (%3), and counting the
 /// iterations by a number of steps (%4).  As in
-/// [https://github.com/google/blockly/wiki/Loops#count-with
-/// https://github.com/google/blockly/wiki/Loops#count-with].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#count-with
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#count-with].
 /// [[File:Blockly-count-with.png]]
 Blockly.Msg.CONTROLS_FOR_TITLE = 'count with %1 from %2 to %3 by %4';
 /** @type {string} */
@@ -288,78 +288,78 @@ Blockly.Msg.CONTROLS_FOR_INPUT_DO = Blockly.Msg.CONTROLS_REPEAT_INPUT_DO;
 
 /** @type {string} */
 /// {{Optional}} url - Describes 'for-each loops' in computer programs.  Consider using your language's translation of [https://en.wikipedia.org/wiki/Foreach https://en.wikipedia.org/wiki/Foreach] if present.
-Blockly.Msg.CONTROLS_FOREACH_HELPURL = 'https://github.com/google/blockly/wiki/Loops#for-each';
+Blockly.Msg.CONTROLS_FOREACH_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#for-each';
 /** @type {string} */
-/// block text - Title of [https://github.com/google/blockly/wiki/Loops#for-each for each block].
+/// block text - Title of [https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#for-each for each block].
 /// Sequentially assigns every item in array %2 to the valiable %1.
 Blockly.Msg.CONTROLS_FOREACH_TITLE = 'for each item %1 in list %2';
 /** @type {string} */
 Blockly.Msg.CONTROLS_FOREACH_INPUT_DO = Blockly.Msg.CONTROLS_REPEAT_INPUT_DO;
 /** @type {string} */
-/// block text - Description of [https://github.com/google/blockly/wiki/Loops#for-each for each blocks].\n\nParameters:\n* %1 - the name of the loop variable.
+/// block text - Description of [https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#for-each for each blocks].\n\nParameters:\n* %1 - the name of the loop variable.
 Blockly.Msg.CONTROLS_FOREACH_TOOLTIP = 'For each item in a list, set the variable "%1" to the item, and then do some statements.';
 
 /** @type {string} */
 /// {{Optional}} url - Describes control flow in computer programs.  Consider using your language's translation of [https://en.wikipedia.org/wiki/Control_flow https://en.wikipedia.org/wiki/Control_flow], if it exists.
-Blockly.Msg.CONTROLS_FLOW_STATEMENTS_HELPURL = 'https://github.com/google/blockly/wiki/Loops#loop-termination-blocks';
+Blockly.Msg.CONTROLS_FLOW_STATEMENTS_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#loop-termination-blocks';
 /** @type {string} */
-/// dropdown - The current loop should be exited.  See [https://github.com/google/blockly/wiki/Loops#break https://github.com/google/blockly/wiki/Loops#break].
+/// dropdown - The current loop should be exited.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#break https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#break].
 Blockly.Msg.CONTROLS_FLOW_STATEMENTS_OPERATOR_BREAK = 'break out of loop';
 /** @type {string} */
-/// dropdown - The current iteration of the loop should be ended and the next should begin.  See [https://github.com/google/blockly/wiki/Loops#continue-with-next-iteration https://github.com/google/blockly/wiki/Loops#continue-with-next-iteration].
+/// dropdown - The current iteration of the loop should be ended and the next should begin.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#continue-with-next-iteration https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#continue-with-next-iteration].
 Blockly.Msg.CONTROLS_FLOW_STATEMENTS_OPERATOR_CONTINUE = 'continue with next iteration of loop';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Loops#break-out-of-loop https://github.com/google/blockly/wiki/Loops#break-out-of-loop].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#break-out-of-loop https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#break-out-of-loop].
 Blockly.Msg.CONTROLS_FLOW_STATEMENTS_TOOLTIP_BREAK = 'Break out of the containing loop.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Loops#continue-with-next-iteration https://github.com/google/blockly/wiki/Loops#continue-with-next-iteration].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#continue-with-next-iteration https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#continue-with-next-iteration].
 Blockly.Msg.CONTROLS_FLOW_STATEMENTS_TOOLTIP_CONTINUE = 'Skip the rest of this loop, and continue with the next iteration.';
 /** @type {string} */
-/// warning - The user has tried placing a block outside of a loop (for each, while, repeat, etc.), but this type of block may only be used within a loop.  See [https://github.com/google/blockly/wiki/Loops#loop-termination-blocks https://github.com/google/blockly/wiki/Loops#loop-termination-blocks].
+/// warning - The user has tried placing a block outside of a loop (for each, while, repeat, etc.), but this type of block may only be used within a loop.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#loop-termination-blocks https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#loop-termination-blocks].
 Blockly.Msg.CONTROLS_FLOW_STATEMENTS_WARNING = 'Warning: This block may only be used within a loop.';
 
 // Logic Blocks.
 /** @type {string} */
 /// {{Optional}} url - Describes conditional statements (if-then-else) in computer programs.  Consider using your language's translation of [https://en.wikipedia.org/wiki/If_else https://en.wikipedia.org/wiki/If_else], if present.
-Blockly.Msg.CONTROLS_IF_HELPURL = 'https://github.com/google/blockly/wiki/IfElse';
+Blockly.Msg.CONTROLS_IF_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/IfElse';
 /** @type {string} */
-/// tooltip - Describes [https://github.com/google/blockly/wiki/IfElse#if-blocks 'if' blocks].  Consider using your language's translation of [https://en.wikipedia.org/wiki/If_statement https://en.wikipedia.org/wiki/If_statement], if present.
+/// tooltip - Describes [https://github.com/RaspberryPiFoundation/blockly/wiki/IfElse#if-blocks 'if' blocks].  Consider using your language's translation of [https://en.wikipedia.org/wiki/If_statement https://en.wikipedia.org/wiki/If_statement], if present.
 Blockly.Msg.CONTROLS_IF_TOOLTIP_1 = 'If a value is true, then do some statements.';
 /** @type {string} */
-/// tooltip - Describes [https://github.com/google/blockly/wiki/IfElse#if-else-blocks if-else blocks].  Consider using your language's translation of [https://en.wikipedia.org/wiki/If_statement https://en.wikipedia.org/wiki/If_statement], if present.
+/// tooltip - Describes [https://github.com/RaspberryPiFoundation/blockly/wiki/IfElse#if-else-blocks if-else blocks].  Consider using your language's translation of [https://en.wikipedia.org/wiki/If_statement https://en.wikipedia.org/wiki/If_statement], if present.
 Blockly.Msg.CONTROLS_IF_TOOLTIP_2 = 'If a value is true, then do the first block of statements. Otherwise, do the second block of statements.';
 /** @type {string} */
-/// tooltip - Describes [https://github.com/google/blockly/wiki/IfElse#if-else-if-blocks if-else-if blocks].  Consider using your language's translation of [https://en.wikipedia.org/wiki/If_statement https://en.wikipedia.org/wiki/If_statement], if present.
+/// tooltip - Describes [https://github.com/RaspberryPiFoundation/blockly/wiki/IfElse#if-else-if-blocks if-else-if blocks].  Consider using your language's translation of [https://en.wikipedia.org/wiki/If_statement https://en.wikipedia.org/wiki/If_statement], if present.
 Blockly.Msg.CONTROLS_IF_TOOLTIP_3 = 'If the first value is true, then do the first block of statements. Otherwise, if the second value is true, do the second block of statements.';
 /** @type {string} */
-/// tooltip - Describes [https://github.com/google/blockly/wiki/IfElse#if-else-if-else-blocks if-else-if-else blocks].  Consider using your language's translation of [https://en.wikipedia.org/wiki/If_statement https://en.wikipedia.org/wiki/If_statement], if present.
+/// tooltip - Describes [https://github.com/RaspberryPiFoundation/blockly/wiki/IfElse#if-else-if-else-blocks if-else-if-else blocks].  Consider using your language's translation of [https://en.wikipedia.org/wiki/If_statement https://en.wikipedia.org/wiki/If_statement], if present.
 Blockly.Msg.CONTROLS_IF_TOOLTIP_4 = 'If the first value is true, then do the first block of statements. Otherwise, if the second value is true, do the second block of statements. If none of the values are true, do the last block of statements.';
 /** @type {string} */
-/// block text - See [https://github.com/google/blockly/wiki/IfElse https://github.com/google/blockly/wiki/IfElse].
+/// block text - See [https://github.com/RaspberryPiFoundation/blockly/wiki/IfElse https://github.com/RaspberryPiFoundation/blockly/wiki/IfElse].
 /// It is recommended, but not essential, that this have text in common with the translation of 'else if'\n{{Identical|If}}
 Blockly.Msg.CONTROLS_IF_MSG_IF = 'if';
 /** @type {string} */
-/// block text - See [https://github.com/google/blockly/wiki/IfElse https://github.com/google/blockly/wiki/IfElse].  The English words "otherwise if" would probably be clearer than "else if", but the latter is used because it is traditional and shorter.
+/// block text - See [https://github.com/RaspberryPiFoundation/blockly/wiki/IfElse https://github.com/RaspberryPiFoundation/blockly/wiki/IfElse].  The English words "otherwise if" would probably be clearer than "else if", but the latter is used because it is traditional and shorter.
 Blockly.Msg.CONTROLS_IF_MSG_ELSEIF = 'else if';
 /** @type {string} */
-/// block text - See [https://github.com/google/blockly/wiki/IfElse https://github.com/google/blockly/wiki/IfElse].  The English word "otherwise" would probably be superior to "else", but the latter is used because it is traditional and shorter.
+/// block text - See [https://github.com/RaspberryPiFoundation/blockly/wiki/IfElse https://github.com/RaspberryPiFoundation/blockly/wiki/IfElse].  The English word "otherwise" would probably be superior to "else", but the latter is used because it is traditional and shorter.
 Blockly.Msg.CONTROLS_IF_MSG_ELSE = 'else';
 /** @type {string} */
 Blockly.Msg.CONTROLS_IF_MSG_THEN = Blockly.Msg.CONTROLS_REPEAT_INPUT_DO;
 /** @type {string} */
 Blockly.Msg.CONTROLS_IF_IF_TITLE_IF = Blockly.Msg.CONTROLS_IF_MSG_IF;
 /** @type {string} */
-/// tooltip - Describes [https://github.com/google/blockly/wiki/IfElse#block-modification if block modification].
+/// tooltip - Describes [https://github.com/RaspberryPiFoundation/blockly/wiki/IfElse#block-modification if block modification].
 Blockly.Msg.CONTROLS_IF_IF_TOOLTIP = 'Add, remove, or reorder sections to reconfigure this if block.';
 /** @type {string} */
 Blockly.Msg.CONTROLS_IF_ELSEIF_TITLE_ELSEIF = Blockly.Msg.CONTROLS_IF_MSG_ELSEIF;
 /** @type {string} */
-/// tooltip - Describes the 'else if' subblock during [https://github.com/google/blockly/wiki/IfElse#block-modification if block modification].
+/// tooltip - Describes the 'else if' subblock during [https://github.com/RaspberryPiFoundation/blockly/wiki/IfElse#block-modification if block modification].
 Blockly.Msg.CONTROLS_IF_ELSEIF_TOOLTIP = 'Add a condition to the if block.';
 /** @type {string} */
 Blockly.Msg.CONTROLS_IF_ELSE_TITLE_ELSE = Blockly.Msg.CONTROLS_IF_MSG_ELSE;
 /** @type {string} */
-/// tooltip - Describes the 'else' subblock during [https://github.com/google/blockly/wiki/IfElse#block-modification if block modification].
+/// tooltip - Describes the 'else' subblock during [https://github.com/RaspberryPiFoundation/blockly/wiki/IfElse#block-modification if block modification].
 Blockly.Msg.CONTROLS_IF_ELSE_TOOLTIP = 'Add a final, catch-all condition to the if block.';
 
 /** @type {string} */
@@ -386,7 +386,7 @@ Blockly.Msg.LOGIC_COMPARE_TOOLTIP_GTE = 'Return true if the first input is great
 
 /** @type {string} */
 /// {{Optional}} url - Information about the Boolean conjunction ("and") and disjunction ("or") operators.  Consider using the translation of [https://en.wikipedia.org/wiki/Boolean_logic https://en.wikipedia.org/wiki/Boolean_logic], if it exists in your language.
-Blockly.Msg.LOGIC_OPERATION_HELPURL = 'https://github.com/google/blockly/wiki/Logic#logical-operations';
+Blockly.Msg.LOGIC_OPERATION_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Logic#logical-operations';
 /** @type {string} */
 /// tooltip - See [https://en.wikipedia.org/wiki/Logical_conjunction https://en.wikipedia.org/wiki/Logical_conjunction].
 Blockly.Msg.LOGIC_OPERATION_TOOLTIP_AND = 'Return true if both inputs are true.';
@@ -402,7 +402,7 @@ Blockly.Msg.LOGIC_OPERATION_OR = 'or';
 
 /** @type {string} */
 /// {{Optional}} url - Information about logical negation.  The translation of [https://en.wikipedia.org/wiki/Logical_negation https://en.wikipedia.org/wiki/Logical_negation] is recommended if it exists in the target language.
-Blockly.Msg.LOGIC_NEGATE_HELPURL = 'https://github.com/google/blockly/wiki/Logic#not';
+Blockly.Msg.LOGIC_NEGATE_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Logic#not';
 /** @type {string} */
 /// block text - This is a unary operator that returns ''false'' when the input is ''true'', and ''true'' when the input is ''false''.
 /// \n\nParameters:\n* %1 - the input (which should be either the value "true" or "false")
@@ -413,7 +413,7 @@ Blockly.Msg.LOGIC_NEGATE_TOOLTIP = 'Returns true if the input is false. Returns 
 
 /** @type {string} */
 /// {{Optional}} url - Information about the logic values ''true'' and ''false''.  Consider using the translation of [https://en.wikipedia.org/wiki/Truth_value https://en.wikipedia.org/wiki/Truth_value] if it exists in your language.
-Blockly.Msg.LOGIC_BOOLEAN_HELPURL = 'https://github.com/google/blockly/wiki/Logic#values';
+Blockly.Msg.LOGIC_BOOLEAN_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Logic#values';
 /** @type {string} */
 /// block text - The word for the [https://en.wikipedia.org/wiki/Truth_value logical value] ''true''.\n{{Identical|True}}
 Blockly.Msg.LOGIC_BOOLEAN_TRUE = 'true';
@@ -748,34 +748,34 @@ Blockly.Msg.MATH_ATAN2_TOOLTIP = 'Return the arctangent of point (X, Y) in degre
 /// {{Optional}} url - Information about how computers represent text (sometimes referred to as ''string''s).
 Blockly.Msg.TEXT_TEXT_HELPURL = 'https://en.wikipedia.org/wiki/String_(computer_science)';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Text https://github.com/google/blockly/wiki/Text].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text https://github.com/RaspberryPiFoundation/blockly/wiki/Text].
 Blockly.Msg.TEXT_TEXT_TOOLTIP = 'A letter, word, or line of text.';
 
 /** @type {string} */
 /// {{Optional}} url - Information on concatenating/appending pieces of text.
-Blockly.Msg.TEXT_JOIN_HELPURL = 'https://github.com/google/blockly/wiki/Text#text-creation';
+Blockly.Msg.TEXT_JOIN_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-creation';
 /** @type {string} */
-/// block text - See [https://github.com/google/blockly/wiki/Text#text-creation https://github.com/google/blockly/wiki/Text#text-creation].
+/// block text - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-creation https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-creation].
 Blockly.Msg.TEXT_JOIN_TITLE_CREATEWITH = 'create text with';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Text#text-creation create text with] for more information.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-creation create text with] for more information.
 Blockly.Msg.TEXT_JOIN_TOOLTIP = 'Create a piece of text by joining together any number of items.';
 
 /** @type {string} */
-/// block text - This is shown when the programmer wants to change the number of pieces of text being joined together.  See [https://github.com/google/blockly/wiki/Text#text-creation https://github.com/google/blockly/wiki/Text#text-creation], specifically the last picture in the 'Text creation' section.\n{{Identical|Join}}
+/// block text - This is shown when the programmer wants to change the number of pieces of text being joined together.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-creation https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-creation], specifically the last picture in the 'Text creation' section.\n{{Identical|Join}}
 Blockly.Msg.TEXT_CREATE_JOIN_TITLE_JOIN = 'join';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Text#text-creation https://github.com/google/blockly/wiki/Text#text-creation], specifically the last picture in the 'Text creation' section.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-creation https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-creation], specifically the last picture in the 'Text creation' section.
 Blockly.Msg.TEXT_CREATE_JOIN_TOOLTIP = 'Add, remove, or reorder sections to reconfigure this text block.';
 /** @type {string} */
 Blockly.Msg.TEXT_CREATE_JOIN_ITEM_TITLE_ITEM = Blockly.Msg.VARIABLES_DEFAULT_NAME;
 /** @type {string} */
-/// block text - See [https://github.com/google/blockly/wiki/Text#text-creation https://github.com/google/blockly/wiki/Text#text-creation], specifically the last picture in the 'Text creation' section.
+/// block text - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-creation https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-creation], specifically the last picture in the 'Text creation' section.
 Blockly.Msg.TEXT_CREATE_JOIN_ITEM_TOOLTIP = 'Add an item to the text.';
 
 /** @type {string} */
 /// {{Optional}} url - This and the other text-related URLs are going to be hard to translate.  As always, it is okay to leave untranslated or paste in the English-language URL.  For these URLs, you might also consider a general URL about how computers represent text (such as the translation of [https://en.wikipedia.org/wiki/String_(computer_science) this Wikipedia page]).
-Blockly.Msg.TEXT_APPEND_HELPURL = 'https://github.com/google/blockly/wiki/Text#text-modification';
+Blockly.Msg.TEXT_APPEND_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-modification';
 /** @type {string} */
 /// block input text - Message that the variable name at %1 will have the item at %2 appended to it.
 /// [[File:blockly-append-text.png]]
@@ -783,54 +783,54 @@ Blockly.Msg.TEXT_APPEND_TITLE = 'to %1 append text %2';
 /** @type {string} */
 Blockly.Msg.TEXT_APPEND_VARIABLE = Blockly.Msg.VARIABLES_DEFAULT_NAME;
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Text#text-modification https://github.com/google/blockly/wiki/Text#text-modification] for more information.\n\nParameters:\n* %1 - the name of the variable to which text should be appended
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-modification https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-modification] for more information.\n\nParameters:\n* %1 - the name of the variable to which text should be appended
 Blockly.Msg.TEXT_APPEND_TOOLTIP = 'Append some text to variable "%1".';
 
 /** @type {string} */
 /// {{Optional}} url - Information about text on computers (usually referred to as 'strings').
-Blockly.Msg.TEXT_LENGTH_HELPURL = 'https://github.com/google/blockly/wiki/Text#text-modification';
+Blockly.Msg.TEXT_LENGTH_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-modification';
 /** @type {string} */
-/// block text - See [https://github.com/google/blockly/wiki/Text#text-length https://github.com/google/blockly/wiki/Text#text-length].
+/// block text - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-length https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-length].
 /// \n\nParameters:\n* %1 - the piece of text to take the length of
 Blockly.Msg.TEXT_LENGTH_TITLE = 'length of %1';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Text#text-length https://github.com/google/blockly/wiki/Text#text-length].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-length https://github.com/RaspberryPiFoundation/blockly/wiki/Text#text-length].
 Blockly.Msg.TEXT_LENGTH_TOOLTIP = 'Returns the number of letters (including spaces) in the provided text.';
 
 /** @type {string} */
 /// {{Optional}} url - Information about empty pieces of text on computers (usually referred to as 'empty strings').
-Blockly.Msg.TEXT_ISEMPTY_HELPURL = 'https://github.com/google/blockly/wiki/Text#checking-for-empty-text';
+Blockly.Msg.TEXT_ISEMPTY_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Text#checking-for-empty-text';
 /** @type {string} */
-/// block text - See [https://github.com/google/blockly/wiki/Text#checking-for-empty-text https://github.com/google/blockly/wiki/Text#checking-for-empty-text].
+/// block text - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#checking-for-empty-text https://github.com/RaspberryPiFoundation/blockly/wiki/Text#checking-for-empty-text].
 /// \n\nParameters:\n* %1 - the piece of text to test for emptiness
 Blockly.Msg.TEXT_ISEMPTY_TITLE = '%1 is empty';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Text#checking-for-empty-text https://github.com/google/blockly/wiki/Text#checking-for-empty-text].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#checking-for-empty-text https://github.com/RaspberryPiFoundation/blockly/wiki/Text#checking-for-empty-text].
 Blockly.Msg.TEXT_ISEMPTY_TOOLTIP = 'Returns true if the provided text is empty.';
 
 /** @type {string} */
 /// {{Optional}} url - Information about finding a character in a piece of text.
-Blockly.Msg.TEXT_INDEXOF_HELPURL = 'https://github.com/google/blockly/wiki/Text#finding-text';
+Blockly.Msg.TEXT_INDEXOF_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Text#finding-text';
 /** @type {string} */
-/// tooltip - %1 will be replaced by either the number 0 or -1 depending on the indexing mode. See [https://github.com/google/blockly/wiki/Text#finding-text https://github.com/google/blockly/wiki/Text#finding-text].
+/// tooltip - %1 will be replaced by either the number 0 or -1 depending on the indexing mode. See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#finding-text https://github.com/RaspberryPiFoundation/blockly/wiki/Text#finding-text].
 Blockly.Msg.TEXT_INDEXOF_TOOLTIP = 'Returns the index of the first/last occurrence of the first text in the second text. Returns %1 if text is not found.';
 /** @type {string} */
 /// block text - Title of blocks allowing users to find text.  See
-/// [https://github.com/google/blockly/wiki/Text#finding-text
-/// https://github.com/google/blockly/wiki/Text#finding-text].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#finding-text
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#finding-text].
 /// [[File:Blockly-find-text.png]].
 /// In English the expanded message is "in text %1 find (first|last) occurance of text %3"
 /// where %1 and %3 are added by the user. See TEXT_INDEXOF_OPERATOR_FIRST and
 /// TEXT_INDEXOF_OPERATOR_LAST for the dropdown text that replaces %2.
 Blockly.Msg.TEXT_INDEXOF_TITLE = 'in text %1 %2 %3';
 /** @type {string} */
-/// dropdown - See [https://github.com/google/blockly/wiki/Text#finding-text
-/// https://github.com/google/blockly/wiki/Text#finding-text].
+/// dropdown - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#finding-text
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#finding-text].
 /// [[File:Blockly-find-text.png]].
 Blockly.Msg.TEXT_INDEXOF_OPERATOR_FIRST = 'find first occurrence of text';
 /** @type {string} */
-/// dropdown - See [https://github.com/google/blockly/wiki/Text#finding-text
-/// https://github.com/google/blockly/wiki/Text#finding-text].  This would
+/// dropdown - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#finding-text
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#finding-text].  This would
 /// replace "find first occurrence of text" below.  (For more information on
 /// how common text is factored out of dropdown menus, see
 /// [https://translatewiki.net/wiki/Translating:Blockly#Drop-Down_Menus
@@ -840,48 +840,48 @@ Blockly.Msg.TEXT_INDEXOF_OPERATOR_LAST = 'find last occurrence of text';
 /** @type {string} */
 
 /// {{Optional}} url - Information about extracting characters (letters, number, symbols, etc.) from text.
-Blockly.Msg.TEXT_CHARAT_HELPURL = 'https://github.com/google/blockly/wiki/Text#extracting-text';
+Blockly.Msg.TEXT_CHARAT_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-text';
 /** @type {string} */
 /// block text - Text for a block to extract a letter (or number,
 /// punctuation character, etc.) from a string, as shown below. %1 is added by
 /// the user and %2 is replaced by a dropdown of options, possibly followed by
 /// another user supplied string. TEXT_CHARAT_TAIL is then added to the end.  See
-/// [https://github.com/google/blockly/wiki/Text#extracting-a-single-character
-/// https://github.com/google/blockly/wiki/Text#extracting-a-single-character].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-single-character
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-single-character].
 /// [[File:Blockly-text-get.png]]
 Blockly.Msg.TEXT_CHARAT_TITLE = 'in text %1 %2';
 /** @type {string} */
 /// dropdown - Indicates that the letter (or number, punctuation character, etc.) with the
 /// specified index should be obtained from the preceding piece of text.  See
-/// [https://github.com/google/blockly/wiki/Text#extracting-a-single-character
-/// https://github.com/google/blockly/wiki/Text#extracting-a-single-character].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-single-character
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-single-character].
 /// [[File:Blockly-text-get.png]]
 Blockly.Msg.TEXT_CHARAT_FROM_START = 'get letter #';
 /** @type {string} */
 /// block text - Indicates that the letter (or number, punctuation character, etc.) with the
 /// specified index from the end of a given piece of text should be obtained. See
-/// [https://github.com/google/blockly/wiki/Text#extracting-a-single-character
-/// https://github.com/google/blockly/wiki/Text#extracting-a-single-character].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-single-character
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-single-character].
 /// [[File:Blockly-text-get.png]]
 Blockly.Msg.TEXT_CHARAT_FROM_END = 'get letter # from end';
 /** @type {string} */
 /// block text - Indicates that the first letter of the following piece of text should be
-/// retrieved.  See [https://github.com/google/blockly/wiki/Text#extracting-a-single-character
-/// https://github.com/google/blockly/wiki/Text#extracting-a-single-character].
+/// retrieved.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-single-character
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-single-character].
 /// [[File:Blockly-text-get.png]]
 Blockly.Msg.TEXT_CHARAT_FIRST = 'get first letter';
 /** @type {string} */
 /// block text - Indicates that the last letter (or number, punctuation mark, etc.) of the
 /// following piece of text should be retrieved.  See
-/// [https://github.com/google/blockly/wiki/Text#extracting-a-single-character
-/// https://github.com/google/blockly/wiki/Text#extracting-a-single-character].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-single-character
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-single-character].
 /// [[File:Blockly-text-get.png]]
 Blockly.Msg.TEXT_CHARAT_LAST = 'get last letter';
 /** @type {string} */
 /// block text - Indicates that any letter (or number, punctuation mark, etc.) in the
 /// following piece of text should be randomly selected.  See
-/// [https://github.com/google/blockly/wiki/Text#extracting-a-single-character
-/// https://github.com/google/blockly/wiki/Text#extracting-a-single-character].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-single-character
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-single-character].
 /// [[File:Blockly-text-get.png]]
 Blockly.Msg.TEXT_CHARAT_RANDOM = 'get random letter';
 /** @type {string} */
@@ -892,19 +892,19 @@ Blockly.Msg.TEXT_CHARAT_RANDOM = 'get random letter';
 /// [[File:Blockly-text-get.png]]
 Blockly.Msg.TEXT_CHARAT_TAIL = '';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Text#extracting-a-single-character
-/// https://github.com/google/blockly/wiki/Text#extracting-a-single-character].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-single-character
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-single-character].
 /// [[File:Blockly-text-get.png]]
 Blockly.Msg.TEXT_CHARAT_TOOLTIP = 'Returns the letter at the specified position.';
 
 /** @type {string} */
-/// See [https://github.com/google/blockly/wiki/Text#extracting-a-region-of-text
-/// https://github.com/google/blockly/wiki/Text#extracting-a-region-of-text].
+/// See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-region-of-text
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-region-of-text].
 Blockly.Msg.TEXT_GET_SUBSTRING_TOOLTIP = 'Returns a specified portion of the text.';
 /** @type {string} */
 /// {{Optional}} url - Information about extracting characters from text.  Reminder: urls are the
 /// lowest priority translations.  Feel free to skip.
-Blockly.Msg.TEXT_GET_SUBSTRING_HELPURL = 'https://github.com/google/blockly/wiki/Text#extracting-a-region-of-text';
+Blockly.Msg.TEXT_GET_SUBSTRING_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-region-of-text';
 /** @type {string} */
 /// block text - Precedes a piece of text from which a portion should be extracted.
 /// [[File:Blockly-get-substring.png]]
@@ -912,15 +912,15 @@ Blockly.Msg.TEXT_GET_SUBSTRING_INPUT_IN_TEXT = 'in text';
 /** @type {string} */
 /// dropdown - Indicates that the following number specifies the position (relative to the start
 /// position) of the beginning of the region of text that should be obtained from the preceding
-/// piece of text.  See [https://github.com/google/blockly/wiki/Text#extracting-a-region-of-text
-/// https://github.com/google/blockly/wiki/Text#extracting-a-region-of-text].
+/// piece of text.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-region-of-text
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-region-of-text].
 /// [[File:Blockly-get-substring.png]]
 Blockly.Msg.TEXT_GET_SUBSTRING_START_FROM_START = 'get substring from letter #';
 /** @type {string} */
 /// dropdown - Indicates that the following number specifies the position (relative to the end
 /// position) of the beginning of the region of text that should be obtained from the preceding
-/// piece of text.  See [https://github.com/google/blockly/wiki/Text#extracting-a-region-of-text
-/// https://github.com/google/blockly/wiki/Text#extracting-a-region-of-text].
+/// piece of text.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-region-of-text
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-region-of-text].
 /// Note: If {{msg-blockly|ORDINAL_NUMBER_SUFFIX}} is defined, it will
 /// automatically appear ''after'' this and any other
 /// [https://translatewiki.net/wiki/Translating:Blockly#Ordinal_numbers ordinal numbers]
@@ -930,125 +930,125 @@ Blockly.Msg.TEXT_GET_SUBSTRING_START_FROM_END = 'get substring from letter # fro
 /** @type {string} */
 /// block text - Indicates that a region starting with the first letter of the preceding piece
 /// of text should be extracted.  See
-/// [https://github.com/google/blockly/wiki/Text#extracting-a-region-of-text
-/// https://github.com/google/blockly/wiki/Text#extracting-a-region-of-text].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-region-of-text
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-region-of-text].
 /// [[File:Blockly-get-substring.png]]
 Blockly.Msg.TEXT_GET_SUBSTRING_START_FIRST = 'get substring from first letter';
 /** @type {string} */
 /// dropdown - Indicates that the following number specifies the position (relative to
 /// the start position) of the end of the region of text that should be obtained from the
 /// preceding piece of text.  See
-/// [https://github.com/google/blockly/wiki/Text#extracting-a-region-of-text
-/// https://github.com/google/blockly/wiki/Text#extracting-a-region-of-text].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-region-of-text
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-region-of-text].
 /// [[File:Blockly-get-substring.png]]
 Blockly.Msg.TEXT_GET_SUBSTRING_END_FROM_START = 'to letter #';
 /** @type {string} */
 /// dropdown - Indicates that the following number specifies the position (relative to the
 /// end position) of the end of the region of text that should be obtained from the preceding
 /// piece of text.  See
-/// [https://github.com/google/blockly/wiki/Text#extracting-a-region-of-text
-/// https://github.com/google/blockly/wiki/Text#extracting-a-region-of-text].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-region-of-text
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-region-of-text].
 /// [[File:Blockly-get-substring.png]]
 Blockly.Msg.TEXT_GET_SUBSTRING_END_FROM_END = 'to letter # from end';
 /** @type {string} */
 /// block text - Indicates that a region ending with the last letter of the preceding piece
 /// of text should be extracted.  See
-/// [https://github.com/google/blockly/wiki/Text#extracting-a-region-of-text
-/// https://github.com/google/blockly/wiki/Text#extracting-a-region-of-text].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-region-of-text
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-region-of-text].
 /// [[File:Blockly-get-substring.png]]
 Blockly.Msg.TEXT_GET_SUBSTRING_END_LAST = 'to last letter';
 /** @type {string} */
 /// {{Optional|Supply translation only if your language requires it.  Most do not.}}
 /// block text - Text that should go after the rightmost block/dropdown when
-/// [https://github.com/google/blockly/wiki/Text#extracting-a-region-of-text
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-a-region-of-text
 /// extracting a region of text].  In most languages, this will be the empty string.
 /// [[File:Blockly-get-substring.png]]
 Blockly.Msg.TEXT_GET_SUBSTRING_TAIL = '';
 
 /** @type {string} */
 /// {{Optional}} url - Information about the case of letters (upper-case and lower-case).
-Blockly.Msg.TEXT_CHANGECASE_HELPURL = 'https://github.com/google/blockly/wiki/Text#adjusting-text-case';
+Blockly.Msg.TEXT_CHANGECASE_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Text#adjusting-text-case';
 /** @type {string} */
 /// tooltip - Describes a block to adjust the case of letters.  For more information on this block,
-/// see [https://github.com/google/blockly/wiki/Text#adjusting-text-case
-/// https://github.com/google/blockly/wiki/Text#adjusting-text-case].
+/// see [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#adjusting-text-case
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#adjusting-text-case].
 Blockly.Msg.TEXT_CHANGECASE_TOOLTIP = 'Return a copy of the text in a different case.';
 /** @type {string} */
 /// block text - Indicates that all of the letters in the following piece of text should be
 /// capitalized.  If your language does not use case, you may indicate that this is not
 /// applicable to your language.  For more information on this block, see
-/// [https://github.com/google/blockly/wiki/Text#adjusting-text-case
-/// https://github.com/google/blockly/wiki/Text#adjusting-text-case].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#adjusting-text-case
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#adjusting-text-case].
 Blockly.Msg.TEXT_CHANGECASE_OPERATOR_UPPERCASE = 'to UPPER CASE';
 /** @type {string} */
-/// block text - Indicates that all of the letters in the following piece of text should be converted to lower-case.  If your language does not use case, you may indicate that this is not applicable to your language.  For more information on this block, see [https://github.com/google/blockly/wiki/Text#adjusting-text-case https://github.com/google/blockly/wiki/Text#adjusting-text-case].
+/// block text - Indicates that all of the letters in the following piece of text should be converted to lower-case.  If your language does not use case, you may indicate that this is not applicable to your language.  For more information on this block, see [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#adjusting-text-case https://github.com/RaspberryPiFoundation/blockly/wiki/Text#adjusting-text-case].
 Blockly.Msg.TEXT_CHANGECASE_OPERATOR_LOWERCASE = 'to lower case';
 /** @type {string} */
-/// block text - Indicates that the first letter of each of the following words should be capitalized and the rest converted to lower-case.  If your language does not use case, you may indicate that this is not applicable to your language.  For more information on this block, see [https://github.com/google/blockly/wiki/Text#adjusting-text-case https://github.com/google/blockly/wiki/Text#adjusting-text-case].
+/// block text - Indicates that the first letter of each of the following words should be capitalized and the rest converted to lower-case.  If your language does not use case, you may indicate that this is not applicable to your language.  For more information on this block, see [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#adjusting-text-case https://github.com/RaspberryPiFoundation/blockly/wiki/Text#adjusting-text-case].
 Blockly.Msg.TEXT_CHANGECASE_OPERATOR_TITLECASE = 'to Title Case';
 
 /** @type {string} */
 /// {{Optional}} url - Information about trimming (removing) text off the beginning and ends of pieces of text.
-Blockly.Msg.TEXT_TRIM_HELPURL = 'https://github.com/google/blockly/wiki/Text#trimming-removing-spaces';
+Blockly.Msg.TEXT_TRIM_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Text#trimming-removing-spaces';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Text#trimming-removing-spaces
-/// https://github.com/google/blockly/wiki/Text#trimming-removing-spaces].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#trimming-removing-spaces
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#trimming-removing-spaces].
 Blockly.Msg.TEXT_TRIM_TOOLTIP = 'Return a copy of the text with spaces removed from one or both ends.';
 /** @type {string} */
 /// dropdown - Removes spaces from the beginning and end of a piece of text.  See
-/// [https://github.com/google/blockly/wiki/Text#trimming-removing-spaces
-/// https://github.com/google/blockly/wiki/Text#trimming-removing-spaces].  Note that neither
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#trimming-removing-spaces
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#trimming-removing-spaces].  Note that neither
 /// this nor the other options modify the original piece of text (that follows);
 /// the block just returns a version of the text without the specified spaces.
 Blockly.Msg.TEXT_TRIM_OPERATOR_BOTH = 'trim spaces from both sides of';
 /** @type {string} */
 /// dropdown - Removes spaces from the beginning of a piece of text.  See
-/// [https://github.com/google/blockly/wiki/Text#trimming-removing-spaces
-/// https://github.com/google/blockly/wiki/Text#trimming-removing-spaces].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#trimming-removing-spaces
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#trimming-removing-spaces].
 /// Note that in right-to-left scripts, this will remove spaces from the right side.
 Blockly.Msg.TEXT_TRIM_OPERATOR_LEFT = 'trim spaces from left side of';
 /** @type {string} */
 /// dropdown - Removes spaces from the end of a piece of text.  See
-/// [https://github.com/google/blockly/wiki/Text#trimming-removing-spaces
-/// https://github.com/google/blockly/wiki/Text#trimming-removing-spaces].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#trimming-removing-spaces
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#trimming-removing-spaces].
 /// Note that in right-to-left scripts, this will remove spaces from the left side.
 Blockly.Msg.TEXT_TRIM_OPERATOR_RIGHT = 'trim spaces from right side of';
 
 /** @type {string} */
 /// {{Optional}} url - Information about displaying text on computers.
-Blockly.Msg.TEXT_PRINT_HELPURL = 'https://github.com/google/blockly/wiki/Text#printing-text';
+Blockly.Msg.TEXT_PRINT_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Text#printing-text';
 /** @type {string} */
 /// block text - Display the input on the screen.  See
-/// [https://github.com/google/blockly/wiki/Text#printing-text
-/// https://github.com/google/blockly/wiki/Text#printing-text].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#printing-text
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#printing-text].
 /// \n\nParameters:\n* %1 - the value to print
 Blockly.Msg.TEXT_PRINT_TITLE = 'print %1';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Text#printing-text
-/// https://github.com/google/blockly/wiki/Text#printing-text].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#printing-text
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#printing-text].
 Blockly.Msg.TEXT_PRINT_TOOLTIP = 'Print the specified text, number or other value.';
 /** @type {string} */
 /// {{Optional}} url - Information about getting text from users.
-Blockly.Msg.TEXT_PROMPT_HELPURL = 'https://github.com/google/blockly/wiki/Text#getting-input-from-the-user';
+Blockly.Msg.TEXT_PROMPT_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Text#getting-input-from-the-user';
 /** @type {string} */
 /// dropdown - Specifies that a piece of text should be requested from the user with
-/// the following message.  See [https://github.com/google/blockly/wiki/Text#printing-text
-/// https://github.com/google/blockly/wiki/Text#printing-text].
+/// the following message.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#printing-text
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#printing-text].
 Blockly.Msg.TEXT_PROMPT_TYPE_TEXT = 'prompt for text with message';
 /** @type {string} */
 /// dropdown - Specifies that a number should be requested from the user with the
-/// following message.  See [https://github.com/google/blockly/wiki/Text#printing-text
-/// https://github.com/google/blockly/wiki/Text#printing-text].
+/// following message.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#printing-text
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#printing-text].
 Blockly.Msg.TEXT_PROMPT_TYPE_NUMBER = 'prompt for number with message';
 /** @type {string} */
 /// dropdown - Precedes the message with which the user should be prompted for
-/// a number.  See [https://github.com/google/blockly/wiki/Text#printing-text
-/// https://github.com/google/blockly/wiki/Text#printing-text].
+/// a number.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#printing-text
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#printing-text].
 Blockly.Msg.TEXT_PROMPT_TOOLTIP_NUMBER = 'Prompt for user for a number.';
 /** @type {string} */
 /// dropdown - Precedes the message with which the user should be prompted for some text.
-/// See [https://github.com/google/blockly/wiki/Text#printing-text
-/// https://github.com/google/blockly/wiki/Text#printing-text].
+/// See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text#printing-text
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Text#printing-text].
 Blockly.Msg.TEXT_PROMPT_TOOLTIP_TEXT = 'Prompt for user for some text.';
 
 /** @type {string} */
@@ -1057,7 +1057,7 @@ Blockly.Msg.TEXT_PROMPT_TOOLTIP_TEXT = 'Prompt for user for some text.';
 Blockly.Msg.TEXT_COUNT_MESSAGE0 = 'count %1 in %2';
 /** @type {string} */
 /// {{Optional}} url - Information about counting how many times a string appears in another string.
-Blockly.Msg.TEXT_COUNT_HELPURL = 'https://github.com/google/blockly/wiki/Text#counting-substrings';
+Blockly.Msg.TEXT_COUNT_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Text#counting-substrings';
 /** @type {string} */
 /// tooltip - Short description of a block that counts how many times some text occurs within some other text.
 Blockly.Msg.TEXT_COUNT_TOOLTIP = 'Count how many times some text occurs within some other text.';
@@ -1068,7 +1068,7 @@ Blockly.Msg.TEXT_COUNT_TOOLTIP = 'Count how many times some text occurs within s
 Blockly.Msg.TEXT_REPLACE_MESSAGE0 = 'replace %1 with %2 in %3';
 /** @type {string} */
 /// {{Optional}} url - Information about replacing each copy text (or string, in computer lingo) with other text.
-Blockly.Msg.TEXT_REPLACE_HELPURL = 'https://github.com/google/blockly/wiki/Text#replacing-substrings';
+Blockly.Msg.TEXT_REPLACE_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Text#replacing-substrings';
 /** @type {string} */
 /// tooltip - Short description of a block that replaces copies of text in a large text with other text.
 Blockly.Msg.TEXT_REPLACE_TOOLTIP = 'Replace all occurances of some text within some other text.';
@@ -1079,128 +1079,128 @@ Blockly.Msg.TEXT_REPLACE_TOOLTIP = 'Replace all occurances of some text within s
 Blockly.Msg.TEXT_REVERSE_MESSAGE0 = 'reverse %1';
 /** @type {string} */
 /// {{Optional}} url - Information about reversing a letters/characters in text.
-Blockly.Msg.TEXT_REVERSE_HELPURL = 'https://github.com/google/blockly/wiki/Text#reversing-text';
+Blockly.Msg.TEXT_REVERSE_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Text#reversing-text';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Text].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Text].
 Blockly.Msg.TEXT_REVERSE_TOOLTIP = 'Reverses the order of the characters in the text.';
 
 // Lists Blocks.
 /** @type {string} */
 /// {{Optional}} url - Information on empty lists.
-Blockly.Msg.LISTS_CREATE_EMPTY_HELPURL = 'https://github.com/google/blockly/wiki/Lists#create-empty-list';
+Blockly.Msg.LISTS_CREATE_EMPTY_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#create-empty-list';
 /** @type {string} */
-/// block text - See [https://github.com/google/blockly/wiki/Lists#create-empty-list https://github.com/google/blockly/wiki/Lists#create-empty-list].
+/// block text - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#create-empty-list https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#create-empty-list].
 Blockly.Msg.LISTS_CREATE_EMPTY_TITLE = 'create empty list';
 /** @type {string} */
-/// block text - See [https://github.com/google/blockly/wiki/Lists#create-empty-list https://github.com/google/blockly/wiki/Lists#create-empty-list].
+/// block text - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#create-empty-list https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#create-empty-list].
 Blockly.Msg.LISTS_CREATE_EMPTY_TOOLTIP = 'Returns a list, of length 0, containing no data records';
 
 /** @type {string} */
 /// {{Optional}} url - Information on building lists.
-Blockly.Msg.LISTS_CREATE_WITH_HELPURL = 'https://github.com/google/blockly/wiki/Lists#create-list-with';
+Blockly.Msg.LISTS_CREATE_WITH_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#create-list-with';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#create-list-with https://github.com/google/blockly/wiki/Lists#create-list-with].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#create-list-with https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#create-list-with].
 Blockly.Msg.LISTS_CREATE_WITH_TOOLTIP = 'Create a list with any number of items.';
 /** @type {string} */
-/// block text - See [https://github.com/google/blockly/wiki/Lists#create-list-with https://github.com/google/blockly/wiki/Lists#create-list-with].
+/// block text - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#create-list-with https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#create-list-with].
 Blockly.Msg.LISTS_CREATE_WITH_INPUT_WITH = 'create list with';
 /** @type {string} */
-/// block text - This appears in a sub-block when [https://github.com/google/blockly/wiki/Lists#changing-number-of-inputs changing the number of inputs in a ''''create list with'''' block].\n{{Identical|List}}
+/// block text - This appears in a sub-block when [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#changing-number-of-inputs changing the number of inputs in a ''''create list with'''' block].\n{{Identical|List}}
 Blockly.Msg.LISTS_CREATE_WITH_CONTAINER_TITLE_ADD = 'list';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#changing-number-of-inputs https://github.com/google/blockly/wiki/Lists#changing-number-of-inputs].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#changing-number-of-inputs https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#changing-number-of-inputs].
 Blockly.Msg.LISTS_CREATE_WITH_CONTAINER_TOOLTIP = 'Add, remove, or reorder sections to reconfigure this list block.';
 /** @type {string} */
 Blockly.Msg.LISTS_CREATE_WITH_ITEM_TITLE = Blockly.Msg.VARIABLES_DEFAULT_NAME;
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#changing-number-of-inputs https://github.com/google/blockly/wiki/Lists#changing-number-of-inputs].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#changing-number-of-inputs https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#changing-number-of-inputs].
 Blockly.Msg.LISTS_CREATE_WITH_ITEM_TOOLTIP = 'Add an item to the list.';
 
 /** @type {string} */
-/// {{Optional}} url - Information about [https://github.com/google/blockly/wiki/Lists#create-list-with creating a list with multiple copies of a single item].
-Blockly.Msg.LISTS_REPEAT_HELPURL = 'https://github.com/google/blockly/wiki/Lists#create-list-with';
+/// {{Optional}} url - Information about [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#create-list-with creating a list with multiple copies of a single item].
+Blockly.Msg.LISTS_REPEAT_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#create-list-with';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#create-list-with creating a list with multiple copies of a single item].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#create-list-with creating a list with multiple copies of a single item].
 Blockly.Msg.LISTS_REPEAT_TOOLTIP = 'Creates a list consisting of the given value repeated the specified number of times.';
 /** @type {string} */
-/// block text - See [https://github.com/google/blockly/wiki/Lists#create-list-with
-/// https://github.com/google/blockly/wiki/Lists#create-list-with].
+/// block text - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#create-list-with
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#create-list-with].
 ///\n\nParameters:\n* %1 - the item (text) to be repeated\n* %2 - the number of times to repeat it
 Blockly.Msg.LISTS_REPEAT_TITLE = 'create list with item %1 repeated %2 times';
 
 /** @type {string} */
 /// {{Optional}} url - Information about how the length of a list is computed (i.e., by the total number of elements, not the number of different elements).
-Blockly.Msg.LISTS_LENGTH_HELPURL = 'https://github.com/google/blockly/wiki/Lists#length-of';
+Blockly.Msg.LISTS_LENGTH_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#length-of';
 /** @type {string} */
-/// block text - See [https://github.com/google/blockly/wiki/Lists#length-of https://github.com/google/blockly/wiki/Lists#length-of].
+/// block text - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#length-of https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#length-of].
 /// \n\nParameters:\n* %1 - the list whose length is desired
 Blockly.Msg.LISTS_LENGTH_TITLE = 'length of %1';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#length-of https://github.com/google/blockly/wiki/Lists#length-of Blockly:Lists:length of].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#length-of https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#length-of Blockly:Lists:length of].
 Blockly.Msg.LISTS_LENGTH_TOOLTIP = 'Returns the length of a list.';
 
 /** @type {string} */
-/// {{Optional}} url - See [https://github.com/google/blockly/wiki/Lists#is-empty https://github.com/google/blockly/wiki/Lists#is-empty].
-Blockly.Msg.LISTS_ISEMPTY_HELPURL = 'https://github.com/google/blockly/wiki/Lists#is-empty';
+/// {{Optional}} url - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#is-empty https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#is-empty].
+Blockly.Msg.LISTS_ISEMPTY_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#is-empty';
 /** @type {string} */
-/// block text - See [https://github.com/google/blockly/wiki/Lists#is-empty
-/// https://github.com/google/blockly/wiki/Lists#is-empty].
+/// block text - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#is-empty
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#is-empty].
 /// \n\nParameters:\n* %1 - the list to test
 Blockly.Msg.LISTS_ISEMPTY_TITLE = '%1 is empty';
 /** @type {string} */
-/// block tooltip - See [https://github.com/google/blockly/wiki/Lists#is-empty
-/// https://github.com/google/blockly/wiki/Lists#is-empty].
+/// block tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#is-empty
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#is-empty].
 Blockly.Msg.LISTS_ISEMPTY_TOOLTIP = 'Returns true if the list is empty.';
 
 /** @type {string} */
-/// block text - Title of blocks operating on [https://github.com/google/blockly/wiki/Lists lists].
+/// block text - Title of blocks operating on [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists lists].
 Blockly.Msg.LISTS_INLIST = 'in list';
 
 /** @type {string} */
-/// {{Optional}} url - See [https://github.com/google/blockly/wiki/Lists#finding-items-in-a-list
-/// https://github.com/google/blockly/wiki/Lists#finding-items-in-a-list].
-Blockly.Msg.LISTS_INDEX_OF_HELPURL = 'https://github.com/google/blockly/wiki/Lists#finding-items-in-a-list';
+/// {{Optional}} url - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#finding-items-in-a-list
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#finding-items-in-a-list].
+Blockly.Msg.LISTS_INDEX_OF_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#finding-items-in-a-list';
 /** @type {string} */
 Blockly.Msg.LISTS_INDEX_OF_INPUT_IN_LIST = Blockly.Msg.LISTS_INLIST;
 /** @type {string} */
-/// dropdown - See [https://github.com/google/blockly/wiki/Lists#finding-items-in-a-list
+/// dropdown - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#finding-items-in-a-list
 /// Lists#finding-items-in-a-list].
 /// [[File:Blockly-list-find.png]]
 Blockly.Msg.LISTS_INDEX_OF_FIRST = 'find first occurrence of item';
 /** @type {string} */
-/// dropdown - See [https://github.com/google/blockly/wiki/Lists#finding-items-in-a-list
-/// https://github.com/google/blockly/wiki/Lists#finding-items-in-a-list].
+/// dropdown - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#finding-items-in-a-list
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#finding-items-in-a-list].
 /// [[File:Blockly-list-find.png]]
 Blockly.Msg.LISTS_INDEX_OF_LAST = 'find last occurrence of item';
 /** @type {string} */
-/// tooltip - %1 will be replaced by either the number 0 or -1 depending on the indexing mode.  See [https://github.com/google/blockly/wiki/Lists#finding-items-in-a-list
-/// https://github.com/google/blockly/wiki/Lists#finding-items-in-a-list].
+/// tooltip - %1 will be replaced by either the number 0 or -1 depending on the indexing mode.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#finding-items-in-a-list
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#finding-items-in-a-list].
 /// [[File:Blockly-list-find.png]]
 Blockly.Msg.LISTS_INDEX_OF_TOOLTIP = 'Returns the index of the first/last occurrence of the item in the list. Returns %1 if item is not found.';
 
 /** @type {string} */
-/// {{Optional}} url - See [https://github.com/google/blockly/wiki/Lists#getting-items-from-a-list
-/// https://github.com/google/blockly/wiki/Lists#getting-items-from-a-list].
-Blockly.Msg.LISTS_GET_INDEX_HELPURL = 'https://github.com/google/blockly/wiki/Lists#getting-items-from-a-list';
+/// {{Optional}} url - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-items-from-a-list
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-items-from-a-list].
+Blockly.Msg.LISTS_GET_INDEX_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-items-from-a-list';
 /** @type {string} */
 /// dropdown - Indicates that the user wishes to
-/// [https://github.com/google/blockly/wiki/Lists#getting-a-single-item
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item
 /// get an item from a list] without removing it from the list.
 Blockly.Msg.LISTS_GET_INDEX_GET = 'get';
 /** @type {string} */
 /// dropdown - Indicates that the user wishes to
-/// [https://github.com/google/blockly/wiki/Lists#getting-a-single-item
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item
 /// get and remove an item from a list], as opposed to merely getting
 /// it without modifying the list.
 Blockly.Msg.LISTS_GET_INDEX_GET_REMOVE = 'get and remove';
 /** @type {string} */
 /// dropdown - Indicates that the user wishes to
-/// [https://github.com/google/blockly/wiki/Lists#removing-an-item
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#removing-an-item
 /// remove an item from a list].\n{{Identical|Remove}}
 Blockly.Msg.LISTS_GET_INDEX_REMOVE = 'remove';
 /** @type {string} */
 /// dropdown - Indicates that an index relative to the front of the list should be used to
-/// [https://github.com/google/blockly/wiki/Lists#getting-a-single-item get and/or remove
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item get and/or remove
 /// an item from a list].  Note: If {{msg-blockly|ORDINAL_NUMBER_SUFFIX}} is defined, it will
 /// automatically appear ''after'' this number (and any other ordinal numbers on this block).
 /// See [[Translating:Blockly#Ordinal_numbers]] for more information on ordinal numbers in Blockly.
@@ -1208,28 +1208,28 @@ Blockly.Msg.LISTS_GET_INDEX_REMOVE = 'remove';
 Blockly.Msg.LISTS_GET_INDEX_FROM_START = '#';
 /** @type {string} */
 /// dropdown - Indicates that an index relative to the end of the list should be used
-/// to [https://github.com/google/blockly/wiki/Lists#getting-a-single-item access an item in a list].
+/// to [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item access an item in a list].
 /// [[File:Blockly-list-get-item.png]]
 Blockly.Msg.LISTS_GET_INDEX_FROM_END = '# from end';
 /** @type {string} */
 /// dropdown - Indicates that the '''first''' item should be
-/// [https://github.com/google/blockly/wiki/Lists#getting-a-single-item accessed in a list].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item accessed in a list].
 /// [[File:Blockly-list-get-item.png]]
 Blockly.Msg.LISTS_GET_INDEX_FIRST = 'first';
 /** @type {string} */
 /// dropdown - Indicates that the '''last''' item should be
-/// [https://github.com/google/blockly/wiki/Lists#getting-a-single-item accessed in a list].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item accessed in a list].
 /// [[File:Blockly-list-get-item.png]]
 Blockly.Msg.LISTS_GET_INDEX_LAST = 'last';
 /** @type {string} */
 /// dropdown - Indicates that a '''random''' item should be
-/// [https://github.com/google/blockly/wiki/Lists#getting-a-single-item accessed in a list].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item accessed in a list].
 /// [[File:Blockly-list-get-item.png]]
 Blockly.Msg.LISTS_GET_INDEX_RANDOM = 'random';
 /** @type {string} */
 /// {{Optional|Supply translation only if your language requires it.  Most do not.}}
 /// block text - Text that should go after the rightmost block/dropdown when
-/// [https://github.com/google/blockly/wiki/Lists#getting-a-single-item
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item
 /// accessing an item from a list].  In most languages, this will be the empty string.
 /// [[File:Blockly-list-get-item.png]]
 Blockly.Msg.LISTS_GET_INDEX_TAIL = '';
@@ -1242,53 +1242,53 @@ Blockly.Msg.LISTS_INDEX_FROM_START_TOOLTIP = '%1 is the first item.';
 /// tooltip - Indicates the ordinal number that the last item in a list is referenced by.  %1 will be replaced by either "#0" or "#1" depending on the indexing mode.
 Blockly.Msg.LISTS_INDEX_FROM_END_TOOLTIP = '%1 is the last item.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-a-single-item https://github.com/google/blockly/wiki/Lists#getting-a-single-item] for more information.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item] for more information.
 Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_FROM = 'Returns the item at the specified position in a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-a-single-item https://github.com/google/blockly/wiki/Lists#getting-a-single-item] for more information.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item] for more information.
 Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_FIRST = 'Returns the first item in a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-a-single-item https://github.com/google/blockly/wiki/Lists#getting-a-single-item] for more information.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item] for more information.
 Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_LAST = 'Returns the last item in a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-a-single-item https://github.com/google/blockly/wiki/Lists#getting-a-single-item] for more information.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item] for more information.
 Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_RANDOM = 'Returns a random item in a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-and-removing-an-item] (for remove and return) and [https://github.com/google/blockly/wiki/Lists#getting-a-single-item] for '#' or '# from end'.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-and-removing-an-item] (for remove and return) and [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item] for '#' or '# from end'.
 Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_REMOVE_FROM = 'Removes and returns the item at the specified position in a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-and-removing-an-item] (for remove and return) and [https://github.com/google/blockly/wiki/Lists#getting-a-single-item] for 'first'.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-and-removing-an-item] (for remove and return) and [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item] for 'first'.
 Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_REMOVE_FIRST = 'Removes and returns the first item in a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-and-removing-an-item] (for remove and return) and [https://github.com/google/blockly/wiki/Lists#getting-a-single-item] for 'last'.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-and-removing-an-item] (for remove and return) and [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item] for 'last'.
 Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_REMOVE_LAST = 'Removes and returns the last item in a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-and-removing-an-item] (for remove and return) and [https://github.com/google/blockly/wiki/Lists#getting-a-single-item] for 'random'.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-and-removing-an-item] (for remove and return) and [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item] for 'random'.
 Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_REMOVE_RANDOM = 'Removes and returns a random item in a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-and-removing-an-item] (for remove and return) and [https://github.com/google/blockly/wiki/Lists#getting-a-single-item] for '#' or '# from end'.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-and-removing-an-item] (for remove and return) and [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item] for '#' or '# from end'.
 Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_REMOVE_FROM = 'Removes the item at the specified position in a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-and-removing-an-item] (for remove and return) and [https://github.com/google/blockly/wiki/Lists#getting-a-single-item] for 'first'.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-and-removing-an-item] (for remove and return) and [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item] for 'first'.
 Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_REMOVE_FIRST = 'Removes the first item in a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-and-removing-an-item] (for remove and return) and [https://github.com/google/blockly/wiki/Lists#getting-a-single-item] for 'last'.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-and-removing-an-item] (for remove and return) and [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item] for 'last'.
 Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_REMOVE_LAST = 'Removes the last item in a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-and-removing-an-item] (for remove and return) and [https://github.com/google/blockly/wiki/Lists#getting-a-single-item] for 'random'.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-and-removing-an-item] (for remove and return) and [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item] for 'random'.
 Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_REMOVE_RANDOM = 'Removes a random item in a list.';
 /** @type {string} */
 /// {{Optional}} url - Information about putting items in lists.
-Blockly.Msg.LISTS_SET_INDEX_HELPURL = 'https://github.com/google/blockly/wiki/Lists#in-list--set';
+Blockly.Msg.LISTS_SET_INDEX_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#in-list--set';
 /** @type {string} */
 Blockly.Msg.LISTS_SET_INDEX_INPUT_IN_LIST = Blockly.Msg.LISTS_INLIST;
 /** @type {string} */
-/// block text - [https://github.com/google/blockly/wiki/Lists#in-list--set
+/// block text - [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#in-list--set
 /// Replaces an item in a list].
 /// [[File:Blockly-in-list-set-insert.png]]
 Blockly.Msg.LISTS_SET_INDEX_SET = 'set';
 /** @type {string} */
-/// block text - [https://github.com/google/blockly/wiki/Lists#in-list--insert-at
+/// block text - [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#in-list--insert-at
 /// Inserts an item into a list].
 /// [[File:Blockly-in-list-set-insert.png]]
 Blockly.Msg.LISTS_SET_INDEX_INSERT = 'insert at';
@@ -1297,39 +1297,39 @@ Blockly.Msg.LISTS_SET_INDEX_INSERT = 'insert at';
 /// [[File:Blockly-in-list-set-insert.png]]
 Blockly.Msg.LISTS_SET_INDEX_INPUT_TO = 'as';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-a-single-item} (even though the page describes the "get" block, the idea is the same for the "set" block).
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item} (even though the page describes the "get" block, the idea is the same for the "set" block).
 Blockly.Msg.LISTS_SET_INDEX_TOOLTIP_SET_FROM = 'Sets the item at the specified position in a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-a-single-item} (even though the page describes the "get" block, the idea is the same for the "set" block).
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item} (even though the page describes the "get" block, the idea is the same for the "set" block).
 Blockly.Msg.LISTS_SET_INDEX_TOOLTIP_SET_FIRST = 'Sets the first item in a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-a-single-item} (even though the page describes the "get" block, the idea is the same for the "set" block).
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item} (even though the page describes the "get" block, the idea is the same for the "set" block).
 Blockly.Msg.LISTS_SET_INDEX_TOOLTIP_SET_LAST = 'Sets the last item in a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-a-single-item} (even though the page describes the "get" block, the idea is the same for the "set" block).
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item} (even though the page describes the "get" block, the idea is the same for the "set" block).
 Blockly.Msg.LISTS_SET_INDEX_TOOLTIP_SET_RANDOM = 'Sets a random item in a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-a-single-item} (even though the page describes the "get" block, the idea is the same for the "insert" block).
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item} (even though the page describes the "get" block, the idea is the same for the "insert" block).
 Blockly.Msg.LISTS_SET_INDEX_TOOLTIP_INSERT_FROM = 'Inserts the item at the specified position in a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-a-single-item} (even though the page describes the "get" block, the idea is the same for the "insert" block).
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item} (even though the page describes the "get" block, the idea is the same for the "insert" block).
 Blockly.Msg.LISTS_SET_INDEX_TOOLTIP_INSERT_FIRST = 'Inserts the item at the start of a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-a-single-item} (even though the page describes the "get" block, the idea is the same for the "insert" block).
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item} (even though the page describes the "get" block, the idea is the same for the "insert" block).
 Blockly.Msg.LISTS_SET_INDEX_TOOLTIP_INSERT_LAST = 'Append the item to the end of a list.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-a-single-item} (even though the page describes the "get" block, the idea is the same for the "insert" block).
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-single-item} (even though the page describes the "get" block, the idea is the same for the "insert" block).
 Blockly.Msg.LISTS_SET_INDEX_TOOLTIP_INSERT_RANDOM = 'Inserts the item randomly in a list.';
 
 /** @type {string} */
 /// {{Optional}} url - Information describing extracting a sublist from an existing list.
-Blockly.Msg.LISTS_GET_SUBLIST_HELPURL = 'https://github.com/google/blockly/wiki/Lists#getting-a-sublist';
+Blockly.Msg.LISTS_GET_SUBLIST_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-sublist';
 /** @type {string} */
 Blockly.Msg.LISTS_GET_SUBLIST_INPUT_IN_LIST = Blockly.Msg.LISTS_INLIST;
 /** @type {string} */
 /// dropdown - Indicates that an index relative to the front of the list should be used
 /// to specify the beginning of the range from which to
-/// [https://github.com/google/blockly/wiki/Lists#getting-a-sublist get a sublist].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-sublist get a sublist].
 /// [[File:Blockly-get-sublist.png]]
 /// Note: If {{msg-blockly|ORDINAL_NUMBER_SUFFIX}} is defined, it will
 /// automatically appear ''after'' this number (and any other ordinal numbers on this block).
@@ -1338,28 +1338,28 @@ Blockly.Msg.LISTS_GET_SUBLIST_START_FROM_START = 'get sub-list from #';
 /** @type {string} */
 /// dropdown - Indicates that an index relative to the end of the list should be used
 /// to specify the beginning of the range from which to
-/// [https://github.com/google/blockly/wiki/Lists#getting-a-sublist get a sublist].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-sublist get a sublist].
 Blockly.Msg.LISTS_GET_SUBLIST_START_FROM_END = 'get sub-list from # from end';
 /** @type {string} */
 /// dropdown - Indicates that the
-/// [https://github.com/google/blockly/wiki/Lists#getting-a-sublist sublist to extract]
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-sublist sublist to extract]
 /// should begin with the list's first item.
 Blockly.Msg.LISTS_GET_SUBLIST_START_FIRST = 'get sub-list from first';
 /** @type {string} */
 /// dropdown - Indicates that an index relative to the front of the list should be
 /// used to specify the end of the range from which to
-/// [https://github.com/google/blockly/wiki/Lists#getting-a-sublist get a sublist].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-sublist get a sublist].
 /// [[File:Blockly-get-sublist.png]]
 Blockly.Msg.LISTS_GET_SUBLIST_END_FROM_START = 'to #';
 /** @type {string} */
 /// dropdown - Indicates that an index relative to the end of the list should be
 /// used to specify the end of the range from which to
-/// [https://github.com/google/blockly/wiki/Lists#getting-a-sublist get a sublist].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-sublist get a sublist].
 /// [[File:Blockly-get-sublist.png]]
 Blockly.Msg.LISTS_GET_SUBLIST_END_FROM_END = 'to # from end';
 /** @type {string} */
 /// dropdown - Indicates that the '''last''' item in the given list should be
-/// [https://github.com/google/blockly/wiki/Lists#getting-a-sublist the end
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-sublist the end
 /// of the selected sublist].
 /// [[File:Blockly-get-sublist.png]]
 Blockly.Msg.LISTS_GET_SUBLIST_END_LAST = 'to last';
@@ -1367,25 +1367,25 @@ Blockly.Msg.LISTS_GET_SUBLIST_END_LAST = 'to last';
 /// {{Optional|Supply translation only if your language requires it.  Most do not.}}
 /// block text - This appears in the rightmost position ("tail") of the
 /// sublist block, as described at
-/// [https://github.com/google/blockly/wiki/Lists#getting-a-sublist
-/// https://github.com/google/blockly/wiki/Lists#getting-a-sublist].
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-sublist
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-sublist].
 /// In English and most other languages, this is the empty string.
 /// [[File:Blockly-get-sublist.png]]
 Blockly.Msg.LISTS_GET_SUBLIST_TAIL = '';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#getting-a-sublist
-/// https://github.com/google/blockly/wiki/Lists#getting-a-sublist] for more information.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-sublist
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-a-sublist] for more information.
 /// [[File:Blockly-get-sublist.png]]
 Blockly.Msg.LISTS_GET_SUBLIST_TOOLTIP = 'Creates a copy of the specified portion of a list.';
 
 /** @type {string} */
 /// {{Optional}} url - Information describing sorting a list.
-Blockly.Msg.LISTS_SORT_HELPURL = 'https://github.com/google/blockly/wiki/Lists#sorting-a-list';
+Blockly.Msg.LISTS_SORT_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#sorting-a-list';
 /** @type {string} */
 /// Sort as type %1 (numeric or alphabetic) in order %2 (ascending or descending) a list of items %3.\n{{Identical|Sort}}
 Blockly.Msg.LISTS_SORT_TITLE = 'sort %1 %2 %3';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#sorting-a-list].
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#sorting-a-list].
 Blockly.Msg.LISTS_SORT_TOOLTIP = 'Sort a copy of a list.';
 /** @type {string} */
 /// sorting order or direction from low to high value for numeric, or A-Z for alphabetic.\n{{Identical|Ascending}}
@@ -1405,7 +1405,7 @@ Blockly.Msg.LISTS_SORT_TYPE_IGNORECASE = 'alphabetic, ignore case';
 
 /** @type {string} */
 /// {{Optional}} url - Information describing splitting text into a list, or joining a list into text.
-Blockly.Msg.LISTS_SPLIT_HELPURL = 'https://github.com/google/blockly/wiki/Lists#splitting-strings-and-joining-lists';
+Blockly.Msg.LISTS_SPLIT_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#splitting-strings-and-joining-lists';
 /** @type {string} */
 /// dropdown - Indicates that text will be split up into a list (e.g. "a-b-c" -> ["a", "b", "c"]).
 Blockly.Msg.LISTS_SPLIT_LIST_FROM_TEXT = 'make list from text';
@@ -1416,17 +1416,17 @@ Blockly.Msg.LISTS_SPLIT_TEXT_FROM_LIST = 'make text from list';
 /// block text - Prompts for a letter to be used as a separator when splitting or joining text.
 Blockly.Msg.LISTS_SPLIT_WITH_DELIMITER = 'with delimiter';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#make-list-from-text
-/// https://github.com/google/blockly/wiki/Lists#make-list-from-text] for more information.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#make-list-from-text
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#make-list-from-text] for more information.
 Blockly.Msg.LISTS_SPLIT_TOOLTIP_SPLIT = 'Split text into a list of texts, breaking at each delimiter.';
 /** @type {string} */
-/// tooltip - See [https://github.com/google/blockly/wiki/Lists#make-text-from-list
-/// https://github.com/google/blockly/wiki/Lists#make-text-from-list] for more information.
+/// tooltip - See [https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#make-text-from-list
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#make-text-from-list] for more information.
 Blockly.Msg.LISTS_SPLIT_TOOLTIP_JOIN = 'Join a list of texts into one text, separated by a delimiter.';
 
 /** @type {string} */
 /// {{Optional}} url - Information describing reversing a list.
-Blockly.Msg.LISTS_REVERSE_HELPURL = 'https://github.com/google/blockly/wiki/Lists#reversing-a-list';
+Blockly.Msg.LISTS_REVERSE_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#reversing-a-list';
 /** @type {string} */
 /// block text - Title of block that returns a copy of a list (%1) with the order of items reversed.
 Blockly.Msg.LISTS_REVERSE_MESSAGE0 = 'reverse %1';
@@ -1445,7 +1445,7 @@ Blockly.Msg.ORDINAL_NUMBER_SUFFIX = '';
 // Variables Blocks.
 /** @type {string} */
 /// {{Optional}} url - Information about ''variables'' in computer programming.  Consider using your language's translation of [https://en.wikipedia.org/wiki/Variable_(computer_science) https://en.wikipedia.org/wiki/Variable_(computer_science)], if it exists.
-Blockly.Msg.VARIABLES_GET_HELPURL = 'https://github.com/google/blockly/wiki/Variables#get';
+Blockly.Msg.VARIABLES_GET_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Variables#get';
 /** @type {string} */
 /// tooltip - This gets the value of the named variable without modifying it.
 Blockly.Msg.VARIABLES_GET_TOOLTIP = 'Returns the value of this variable.';
@@ -1456,7 +1456,7 @@ Blockly.Msg.VARIABLES_GET_CREATE_SET = 'Create "set %1"';
 
 /** @type {string} */
 /// {{Optional}} url - Information about ''variables'' in computer programming.  Consider using your language's translation of [https://en.wikipedia.org/wiki/Variable_(computer_science) https://en.wikipedia.org/wiki/Variable_(computer_science)], if it exists.
-Blockly.Msg.VARIABLES_SET_HELPURL = 'https://github.com/google/blockly/wiki/Variables#set';
+Blockly.Msg.VARIABLES_SET_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Variables#set';
 /** @type {string} */
 /// block text - Change the value of a mathematical variable: '''set [the value of] x to 7'''.\n\nParameters:\n* %1 - the name of the variable.\n* %2 - the value to be assigned.
 Blockly.Msg.VARIABLES_SET = 'set %1 to %2';
