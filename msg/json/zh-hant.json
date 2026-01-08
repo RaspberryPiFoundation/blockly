@@ -269,7 +269,7 @@
 	"LISTS_INDEX_OF_FIRST": "從 最前面 索引項目",
 	"LISTS_INDEX_OF_LAST": "從 最後面 索引項目",
 	"LISTS_INDEX_OF_TOOLTIP": "在清單中檢索是否有包含項目，如果有，返回從頭/倒數算起的索引值。如果沒有則返回 %1。",
-	"LISTS_GET_INDEX_HELPURL": "https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-items-from-a-list",
+	"LISTS_GET_INDEX_HELPURL": "https://github.com/google/blockly/wiki/Lists#getting-items-from-a-list",
 	"LISTS_GET_INDEX_GET": "取得",
 	"LISTS_GET_INDEX_GET_REMOVE": "取得並移除",
 	"LISTS_GET_INDEX_REMOVE": "移除",

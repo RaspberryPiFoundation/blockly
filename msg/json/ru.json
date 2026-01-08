@@ -270,7 +270,7 @@
 	"LISTS_INDEX_OF_FIRST": "найти первое вхождение элемента",
 	"LISTS_INDEX_OF_LAST": "найти последнее вхождение элемента",
 	"LISTS_INDEX_OF_TOOLTIP": "Возвращает номер позиции первого/последнего вхождения элемента в списке. Возвращает %1, если элемент не найден.",
-	"LISTS_GET_INDEX_HELPURL": "https://github.com/RaspberryPiFoundation/blockly/wiki/Lists#getting-items-from-a-list",
+	"LISTS_GET_INDEX_HELPURL": "https://github.com/google/blockly/wiki/Lists#getting-items-from-a-list",
 	"LISTS_GET_INDEX_GET": "взять",
 	"LISTS_GET_INDEX_GET_REMOVE": "взять и удалить",
 	"LISTS_GET_INDEX_REMOVE": "удалить",
