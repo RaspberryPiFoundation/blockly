@@ -104,15 +104,15 @@ export class ContextMenuRegistry {
         weight: item.weight,
       };
 
+      const precondition = item.preconditionFn?.(scope, menuOpenEvent);
+      if (precondition === 'hidden') continue;
+
       if (item.separator) {
         menuOption = {
           ...menuOption,
           separator: true,
         };
       } else {
-        const precondition = item.preconditionFn(scope, menuOpenEvent);
-        if (precondition === 'hidden') continue;
-
         const displayText =
           typeof item.displayText === 'function'
             ? item.displayText(scope)
@@ -165,6 +165,7 @@ export namespace ContextMenuRegistry {
     scopeType?: ScopeType;
     weight: number;
     id: string;
+    preconditionFn?: (p1: Scope, menuOpenEvent: Event) => string;
   }
 
   /**
@@ -185,8 +186,8 @@ export namespace ContextMenuRegistry {
       location: Coordinate,
     ) => void;
     displayText: ((p1: Scope) => string | HTMLElement) | string | HTMLElement;
-    preconditionFn: (p1: Scope, menuOpenEvent: Event) => string;
     separator?: never;
+    preconditionFn: (p1: Scope, menuOpenEvent: Event) => string;
   }
 
   /**
@@ -196,7 +197,6 @@ export namespace ContextMenuRegistry {
     separator: true;
     callback?: never;
     displayText?: never;
-    preconditionFn?: never;
   }
 
   /**
