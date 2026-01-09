@@ -326,68 +326,7 @@ function bindDocumentEvents() {
  */
 function loadSounds(pathToMedia: string, workspace: WorkspaceSvg) {
   const audioMgr = workspace.getAudioManager();
-  audioMgr.load(
-    [
-      pathToMedia + 'click.mp3',
-      pathToMedia + 'click.wav',
-      pathToMedia + 'click.ogg',
-    ],
-    'click',
-  );
-  audioMgr.load(
-    [
-      pathToMedia + 'disconnect.wav',
-      pathToMedia + 'disconnect.mp3',
-      pathToMedia + 'disconnect.ogg',
-    ],
-    'disconnect',
-  );
-  audioMgr.load(
-    [
-      pathToMedia + 'delete.mp3',
-      pathToMedia + 'delete.ogg',
-      pathToMedia + 'delete.wav',
-    ],
-    'delete',
-  );
-
-  // Bind temporary hooks that preload the sounds.
-  const soundBinds: browserEvents.Data[] = [];
-  /**
-   *
-   */
-  function unbindSounds() {
-    while (soundBinds.length) {
-      const oldSoundBinding = soundBinds.pop();
-      if (oldSoundBinding) {
-        browserEvents.unbind(oldSoundBinding);
-      }
-    }
-    audioMgr.preload();
-  }
-
-  // These are bound on mouse/touch events with
-  // Blockly.browserEvents.conditionalBind, so they restrict the touch
-  // identifier that will be recognized.  But this is really something that
-  // happens on a click, not a drag, so that's not necessary.
-
-  // Android ignores any sound not loaded as a result of a user action.
-  soundBinds.push(
-    browserEvents.conditionalBind(
-      document,
-      'pointermove',
-      null,
-      unbindSounds,
-      true,
-    ),
-  );
-  soundBinds.push(
-    browserEvents.conditionalBind(
-      document,
-      'touchstart',
-      null,
-      unbindSounds,
-      true,
-    ),
-  );
+  audioMgr.load([`${pathToMedia}click.mp3`], 'click');
+  audioMgr.load([`${pathToMedia}disconnect.mp3`], 'disconnect');
+  audioMgr.load([`${pathToMedia}delete.mp3`], 'delete');
 }
