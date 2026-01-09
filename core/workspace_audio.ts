@@ -34,13 +34,17 @@ export class WorkspaceAudio {
   private muted: boolean = false;
 
   /** Audio context used for playback. */
-  private readonly context = new AudioContext();
+  private readonly context?: AudioContext;
 
   /**
    * @param parentWorkspace The parent of the workspace this audio object
    *     belongs to, or null.
    */
-  constructor(private parentWorkspace: WorkspaceSvg) {}
+  constructor(private parentWorkspace: WorkspaceSvg) {
+    if (window.AudioContext) {
+      this.context = new AudioContext();
+    }
+  }
 
   /**
    * Dispose of this audio manager.
@@ -49,7 +53,7 @@ export class WorkspaceAudio {
    */
   dispose() {
     this.sounds.clear();
-    this.context.close();
+    this.context?.close();
   }
 
   /**
@@ -66,7 +70,7 @@ export class WorkspaceAudio {
 
     const response = await fetch(filenames[0]);
     const arrayBuffer = await response.arrayBuffer();
-    this.context.decodeAudioData(arrayBuffer, (audioBuffer) => {
+    this.context?.decodeAudioData(arrayBuffer, (audioBuffer) => {
       this.sounds.set(name, audioBuffer);
     });
   }
@@ -79,7 +83,7 @@ export class WorkspaceAudio {
    * @param opt_volume Volume of sound (0-1).
    */
   async play(name: string, opt_volume?: number) {
-    if (this.muted || opt_volume === 0) {
+    if (this.muted || opt_volume === 0 || !this.context) {
       return;
     }
     const sound = this.sounds.get(name);
