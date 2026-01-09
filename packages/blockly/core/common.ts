@@ -58,7 +58,7 @@ export function registerWorkspace(workspace: Workspace) {
  *
  * @param workspace
  */
-export function unregisterWorkpace(workspace: Workspace) {
+export function unregisterWorkspace(workspace: Workspace) {
   delete WorkspaceDB_[workspace.id];
 }
 
