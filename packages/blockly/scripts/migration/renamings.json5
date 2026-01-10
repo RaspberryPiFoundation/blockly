@@ -1595,5 +1595,16 @@
     },
   ],
 
+  '13.0.0': [
+    {
+      oldName: 'Blockly.common',
+      exports: {
+        unregisterWorkpace: {
+          newExport: 'unregisterWorkspace'.
+        },
+      },
+    },
+  ],
+
   'develop': [],
 }
