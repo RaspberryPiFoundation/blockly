@@ -37,7 +37,6 @@ export class PathObject extends BasePathObject {
     style: BlockStyle,
     public override constants: ConstantProvider,
   ) {
-    console.trace();
     super(root, style, constants);
 
     /** The dark path of the block. */
