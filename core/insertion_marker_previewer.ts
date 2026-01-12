@@ -92,6 +92,10 @@ export class InsertionMarkerPreviewer implements IConnectionPreviewer {
         staticConn.highlight();
       }
 
+      if (this.workspace.getRenderer().shouldHighlightConnection(draggedConn)) {
+        draggedConn.highlight();
+      }
+
       this.draggedConn = draggedConn;
       this.staticConn = staticConn;
     } finally {
@@ -223,6 +227,10 @@ export class InsertionMarkerPreviewer implements IConnectionPreviewer {
       if (this.staticConn) {
         this.staticConn.unhighlight();
         this.staticConn = null;
+      }
+      if (this.draggedConn) {
+        this.draggedConn.unhighlight();
+        this.draggedConn = null;
       }
       if (this.fadedBlock) {
         this.fadedBlock.fadeForReplacement(false);

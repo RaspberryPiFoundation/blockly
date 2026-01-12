@@ -105,12 +105,6 @@ export class ConstantProvider extends BaseConstantProvider {
   /** The size of the selected glow. */
   SELECTED_GLOW_SIZE = 0.5;
 
-  /** The replacement glow colour. */
-  REPLACEMENT_GLOW_COLOUR = '#fff200';
-
-  /** The size of the selected glow. */
-  REPLACEMENT_GLOW_SIZE = 2;
-
   /**
    * The ID of the selected glow filter, or the empty string if no filter is
    * set.
@@ -121,17 +115,6 @@ export class ConstantProvider extends BaseConstantProvider {
    * The <filter> element to use for a selected glow, or null if not set.
    */
   private selectedGlowFilter: SVGElement | null = null;
-
-  /**
-   * The ID of the replacement glow filter, or the empty string if no filter
-   * is set.
-   */
-  replacementGlowFilterId = '';
-
-  /**
-   * The <filter> element to use for a replacement glow, or null if not set.
-   */
-  private replacementGlowFilter: SVGElement | null = null;
 
   /**
    * The object containing information about the hexagon used for a boolean
@@ -269,25 +252,12 @@ export class ConstantProvider extends BaseConstantProvider {
       selectedGlowSize && !isNaN(selectedGlowSize)
         ? selectedGlowSize
         : this.SELECTED_GLOW_SIZE;
-    this.REPLACEMENT_GLOW_COLOUR =
-      theme.getComponentStyle('replacementGlowColour') ||
-      this.REPLACEMENT_GLOW_COLOUR;
-    const replacementGlowSize = Number(
-      theme.getComponentStyle('replacementGlowSize'),
-    );
-    this.REPLACEMENT_GLOW_SIZE =
-      replacementGlowSize && !isNaN(replacementGlowSize)
-        ? replacementGlowSize
-        : this.REPLACEMENT_GLOW_SIZE;
   }
 
   override dispose() {
     super.dispose();
     if (this.selectedGlowFilter) {
       dom.removeNode(this.selectedGlowFilter);
-    }
-    if (this.replacementGlowFilter) {
-      dom.removeNode(this.replacementGlowFilter);
     }
   }
 
@@ -740,67 +710,6 @@ export class ConstantProvider extends BaseConstantProvider {
     this.selectedGlowFilterId = selectedGlowFilter.id;
     this.selectedGlowFilter = selectedGlowFilter;
 
-    // Using a dilate distorts the block shape.
-    // Instead use a gaussian blur, and then set all alpha to 1 with a transfer.
-    const replacementGlowFilter = dom.createSvgElement(
-      Svg.FILTER,
-      {
-        'id': 'blocklyReplacementGlowFilter' + this.randomIdentifier,
-        'height': '160%',
-        'width': '180%',
-        'y': '-30%',
-        'x': '-40%',
-      },
-      defs,
-    );
-    dom.createSvgElement(
-      Svg.FEGAUSSIANBLUR,
-      {'in': 'SourceGraphic', 'stdDeviation': this.REPLACEMENT_GLOW_SIZE},
-      replacementGlowFilter,
-    );
-    // Set all gaussian blur pixels to 1 opacity before applying flood
-    const replacementComponentTransfer = dom.createSvgElement(
-      Svg.FECOMPONENTTRANSFER,
-      {'result': 'outBlur'},
-      replacementGlowFilter,
-    );
-    dom.createSvgElement(
-      Svg.FEFUNCA,
-      {'type': 'table', 'tableValues': '0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1'},
-      replacementComponentTransfer,
-    );
-    // Color the highlight
-    dom.createSvgElement(
-      Svg.FEFLOOD,
-      {
-        'flood-color': this.REPLACEMENT_GLOW_COLOUR,
-        'flood-opacity': 1,
-        'result': 'outColor',
-      },
-      replacementGlowFilter,
-    );
-    dom.createSvgElement(
-      Svg.FECOMPOSITE,
-      {
-        'in': 'outColor',
-        'in2': 'outBlur',
-        'operator': 'in',
-        'result': 'outGlow',
-      },
-      replacementGlowFilter,
-    );
-    dom.createSvgElement(
-      Svg.FECOMPOSITE,
-      {
-        'in': 'SourceGraphic',
-        'in2': 'outGlow',
-        'operator': 'over',
-      },
-      replacementGlowFilter,
-    );
-    this.replacementGlowFilterId = replacementGlowFilter.id;
-    this.replacementGlowFilter = replacementGlowFilter;
-
     if (injectionDivIfIsParent) {
       // If this renderer is for the parent workspace, add CSS variables scoped
       // to the injection div referencing the created patterns so that CSS can
@@ -808,10 +717,6 @@ export class ConstantProvider extends BaseConstantProvider {
       injectionDivIfIsParent.style.setProperty(
         '--blocklySelectedGlowFilter',
         `url(#${this.selectedGlowFilterId})`,
-      );
-      injectionDivIfIsParent.style.setProperty(
-        '--blocklyReplacementGlowFilter',
-        `url(#${this.replacementGlowFilterId})`,
       );
     }
   }
@@ -903,10 +808,6 @@ export class ConstantProvider extends BaseConstantProvider {
       `${selector} .blocklySelected>.blocklyPath.blocklyPathSelected {`,
       `fill: none;`,
       `filter: var(--blocklySelectedGlowFilter);`,
-      `}`,
-
-      `${selector} .blocklyReplaceable>.blocklyPath {`,
-      `filter: var(--blocklyReplacementGlowFilter);`,
       `}`,
     ];
   }

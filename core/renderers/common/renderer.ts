@@ -11,6 +11,7 @@ import type {BlockSvg} from '../../block_svg.js';
 import {Connection} from '../../connection.js';
 import {ConnectionType} from '../../connection_type.js';
 import type {IRegistrable} from '../../interfaces/i_registrable.js';
+import type {RenderedConnection} from '../../rendered_connection.js';
 import type {BlockStyle, Theme} from '../../theme.js';
 import {ConstantProvider} from './constants.js';
 import {Drawer} from './drawer.js';
@@ -188,11 +189,11 @@ export class Renderer implements IRegistrable {
   /**
    * Determine whether or not to highlight a connection.
    *
-   * @param _conn The connection to determine whether or not to highlight.
+   * @param connection The connection to determine whether or not to highlight.
    * @returns True if we should highlight the connection.
    */
-  shouldHighlightConnection(_conn: Connection): boolean {
-    return true;
+  shouldHighlightConnection(connection: RenderedConnection): boolean {
+    return !connection.getSourceBlock().isDragging();
   }
 
   /**

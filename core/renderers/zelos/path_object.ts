@@ -7,7 +7,6 @@
 // Former goog.module ID: Blockly.zelos.PathObject
 
 import type {BlockSvg} from '../../block_svg.js';
-import type {Connection} from '../../connection.js';
 import {FocusManager} from '../../focus_manager.js';
 import type {BlockStyle} from '../../theme.js';
 import * as dom from '../../utils/dom.js';
@@ -110,26 +109,6 @@ export class PathObject extends BasePathObject {
         this.svgRoot.removeChild(this.svgPathSelected);
         this.svgPathSelected = null;
       }
-    }
-  }
-
-  override updateReplacementFade(enable: boolean) {
-    this.setClass_('blocklyReplaceable', enable);
-  }
-
-  override updateShapeForInputHighlight(conn: Connection, enable: boolean) {
-    const name = conn.getParentInput()!.name;
-    const outlinePath = this.getOutlinePath(name);
-    if (!outlinePath) {
-      return;
-    }
-    if (enable) {
-      outlinePath.setAttribute(
-        'filter',
-        'url(#' + this.constants.replacementGlowFilterId + ')',
-      );
-    } else {
-      outlinePath.removeAttribute('filter');
     }
   }
 

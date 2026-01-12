@@ -782,6 +782,13 @@ export class BlockSvg
   }
 
   /**
+   * Returns whether or not this block is currently being dragged.
+   */
+  isDragging() {
+    return this.dragging;
+  }
+
+  /**
    * Set whether this block is movable or not.
    *
    * @param movable True if movable.
@@ -1728,24 +1735,11 @@ export class BlockSvg
    * @internal
    */
   fadeForReplacement(add: boolean) {
-    // TODO (7204): Remove these internal methods.
-    (this.pathObject as AnyDuringMigration).updateReplacementFade(add);
-  }
-
-  /**
-   * Visual effect to show that if the dragging block is dropped it will connect
-   * to this input.
-   *
-   * @param conn The connection on the input to highlight.
-   * @param add True if highlighting should be added.
-   * @internal
-   */
-  highlightShapeForInput(conn: RenderedConnection, add: boolean) {
-    // TODO (7204): Remove these internal methods.
-    (this.pathObject as AnyDuringMigration).updateShapeForInputHighlight(
-      conn,
-      add,
-    );
+    if (add) {
+      this.addClass('blocklyReplaceable');
+    } else {
+      this.removeClass('blocklyReplaceable');
+    }
   }
 
   /**
