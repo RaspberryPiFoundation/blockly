@@ -315,6 +315,8 @@ export class VariableMap
     }
     try {
       for (let i = 0; i < uses.length; i++) {
+        if (uses[i].isDeadOrDying()) continue;
+
         uses[i].dispose(true);
       }
       const variables = this.variableMap.get(variable.getType());
