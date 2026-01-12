@@ -462,7 +462,7 @@ const PROCEDURE_DEF_COMMON = {
     // Add option to create caller.
     const name = this.getFieldValue('NAME');
     const callProcedureBlockState = {
-      type: (this as AnyDuringMigration).callType_,
+      type: this.callType_,
       extraState: {name: name, params: this.arguments_},
     };
     options.push({

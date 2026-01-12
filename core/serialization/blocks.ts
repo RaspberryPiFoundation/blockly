@@ -104,52 +104,36 @@ export function save(
   if (block.isInsertionMarker()) {
     return null;
   }
-  const state = {
+  const state: State = {
     'type': block.type,
     'id': saveIds ? block.id : undefined,
   };
 
   if (addCoordinates) {
-    // AnyDuringMigration because:  Argument of type '{ type: string; id:
-    // string; }' is not assignable to parameter of type 'State'.
-    saveCoords(block, state as AnyDuringMigration);
+    saveCoords(block, state);
   }
-  // AnyDuringMigration because:  Argument of type '{ type: string; id: string;
-  // }' is not assignable to parameter of type 'State'.
-  saveAttributes(block, state as AnyDuringMigration);
-  // AnyDuringMigration because:  Argument of type '{ type: string; id: string;
-  // }' is not assignable to parameter of type 'State'.
-  saveExtraState(block, state as AnyDuringMigration, doFullSerialization);
-  // AnyDuringMigration because:  Argument of type '{ type: string; id: string;
-  // }' is not assignable to parameter of type 'State'.
-  saveIcons(block, state as AnyDuringMigration, doFullSerialization);
-  // AnyDuringMigration because:  Argument of type '{ type: string; id: string;
-  // }' is not assignable to parameter of type 'State'.
-  saveFields(block, state as AnyDuringMigration, doFullSerialization);
+  saveAttributes(block, state);
+  saveExtraState(block, state, doFullSerialization);
+  saveIcons(block, state, doFullSerialization);
+  saveFields(block, state, doFullSerialization);
   if (addInputBlocks) {
-    // AnyDuringMigration because:  Argument of type '{ type: string; id:
-    // string; }' is not assignable to parameter of type 'State'.
     saveInputBlocks(
       block,
-      state as AnyDuringMigration,
+      state,
       doFullSerialization,
       saveIds,
     );
   }
   if (addNextBlocks) {
-    // AnyDuringMigration because:  Argument of type '{ type: string; id:
-    // string; }' is not assignable to parameter of type 'State'.
     saveNextBlocks(
       block,
-      state as AnyDuringMigration,
+      state,
       doFullSerialization,
       saveIds,
     );
   }
 
-  // AnyDuringMigration because:  Type '{ type: string; id: string; }' is not
-  // assignable to type 'State'.
-  return state as AnyDuringMigration;
+  return state;
 }
 
 /**

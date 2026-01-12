@@ -110,7 +110,7 @@ export class WorkspaceCommentSerializer implements ISerializer {
   save(workspace: Workspace): State[] | null {
     const commentStates = [];
     for (const comment of workspace.getTopComments()) {
-      const state = saveComment(comment as AnyDuringMigration, {
+      const state = saveComment(comment, {
         addCoordinates: true,
         saveIds: true,
       });

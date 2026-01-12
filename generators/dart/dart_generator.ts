@@ -232,7 +232,7 @@ export class DartGenerator extends CodeGenerator {
       let comment = block.getCommentText();
       if (comment) {
         comment = stringUtils.wrap(comment, this.COMMENT_WRAP - 3);
-        if ((block as AnyDuringMigration).getProcedureDef) {
+        if ('getProcedureDef' in block) {
           // Use documentation comment for function comments.
           commentCode += this.prefixLines(comment + '\n', '/// ');
         } else {

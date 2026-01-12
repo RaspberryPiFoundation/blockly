@@ -208,10 +208,6 @@ export class Gesture {
       browserEvents.unbind(event);
     }
     this.boundEvents.length = 0;
-
-    if (this.workspaceDragger) {
-      this.workspaceDragger.dispose();
-    }
   }
 
   /**

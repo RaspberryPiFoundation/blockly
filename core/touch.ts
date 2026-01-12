@@ -49,7 +49,7 @@ export const TOUCH_MAP: {[key: string]: string[]} = {
 };
 
 /** PID of queued long-press task. */
-let longPid_: AnyDuringMigration = 0;
+let longPid_: ReturnType<typeof setTimeout> = 0;
 
 /**
  * Context menus on touch devices are activated using a long-press.

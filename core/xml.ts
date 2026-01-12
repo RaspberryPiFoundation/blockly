@@ -48,7 +48,7 @@ export function workspaceToDom(workspace: Workspace, skipId = false): Element {
   }
   for (const comment of workspace.getTopComments()) {
     treeXml.appendChild(
-      saveWorkspaceComment(comment as AnyDuringMigration, skipId),
+      saveWorkspaceComment(comment, skipId),
     );
   }
   const blocks = workspace.getTopBlocks(true);
