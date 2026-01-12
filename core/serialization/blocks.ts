@@ -117,20 +117,10 @@ export function save(
   saveIcons(block, state, doFullSerialization);
   saveFields(block, state, doFullSerialization);
   if (addInputBlocks) {
-    saveInputBlocks(
-      block,
-      state,
-      doFullSerialization,
-      saveIds,
-    );
+    saveInputBlocks(block, state, doFullSerialization, saveIds);
   }
   if (addNextBlocks) {
-    saveNextBlocks(
-      block,
-      state,
-      doFullSerialization,
-      saveIds,
-    );
+    saveNextBlocks(block, state, doFullSerialization, saveIds);
   }
 
   return state;

@@ -11,7 +11,6 @@
  */
 // Former goog.module ID: Blockly.RenderedConnection
 
-import type {Block} from './block.js';
 import type {BlockSvg} from './block_svg.js';
 import {config} from './config.js';
 import {Connection} from './connection.js';

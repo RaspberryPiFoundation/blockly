@@ -47,9 +47,7 @@ export function workspaceToDom(workspace: Workspace, skipId = false): Element {
     treeXml.appendChild(variablesElement);
   }
   for (const comment of workspace.getTopComments()) {
-    treeXml.appendChild(
-      saveWorkspaceComment(comment, skipId),
-    );
+    treeXml.appendChild(saveWorkspaceComment(comment, skipId));
   }
   const blocks = workspace.getTopBlocks(true);
   for (let i = 0; i < blocks.length; i++) {
