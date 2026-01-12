@@ -16,7 +16,6 @@ import * as path from 'path';
 // TODO(#5007): If you modify these values, you must also modify the
 // corresponding values in the following files:
 //
-// - tests/scripts/compile_typings.sh
 // - tests/scripts/check_metadata.sh
 // - tests/scripts/update_metadata.sh
 
