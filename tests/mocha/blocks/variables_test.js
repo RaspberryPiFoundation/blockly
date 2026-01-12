@@ -15,7 +15,7 @@ import {
   sharedTestTeardown,
 } from '../test_helpers/setup_teardown.js';
 
-suite.only('Variables', function () {
+suite('Variables', function () {
   setup(function () {
     sharedTestSetup.call(this);
     this.workspace = new Blockly.Workspace();
