@@ -191,6 +191,17 @@ export class PathObject implements IPathObject {
     this.setClass_('blocklyDraggable', enable);
   }
 
+  /**
+   * Add or remove styling indicating that a block will be bumped out and
+   * replaced by another block that is mid-move.
+   *
+   * @param replacing True if the block is at risk of being replaced, false
+   *     otherwise.
+   */
+  updateReplacing(replacing: boolean) {
+    this.setClass_('blocklyReplaceable', replacing);
+  }
+
   /** Adds the given path as a connection highlight for the given connection. */
   addConnectionHighlight(
     connection: RenderedConnection,

@@ -1735,11 +1735,7 @@ export class BlockSvg
    * @internal
    */
   fadeForReplacement(add: boolean) {
-    if (add) {
-      this.addClass('blocklyReplaceable');
-    } else {
-      this.removeClass('blocklyReplaceable');
-    }
+    this.pathObject.updateReplacing?.(add);
   }
 
   /**
