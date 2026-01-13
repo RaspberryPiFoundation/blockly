@@ -1600,7 +1600,7 @@
       oldName: 'Blockly.common',
       exports: {
         unregisterWorkpace: {
-          newExport: 'unregisterWorkspace'.
+          newExport: 'unregisterWorkspace',
         },
       },
     },
