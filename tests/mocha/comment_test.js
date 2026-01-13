@@ -167,4 +167,27 @@ suite('Comments', function () {
       assertBubbleLocation(this.comment, 100, 100);
     });
   });
+  suite('Undo/Redo', function () {
+    test('Adding a comment can be undone', function () {
+      const block = this.workspace.newBlock('empty_block');
+      block.setCommentText('');
+      assert.isNotNull(block.getIcon(Blockly.icons.IconType.COMMENT));
+      assert.equal(block.getCommentText(), '');
+
+      this.workspace.undo(false);
+
+      assert.isUndefined(block.getIcon(Blockly.icons.IconType.COMMENT));
+      assert.isNull(block.getCommentText());
+    });
+
+    test('Adding a comment can be redone', function () {
+      const block = this.workspace.newBlock('empty_block');
+      block.setCommentText('');
+      this.workspace.undo(false);
+      this.workspace.undo(true);
+
+      assert.isNotNull(block.getIcon(Blockly.icons.IconType.COMMENT));
+      assert.equal(block.getCommentText(), '');
+    });
+  });
 });
