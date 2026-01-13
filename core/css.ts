@@ -452,7 +452,7 @@ input[type=number] {
 }
 
 .blocklyMenuItemSelected .blocklyMenuItemCheckbox {
-  background: url(<<<PATH>>>/sprites.png) no-repeat -48px -16px;
+  background: url(<<<PATH>>>/sprites.svg) no-repeat -48px -16px;
   float: left;
   margin-left: -24px;
   position: static;  /* Scroll with the menu. */

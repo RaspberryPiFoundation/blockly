@@ -692,7 +692,7 @@ Css.register(`
 }
 
 .blocklyToolboxCategoryIcon {
-  background-image: url(<<<PATH>>>/sprites.png);
+  background-image: url(<<<PATH>>>/sprites.svg);
   height: 16px;
   vertical-align: middle;
   visibility: hidden;
