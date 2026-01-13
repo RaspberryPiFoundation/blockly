@@ -1950,6 +1950,23 @@ suite('Blocks', function () {
           'Warning should be removed from parent after expanding',
         );
       });
+
+      test('Collapsing a block should not inherit warnings from following siblings', function () {
+        const nextBlock = createRenderedBlock(
+          this.workspace,
+          'statement_block',
+        );
+        this.childBlock.nextConnection.connect(nextBlock.previousConnection);
+        nextBlock.setWarningText('Warning Text');
+
+        this.childBlock.setCollapsed(true);
+
+        const icon = this.childBlock.getIcon(Blockly.icons.WarningIcon.TYPE);
+        assert.isUndefined(
+          icon,
+          'Collapsed block should not show warnings from following siblings',
+        );
+      });
     });
 
     suite('Bubbles and collapsing', function () {

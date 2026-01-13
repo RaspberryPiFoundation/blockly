@@ -539,12 +539,22 @@ export class BlockSvg
    * @returns true if any child has a warning, false otherwise.
    */
   private childHasWarning(): boolean {
-    const children = this.getChildren(false);
-    for (const child of children) {
-      if (child.getIcon(WarningIcon.TYPE) || child.childHasWarning()) {
+    const next = this.getNextBlock();
+    const excluded = next ? new Set(next.getDescendants(false)) : null;
+    const descendants = this.getDescendants(false);
+
+    for (const descendant of descendants) {
+      if (descendant === this) {
+        continue;
+      }
+      if (excluded?.has(descendant)) {
+        continue;
+      }
+      if (descendant.getIcon(WarningIcon.TYPE)) {
         return true;
       }
     }
+
     return false;
   }
 
