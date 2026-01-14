@@ -12,7 +12,6 @@
 // Former goog.module ID: Blockly.MenuItem
 
 import * as aria from './utils/aria.js';
-import * as dom from './utils/dom.js';
 import * as idGenerator from './utils/idgenerator.js';
 
 /**
@@ -74,12 +73,6 @@ export class MenuItem {
 
     const content = document.createElement('div');
     content.className = 'blocklyMenuItemContent';
-    // Add a checkbox for checkable menu items.
-    if (this.checkable) {
-      const checkbox = document.createElement('div');
-      checkbox.className = 'blocklyMenuItemCheckbox ';
-      content.appendChild(checkbox);
-    }
 
     let contentDom: Node = this.content as HTMLElement;
     if (typeof this.content === 'string') {
@@ -87,6 +80,11 @@ export class MenuItem {
     }
     content.appendChild(contentDom);
     element.appendChild(content);
+
+    // Add a checkbox for checkable menu items.
+    if (this.checkable) {
+      this.toggleCheckbox(true);
+    }
 
     // Initialize ARIA role and state.
     if (this.roleName) {
@@ -145,6 +143,7 @@ export class MenuItem {
    */
   setRightToLeft(rtl: boolean) {
     this.rightToLeft = rtl;
+    this.getElement()?.classList.toggle('blocklyMenuItemRtl', this.rightToLeft);
   }
 
   /**
@@ -166,6 +165,12 @@ export class MenuItem {
    */
   setCheckable(checkable: boolean) {
     this.checkable = checkable;
+
+    if (!this.checkable) {
+      this.setChecked(false);
+    }
+
+    this.toggleCheckbox(checkable);
   }
 
   /**
@@ -175,7 +180,14 @@ export class MenuItem {
    * @internal
    */
   setChecked(checked: boolean) {
+    if (checked && !this.checkable) return;
+
     this.checked = checked;
+    const element = this.getElement();
+    if (element) {
+      element.classList.toggle('blocklyMenuItemSelected', this.checked);
+      aria.setState(element, aria.State.SELECTED, this.checked);
+    }
   }
 
   /**
@@ -186,15 +198,10 @@ export class MenuItem {
    */
   setHighlighted(highlight: boolean) {
     this.highlight = highlight;
-    const el = this.getElement();
-    if (el && this.isEnabled()) {
-      const name = 'blocklyMenuItemHighlight';
-      if (highlight) {
-        dom.addClass(el, name);
-      } else {
-        dom.removeClass(el, name);
-      }
-    }
+    this.getElement()?.classList.toggle(
+      'blocklyMenuItemHighlight',
+      this.highlight,
+    );
   }
 
   /**
@@ -215,6 +222,11 @@ export class MenuItem {
    */
   setEnabled(enabled: boolean) {
     this.enabled = enabled;
+    const element = this.getElement();
+    if (element) {
+      element.classList.toggle('blocklyMenuItemDisabled', !this.enabled);
+      aria.setState(element, aria.State.DISABLED, !this.enabled);
+    }
   }
 
   /**
@@ -242,5 +254,27 @@ export class MenuItem {
    */
   onAction(fn: (p1: MenuItem, menuSelectEvent: Event) => void, obj: object) {
     this.actionHandler = fn.bind(obj);
+  }
+
+  private toggleCheckbox(add: boolean) {
+    if (add) {
+      if (
+        this.getElement()?.querySelector(
+          '.blocklyMenuItemContent .blocklyMenuItemCheckbox',
+        )
+      ) {
+        return;
+      }
+
+      const checkbox = document.createElement('div');
+      checkbox.className = 'blocklyMenuItemCheckbox ';
+      this.getElement()
+        ?.querySelector('.blocklyMenuItemContent')
+        ?.prepend(checkbox);
+    } else {
+      this.getElement()
+        ?.querySelector('.blocklyMenuItemContent .blocklyMenuItemCheckbox')
+        ?.remove();
+    }
   }
 }
