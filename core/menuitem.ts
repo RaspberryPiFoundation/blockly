@@ -256,6 +256,13 @@ export class MenuItem {
     this.actionHandler = fn.bind(obj);
   }
 
+  /**
+   * Adds or removes the checkmark indicator on this menu item.
+   * The indicator is present even if this menu item is not checked, as long
+   * as it is checkable; its visibility is controlled with CSS.
+   *
+   * @param add True to add the checkmark indicator, false to remove it.
+   */
   private toggleCheckbox(add: boolean) {
     if (add) {
       if (
