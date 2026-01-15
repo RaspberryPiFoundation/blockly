@@ -43,6 +43,7 @@ import * as Variables from '../core/variables.js';
 import type {Workspace} from '../core/workspace.js';
 import type {WorkspaceSvg} from '../core/workspace_svg.js';
 import * as Xml from '../core/xml.js';
+import * as deprecation from '../utils/deprecation.js';
 
 /** A dictionary of the block definitions provided by this module. */
 export const blocks: {[key: string]: BlockDefinition} = {};
@@ -345,9 +346,17 @@ const PROCEDURE_DEF_COMMON = {
   /**
    * Return all variables referenced by this block.
    *
+   * @deprecated v13: Use Blockly.libraryBlocks.procedures.getVarModels()
+   *      .map(m => m.getName())
    * @returns List of variable names.
    */
   getVars: function (this: ProcedureBlock): string[] {
+    deprecation.warn(
+      'Blockly.libraryBlocks.procedures.getVars()',
+      'v13',
+      'v14',
+      'Blockly.libraryBlocks.procedures.getVarModels().map(model => model.getName())',
+    );
     return this.arguments_;
   },
   /**
@@ -1020,9 +1029,17 @@ const PROCEDURE_CALL_COMMON = {
   /**
    * Return all variables referenced by this block.
    *
+   * @deprecated v13: Use Blockly.libraryBlocks.procedures.getVarModels()
+   *      .map(m => m.getName())
    * @returns List of variable names.
    */
   getVars: function (this: CallBlock): string[] {
+    deprecation.warn(
+      'Blockly.libraryBlocks.procedures.getVars()',
+      'v13',
+      'v14',
+      'Blockly.libraryBlocks.procedures.getVarModels().map(model => model.getName())',
+    );
     return this.arguments_;
   },
   /**
@@ -1060,7 +1077,8 @@ const PROCEDURE_CALL_COMMON = {
       if (
         def &&
         (def.type !== this.defType_ ||
-          JSON.stringify(def.getVars()) !== JSON.stringify(this.arguments_))
+          JSON.stringify(def.getVarModels().map((model) => model.getName())) !==
+            JSON.stringify(this.arguments_))
       ) {
         // The signatures don't match.
         def = null;

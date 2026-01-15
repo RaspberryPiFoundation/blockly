@@ -1973,20 +1973,26 @@ suite('Procedures', function () {
             }
             function assertArgs(argArray) {
               assert.equal(
-                this.defBlock.getVars().length,
+                this.defBlock.getVarModels().length,
                 argArray.length,
                 'Expected the def to have the right number of arguments',
               );
               for (let i = 0; i < argArray.length; i++) {
-                assert.equal(this.defBlock.getVars()[i], argArray[i]);
+                assert.equal(
+                  this.defBlock.getVarModels()[i].getName(),
+                  argArray[i],
+                );
               }
               assert.equal(
-                this.callBlock.getVars().length,
+                this.callBlock.getVarModels().length,
                 argArray.length,
                 'Expected the call to have the right number of arguments',
               );
               for (let i = 0; i < argArray.length; i++) {
-                assert.equal(this.callBlock.getVars()[i], argArray[i]);
+                assert.equal(
+                  this.callBlock.getVarModels()[i].getName(),
+                  argArray[i],
+                );
               }
             }
             test('Simple Add Arg', async function () {

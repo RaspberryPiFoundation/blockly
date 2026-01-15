@@ -964,7 +964,7 @@ FactoryUtils.hasVariableField = function(block) {
   if (!block) {
     return false;
   }
-  return block.getVars().length > 0;
+  return block.getVarModels().length > 0;
 };
 
 /**
