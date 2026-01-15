@@ -174,7 +174,7 @@ suite('Comments', function () {
       assert.isNotNull(block.getIcon(Blockly.icons.IconType.COMMENT));
       assert.equal(block.getCommentText(), '');
 
-      this.workspace.undo(false);
+      this.workspace.undo();
 
       assert.isUndefined(block.getIcon(Blockly.icons.IconType.COMMENT));
       assert.isNull(block.getCommentText());
@@ -183,8 +183,8 @@ suite('Comments', function () {
     test('Adding an empty comment can be redone', function () {
       const block = this.workspace.newBlock('empty_block');
       block.setCommentText('');
-      this.workspace.undo(false);
-      this.workspace.undo(true);
+      this.workspace.undo();
+      this.workspace.redo();
 
       assert.isNotNull(block.getIcon(Blockly.icons.IconType.COMMENT));
       assert.equal(block.getCommentText(), '');
@@ -196,7 +196,7 @@ suite('Comments', function () {
       assert.isNotNull(block.getIcon(Blockly.icons.IconType.COMMENT));
       assert.equal(block.getCommentText(), 'hey there');
 
-      this.workspace.undo(false);
+      this.workspace.undo();
 
       assert.isUndefined(block.getIcon(Blockly.icons.IconType.COMMENT));
       assert.isNull(block.getCommentText());
@@ -205,8 +205,8 @@ suite('Comments', function () {
     test('Adding a non-empty comment can be redone', function () {
       const block = this.workspace.newBlock('empty_block');
       block.setCommentText('hey there');
-      this.workspace.undo(false);
-      this.workspace.undo(true);
+      this.workspace.undo();
+      this.workspace.redo();
 
       assert.isNotNull(block.getIcon(Blockly.icons.IconType.COMMENT));
       assert.equal(block.getCommentText(), 'hey there');

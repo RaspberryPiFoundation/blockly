@@ -47,7 +47,7 @@ export function registerUndo() {
       return 'disabled';
     },
     callback(scope: Scope) {
-      scope.workspace!.undo(false);
+      scope.workspace!.undo();
     },
     scopeType: ContextMenuRegistry.ScopeType.WORKSPACE,
     id: 'undoWorkspace',
@@ -71,7 +71,7 @@ export function registerRedo() {
       return 'disabled';
     },
     callback(scope: Scope) {
-      scope.workspace!.undo(true);
+      scope.workspace!.redo();
     },
     scopeType: ContextMenuRegistry.ScopeType.WORKSPACE,
     id: 'redoWorkspace',
