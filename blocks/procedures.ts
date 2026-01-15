@@ -38,12 +38,12 @@ import type {
 import {Msg} from '../core/msg.js';
 import {Names} from '../core/names.js';
 import * as Procedures from '../core/procedures.js';
+import * as deprecation from '../core/utils/deprecation.js';
 import * as xmlUtils from '../core/utils/xml.js';
 import * as Variables from '../core/variables.js';
 import type {Workspace} from '../core/workspace.js';
 import type {WorkspaceSvg} from '../core/workspace_svg.js';
 import * as Xml from '../core/xml.js';
-import * as deprecation from '../utils/deprecation.js';
 
 /** A dictionary of the block definitions provided by this module. */
 export const blocks: {[key: string]: BlockDefinition} = {};
