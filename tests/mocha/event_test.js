@@ -833,11 +833,9 @@ suite('Events', function () {
         title: 'Variable events',
         testCases: variableEventTestCases,
         setup: (thisObj) => {
-          thisObj.variable = thisObj.workspace.createVariable(
-            'name1',
-            'type1',
-            'id1',
-          );
+          thisObj.variable = thisObj.workspace
+            .getVariableMap()
+            .createVariable('name1', 'type1', 'id1');
         },
       },
       {
@@ -1550,7 +1548,9 @@ suite('Events', function () {
       );
 
       // Expect the workspace to have a variable with ID 'test_var_id'.
-      assert.isNotNull(this.workspace.getVariableById(TEST_VAR_ID));
+      assert.isNotNull(
+        this.workspace.getVariableMap().getVariableById(TEST_VAR_ID),
+      );
     });
   });
   suite('Disable orphans', function () {

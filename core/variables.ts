@@ -727,7 +727,7 @@ export function getVariable(
   // Try to just get the variable, by ID if possible.
   if (id) {
     // Look in the real variable map before checking the potential variable map.
-    variable = workspace.getVariableById(id);
+    variable = workspace.getVariableMap().getVariableById(id);
     if (!variable && potentialVariableMap) {
       variable = potentialVariableMap.getVariableById(id);
     }
@@ -742,7 +742,7 @@ export function getVariable(
       throw Error('Tried to look up a variable by name without a type');
     }
     // Otherwise look up by name and type.
-    variable = workspace.getVariable(opt_name, opt_type);
+    variable = workspace.getVariableMap().getVariable(opt_name, opt_type);
     if (!variable && potentialVariableMap) {
       variable = potentialVariableMap.getVariable(opt_name, opt_type);
     }
@@ -809,7 +809,7 @@ export function getAddedVariables(
   workspace: Workspace,
   originalVariables: IVariableModel<IVariableState>[],
 ): IVariableModel<IVariableState>[] {
-  const allCurrentVariables = workspace.getAllVariables();
+  const allCurrentVariables = workspace.getVariableMap().getAllVariables();
   const addedVariables = [];
   if (originalVariables.length !== allCurrentVariables.length) {
     for (let i = 0; i < allCurrentVariables.length; i++) {

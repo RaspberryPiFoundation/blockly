@@ -391,7 +391,7 @@ export function appendInternal(
   }
   eventUtils.disable();
 
-  const variablesBeforeCreation = workspace.getAllVariables();
+  const variablesBeforeCreation = workspace.getVariableMap().getAllVariables();
   let block;
   try {
     block = appendPrivate(state, workspace, {parentConnection, isShadow});

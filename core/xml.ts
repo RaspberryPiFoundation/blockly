@@ -635,7 +635,7 @@ export function domToBlockInternal(
 ): Block {
   // Create top-level block.
   eventUtils.disable();
-  const variablesBeforeCreation = workspace.getAllVariables();
+  const variablesBeforeCreation = workspace.getVariableMap().getAllVariables();
   let topBlock;
   try {
     topBlock = domToBlockHeadless(xmlBlock, workspace);

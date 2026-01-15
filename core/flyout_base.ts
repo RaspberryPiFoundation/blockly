@@ -813,7 +813,9 @@ export abstract class Flyout
   createBlock(originalBlock: BlockSvg): BlockSvg {
     let newBlock = null;
     eventUtils.disable();
-    const variablesBeforeCreation = this.targetWorkspace.getAllVariables();
+    const variablesBeforeCreation = this.targetWorkspace
+      .getVariableMap()
+      .getAllVariables();
     this.targetWorkspace.setResizesEnabled(false);
     try {
       newBlock = this.placeNewBlock(originalBlock);

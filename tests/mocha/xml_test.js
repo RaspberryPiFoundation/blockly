@@ -449,7 +449,7 @@ suite('XML', function () {
       createGenUidStubWithReturns('1');
       this.variableMap.createVariable('name1');
       const resultDom = Blockly.Xml.variablesToDom(
-        this.workspace.getAllVariables(),
+        this.workspace.getVariableMap().getAllVariables(),
       );
       assert.equal(resultDom.children.length, 1);
       const resultVariableDom = resultDom.children[0];
@@ -471,7 +471,7 @@ suite('XML', function () {
       Blockly.Events.enable();
 
       const resultDom = Blockly.Xml.variablesToDom(
-        this.workspace.getAllVariables(),
+        this.workspace.getVariableMap().getAllVariables(),
       );
       assert.equal(resultDom.children.length, 2);
       assertVariableDom(resultDom.children[0], null, 'id1', 'name1');
@@ -479,7 +479,7 @@ suite('XML', function () {
     });
     test('No variables', function () {
       const resultDom = Blockly.Xml.variablesToDom(
-        this.workspace.getAllVariables(),
+        this.workspace.getVariableMap().getAllVariables(),
       );
       assert.equal(resultDom.children.length, 0);
     });

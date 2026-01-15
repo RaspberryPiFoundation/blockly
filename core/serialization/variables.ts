@@ -32,7 +32,10 @@ export class VariableSerializer implements ISerializer {
    *     variables.
    */
   save(workspace: Workspace): IVariableState[] | null {
-    const variableStates = workspace.getAllVariables().map((v) => v.save());
+    const variableStates = workspace
+      .getVariableMap()
+      .getAllVariables()
+      .map((v) => v.save());
     return variableStates.length ? variableStates : null;
   }
 

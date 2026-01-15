@@ -26,12 +26,12 @@ suite('Procedures', function () {
   setup(function () {
     sharedTestSetup.call(this, {fireEventsNow: false});
     this.workspace = Blockly.inject('blocklyDiv', {});
-    this.workspace.createVariable('preCreatedVar', '', 'preCreatedVarId');
-    this.workspace.createVariable(
-      'preCreatedTypedVar',
-      'type',
-      'preCreatedTypedVarId',
-    );
+    this.workspace
+      .getVariableMap()
+      .createVariable('preCreatedVar', '', 'preCreatedVarId');
+    this.workspace
+      .getVariableMap()
+      .createVariable('preCreatedTypedVar', 'type', 'preCreatedTypedVarId');
     defineRowBlock();
     this.variableMap = this.workspace.getVariableMap();
   });
@@ -433,7 +433,7 @@ suite('Procedures', function () {
       this.clock.runAll();
 
       assert.isNotNull(
-        this.workspace.getVariable('param1', ''),
+        this.workspace.getVariableMap().getVariable('param1', ''),
         'Expected the old variable to continue to exist',
       );
     });
@@ -453,7 +453,9 @@ suite('Procedures', function () {
       this.clock.runAll();
       mutatorIcon.setBubbleVisible(false);
 
-      const variable = this.workspace.getVariable('param1', '');
+      const variable = this.workspace
+        .getVariableMap()
+        .getVariable('param1', '');
       this.variableMap.renameVariable(variable, 'new name');
 
       assert.isNotNull(
@@ -480,7 +482,9 @@ suite('Procedures', function () {
         .connection.connect(paramBlock.previousConnection);
       this.clock.runAll();
 
-      const variable = this.workspace.getVariable('param1', '');
+      const variable = this.workspace
+        .getVariableMap()
+        .getVariable('param1', '');
       this.variableMap.renameVariable(variable, 'new name');
 
       assert.equal(
@@ -506,7 +510,9 @@ suite('Procedures', function () {
       this.clock.runAll();
       mutatorIcon.setBubbleVisible(false);
 
-      const variable = this.workspace.getVariable('param1', '');
+      const variable = this.workspace
+        .getVariableMap()
+        .getVariable('param1', '');
       this.variableMap.renameVariable(variable, 'new name');
 
       assert.isNotNull(
@@ -535,7 +541,9 @@ suite('Procedures', function () {
       this.clock.runAll();
       mutatorIcon.setBubbleVisible(false);
 
-      const variable = this.workspace.getVariable('param1', '');
+      const variable = this.workspace
+        .getVariableMap()
+        .getVariable('param1', '');
       this.variableMap.renameVariable(variable, 'preCreatedVar');
 
       assert.isNotNull(
@@ -562,7 +570,9 @@ suite('Procedures', function () {
         .connection.connect(paramBlock.previousConnection);
       this.clock.runAll();
 
-      const variable = this.workspace.getVariable('param1', '');
+      const variable = this.workspace
+        .getVariableMap()
+        .getVariable('param1', '');
       this.variableMap.renameVariable(variable, 'preCreatedVar');
 
       assert.equal(
@@ -588,7 +598,9 @@ suite('Procedures', function () {
       this.clock.runAll();
       mutatorIcon.setBubbleVisible(false);
 
-      const variable = this.workspace.getVariable('param1', '');
+      const variable = this.workspace
+        .getVariableMap()
+        .getVariable('param1', '');
       this.variableMap.renameVariable(variable, 'preCreatedVar');
 
       assert.isNotNull(

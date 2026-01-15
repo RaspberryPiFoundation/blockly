@@ -15,7 +15,11 @@ import {assert} from '../../../node_modules/chai/index.js';
  * @param {!string} id The expected id of the variable.
  */
 export function assertVariableValues(container, name, type, id) {
-  const variable = container.getVariableById(id);
+  const variableMap =
+    container instanceof Blockly.Workspace
+      ? container.getVariableMap()
+      : container;
+  const variable = variableMap.getVariableById(id);
   assert.isDefined(variable);
   assert.equal(variable.name, name);
   assert.equal(variable.type, type);

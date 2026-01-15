@@ -2450,7 +2450,7 @@ suite('Blocks', function () {
         const blockA = createRenderedBlock(this.workspace, 'variable_block');
 
         blockA.setCollapsed(true);
-        const variable = this.workspace.getVariable('x', '');
+        const variable = this.workspace.getVariableMap().getVariable('x', '');
         this.variableMap.renameVariable(variable, 'y');
 
         this.clock.runAll();

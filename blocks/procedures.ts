@@ -308,7 +308,9 @@ const PROCEDURE_DEF_COMMON = {
     while (paramBlock && !paramBlock.isInsertionMarker()) {
       const varName = paramBlock.getFieldValue('NAME');
       this.arguments_.push(varName);
-      const variable = this.workspace.getVariable(varName, '')!;
+      const variable = this.workspace
+        .getVariableMap()
+        .getVariable(varName, '')!;
       this.argumentVarModels_.push(variable);
 
       this.paramIds_.push(paramBlock.id);
@@ -374,13 +376,13 @@ const PROCEDURE_DEF_COMMON = {
     oldId: string,
     newId: string,
   ) {
-    const oldVariable = this.workspace.getVariableById(oldId)!;
+    const oldVariable = this.workspace.getVariableMap().getVariableById(oldId)!;
     if (oldVariable.getType() !== '') {
       // Procedure arguments always have the empty type.
       return;
     }
     const oldName = oldVariable.getName();
-    const newVar = this.workspace.getVariableById(newId)!;
+    const newVar = this.workspace.getVariableMap().getVariableById(newId)!;
 
     let change = false;
     for (let i = 0; i < this.argumentVarModels_.length; i++) {
