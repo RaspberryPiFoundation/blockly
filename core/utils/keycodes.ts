@@ -156,5 +156,7 @@ export enum KeyCodes {
 
   // The primary modifier key on the current platform, i.e. Command on Apple
   // platforms and Control elsewhere.
-  CTRL_CMD = userAgent.MAC || userAgent.IPHONE || userAgent.IPAD ? 91 : 17,
+  CTRL_CMD = userAgent.MAC || userAgent.IPHONE || userAgent.IPAD
+    ? MAC_WK_CMD_LEFT
+    : CTRL,
 }
