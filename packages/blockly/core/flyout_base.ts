@@ -861,7 +861,7 @@ export abstract class Flyout
     const json = this.serializeBlock(oldBlock);
     // Normally this resizes leading to weird jumps. Save it for terminateDrag.
     targetWorkspace.setResizesEnabled(false);
-    const block = blocks.append(json, targetWorkspace, {recordUndo: true}) as BlockSvg;
+    const block = blocks.appendInternal(json, targetWorkspace, {recordUndo: true}) as BlockSvg;
 
     this.positionNewBlock(oldBlock, block);
 
