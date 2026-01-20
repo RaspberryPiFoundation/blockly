@@ -198,10 +198,12 @@ export class MenuItem {
    */
   setHighlighted(highlight: boolean) {
     this.highlight = highlight;
-    this.getElement()?.classList.toggle(
-      'blocklyMenuItemHighlight',
-      this.highlight,
-    );
+    if (this.isEnabled()) {
+      this.getElement()?.classList.toggle(
+        'blocklyMenuItemHighlight',
+        this.highlight,
+      );
+    }
   }
 
   /**

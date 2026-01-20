@@ -132,6 +132,14 @@ suite('Menu items', function () {
     );
   });
 
+  test('cannot be highlighted if not enabled', function () {
+    this.menuItem.setEnabled(false);
+    this.menuItem.setHighlighted(true);
+    assert.isFalse(
+      this.menuItem.getElement().classList.contains('blocklyMenuItemHighlight'),
+    );
+  });
+
   test('can be enabled', function () {
     this.menuItem.setEnabled(true);
     assert.isTrue(this.menuItem.isEnabled());
