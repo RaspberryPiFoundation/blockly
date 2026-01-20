@@ -34,18 +34,6 @@ const LINE_MODE_MULTIPLIER = 40;
 const PAGE_MODE_MULTIPLIER = 125;
 
 /**
- * Options to control the behavior of bound event listeners. Based on
- * https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#options
- * and should be kept consistent with web standards as they evolve.
- */
-export type BindOptions = {
-  capture?: boolean;
-  once?: boolean;
-  passive?: boolean;
-  signal?: AbortSignal;
-};
-
-/**
  * Bind an event handler that can be ignored if it is not part of the active
  * touch stream.
  * Use this for events that either start or continue a multi-part gesture (e.g.
@@ -69,7 +57,7 @@ export function conditionalBind(
   thisObject: object | null,
   func: Function,
   opt_noCaptureIdentifier?: boolean,
-  options?: BindOptions,
+  options?: AddEventListenerOptions,
 ): Data {
   /**
    *
@@ -121,7 +109,7 @@ export function bind(
   name: string,
   thisObject: object | null,
   func: Function,
-  options?: BindOptions,
+  options?: AddEventListenerOptions,
 ): Data {
   /**
    *
