@@ -273,10 +273,7 @@ export class Gesture {
       throw new Error(`Cannot update dragging from the flyout because the ' +
           'flyout's target workspace is undefined`);
     }
-    if (
-      !this.flyout.isScrollable() ||
-      this.flyout.isDragTowardWorkspace(this.currentDragDeltaXY)
-    ) {
+
       this.startWorkspace_ = this.flyout.targetWorkspace;
       this.startWorkspace_.updateScreenCalculationsIfScrolled();
       // Start the event group now, so that the same event group is used for
@@ -289,8 +286,7 @@ export class Gesture {
       this.targetBlock = this.flyout.createBlock(this.targetBlock);
       getFocusManager().focusNode(this.targetBlock);
       return true;
-    }
-    return false;
+
   }
 
   /**
