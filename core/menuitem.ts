@@ -83,7 +83,7 @@ export class MenuItem {
 
     // Add a checkbox for checkable menu items.
     if (this.checkable) {
-      this.toggleCheckbox(true);
+      this.toggleHasCheckbox(true);
     }
 
     // Initialize ARIA role and state.
@@ -170,7 +170,7 @@ export class MenuItem {
       this.setChecked(false);
     }
 
-    this.toggleCheckbox(checkable);
+    this.toggleHasCheckbox(checkable);
   }
 
   /**
@@ -263,7 +263,7 @@ export class MenuItem {
    *
    * @param add True to add the checkmark indicator, false to remove it.
    */
-  private toggleCheckbox(add: boolean) {
+  private toggleHasCheckbox(add: boolean) {
     if (add) {
       if (
         this.getElement()?.querySelector(
