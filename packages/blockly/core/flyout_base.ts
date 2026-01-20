@@ -38,7 +38,6 @@ import * as dom from './utils/dom.js';
 import * as idGenerator from './utils/idgenerator.js';
 import {Svg} from './utils/svg.js';
 import * as toolbox from './utils/toolbox.js';
-import * as Variables from './variables.js';
 import {WorkspaceSvg} from './workspace_svg.js';
 
 /**
@@ -813,44 +812,16 @@ export abstract class Flyout
    * @internal
    */
   createBlock(originalBlock: BlockSvg): BlockSvg {
-    let newBlock = null;
-    eventUtils.disable();
-    const variablesBeforeCreation = this.targetWorkspace
-      .getVariableMap()
-      .getAllVariables();
-    this.targetWorkspace.setResizesEnabled(false);
     try {
-      newBlock = this.placeNewBlock(originalBlock);
+      return this.placeNewBlock(originalBlock);
     } finally {
-      eventUtils.enable();
-    }
+      this.targetWorkspace.hideChaff();
 
-    // Close the flyout.
-    this.targetWorkspace.hideChaff();
-
-    const newVariables = Variables.getAddedVariables(
-      this.targetWorkspace,
-      variablesBeforeCreation,
-    );
-
-    if (eventUtils.isEnabled()) {
-      eventUtils.setGroup(true);
-      // Fire a VarCreate event for each (if any) new variable created.
-      for (let i = 0; i < newVariables.length; i++) {
-        const thisVariable = newVariables[i];
-        eventUtils.fire(
-          new (eventUtils.get(EventType.VAR_CREATE))(thisVariable),
-        );
+      // Close the flyout.
+      if (this.autoClose) {
+        this.hide();
       }
-
-      // Block events come after var events, in case they refer to newly created
-      // variables.
-      eventUtils.fire(new (eventUtils.get(EventType.BLOCK_CREATE))(newBlock));
     }
-    if (this.autoClose) {
-      this.hide();
-    }
-    return newBlock;
   }
 
   /**
@@ -890,7 +861,7 @@ export abstract class Flyout
     const json = this.serializeBlock(oldBlock);
     // Normally this resizes leading to weird jumps. Save it for terminateDrag.
     targetWorkspace.setResizesEnabled(false);
-    const block = blocks.append(json, targetWorkspace) as BlockSvg;
+    const block = blocks.append(json, targetWorkspace, {recordUndo: true}) as BlockSvg;
 
     this.positionNewBlock(oldBlock, block);
 
