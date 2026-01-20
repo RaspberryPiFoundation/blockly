@@ -291,7 +291,10 @@ export class Connection {
     }
 
     let event;
-    if (eventUtils.isEnabled()) {
+    if (
+      eventUtils.isEnabled() &&
+      !childConnection.getSourceBlock().isDeadOrDying()
+    ) {
       event = new (eventUtils.get(EventType.BLOCK_MOVE))(
         childConnection.getSourceBlock(),
       ) as BlockMove;

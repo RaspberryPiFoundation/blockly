@@ -11,7 +11,6 @@
  */
 // Former goog.module ID: Blockly.RenderedConnection
 
-import type {Block} from './block.js';
 import type {BlockSvg} from './block_svg.js';
 import {config} from './config.js';
 import {Connection} from './connection.js';
@@ -416,13 +415,13 @@ export class RenderedConnection
    *
    * @returns List of blocks to render.
    */
-  startTrackingAll(): Block[] {
+  startTrackingAll(): BlockSvg[] {
     this.setTracking(true);
     // All blocks that are not tracked must start tracking before any
     // rendering takes place, since rendering requires knowing the dimensions
     // of lower blocks. Also, since rendering a block renders all its parents,
     // we only need to render the leaf nodes.
-    let renderList: Block[] = [];
+    let renderList: BlockSvg[] = [];
     if (
       this.type !== ConnectionType.INPUT_VALUE &&
       this.type !== ConnectionType.NEXT_STATEMENT

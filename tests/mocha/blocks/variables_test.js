@@ -30,6 +30,25 @@ suite('Variables', function () {
             'variableTypes': ['', 'type1', 'type2'],
           },
         ],
+        'output': null,
+      },
+      // Block for variable setter.
+      {
+        'type': 'set_var_block',
+        'message0': '%{BKY_VARIABLES_SET}',
+        'args0': [
+          {
+            'type': 'field_variable',
+            'name': 'VAR',
+            'variableTypes': ['', 'type1', 'type2'],
+          },
+          {
+            'type': 'input_value',
+            'name': 'VALUE',
+          },
+        ],
+        'previousStatement': null,
+        'nextStatement': null,
       },
     ]);
     this.variableMap = this.workspace.getVariableMap();
@@ -58,6 +77,21 @@ suite('Variables', function () {
     Blockly.Events.enable();
     return block;
   }
+
+  test('can be deleted when two connected blocks reference the same variable', function () {
+    const getter = new Blockly.Block(this.workspace, 'get_var_block');
+    getter.getField('VAR').setValue('1');
+
+    const setter = new Blockly.Block(this.workspace, 'set_var_block');
+    setter.getField('VAR').setValue('1');
+    setter.getInput('VALUE').connection.connect(getter.outputConnection);
+
+    this.variableMap.deleteVariable(this.variableMap.getVariableById('1'));
+    // Both blocks should have been deleted.
+    assert.equal(0, this.workspace.getAllBlocks(false).length);
+    // The variable itself should have been deleted.
+    assert.equal(this.variableMap.getVariableById('1'), undefined);
+  });
 
   suite('allUsedVarModels', function () {
     test('All used', function () {

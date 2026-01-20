@@ -12,7 +12,6 @@
  */
 // Former goog.module ID: Blockly.WorkspaceAudio
 
-import * as userAgent from './utils/useragent.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 
 /**
@@ -26,7 +25,7 @@ const SOUND_LIMIT = 100;
  */
 export class WorkspaceAudio {
   /** Database of pre-loaded sounds. */
-  private sounds = new Map<string, HTMLAudioElement>();
+  private sounds = new Map<string, AudioBuffer>();
 
   /** Time that the last sound was played. */
   private lastSound: Date | null = null;
@@ -34,11 +33,18 @@ export class WorkspaceAudio {
   /** Whether the audio is muted or not. */
   private muted: boolean = false;
 
+  /** Audio context used for playback. */
+  private readonly context?: AudioContext;
+
   /**
    * @param parentWorkspace The parent of the workspace this audio object
    *     belongs to, or null.
    */
-  constructor(private parentWorkspace: WorkspaceSvg) {}
+  constructor(private parentWorkspace: WorkspaceSvg) {
+    if (window.AudioContext) {
+      this.context = new AudioContext();
+    }
+  }
 
   /**
    * Dispose of this audio manager.
@@ -47,73 +53,26 @@ export class WorkspaceAudio {
    */
   dispose() {
     this.sounds.clear();
+    this.context?.close();
   }
 
   /**
    * Load an audio file.  Cache it, ready for instantaneous playing.
    *
-   * @param filenames List of file types in decreasing order of preference (i.e.
-   *     increasing size).  E.g. ['media/go.mp3', 'media/go.wav'] Filenames
-   *     include path from Blockly's root.  File extensions matter.
+   * @param filenames Single-item array containing the URL for the sound file.
+   *     Any items after the first item are ignored.
    * @param name Name of sound.
    */
-  load(filenames: string[], name: string) {
+  async load(filenames: string[], name: string) {
     if (!filenames.length) {
       return;
     }
-    let audioTest;
-    try {
-      audioTest = new globalThis['Audio']();
-    } catch {
-      // No browser support for Audio.
-      // IE can throw an error even if the Audio object exists.
-      return;
-    }
-    let sound;
-    for (let i = 0; i < filenames.length; i++) {
-      const filename = filenames[i];
-      const ext = filename.match(/\.(\w+)$/);
-      if (ext && audioTest.canPlayType('audio/' + ext[1])) {
-        // Found an audio format we can play.
-        sound = new globalThis['Audio'](filename);
-        break;
-      }
-    }
-    if (sound) {
-      this.sounds.set(name, sound);
-    }
-  }
 
-  /**
-   * Preload all the audio files so that they play quickly when asked for.
-   *
-   * @internal
-   */
-  preload() {
-    for (const sound of this.sounds.values()) {
-      sound.volume = 0.01;
-      const playPromise = sound.play();
-      // Edge does not return a promise, so we need to check.
-      if (playPromise !== undefined) {
-        // If we don't wait for the play request to complete before calling
-        // pause() we will get an exception: (DOMException: The play() request
-        // was interrupted) See more:
-        // https://developers.google.com/web/updates/2017/06/play-request-was-interrupted
-        playPromise.then(sound.pause).catch(
-          // Play without user interaction was prevented.
-          function () {},
-        );
-      } else {
-        sound.pause();
-      }
-
-      // iOS can only process one sound at a time.  Trying to load more than one
-      // corrupts the earlier ones.  Just load one and leave the others
-      // uncached.
-      if (userAgent.IPAD || userAgent.IPHONE) {
-        break;
-      }
-    }
+    const response = await fetch(filenames[0]);
+    const arrayBuffer = await response.arrayBuffer();
+    this.context?.decodeAudioData(arrayBuffer, (audioBuffer) => {
+      this.sounds.set(name, audioBuffer);
+    });
   }
 
   /**
@@ -123,8 +82,8 @@ export class WorkspaceAudio {
    * @param name Name of sound.
    * @param opt_volume Volume of sound (0-1).
    */
-  play(name: string, opt_volume?: number) {
-    if (this.muted) {
+  async play(name: string, opt_volume?: number) {
+    if (this.muted || opt_volume === 0 || !this.context) {
       return;
     }
     const sound = this.sounds.get(name);
@@ -138,17 +97,24 @@ export class WorkspaceAudio {
         return;
       }
       this.lastSound = now;
-      let mySound;
-      if (userAgent.IPAD || userAgent.ANDROID) {
-        // Creating a new audio node causes lag in Android and iPad.  Android
-        // refetches the file from the server, iPad uses a singleton audio
-        // node which must be deleted and recreated for each new audio tag.
-        mySound = sound;
-      } else {
-        mySound = sound.cloneNode() as HTMLAudioElement;
+
+      if (this.context.state === 'suspended') {
+        await this.context.resume();
       }
-      mySound.volume = opt_volume === undefined ? 1 : opt_volume;
-      mySound.play();
+
+      const source = this.context.createBufferSource();
+      const gainNode = this.context.createGain();
+      gainNode.gain.value = opt_volume ?? 1;
+      gainNode.connect(this.context.destination);
+      source.buffer = sound;
+      source.connect(gainNode);
+
+      source.addEventListener('ended', () => {
+        source.disconnect();
+        gainNode.disconnect();
+      });
+
+      source.start();
     } else if (this.parentWorkspace) {
       // Maybe a workspace on a lower level knows about this sound.
       this.parentWorkspace.getAudioManager().play(name, opt_volume);

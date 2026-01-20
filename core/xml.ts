@@ -47,9 +47,7 @@ export function workspaceToDom(workspace: Workspace, skipId = false): Element {
     treeXml.appendChild(variablesElement);
   }
   for (const comment of workspace.getTopComments()) {
-    treeXml.appendChild(
-      saveWorkspaceComment(comment as AnyDuringMigration, skipId),
-    );
+    treeXml.appendChild(saveWorkspaceComment(comment, skipId));
   }
   const blocks = workspace.getTopBlocks(true);
   for (let i = 0; i < blocks.length; i++) {
@@ -637,7 +635,7 @@ export function domToBlockInternal(
 ): Block {
   // Create top-level block.
   eventUtils.disable();
-  const variablesBeforeCreation = workspace.getAllVariables();
+  const variablesBeforeCreation = workspace.getVariableMap().getAllVariables();
   let topBlock;
   try {
     topBlock = domToBlockHeadless(xmlBlock, workspace);

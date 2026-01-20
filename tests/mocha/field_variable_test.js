@@ -171,7 +171,7 @@ suite('Variable Fields', function () {
 
   suite('setValue', function () {
     setup(function () {
-      this.workspace.createVariable('name2', null, 'id2');
+      this.workspace.getVariableMap().createVariable('name2', null, 'id2');
       this.field = new Blockly.FieldVariable(null);
       initVariableField(this.workspace, this.field);
 
@@ -209,8 +209,8 @@ suite('Variable Fields', function () {
       assert.include(dropdownOptions[dropdownOptions.length - 1][0], 'Delete');
     };
     test('Contains variables created before field', function () {
-      this.workspace.createVariable('name1', '', 'id1');
-      this.workspace.createVariable('name2', '', 'id2');
+      this.workspace.getVariableMap().createVariable('name1', '', 'id1');
+      this.workspace.getVariableMap().createVariable('name2', '', 'id2');
       // Expect that the dropdown options will contain the variables that exist
       const fieldVariable = initVariableField(
         this.workspace,
@@ -228,22 +228,22 @@ suite('Variable Fields', function () {
         new Blockly.FieldVariable('name1'),
       );
       // Expect that variables created after field creation will show up too.
-      this.workspace.createVariable('name2', '', 'id2');
+      this.workspace.getVariableMap().createVariable('name2', '', 'id2');
       assertDropdownContents(fieldVariable, [
         ['name1', 'id1'],
         ['name2', 'id2'],
       ]);
     });
     test('Contains variables created before and after field', function () {
-      this.workspace.createVariable('name1', '', 'id1');
-      this.workspace.createVariable('name2', '', 'id2');
+      this.workspace.getVariableMap().createVariable('name1', '', 'id1');
+      this.workspace.getVariableMap().createVariable('name2', '', 'id2');
       // Expect that the dropdown options will contain the variables that exist
       const fieldVariable = initVariableField(
         this.workspace,
         new Blockly.FieldVariable('name1'),
       );
       // Expect that variables created after field creation will show up too.
-      this.workspace.createVariable('name3', '', 'id3');
+      this.workspace.getVariableMap().createVariable('name3', '', 'id3');
       assertDropdownContents(fieldVariable, [
         ['name1', 'id1'],
         ['name2', 'id2'],
@@ -254,9 +254,9 @@ suite('Variable Fields', function () {
 
   suite('Validators', function () {
     setup(function () {
-      this.workspace.createVariable('name1', null, 'id1');
-      this.workspace.createVariable('name2', null, 'id2');
-      this.workspace.createVariable('name3', null, 'id3');
+      this.workspace.getVariableMap().createVariable('name1', null, 'id1');
+      this.workspace.getVariableMap().createVariable('name2', null, 'id2');
+      this.workspace.getVariableMap().createVariable('name3', null, 'id3');
       this.variableField = initVariableField(
         this.workspace,
         new Blockly.FieldVariable('name1'),
@@ -281,7 +281,9 @@ suite('Variable Fields', function () {
       });
       test('New Value', function () {
         // Must create the var so that the field doesn't throw an error.
-        this.workspace.createVariable('thing2', null, 'other2');
+        this.workspace
+          .getVariableMap()
+          .createVariable('thing2', null, 'other2');
         this.variableField.setValue('other2');
         assertFieldValue(this.variableField, 'id2', 'name2');
       });
@@ -368,8 +370,8 @@ suite('Variable Fields', function () {
   });
   suite('Get variable types', function () {
     setup(function () {
-      this.workspace.createVariable('name1', 'type1');
-      this.workspace.createVariable('name2', 'type2');
+      this.workspace.getVariableMap().createVariable('name1', 'type1');
+      this.workspace.getVariableMap().createVariable('name2', 'type2');
     });
     test('variableTypes is explicit', function () {
       // Expect that since variableTypes is defined, it will be the return
@@ -467,7 +469,7 @@ suite('Variable Fields', function () {
   });
   suite('Renaming Variables', function () {
     setup(function () {
-      this.workspace.createVariable('name1', null, 'id1');
+      this.workspace.getVariableMap().createVariable('name1', null, 'id1');
       Blockly.defineBlocksWithJsonArray([
         {
           'type': 'field_variable_test_block',
@@ -584,7 +586,7 @@ suite('Variable Fields', function () {
     });
 
     test('ID', function () {
-      this.workspace.createVariable('test', '', 'id1');
+      this.workspace.getVariableMap().createVariable('test', '', 'id1');
       const block = Blockly.serialization.blocks.append(
         {
           'type': 'variables_get',

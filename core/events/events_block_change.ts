@@ -193,7 +193,7 @@ export class BlockChange extends BlockBase {
         break;
       }
       case 'comment':
-        block.setCommentText((value as string) || null);
+        block.setCommentText((value as string) ?? null);
         break;
       case 'collapsed':
         block.setCollapsed(!!value);

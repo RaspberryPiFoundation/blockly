@@ -14,8 +14,10 @@ import {ConnectionType} from '../connection_type.js';
 import type {BlockMove} from '../events/events_block_move.js';
 import {EventType} from '../events/type.js';
 import * as eventUtils from '../events/utils.js';
+import type {IBubble} from '../interfaces/i_bubble.js';
 import {IConnectionPreviewer} from '../interfaces/i_connection_previewer.js';
 import {IDragStrategy} from '../interfaces/i_draggable.js';
+import {IHasBubble, hasBubble} from '../interfaces/i_has_bubble.js';
 import * as layers from '../layers.js';
 import * as registry from '../registry.js';
 import {finishQueuedRenders} from '../render_management.js';
@@ -120,6 +122,34 @@ export class BlockDragStrategy implements IDragStrategy {
     }
     this.block.setDragging(true);
     this.workspace.getLayerManager()?.moveToDragLayer(this.block);
+    this.getVisibleBubbles(this.block).forEach((bubble) => {
+      this.workspace.getLayerManager()?.moveToDragLayer(bubble, false);
+    });
+  }
+
+  /**
+   * Returns an array of visible bubbles attached to the given block or its
+   * descendants.
+   *
+   * @param block The block to identify open bubbles on.
+   * @returns An array of all currently visible bubbles on the given block or
+   *    its descendants.
+   */
+  private getVisibleBubbles(block: BlockSvg): IBubble[] {
+    return block
+      .getDescendants(false)
+      .flatMap((block) => block.getIcons())
+      .filter((icon) => hasBubble(icon) && icon.bubbleIsVisible())
+      .map((icon) => (icon as unknown as IHasBubble).getBubble())
+      .filter((bubble) => !!bubble) // Convince TS they're non-null.
+      .sort((a, b) => {
+        // Sort the bubbles by their position in the DOM in order to maintain
+        // their relative z-ordering when moving between layers.
+        const position = a.getSvgRoot().compareDocumentPosition(b.getSvgRoot());
+        if (position & Node.DOCUMENT_POSITION_PRECEDING) return 1;
+        if (position & Node.DOCUMENT_POSITION_FOLLOWING) return -1;
+        return 0;
+      });
   }
 
   /**
@@ -393,6 +423,13 @@ export class BlockDragStrategy implements IDragStrategy {
       this.workspace
         .getLayerManager()
         ?.moveOffDragLayer(this.block, layers.BLOCK);
+
+      this.getVisibleBubbles(this.block).forEach((bubble) =>
+        this.workspace
+          .getLayerManager()
+          ?.moveOffDragLayer(bubble, layers.BUBBLE, false),
+      );
+
       this.block.setDragging(false);
     }
 
@@ -462,6 +499,12 @@ export class BlockDragStrategy implements IDragStrategy {
       this.workspace
         .getLayerManager()
         ?.moveOffDragLayer(this.block, layers.BLOCK);
+      this.getVisibleBubbles(this.block).forEach((bubble) =>
+        this.workspace
+          .getLayerManager()
+          ?.moveOffDragLayer(bubble, layers.BUBBLE, false),
+      );
+
       // Blocks dragged directly from a flyout may need to be bumped into
       // bounds.
       bumpObjects.bumpIntoBounds(

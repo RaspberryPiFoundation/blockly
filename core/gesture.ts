@@ -208,10 +208,6 @@ export class Gesture {
       browserEvents.unbind(event);
     }
     this.boundEvents.length = 0;
-
-    if (this.workspaceDragger) {
-      this.workspaceDragger.dispose();
-    }
   }
 
   /**
@@ -777,13 +773,11 @@ export class Gesture {
     this.setStartWorkspace(ws);
     this.mostRecentEvent = e;
 
-    if (!this.startBlock && !this.startBubble && !this.startComment) {
+    if (!this.targetBlock && !this.startBubble && !this.startComment) {
       // Ensure the workspace is selected if nothing else should be. Note that
       // this is focusNode() instead of focusTree() because if any active node
       // is focused in the workspace it should be defocused.
       getFocusManager().focusNode(ws);
-    } else if (this.startBlock) {
-      getFocusManager().focusNode(this.startBlock);
     }
 
     this.doStart(e);

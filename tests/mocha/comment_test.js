@@ -167,4 +167,49 @@ suite('Comments', function () {
       assertBubbleLocation(this.comment, 100, 100);
     });
   });
+  suite('Undo/Redo', function () {
+    test('Adding an empty comment can be undone', function () {
+      const block = this.workspace.newBlock('empty_block');
+      block.setCommentText('');
+      assert.isNotNull(block.getIcon(Blockly.icons.IconType.COMMENT));
+      assert.equal(block.getCommentText(), '');
+
+      this.workspace.undo(false);
+
+      assert.isUndefined(block.getIcon(Blockly.icons.IconType.COMMENT));
+      assert.isNull(block.getCommentText());
+    });
+
+    test('Adding an empty comment can be redone', function () {
+      const block = this.workspace.newBlock('empty_block');
+      block.setCommentText('');
+      this.workspace.undo(false);
+      this.workspace.undo(true);
+
+      assert.isNotNull(block.getIcon(Blockly.icons.IconType.COMMENT));
+      assert.equal(block.getCommentText(), '');
+    });
+
+    test('Adding a non-empty comment can be undone', function () {
+      const block = this.workspace.newBlock('empty_block');
+      block.setCommentText('hey there');
+      assert.isNotNull(block.getIcon(Blockly.icons.IconType.COMMENT));
+      assert.equal(block.getCommentText(), 'hey there');
+
+      this.workspace.undo(false);
+
+      assert.isUndefined(block.getIcon(Blockly.icons.IconType.COMMENT));
+      assert.isNull(block.getCommentText());
+    });
+
+    test('Adding a non-empty comment can be redone', function () {
+      const block = this.workspace.newBlock('empty_block');
+      block.setCommentText('hey there');
+      this.workspace.undo(false);
+      this.workspace.undo(true);
+
+      assert.isNotNull(block.getIcon(Blockly.icons.IconType.COMMENT));
+      assert.equal(block.getCommentText(), 'hey there');
+    });
+  });
 });

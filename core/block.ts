@@ -1161,9 +1161,9 @@ export class Block {
     const vars = [];
     for (const field of this.getFields()) {
       if (field.referencesVariables()) {
-        const model = this.workspace.getVariableById(
-          field.getValue() as string,
-        );
+        const model = this.workspace
+          .getVariableMap()
+          .getVariableById(field.getValue() as string);
         // Check if the variable actually exists (and isn't just a potential
         // variable).
         if (model) {

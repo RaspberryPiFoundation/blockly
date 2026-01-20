@@ -1950,6 +1950,23 @@ suite('Blocks', function () {
           'Warning should be removed from parent after expanding',
         );
       });
+
+      test('Collapsing a block should not inherit warnings from following siblings', function () {
+        const nextBlock = createRenderedBlock(
+          this.workspace,
+          'statement_block',
+        );
+        this.childBlock.nextConnection.connect(nextBlock.previousConnection);
+        nextBlock.setWarningText('Warning Text');
+
+        this.childBlock.setCollapsed(true);
+
+        const icon = this.childBlock.getIcon(Blockly.icons.WarningIcon.TYPE);
+        assert.isUndefined(
+          icon,
+          'Collapsed block should not show warnings from following siblings',
+        );
+      });
     });
 
     suite('Bubbles and collapsing', function () {
@@ -2433,7 +2450,7 @@ suite('Blocks', function () {
         const blockA = createRenderedBlock(this.workspace, 'variable_block');
 
         blockA.setCollapsed(true);
-        const variable = this.workspace.getVariable('x', '');
+        const variable = this.workspace.getVariableMap().getVariable('x', '');
         this.variableMap.renameVariable(variable, 'y');
 
         this.clock.runAll();
@@ -2881,6 +2898,52 @@ suite('Blocks', function () {
         'newline should be converted to an end-row input',
       );
       assert.equal(block.inputList[1].fieldRow[0].getValue(), 'Row2');
+    });
+  });
+
+  suite('Dragging', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv');
+      this.blocks = createTestBlocks(this.workspace, false);
+      for (const block of Object.values(this.blocks)) {
+        block.initSvg();
+        block.render();
+      }
+    });
+    test('Bubbles are moved to drag layer along with their blocks', async function () {
+      this.blocks.A.setCommentText('a');
+      this.blocks.B.setCommentText('b');
+      this.blocks.C.setCommentText('c');
+      const v1 = this.blocks.A.getIcon(
+        Blockly.icons.IconType.COMMENT,
+      ).setBubbleVisible(true);
+      const v2 = this.blocks.B.getIcon(
+        Blockly.icons.IconType.COMMENT,
+      ).setBubbleVisible(true);
+      const v3 = this.blocks.C.getIcon(
+        Blockly.icons.IconType.COMMENT,
+      ).setBubbleVisible(true);
+
+      this.clock.tick(1000);
+      await Promise.all([v1, v2, v3]);
+
+      this.blocks.B.startDrag();
+
+      // Block A stays put and should have its comment stay on the bubble layer.
+      assert.equal(
+        this.blocks.A.getIcon(Blockly.icons.IconType.COMMENT)
+          .getBubble()
+          .getSvgRoot().parentElement,
+        this.blocks.A.workspace.getLayerManager()?.getBubbleLayer(),
+      );
+
+      // Block B moves to the drag layer and its comment should follow.
+      assert.equal(
+        this.blocks.B.getIcon(Blockly.icons.IconType.COMMENT)
+          .getBubble()
+          .getSvgRoot().parentElement,
+        this.blocks.B.workspace.getLayerManager()?.getDragLayer(),
+      );
     });
   });
 });

@@ -371,6 +371,89 @@ suite('Context Menu Items', function () {
         assert.equal(this.deleteOption.displayText(this.scope), 'Delete Block');
       });
     });
+
+    suite('Separators', function () {
+      setup(function () {
+        this.registry.reset();
+        this.registry.register({
+          weight: 0,
+          id: 'a',
+          preconditionFn: () => {},
+          displayText: 'a',
+          callback: () => {},
+        });
+        this.registry.register({
+          weight: 2,
+          id: 'b',
+          preconditionFn: () => {},
+          displayText: 'b',
+          callback: () => {},
+        });
+      });
+
+      test('are hidden when precondition returns hidden', function () {
+        this.registry.register({
+          weight: 1,
+          id: 'separator',
+          preconditionFn: () => 'hidden',
+          separator: true,
+        });
+
+        const items = this.registry.getContextMenuOptions(
+          this.scope,
+          new Event('pointerdown'),
+        );
+        assert.equal(items.length, 2);
+        assert.isTrue(items.every((item) => !('separator' in item)));
+      });
+
+      test('are included when precondition returns enabled', function () {
+        this.registry.register({
+          weight: 1,
+          id: 'separator',
+          preconditionFn: () => 'enabled',
+          separator: true,
+        });
+
+        const items = this.registry.getContextMenuOptions(
+          this.scope,
+          new Event('pointerdown'),
+        );
+        assert.equal(items.length, 3);
+        assert.isTrue('separator' in items[1]);
+      });
+
+      test('are included when precondition returns disabled', function () {
+        this.registry.register({
+          weight: 1,
+          id: 'separator',
+          preconditionFn: () => 'disabled',
+          separator: true,
+        });
+
+        const items = this.registry.getContextMenuOptions(
+          this.scope,
+          new Event('pointerdown'),
+        );
+        assert.equal(items.length, 3);
+        assert.isTrue('separator' in items[1]);
+      });
+
+      test('are included when there is no precondition', function () {
+        this.registry.register({
+          weight: 1,
+          id: 'separator',
+          separator: true,
+        });
+
+        const items = this.registry.getContextMenuOptions(
+          this.scope,
+          new Event('pointerdown'),
+        );
+        assert.equal(items.length, 3);
+        assert.isTrue('separator' in items[1]);
+      });
+    });
   });
 
   suite('Block Items', function () {
@@ -481,6 +564,89 @@ suite('Context Menu Items', function () {
         this.block.appendValueInput('test1');
         this.block.appendValueInput('test2');
         assert.equal(this.inlineOption.preconditionFn(this.scope), 'enabled');
+      });
+    });
+
+    suite('Separators', function () {
+      setup(function () {
+        this.registry.reset();
+        this.registry.register({
+          weight: 0,
+          id: 'a',
+          preconditionFn: () => {},
+          displayText: 'a',
+          callback: () => {},
+        });
+        this.registry.register({
+          weight: 2,
+          id: 'b',
+          preconditionFn: () => {},
+          displayText: 'b',
+          callback: () => {},
+        });
+      });
+
+      test('are hidden when precondition returns hidden', function () {
+        this.registry.register({
+          weight: 1,
+          id: 'separator',
+          preconditionFn: () => 'hidden',
+          separator: true,
+        });
+
+        const items = this.registry.getContextMenuOptions(
+          this.scope,
+          new Event('pointerdown'),
+        );
+        assert.equal(items.length, 2);
+        assert.isTrue(items.every((item) => !('separator' in item)));
+      });
+
+      test('are included when precondition returns enabled', function () {
+        this.registry.register({
+          weight: 1,
+          id: 'separator',
+          preconditionFn: () => 'enabled',
+          separator: true,
+        });
+
+        const items = this.registry.getContextMenuOptions(
+          this.scope,
+          new Event('pointerdown'),
+        );
+        assert.equal(items.length, 3);
+        assert.isTrue('separator' in items[1]);
+      });
+
+      test('are included when precondition returns disabled', function () {
+        this.registry.register({
+          weight: 1,
+          id: 'separator',
+          preconditionFn: () => 'disabled',
+          separator: true,
+        });
+
+        const items = this.registry.getContextMenuOptions(
+          this.scope,
+          new Event('pointerdown'),
+        );
+        assert.equal(items.length, 3);
+        assert.isTrue('separator' in items[1]);
+      });
+
+      test('are included when there is no precondition', function () {
+        this.registry.register({
+          weight: 1,
+          id: 'separator',
+          separator: true,
+        });
+
+        const items = this.registry.getContextMenuOptions(
+          this.scope,
+          new Event('pointerdown'),
+        );
+        assert.equal(items.length, 3);
+        assert.isTrue('separator' in items[1]);
       });
     });
   });
