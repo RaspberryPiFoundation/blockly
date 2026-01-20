@@ -274,19 +274,18 @@ export class Gesture {
           'flyout's target workspace is undefined`);
     }
 
-      this.startWorkspace_ = this.flyout.targetWorkspace;
-      this.startWorkspace_.updateScreenCalculationsIfScrolled();
-      // Start the event group now, so that the same event group is used for
-      // block creation and block dragging.
-      if (!eventUtils.getGroup()) {
-        eventUtils.setGroup(true);
-      }
-      // The start block is no longer relevant, because this is a drag.
-      this.startBlock = null;
-      this.targetBlock = this.flyout.createBlock(this.targetBlock);
-      getFocusManager().focusNode(this.targetBlock);
-      return true;
-
+    this.startWorkspace_ = this.flyout.targetWorkspace;
+    this.startWorkspace_.updateScreenCalculationsIfScrolled();
+    // Start the event group now, so that the same event group is used for
+    // block creation and block dragging.
+    if (!eventUtils.getGroup()) {
+      eventUtils.setGroup(true);
+    }
+    // The start block is no longer relevant, because this is a drag.
+    this.startBlock = null;
+    this.targetBlock = this.flyout.createBlock(this.targetBlock);
+    getFocusManager().focusNode(this.targetBlock);
+    return true;
   }
 
   /**
