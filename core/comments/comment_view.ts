@@ -672,6 +672,8 @@ css.register(`
   border: 1px solid var(--commentBorderColour);
   box-sizing: border-box;
   display: block;
+  /* Match Zelos block comment bubbles: do not inherit bold label weight */
+  font-weight: normal;
   outline: 0;
   padding: 5px;
   resize: none;
@@ -713,6 +715,8 @@ css.register(`
 .blocklyComment .blocklyCommentPreview.blocklyText {
   fill: #000;
   dominant-baseline: middle;
+  /* Ensure preview text uses normal weight for consistency with textarea */
+  font-weight: normal;
   visibility: hidden;
 }
 
