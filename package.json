@@ -1,158 +1,28 @@
 {
-  "name": "blockly",
-  "version": "12.3.1",
-  "description": "Blockly is a library for building visual programming editors.",
+  "name": "blockly-repo",
+  "version": "0.0.0",
+  "description": "Monorepo for blockly and related packages",
   "keywords": [
     "blockly"
   ],
+  "homepage": "https://blockly.com",
+  "bugs": {
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/google/blockly.git"
-  },
-  "bugs": {
-    "url": "https://github.com/google/blockly/issues"
-  },
-  "homepage": "https://developers.google.com/blockly/",
-  "author": {
-    "name": "Neil Fraser"
-  },
-  "scripts": {
-    "build": "gulp build",
-    "build-debug": "gulp build --verbose --debug",
-    "build-debug-log": "npm run build:debug > build-debug.log 2>&1 && tail -3 build-debug.log",
-    "build-strict": "gulp build --verbose --strict",
-    "build-strict-log": "npm run build:strict > build-debug.log 2>&1 && tail -3 build-debug.log",
-    "clean": "gulp clean",
-    "deployDemos": "npm ci && gulp deployDemos",
-    "deployDemos:beta": "npm ci && gulp deployDemosBeta",
-    "docs": "gulp docs",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "messages": "gulp messages",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "langfiles": "gulp langfiles",
-    "minify": "gulp minify",
-    "package": "gulp pack",
-    "postinstall": "patch-package",
-    "prepareDemos": "gulp prepareDemos",
-    "publish": "npm ci && gulp publish",
-    "publish:beta": "npm ci && gulp publishBeta",
-    "recompile": "gulp recompile",
-    "release": "gulp gitCreateRC",
-    "start": "npm run build && concurrently -n tsc,server \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"http-server ./ -s -o /tests/playground.html -c-1\"",
-    "tsc": "gulp tsc",
-    "test": "gulp test",
-    "test:browser": "cd tests/browser && npx mocha",
-    "test:generators": "gulp testGenerators",
-    "test:mocha:interactive": "npm run build && concurrently -n tsc,server \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"gulp interactiveMocha\"",
-    "test:compile:advanced": "gulp buildAdvancedCompilationTest --debug",
-    "updateGithubPages": "npm ci && gulp gitUpdateGithubPages"
-  },
-  "exports": {
-    ".": {
-      "types": "./index.d.ts",
-      "import": "./index.mjs",
-      "umd": "./blockly.min.js",
-      "default": "./index.js"
-    },
-    "./core": {
-      "types": "./core.d.ts",
-      "node": "./core-node.js",
-      "import": "./blockly.mjs",
-      "default": "./blockly_compressed.js"
-    },
-    "./blocks": {
-      "types": "./blocks.d.ts",
-      "import": "./blocks.mjs",
-      "default": "./blocks_compressed.js"
-    },
-    "./dart": {
-      "types": "./dart.d.ts",
-      "import": "./dart.mjs",
-      "default": "./dart_compressed.js"
-    },
-    "./lua": {
-      "types": "./lua.d.ts",
-      "import": "./lua.mjs",
-      "default": "./lua_compressed.js"
-    },
-    "./javascript": {
-      "types": "./javascript.d.ts",
-      "import": "./javascript.mjs",
-      "default": "./javascript_compressed.js"
-    },
-    "./php": {
-      "types": "./php.d.ts",
-      "import": "./php.mjs",
-      "default": "./php_compressed.js"
-    },
-    "./python": {
-      "types": "./python.d.ts",
-      "import": "./python.mjs",
-      "default": "./python_compressed.js"
-    },
-    "./msg/*": {
-      "types": "./msg/*.d.ts",
-      "import": "./msg/*.mjs",
-      "default": "./msg/*.js"
-    }
+    "url": "git+https://github.com/RaspberryPiFoundation/blockly.git"
   },
   "license": "Apache-2.0",
-  "devDependencies": {
-    "@blockly/block-test": "^7.0.2",
-    "@blockly/dev-tools": "^9.0.2",
-    "@blockly/keyboard-navigation": "^3.0.1",
-    "@blockly/theme-modern": "^7.0.1",
-    "@commitlint/cli": "^20.1.0",
-    "@commitlint/config-conventional": "^20.0.0",
-    "@hyperjump/browser": "^1.1.4",
-    "@hyperjump/json-schema": "^1.5.0",
-    "@microsoft/api-documenter": "7.22.4",
-    "@microsoft/api-extractor": "^7.29.5",
-    "ajv": "^8.17.1",
-    "async-done": "^2.0.0",
-    "chai": "^6.0.1",
-    "concurrently": "^9.0.1",
-    "eslint": "^9.15.0",
-    "eslint-config-google": "^0.14.0",
-    "eslint-config-prettier": "^10.1.1",
-    "eslint-plugin-jsdoc": "^52.0.2",
-    "eslint-plugin-mocha": "^11.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "glob": "^11.0.1",
-    "globals": "^16.0.0",
-    "google-closure-compiler": "^20251015.0.0",
-    "gulp": "^5.0.0",
-    "gulp-concat": "^2.6.1",
-    "gulp-gzip": "^1.4.2",
-    "gulp-header": "^2.0.9",
-    "gulp-insert": "^0.5.0",
-    "gulp-rename": "^2.0.0",
-    "gulp-replace": "^1.0.0",
-    "gulp-series": "^1.0.2",
-    "gulp-shell": "^0.8.0",
-    "gulp-sourcemaps": "^3.0.0",
-    "gulp-umd": "^2.0.0",
-    "http-server": "^14.0.0",
-    "json5": "^2.2.0",
-    "markdown-tables-to-json": "^0.1.7",
-    "mocha": "^11.3.0",
-    "patch-package": "^8.0.0",
-    "prettier": "^3.3.3",
-    "prettier-plugin-organize-imports": "^4.0.0",
-    "puppeteer-core": "^24.17.0",
-    "readline-sync": "^1.4.10",
-    "rimraf": "^5.0.0",
-    "typescript": "^5.3.3",
-    "typescript-eslint": "^8.16.0",
-    "webdriverio": "^9.0.7",
-    "yargs": "^17.2.1"
-  },
-  "dependencies": {
-    "jsdom": "26.1.0"
-  },
-  "engines": {
-    "node": ">=18"
+  "author": "Raspberry Pi Foundation",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "npm run test --ws --if-present",
+    "lint": "npm run lint --ws --if-present",
+    "build": "npm run build --ws --if-present",
+    "format:check": "npm run format:check --ws --if-present"
   }
 }
