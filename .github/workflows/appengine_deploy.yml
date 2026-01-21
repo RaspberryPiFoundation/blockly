@@ -20,6 +20,7 @@ jobs:
       - name: Prepare demo files
         # Install all dependencies, then copy all the files needed for demos.
         run: |
+          cd packages/blockly
           npm install
           npm run prepareDemos
 

@@ -1,0 +1,10 @@
+tests/compile/main_compressed.js
+tests/compile/main_compressed.js.map
+tests/compile/*compiler*.jar
+tests/screenshot/outputs/*
+local_build/*compiler*.jar
+local_build/local_*_compressed.js
+chromedriver
+build/
+dist/
+temp/

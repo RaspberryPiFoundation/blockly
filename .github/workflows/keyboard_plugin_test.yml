@@ -52,11 +52,11 @@ jobs:
 
       - name: Link latest core main with plugin
         run: |
-          cd core-blockly
+          cd core-blockly/packages/blockly
           npm run package
           cd dist
           npm link
-          cd ../../blockly-keyboard-experimentation
+          cd ../../../../blockly-keyboard-experimentation
           npm link blockly
           cd ..
 
