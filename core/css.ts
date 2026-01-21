@@ -59,6 +59,15 @@ export function inject(hasCss: boolean, pathToMedia: string) {
  * The CSS content for Blockly.
  */
 let content = `
+:is(
+  .injectionDiv,
+  .blocklyWidgetDiv,
+  .blocklyDropdownDiv,
+  .blocklyTooltipDiv,
+) * {
+  box-sizing: border-box;
+}
+
 .blocklySvg {
   background-color: #fff;
   outline: none;
@@ -452,7 +461,7 @@ input[type=number] {
 }
 
 .blocklyMenuItemSelected .blocklyMenuItemCheckbox {
-  background: url(<<<PATH>>>/sprites.png) no-repeat -48px -16px;
+  background: url(<<<PATH>>>/sprites.svg) no-repeat -48px -16px;
   float: left;
   margin-left: -24px;
   position: static;  /* Scroll with the menu. */

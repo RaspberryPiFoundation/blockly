@@ -1972,22 +1972,14 @@ suite('Procedures', function () {
               this.clock.runAll();
             }
             function assertArgs(argArray) {
-              assert.equal(
-                this.defBlock.getVars().length,
-                argArray.length,
-                'Expected the def to have the right number of arguments',
+              assert.deepEqual(
+                this.defBlock.getVarModels().map((m) => m.getName()),
+                argArray,
               );
-              for (let i = 0; i < argArray.length; i++) {
-                assert.equal(this.defBlock.getVars()[i], argArray[i]);
-              }
-              assert.equal(
-                this.callBlock.getVars().length,
-                argArray.length,
-                'Expected the call to have the right number of arguments',
+              assert.deepEqual(
+                this.callBlock.getVarModels().map((m) => m.getName()),
+                argArray,
               );
-              for (let i = 0; i < argArray.length; i++) {
-                assert.equal(this.callBlock.getVars()[i], argArray[i]);
-              }
             }
             test('Simple Add Arg', async function () {
               const args = ['arg1'];
