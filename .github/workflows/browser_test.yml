@@ -25,6 +25,10 @@ jobs:
         # See supported Node.js release schedule at
         # https://nodejs.org/en/about/releases/
 
+    defaults:
+      run:
+        working-directory: ./packages/blockly
+    
     steps:
       - uses: actions/checkout@v5
         with:

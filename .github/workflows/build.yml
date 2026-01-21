@@ -43,6 +43,7 @@ jobs:
       - name: Linux Test Setup
         if: runner.os == 'Linux'
         run: source ./tests/scripts/setup_linux_env.sh
+        working-directory: ./packages/blockly
 
       - name: Run
         run: npm run test
