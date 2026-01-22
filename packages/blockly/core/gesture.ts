@@ -764,7 +764,12 @@ export class Gesture {
     this.setStartWorkspace(ws);
     this.mostRecentEvent = e;
 
-    if (!this.targetBlock && !this.startBubble && !this.startComment) {
+    if (
+      !this.targetBlock &&
+      !this.startBubble &&
+      !this.startComment &&
+      !this.startIcon
+    ) {
       // Ensure the workspace is selected if nothing else should be. Note that
       // this is focusNode() instead of focusTree() because if any active node
       // is focused in the workspace it should be defocused.
@@ -1009,8 +1014,9 @@ export class Gesture {
    * @internal
    */
   setStartBlock(block: BlockSvg) {
-    // If the gesture already went through a bubble, don't set the start block.
-    if (!this.startBlock && !this.startBubble) {
+    // If the gesture already went through a block child, don't set the start
+    // block.
+    if (!this.startBlock && !this.startBubble && !this.startIcon) {
       this.startBlock = block;
       if (block.isInFlyout && block !== block.getRootBlock()) {
         this.setTargetBlock(block.getRootBlock());

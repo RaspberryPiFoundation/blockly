@@ -196,4 +196,8 @@ export abstract class Icon implements IIcon {
   getSourceBlock(): Block {
     return this.sourceBlock;
   }
+
+  showContextMenu(e: PointerEvent) {
+    (this.getSourceBlock() as BlockSvg).showContextMenu(e);
+  }
 }

@@ -1126,7 +1126,9 @@ export class BlockSvg
       if (this.isDeadOrDying()) return;
       const gesture = this.workspace.getGesture(e);
       if (gesture) {
+        this.bringToFront();
         gesture.setStartIcon(icon);
+        getFocusManager().focusNode(icon);
       }
     };
   }
