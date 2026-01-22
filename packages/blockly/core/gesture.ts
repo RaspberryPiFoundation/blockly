@@ -27,6 +27,7 @@ import * as eventUtils from './events/utils.js';
 import type {Field} from './field.js';
 import {getFocusManager} from './focus_manager.js';
 import type {IBubble} from './interfaces/i_bubble.js';
+import {hasContextMenu} from './interfaces/i_contextmenu.js';
 import {IDraggable, isDraggable} from './interfaces/i_draggable.js';
 import {IDragger} from './interfaces/i_dragger.js';
 import type {IFlyout} from './interfaces/i_flyout.js';
@@ -732,22 +733,12 @@ export class Gesture {
    * @internal
    */
   handleRightClick(e: PointerEvent) {
-    if (this.targetBlock) {
-      this.bringBlockToFront();
-      this.targetBlock.workspace.hideChaff(!!this.flyout);
-      this.targetBlock.showContextMenu(e);
-    } else if (this.startBubble) {
-      this.startBubble.showContextMenu(e);
-    } else if (this.startComment) {
-      this.startComment.workspace.hideChaff();
-      this.startComment.showContextMenu(e);
-    } else if (this.startWorkspace_ && !this.flyout) {
-      this.startWorkspace_.hideChaff();
-      getFocusManager().focusNode(this.startWorkspace_);
-      this.startWorkspace_.showContextMenu(e);
+    const selection = getFocusManager().getFocusedNode();
+    if (hasContextMenu(selection)) {
+      this.startWorkspace_?.hideChaff(!!this.flyout);
+      selection.showContextMenu(e);
     }
 
-    // TODO: Handle right-click on a bubble.
     e.preventDefault();
     e.stopPropagation();
 
@@ -878,12 +869,6 @@ export class Gesture {
       );
     }
 
-    // Note that the order is important here: bringing a block to the front will
-    // cause it to become focused and showing the field editor will capture
-    // focus ephemerally. It's important to ensure that focus is properly
-    // restored back to the block after field editing has completed.
-    this.bringBlockToFront();
-
     // Only show the editor if the field's editor wasn't already open
     // right before this gesture started.
     const dropdownAlreadyOpen = this.currentDropdownOwner === this.startField;
@@ -899,7 +884,6 @@ export class Gesture {
         'Cannot do an icon click because the start icon is undefined',
       );
     }
-    this.bringBlockToFront();
     this.startIcon.onClick();
   }
 
@@ -938,7 +922,6 @@ export class Gesture {
       );
       eventUtils.fire(event);
     }
-    this.bringBlockToFront();
     eventUtils.setGroup(false);
   }
 
@@ -956,19 +939,6 @@ export class Gesture {
    * of target. */
 
   // TODO (fenichel): Move bubbles to the front.
-
-  /**
-   * Move the dragged/clicked block to the front of the workspace so that it is
-   * not occluded by other blocks.
-   */
-  private bringBlockToFront() {
-    // Blocks in the flyout don't overlap, so skip the work.
-    if (this.targetBlock && !this.flyout) {
-      // Always ensure the block being dragged/clicked has focus.
-      getFocusManager().focusNode(this.targetBlock);
-      this.targetBlock.bringToFront();
-    }
-  }
 
   /* Begin functions for populating a gesture at pointerdown. */
 
@@ -1064,7 +1034,8 @@ export class Gesture {
       this.setTargetBlock(block.getParent()!);
     } else {
       this.targetBlock = block;
-      getFocusManager().focusNode(block);
+      getFocusManager().focusNode(this.targetBlock);
+      this.targetBlock.bringToFront();
     }
   }
 
