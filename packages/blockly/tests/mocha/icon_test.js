@@ -29,7 +29,7 @@ class TestIcon extends Blockly.icons.Icon {
   }
 
   getType() {
-    new Blockly.icons.IconType() < TestIcon > 'test';
+    new Blockly.icons.IconType('test');
   }
 }
 
