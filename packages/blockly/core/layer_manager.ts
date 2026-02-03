@@ -73,11 +73,11 @@ export class LayerManager {
    * @internal
    */
   appendToAnimationLayer(elem: IRenderedElement) {
-    const currentTransform = this.dragLayer?.getAttribute('transform');
+    const currentTransform = this.dragLayer?.style.transform;
     // Only update the current transform when appending, so animations don't
     // move if the workspace moves.
-    if (currentTransform) {
-      this.animationLayer?.setAttribute('transform', currentTransform);
+    if (currentTransform && this.animationLayer) {
+      this.animationLayer.style.transform = currentTransform;
     }
     this.animationLayer?.appendChild(elem.getSvgRoot());
   }
@@ -88,10 +88,12 @@ export class LayerManager {
    * @internal
    */
   translateLayers(newCoord: Coordinate, newScale: number) {
-    const translation = `translate(${newCoord.x}, ${newCoord.y}) scale(${newScale})`;
-    this.dragLayer?.setAttribute('transform', translation);
+    const translation = `translate(${newCoord.x}px, ${newCoord.y}px) scale(${newScale})`;
+    if (this.dragLayer) {
+      this.dragLayer.style.transform = translation;
+    }
     for (const [_, layer] of this.layers) {
-      layer.setAttribute('transform', translation);
+      layer.style.transform = translation;
     }
   }
 
