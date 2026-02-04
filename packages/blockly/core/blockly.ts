@@ -137,6 +137,7 @@ import {IDeletable, isDeletable} from './interfaces/i_deletable.js';
 import {IDeleteArea} from './interfaces/i_delete_area.js';
 import {IDragTarget} from './interfaces/i_drag_target.js';
 import {
+  DragDisposition,
   IDragStrategy,
   IDraggable,
   isDraggable,
@@ -500,6 +501,7 @@ export {
   BlockFlyoutInflater,
   ButtonFlyoutInflater,
   CodeGenerator,
+  DragDisposition,
   Field,
   FieldCheckbox,
   FieldCheckboxConfig,

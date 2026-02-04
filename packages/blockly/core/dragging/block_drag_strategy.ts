@@ -6,7 +6,7 @@
 
 import type {Block} from '../block.js';
 import * as blockAnimation from '../block_animations.js';
-import {BlockSvg} from '../block_svg.js';
+import type {BlockSvg} from '../block_svg.js';
 import * as bumpObjects from '../bump_objects.js';
 import {config} from '../config.js';
 import {Connection} from '../connection.js';
@@ -15,16 +15,20 @@ import type {BlockMove} from '../events/events_block_move.js';
 import {EventType} from '../events/type.js';
 import * as eventUtils from '../events/utils.js';
 import type {IBubble} from '../interfaces/i_bubble.js';
-import {IConnectionPreviewer} from '../interfaces/i_connection_previewer.js';
-import {IDragStrategy} from '../interfaces/i_draggable.js';
+import type {IConnectionPreviewer} from '../interfaces/i_connection_previewer.js';
+import type {
+  DragDisposition,
+  IDragStrategy,
+  IDraggable,
+} from '../interfaces/i_draggable.js';
 import {IHasBubble, hasBubble} from '../interfaces/i_has_bubble.js';
 import * as layers from '../layers.js';
 import * as registry from '../registry.js';
 import {finishQueuedRenders} from '../render_management.js';
-import {RenderedConnection} from '../rendered_connection.js';
+import type {RenderedConnection} from '../rendered_connection.js';
 import {Coordinate} from '../utils.js';
 import * as dom from '../utils/dom.js';
-import {WorkspaceSvg} from '../workspace_svg.js';
+import type {WorkspaceSvg} from '../workspace_svg.js';
 
 /** Represents a nearby valid connection. */
 interface ConnectionCandidate {
@@ -91,10 +95,10 @@ export class BlockDragStrategy implements IDragStrategy {
    * Handles any setup for starting the drag, including disconnecting the block
    * from any parent blocks.
    */
-  startDrag(e?: PointerEvent): void {
+  startDrag(e?: PointerEvent | KeyboardEvent): IDraggable {
     if (this.block.isShadow()) {
       this.startDraggingShadow(e);
-      return;
+      return this.block.getParent()!;
     }
 
     this.dragging = true;
@@ -125,6 +129,8 @@ export class BlockDragStrategy implements IDragStrategy {
     this.getVisibleBubbles(this.block).forEach((bubble) => {
       this.workspace.getLayerManager()?.moveToDragLayer(bubble, false);
     });
+
+    return this.block;
   }
 
   /**
@@ -159,12 +165,12 @@ export class BlockDragStrategy implements IDragStrategy {
    * @returns True if just the initial block should be dragged out, false
    *     if all following blocks should also be dragged.
    */
-  protected shouldHealStack(e: PointerEvent | undefined) {
+  protected shouldHealStack(e: PointerEvent | KeyboardEvent | undefined) {
     return !!e && (e.altKey || e.ctrlKey || e.metaKey);
   }
 
   /** Starts a drag on a shadow, recording the drag offset. */
-  private startDraggingShadow(e?: PointerEvent) {
+  private startDraggingShadow(e?: PointerEvent | KeyboardEvent) {
     const parent = this.block.getParent();
     if (!parent) {
       throw new Error(
@@ -402,9 +408,12 @@ export class BlockDragStrategy implements IDragStrategy {
    * Cleans up any state at the end of the drag. Applies any pending
    * connections.
    */
-  endDrag(e?: PointerEvent): void {
+  endDrag(
+    e: PointerEvent | KeyboardEvent | undefined,
+    disposition: DragDisposition,
+  ): void {
     if (this.block.isShadow()) {
-      this.block.getParent()?.endDrag(e);
+      this.block.getParent()?.endDrag(e, disposition);
       return;
     }
     this.originalEventGroup = eventUtils.getGroup();

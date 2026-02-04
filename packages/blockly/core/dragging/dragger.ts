@@ -9,15 +9,16 @@ import {BlockSvg} from '../block_svg.js';
 import {ComponentManager} from '../component_manager.js';
 import * as eventUtils from '../events/utils.js';
 import {getFocusManager} from '../focus_manager.js';
-import {IDeletable, isDeletable} from '../interfaces/i_deletable.js';
-import {IDeleteArea} from '../interfaces/i_delete_area.js';
-import {IDragTarget} from '../interfaces/i_drag_target.js';
-import {IDraggable} from '../interfaces/i_draggable.js';
-import {IDragger} from '../interfaces/i_dragger.js';
+import type {IDeletable} from '../interfaces/i_deletable.js';
+import {isDeletable} from '../interfaces/i_deletable.js';
+import type {IDeleteArea} from '../interfaces/i_delete_area.js';
+import type {IDragTarget} from '../interfaces/i_drag_target.js';
+import {DragDisposition, type IDraggable} from '../interfaces/i_draggable.js';
+import type {IDragger} from '../interfaces/i_dragger.js';
 import {isFocusableNode} from '../interfaces/i_focusable_node.js';
 import * as registry from '../registry.js';
 import {Coordinate} from '../utils/coordinate.js';
-import {WorkspaceSvg} from '../workspace_svg.js';
+import type {WorkspaceSvg} from '../workspace_svg.js';
 
 export class Dragger implements IDragger {
   protected startLoc: Coordinate;
@@ -32,7 +33,7 @@ export class Dragger implements IDragger {
   }
 
   /** Handles any drag startup. */
-  onDragStart(e: PointerEvent) {
+  onDragStart(e?: PointerEvent | KeyboardEvent) {
     if (!eventUtils.getGroup()) {
       eventUtils.setGroup(true);
     }
@@ -45,21 +46,26 @@ export class Dragger implements IDragger {
    * @param totalDelta The total amount in pixel coordinates the mouse has moved
    *     since the start of the drag.
    */
-  onDrag(e: PointerEvent, totalDelta: Coordinate) {
+  onDrag(e: PointerEvent | KeyboardEvent | undefined, totalDelta: Coordinate) {
     this.moveDraggable(e, totalDelta);
     const root = this.getRoot(this.draggable);
 
     // Must check `wouldDelete` before calling other hooks on drag targets
     // since we have documented that we would do so.
     if (isDeletable(root)) {
-      root.setDeleteStyle(this.wouldDeleteDraggable(e, root));
+      root.setDeleteStyle(
+        this.wouldDeleteDraggable(
+          this.draggable.getRelativeToSurfaceXY(),
+          root,
+        ),
+      );
     }
-    this.updateDragTarget(e);
+    this.updateDragTarget(this.draggable.getRelativeToSurfaceXY());
   }
 
   /** Updates the drag target under the pointer (if there is one). */
-  protected updateDragTarget(e: PointerEvent) {
-    const newDragTarget = this.workspace.getDragTarget(e);
+  protected updateDragTarget(coordinate: Coordinate) {
+    const newDragTarget = this.workspace.getDragTarget(coordinate);
     const root = this.getRoot(this.draggable);
     if (this.dragTarget !== newDragTarget) {
       this.dragTarget?.onDragExit(root);
@@ -73,7 +79,10 @@ export class Dragger implements IDragger {
    * Calculates the correct workspace coordinate for the movable and tells
    * the draggable to go to that location.
    */
-  private moveDraggable(e: PointerEvent, totalDelta: Coordinate) {
+  private moveDraggable(
+    e: PointerEvent | KeyboardEvent | undefined,
+    totalDelta: Coordinate,
+  ) {
     const delta = this.pixelsToWorkspaceUnits(totalDelta);
     const newLoc = Coordinate.sum(this.startLoc, delta);
     this.draggable.drag(newLoc, e);
@@ -84,10 +93,10 @@ export class Dragger implements IDragger {
    * at the current location.
    */
   protected wouldDeleteDraggable(
-    e: PointerEvent,
+    coordinate: Coordinate,
     rootDraggable: IDraggable & IDeletable,
   ) {
-    const dragTarget = this.workspace.getDragTarget(e);
+    const dragTarget = this.workspace.getDragTarget(coordinate);
     if (!dragTarget) return false;
 
     const componentManager = this.workspace.getComponentManager();
@@ -101,40 +110,55 @@ export class Dragger implements IDragger {
   }
 
   /** Handles any drag cleanup. */
-  onDragEnd(e: PointerEvent) {
+  onDragEnd(e?: PointerEvent | KeyboardEvent) {
     const origGroup = eventUtils.getGroup();
-    const dragTarget = this.workspace.getDragTarget(e);
+    const dragTarget = this.workspace.getDragTarget(
+      this.draggable.getRelativeToSurfaceXY(),
+    );
     const root = this.getRoot(this.draggable);
 
     if (dragTarget) {
       this.dragTarget?.onDrop(root);
     }
 
-    if (this.shouldReturnToStart(e, root)) {
+    if (
+      this.shouldReturnToStart(this.draggable.getRelativeToSurfaceXY(), root)
+    ) {
       this.draggable.revertDrag();
     }
 
-    const wouldDelete = isDeletable(root) && this.wouldDeleteDraggable(e, root);
+    const wouldDelete =
+      isDeletable(root) &&
+      this.wouldDeleteDraggable(this.draggable.getRelativeToSurfaceXY(), root);
 
     // TODO(#8148): use a generalized API instead of an instanceof check.
     if (wouldDelete && this.draggable instanceof BlockSvg) {
       blockAnimations.disposeUiEffect(this.draggable.getRootBlock());
     }
 
-    this.draggable.endDrag(e);
-
     if (wouldDelete && isDeletable(root)) {
+      this.draggable.endDrag(e, DragDisposition.DELETE);
       // We want to make sure the delete gets grouped with any possible move
       // event. In core Blockly this shouldn't happen, but due to a change
       // in behavior older custom draggables might still clear the group.
       eventUtils.setGroup(origGroup);
       root.dispose();
+    } else {
+      this.draggable.endDrag(e, DragDisposition.COMMIT);
     }
     eventUtils.setGroup(false);
 
     if (!wouldDelete && isFocusableNode(this.draggable)) {
       // Ensure focusable nodes that have finished dragging (but aren't being
       // deleted) end with focus and selection.
+      getFocusManager().focusNode(this.draggable);
+    }
+  }
+
+  /** Handles a drag being reverted. */
+  onDragRevert() {
+    this.draggable.revertDrag();
+    if (isFocusableNode(this.draggable)) {
       getFocusManager().focusNode(this.draggable);
     }
   }
@@ -149,8 +173,11 @@ export class Dragger implements IDragger {
    * Returns true if we should return the draggable to its original location
    * at the end of the drag.
    */
-  protected shouldReturnToStart(e: PointerEvent, rootDraggable: IDraggable) {
-    const dragTarget = this.workspace.getDragTarget(e);
+  protected shouldReturnToStart(
+    coordinate: Coordinate,
+    rootDraggable: IDraggable,
+  ) {
+    const dragTarget = this.workspace.getDragTarget(coordinate);
     if (!dragTarget) return false;
     return dragTarget.shouldPreventMove(rootDraggable);
   }

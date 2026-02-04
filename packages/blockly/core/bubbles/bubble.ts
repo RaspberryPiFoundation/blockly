@@ -9,6 +9,7 @@ import * as common from '../common.js';
 import {BubbleDragStrategy} from '../dragging/bubble_drag_strategy.js';
 import {getFocusManager} from '../focus_manager.js';
 import {IBubble} from '../interfaces/i_bubble.js';
+import type {IDraggable} from '../interfaces/i_draggable.js';
 import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
 import type {IFocusableTree} from '../interfaces/i_focusable_tree.js';
 import type {IHasBubble} from '../interfaces/i_has_bubble.js';
@@ -664,8 +665,8 @@ export abstract class Bubble implements IBubble, ISelectable, IFocusableNode {
   }
 
   /** Starts a drag on the bubble. */
-  startDrag(): void {
-    this.dragStrategy.startDrag();
+  startDrag(): IDraggable {
+    return this.dragStrategy.startDrag();
   }
 
   /** Drags the bubble to the given location. */

@@ -239,8 +239,8 @@ export class RenderedWorkspaceComment
   }
 
   /** Starts a drag on the comment. */
-  startDrag(): void {
-    this.dragStrategy.startDrag();
+  startDrag(): IDraggable {
+    return this.dragStrategy.startDrag();
   }
 
   /** Drags the comment to the given location. */

@@ -43,7 +43,11 @@ import type {IBoundedElement} from './interfaces/i_bounded_element.js';
 import {IContextMenu} from './interfaces/i_contextmenu.js';
 import type {ICopyable} from './interfaces/i_copyable.js';
 import {IDeletable} from './interfaces/i_deletable.js';
-import type {IDragStrategy, IDraggable} from './interfaces/i_draggable.js';
+import type {
+  DragDisposition,
+  IDragStrategy,
+  IDraggable,
+} from './interfaces/i_draggable.js';
 import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
 import {IIcon} from './interfaces/i_icon.js';
@@ -1810,18 +1814,21 @@ export class BlockSvg
   }
 
   /** Starts a drag on the block. */
-  startDrag(e?: PointerEvent): void {
-    this.dragStrategy.startDrag(e);
+  startDrag(e?: PointerEvent | KeyboardEvent): IDraggable {
+    return this.dragStrategy.startDrag(e);
   }
 
   /** Drags the block to the given location. */
-  drag(newLoc: Coordinate, e?: PointerEvent): void {
+  drag(newLoc: Coordinate, e?: PointerEvent | KeyboardEvent): void {
     this.dragStrategy.drag(newLoc, e);
   }
 
   /** Ends the drag on the block. */
-  endDrag(e?: PointerEvent): void {
-    this.dragStrategy.endDrag(e);
+  endDrag(
+    e: PointerEvent | KeyboardEvent | undefined,
+    disposition: DragDisposition,
+  ): void {
+    this.dragStrategy.endDrag(e, disposition);
   }
 
   /** Moves the block back to where it was at the start of a drag. */
