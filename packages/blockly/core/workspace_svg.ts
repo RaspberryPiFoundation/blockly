@@ -1427,13 +1427,15 @@ export class WorkspaceSvg
   /**
    * Returns the drag target the pointer event is over.
    *
-   * @param e Pointer move event.
+   * @param e Pointer move event or a workspace coordinate.
    * @returns Null if not over a drag target, or the drag target the event is
    *     over.
    */
   getDragTarget(e: PointerEvent | Coordinate): IDragTarget | null {
     const coordinate =
-      e instanceof Coordinate ? e : new Coordinate(e.clientX, e.clientY);
+      e instanceof Coordinate
+        ? svgMath.wsToScreenCoordinates(this, e)
+        : new Coordinate(e.clientX, e.clientY);
     for (let i = 0, targetArea; (targetArea = this.dragTargetAreas[i]); i++) {
       if (targetArea.clientRect.contains(coordinate.x, coordinate.y)) {
         return targetArea.component;
