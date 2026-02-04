@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as blockAnimations from '../block_animations.js';
-import {BlockSvg} from '../block_svg.js';
 import {ComponentManager} from '../component_manager.js';
 import * as eventUtils from '../events/utils.js';
 import {getFocusManager} from '../focus_manager.js';
@@ -37,7 +35,7 @@ export class Dragger implements IDragger {
     if (!eventUtils.getGroup()) {
       eventUtils.setGroup(true);
     }
-    this.draggable.startDrag(e);
+    this.draggable = this.draggable.startDrag(e);
   }
 
   /**
@@ -48,15 +46,14 @@ export class Dragger implements IDragger {
    */
   onDrag(e: PointerEvent | KeyboardEvent | undefined, totalDelta: Coordinate) {
     this.moveDraggable(e, totalDelta);
-    const root = this.getRoot(this.draggable);
 
     // Must check `wouldDelete` before calling other hooks on drag targets
     // since we have documented that we would do so.
-    if (isDeletable(root)) {
-      root.setDeleteStyle(
+    if (isDeletable(this.draggable)) {
+      this.draggable.setDeleteStyle(
         this.wouldDeleteDraggable(
           this.draggable.getRelativeToSurfaceXY(),
-          root,
+          this.draggable,
         ),
       );
     }
@@ -66,12 +63,11 @@ export class Dragger implements IDragger {
   /** Updates the drag target under the pointer (if there is one). */
   protected updateDragTarget(coordinate: Coordinate) {
     const newDragTarget = this.workspace.getDragTarget(coordinate);
-    const root = this.getRoot(this.draggable);
     if (this.dragTarget !== newDragTarget) {
-      this.dragTarget?.onDragExit(root);
-      newDragTarget?.onDragEnter(root);
+      this.dragTarget?.onDragExit(this.draggable);
+      newDragTarget?.onDragEnter(this.draggable);
     }
-    newDragTarget?.onDragOver(root);
+    newDragTarget?.onDragOver(this.draggable);
     this.dragTarget = newDragTarget;
   }
 
@@ -115,36 +111,35 @@ export class Dragger implements IDragger {
     const dragTarget = this.workspace.getDragTarget(
       this.draggable.getRelativeToSurfaceXY(),
     );
-    const root = this.getRoot(this.draggable);
 
     if (dragTarget) {
-      this.dragTarget?.onDrop(root);
+      this.dragTarget?.onDrop(this.draggable);
     }
 
+    let reverted = false;
     if (
-      this.shouldReturnToStart(this.draggable.getRelativeToSurfaceXY(), root)
+      this.shouldReturnToStart(this.draggable.getRelativeToSurfaceXY(), this.draggable)
     ) {
+      reverted = true;
       this.draggable.revertDrag();
     }
 
     const wouldDelete =
-      isDeletable(root) &&
-      this.wouldDeleteDraggable(this.draggable.getRelativeToSurfaceXY(), root);
+      isDeletable(this.draggable) &&
+      this.wouldDeleteDraggable(this.draggable.getRelativeToSurfaceXY(), this.draggable);
 
-    // TODO(#8148): use a generalized API instead of an instanceof check.
-    if (wouldDelete && this.draggable instanceof BlockSvg) {
-      blockAnimations.disposeUiEffect(this.draggable.getRootBlock());
-    }
-
-    if (wouldDelete && isDeletable(root)) {
+    if (wouldDelete && isDeletable(this.draggable)) {
       this.draggable.endDrag(e, DragDisposition.DELETE);
       // We want to make sure the delete gets grouped with any possible move
       // event. In core Blockly this shouldn't happen, but due to a change
       // in behavior older custom draggables might still clear the group.
       eventUtils.setGroup(origGroup);
-      root.dispose();
+      this.draggable.dispose();
     } else {
-      this.draggable.endDrag(e, DragDisposition.COMMIT);
+      this.draggable.endDrag(
+        e,
+        reverted ? DragDisposition.REVERT : DragDisposition.COMMIT,
+      );
     }
     eventUtils.setGroup(false);
 
@@ -161,12 +156,6 @@ export class Dragger implements IDragger {
     if (isFocusableNode(this.draggable)) {
       getFocusManager().focusNode(this.draggable);
     }
-  }
-
-  // We need to special case blocks for now so that we look at the root block
-  // instead of the one actually being dragged in most cases.
-  private getRoot(draggable: IDraggable): IDraggable {
-    return draggable instanceof BlockSvg ? draggable.getRootBlock() : draggable;
   }
 
   /**

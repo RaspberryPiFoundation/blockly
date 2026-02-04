@@ -9,6 +9,7 @@ import type {Coordinate} from '../utils/coordinate';
 export enum DragDisposition {
   COMMIT = 1,
   DELETE = 2,
+  REVERT = 3,
 }
 
 /**
