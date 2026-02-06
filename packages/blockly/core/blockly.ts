@@ -125,7 +125,10 @@ import {FocusableTreeTraverser} from './utils/focusable_tree_traverser.js';
 import {Input} from './inputs/input.js';
 import {InsertionMarkerPreviewer} from './insertion_marker_previewer.js';
 import {IAutoHideable} from './interfaces/i_autohideable.js';
-import {IBoundedElement} from './interfaces/i_bounded_element.js';
+import {
+  IBoundedElement,
+  isBoundedElement,
+} from './interfaces/i_bounded_element.js';
 import {IBubble} from './interfaces/i_bubble.js';
 import {ICollapsibleToolboxItem} from './interfaces/i_collapsible_toolbox_item.js';
 import {IComponent} from './interfaces/i_component.js';
@@ -628,6 +631,7 @@ export {
   icons,
   inject,
   inputs,
+  isBoundedElement,
   isCopyable,
   isDeletable,
   isDraggable,
