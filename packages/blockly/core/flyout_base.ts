@@ -812,16 +812,24 @@ export abstract class Flyout
    * @internal
    */
   createBlock(originalBlock: BlockSvg): BlockSvg {
-    try {
-      return this.placeNewBlock(originalBlock);
-    } finally {
-      this.targetWorkspace.hideChaff();
-
-      // Close the flyout.
-      if (this.autoClose) {
-        this.hide();
-      }
+    const targetWorkspace = this.targetWorkspace;
+    targetWorkspace.hideChaff();
+    const svgRootOld = originalBlock.getSvgRoot();
+    if (!svgRootOld) {
+      throw Error('oldBlock is not rendered');
     }
+
+    // Clone the block.
+    const json = this.serializeBlock(originalBlock);
+    // Normally this resizes leading to weird jumps. Save it for terminateDrag.
+    targetWorkspace.setResizesEnabled(false);
+    const block = blocks.appendInternal(json, targetWorkspace, {
+      recordUndo: true,
+    }) as BlockSvg;
+
+    this.positionNewBlock(originalBlock, block);
+
+    return block;
   }
 
   /**
@@ -842,32 +850,6 @@ export abstract class Flyout
     return this.workspace_.scrollbar
       ? this.workspace_.scrollbar.isVisible()
       : false;
-  }
-
-  /**
-   * Copy a block from the flyout to the workspace and position it correctly.
-   *
-   * @param oldBlock The flyout block to copy.
-   * @returns The new block in the main workspace.
-   */
-  private placeNewBlock(oldBlock: BlockSvg): BlockSvg {
-    const targetWorkspace = this.targetWorkspace;
-    const svgRootOld = oldBlock.getSvgRoot();
-    if (!svgRootOld) {
-      throw Error('oldBlock is not rendered');
-    }
-
-    // Clone the block.
-    const json = this.serializeBlock(oldBlock);
-    // Normally this resizes leading to weird jumps. Save it for terminateDrag.
-    targetWorkspace.setResizesEnabled(false);
-    const block = blocks.appendInternal(json, targetWorkspace, {
-      recordUndo: true,
-    }) as BlockSvg;
-
-    this.positionNewBlock(oldBlock, block);
-
-    return block;
   }
 
   /**
