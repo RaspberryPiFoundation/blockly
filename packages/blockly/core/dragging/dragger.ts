@@ -118,7 +118,10 @@ export class Dragger implements IDragger {
 
     let reverted = false;
     if (
-      this.shouldReturnToStart(this.draggable.getRelativeToSurfaceXY(), this.draggable)
+      this.shouldReturnToStart(
+        this.draggable.getRelativeToSurfaceXY(),
+        this.draggable,
+      )
     ) {
       reverted = true;
       this.draggable.revertDrag();
@@ -126,7 +129,10 @@ export class Dragger implements IDragger {
 
     const wouldDelete =
       isDeletable(this.draggable) &&
-      this.wouldDeleteDraggable(this.draggable.getRelativeToSurfaceXY(), this.draggable);
+      this.wouldDeleteDraggable(
+        this.draggable.getRelativeToSurfaceXY(),
+        this.draggable,
+      );
 
     if (wouldDelete && isDeletable(this.draggable)) {
       this.draggable.endDrag(e, DragDisposition.DELETE);

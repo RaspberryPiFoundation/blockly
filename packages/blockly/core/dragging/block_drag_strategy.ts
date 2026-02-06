@@ -16,13 +16,8 @@ import {EventType} from '../events/type.js';
 import * as eventUtils from '../events/utils.js';
 import type {IBubble} from '../interfaces/i_bubble.js';
 import type {IConnectionPreviewer} from '../interfaces/i_connection_previewer.js';
-import {
-  DragDisposition,
-} from '../interfaces/i_draggable.js';
-import type {
-  IDragStrategy,
-  IDraggable,
-} from '../interfaces/i_draggable.js';
+import type {IDragStrategy, IDraggable} from '../interfaces/i_draggable.js';
+import {DragDisposition} from '../interfaces/i_draggable.js';
 import {IHasBubble, hasBubble} from '../interfaces/i_has_bubble.js';
 import * as layers from '../layers.js';
 import * as registry from '../registry.js';
@@ -414,7 +409,6 @@ export class BlockDragStrategy implements IDragStrategy {
     e: PointerEvent | KeyboardEvent | undefined,
     disposition: DragDisposition,
   ): void {
-
     if (disposition === DragDisposition.DELETE) {
       blockAnimation.disposeUiEffect(this.block);
     }
