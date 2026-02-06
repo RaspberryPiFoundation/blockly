@@ -813,7 +813,6 @@ export abstract class Flyout
    */
   createBlock(originalBlock: BlockSvg): BlockSvg {
     const targetWorkspace = this.targetWorkspace;
-    targetWorkspace.hideChaff();
     const svgRootOld = originalBlock.getSvgRoot();
     if (!svgRootOld) {
       throw Error('oldBlock is not rendered');
@@ -828,7 +827,7 @@ export abstract class Flyout
     }) as BlockSvg;
 
     this.positionNewBlock(originalBlock, block);
-
+    targetWorkspace.hideChaff();
     return block;
   }
 
