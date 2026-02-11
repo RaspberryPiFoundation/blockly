@@ -14,6 +14,7 @@ import {ShortcutRegistry} from '../shortcut_registry.js';
 import {Coordinate} from '../utils/coordinate.js';
 import {KeyCodes} from '../utils/keycodes.js';
 import type {WorkspaceSvg} from '../workspace_svg.js';
+import {MoveIndicator} from './move_indicator.js';
 
 /**
  * Cardinal directions in which a move can proceed.
@@ -65,6 +66,11 @@ export class KeyboardMover {
    * The distance to move an item in workspace coordinates.
    */
   protected stepDistance = 20;
+
+  /**
+   * Symbol attached to the item being moved to indicate it is in move mode.
+   */
+  protected moveIndicator?: MoveIndicator;
 
   // Set up a blur listener to end the move if the user clicks away
   private readonly blurListener = () => {
@@ -171,6 +177,8 @@ export class KeyboardMover {
     ShortcutRegistry.registry.register(commitMoveShortcut, true);
 
     this.scrollCurrentElementIntoView();
+    this.moveIndicator = new MoveIndicator(this.workspace);
+    this.repositionMoveIndicator();
 
     return true;
   }
@@ -202,6 +210,7 @@ export class KeyboardMover {
 
     this.updateTotalDelta();
     this.scrollCurrentElementIntoView();
+    this.repositionMoveIndicator();
 
     return true;
   }
@@ -247,6 +256,16 @@ export class KeyboardMover {
   }
 
   /**
+   * Repositions the move indicator to the corner of the item being moved.
+   */
+  protected repositionMoveIndicator() {
+    const bounds = this.draggable?.getBoundingRectangle();
+    if (!bounds) return;
+
+    this.moveIndicator?.moveTo(bounds.right, bounds.top);
+  }
+
+  /**
    * Common clean-up for finish/abort run before terminating the move.
    */
   protected preDragEndCleanup() {
@@ -264,6 +283,8 @@ export class KeyboardMover {
   protected postDragEndCleanup() {
     this.workspace.setKeyboardMoveInProgress(false);
 
+    this.moveIndicator?.dispose();
+    this.moveIndicator = undefined;
     this.draggable = undefined;
     this.dragger = undefined;
     this.startLocation = undefined;
