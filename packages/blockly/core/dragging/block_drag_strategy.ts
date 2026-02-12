@@ -14,6 +14,7 @@ import {ConnectionType} from '../connection_type.js';
 import type {BlockMove} from '../events/events_block_move.js';
 import {EventType} from '../events/type.js';
 import * as eventUtils from '../events/utils.js';
+import {showUnconstrainedMoveHint} from '../hints.js';
 import type {IBubble} from '../interfaces/i_bubble.js';
 import type {IConnectionPreviewer} from '../interfaces/i_connection_previewer.js';
 import type {IDragStrategy, IDraggable} from '../interfaces/i_draggable.js';
@@ -166,9 +167,7 @@ export class BlockDragStrategy implements IDragStrategy {
         } else {
           offset = new Coordinate(neighbour.x + 10, neighbour.y + 10);
         }
-        this.block.moveDuringDrag(
-          offset
-        );
+        this.block.moveDuringDrag(offset);
       }
     }
 
@@ -311,9 +310,9 @@ export class BlockDragStrategy implements IDragStrategy {
       // Handle the case when unconstrained drag was far from any candidate.
       this.searchNode = null;
 
-      // if (this.moveMode === MoveMode.CONSTRAINED) {
-      //   showUnconstrainedMoveHint(this.workspace, true);
-      // }
+      if (this.moveMode === MoveMode.CONSTRAINED) {
+        showUnconstrainedMoveHint(this.workspace, true);
+      }
     }
   }
 
@@ -667,7 +666,8 @@ export class BlockDragStrategy implements IDragStrategy {
    *     start of the drag.
    */
   private createInitialCandidate(): ConnectionCandidate | null {
-    this.searchNode = /* this.startPoint ?? */ this.startParentConn ?? this.startChildConn;
+    this.searchNode =
+      /* this.startPoint ?? */ this.startParentConn ?? this.startChildConn;
 
     switch (this.searchNode?.type) {
       case ConnectionType.INPUT_VALUE: {

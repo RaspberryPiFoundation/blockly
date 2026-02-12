@@ -416,6 +416,7 @@
 	"COMMAND_KEY": "Representation of the Mac Command key used in keyboard shortcuts.",
 	"OPTION_KEY": "Representation of the Mac Option key used in keyboard shortcuts.",
 	"ALT_KEY": "Representation of the Alt key used in keyboard shortcuts.",
+	"ENTER_KEY": "Representation of the Enter key used in keyboard shortcuts.",
 	"CUT_SHORTCUT": "menu label - Contextual menu item that cuts the focused item.",
 	"COPY_SHORTCUT": "menu label - Contextual menu item that copies the focused item.",
 	"PASTE_SHORTCUT": "menu label - Contextual menu item that pastes the previously copied item.",

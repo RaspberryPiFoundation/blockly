@@ -1626,7 +1626,7 @@ Blockly.Msg.EDIT_BLOCK_CONTENTS = 'Edit Block contents';
 /// menu label - Contextual menu item that starts a keyboard-driven block move.
 Blockly.Msg.MOVE_BLOCK = 'Move Block';
 /** @type {string} */
-/// Name of the Microsoft Windows operating system displayed in a list of 
+/// Name of the Microsoft Windows operating system displayed in a list of
 /// keyboard shortcuts.
 Blockly.Msg.WINDOWS = 'Windows';
 /** @type {string} */
@@ -1657,6 +1657,9 @@ Blockly.Msg.OPTION_KEY = '⌥ Option';
 /** @type {string} */
 /// Representation of the Alt key used in keyboard shortcuts.
 Blockly.Msg.ALT_KEY = 'Alt';
+/** @type {string} */
+/// Representation of the Enter key used in keyboard shortcuts.
+Blockly.Msg.ENTER_KEY = 'Enter';
 /** @type {string} */
 /// menu label - Contextual menu item that cuts the focused item.
 Blockly.Msg.CUT_SHORTCUT = 'Cut';

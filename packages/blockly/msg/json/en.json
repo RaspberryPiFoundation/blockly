@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-01-08 08:39:56.707280",
+		"lastupdated": "2026-02-12 13:23:33.999357",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -409,6 +409,7 @@
 	"COMMAND_KEY": "⌘ Command",
 	"OPTION_KEY": "⌥ Option",
 	"ALT_KEY": "Alt",
+	"ENTER_KEY": "Enter",
 	"CUT_SHORTCUT": "Cut",
 	"COPY_SHORTCUT": "Copy",
 	"PASTE_SHORTCUT": "Paste",
