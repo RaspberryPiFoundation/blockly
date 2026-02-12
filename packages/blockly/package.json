@@ -43,7 +43,7 @@
     "start": "npm run build && concurrently -n tsc,server \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"http-server ./ -s -o /tests/playground.html -c-1\"",
     "tsc": "gulp tsc",
     "test": "gulp test",
-    "test:browser": "cd tests/browser && npx mocha",
+    "test:browser": "npx mocha --config tests/browser/.mocharc.js",
     "test:generators": "gulp testGenerators",
     "test:mocha:interactive": "npm run build && concurrently -n tsc,server \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"gulp interactiveMocha\"",
     "test:compile:advanced": "gulp buildAdvancedCompilationTest --debug",
