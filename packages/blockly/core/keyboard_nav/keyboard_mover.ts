@@ -206,7 +206,7 @@ export class KeyboardMover {
         break;
     }
 
-    this.dragger?.onDrag(event, this.totalDelta.clone());
+    this.dragger?.onDrag(event, this.totalPixelDelta());
 
     this.updateTotalDelta();
     this.scrollCurrentElementIntoView();
@@ -224,7 +224,7 @@ export class KeyboardMover {
   finishMove(event?: KeyboardEvent | PointerEvent) {
     this.preDragEndCleanup();
 
-    this.dragger?.onDragEnd(event, this.totalDelta);
+    this.dragger?.onDragEnd(event, this.totalPixelDelta());
 
     this.postDragEndCleanup();
     return true;
@@ -239,7 +239,7 @@ export class KeyboardMover {
   abortMove(event?: KeyboardEvent | PointerEvent) {
     this.preDragEndCleanup();
 
-    this.dragger?.onDragRevert(event, this.totalDelta);
+    this.dragger?.onDragRevert(event, this.totalPixelDelta());
 
     this.postDragEndCleanup();
     return true;
@@ -289,6 +289,14 @@ export class KeyboardMover {
     this.dragger = undefined;
     this.startLocation = undefined;
     this.totalDelta = new Coordinate(0, 0);
+  }
+
+  /**
+   * Returns the total distance current element has moved in pixels.
+   */
+  protected totalPixelDelta() {
+    const scale = this.workspace.scale;
+    return new Coordinate(this.totalDelta.x * scale, this.totalDelta.y * scale);
   }
 
   /**
