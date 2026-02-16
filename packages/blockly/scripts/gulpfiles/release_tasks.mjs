@@ -166,7 +166,7 @@ export const publishBeta = gulp.series(
 // Switch to a new branch, update the version number, build Blockly
 // and check in the resulting built files.
 export const recompile = gulp.series(
-  gitTasks.syncDevelop(),
+  gitTasks.syncMain(),
   gitTasks.createRebuildBranch,
   updateVersionPrompt,
   packageTasks.pack,  // Does clean + build.

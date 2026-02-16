@@ -14,11 +14,11 @@ import {execSync} from 'child_process';
 import * as buildTasks from './build_tasks.mjs';
 import * as packageTasks from './package_tasks.mjs';
 
-const UPSTREAM_URL = 'https://github.com/google/blockly.git';
+const UPSTREAM_URL = 'git@github.com:RaspberryPiFoundation/blockly.git';
 
 /**
  * Extra paths to include in the gh_pages branch (beyond the normal
- * contents of master / develop).  Passed to shell unquoted, so can
+ * contents of main).  Passed to shell unquoted, so can
  * include globs.
  */
 const EXTRAS = [
@@ -37,7 +37,7 @@ let upstream = null;
 function getUpstream() {
   if (upstream) return upstream;
   for (const line of String(execSync('git remote -v')).split('\n')) {
-    if (line.includes('google/blockly')) {
+    if (line.includes('RaspberryPiFoundation/blockly')) {
       upstream = line.split('\t')[0];
       return upstream;
     }
@@ -47,7 +47,7 @@ function getUpstream() {
 
 /**
  * Stash current state, check out the named branch, and sync with
- * google/blockly.
+ * RaspberryPiFoundation/blockly.
  */
 function syncBranch(branchName) {
   return function(done) {
@@ -60,19 +60,11 @@ function syncBranch(branchName) {
 }
 
 /**
- * Stash current state, check out develop, and sync with
- * google/blockly.
+ * Stash current state, check out main, and sync with
+ * RaspberryPiFoundation/blockly.
  */
-export function syncDevelop() {
-  return syncBranch('develop');
-};
-
-/**
- * Stash current state, check out master, and sync with
- * google/blockly.
- */
-export function syncMaster() {
-  return syncBranch('master');
+export function syncMain() {
+  return syncBranch('main');
 };
 
 /**
@@ -109,10 +101,10 @@ function checkoutBranch(branchName) {
 
 /**
  * Create and push an RC branch.
- * Note that this pushes to google/blockly.
+ * Note that this pushes to RaspberryPiFoundation/blockly.
  */
 export const createRC = gulp.series(
-  syncDevelop(),
+  syncMain(),
   function(done) {
     const branchName = getRCBranchName();
     execSync(`git switch -C ${branchName}`, { stdio: 'inherit' });
@@ -136,12 +128,12 @@ export function pushRebuildBranch(done) {
   const branchName = getRebuildBranchName();
   execSync(`git push origin ${branchName}`, { stdio: 'inherit' });
   console.log(`Branch ${branchName} pushed to GitHub.`);
-  console.log('Next step: create a pull request against develop.');
+  console.log('Next step: create a pull request against main.');
   done();
 }
 
 /**
- * Update github pages with what is currently in develop.
+ * Update github pages with what is currently in main.
  *
  * Prerequisites (invoked): clean, build.
  */
@@ -150,7 +142,7 @@ export const updateGithubPages = gulp.series(
     execSync('git stash save -m "Stash for sync"', { stdio: 'inherit' });
     execSync('git switch -C gh-pages', { stdio: 'inherit' });
     execSync(`git fetch ${getUpstream()}`, { stdio: 'inherit' });
-    execSync(`git reset --hard ${getUpstream()}/develop`, { stdio: 'inherit' });
+    execSync(`git reset --hard ${getUpstream()}/main`, { stdio: 'inherit' });
     done();
   },
   buildTasks.cleanBuildDir,

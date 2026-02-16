@@ -35,15 +35,12 @@ import {
 import {docs} from './scripts/gulpfiles/docs_tasks.mjs';
 import {
   createRC,
-  syncDevelop,
-  syncMaster,
   updateGithubPages,
 } from './scripts/gulpfiles/git_tasks.mjs';
 import {cleanReleaseDir, pack} from './scripts/gulpfiles/package_tasks.mjs';
 import {
   publish,
   publishBeta,
-  recompile,
 } from './scripts/gulpfiles/release_tasks.mjs';
 import {
   generators,
@@ -88,13 +85,4 @@ export {
   buildAdvancedCompilationTest,
   createRC as gitCreateRC,
   docs,
-}
-
-// Legacy targets, to be deleted.
-//
-// prettier-ignore
-export {
-  recompile,
-  syncDevelop as gitSyncDevelop,
-  syncMaster as gitSyncMaster,
 }
