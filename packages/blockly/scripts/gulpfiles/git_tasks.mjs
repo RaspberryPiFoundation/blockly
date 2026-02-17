@@ -28,33 +28,15 @@ const EXTRAS = [
   'build/*.loader.mjs',
 ];
 
-let upstream = null;
-
 /**
- * Get name of git remote for upstream (typically 'upstream', but this
- * is just convention and can be changed.)
- */
-function getUpstream() {
-  if (upstream) return upstream;
-  for (const line of String(execSync('git remote -v')).split('\n')) {
-    if (line.includes('RaspberryPiFoundation/blockly')) {
-      upstream = line.split('\t')[0];
-      return upstream;
-    }
-  }
-  throw new Error('Unable to determine upstream URL');
-}
-
-/**
- * Stash current state, check out the named branch, and sync with
- * RaspberryPiFoundation/blockly.
+ * Stash current state, check out the named branch, and pull
+ * changes from RaspberryPiFoundation/blockly.
  */
 function syncBranch(branchName) {
   return function(done) {
     execSync('git stash save -m "Stash for sync"', { stdio: 'inherit' });
     checkoutBranch(branchName);
     execSync(`git pull ${UPSTREAM_URL} ${branchName}`, { stdio: 'inherit' });
-    execSync(`git push origin ${branchName}`, { stdio: 'inherit' });
     done();
   };
 }
@@ -68,29 +50,6 @@ export function syncMain() {
 };
 
 /**
- * Helper function: get a name for a rebuild branch. Format:
- * rebuild_mm_dd_yyyy.
- */
-function getRebuildBranchName() {
-  const date = new Date();
-  const mm = date.getMonth() + 1;  // Month, 0-11
-  const dd = date.getDate();  // Day of the month, 1-31
-  const yyyy = date.getFullYear();
-  return `rebuild_${mm}_${dd}_${yyyy}`;
-};
-
-/**
- * Helper function: get a name for a rebuild branch. Format:
- * rebuild_yyyy_mm.
- */
-function getRCBranchName() {
-  const date = new Date();
-  const mm = date.getMonth() + 1;  // Month, 0-11
-  const yyyy = date.getFullYear();
-  return `rc_${yyyy}_${mm}`;
-};
-
-/**
  * If branch does not exist then create the branch.
  * If branch exists switch to branch.
  */
@@ -100,49 +59,15 @@ function checkoutBranch(branchName) {
 }
 
 /**
- * Create and push an RC branch.
- * Note that this pushes to RaspberryPiFoundation/blockly.
- */
-export const createRC = gulp.series(
-  syncMain(),
-  function(done) {
-    const branchName = getRCBranchName();
-    execSync(`git switch -C ${branchName}`, { stdio: 'inherit' });
-    execSync(`git push ${UPSTREAM_URL} ${branchName}`, { stdio: 'inherit' });
-    done();
-  }
-);
-
-/** Create the rebuild branch. */
-export function createRebuildBranch(done) {
-  const branchName = getRebuildBranchName();
-  console.log(`make-rebuild-branch: creating branch ${branchName}`);
-  execSync(`git switch -C ${branchName}`, { stdio: 'inherit' });
-  done();
-}
-
-/** Push the rebuild branch to origin. */
-export function pushRebuildBranch(done) {
-  console.log('push-rebuild-branch: committing rebuild');
-  execSync('git commit -am "Rebuild"', { stdio: 'inherit' });
-  const branchName = getRebuildBranchName();
-  execSync(`git push origin ${branchName}`, { stdio: 'inherit' });
-  console.log(`Branch ${branchName} pushed to GitHub.`);
-  console.log('Next step: create a pull request against main.');
-  done();
-}
-
-/**
  * Update github pages with what is currently in main.
  *
  * Prerequisites (invoked): clean, build.
  */
 export const updateGithubPages = gulp.series(
+  syncMain,
   function(done) {
-    execSync('git stash save -m "Stash for sync"', { stdio: 'inherit' });
     execSync('git switch -C gh-pages', { stdio: 'inherit' });
-    execSync(`git fetch ${getUpstream()}`, { stdio: 'inherit' });
-    execSync(`git reset --hard ${getUpstream()}/main`, { stdio: 'inherit' });
+    execSync(`git reset --hard main`, { stdio: 'inherit' });
     done();
   },
   buildTasks.cleanBuildDir,

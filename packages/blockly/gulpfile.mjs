@@ -83,6 +83,5 @@ export {
   generators as testGenerators,
   interactiveMocha,
   buildAdvancedCompilationTest,
-  createRC as gitCreateRC,
   docs,
 }

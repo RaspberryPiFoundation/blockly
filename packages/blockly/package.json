@@ -38,8 +38,6 @@
     "prepareDemos": "gulp prepareDemos",
     "publish": "npm ci && gulp publish",
     "publish:beta": "npm ci && gulp publishBeta",
-    "recompile": "gulp recompile",
-    "release": "gulp gitCreateRC",
     "start": "npm run build && concurrently -n tsc,server \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"http-server ./ -s -o /tests/playground.html -c-1\"",
     "tsc": "gulp tsc",
     "test": "gulp test",
