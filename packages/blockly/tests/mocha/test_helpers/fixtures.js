@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-
 // The draw block contains a stack of statement blocks, each of which
 // has a value input to which is connected a value expression block
 // which itself has one or two inputs which have (non-shadow) simple
