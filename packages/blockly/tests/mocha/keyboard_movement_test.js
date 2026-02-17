@@ -397,7 +397,9 @@ suite('Keyboard-driven movement', function () {
         assert.deepEqual(newBounds, originalBounds);
         assert.equal(
           toastSpy.args[0][1]['message'],
-          'Hold ⌥ Option and use arrow keys to move freely, then Enter to accept the position',
+          Blockly.utils.userAgent.MAC
+            ? 'Hold ⌥ Option and use arrow keys to move freely, then Enter to accept the position'
+            : 'Hold Ctrl and use arrow keys to move freely, then Enter to accept the position',
         );
         toastSpy.restore();
       });
