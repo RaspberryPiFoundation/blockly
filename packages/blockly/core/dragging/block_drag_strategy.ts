@@ -631,7 +631,8 @@ export class BlockDragStrategy implements IDragStrategy {
       localConns.forEach((conn: RenderedConnection) => {
         if (
           potential &&
-          connectionChecker.canConnect(conn, potential, true, Infinity)
+          connectionChecker.canConnect(conn, potential, true, Infinity) &&
+          !potential.targetBlock()?.isInsertionMarker()
         ) {
           candidateConnection = {
             local: conn,
