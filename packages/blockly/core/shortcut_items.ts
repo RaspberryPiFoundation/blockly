@@ -384,6 +384,10 @@ export function registerRedo() {
   ShortcutRegistry.registry.register(redoShortcut);
 }
 
+/**
+ * Registers keyboard shortcuts for keyboard-driven movement of workspace
+ *elements.
+ */
 export function registerMovementShortcuts() {
   const getCurrentDraggable = (
     workspace: WorkspaceSvg,

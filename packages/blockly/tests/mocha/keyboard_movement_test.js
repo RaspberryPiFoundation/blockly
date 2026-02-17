@@ -68,14 +68,17 @@ suite('Keyboard-driven movement', function () {
    * Create a new block from serialised state (parsed JSON) and
    * optionally attach it to an existing block on the workspace.
    *
-   * @param workspace The workspace to create the block on.
-   * @param state The JSON definition of the new block.
-   * @param parentId The ID of the block to attach to. If undefined, the
-   *     new block is not attached.
-   * @param inputName The name of the input on the parent block to
+   * @param {!Blockly.WorkspaceSvg} workspace The workspace to create the block
+   *     on.
+   * @param {!Blockly.serialization.blocks.State} state The JSON definition of
+   *     the new block.
+   * @param {?string} parentId The ID of the block to attach to. If undefined,
+   *     the new block is not attached.
+   * @param {?string} inputName The name of the input on the parent block to
    *     attach to. If undefined, the new block is attached to the
    *     parent's next connection.
-   * @returns A promise that resolves with the new block's ID.
+   * @returns {!Promise<string>} A promise that resolves with the new block's
+   *     ID.
    */
   function appendBlock(workspace, state, parentId, inputName) {
     const block = Blockly.serialization.blocks.append(state, workspace);
@@ -116,7 +119,7 @@ suite('Keyboard-driven movement', function () {
    * Get information about the currently-focused block's parent and
    * child blocks.
    *
-   * @returns A promise resolving to
+   * @returns {!Promise<{parentId: string | null, parentIndex: number | null, nextId: string | null, valueId: string | null}>} A promise resolving to
    *
    *         {parentId, parentIndex, nextId, valueId}
    *
@@ -152,7 +155,8 @@ suite('Keyboard-driven movement', function () {
    * Get information about the connection candidate for the
    * currently-moving block (if any).
    *
-   * @returns A promise resolving to either null if there is no connection
+   * @returns {!Promise<{id: string, index: number, ownIndex: number} | null>} A
+   *     promise resolving to either null if there is no connection
    *     candidate, or otherwise if there is one to
    *
    *         {id, index, ownIndex}
@@ -188,10 +192,12 @@ suite('Keyboard-driven movement', function () {
    * finishes that the moving block is reconnected to its initial
    * location.
    *
-   * @param mover Block ID of the block to be moved.
-   * @param key Key to send to move one step.
-   * @param candidates Array of expected connection candidates.
-   * @returns function to pass as second argument to mocha's test function.
+   * @param {!string} mover Block ID of the block to be moved.
+   * @param {!Blockly.utils.KeyCodes} key Key to send to move one step.
+   * @param {!Blockly.RenderedConnection[]} candidates Array of expected
+   *     connection candidates.
+   * @returns {!function} function to pass as second argument to mocha's test
+   *     function.
    */
   function moveTest(mover, key, candidates) {
     return async function () {

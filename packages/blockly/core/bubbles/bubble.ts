@@ -283,9 +283,9 @@ export abstract class Bubble
    *
    * @param dx The distance to move along the x axis.
    * @param dy The distance to move along the y axis.
-   * @param reason A description of why this move is happening.
+   * @param _reason A description of why this move is happening.
    */
-  moveBy(dx: number, dy: number, reason?: string[]) {
+  moveBy(dx: number, dy: number, _reason?: string[]) {
     const origin = this.getRelativeToSurfaceXY();
     this.moveTo(origin.x + dx, origin.y + dy);
   }
