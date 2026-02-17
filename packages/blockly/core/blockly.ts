@@ -118,6 +118,8 @@ import * as icons from './icons.js';
 import {inject} from './inject.js';
 import * as inputs from './inputs.js';
 import {IFlyoutInflater} from './interfaces/i_flyout_inflater.js';
+import {Direction, KeyboardMover} from './keyboard_nav/keyboard_mover.js';
+import {MoveIndicator} from './keyboard_nav/move_indicator.js';
 import {LabelFlyoutInflater} from './label_flyout_inflater.js';
 import {SeparatorFlyoutInflater} from './separator_flyout_inflater.js';
 import {FocusableTreeTraverser} from './utils/focusable_tree_traverser.js';
@@ -504,6 +506,7 @@ export {
   BlockFlyoutInflater,
   ButtonFlyoutInflater,
   CodeGenerator,
+  Direction,
   DragDisposition,
   Field,
   FieldCheckbox,
@@ -589,6 +592,7 @@ export {
   ImageProperties,
   Input,
   InsertionMarkerPreviewer,
+  KeyboardMover,
   KeyboardNavigationController,
   LabelFlyoutInflater,
   LayerManager,
@@ -600,6 +604,7 @@ export {
   MenuItem,
   MenuOption,
   MetricsManager,
+  MoveIndicator,
   Msg,
   Names,
   Options,
