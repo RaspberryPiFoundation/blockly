@@ -137,19 +137,7 @@ export class BlockDragStrategy implements IDragStrategy {
     // use in constrained moved mode.
     if (e instanceof KeyboardEvent) {
       for (const topBlock of this.block.workspace.getTopBlocks(true)) {
-        this.allConnections.push(
-          ...topBlock
-            .getDescendants(true)
-            .filter((block: BlockSvg) => !block.isShadow())
-            .flatMap((block: BlockSvg) => block.getConnections_(false))
-            .sort((a: RenderedConnection, b: RenderedConnection) => {
-              let delta = a.y - b.y;
-              if (delta === 0) {
-                delta = a.x - b.x;
-              }
-              return delta;
-            }),
-        );
+        this.allConnections.push(...this.getAllConnections(topBlock));
       }
 
       // Scooch the block to be offset from the connection preview indicator.
@@ -733,5 +721,45 @@ export class BlockDragStrategy implements IDragStrategy {
       }
     }
     return Direction.NONE;
+  }
+
+  /**
+   * Returns all navigable connections on the given block and its children.
+   * Omits connections on shadow blocks, collapsed blocks, or those that are
+   * associated with a hidden input.
+   *
+   * @param block The block to use as a starting point for retrieving
+   *     connections.
+   * @returns All connections on the block and its children.
+   */
+  private getAllConnections(block: BlockSvg): RenderedConnection[] {
+    if (block.isShadow()) return [];
+
+    const connections = [];
+
+    if (block.outputConnection) connections.push(block.outputConnection);
+    if (block.previousConnection) connections.push(block.previousConnection);
+
+    if (!block.isCollapsed()) {
+      for (const input of block.inputList) {
+        if (input.connection && input.isVisible()) {
+          connections.push(input.connection);
+          const target = input.connection.targetBlock() as BlockSvg;
+          if (target) {
+            connections.push(...this.getAllConnections(target));
+          }
+        }
+      }
+    }
+    if (block.nextConnection) {
+      connections.push(block.nextConnection);
+
+      const target = block.nextConnection.targetBlock() as BlockSvg;
+      if (target) {
+        connections.push(...this.getAllConnections(target));
+      }
+    }
+
+    return connections as RenderedConnection[];
   }
 }
