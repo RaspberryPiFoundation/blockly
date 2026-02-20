@@ -453,8 +453,12 @@ export function registerMovementShortcuts() {
     {
       name: 'move_left',
       preconditionFn: (workspace) => workspace.getKeyboardMover().isMoving(),
-      callback: (workspace, e) =>
-        workspace.getKeyboardMover().move(Direction.LEFT, e as KeyboardEvent),
+      callback: (workspace, e) => {
+        e.preventDefault();
+        return workspace
+          .getKeyboardMover()
+          .move(Direction.LEFT, e as KeyboardEvent);
+      },
       keyCodes: [
         KeyCodes.LEFT,
         ShortcutRegistry.registry.createSerializedKey(KeyCodes.LEFT, [
@@ -469,8 +473,12 @@ export function registerMovementShortcuts() {
     {
       name: 'move_right',
       preconditionFn: (workspace) => workspace.getKeyboardMover().isMoving(),
-      callback: (workspace, e) =>
-        workspace.getKeyboardMover().move(Direction.RIGHT, e as KeyboardEvent),
+      callback: (workspace, e) => {
+        e.preventDefault();
+        return workspace
+          .getKeyboardMover()
+          .move(Direction.RIGHT, e as KeyboardEvent);
+      },
       keyCodes: [
         KeyCodes.RIGHT,
         ShortcutRegistry.registry.createSerializedKey(KeyCodes.RIGHT, [
@@ -485,8 +493,12 @@ export function registerMovementShortcuts() {
     {
       name: 'move_up',
       preconditionFn: (workspace) => workspace.getKeyboardMover().isMoving(),
-      callback: (workspace, e) =>
-        workspace.getKeyboardMover().move(Direction.UP, e as KeyboardEvent),
+      callback: (workspace, e) => {
+        e.preventDefault();
+        return workspace
+          .getKeyboardMover()
+          .move(Direction.UP, e as KeyboardEvent);
+      },
       keyCodes: [
         KeyCodes.UP,
         ShortcutRegistry.registry.createSerializedKey(KeyCodes.UP, [
@@ -501,8 +513,12 @@ export function registerMovementShortcuts() {
     {
       name: 'move_down',
       preconditionFn: (workspace) => workspace.getKeyboardMover().isMoving(),
-      callback: (workspace, e) =>
-        workspace.getKeyboardMover().move(Direction.DOWN, e as KeyboardEvent),
+      callback: (workspace, e) => {
+        e.preventDefault();
+        return workspace
+          .getKeyboardMover()
+          .move(Direction.DOWN, e as KeyboardEvent);
+      },
       keyCodes: [
         KeyCodes.DOWN,
         ShortcutRegistry.registry.createSerializedKey(KeyCodes.DOWN, [
