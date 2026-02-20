@@ -262,7 +262,10 @@ export class KeyboardMover {
     const bounds = this.draggable?.getBoundingRectangle();
     if (!bounds) return;
 
-    this.moveIndicator?.moveTo(bounds.right, bounds.top);
+    this.moveIndicator?.moveTo(
+      this.workspace.RTL ? bounds.left : bounds.right,
+      bounds.top,
+    );
   }
 
   /**

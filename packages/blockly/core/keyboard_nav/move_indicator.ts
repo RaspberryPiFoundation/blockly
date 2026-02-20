@@ -23,7 +23,7 @@ export class MoveIndicator {
    *
    * @param workspace The workspace the indicator should be displayed on.
    */
-  constructor(workspace: WorkspaceSvg) {
+  constructor(private workspace: WorkspaceSvg) {
     this.svgRoot = dom.createSvgElement(
       Svg.G,
       {},
@@ -66,7 +66,10 @@ export class MoveIndicator {
    * @param y The location on the Y axis to move to.
    */
   moveTo(x: number, y: number) {
-    this.svgRoot.setAttribute('transform', `translate(${x - 20}, ${y - 20})`);
+    this.svgRoot.setAttribute(
+      'transform',
+      `translate(${x + (this.workspace.RTL ? 20 : -20)}, ${y - 20})`,
+    );
   }
 
   /**
