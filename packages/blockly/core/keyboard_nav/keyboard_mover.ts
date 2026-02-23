@@ -114,7 +114,6 @@ class KeyboardMoverImplementations {
     // Record that a move is in progress and start dragging.
     this.draggable = this.dragger.onDragStart(event);
     this.startLocation = this.draggable.getRelativeToSurfaceXY();
-    this.draggable.workspace.setKeyboardMoveInProgress(true);
 
     this.updateTotalDelta();
 
@@ -272,8 +271,6 @@ class KeyboardMoverImplementations {
    * Common clean-up for finish/abort run after terminating the move.
    */
   protected postDragEndCleanup() {
-    this.draggable?.workspace.setKeyboardMoveInProgress(false);
-
     this.moveIndicator?.dispose();
     this.moveIndicator = undefined;
     this.draggable = undefined;

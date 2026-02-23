@@ -59,6 +59,7 @@ import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
 import {hasBubble} from './interfaces/i_has_bubble.js';
 import type {IMetricsManager} from './interfaces/i_metrics_manager.js';
 import type {IToolbox} from './interfaces/i_toolbox.js';
+import {KeyboardMover} from './keyboard_nav/keyboard_mover.js';
 import type {LineCursor} from './keyboard_nav/line_cursor.js';
 import type {Marker} from './keyboard_nav/marker.js';
 import {LayerManager} from './layer_manager.js';
@@ -319,9 +320,6 @@ export class WorkspaceSvg
 
   /** True if keyboard accessibility mode is on, false otherwise. */
   keyboardAccessibilityMode = false;
-
-  /** True iff a keyboard-initiated move ("drag") is in progress. */
-  keyboardMoveInProgress = false; // TODO(#8960): Delete this.
 
   /** The list of top-level bounded elements on the workspace. */
   private topBoundedElements: IBoundedElement[] = [];
@@ -1477,27 +1475,6 @@ export class WorkspaceSvg
   }
 
   /**
-   * Indicate whether a keyboard move is in progress or not.
-   *
-   * Should be called with true when a keyboard move of an IDraggable
-   * is starts, and false when it finishes or is aborted.
-   *
-   * N.B.: This method is experimental and internal-only.  It is
-   * intended only to called only from the keyboard navigation plugin.
-   * Its signature and behaviour may be modified, or the method
-   * removed, at an time without notice and without being treated
-   * as a breaking change.
-   *
-   * TODO(#8960): Delete this.
-   *
-   * @internal
-   * @param inProgress Is a keyboard-initated move in progress?
-   */
-  setKeyboardMoveInProgress(inProgress: boolean) {
-    this.keyboardMoveInProgress = inProgress;
-  }
-
-  /**
    * Returns true iff the user is currently engaged in a drag gesture,
    * or if a keyboard-initated move is in progress.
    *
@@ -1513,9 +1490,7 @@ export class WorkspaceSvg
    */
   isDragging(): boolean {
     return (
-      // TODO(#8960): Query Mover.isMoving to see if move is in
-      // progress rather than relying on a status flag.
-      this.keyboardMoveInProgress ||
+      KeyboardMover.isMoving() ||
       (this.currentGesture_ !== null && this.currentGesture_.isDragging())
     );
   }
@@ -2472,10 +2447,9 @@ export class WorkspaceSvg
    * @internal
    */
   getGesture(e?: PointerEvent): Gesture | null {
-    // TODO(#8960): Query Mover.isMoving to see if move is in progress
-    // rather than relying on .keyboardMoveInProgress status flag.
-    if (this.keyboardMoveInProgress) {
-      // Normally these would be called from Gesture.doStart.
+    // Ignore and cancel events that would start a gesture during a
+    // keyboard-driven move.
+    if (KeyboardMover.isMoving()) {
       e?.preventDefault();
       e?.stopPropagation();
       return null;
