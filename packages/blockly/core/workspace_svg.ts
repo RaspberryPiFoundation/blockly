@@ -59,7 +59,6 @@ import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
 import {hasBubble} from './interfaces/i_has_bubble.js';
 import type {IMetricsManager} from './interfaces/i_metrics_manager.js';
 import type {IToolbox} from './interfaces/i_toolbox.js';
-import {KeyboardMover} from './keyboard_nav/keyboard_mover.js';
 import type {LineCursor} from './keyboard_nav/line_cursor.js';
 import type {Marker} from './keyboard_nav/marker.js';
 import {LayerManager} from './layer_manager.js';
@@ -347,12 +346,6 @@ export class WorkspaceSvg
    * response to keyboard navigation commands.
    */
   private navigator = new Navigator();
-
-  /**
-   * Object responsible for moving objects on the workspace in response to
-   * keyboard navigation commands.
-   */
-  private keyboardMover = new KeyboardMover(this);
 
   /**
    * @param options Dictionary of options.
@@ -2950,14 +2943,6 @@ export class WorkspaceSvg
    */
   setNavigator(newNavigator: Navigator) {
     this.navigator = newNavigator;
-  }
-
-  /**
-   * Returns the object responsible for coordinating keyboard-driven movement of
-   * blocks, comments and other items on the workspace.
-   */
-  getKeyboardMover(): KeyboardMover {
-    return this.keyboardMover;
   }
 }
 

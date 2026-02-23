@@ -25,7 +25,7 @@ import {
   isFocusableNode,
 } from './interfaces/i_focusable_node.js';
 import {type ISelectable, isSelectable} from './interfaces/i_selectable.js';
-import {Direction} from './keyboard_nav/keyboard_mover.js';
+import {Direction, KeyboardMover} from './keyboard_nav/keyboard_mover.js';
 import {keyboardNavigationController} from './keyboard_navigation_controller.js';
 import {KeyboardShortcut, ShortcutRegistry} from './shortcut_registry.js';
 import {Coordinate} from './utils/coordinate.js';
@@ -412,10 +412,7 @@ export function registerMovementShortcuts() {
       name: 'start_move',
       preconditionFn: (workspace) => {
         const startDraggable = getCurrentDraggable(workspace);
-        return (
-          !!startDraggable &&
-          workspace.getKeyboardMover().canMove(startDraggable)
-        );
+        return !!startDraggable && KeyboardMover.canMove(startDraggable);
       },
       callback: (workspace, e) => {
         keyboardNavigationController.setIsActive(true);
@@ -427,37 +424,31 @@ export function registerMovementShortcuts() {
         }
         return (
           !!startDraggable &&
-          workspace
-            .getKeyboardMover()
-            .startMove(startDraggable, e as KeyboardEvent)
+          KeyboardMover.startMove(startDraggable, e as KeyboardEvent)
         );
       },
       keyCodes: [KeyCodes.M],
     },
     {
       name: 'finish_move',
-      preconditionFn: (workspace) => workspace.getKeyboardMover().isMoving(),
-      callback: (workspace, e) =>
-        workspace.getKeyboardMover().finishMove(e as KeyboardEvent),
+      preconditionFn: () => KeyboardMover.isMoving(),
+      callback: (_workspace, e) => KeyboardMover.finishMove(e as KeyboardEvent),
       keyCodes: [KeyCodes.ENTER, KeyCodes.SPACE],
       allowCollision: true,
     },
     {
       name: 'abort_move',
-      preconditionFn: (workspace) => workspace.getKeyboardMover().isMoving(),
-      callback: (workspace, e) =>
-        workspace.getKeyboardMover().abortMove(e as KeyboardEvent),
+      preconditionFn: () => KeyboardMover.isMoving(),
+      callback: (_workspace, e) => KeyboardMover.abortMove(e as KeyboardEvent),
       keyCodes: [KeyCodes.ESC],
       allowCollision: true,
     },
     {
       name: 'move_left',
-      preconditionFn: (workspace) => workspace.getKeyboardMover().isMoving(),
-      callback: (workspace, e) => {
+      preconditionFn: () => KeyboardMover.isMoving(),
+      callback: (_workspace, e) => {
         e.preventDefault();
-        return workspace
-          .getKeyboardMover()
-          .move(Direction.LEFT, e as KeyboardEvent);
+        return KeyboardMover.move(Direction.LEFT, e as KeyboardEvent);
       },
       keyCodes: [
         KeyCodes.LEFT,
@@ -472,12 +463,10 @@ export function registerMovementShortcuts() {
     },
     {
       name: 'move_right',
-      preconditionFn: (workspace) => workspace.getKeyboardMover().isMoving(),
-      callback: (workspace, e) => {
+      preconditionFn: () => KeyboardMover.isMoving(),
+      callback: (_workspace, e) => {
         e.preventDefault();
-        return workspace
-          .getKeyboardMover()
-          .move(Direction.RIGHT, e as KeyboardEvent);
+        return KeyboardMover.move(Direction.RIGHT, e as KeyboardEvent);
       },
       keyCodes: [
         KeyCodes.RIGHT,
@@ -492,12 +481,10 @@ export function registerMovementShortcuts() {
     },
     {
       name: 'move_up',
-      preconditionFn: (workspace) => workspace.getKeyboardMover().isMoving(),
-      callback: (workspace, e) => {
+      preconditionFn: () => KeyboardMover.isMoving(),
+      callback: (_workspace, e) => {
         e.preventDefault();
-        return workspace
-          .getKeyboardMover()
-          .move(Direction.UP, e as KeyboardEvent);
+        return KeyboardMover.move(Direction.UP, e as KeyboardEvent);
       },
       keyCodes: [
         KeyCodes.UP,
@@ -512,12 +499,10 @@ export function registerMovementShortcuts() {
     },
     {
       name: 'move_down',
-      preconditionFn: (workspace) => workspace.getKeyboardMover().isMoving(),
-      callback: (workspace, e) => {
+      preconditionFn: () => KeyboardMover.isMoving(),
+      callback: (_workspace, e) => {
         e.preventDefault();
-        return workspace
-          .getKeyboardMover()
-          .move(Direction.DOWN, e as KeyboardEvent);
+        return KeyboardMover.move(Direction.DOWN, e as KeyboardEvent);
       },
       keyCodes: [
         KeyCodes.DOWN,

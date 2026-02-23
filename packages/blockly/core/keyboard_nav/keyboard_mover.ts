@@ -4,16 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type {IBoundedElement} from '../interfaces/i_bounded_element.js';
+import {type IBoundedElement} from '../interfaces/i_bounded_element.js';
 import type {IDraggable} from '../interfaces/i_draggable.js';
 import type {IDragger} from '../interfaces/i_dragger.js';
-import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
-import type {ISelectable} from '../interfaces/i_selectable.js';
+import {type ISelectable} from '../interfaces/i_selectable.js';
 import * as registry from '../registry.js';
 import {ShortcutRegistry} from '../shortcut_registry.js';
 import {Coordinate} from '../utils/coordinate.js';
 import {KeyCodes} from '../utils/keycodes.js';
-import type {WorkspaceSvg} from '../workspace_svg.js';
 import {MoveIndicator} from './move_indicator.js';
 
 /**
@@ -36,7 +34,7 @@ const COMMIT_MOVE_SHORTCUT = 'commitMove';
  * Class responsible for coordinating keyboard-driven moves with the workspace
  * and dragging system.
  */
-export class KeyboardMover {
+class KeyboardMoverImplementations {
   /**
    * Object responsible for dragging workspace elements in response to move
    * commands.
@@ -46,10 +44,7 @@ export class KeyboardMover {
   /**
    * The object that is currently being moved.
    */
-  protected draggable?: IDraggable &
-    IFocusableNode &
-    IBoundedElement &
-    ISelectable;
+  protected draggable?: IDraggable & IBoundedElement & ISelectable;
 
   /**
    * Workspace coordinate that the current move started from.
@@ -78,20 +73,13 @@ export class KeyboardMover {
   };
 
   /**
-   * Creates a new KeyboardMover instance.
-   *
-   * @param workspace The workspace that this mover will move items on.
-   */
-  constructor(protected workspace: WorkspaceSvg) {}
-
-  /**
    * Returns true iff the given draggable is allowed to be moved.
    *
    * @param draggable The draggable element to try to move.
    * @returns True iff movement is allowed.
    */
-  canMove(draggable: IDraggable) {
-    return !this.workspace.isReadOnly() && draggable.isMovable();
+  canMove(draggable: IDraggable & IBoundedElement & ISelectable) {
+    return !draggable.workspace.isReadOnly() && draggable.isMovable();
   }
 
   /**
@@ -111,23 +99,23 @@ export class KeyboardMover {
    * @returns True iff a move has successfully begun.
    */
   startMove(
-    draggable: IDraggable & IFocusableNode & IBoundedElement & ISelectable,
+    draggable: IDraggable & IBoundedElement & ISelectable,
     event: KeyboardEvent,
   ) {
     if (!this.canMove(draggable) || this.isMoving()) return false;
 
     const DraggerClass = registry.getClassFromOptions(
       registry.Type.BLOCK_DRAGGER,
-      this.workspace.options,
+      draggable.workspace.options,
       true,
     );
     if (!DraggerClass) throw new Error('no Dragger registered');
-    this.draggable = draggable;
-    this.dragger = new DraggerClass(draggable, this.workspace);
-    this.startLocation = this.draggable.getRelativeToSurfaceXY();
+    this.dragger = new DraggerClass(draggable, draggable.workspace);
     // Record that a move is in progress and start dragging.
-    this.workspace.setKeyboardMoveInProgress(true);
-    this.dragger.onDragStart(event);
+    this.draggable = this.dragger.onDragStart(event);
+    this.startLocation = this.draggable.getRelativeToSurfaceXY();
+    this.draggable.workspace.setKeyboardMoveInProgress(true);
+
     this.updateTotalDelta();
 
     this.draggable
@@ -177,7 +165,7 @@ export class KeyboardMover {
     ShortcutRegistry.registry.register(commitMoveShortcut, true);
 
     this.scrollCurrentElementIntoView();
-    this.moveIndicator = new MoveIndicator(this.workspace);
+    this.moveIndicator = new MoveIndicator(this.draggable.workspace);
     this.repositionMoveIndicator();
 
     return true;
@@ -263,7 +251,7 @@ export class KeyboardMover {
     if (!bounds) return;
 
     this.moveIndicator?.moveTo(
-      this.workspace.RTL ? bounds.left : bounds.right,
+      this.draggable?.workspace.RTL ? bounds.left : bounds.right,
       bounds.top,
     );
   }
@@ -284,7 +272,7 @@ export class KeyboardMover {
    * Common clean-up for finish/abort run after terminating the move.
    */
   protected postDragEndCleanup() {
-    this.workspace.setKeyboardMoveInProgress(false);
+    this.draggable?.workspace.setKeyboardMoveInProgress(false);
 
     this.moveIndicator?.dispose();
     this.moveIndicator = undefined;
@@ -298,7 +286,7 @@ export class KeyboardMover {
    * Returns the total distance current element has moved in pixels.
    */
   protected totalPixelDelta() {
-    const scale = this.workspace.scale;
+    const scale = this.draggable?.workspace.scale ?? 1;
     return new Coordinate(this.totalDelta.x * scale, this.totalDelta.y * scale);
   }
 
@@ -308,7 +296,7 @@ export class KeyboardMover {
   protected scrollCurrentElementIntoView() {
     if (!this.draggable) return;
     const bounds = this.draggable.getBoundingRectangle();
-    this.workspace.scrollBoundsIntoView(bounds);
+    this.draggable.workspace.scrollBoundsIntoView(bounds);
   }
 
   /**
@@ -324,3 +312,6 @@ export class KeyboardMover {
     );
   }
 }
+
+const KeyboardMover = new KeyboardMoverImplementations();
+export {KeyboardMover};
