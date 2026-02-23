@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {IBoundedElement, ISelectable} from '../blockly.js';
 import {ComponentManager} from '../component_manager.js';
 import * as eventUtils from '../events/utils.js';
 import {getFocusManager} from '../focus_manager.js';
+import {IBoundedElement} from '../interfaces/i_bounded_element.js';
 import type {IDeletable} from '../interfaces/i_deletable.js';
 import {isDeletable} from '../interfaces/i_deletable.js';
 import type {IDeleteArea} from '../interfaces/i_delete_area.js';
@@ -15,6 +15,7 @@ import type {IDragTarget} from '../interfaces/i_drag_target.js';
 import {DragDisposition, type IDraggable} from '../interfaces/i_draggable.js';
 import type {IDragger} from '../interfaces/i_dragger.js';
 import {isFocusableNode} from '../interfaces/i_focusable_node.js';
+import {ISelectable} from '../interfaces/i_selectable.js';
 import * as registry from '../registry.js';
 import {Coordinate} from '../utils/coordinate.js';
 import type {WorkspaceSvg} from '../workspace_svg.js';
