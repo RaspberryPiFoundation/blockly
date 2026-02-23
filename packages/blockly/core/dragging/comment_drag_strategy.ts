@@ -8,7 +8,7 @@ import type {RenderedWorkspaceComment} from '../comments.js';
 import type {CommentMove} from '../events/events_comment_move.js';
 import {EventType} from '../events/type.js';
 import * as eventUtils from '../events/utils.js';
-import type {IDraggable, IDragStrategy} from '../interfaces/i_draggable.js';
+import type {IDragStrategy} from '../interfaces/i_draggable.js';
 import * as layers from '../layers.js';
 import type {Coordinate} from '../utils.js';
 import type {WorkspaceSvg} from '../workspace_svg.js';
@@ -30,7 +30,7 @@ export class CommentDragStrategy implements IDragStrategy {
     );
   }
 
-  startDrag(): IDraggable {
+  startDrag() {
     this.fireDragStartEvent();
     this.startLoc = this.comment.getRelativeToSurfaceXY();
     this.workspace.setResizesEnabled(false);

@@ -4,7 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type {Coordinate} from '../utils/coordinate';
+import type {Coordinate} from '../utils/coordinate.js';
+import type {IBoundedElement} from './i_bounded_element';
+import type {ISelectable} from './i_selectable';
 
 export enum DragDisposition {
   COMMIT = 1,
@@ -36,7 +38,9 @@ export interface IDragStrategy {
    *     etc. May be missing when dragging is triggered programmatically rather
    *     than by user.
    */
-  startDrag(e?: PointerEvent | KeyboardEvent): IDraggable;
+  startDrag(
+    e?: PointerEvent | KeyboardEvent,
+  ): IDraggable & ISelectable & IBoundedElement;
 
   /**
    * Handles moving elements to the new location, and updating any

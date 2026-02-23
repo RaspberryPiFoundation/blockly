@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {IBoundedElement, ISelectable} from '../blockly.js';
 import {ComponentManager} from '../component_manager.js';
 import * as eventUtils from '../events/utils.js';
 import {getFocusManager} from '../focus_manager.js';
@@ -24,7 +25,7 @@ export class Dragger implements IDragger {
   protected dragTarget: IDragTarget | null = null;
 
   constructor(
-    protected draggable: IDraggable,
+    protected draggable: IDraggable & ISelectable & IBoundedElement,
     protected workspace: WorkspaceSvg,
   ) {
     this.startLoc = draggable.getRelativeToSurfaceXY();
@@ -36,6 +37,9 @@ export class Dragger implements IDragger {
       eventUtils.setGroup(true);
     }
     this.draggable = this.draggable.startDrag(e);
+    this.startLoc = this.draggable.getRelativeToSurfaceXY();
+
+    return this.draggable;
   }
 
   /**

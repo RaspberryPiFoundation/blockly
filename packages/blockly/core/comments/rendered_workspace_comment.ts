@@ -239,7 +239,7 @@ export class RenderedWorkspaceComment
   }
 
   /** Starts a drag on the comment. */
-  startDrag(): IDraggable {
+  startDrag() {
     return this.dragStrategy.startDrag();
   }
 

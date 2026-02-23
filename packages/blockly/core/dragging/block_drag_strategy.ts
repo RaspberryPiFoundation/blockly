@@ -103,7 +103,7 @@ export class BlockDragStrategy implements IDragStrategy {
    * Handles any setup for starting the drag, including disconnecting the block
    * from any parent blocks.
    */
-  startDrag(e?: PointerEvent | KeyboardEvent): IDraggable {
+  startDrag(e?: PointerEvent | KeyboardEvent) {
     this.dragging = true;
     this.fireDragStartEvent();
 

@@ -5,6 +5,9 @@
  */
 
 import type {Coordinate} from '../utils/coordinate';
+import type {IBoundedElement} from './i_bounded_element';
+import type {IDraggable} from './i_draggable';
+import type {ISelectable} from './i_selectable';
 
 export interface IDragger {
   /**
@@ -12,7 +15,9 @@ export interface IDragger {
    *
    * @param e Event that started the drag.
    */
-  onDragStart(e?: PointerEvent | KeyboardEvent): void;
+  onDragStart(
+    e?: PointerEvent | KeyboardEvent,
+  ): IDraggable & ISelectable & IBoundedElement;
 
   /**
    * Handles dragging, including calculating where the element should

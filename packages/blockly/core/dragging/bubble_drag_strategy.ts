@@ -5,7 +5,7 @@
  */
 
 import type {IBubble} from '../interfaces/i_bubble.js';
-import type {IDragStrategy, IDraggable} from '../interfaces/i_draggable.js';
+import type {IDragStrategy} from '../interfaces/i_draggable.js';
 import * as layers from '../layers.js';
 import type {Coordinate} from '../utils.js';
 import type {WorkspaceSvg} from '../workspace_svg.js';
@@ -22,7 +22,7 @@ export class BubbleDragStrategy implements IDragStrategy {
     return true;
   }
 
-  startDrag(): IDraggable {
+  startDrag() {
     this.startLoc = this.bubble.getRelativeToSurfaceXY();
     this.workspace.setResizesEnabled(false);
     this.workspace.getLayerManager()?.moveToDragLayer(this.bubble);

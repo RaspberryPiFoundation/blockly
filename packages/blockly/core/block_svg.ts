@@ -1814,7 +1814,7 @@ export class BlockSvg
   }
 
   /** Starts a drag on the block. */
-  startDrag(e?: PointerEvent | KeyboardEvent): IDraggable {
+  startDrag(e?: PointerEvent | KeyboardEvent) {
     return this.dragStrategy.startDrag(e);
   }
 
