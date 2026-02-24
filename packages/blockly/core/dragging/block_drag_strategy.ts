@@ -17,7 +17,7 @@ import * as eventUtils from '../events/utils.js';
 import {showUnconstrainedMoveHint} from '../hints.js';
 import type {IBubble} from '../interfaces/i_bubble.js';
 import type {IConnectionPreviewer} from '../interfaces/i_connection_previewer.js';
-import type {IDragStrategy, IDraggable} from '../interfaces/i_draggable.js';
+import type {IDragStrategy} from '../interfaces/i_draggable.js';
 import {DragDisposition} from '../interfaces/i_draggable.js';
 import {IHasBubble, hasBubble} from '../interfaces/i_has_bubble.js';
 import {Direction} from '../keyboard_nav/keyboard_mover.js';
