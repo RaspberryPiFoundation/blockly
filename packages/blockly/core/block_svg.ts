@@ -864,6 +864,32 @@ export class BlockSvg
   }
 
   /**
+   * Returns the closest live block to this one, if any.
+   */
+  private getNearestNeighbour() {
+    if (!this.workspace.rendered) return null;
+
+    const blocks = this.workspace
+      .getAllBlocks(false)
+      .filter((block) => !block.isDeadOrDying());
+    let nearestNeighbour = null;
+    let closestDistance = Number.MAX_SAFE_INTEGER;
+    const self = this.getRelativeToSurfaceXY();
+    for (const block of blocks) {
+      const other = block.getRelativeToSurfaceXY();
+      const distance = Math.sqrt(
+        Math.pow(other.x - self.x, 2) + Math.pow(other.y - self.y, 2),
+      );
+      if (distance < closestDistance) {
+        nearestNeighbour = block;
+        closestDistance = distance;
+      }
+    }
+
+    return nearestNeighbour;
+  }
+
+  /**
    * Dispose of this block.
    *
    * @param healStack If true, then try to heal any gap by connecting the next
@@ -904,7 +930,12 @@ export class BlockSvg
       if (parent) {
         focusManager.focusNode(parent);
       } else {
-        setTimeout(() => focusManager.focusTree(this.workspace), 0);
+        const nearestNeighbour = this.getNearestNeighbour();
+        if (nearestNeighbour) {
+          setTimeout(() => focusManager.focusNode(nearestNeighbour), 0);
+        } else {
+          setTimeout(() => focusManager.focusTree(this.workspace), 0);
+        }
       }
     }
 
