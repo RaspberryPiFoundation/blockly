@@ -167,7 +167,7 @@ export class Workspace {
     this.listeners.length = 0;
     this.clear();
     // Remove from workspace database.
-    common.unregisterWorkpace(this);
+    common.unregisterWorkspace(this);
   }
 
   /**
