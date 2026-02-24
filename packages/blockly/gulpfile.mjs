@@ -33,15 +33,9 @@ import {
   tsc,
 } from './scripts/gulpfiles/build_tasks.mjs';
 import {docs} from './scripts/gulpfiles/docs_tasks.mjs';
-import {
-  createRC,
-  updateGithubPages,
-} from './scripts/gulpfiles/git_tasks.mjs';
+import {createRC, updateGithubPages} from './scripts/gulpfiles/git_tasks.mjs';
 import {cleanReleaseDir, pack} from './scripts/gulpfiles/package_tasks.mjs';
-import {
-  publish,
-  publishBeta,
-} from './scripts/gulpfiles/release_tasks.mjs';
+import {publish, publishBeta} from './scripts/gulpfiles/release_tasks.mjs';
 import {
   generators,
   interactiveMocha,
