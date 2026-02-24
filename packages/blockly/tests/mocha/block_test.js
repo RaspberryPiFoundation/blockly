@@ -2946,4 +2946,94 @@ suite('Blocks', function () {
       );
     });
   });
+
+  suite('Disposal focus management', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv');
+      const firstBlock = this.workspace.newBlock('stack_block');
+      firstBlock.moveBy(-500, -500);
+    });
+
+    test('Deleting the sole block on the workspace focuses the workspace', function () {
+      const block = this.workspace.getTopBlocks(false)[0];
+      Blockly.getFocusManager().focusNode(block);
+      block.dispose();
+      this.clock.runAll();
+
+      assert.equal(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.workspace,
+        'Focus should move to the workspace when the focused block is deleted',
+      );
+    });
+
+    test('Deleting a block with several adjacent blocks focuses the closest one', function () {
+      this.workspace.newBlock('stack_block');
+      const blockMiddle = this.workspace.newBlock('stack_block');
+      const blockRight = this.workspace.newBlock('stack_block');
+      blockMiddle.moveBy(60, 0);
+      blockRight.moveBy(100, 0);
+
+      Blockly.getFocusManager().focusNode(blockMiddle);
+      blockMiddle.dispose();
+      this.clock.runAll();
+
+      const focused = Blockly.getFocusManager().getFocusedNode();
+      assert.equal(
+        focused,
+        blockRight,
+        'Focus should move to the closest remaining block (blockRight at (100, 0))',
+      );
+    });
+
+    test('Bulk deleting blocks does not focus another dying block', function () {
+      for (let i = 0; i < 50; i++) {
+        this.workspace.newBlock('stack_block');
+      }
+
+      Blockly.getFocusManager().focusNode(
+        this.workspace.getTopBlocks(false)[0],
+      );
+      this.workspace.clear();
+      this.clock.runAll();
+
+      assert.equal(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.workspace,
+        'Focus should move to the workspace, not a dying peer block',
+      );
+    });
+
+    test('Deleting a block focuses its parent block', function () {
+      const parent = this.workspace.newBlock('stack_block');
+      const child = this.workspace.newBlock('stack_block');
+      parent.nextConnection.connect(child.previousConnection);
+
+      Blockly.getFocusManager().focusNode(child);
+      child.dispose();
+      this.clock.runAll();
+
+      assert.equal(
+        Blockly.getFocusManager().getFocusedNode(),
+        parent,
+        'Focus should move to the parent block when a connected child is deleted',
+      );
+    });
+
+    test('Deleting an unfocused block does not change focus', function () {
+      const a = this.workspace.getTopBlocks(false)[0];
+      const b = this.workspace.newBlock('stack_block');
+      this.workspace.newBlock('stack_block');
+
+      Blockly.getFocusManager().focusNode(a);
+      b.dispose();
+      this.clock.runAll();
+
+      assert.equal(
+        Blockly.getFocusManager().getFocusedNode(),
+        a,
+        'Focus should not change when an unfocused block is deleted',
+      );
+    });
+  });
 });
