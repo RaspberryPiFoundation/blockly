@@ -18,7 +18,7 @@ jobs:
         # TODO (#2114): re-enable osx build.
         # os: [ubuntu-latest, macos-latest]
         os: [ubuntu-latest]
-        node-version: [22.x, 24.x, 26.x]
+        node-version: [22.x, 24.x]
         # See supported Node.js release schedule at
         # https://nodejs.org/en/about/releases/
 
@@ -57,10 +57,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Use Node.js 26.x
+      - name: Use Node.js 24.x
         uses: actions/setup-node@v5
         with:
-          node-version: 26.x
+          node-version: 24.x
 
       - name: Npm Install
         run: npm install
@@ -74,10 +74,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Use Node.js 26.x
+      - name: Use Node.js 24.x
         uses: actions/setup-node@v5
         with:
-          node-version: 26.x
+          node-version: 24.x
 
       - name: Npm Install
         run: npm install
