@@ -23,6 +23,7 @@ suite('Keyboard-driven movement', function () {
     const toolbox = document.getElementById('toolbox-simple');
     this.workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
     Blockly.common.defineBlocks(p5blocks);
+    Blockly.KeyboardMover.setMoveDistance(20);
   });
 
   teardown(function () {
@@ -131,7 +132,7 @@ suite('Keyboard-driven movement', function () {
    *     focused block (or, in each case, null if there is no such
    *     block).
    */
-  function getFocusedNeighbourInfo() {
+  async function getFocusedNeighbourInfo() {
     return Blockly.renderManagement.finishQueuedRenders().then(() => {
       const block = Blockly.getFocusManager().getFocusedNode();
       if (!block) throw new Error('nothing focused');
@@ -319,12 +320,13 @@ suite('Keyboard-driven movement', function () {
       startMove(this.workspace);
       const steps = [100, 20, 0, -20, -100];
       for (const step of steps) {
-        this.workspace.getKeyboardMover().setMoveDistance(step);
+        Blockly.KeyboardMover.setMoveDistance(step);
         const oldLeft = this.element.getBoundingRectangle().left;
         moveRight(this.workspace, this.modifiers);
         const newLeft = this.element.getBoundingRectangle().left;
         assert.equal(newLeft - oldLeft, step);
       }
+      endMove(this.workspace);
     });
   }
 
@@ -333,7 +335,7 @@ suite('Keyboard-driven movement', function () {
       const oldBounds = this.element.getBoundingRectangle();
       Blockly.getFocusManager().focusNode(this.element);
       startMove(this.workspace);
-      assert.isTrue(this.workspace.getKeyboardMover().isMoving());
+      assert.isTrue(Blockly.KeyboardMover.isMoving());
       moveRight(this.workspace, this.modifiers);
       moveRight(this.workspace, this.modifiers);
 
@@ -341,7 +343,7 @@ suite('Keyboard-driven movement', function () {
         Blockly.utils.KeyCodes.META,
       ]);
       this.workspace.getInjectionDiv().dispatchEvent(event);
-      assert.isFalse(this.workspace.getKeyboardMover().isMoving());
+      assert.isFalse(Blockly.KeyboardMover.isMoving());
 
       const newBounds = this.element.getBoundingRectangle();
       oldBounds.left += 40;
@@ -393,6 +395,7 @@ suite('Keyboard-driven movement', function () {
         const originalBounds = this.element.getBoundingRectangle();
         startMove(this.workspace);
         moveUp(this.workspace);
+        endMove(this.workspace);
         const newBounds = this.element.getBoundingRectangle();
         assert.deepEqual(newBounds, originalBounds);
         assert.equal(
