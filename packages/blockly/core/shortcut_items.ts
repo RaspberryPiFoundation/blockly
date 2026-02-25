@@ -9,8 +9,10 @@
 import {BlockSvg} from './block_svg.js';
 import * as clipboard from './clipboard.js';
 import {RenderedWorkspaceComment} from './comments.js';
+import * as contextmenu from './contextmenu.js';
 import * as eventUtils from './events/utils.js';
 import {getFocusManager} from './focus_manager.js';
+import {hasContextMenu} from './interfaces/i_contextmenu.js';
 import {isCopyable as isICopyable} from './interfaces/i_copyable.js';
 import {isDeletable as isIDeletable} from './interfaces/i_deletable.js';
 import {isDraggable} from './interfaces/i_draggable.js';
@@ -33,6 +35,7 @@ export enum names {
   PASTE = 'paste',
   UNDO = 'undo',
   REDO = 'redo',
+  MENU = 'menu',
 }
 
 /**
@@ -372,6 +375,35 @@ export function registerRedo() {
 }
 
 /**
+ * Keyboard shortcut to show the context menu on ctrl/cmd+Enter.
+ */
+export function registerShowContextMenu() {
+  const ctrlEnter = ShortcutRegistry.registry.createSerializedKey(
+    KeyCodes.ENTER,
+    [KeyCodes.CTRL_CMD],
+  );
+
+  const contextMenuShortcut: KeyboardShortcut = {
+    name: names.MENU,
+    preconditionFn: (workspace) => {
+      return !workspace.isDragging();
+    },
+    callback: (workspace, e) => {
+      const target = getFocusManager().getFocusedNode();
+      if (hasContextMenu(target)) {
+        target.showContextMenu(e);
+        contextmenu.getMenu()?.highlightNext();
+
+        return true;
+      }
+      return false;
+    },
+    keyCodes: [ctrlEnter],
+  };
+  ShortcutRegistry.registry.register(contextMenuShortcut);
+}
+
+/**
  * Registers all default keyboard shortcut item. This should be called once per
  * instance of KeyboardShortcutRegistry.
  *
@@ -385,6 +417,7 @@ export function registerDefaultShortcuts() {
   registerPaste();
   registerUndo();
   registerRedo();
+  registerShowContextMenu();
 }
 
 registerDefaultShortcuts();
