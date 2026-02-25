@@ -2960,7 +2960,7 @@ suite('Blocks', function () {
       block.dispose();
       this.clock.runAll();
 
-      assert.equal(
+      assert.strictEqual(
         Blockly.getFocusManager().getFocusedNode(),
         this.workspace,
         'Focus should move to the workspace when the focused block is deleted',
@@ -2979,7 +2979,7 @@ suite('Blocks', function () {
       this.clock.runAll();
 
       const focused = Blockly.getFocusManager().getFocusedNode();
-      assert.equal(
+      assert.strictEqual(
         focused,
         blockRight,
         'Focus should move to the closest remaining block (blockRight at (100, 0))',
@@ -2997,7 +2997,7 @@ suite('Blocks', function () {
       this.workspace.clear();
       this.clock.runAll();
 
-      assert.equal(
+      assert.strictEqual(
         Blockly.getFocusManager().getFocusedNode(),
         this.workspace,
         'Focus should move to the workspace, not a dying peer block',
@@ -3013,7 +3013,7 @@ suite('Blocks', function () {
       child.dispose();
       this.clock.runAll();
 
-      assert.equal(
+      assert.strictEqual(
         Blockly.getFocusManager().getFocusedNode(),
         parent,
         'Focus should move to the parent block when a connected child is deleted',
@@ -3029,7 +3029,7 @@ suite('Blocks', function () {
       b.dispose();
       this.clock.runAll();
 
-      assert.equal(
+      assert.strictEqual(
         Blockly.getFocusManager().getFocusedNode(),
         a,
         'Focus should not change when an unfocused block is deleted',
