@@ -403,4 +403,85 @@ suite('Keyboard Shortcut Items', function () {
       ]),
     );
   });
+
+  suite('Show context menu (Ctrl/Cmd+Enter)', function () {
+    const contextMenuKeyEvent = createKeyDownEvent(
+      Blockly.utils.KeyCodes.ENTER,
+      [Blockly.utils.KeyCodes.CTRL_CMD],
+    );
+
+    test('Displays context menu on a block using the keyboard shortcut', function () {
+      const block = setSelectedBlock(this.workspace);
+      this.injectionDiv.dispatchEvent(contextMenuKeyEvent);
+
+      const menu = Blockly.ContextMenu.getMenu();
+      assert.instanceOf(menu, Blockly.Menu, 'Context menu should be shown');
+
+      const menuOptions =
+        Blockly.ContextMenuRegistry.registry.getContextMenuOptions(
+          {block, focusedNode: block},
+          contextMenuKeyEvent,
+        );
+      for (const option of menuOptions) {
+        assert.include(menu.getElement().innerText, option.text);
+      }
+    });
+
+    test('Displays context menu on the workspace using the keyboard shortcut', function () {
+      Blockly.getFocusManager().focusNode(this.workspace);
+      this.injectionDiv.dispatchEvent(contextMenuKeyEvent);
+
+      const menu = Blockly.ContextMenu.getMenu();
+      assert.instanceOf(menu, Blockly.Menu, 'Context menu should be shown');
+      const menuOptions =
+        Blockly.ContextMenuRegistry.registry.getContextMenuOptions(
+          {workspace: this.workspace, focusedNode: this.workspace},
+          contextMenuKeyEvent,
+        );
+      for (const option of menuOptions) {
+        assert.include(menu.getElement().innerText, option.text);
+      }
+    });
+
+    test('Displays context menu on a workspace comment using the keyboard shortcut', function () {
+      Blockly.ContextMenuItems.registerCommentOptions();
+      const comment = setSelectedComment(this.workspace);
+      this.injectionDiv.dispatchEvent(contextMenuKeyEvent);
+
+      const menu = Blockly.ContextMenu.getMenu();
+      assert.instanceOf(menu, Blockly.Menu, 'Context menu should be shown');
+      const menuOptions =
+        Blockly.ContextMenuRegistry.registry.getContextMenuOptions(
+          {comment, focusedNode: comment},
+          contextMenuKeyEvent,
+        );
+      for (const option of menuOptions) {
+        assert.include(menu.getElement().innerText, option.text);
+      }
+    });
+
+    test('First menu item is highlighted when context menu is shown via keyboard shortcut', function () {
+      setSelectedBlock(this.workspace);
+      this.injectionDiv.dispatchEvent(contextMenuKeyEvent);
+
+      const menuEl = Blockly.ContextMenu.getMenu().getElement();
+      const firstMenuItem = menuEl.querySelector('.blocklyMenuItem');
+      assert.isTrue(
+        firstMenuItem.classList.contains('blocklyMenuItemHighlight'),
+      );
+    });
+
+    test('Context menu is not shown when shortcut is invoked while a field is focused', function () {
+      const block = this.workspace.newBlock('math_arithmetic');
+      block.initSvg();
+      const field = block.getField('OP');
+      Blockly.getFocusManager().focusNode(field);
+      this.injectionDiv.dispatchEvent(contextMenuKeyEvent);
+
+      assert.isNull(
+        Blockly.ContextMenu.getMenu(),
+        'Context menu should not be triggered when a field is focused',
+      );
+    });
+  });
 });
