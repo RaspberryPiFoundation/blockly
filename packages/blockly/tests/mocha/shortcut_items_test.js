@@ -18,6 +18,8 @@ suite('Keyboard Shortcut Items', function () {
     sharedTestSetup.call(this);
     this.workspace = Blockly.inject('blocklyDiv', {});
     this.injectionDiv = this.workspace.getInjectionDiv();
+    Blockly.ContextMenuRegistry.registry.reset();
+    Blockly.ContextMenuItems.registerDefaultOptions();
   });
   teardown(function () {
     sharedTestTeardown.call(this);
