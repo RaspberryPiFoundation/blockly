@@ -2987,21 +2987,36 @@ suite('Blocks', function () {
     });
 
     test('Bulk deleting blocks does not focus another dying block', function () {
+      const blocks = this.workspace.getTopBlocks(false);
       for (let i = 0; i < 5; i++) {
-        this.workspace.newBlock('stack_block');
+        blocks.push(this.workspace.newBlock('stack_block'));
       }
 
+      // Focus the last block we added; clearing the workspace proceeds in block
+      // creation order, so if we focused an earlier block, it would (correctly)
+      // assign focus to a later-added block which is not yet dying, on down the
+      // chain. If we focus the last block, by the time deletion gets to it, all
+      // the other blocks will have already been marked as disposing, and should
+      // thus be ineligible to be focused.
       Blockly.getFocusManager().focusNode(
-        this.workspace.getTopBlocks(false)[0],
+        this.workspace.getTopBlocks(false)[5],
       );
+
+      const spy = sinon.spy(Blockly.getFocusManager(), 'focusNode');
+
       this.workspace.clear();
       this.clock.runAll();
 
+      for (const block of blocks) {
+        assert.isFalse(spy.calledWith(block));
+      }
       assert.strictEqual(
         Blockly.getFocusManager().getFocusedNode(),
         this.workspace,
         'Focus should move to the workspace, not a dying peer block',
       );
+
+      spy.restore();
     });
 
     test('Deleting a block focuses its parent block', function () {
