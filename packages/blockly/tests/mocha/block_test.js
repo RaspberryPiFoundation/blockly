@@ -3052,7 +3052,9 @@ suite('Blocks', function () {
     });
 
     test('Disposing a workspace with a focused block succeeds', function () {
-      Blockly.getFocusManager().focusNode(this.workspace.getTopBlocks(false)[0]);
+      Blockly.getFocusManager().focusNode(
+        this.workspace.getTopBlocks(false)[0],
+      );
       this.workspace.dispose();
       this.clock.runAll();
 
