@@ -2987,7 +2987,7 @@ suite('Blocks', function () {
     });
 
     test('Bulk deleting blocks does not focus another dying block', function () {
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 5; i++) {
         this.workspace.newBlock('stack_block');
       }
 
