@@ -3050,5 +3050,13 @@ suite('Blocks', function () {
         'Focus should not change when an unfocused block is deleted',
       );
     });
+
+    test('Disposing a workspace with a focused block succeeds', function () {
+      Blockly.getFocusManager().focusNode(this.workspace.getTopBlocks(false)[0]);
+      this.workspace.dispose();
+      this.clock.runAll();
+
+      // No assert, this just shouldn't throw.
+    });
   });
 });

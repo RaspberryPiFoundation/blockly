@@ -932,9 +932,12 @@ export class BlockSvg
       } else {
         const nearestNeighbour = this.getNearestNeighbour();
         if (nearestNeighbour) {
-          setTimeout(() => focusManager.focusNode(nearestNeighbour), 0);
+          focusManager.focusNode(nearestNeighbour);
         } else {
-          setTimeout(() => focusManager.focusTree(this.workspace), 0);
+          setTimeout(() => {
+            if (!this.workspace.rendered) return;
+            focusManager.focusTree(this.workspace);
+          }, 0);
         }
       }
     }
