@@ -456,6 +456,7 @@ input[type=number] {
   height: 16px;
   position: absolute;
   width: 16px;
+  display: none;
 }
 
 .blocklyMenuItemSelected .blocklyMenuItemCheckbox {
@@ -463,6 +464,7 @@ input[type=number] {
   float: left;
   margin-left: -24px;
   position: static;  /* Scroll with the menu. */
+  display: block;
 }
 
 .blocklyMenuItemRtl .blocklyMenuItemCheckbox {
