@@ -299,6 +299,6 @@ export function callbackFactory(
 /**
  * Returns the contextual menu if it is currently being shown.
  */
-export function getMenu() {
+export function getMenu(): Menu | null {
   return menu_;
 }
