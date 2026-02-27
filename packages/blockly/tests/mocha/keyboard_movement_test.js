@@ -9,7 +9,7 @@ import {assert} from '../../node_modules/chai/index.js';
 import {
   moveStatementTestBlocks,
   moveValueTestBlocks,
-} from './test_helpers/fixtures.js';
+} from './test_helpers/move_test_blocks.js';
 import {p5blocks} from './test_helpers/p5_blocks.js';
 import {
   sharedTestSetup,
