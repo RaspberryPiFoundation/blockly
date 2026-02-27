@@ -5,8 +5,8 @@
  */
 
 import type {Coordinate} from '../utils/coordinate.js';
-import type {IBoundedElement} from './i_bounded_element';
-import type {ISelectable} from './i_selectable';
+import type {IBoundedElement} from './i_bounded_element.js';
+import type {ISelectable} from './i_selectable.js';
 
 export enum DragDisposition {
   COMMIT = 1,
@@ -17,7 +17,10 @@ export enum DragDisposition {
 /**
  * Represents an object that can be dragged.
  */
-export interface IDraggable extends IDragStrategy {
+export interface IDraggable
+  extends IDragStrategy,
+    IBoundedElement,
+    ISelectable {
   /**
    * Returns the current location of the draggable in workspace coordinates.
    *
@@ -38,9 +41,7 @@ export interface IDragStrategy {
    *     etc. May be missing when dragging is triggered programmatically rather
    *     than by user.
    */
-  startDrag(
-    e?: PointerEvent | KeyboardEvent,
-  ): IDraggable & ISelectable & IBoundedElement;
+  startDrag(e?: PointerEvent | KeyboardEvent): IDraggable;
 
   /**
    * Handles moving elements to the new location, and updating any

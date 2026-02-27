@@ -12,19 +12,11 @@ import {RenderedWorkspaceComment} from './comments.js';
 import * as contextmenu from './contextmenu.js';
 import * as eventUtils from './events/utils.js';
 import {getFocusManager} from './focus_manager.js';
-import {
-  type IBoundedElement,
-  isBoundedElement,
-} from './interfaces/i_bounded_element.js';
 import {hasContextMenu} from './interfaces/i_contextmenu.js';
 import {isCopyable as isICopyable} from './interfaces/i_copyable.js';
 import {isDeletable as isIDeletable} from './interfaces/i_deletable.js';
 import {type IDraggable, isDraggable} from './interfaces/i_draggable.js';
-import {
-  type IFocusableNode,
-  isFocusableNode,
-} from './interfaces/i_focusable_node.js';
-import {type ISelectable, isSelectable} from './interfaces/i_selectable.js';
+import {type IFocusableNode} from './interfaces/i_focusable_node.js';
 import {Direction, KeyboardMover} from './keyboard_nav/keyboard_mover.js';
 import {keyboardNavigationController} from './keyboard_navigation_controller.js';
 import {KeyboardShortcut, ShortcutRegistry} from './shortcut_registry.js';
@@ -391,19 +383,9 @@ export function registerRedo() {
 export function registerMovementShortcuts() {
   const getCurrentDraggable = (
     workspace: WorkspaceSvg,
-  ):
-    | (IDraggable & IFocusableNode & IBoundedElement & ISelectable)
-    | undefined => {
+  ): IDraggable | undefined => {
     const node = getFocusManager().getFocusedNode();
-    if (
-      isDraggable(node) &&
-      isFocusableNode(node) &&
-      isBoundedElement(node) &&
-      isSelectable(node)
-    ) {
-      return node;
-    }
-
+    if (isDraggable(node)) return node;
     return workspace.getCursor().getSourceBlock() ?? undefined;
   };
 

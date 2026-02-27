@@ -4,10 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {type IBoundedElement} from '../interfaces/i_bounded_element.js';
 import type {IDraggable} from '../interfaces/i_draggable.js';
 import type {IDragger} from '../interfaces/i_dragger.js';
-import {type ISelectable} from '../interfaces/i_selectable.js';
 import * as registry from '../registry.js';
 import {ShortcutRegistry} from '../shortcut_registry.js';
 import {Coordinate} from '../utils/coordinate.js';
@@ -44,7 +42,7 @@ class KeyboardMoverImplementation {
   /**
    * The object that is currently being moved.
    */
-  protected draggable?: IDraggable & IBoundedElement & ISelectable;
+  protected draggable?: IDraggable;
 
   /**
    * Workspace coordinate that the current move started from.
@@ -78,7 +76,7 @@ class KeyboardMoverImplementation {
    * @param draggable The draggable element to try to move.
    * @returns True iff movement is allowed.
    */
-  canMove(draggable: IDraggable & IBoundedElement & ISelectable) {
+  canMove(draggable: IDraggable) {
     return !draggable.workspace.isReadOnly() && draggable.isMovable();
   }
 
@@ -98,10 +96,7 @@ class KeyboardMoverImplementation {
    * @param event The keyboard event that triggered this move.
    * @returns True iff a move has successfully begun.
    */
-  startMove(
-    draggable: IDraggable & IBoundedElement & ISelectable,
-    event: KeyboardEvent,
-  ) {
+  startMove(draggable: IDraggable, event: KeyboardEvent) {
     if (!this.canMove(draggable) || this.isMoving()) return false;
 
     const DraggerClass = registry.getClassFromOptions(
