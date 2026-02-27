@@ -154,6 +154,7 @@ export class MiniWorkspaceBubble extends Bubble {
    * are dealt with by resizing the workspace to show them.
    */
   private bumpBlocksIntoBounds() {
+    // Only bump for mouse-driven drags.
     if (this.miniWorkspace.isDragging() && !KeyboardMover.isMoving()) return;
 
     const MARGIN = 20;

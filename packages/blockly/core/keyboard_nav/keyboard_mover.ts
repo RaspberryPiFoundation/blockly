@@ -18,7 +18,7 @@ import {MoveIndicator} from './move_indicator.js';
  * Cardinal directions in which a move can proceed.
  */
 export enum Direction {
-  NONE = 0,
+  NONE,
   UP,
   DOWN,
   LEFT,
@@ -34,7 +34,7 @@ const COMMIT_MOVE_SHORTCUT = 'commitMove';
  * Class responsible for coordinating keyboard-driven moves with the workspace
  * and dragging system.
  */
-class KeyboardMoverImplementations {
+class KeyboardMoverImplementation {
   /**
    * Object responsible for dragging workspace elements in response to move
    * commands.
@@ -310,5 +310,5 @@ class KeyboardMoverImplementations {
   }
 }
 
-const KeyboardMover = new KeyboardMoverImplementations();
+const KeyboardMover = new KeyboardMoverImplementation();
 export {KeyboardMover};

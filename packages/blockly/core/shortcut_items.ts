@@ -386,7 +386,7 @@ export function registerRedo() {
 
 /**
  * Registers keyboard shortcuts for keyboard-driven movement of workspace
- *elements.
+ * elements.
  */
 export function registerMovementShortcuts() {
   const getCurrentDraggable = (

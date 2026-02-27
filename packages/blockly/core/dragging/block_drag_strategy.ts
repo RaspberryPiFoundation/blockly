@@ -281,7 +281,7 @@ export class BlockDragStrategy implements IDragStrategy {
       Coordinate.difference(newLoc, this.startLoc!),
     );
 
-    // Handle the case when an unconstrained drag found a connection candidate.
+    // Handle the case where the drag has reached a possible connection.
     if (this.connectionCandidate) {
       const neighbour = this.connectionCandidate.neighbour;
       // The next constrained move will resume the search from the current
@@ -295,7 +295,10 @@ export class BlockDragStrategy implements IDragStrategy {
         );
       }
     } else {
-      // Handle the case when unconstrained drag was far from any candidate.
+      // No connection was available or adequately close to the dragged block;
+      // clear out the search node since we have nowhere to search from, and
+      // suggest using unconstrained mode to arbitrarily position the block if
+      // we're in keyboard-driven constrained mode.
       this.searchNode = null;
 
       if (this.moveMode === MoveMode.CONSTRAINED) {
@@ -655,8 +658,7 @@ export class BlockDragStrategy implements IDragStrategy {
    *     start of the drag.
    */
   private createInitialCandidate(): ConnectionCandidate | null {
-    this.searchNode =
-      /* this.startPoint ?? */ this.startParentConn ?? this.startChildConn;
+    this.searchNode = this.startParentConn ?? this.startChildConn;
 
     switch (this.searchNode?.type) {
       case ConnectionType.INPUT_VALUE: {
