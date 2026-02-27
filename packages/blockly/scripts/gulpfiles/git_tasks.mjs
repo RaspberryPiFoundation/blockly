@@ -28,6 +28,10 @@ const argv = yargs(hideBin(process.argv)).option('remote', {
   type: 'boolean',
   describe: 'Push to RaspberryPiFoundation/blockly instead of origin',
   demandOption: false
+}).option('use-local', {
+  type: 'boolean',
+  describe: 'Build and push from current branch instead of syncing with main',
+  demandOption: false
 }).help().argv;
 const remoteToUse = argv.upstream ? UPSTREAM_URL : resolveRemote(argv.remote);
 
@@ -74,14 +78,15 @@ function checkoutBranch(branchName) {
 }
 
 /**
- * Update github pages with what is currently in main.
+ * Update github pages with what is currently in main (or current branch if --use-local).
  *
  * Prerequisites (invoked): clean, build.
- * 
+ *
  * Usage:
- *   gulp updateGithubPages # uses origin if exists
+ *   gulp updateGithubPages # sync main, then use origin if exists
  *   gulp updateGithubPages --upstream # uses hardcoded upstream
  *   gulp updateGithubPages --remote <remote> # uses named remote
+ *   gulp updateGithubPages --use-local # build from current branch, skip syncing main
  *
  */
 export const updateGithubPages = gulp.series(
@@ -100,10 +105,35 @@ export const updateGithubPages = gulp.series(
         }
         done();
     },
-    syncMain(),
+    function (done) {
+      if (!argv.useLocal) {
+        done();
+        return;
+      }
+      const status = execSync('git status --porcelain', { encoding: 'utf8' });
+      if (status.trim()) {
+        const errMsg =
+          'You cannot push the local branch with uncommitted changes. ' +
+          'Please commit or stash your changes first.';
+        console.error(errMsg);
+        done(new Error(errMsg));
+        return;
+      }
+      done();
+    },
+    function (done) {
+      if (argv.useLocal) {
+        done();
+        return;
+      }
+      syncMain()(done);
+    },
     function(done) {
+      const sourceRef = argv.useLocal
+        ? execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim()
+        : 'main';
       execSync('git switch -C gh-pages', { stdio: 'inherit' });
-      execSync(`git reset --hard main`, { stdio: 'inherit' });
+      execSync(`git reset --hard ${sourceRef}`, { stdio: 'inherit' });
       done();
     },
     buildTasks.cleanBuildDir,
