@@ -8,13 +8,28 @@
  * @fileoverview Git-related gulp tasks for Blockly.
  */
 
+
 import * as gulp from 'gulp';
 import {execSync} from 'child_process';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
 import * as buildTasks from './build_tasks.mjs';
 import * as packageTasks from './package_tasks.mjs';
 
 const UPSTREAM_URL = 'git@github.com:RaspberryPiFoundation/blockly.git';
+
+// Use yargs to parse --remote argument
+const argv = yargs(hideBin(process.argv)).option('remote', {
+    type: 'string',
+    describe: 'Remote to push gh-pages to',
+    demandOption: false
+}).option('upstream', {
+  type: 'boolean',
+  describe: 'Push to RaspberryPiFoundation/blockly instead of origin',
+  demandOption: false
+}).help().argv;
+const remoteToUse = argv.upstream ? UPSTREAM_URL : resolveRemote(argv.remote);
 
 /**
  * Extra paths to include in the gh_pages branch (beyond the normal
@@ -50,11 +65,11 @@ export function syncMain() {
 };
 
 /**
- * If branch does not exist then create the branch.
  * If branch exists switch to branch.
+ * If branch does not exist then create the branch.
  */
 function checkoutBranch(branchName) {
-  execSync(`git switch -c ${branchName}`,
+  execSync(`git switch ${branchName} || git switch -c ${branchName}`,
       { stdio: 'inherit' });
 }
 
@@ -62,23 +77,62 @@ function checkoutBranch(branchName) {
  * Update github pages with what is currently in main.
  *
  * Prerequisites (invoked): clean, build.
+ * 
+ * Usage:
+ *   gulp updateGithubPages # uses origin if exists
+ *   gulp updateGithubPages --upstream # uses hardcoded upstream
+ *   gulp updateGithubPages --remote <remote> # uses named remote
+ *
  */
 export const updateGithubPages = gulp.series(
-  syncMain,
-  function(done) {
-    execSync('git switch -C gh-pages', { stdio: 'inherit' });
-    execSync(`git reset --hard main`, { stdio: 'inherit' });
-    done();
-  },
-  buildTasks.cleanBuildDir,
-  packageTasks.cleanReleaseDir,
-  buildTasks.build,
-  function(done) {
-    // Extra paths (e.g. build/, dist/ etc.) are normally gitignored,
-    // so we have to force add.
-    execSync(`git add -f ${EXTRAS.join(' ')}`, {stdio: 'inherit'});
-    execSync('git commit -am "Rebuild"', {stdio: 'inherit'});
-    execSync(`git push ${UPSTREAM_URL} gh-pages --force`, {stdio: 'inherit'});
-    done();
+    function (done) {
+        if (!remoteToUse) {
+          const attemptedRemote = argv.remote || 'origin';
+          const remoteLabel = argv.remote
+            ? `Remote '${attemptedRemote}'`
+            : "Remote 'origin' (default)";
+          const errMsg = `${remoteLabel} not found in git remotes. ` +
+            'Please add that remote or use --upstream.\n' +
+            'Usage: gulp updateGithubPages [--remote <remote> | --upstream]';
+          console.error(errMsg);
+          done(new Error(errMsg));
+          return;
+        }
+        done();
+    },
+    syncMain(),
+    function(done) {
+      execSync('git switch -C gh-pages', { stdio: 'inherit' });
+      execSync(`git reset --hard main`, { stdio: 'inherit' });
+      done();
+    },
+    buildTasks.cleanBuildDir,
+    packageTasks.cleanReleaseDir,
+    buildTasks.build,
+    function(done) {
+      // Extra paths (e.g. build/, dist/ etc.) are normally gitignored,
+      // so we have to force add.
+      execSync(`git add -f ${EXTRAS.join(' ')}`, {stdio: 'inherit'});
+      execSync('git commit -am "Rebuild"', {stdio: 'inherit'});
+      execSync(`git push ${remoteToUse} gh-pages --force`, {stdio: 'inherit'});
+      done();
+    }
+  );
+
+/**
+ * Resolves which remote to use for pushing gh-pages.
+ * @param {string} remoteArg
+ * @returns {string|undefined} The remote name, or undefined if not found.
+ */
+function resolveRemote(remoteArg) {
+  const remoteName = remoteArg || 'origin';
+  try {
+    const remotes = execSync('git remote', {encoding: 'utf8'}).split(/\r?\n/).map(r => r.trim()).filter(Boolean);
+    if (remotes.includes(remoteName)) {
+      return remoteName;
+    }
+    return undefined;
+  } catch (e) {
+    return undefined;
   }
-);
+}
