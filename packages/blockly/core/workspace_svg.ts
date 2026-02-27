@@ -1490,7 +1490,7 @@ export class WorkspaceSvg
    */
   isDragging(): boolean {
     return (
-      KeyboardMover.isMoving() ||
+      KeyboardMover.mover.isMoving() ||
       (this.currentGesture_ !== null && this.currentGesture_.isDragging())
     );
   }
@@ -2449,7 +2449,7 @@ export class WorkspaceSvg
   getGesture(e?: PointerEvent): Gesture | null {
     // Ignore and cancel events that would start a gesture during a
     // keyboard-driven move.
-    if (KeyboardMover.isMoving()) {
+    if (KeyboardMover.mover.isMoving()) {
       e?.preventDefault();
       e?.stopPropagation();
       return null;

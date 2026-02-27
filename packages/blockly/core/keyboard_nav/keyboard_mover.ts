@@ -32,7 +32,7 @@ const COMMIT_MOVE_SHORTCUT = 'commitMove';
  * Class responsible for coordinating keyboard-driven moves with the workspace
  * and dragging system.
  */
-class KeyboardMoverImplementation {
+export class KeyboardMover {
   /**
    * Object responsible for dragging workspace elements in response to move
    * commands.
@@ -69,6 +69,11 @@ class KeyboardMoverImplementation {
   private readonly blurListener = () => {
     this.abortMove();
   };
+
+  static mover = new KeyboardMover();
+
+  // Constructor is private to keep this class a singleton.
+  private constructor() {}
 
   /**
    * Returns true iff the given draggable is allowed to be moved.
@@ -304,6 +309,3 @@ class KeyboardMoverImplementation {
     );
   }
 }
-
-const KeyboardMover = new KeyboardMoverImplementation();
-export {KeyboardMover};

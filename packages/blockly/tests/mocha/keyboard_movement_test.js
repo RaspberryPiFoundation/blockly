@@ -23,7 +23,7 @@ suite('Keyboard-driven movement', function () {
     const toolbox = document.getElementById('toolbox-simple');
     this.workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
     Blockly.common.defineBlocks(p5blocks);
-    Blockly.KeyboardMover.setMoveDistance(20);
+    Blockly.KeyboardMover.mover.setMoveDistance(20);
   });
 
   teardown(function () {
@@ -320,7 +320,7 @@ suite('Keyboard-driven movement', function () {
       startMove(this.workspace);
       const steps = [100, 20, 0, -20, -100];
       for (const step of steps) {
-        Blockly.KeyboardMover.setMoveDistance(step);
+        Blockly.KeyboardMover.mover.setMoveDistance(step);
         const oldLeft = this.element.getBoundingRectangle().left;
         moveRight(this.workspace, this.modifiers);
         const newLeft = this.element.getBoundingRectangle().left;
@@ -335,7 +335,7 @@ suite('Keyboard-driven movement', function () {
       const oldBounds = this.element.getBoundingRectangle();
       Blockly.getFocusManager().focusNode(this.element);
       startMove(this.workspace);
-      assert.isTrue(Blockly.KeyboardMover.isMoving());
+      assert.isTrue(Blockly.KeyboardMover.mover.isMoving());
       moveRight(this.workspace, this.modifiers);
       moveRight(this.workspace, this.modifiers);
 
@@ -343,7 +343,7 @@ suite('Keyboard-driven movement', function () {
         Blockly.utils.KeyCodes.META,
       ]);
       this.workspace.getInjectionDiv().dispatchEvent(event);
-      assert.isFalse(Blockly.KeyboardMover.isMoving());
+      assert.isFalse(Blockly.KeyboardMover.mover.isMoving());
 
       const newBounds = this.element.getBoundingRectangle();
       oldBounds.left += 40;

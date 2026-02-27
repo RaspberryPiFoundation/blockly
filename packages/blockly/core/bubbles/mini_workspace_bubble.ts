@@ -155,7 +155,9 @@ export class MiniWorkspaceBubble extends Bubble {
    */
   private bumpBlocksIntoBounds() {
     // Only bump for mouse-driven drags.
-    if (this.miniWorkspace.isDragging() && !KeyboardMover.isMoving()) return;
+    if (this.miniWorkspace.isDragging() && !KeyboardMover.mover.isMoving()) {
+      return;
+    }
 
     const MARGIN = 20;
 
@@ -187,11 +189,13 @@ export class MiniWorkspaceBubble extends Bubble {
    * mini workspace.
    */
   private updateBubbleSize() {
-    if (this.miniWorkspace.isDragging() && !KeyboardMover.isMoving()) return;
+    if (this.miniWorkspace.isDragging() && !KeyboardMover.mover.isMoving()) {
+      return;
+    }
 
     // Disable autolayout if a keyboard move is in progress to prevent the
     // mutator bubble from jumping around.
-    this.autoLayout &&= !KeyboardMover.isMoving();
+    this.autoLayout &&= !KeyboardMover.mover.isMoving();
 
     const currSize = this.getSize();
     const newSize = this.calculateWorkspaceSize();

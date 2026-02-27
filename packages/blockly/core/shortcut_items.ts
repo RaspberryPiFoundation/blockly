@@ -394,7 +394,7 @@ export function registerMovementShortcuts() {
       name: 'start_move',
       preconditionFn: (workspace) => {
         const startDraggable = getCurrentDraggable(workspace);
-        return !!startDraggable && KeyboardMover.canMove(startDraggable);
+        return !!startDraggable && KeyboardMover.mover.canMove(startDraggable);
       },
       callback: (workspace, e) => {
         keyboardNavigationController.setIsActive(true);
@@ -406,31 +406,33 @@ export function registerMovementShortcuts() {
         }
         return (
           !!startDraggable &&
-          KeyboardMover.startMove(startDraggable, e as KeyboardEvent)
+          KeyboardMover.mover.startMove(startDraggable, e as KeyboardEvent)
         );
       },
       keyCodes: [KeyCodes.M],
     },
     {
       name: 'finish_move',
-      preconditionFn: () => KeyboardMover.isMoving(),
-      callback: (_workspace, e) => KeyboardMover.finishMove(e as KeyboardEvent),
+      preconditionFn: () => KeyboardMover.mover.isMoving(),
+      callback: (_workspace, e) =>
+        KeyboardMover.mover.finishMove(e as KeyboardEvent),
       keyCodes: [KeyCodes.ENTER, KeyCodes.SPACE],
       allowCollision: true,
     },
     {
       name: 'abort_move',
-      preconditionFn: () => KeyboardMover.isMoving(),
-      callback: (_workspace, e) => KeyboardMover.abortMove(e as KeyboardEvent),
+      preconditionFn: () => KeyboardMover.mover.isMoving(),
+      callback: (_workspace, e) =>
+        KeyboardMover.mover.abortMove(e as KeyboardEvent),
       keyCodes: [KeyCodes.ESC],
       allowCollision: true,
     },
     {
       name: 'move_left',
-      preconditionFn: () => KeyboardMover.isMoving(),
+      preconditionFn: () => KeyboardMover.mover.isMoving(),
       callback: (_workspace, e) => {
         e.preventDefault();
-        return KeyboardMover.move(Direction.LEFT, e as KeyboardEvent);
+        return KeyboardMover.mover.move(Direction.LEFT, e as KeyboardEvent);
       },
       keyCodes: [
         KeyCodes.LEFT,
@@ -445,10 +447,10 @@ export function registerMovementShortcuts() {
     },
     {
       name: 'move_right',
-      preconditionFn: () => KeyboardMover.isMoving(),
+      preconditionFn: () => KeyboardMover.mover.isMoving(),
       callback: (_workspace, e) => {
         e.preventDefault();
-        return KeyboardMover.move(Direction.RIGHT, e as KeyboardEvent);
+        return KeyboardMover.mover.move(Direction.RIGHT, e as KeyboardEvent);
       },
       keyCodes: [
         KeyCodes.RIGHT,
@@ -463,10 +465,10 @@ export function registerMovementShortcuts() {
     },
     {
       name: 'move_up',
-      preconditionFn: () => KeyboardMover.isMoving(),
+      preconditionFn: () => KeyboardMover.mover.isMoving(),
       callback: (_workspace, e) => {
         e.preventDefault();
-        return KeyboardMover.move(Direction.UP, e as KeyboardEvent);
+        return KeyboardMover.mover.move(Direction.UP, e as KeyboardEvent);
       },
       keyCodes: [
         KeyCodes.UP,
@@ -481,10 +483,10 @@ export function registerMovementShortcuts() {
     },
     {
       name: 'move_down',
-      preconditionFn: () => KeyboardMover.isMoving(),
+      preconditionFn: () => KeyboardMover.mover.isMoving(),
       callback: (_workspace, e) => {
         e.preventDefault();
-        return KeyboardMover.move(Direction.DOWN, e as KeyboardEvent);
+        return KeyboardMover.mover.move(Direction.DOWN, e as KeyboardEvent);
       },
       keyCodes: [
         KeyCodes.DOWN,
