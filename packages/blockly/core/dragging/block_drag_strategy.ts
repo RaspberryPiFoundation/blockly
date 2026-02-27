@@ -83,6 +83,8 @@ export class BlockDragStrategy implements IDragStrategy {
   /** Used to persist an event group when snapping is done async. */
   private originalEventGroup = '';
 
+  protected readonly BLOCK_CONNECTION_OFFSET = 10;
+
   constructor(private block: BlockSvg) {
     this.workspace = block.workspace;
   }
@@ -151,9 +153,15 @@ export class BlockDragStrategy implements IDragStrategy {
         let offset: Coordinate;
         if (neighbour.type === ConnectionType.PREVIOUS_STATEMENT) {
           const origin = this.block.getRelativeToSurfaceXY();
-          offset = new Coordinate(origin.x + 10, origin.y - 10);
+          offset = new Coordinate(
+            origin.x + this.BLOCK_CONNECTION_OFFSET,
+            origin.y - this.BLOCK_CONNECTION_OFFSET,
+          );
         } else {
-          offset = new Coordinate(neighbour.x + 10, neighbour.y + 10);
+          offset = new Coordinate(
+            neighbour.x + this.BLOCK_CONNECTION_OFFSET,
+            neighbour.y + this.BLOCK_CONNECTION_OFFSET,
+          );
         }
         this.block.moveDuringDrag(offset);
       }
@@ -291,7 +299,10 @@ export class BlockDragStrategy implements IDragStrategy {
         // Position the moving block down and slightly to the right of the
         // target connection.
         this.block.moveDuringDrag(
-          new Coordinate(neighbour.x + 10, neighbour.y + 10),
+          new Coordinate(
+            neighbour.x + this.BLOCK_CONNECTION_OFFSET,
+            neighbour.y + this.BLOCK_CONNECTION_OFFSET,
+          ),
         );
       }
     } else {
