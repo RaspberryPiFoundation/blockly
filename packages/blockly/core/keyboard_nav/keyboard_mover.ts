@@ -37,33 +37,35 @@ export class KeyboardMover {
    * Object responsible for dragging workspace elements in response to move
    * commands.
    */
-  protected dragger?: IDragger;
+  private dragger?: IDragger;
 
   /**
    * The object that is currently being moved.
    */
-  protected draggable?: IDraggable;
+  private draggable?: IDraggable;
 
   /**
    * Workspace coordinate that the current move started from.
    */
-  protected startLocation?: Coordinate;
+  private startLocation?: Coordinate;
 
   /**
    * The total distance, in workspace coordinates, that the element being moved
    * has been moved since the movement process started.
    */
-  protected totalDelta = new Coordinate(0, 0);
+  private totalDelta = new Coordinate(0, 0);
 
   /**
    * The distance to move an item in workspace coordinates.
    */
-  protected stepDistance = 20;
+  private stepDistance = 20;
 
   /**
    * Symbol attached to the item being moved to indicate it is in move mode.
    */
-  protected moveIndicator?: MoveIndicator;
+  private moveIndicator?: MoveIndicator;
+
+  private allowedShortcuts: string[] = [];
 
   // Set up a blur listener to end the move if the user clicks away
   private readonly blurListener = () => {
@@ -243,9 +245,25 @@ export class KeyboardMover {
   }
 
   /**
+   * Returns a list of the names of shortcuts that are allowed to be run while
+   * a keyboard-driven move is in progress.
+   */
+  getAllowedShortcuts() {
+    return this.allowedShortcuts;
+  }
+
+  /**
+   * Adds shortcuts with the given names to the list of shortcuts that are
+   * allowed to be run while a keyboard-driven move is in progress.
+   */
+  setAllowedShortcuts(shortcutNames: string[]) {
+    this.allowedShortcuts = shortcutNames;
+  }
+
+  /**
    * Repositions the move indicator to the corner of the item being moved.
    */
-  protected repositionMoveIndicator() {
+  private repositionMoveIndicator() {
     const bounds = this.draggable?.getBoundingRectangle();
     if (!bounds) return;
 
@@ -258,7 +276,7 @@ export class KeyboardMover {
   /**
    * Common clean-up for finish/abort run before terminating the move.
    */
-  protected preDragEndCleanup() {
+  private preDragEndCleanup() {
     ShortcutRegistry.registry.unregister(COMMIT_MOVE_SHORTCUT);
 
     // Remove the blur listener before ending the drag
@@ -270,7 +288,7 @@ export class KeyboardMover {
   /**
    * Common clean-up for finish/abort run after terminating the move.
    */
-  protected postDragEndCleanup() {
+  private postDragEndCleanup() {
     this.moveIndicator?.dispose();
     this.moveIndicator = undefined;
     this.draggable = undefined;
@@ -282,7 +300,7 @@ export class KeyboardMover {
   /**
    * Returns the total distance current element has moved in pixels.
    */
-  protected totalPixelDelta() {
+  private totalPixelDelta() {
     const scale = this.draggable?.workspace.scale ?? 1;
     return new Coordinate(this.totalDelta.x * scale, this.totalDelta.y * scale);
   }
@@ -290,7 +308,7 @@ export class KeyboardMover {
   /**
    * Scrolls the current element into view.
    */
-  protected scrollCurrentElementIntoView() {
+  private scrollCurrentElementIntoView() {
     if (!this.draggable) return;
     const bounds = this.draggable.getBoundingRectangle();
     this.draggable.workspace.scrollBoundsIntoView(bounds);
@@ -300,7 +318,7 @@ export class KeyboardMover {
    * Recalculates the total movement delta from the starting location and the
    * current position of the item being moved.
    */
-  protected updateTotalDelta() {
+  private updateTotalDelta() {
     if (!this.draggable || !this.startLocation) return;
 
     this.totalDelta = new Coordinate(

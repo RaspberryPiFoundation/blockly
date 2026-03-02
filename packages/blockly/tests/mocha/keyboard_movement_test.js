@@ -352,6 +352,43 @@ suite('Keyboard-driven movement', function () {
     });
   }
 
+  function testExemptedShortcutsAllowed() {
+    test('is not committed when allowlisted shortcuts are performed', function () {
+      const hotkey = Blockly.ShortcutRegistry.registry.createSerializedKey(
+        Blockly.utils.KeyCodes.M,
+        [Blockly.utils.KeyCodes.CTRL_CMD],
+      );
+
+      let shortcutRun = false;
+      const testShortcut = {
+        name: 'test_shortcut',
+        preconditionFn: () => true,
+        callback: () => {
+          shortcutRun = true;
+          return true;
+        },
+        keyCodes: [hotkey],
+      };
+      Blockly.ShortcutRegistry.registry.register(testShortcut);
+
+      Blockly.getFocusManager().focusNode(this.element);
+      startMove(this.workspace);
+      assert.isTrue(Blockly.KeyboardMover.mover.isMoving());
+      moveRight(this.workspace, this.modifiers);
+
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.M, [
+        Blockly.utils.KeyCodes.CTRL_CMD,
+      ]);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+      // Move mode should still be active and the shortcut should have toggled
+      // the `shortcutRun` variable.
+      assert.isTrue(Blockly.KeyboardMover.mover.isMoving());
+      assert.isTrue(shortcutRun);
+      cancelMove(this.workspace);
+      Blockly.ShortcutRegistry.registry.unregister('test_shortcut');
+    });
+  }
+
   suite('of workspace comments', function () {
     setup(function () {
       this.element = new Blockly.comments.RenderedWorkspaceComment(
@@ -367,6 +404,7 @@ suite('Keyboard-driven movement', function () {
     testMoveIndicatorIsDisplayed();
     testAdjustingMoveStepSize();
     testUnrelatedShortcutCommits();
+    testExemptedShortcutsAllowed();
   });
 
   suite('of blocks', function () {
@@ -386,6 +424,7 @@ suite('Keyboard-driven movement', function () {
       testMoveIndicatorIsDisplayed();
       testAdjustingMoveStepSize();
       testUnrelatedShortcutCommits();
+      testExemptedShortcutsAllowed();
     });
 
     suite('in constrained mode', function () {
@@ -817,5 +856,6 @@ suite('Keyboard-driven movement', function () {
     testMoveIndicatorIsDisplayed();
     testAdjustingMoveStepSize();
     testUnrelatedShortcutCommits();
+    testExemptedShortcutsAllowed();
   });
 });
