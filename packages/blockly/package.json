@@ -120,7 +120,7 @@
     "eslint-plugin-prettier": "^5.2.1",
     "glob": "^11.0.1",
     "globals": "^16.0.0",
-    "google-closure-compiler": "^20260114.0.0",
+    "google-closure-compiler": "^20260225.0.0",
     "gulp": "^5.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-gzip": "^1.4.2",
