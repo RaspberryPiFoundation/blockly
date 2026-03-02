@@ -340,7 +340,7 @@ suite('Keyboard-driven movement', function () {
       moveRight(this.workspace, this.modifiers);
 
       const event = createKeyDownEvent(Blockly.utils.KeyCodes.C, [
-        Blockly.utils.KeyCodes.META,
+        Blockly.utils.KeyCodes.CTRL_CMD,
       ]);
       this.workspace.getInjectionDiv().dispatchEvent(event);
       assert.isFalse(Blockly.KeyboardMover.mover.isMoving());
