@@ -24,7 +24,7 @@ export function showUnconstrainedMoveHint(
 ) {
   const modifier =
     userAgent.MAC || userAgent.IPAD || userAgent.IPHONE
-      ? Msg['OPTION_KEY']
+      ? Msg['COMMAND_KEY']
       : Msg['CONTROL_KEY'];
   const message = Msg['KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT']
     .replace('%1', modifier)

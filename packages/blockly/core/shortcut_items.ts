@@ -437,10 +437,7 @@ export function registerMovementShortcuts() {
       keyCodes: [
         KeyCodes.LEFT,
         ShortcutRegistry.registry.createSerializedKey(KeyCodes.LEFT, [
-          KeyCodes.ALT,
-        ]),
-        ShortcutRegistry.registry.createSerializedKey(KeyCodes.LEFT, [
-          KeyCodes.CTRL,
+          KeyCodes.CTRL_CMD,
         ]),
       ],
       allowCollision: true,
@@ -455,10 +452,7 @@ export function registerMovementShortcuts() {
       keyCodes: [
         KeyCodes.RIGHT,
         ShortcutRegistry.registry.createSerializedKey(KeyCodes.RIGHT, [
-          KeyCodes.ALT,
-        ]),
-        ShortcutRegistry.registry.createSerializedKey(KeyCodes.RIGHT, [
-          KeyCodes.CTRL,
+          KeyCodes.CTRL_CMD,
         ]),
       ],
       allowCollision: true,
@@ -473,10 +467,7 @@ export function registerMovementShortcuts() {
       keyCodes: [
         KeyCodes.UP,
         ShortcutRegistry.registry.createSerializedKey(KeyCodes.UP, [
-          KeyCodes.ALT,
-        ]),
-        ShortcutRegistry.registry.createSerializedKey(KeyCodes.UP, [
-          KeyCodes.CTRL,
+          KeyCodes.CTRL_CMD,
         ]),
       ],
       allowCollision: true,
@@ -491,10 +482,7 @@ export function registerMovementShortcuts() {
       keyCodes: [
         KeyCodes.DOWN,
         ShortcutRegistry.registry.createSerializedKey(KeyCodes.DOWN, [
-          KeyCodes.ALT,
-        ]),
-        ShortcutRegistry.registry.createSerializedKey(KeyCodes.DOWN, [
-          KeyCodes.CTRL,
+          KeyCodes.CTRL_CMD,
         ]),
       ],
       allowCollision: true,

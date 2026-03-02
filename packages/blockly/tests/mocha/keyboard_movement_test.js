@@ -374,7 +374,7 @@ suite('Keyboard-driven movement', function () {
       this.element = this.workspace.newBlock('logic_boolean');
       this.element.initSvg();
       this.element.render();
-      this.modifiers = [Blockly.utils.KeyCodes.ALT];
+      this.modifiers = [Blockly.utils.KeyCodes.CTRL_CMD];
     });
 
     suite('in unconstrained mode', function () {
@@ -401,7 +401,7 @@ suite('Keyboard-driven movement', function () {
         assert.equal(
           toastSpy.args[0][1]['message'],
           Blockly.utils.userAgent.MAC
-            ? 'Hold ⌥ Option and use arrow keys to move freely, then Enter to accept the position'
+            ? 'Hold ⌘ Command and use arrow keys to move freely, then Enter to accept the position'
             : 'Hold Ctrl and use arrow keys to move freely, then Enter to accept the position',
         );
         toastSpy.restore();

@@ -204,7 +204,7 @@ export class BlockDragStrategy implements IDragStrategy {
    */
   protected shouldHealStack(e: PointerEvent | KeyboardEvent | undefined) {
     return e instanceof PointerEvent
-      ? e.altKey || e.ctrlKey || e.metaKey
+      ? e.ctrlKey || e.metaKey
       : !!this.block.previousConnection;
   }
 
@@ -277,7 +277,7 @@ export class BlockDragStrategy implements IDragStrategy {
   /** Moves the block and updates any connection previews. */
   drag(newLoc: Coordinate, e?: PointerEvent | KeyboardEvent): void {
     this.moveMode =
-      e instanceof KeyboardEvent && !e.altKey
+      e instanceof KeyboardEvent && !(e.ctrlKey || e.metaKey)
         ? MoveMode.CONSTRAINED
         : MoveMode.UNCONSTRAINED;
 
