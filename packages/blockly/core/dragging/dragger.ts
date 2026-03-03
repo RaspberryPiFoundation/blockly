@@ -16,17 +16,13 @@ import type {IDragger} from '../interfaces/i_dragger.js';
 import {isFocusableNode} from '../interfaces/i_focusable_node.js';
 import * as registry from '../registry.js';
 import {Coordinate} from '../utils/coordinate.js';
-import type {WorkspaceSvg} from '../workspace_svg.js';
 
 export class Dragger implements IDragger {
   protected startLoc: Coordinate;
 
   protected dragTarget: IDragTarget | null = null;
 
-  constructor(
-    protected draggable: IDraggable,
-    protected workspace: WorkspaceSvg,
-  ) {
+  constructor(protected draggable: IDraggable) {
     this.startLoc = draggable.getRelativeToSurfaceXY();
   }
 
@@ -65,7 +61,7 @@ export class Dragger implements IDragger {
 
   /** Updates the drag target under the pointer (if there is one). */
   protected updateDragTarget(coordinate: Coordinate) {
-    const newDragTarget = this.workspace.getDragTarget(coordinate);
+    const newDragTarget = this.draggable.workspace.getDragTarget(coordinate);
     if (this.dragTarget !== newDragTarget) {
       this.dragTarget?.onDragExit(this.draggable);
       newDragTarget?.onDragEnter(this.draggable);
@@ -95,10 +91,10 @@ export class Dragger implements IDragger {
     coordinate: Coordinate,
     rootDraggable: IDraggable & IDeletable,
   ) {
-    const dragTarget = this.workspace.getDragTarget(coordinate);
+    const dragTarget = this.draggable.workspace.getDragTarget(coordinate);
     if (!dragTarget) return false;
 
-    const componentManager = this.workspace.getComponentManager();
+    const componentManager = this.draggable.workspace.getComponentManager();
     const isDeleteArea = componentManager.hasCapability(
       dragTarget.id,
       ComponentManager.Capability.DELETE_AREA,
@@ -111,7 +107,7 @@ export class Dragger implements IDragger {
   /** Handles any drag cleanup. */
   onDragEnd(e?: PointerEvent | KeyboardEvent) {
     const origGroup = eventUtils.getGroup();
-    const dragTarget = this.workspace.getDragTarget(
+    const dragTarget = this.draggable.workspace.getDragTarget(
       this.draggable.getRelativeToSurfaceXY(),
     );
 
@@ -175,21 +171,21 @@ export class Dragger implements IDragger {
     coordinate: Coordinate,
     rootDraggable: IDraggable,
   ) {
-    const dragTarget = this.workspace.getDragTarget(coordinate);
+    const dragTarget = this.draggable.workspace.getDragTarget(coordinate);
     if (!dragTarget) return false;
     return dragTarget.shouldPreventMove(rootDraggable);
   }
 
   protected pixelsToWorkspaceUnits(pixelCoord: Coordinate): Coordinate {
     const result = new Coordinate(
-      pixelCoord.x / this.workspace.scale,
-      pixelCoord.y / this.workspace.scale,
+      pixelCoord.x / this.draggable.workspace.scale,
+      pixelCoord.y / this.draggable.workspace.scale,
     );
-    if (this.workspace.isMutator) {
+    if (this.draggable.workspace.isMutator) {
       // If we're in a mutator, its scale is always 1, purely because of some
       // oddities in our rendering optimizations.  The actual scale is the same
       // as the scale on the parent workspace. Fix that for dragging.
-      const mainScale = this.workspace.options.parentWorkspace!.scale;
+      const mainScale = this.draggable.workspace.options.parentWorkspace!.scale;
       result.scale(1 / mainScale);
     }
     return result;

@@ -6,9 +6,7 @@
 
 // Former goog.module ID: Blockly.IFlyout
 
-import type {BlockSvg} from '../block_svg.js';
 import type {FlyoutItem} from '../flyout_item.js';
-import type {Coordinate} from '../utils/coordinate.js';
 import type {Svg} from '../utils/svg.js';
 import type {FlyoutDefinition} from '../utils/toolbox.js';
 import type {WorkspaceSvg} from '../workspace_svg.js';
@@ -129,15 +127,6 @@ export interface IFlyout extends IRegistrable, IFocusableTree {
    */
   getContents(): FlyoutItem[];
 
-  /**
-   * Create a copy of this block on the workspace.
-   *
-   * @param originalBlock The block to copy from the flyout.
-   * @returns The newly created block.
-   * @throws {Error} if something went wrong with deserialization.
-   */
-  createBlock(originalBlock: BlockSvg): BlockSvg;
-
   /** Reflow blocks and their mats. */
   reflow(): void;
 
@@ -163,27 +152,6 @@ export interface IFlyout extends IRegistrable, IFocusableTree {
 
   /** Position the flyout. */
   position(): void;
-
-  /**
-   * Determine if a drag delta is toward the workspace, based on the position
-   * and orientation of the flyout. This is used in determineDragIntention_ to
-   * determine if a new block should be created or if the flyout should scroll.
-   *
-   * @param currentDragDeltaXY How far the pointer has moved from the position
-   *     at mouse down, in pixel units.
-   * @returns True if the drag is toward the workspace.
-   */
-  isDragTowardWorkspace(currentDragDeltaXY: Coordinate): boolean;
-
-  /**
-   * Does this flyout allow you to create a new instance of the given block?
-   * Used for deciding if a block can be "dragged out of" the flyout.
-   *
-   * @param block The block to copy from the flyout.
-   * @returns True if you can create a new instance of the block, false
-   *     otherwise.
-   */
-  isBlockCreatable(block: BlockSvg): boolean;
 
   /** Scroll the flyout to the beginning of its contents. */
   scrollToStart(): void;

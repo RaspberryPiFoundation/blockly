@@ -18,7 +18,6 @@ import type {FlyoutItem} from './flyout_item.js';
 import type {Options} from './options.js';
 import * as registry from './registry.js';
 import {Scrollbar} from './scrollbar.js';
-import type {Coordinate} from './utils/coordinate.js';
 import {Rect} from './utils/rect.js';
 import * as toolbox from './utils/toolbox.js';
 import * as WidgetDiv from './widgetdiv.js';
@@ -269,32 +268,6 @@ export class HorizontalFlyout extends Flyout {
       item.getElement().moveBy(moveX, cursorY);
       cursorX += item.getElement().getBoundingRectangle().getWidth();
     }
-  }
-
-  /**
-   * Determine if a drag delta is toward the workspace, based on the position
-   * and orientation of the flyout. This is used in determineDragIntention_ to
-   * determine if a new block should be created or if the flyout should scroll.
-   *
-   * @param currentDragDeltaXY How far the pointer has moved from the position
-   *     at mouse down, in pixel units.
-   * @returns True if the drag is toward the workspace.
-   */
-  override isDragTowardWorkspace(currentDragDeltaXY: Coordinate): boolean {
-    const dx = currentDragDeltaXY.x;
-    const dy = currentDragDeltaXY.y;
-    // Direction goes from -180 to 180, with 0 toward the right and 90 on top.
-    const dragDirection = (Math.atan2(dy, dx) / Math.PI) * 180;
-
-    const range = this.dragAngleRange_;
-    // Check for up or down dragging.
-    if (
-      (dragDirection < 90 + range && dragDirection > 90 - range) ||
-      (dragDirection > -90 - range && dragDirection < -90 + range)
-    ) {
-      return true;
-    }
-    return false;
   }
 
   /**

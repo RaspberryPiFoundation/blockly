@@ -256,40 +256,6 @@ export class Gesture {
   }
 
   /**
-   * Update this gesture to record whether a block is being dragged from the
-   * flyout.
-   * This function should be called on a pointermove event the first time
-   * the drag radius is exceeded.  It should be called no more than once per
-   * gesture. If a block should be dragged from the flyout this function creates
-   * the new block on the main workspace and updates targetBlock_ and
-   * startWorkspace_.
-   *
-   * @returns True if a block is being dragged from the flyout.
-   */
-  private updateIsDraggingFromFlyout(): boolean {
-    if (!this.targetBlock || !this.flyout?.isBlockCreatable(this.targetBlock)) {
-      return false;
-    }
-    if (!this.flyout.targetWorkspace) {
-      throw new Error(`Cannot update dragging from the flyout because the ' +
-          'flyout's target workspace is undefined`);
-    }
-
-    this.startWorkspace_ = this.flyout.targetWorkspace;
-    this.startWorkspace_.updateScreenCalculationsIfScrolled();
-    // Start the event group now, so that the same event group is used for
-    // block creation and block dragging.
-    if (!eventUtils.getGroup()) {
-      eventUtils.setGroup(true);
-    }
-    // The start block is no longer relevant, because this is a drag.
-    this.startBlock = null;
-    this.targetBlock = this.flyout.createBlock(this.targetBlock);
-    getFocusManager().focusNode(this.targetBlock);
-    return true;
-  }
-
-  /**
    * Check whether to start a workspace drag. If a workspace is being dragged,
    * create the necessary WorkspaceDragger and start the drag.
    *
@@ -335,14 +301,10 @@ export class Gesture {
     }
     this.calledUpdateIsDragging = true;
 
-    // If we drag a block out of the flyout, it updates `common.getSelected`
-    // to return the new block.
-    if (this.flyout) this.updateIsDraggingFromFlyout();
-
     const selected = common.getSelected();
     if (selected && isDraggable(selected) && selected.isMovable()) {
       this.dragging = true;
-      this.dragger = this.createDragger(selected, this.startWorkspace_);
+      this.dragger = this.createDragger(selected);
       this.dragger.onDragStart(e);
       this.dragger.onDrag(e, this.currentDragDeltaXY);
     } else {
@@ -350,16 +312,13 @@ export class Gesture {
     }
   }
 
-  private createDragger(
-    draggable: IDraggable,
-    workspace: WorkspaceSvg,
-  ): IDragger {
+  private createDragger(draggable: IDraggable): IDragger {
     const DraggerClass = registry.getClassFromOptions(
       registry.Type.BLOCK_DRAGGER,
       this.creatorWorkspace.options,
       true,
     );
-    return new DraggerClass!(draggable, workspace);
+    return new DraggerClass!(draggable);
   }
 
   /**
@@ -896,17 +855,11 @@ export class Gesture {
           'Cannot do a block click because the target block is ' + 'undefined',
         );
       }
-      if (this.flyout.isBlockCreatable(this.targetBlock)) {
-        if (!eventUtils.getGroup()) {
-          eventUtils.setGroup(true);
-        }
-        const newBlock = this.flyout.createBlock(this.targetBlock);
-        newBlock.snapToGrid();
-        newBlock.bumpNeighbours();
 
-        // If a new block was added, make sure that it's correctly focused.
-        getFocusManager().focusNode(newBlock);
-      }
+      // Perform a zero-length drag to copy the block out of the flyout.
+      const dragger = this.createDragger(this.targetBlock);
+      dragger.onDragStart();
+      dragger.onDragEnd(undefined, new Coordinate(0, 0));
     } else {
       if (!this.startWorkspace_) {
         throw new Error(

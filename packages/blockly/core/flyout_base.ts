@@ -11,7 +11,6 @@
  */
 // Former goog.module ID: Blockly.Flyout
 
-import {BlockSvg} from './block_svg.js';
 import * as browserEvents from './browser_events.js';
 import {ComponentManager} from './component_manager.js';
 import {DeleteArea} from './delete_area.js';
@@ -32,8 +31,6 @@ import * as registry from './registry.js';
 import * as renderManagement from './render_management.js';
 import {ScrollbarPair} from './scrollbar_pair.js';
 import {SEPARATOR_TYPE} from './separator_flyout_inflater.js';
-import * as blocks from './serialization/blocks.js';
-import {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
 import * as idGenerator from './utils/idgenerator.js';
 import {Svg} from './utils/svg.js';
@@ -51,17 +48,6 @@ export abstract class Flyout
    * Position the flyout.
    */
   abstract position(): void;
-
-  /**
-   * Determine if a drag delta is toward the workspace, based on the position
-   * and orientation of the flyout. This is used in determineDragIntention_ to
-   * determine if a new block should be created or if the flyout should scroll.
-   *
-   * @param currentDragDeltaXY How far the pointer has
-   *     moved from the position at mouse down, in pixel units.
-   * @returns True if the drag is toward the workspace.
-   */
-  abstract isDragTowardWorkspace(currentDragDeltaXY: Coordinate): boolean;
 
   /**
    * Sets the translation of the flyout to match the scrollbars.
@@ -191,29 +177,6 @@ export abstract class Flyout
    * Height of flyout.
    */
   protected height_ = 0;
-  // clang-format off
-  /**
-   * Range of a drag angle from a flyout considered "dragging toward
-   * workspace". Drags that are within the bounds of this many degrees from
-   * the orthogonal line to the flyout edge are considered to be "drags toward
-   * the workspace".
-   *
-   * @example
-   *
-   * ```
-   * Flyout                                                 Edge   Workspace
-   * [block] /  <-within this angle, drags "toward workspace" |
-   * [block] ---- orthogonal to flyout boundary ----          |
-   * [block] \                                                |
-   * ```
-   *
-   * The angle is given in degrees from the orthogonal.
-   *
-   * This is used to know when to create a new block and when to scroll the
-   * flyout. Setting it to 360 means that all drags create a new block.
-   */
-  // clang-format on
-  protected dragAngleRange_ = 70;
 
   /**
    * The path around the background of the flyout, which will be filled with a
@@ -791,47 +754,6 @@ export abstract class Flyout
   }
 
   /**
-   * Does this flyout allow you to create a new instance of the given block?
-   * Used for deciding if a block can be "dragged out of" the flyout.
-   *
-   * @param block The block to copy from the flyout.
-   * @returns True if you can create a new instance of the block, false
-   *    otherwise.
-   * @internal
-   */
-  isBlockCreatable(block: BlockSvg): boolean {
-    return block.isEnabled() && !this.getTargetWorkspace().isReadOnly();
-  }
-
-  /**
-   * Create a copy of this block on the workspace.
-   *
-   * @param originalBlock The block to copy from the flyout.
-   * @returns The newly created block.
-   * @throws {Error} if something went wrong with deserialization.
-   * @internal
-   */
-  createBlock(originalBlock: BlockSvg): BlockSvg {
-    const targetWorkspace = this.targetWorkspace;
-    const svgRootOld = originalBlock.getSvgRoot();
-    if (!svgRootOld) {
-      throw Error('oldBlock is not rendered');
-    }
-
-    // Clone the block.
-    const json = this.serializeBlock(originalBlock);
-    // Normally this resizes leading to weird jumps. Save it for terminateDrag.
-    targetWorkspace.setResizesEnabled(false);
-    const block = blocks.appendInternal(json, targetWorkspace, {
-      recordUndo: true,
-    }) as BlockSvg;
-
-    this.positionNewBlock(originalBlock, block);
-    targetWorkspace.hideChaff();
-    return block;
-  }
-
-  /**
    * Reflow flyout contents.
    */
   reflow() {
@@ -849,59 +771,6 @@ export abstract class Flyout
     return this.workspace_.scrollbar
       ? this.workspace_.scrollbar.isVisible()
       : false;
-  }
-
-  /**
-   * Serialize a block to JSON.
-   *
-   * @param block The block to serialize.
-   * @returns A serialized representation of the block.
-   */
-  protected serializeBlock(block: BlockSvg): blocks.State {
-    return blocks.save(block) as blocks.State;
-  }
-
-  /**
-   * Positions a block on the target workspace.
-   *
-   * @param oldBlock The flyout block being copied.
-   * @param block The block to posiiton.
-   */
-  private positionNewBlock(oldBlock: BlockSvg, block: BlockSvg) {
-    const targetWorkspace = this.targetWorkspace;
-
-    // The offset in pixels between the main workspace's origin and the upper
-    // left corner of the injection div.
-    const mainOffsetPixels = targetWorkspace.getOriginOffsetInPixels();
-
-    // The offset in pixels between the flyout workspace's origin and the upper
-    // left corner of the injection div.
-    const flyoutOffsetPixels = this.workspace_.getOriginOffsetInPixels();
-
-    // The position of the old block in flyout workspace coordinates.
-    const oldBlockPos = oldBlock.getRelativeToSurfaceXY();
-    // The position of the old block in pixels relative to the flyout
-    // workspace's origin.
-    oldBlockPos.scale(this.workspace_.scale);
-
-    // The position of the old block in pixels relative to the upper left corner
-    // of the injection div.
-    const oldBlockOffsetPixels = Coordinate.sum(
-      flyoutOffsetPixels,
-      oldBlockPos,
-    );
-
-    // The position of the old block in pixels relative to the origin of the
-    // main workspace.
-    const finalOffset = Coordinate.difference(
-      oldBlockOffsetPixels,
-      mainOffsetPixels,
-    );
-    // The position of the old block in main workspace coordinates.
-    finalOffset.scale(1 / targetWorkspace.scale);
-
-    // No 'reason' provided since events are disabled.
-    block.moveTo(new Coordinate(finalOffset.x, finalOffset.y));
   }
 
   /**
