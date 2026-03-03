@@ -647,11 +647,10 @@ export class ConstantProvider extends BaseConstantProvider {
 
   override createDom(
     svg: SVGElement,
-    tagName: string,
     selector: string,
     injectionDivIfIsParent?: HTMLElement,
   ) {
-    super.createDom(svg, tagName, selector, injectionDivIfIsParent);
+    super.createDom(svg, selector, injectionDivIfIsParent);
     /*
         <defs>
           ... filters go here ...

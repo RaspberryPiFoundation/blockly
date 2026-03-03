@@ -112,6 +112,10 @@ export function show(
   dispose = newDispose;
   const div = containerDiv;
   if (!div) return;
+
+  const parentDiv = common.getParentContainer();
+  parentDiv?.appendChild(div);
+
   div.style.direction = rtl ? 'rtl' : 'ltr';
   div.style.display = 'block';
   if (!workspace && newOwner instanceof Field) {
@@ -225,9 +229,18 @@ export function hideIfOwnerIsInWorkspace(workspace: WorkspaceSvg) {
  * @param height The height of the widget div (pixels).
  */
 function positionInternal(x: number, y: number, height: number) {
-  containerDiv!.style.left = x + 'px';
-  containerDiv!.style.top = y + 'px';
-  containerDiv!.style.height = height + 'px';
+  if (!containerDiv) return;
+
+  const parentElement = containerDiv.parentElement;
+  if (parentElement) {
+    const bounds = parentElement.getBoundingClientRect();
+    x -= bounds.left + window.scrollX;
+    y -= bounds.top + window.scrollY;
+  }
+
+  containerDiv.style.left = x + 'px';
+  containerDiv.style.top = y + 'px';
+  containerDiv.style.height = height + 'px';
 }
 
 /**

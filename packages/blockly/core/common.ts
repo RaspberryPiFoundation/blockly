@@ -141,8 +141,15 @@ let parentContainer: Element | null;
  *
  * @returns The parent container.
  */
-export function getParentContainer(): Element | null {
-  return parentContainer;
+export function getParentContainer(
+  workspace = getMainWorkspace(),
+): Element | null {
+  if (parentContainer) return parentContainer;
+  if (workspace && workspace.rendered) {
+    return (workspace as WorkspaceSvg).getInjectionDiv();
+  }
+
+  return null;
 }
 
 /**

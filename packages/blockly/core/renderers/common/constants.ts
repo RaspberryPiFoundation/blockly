@@ -327,9 +327,6 @@ export class ConstantProvider {
    */
   private debugFilter: SVGElement | null = null;
 
-  /** The <style> element to use for injecting renderer specific CSS. */
-  private cssNode: HTMLStyleElement | null = null;
-
   /**
    * Cursor colour.
    */
@@ -696,7 +693,6 @@ export class ConstantProvider {
     if (this.debugFilter) {
       dom.removeNode(this.debugFilter);
     }
-    this.cssNode = null;
   }
 
   /**
@@ -934,11 +930,15 @@ export class ConstantProvider {
    */
   createDom(
     svg: SVGElement,
-    tagName: string,
     selector: string,
     injectionDivIfIsParent?: HTMLElement,
   ) {
-    this.injectCSS_(tagName, selector);
+    if (injectionDivIfIsParent) {
+      const root = injectionDivIfIsParent.getRootNode() as
+        | Document
+        | ShadowRoot;
+      this.injectCSS_(root, selector);
+    }
 
     /*
         <defs>
@@ -1121,26 +1121,13 @@ export class ConstantProvider {
   /**
    * Inject renderer specific CSS into the page.
    *
-   * @param tagName The name of the style tag to use.
-   * @param selector The CSS selector to use.
+   * @param root The document root to inject the CSS into.
+   * @param selector The CSS selector to interpolate into the stylesheet.
    */
-  protected injectCSS_(tagName: string, selector: string) {
-    const cssArray = this.getCSS_(selector);
-    const cssNodeId = 'blockly-renderer-style-' + tagName;
-    this.cssNode = document.getElementById(cssNodeId) as HTMLStyleElement;
-    const text = cssArray.join('\n');
-    if (this.cssNode) {
-      // Already injected, update if the theme changed.
-      this.cssNode.firstChild!.textContent = text;
-      return;
-    }
-    // Inject CSS tag at start of head.
-    const cssNode = document.createElement('style');
-    cssNode.id = cssNodeId;
-    const cssTextNode = document.createTextNode(text);
-    cssNode.appendChild(cssTextNode);
-    document.head.insertBefore(cssNode, document.head.firstChild);
-    this.cssNode = cssNode;
+  protected injectCSS_(root: Document | ShadowRoot, selector: string) {
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(this.getCSS_(selector).join('\n'));
+    root.adoptedStyleSheets.push(sheet);
   }
 
   /**

@@ -370,6 +370,9 @@ export function show<T>(
   manageEphemeralFocus: boolean,
   opt_onHide?: () => void,
 ): boolean {
+  const parentDiv = common.getParentContainer();
+  parentDiv?.appendChild(div);
+
   owner = newOwner as Field;
   onHide = opt_onHide || null;
   // Set direction.
@@ -738,10 +741,19 @@ function positionInternal(
     arrow.style.display = 'none';
   }
 
-  const initialX = Math.floor(metrics.initialX);
-  const initialY = Math.floor(metrics.initialY);
-  const finalX = Math.floor(metrics.finalX);
-  const finalY = Math.floor(metrics.finalY);
+  let initialX = Math.floor(metrics.initialX);
+  let initialY = Math.floor(metrics.initialY);
+  let finalX = Math.floor(metrics.finalX);
+  let finalY = Math.floor(metrics.finalY);
+
+  const parentElement = div.parentElement;
+  if (parentElement) {
+    const bounds = parentElement.getBoundingClientRect();
+    initialX -= bounds.left + window.scrollX;
+    finalX -= bounds.left + window.scrollX;
+    initialY -= bounds.top + window.scrollY;
+    finalY -= bounds.top + window.scrollY;
+  }
 
   // First apply initial translation.
   div.style.left = initialX + 'px';

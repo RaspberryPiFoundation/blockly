@@ -9,6 +9,7 @@
 import * as browserEvents from './browser_events.js';
 import * as common from './common.js';
 import * as blocklyString from './utils/string.js';
+import type {WorkspaceSvg} from './workspace_svg.js';
 
 /**
  * A type which can define a tooltip.
@@ -287,7 +288,7 @@ function onMouseOut(_e: PointerEvent) {
  *
  * @param e Mouse event.
  */
-function onMouseMove(e: Event) {
+function onMouseMove(this: any, e: Event) {
   if (!element || !(element as AnyDuringMigration).tooltip) {
     // No tooltip here to show.
     return;
@@ -318,7 +319,20 @@ function onMouseMove(e: Event) {
     // AnyDuringMigration because:  Property 'pageY' does not exist on type
     // 'Event'.
     lastY = (e as AnyDuringMigration).pageY;
-    showPid = setTimeout(show, HOVER_MS);
+    showPid = setTimeout(() => {
+      let workspace: WorkspaceSvg | undefined;
+      if (this instanceof Element) {
+        for (const ws of common.getAllWorkspaces()) {
+          if (!ws.rendered) continue;
+          if ((ws as WorkspaceSvg).getInjectionDiv()?.contains(this)) {
+            workspace = ws as WorkspaceSvg;
+            break;
+          }
+        }
+      }
+
+      show(workspace);
+    }, HOVER_MS);
   }
 }
 
@@ -416,7 +430,16 @@ function getPosition(rtl: boolean): {x: number; y: number} {
   }
 
   let anchorY = lastY + OFFSET_Y;
-  if (anchorY + containerDiv!.offsetHeight > windowHeight + window.scrollY) {
+
+  const parentElement = containerDiv?.parentElement;
+  if (parentElement) {
+    const parentBounds = parentElement.getBoundingClientRect();
+    anchorX -= parentBounds.left + window.scrollX;
+    anchorY -= parentBounds.top + window.scrollY;
+  }
+
+  const tooltipBottom = anchorY + containerDiv!.offsetHeight;
+  if (tooltipBottom > windowHeight + window.scrollY) {
     // Falling off the bottom of the screen; shift the tooltip up.
     anchorY -= containerDiv!.offsetHeight + 2 * OFFSET_Y;
   }
@@ -439,7 +462,7 @@ function getPosition(rtl: boolean): {x: number; y: number} {
 }
 
 /** Create the tooltip and show it. */
-function show() {
+function show(workspace?: WorkspaceSvg) {
   if (blocked) {
     // Someone doesn't want us to show tooltips.
     return;
@@ -448,6 +471,10 @@ function show() {
   if (!containerDiv) {
     return;
   }
+
+  const parentDiv = common.getParentContainer(workspace);
+  parentDiv?.appendChild(containerDiv);
+
   // Erase all existing text.
   containerDiv.textContent = '';
 

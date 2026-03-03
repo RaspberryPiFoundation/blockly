@@ -702,8 +702,15 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
 
       // In RTL mode block fields and LTR input fields the left edge moves,
       // whereas the right edge is fixed.  Reposition the editor.
-      const x = block.RTL ? bBox.right - div!.offsetWidth : bBox.left;
-      const y = bBox.top;
+      let x = block.RTL ? bBox.right - div!.offsetWidth : bBox.left;
+      let y = bBox.top;
+
+      const parentElement = div?.parentElement;
+      if (parentElement) {
+        const bounds = parentElement.getBoundingClientRect();
+        x -= bounds.left + window.scrollX;
+        y -= bounds.top + window.scrollY;
+      }
 
       div!.style.left = `${x}px`;
       div!.style.top = `${y}px`;

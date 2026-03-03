@@ -6,7 +6,8 @@
 
 // Former goog.module ID: Blockly.Css
 /** Has CSS already been injected? */
-let injected = false;
+const injectionSites = new WeakSet<Document | ShadowRoot>();
+const registeredStyleSheets: Array<CSSStyleSheet> = [];
 
 /**
  * Add some CSS to the blob that will be injected later.  Allows optional
@@ -15,10 +16,11 @@ let injected = false;
  * @param cssContent Multiline CSS string or an array of single lines of CSS.
  */
 export function register(cssContent: string) {
-  if (injected) {
-    throw Error('CSS already injected');
-  }
-  content += '\n' + cssContent;
+  if (typeof window === 'undefined' || !window.CSSStyleSheet) return;
+
+  const sheet = new CSSStyleSheet();
+  sheet.replaceSync(cssContent);
+  registeredStyleSheets.push(sheet);
 }
 
 /**
@@ -28,37 +30,40 @@ export function register(cssContent: string) {
  * b) It speeds up loading by not blocking on a separate HTTP transfer.
  * c) The CSS content may be made dynamic depending on init options.
  *
+ * @param container The div or other HTML element into which Blockly was injected.
  * @param hasCss If false, don't inject CSS (providing CSS becomes the
  *     document's responsibility).
  * @param pathToMedia Path from page to the Blockly media directory.
  */
-export function inject(hasCss: boolean, pathToMedia: string) {
-  // Only inject the CSS once.
-  if (injected) {
-    return;
-  }
-  injected = true;
+export function inject(
+  container: HTMLElement,
+  hasCss: boolean,
+  pathToMedia: string,
+) {
   if (!hasCss) {
     return;
   }
+
+  const root = container.getRootNode() as Document | ShadowRoot;
+  // Only inject the CSS once.
+  if (injectionSites.has(root)) return;
+  injectionSites.add(root);
+
   // Strip off any trailing slash (either Unix or Windows).
   const mediaPath = pathToMedia.replace(/[\\/]$/, '');
   const cssContent = content.replace(/<<<PATH>>>/g, mediaPath);
-  // Cleanup the collected css content after injecting it to the DOM.
-  content = '';
 
-  // Inject CSS tag at start of head.
-  const cssNode = document.createElement('style');
-  cssNode.id = 'blockly-common-style';
-  const cssTextNode = document.createTextNode(cssContent);
-  cssNode.appendChild(cssTextNode);
-  document.head.insertBefore(cssNode, document.head.firstChild);
+  const sheet = new CSSStyleSheet();
+  sheet.replaceSync(cssContent);
+  root.adoptedStyleSheets.push(sheet);
+
+  registeredStyleSheets.forEach((sheet) => root.adoptedStyleSheets.push(sheet));
 }
 
 /**
  * The CSS content for Blockly.
  */
-let content = `
+const content = `
 :is(
   .injectionDiv,
   .blocklyWidgetDiv,

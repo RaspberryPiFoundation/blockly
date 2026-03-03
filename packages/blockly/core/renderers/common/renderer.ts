@@ -89,7 +89,6 @@ export class Renderer implements IRegistrable {
   ) {
     this.constants_.createDom(
       svg,
-      this.name + '-' + theme.name,
       '.' + this.getClassName() + '.' + theme.getClassName(),
       injectionDivIfIsParent,
     );
