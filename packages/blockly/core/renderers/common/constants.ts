@@ -920,7 +920,6 @@ export class ConstantProvider {
    * Create any DOM elements that this renderer needs (filters, patterns, etc).
    *
    * @param svg The root of the workspace's SVG.
-   * @param tagName The name to use for the CSS style tag.
    * @param selector The CSS selector to use.
    * @param injectionDivIfIsParent The div containing the parent workspace and
    *   all related workspaces and block containers, if this renderer is for the
