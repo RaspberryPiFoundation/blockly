@@ -13,6 +13,7 @@ import {
 suite('WidgetDiv', function () {
   setup(function () {
     sharedTestSetup.call(this);
+    Blockly.common.setParentContainer(document.firstElementChild);
     this.workspace = Blockly.inject('blocklyDiv');
     this.setUpBlockWithField = function () {
       const blockJson = {

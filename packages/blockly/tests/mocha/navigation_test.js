@@ -701,7 +701,9 @@ suite('Navigation', function () {
 
     suite('In', function () {
       setup(function () {
-        this.emptyWorkspace = Blockly.inject(document.createElement('div'), {});
+        const container = document.createElement('div');
+        document.body.appendChild(container);
+        this.emptyWorkspace = Blockly.inject(container, {});
       });
       teardown(function () {
         workspaceTeardown.call(this, this.emptyWorkspace);
