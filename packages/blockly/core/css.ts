@@ -452,17 +452,12 @@ input[type=number] {
 }
 
 /* State: selected/checked. */
-.blocklyMenuItemCheckbox {
-  height: 16px;
-  position: absolute;
-  width: 16px;
-  display: none;
-}
-
 .blocklyMenuItemSelected .blocklyMenuItemCheckbox {
   background: url(<<<PATH>>>/sprites.png) no-repeat -48px -16px;
   float: left;
   margin-left: -24px;
+  width: 16px;
+  height: 16px;
   position: static;  /* Scroll with the menu. */
   display: block;
 }
