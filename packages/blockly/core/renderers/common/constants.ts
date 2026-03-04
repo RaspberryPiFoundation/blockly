@@ -1124,6 +1124,8 @@ export class ConstantProvider {
    * @param selector The CSS selector to interpolate into the stylesheet.
    */
   protected injectCSS_(root: Document | ShadowRoot, selector: string) {
+    if (typeof window === 'undefined' || !window.CSSStyleSheet) return;
+
     const sheet = new CSSStyleSheet();
     sheet.replaceSync(this.getCSS_(selector).join('\n'));
     root.adoptedStyleSheets.push(sheet);
