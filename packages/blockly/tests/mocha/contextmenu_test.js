@@ -85,7 +85,7 @@ suite('Context Menu', function () {
 
       const menu = Blockly.ContextMenu.getMenu();
       assert.instanceOf(menu, Blockly.Menu, 'getMenu() should return a Menu');
-      assert.include(menu.getElement().innerText, 'Test option');
+      assert.include(menu.getElement().textContent, 'Test option');
 
       Blockly.ContextMenu.hide();
       assert.isNull(Blockly.ContextMenu.getMenu());
