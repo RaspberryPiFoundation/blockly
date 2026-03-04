@@ -19,7 +19,7 @@ export function register(cssContent: string) {
   if (typeof window === 'undefined' || !window.CSSStyleSheet) return;
 
   const sheet = new CSSStyleSheet();
-  sheet.replaceSync(cssContent);
+  sheet.replace(cssContent);
   registeredStyleSheets.push(sheet);
 }
 
@@ -40,7 +40,7 @@ export function inject(
   hasCss: boolean,
   pathToMedia: string,
 ) {
-  if (!hasCss) {
+  if (!hasCss || typeof window === 'undefined' || !window.CSSStyleSheet) {
     return;
   }
 
@@ -54,7 +54,7 @@ export function inject(
   const cssContent = content.replace(/<<<PATH>>>/g, mediaPath);
 
   const sheet = new CSSStyleSheet();
-  sheet.replaceSync(cssContent);
+  sheet.replace(cssContent);
   root.adoptedStyleSheets.push(sheet);
 
   registeredStyleSheets.forEach((sheet) => root.adoptedStyleSheets.push(sheet));

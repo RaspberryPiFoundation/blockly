@@ -116,6 +116,8 @@ export function isNotch(shape: Shape): shape is Notch {
   );
 }
 
+const injectionSites = new WeakSet<Document | ShadowRoot>();
+
 /**
  * An object that provides constants for rendering blocks.
  */
@@ -1124,11 +1126,18 @@ export class ConstantProvider {
    * @param selector The CSS selector to interpolate into the stylesheet.
    */
   protected injectCSS_(root: Document | ShadowRoot, selector: string) {
-    if (typeof window === 'undefined' || !window.CSSStyleSheet) return;
+    if (
+      typeof window === 'undefined' ||
+      !window.CSSStyleSheet ||
+      injectionSites.has(root)
+    ) {
+      return;
+    }
 
     const sheet = new CSSStyleSheet();
-    sheet.replaceSync(this.getCSS_(selector).join('\n'));
+    sheet.replace(this.getCSS_(selector).join('\n'));
     root.adoptedStyleSheets.push(sheet);
+    injectionSites.add(root);
   }
 
   /**
