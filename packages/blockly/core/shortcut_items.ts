@@ -38,6 +38,14 @@ export enum names {
   UNDO = 'undo',
   REDO = 'redo',
   MENU = 'menu',
+  FOCUS_WORKSPACE = 'focus_workspace',
+  START_MOVE = 'start_move',
+  FINISH_MOVE = 'finish_move',
+  ABORT_MOVE = 'abort_move',
+  MOVE_UP = 'move_up',
+  MOVE_DOWN = 'move_down',
+  MOVE_LEFT = 'move_left',
+  MOVE_RIGHT = 'move_right',
 }
 
 /**
@@ -391,7 +399,7 @@ export function registerMovementShortcuts() {
 
   const shortcuts: ShortcutRegistry.KeyboardShortcut[] = [
     {
-      name: 'start_move',
+      name: names.START_MOVE,
       preconditionFn: (workspace) => {
         const startDraggable = getCurrentDraggable(workspace);
         return !!startDraggable && KeyboardMover.mover.canMove(startDraggable);
@@ -412,7 +420,7 @@ export function registerMovementShortcuts() {
       keyCodes: [KeyCodes.M],
     },
     {
-      name: 'finish_move',
+      name: names.FINISH_MOVE,
       preconditionFn: () => KeyboardMover.mover.isMoving(),
       callback: (_workspace, e) =>
         KeyboardMover.mover.finishMove(e as KeyboardEvent),
@@ -420,7 +428,7 @@ export function registerMovementShortcuts() {
       allowCollision: true,
     },
     {
-      name: 'abort_move',
+      name: names.ABORT_MOVE,
       preconditionFn: () => KeyboardMover.mover.isMoving(),
       callback: (_workspace, e) =>
         KeyboardMover.mover.abortMove(e as KeyboardEvent),
@@ -428,7 +436,7 @@ export function registerMovementShortcuts() {
       allowCollision: true,
     },
     {
-      name: 'move_left',
+      name: names.MOVE_LEFT,
       preconditionFn: () => KeyboardMover.mover.isMoving(),
       callback: (_workspace, e) => {
         e.preventDefault();
@@ -443,7 +451,7 @@ export function registerMovementShortcuts() {
       allowCollision: true,
     },
     {
-      name: 'move_right',
+      name: names.MOVE_RIGHT,
       preconditionFn: () => KeyboardMover.mover.isMoving(),
       callback: (_workspace, e) => {
         e.preventDefault();
@@ -458,7 +466,7 @@ export function registerMovementShortcuts() {
       allowCollision: true,
     },
     {
-      name: 'move_up',
+      name: names.MOVE_UP,
       preconditionFn: () => KeyboardMover.mover.isMoving(),
       callback: (_workspace, e) => {
         e.preventDefault();
@@ -473,7 +481,7 @@ export function registerMovementShortcuts() {
       allowCollision: true,
     },
     {
-      name: 'move_down',
+      name: names.MOVE_DOWN,
       preconditionFn: () => KeyboardMover.mover.isMoving(),
       callback: (_workspace, e) => {
         e.preventDefault();
@@ -508,7 +516,7 @@ export function registerShowContextMenu() {
     preconditionFn: (workspace) => {
       return !workspace.isDragging();
     },
-    callback: (workspace, e) => {
+    callback: (_workspace, e) => {
       const target = getFocusManager().getFocusedNode();
       if (hasContextMenu(target)) {
         target.showContextMenu(e);
@@ -519,6 +527,33 @@ export function registerShowContextMenu() {
       return false;
     },
     keyCodes: [ctrlEnter],
+  };
+  ShortcutRegistry.registry.register(contextMenuShortcut);
+}
+
+/**
+ * Registers keyboard shortcut to focus the workspace.
+ */
+export function registerFocusWorkspace() {
+  const resolveWorkspace = (workspace: WorkspaceSvg) => {
+    if (workspace.isFlyout) {
+      const target = workspace.targetWorkspace;
+      if (target) {
+        return resolveWorkspace(target);
+      }
+    }
+    return workspace.getRootWorkspace() ?? workspace;
+  };
+
+  const contextMenuShortcut: KeyboardShortcut = {
+    name: names.FOCUS_WORKSPACE,
+    preconditionFn: () => true,
+    callback: (workspace) => {
+      keyboardNavigationController.setIsActive(true);
+      getFocusManager().focusNode(resolveWorkspace(workspace));
+      return true;
+    },
+    keyCodes: [KeyCodes.W],
   };
   ShortcutRegistry.registry.register(contextMenuShortcut);
 }
@@ -537,8 +572,17 @@ export function registerDefaultShortcuts() {
   registerPaste();
   registerUndo();
   registerRedo();
+}
+
+/**
+ * Registers an extended set of keyboard shortcuts used to support deep keyboard
+ * navigation of Blockly.
+ */
+export function registerKeyboardNavigationShortcuts() {
   registerShowContextMenu();
   registerMovementShortcuts();
+  registerFocusWorkspace();
 }
 
 registerDefaultShortcuts();
+registerKeyboardNavigationShortcuts();
