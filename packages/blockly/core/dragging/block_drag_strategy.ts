@@ -142,10 +142,12 @@ export class BlockDragStrategy implements IDragStrategy {
           json,
           this.block.workspace.targetWorkspace,
           {
-            recordUndo: false,
+            recordUndo: true,
           },
         ) as BlockSvg;
+        eventUtils.setRecordUndo(false);
         this.positionNewBlock(this.block, newBlock);
+        eventUtils.setRecordUndo(true);
 
         return newBlock;
       }
