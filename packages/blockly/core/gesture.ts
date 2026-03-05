@@ -34,9 +34,11 @@ import type {IFlyout} from './interfaces/i_flyout.js';
 import type {IIcon} from './interfaces/i_icon.js';
 import {keyboardNavigationController} from './keyboard_navigation_controller.js';
 import * as registry from './registry.js';
+import * as blocks from './serialization/blocks.js';
 import * as Tooltip from './tooltip.js';
 import * as Touch from './touch.js';
 import {Coordinate} from './utils/coordinate.js';
+import * as svgMath from './utils/svg_math.js';
 import {WorkspaceDragger} from './workspace_dragger.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 
@@ -856,10 +858,24 @@ export class Gesture {
         );
       }
 
-      // Perform a zero-length drag to copy the block out of the flyout.
-      const dragger = this.createDragger(this.targetBlock);
-      dragger.onDragStart();
-      dragger.onDragEnd(undefined, new Coordinate(0, 0));
+      const json = blocks.save(this.targetBlock);
+      const targetWorkspace = this.flyout.targetWorkspace;
+      if (json && targetWorkspace) {
+        const screenCoordinate = svgMath.wsToScreenCoordinates(
+          this.flyout.getWorkspace(),
+          this.targetBlock.getRelativeToSurfaceXY(),
+        );
+        const workspaceCoordinates = svgMath.screenToWsCoordinates(
+          targetWorkspace,
+          screenCoordinate,
+        );
+        json.x = workspaceCoordinates.x;
+        json.y = workspaceCoordinates.y;
+        blocks.appendInternal(json, targetWorkspace, {
+          recordUndo: true,
+        });
+        targetWorkspace.hideChaff(false);
+      }
     } else {
       if (!this.startWorkspace_) {
         throw new Error(
