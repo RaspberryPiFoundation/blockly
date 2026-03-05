@@ -122,10 +122,8 @@ export class BlockDragStrategy implements IDragStrategy {
   }
 
   /**
-   * Returns a block to use for the current drag operation in place of the
-   * current block, or undefined if the current block should be used. This may
-   * create and return a newly instantiated block when e.g. dragging from a
-   * flyout.
+   * Returns the block to use for the current drag operation. This may create
+   * and return a newly instantiated block when e.g. dragging from a flyout.
    */
   protected getTargetBlock() {
     if (this.block.isShadow()) {
@@ -153,7 +151,7 @@ export class BlockDragStrategy implements IDragStrategy {
       }
     }
 
-    return null;
+    return this.block;
   }
 
   /**
@@ -162,7 +160,7 @@ export class BlockDragStrategy implements IDragStrategy {
    */
   startDrag(e?: PointerEvent | KeyboardEvent) {
     const alternateTarget = this.getTargetBlock();
-    if (alternateTarget) {
+    if (alternateTarget !== this.block) {
       return alternateTarget.startDrag(e);
     }
 
