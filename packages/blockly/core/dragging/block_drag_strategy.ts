@@ -123,9 +123,11 @@ export class BlockDragStrategy implements IDragStrategy {
 
   /**
    * Returns a block to use for the current drag operation in place of the
-   * current block, or undefined if the current block should be used.
+   * current block, or undefined if the current block should be used. This may
+   * create and return a newly instantiated block when e.g. dragging from a
+   * flyout.
    */
-  protected swapTargetBlock() {
+  protected getTargetBlock() {
     if (this.block.isShadow()) {
       const parent = this.block.getParent();
       if (parent) {
@@ -157,9 +159,9 @@ export class BlockDragStrategy implements IDragStrategy {
    * from any parent blocks.
    */
   startDrag(e?: PointerEvent | KeyboardEvent) {
-    const alterateTarget = this.swapTargetBlock();
-    if (alterateTarget) {
-      return alterateTarget.startDrag(e);
+    const alternateTarget = this.getTargetBlock();
+    if (alternateTarget) {
+      return alternateTarget.startDrag(e);
     }
 
     this.dragging = true;
