@@ -16,7 +16,8 @@ import {createKeyDownEvent} from './test_helpers/user_input.js';
 suite('Keyboard Shortcut Items', function () {
   setup(function () {
     sharedTestSetup.call(this);
-    this.workspace = Blockly.inject('blocklyDiv', {});
+    const toolbox = document.getElementById('toolbox-categories');
+    this.workspace = Blockly.inject('blocklyDiv', {toolbox});
     this.injectionDiv = this.workspace.getInjectionDiv();
     Blockly.ContextMenuRegistry.registry.reset();
     Blockly.ContextMenuItems.registerDefaultOptions();
@@ -484,6 +485,67 @@ suite('Keyboard Shortcut Items', function () {
         Blockly.ContextMenu.getMenu(),
         'Context menu should not be triggered when a field is focused',
       );
+    });
+  });
+
+  suite('Focus Workspace (W)', function () {
+    setup(function () {
+      this.testFocusChange = (startingElement) => {
+        Blockly.getFocusManager().focusNode(startingElement);
+        assert.strictEqual(
+          Blockly.getFocusManager().getFocusedNode(),
+          startingElement,
+        );
+        const event = createKeyDownEvent(Blockly.utils.KeyCodes.W);
+        this.workspace.getInjectionDiv().dispatchEvent(event);
+        assert.strictEqual(
+          Blockly.getFocusManager().getFocusedNode(),
+          this.workspace,
+        );
+      };
+    });
+
+    test('Does not change focus when workspace is already focused', function () {
+      this.testFocusChange(this.workspace);
+    });
+
+    test('Focuses workspace when toolbox is focused', function () {
+      this.testFocusChange(this.workspace.getToolbox());
+    });
+
+    test('Focuses workspace when flyout is focused', function () {
+      this.workspace.getToolbox().getFlyout().show();
+      const flyoutWorkspace = this.workspace
+        .getToolbox()
+        .getFlyout()
+        .getWorkspace();
+      this.testFocusChange(flyoutWorkspace);
+    });
+
+    test('Focuses workspace when a block is focused', function () {
+      const block = this.workspace.newBlock('controls_if');
+      this.testFocusChange(block);
+    });
+
+    suite('With mutator', function () {
+      test('Focuses root workspace when a mutator block is focused', async function () {
+        const block = this.workspace.newBlock('controls_if');
+        const icon = block.getIcon(Blockly.icons.MutatorIcon.TYPE);
+        await icon.setBubbleVisible(true);
+        const mutatorWorkspace = icon.getWorkspace();
+        this.testFocusChange(mutatorWorkspace.getAllBlocks()[0]);
+      });
+
+      test("Focuses workspace when a mutator's flyout is focused", async function () {
+        const block = this.workspace.newBlock('controls_if');
+        const icon = block.getIcon(Blockly.icons.MutatorIcon.TYPE);
+        await icon.setBubbleVisible(true);
+        const mutatorFlyoutWorkspace = icon
+          .getWorkspace()
+          .getFlyout()
+          .getWorkspace();
+        this.testFocusChange(mutatorFlyoutWorkspace);
+      });
     });
   });
 });
