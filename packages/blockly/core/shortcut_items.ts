@@ -547,7 +547,7 @@ export function registerFocusWorkspace() {
 
   const contextMenuShortcut: KeyboardShortcut = {
     name: names.FOCUS_WORKSPACE,
-    preconditionFn: () => true,
+    preconditionFn: (workspace) => !workspace.isDragging(),
     callback: (workspace) => {
       keyboardNavigationController.setIsActive(true);
       getFocusManager().focusNode(resolveWorkspace(workspace));
