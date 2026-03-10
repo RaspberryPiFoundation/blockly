@@ -111,6 +111,8 @@
     "async-done": "^2.0.0",
     "chai": "^6.0.1",
     "concurrently": "^9.0.1",
+    "conventional-changelog-conventionalcommits": "^7.0.2",
+    "conventional-recommended-bump": "^11.2.0",
     "eslint": "^9.15.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^10.1.1",
