@@ -2,6 +2,12 @@ name: Publish to npm
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -51,6 +57,7 @@ jobs:
           echo "New version: $VERSION"
 
       - name: Commit and push version bump
+        if: ${{ !inputs.dry_run }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -59,18 +66,22 @@ jobs:
           git push
 
       - name: Build package
+        if: ${{ !inputs.dry_run }}
         working-directory: packages/blockly
         run: npm run package
 
       - name: Publish to npm
+        if: ${{ !inputs.dry_run }}
         working-directory: packages/blockly/dist
         run: npm publish
 
       - name: Create tarball
+        if: ${{ !inputs.dry_run }}
         working-directory: packages/blockly
         run: npm pack ./dist
 
       - name: Create GitHub release
+        if: ${{ !inputs.dry_run }}
         working-directory: packages/blockly
         env:
           GH_TOKEN: ${{ github.token }}
