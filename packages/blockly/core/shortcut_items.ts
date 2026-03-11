@@ -402,28 +402,27 @@ export function registerMovementShortcuts() {
     KeyCodes.SHIFT,
   ]);
 
-  const startMoveShortcut: KeyboardShortcut = 
-    {
-      name: names.START_MOVE,
-      preconditionFn: (workspace) => {
-        const startDraggable = getCurrentDraggable(workspace);
-        return !!startDraggable && KeyboardMover.mover.canMove(startDraggable);
-      },
-      callback: (workspace, e) => {
-        keyboardNavigationController.setIsActive(true);
-        const startDraggable = getCurrentDraggable(workspace);
-        // Focus the root draggable in case one of its children
-        // was focused when the move was triggered.
-        if (startDraggable) {
-          getFocusManager().focusNode(startDraggable);
-        }
-        return (
-          !!startDraggable &&
-          KeyboardMover.mover.startMove(startDraggable, e as KeyboardEvent)
-        );
-      },
-      keyCodes: [KeyCodes.M],
-    };
+  const startMoveShortcut: KeyboardShortcut = {
+    name: names.START_MOVE,
+    preconditionFn: (workspace) => {
+      const startDraggable = getCurrentDraggable(workspace);
+      return !!startDraggable && KeyboardMover.mover.canMove(startDraggable);
+    },
+    callback: (workspace, e) => {
+      keyboardNavigationController.setIsActive(true);
+      const startDraggable = getCurrentDraggable(workspace);
+      // Focus the root draggable in case one of its children
+      // was focused when the move was triggered.
+      if (startDraggable) {
+        getFocusManager().focusNode(startDraggable);
+      }
+      return (
+        !!startDraggable &&
+        KeyboardMover.mover.startMove(startDraggable, e as KeyboardEvent)
+      );
+    },
+    keyCodes: [KeyCodes.M],
+  };
   const shortcuts: ShortcutRegistry.KeyboardShortcut[] = [
     startMoveShortcut,
     {

@@ -35,6 +35,13 @@ suite('Keyboard-driven movement', function () {
     workspace.getInjectionDiv().dispatchEvent(event);
   }
 
+  function startMoveStack(workspace) {
+    const event = createKeyDownEvent(Blockly.utils.KeyCodes.M, [
+      Blockly.utils.KeyCodes.SHIFT,
+    ]);
+    workspace.getInjectionDiv().dispatchEvent(event);
+  }
+
   function moveUp(workspace, modifiers) {
     const event = createKeyDownEvent(Blockly.utils.KeyCodes.UP, modifiers);
     workspace.getInjectionDiv().dispatchEvent(event);
@@ -405,6 +412,106 @@ suite('Keyboard-driven movement', function () {
     testAdjustingMoveStepSize();
     testUnrelatedShortcutCommits();
     testExemptedShortcutsAllowed();
+  });
+
+  suite('to disconnect blocks', function () {
+    setup(function () {
+      // Clear workspace and build 3-block stack.
+      this.workspace.clear();
+      this.block1 = this.workspace.newBlock('draw_emoji');
+      this.block1.initSvg();
+      this.block1.render();
+
+      this.block2 = this.workspace.newBlock('draw_emoji');
+      this.block2.initSvg();
+      this.block2.render();
+      this.block1.nextConnection.connect(this.block2.previousConnection);
+
+      this.block3 = this.workspace.newBlock('draw_emoji');
+      this.block3.initSvg();
+      this.block3.render();
+      this.block2.nextConnection.connect(this.block3.previousConnection);
+    });
+
+    test('Top block - M detaches single block', function () {
+      startMove(this.block1, false);
+
+      // Only block1 should be detached; block2/3 remain connected.
+      assert.isNull(this.block1.previousConnection.targetConnection);
+      assert.strictEqual(this.block1.nextConnection.targetBlock(), this.block2);
+      assert.strictEqual(
+        this.block2.previousConnection.targetBlock(),
+        this.block1,
+      );
+    });
+
+    test('Top block - Shift+M detaches full stack', function () {
+      startMoveStack(this.block1, true);
+
+      // All three blocks should be treated as moving together.
+      assert.isNull(this.block1.previousConnection.targetConnection);
+      assert.isNull(this.block2.previousConnection.targetConnection);
+      assert.isNull(this.block3.previousConnection.targetConnection);
+    });
+
+    test('Middle block - M detaches single block', function () {
+      startMove(this.block2, false);
+      assert.strictEqual(this.block1.nextConnection.targetBlock(), this.block3);
+      assert.isNull(this.block2.previousConnection.targetConnection);
+      assert.strictEqual(this.block2.nextConnection.targetBlock(), this.block3);
+    });
+
+    test('Middle block - Shift+M detaches stack from middle down', function () {
+      startMoveStack(this.block2, true);
+      // block2 and block3 detached; block1 stays.
+      assert.strictEqual(this.block1.nextConnection.targetBlock(), null);
+      assert.isNull(this.block2.previousConnection.targetConnection);
+      assert.isNull(this.block3.previousConnection.targetConnection);
+    });
+
+    test('Bottom block - M detaches single block', function () {
+      startMove(this.block3, false);
+      assert.strictEqual(this.block2.nextConnection.targetBlock(), null);
+      assert.isNull(this.block3.previousConnection.targetConnection);
+    });
+
+    test('Bottom block - Shift+M detaches full stack from bottom', function () {
+      startMoveStack(this.block3, true);
+      // Only bottom block is disconnected, behaves same as M
+      assert.strictEqual(this.block2.nextConnection.targetBlock(), null);
+      assert.isNull(this.block3.previousConnection.targetConnection);
+    });
+
+    test('Cancel move restores connections', function () {
+      startMove(this.block2, true);
+      cancelMove(this.block2);
+
+      // Original stack restored
+      assert.strictEqual(this.block1.nextConnection.targetBlock(), this.block2);
+      assert.strictEqual(
+        this.block2.previousConnection.targetBlock(),
+        this.block1,
+      );
+      assert.strictEqual(this.block2.nextConnection.targetBlock(), this.block3);
+      assert.strictEqual(
+        this.block3.previousConnection.targetBlock(),
+        this.block2,
+      );
+
+      startMoveStack(this.block2, true);
+      cancelMove(this.block2);
+      // Original stack restored
+      assert.strictEqual(this.block1.nextConnection.targetBlock(), this.block2);
+      assert.strictEqual(
+        this.block2.previousConnection.targetBlock(),
+        this.block1,
+      );
+      assert.strictEqual(this.block2.nextConnection.targetBlock(), this.block3);
+      assert.strictEqual(
+        this.block3.previousConnection.targetBlock(),
+        this.block2,
+      );
+    });
   });
 
   suite('of blocks', function () {

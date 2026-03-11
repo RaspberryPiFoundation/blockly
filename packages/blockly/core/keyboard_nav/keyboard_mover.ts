@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {BlockSvg} from '../blockly.js';
 import type {IDraggable} from '../interfaces/i_draggable.js';
 import type {IDragger} from '../interfaces/i_dragger.js';
 import * as registry from '../registry.js';
@@ -169,6 +170,10 @@ export class KeyboardMover {
     this.moveIndicator = new MoveIndicator(this.draggable.workspace);
     this.repositionMoveIndicator();
 
+    console.log(
+      (this.draggable as BlockSvg).previousConnection.targetBlock()?.id,
+    );
+    console.log((this.draggable as BlockSvg).nextConnection.targetBlock()?.id);
     return true;
   }
 

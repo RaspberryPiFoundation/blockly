@@ -267,7 +267,7 @@ export class BlockDragStrategy implements IDragStrategy {
       return !e.shiftKey;
     } else {
       return !!this.block.previousConnection;
-      }
+    }
   }
 
   /**
