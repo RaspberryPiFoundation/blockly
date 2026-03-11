@@ -261,9 +261,13 @@ export class BlockDragStrategy implements IDragStrategy {
    *     if all following blocks should also be dragged.
    */
   protected shouldHealStack(e: PointerEvent | KeyboardEvent | undefined) {
-    return e instanceof PointerEvent
-      ? e.ctrlKey || e.metaKey
-      : !!this.block.previousConnection;
+    if (e instanceof PointerEvent) {
+      return e.ctrlKey || e.metaKey;
+    } else if (e instanceof KeyboardEvent) {
+      return !e.shiftKey;
+    } else {
+      return !!this.block.previousConnection;
+      }
   }
 
   /**

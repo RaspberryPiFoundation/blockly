@@ -40,6 +40,7 @@ export enum names {
   MENU = 'menu',
   FOCUS_WORKSPACE = 'focus_workspace',
   START_MOVE = 'start_move',
+  START_MOVE_STACK = 'start_move_stack',
   FINISH_MOVE = 'finish_move',
   ABORT_MOVE = 'abort_move',
   MOVE_UP = 'move_up',
@@ -397,7 +398,11 @@ export function registerMovementShortcuts() {
     return workspace.getCursor().getSourceBlock() ?? undefined;
   };
 
-  const shortcuts: ShortcutRegistry.KeyboardShortcut[] = [
+  const shiftM = ShortcutRegistry.registry.createSerializedKey(KeyCodes.M, [
+    KeyCodes.SHIFT,
+  ]);
+
+  const startMoveShortcut: KeyboardShortcut = 
     {
       name: names.START_MOVE,
       preconditionFn: (workspace) => {
@@ -418,6 +423,13 @@ export function registerMovementShortcuts() {
         );
       },
       keyCodes: [KeyCodes.M],
+    };
+  const shortcuts: ShortcutRegistry.KeyboardShortcut[] = [
+    startMoveShortcut,
+    {
+      ...startMoveShortcut,
+      name: names.START_MOVE_STACK,
+      keyCodes: [shiftM],
     },
     {
       name: names.FINISH_MOVE,
