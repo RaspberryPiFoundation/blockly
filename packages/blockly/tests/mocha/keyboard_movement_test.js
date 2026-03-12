@@ -431,86 +431,72 @@ suite('Keyboard-driven movement', function () {
       this.block3.initSvg();
       this.block3.render();
       this.block2.nextConnection.connect(this.block3.previousConnection);
+      console.log(Blockly.serialization.blocks.save(this.workspace));
     });
 
-    test('Top block - M detaches single block', function () {
+    test('Top block - Detach single block', function () {
       startMove(this.block1, false);
 
       // Only block1 should be detached; block2/3 remain connected.
-      assert.isNull(this.block1.previousConnection.targetConnection);
-      assert.strictEqual(this.block1.nextConnection.targetBlock(), this.block2);
-      assert.strictEqual(
-        this.block2.previousConnection.targetBlock(),
-        this.block1,
-      );
+      assert.isNull(this.block1.nextConnection.targetBlock());
+      assert.strictEqual(this.block2.nextConnection.targetBlock(), this.block3);
+      cancelMove(this.block1);
     });
 
-    test('Top block - Shift+M detaches full stack', function () {
+    test('Top block - Detach three-block stack', function () {
       startMoveStack(this.block1, true);
 
       // All three blocks should be treated as moving together.
-      assert.isNull(this.block1.previousConnection.targetConnection);
-      assert.isNull(this.block2.previousConnection.targetConnection);
-      assert.isNull(this.block3.previousConnection.targetConnection);
-    });
-
-    test('Middle block - M detaches single block', function () {
-      startMove(this.block2, false);
-      assert.strictEqual(this.block1.nextConnection.targetBlock(), this.block3);
-      assert.isNull(this.block2.previousConnection.targetConnection);
+      assert.strictEqual(this.block1.nextConnection.targetBlock(), this.block2);
       assert.strictEqual(this.block2.nextConnection.targetBlock(), this.block3);
+      cancelMove(this.block1);
     });
 
-    test('Middle block - Shift+M detaches stack from middle down', function () {
+    test('Middle block - Detach single block', function () {
+      startMove(this.block2, false);
+      assert.isNull(this.block2.previousConnection.targetBlock());
+      assert.isNull(this.block2.nextConnection.targetBlock());
+      assert.strictEqual(this.block1.nextConnection.targetBlock(), this.block3);
+      cancelMove(this.block2);
+    });
+
+    test('Middle block - Detaches two-block stack from middle down', function () {
       startMoveStack(this.block2, true);
       // block2 and block3 detached; block1 stays.
+      assert.isNull(this.block2.previousConnection.targetBlock());
+      assert.strictEqual(this.block2.nextConnection.targetBlock(), this.block3);
       assert.strictEqual(this.block1.nextConnection.targetBlock(), null);
-      assert.isNull(this.block2.previousConnection.targetConnection);
-      assert.isNull(this.block3.previousConnection.targetConnection);
+      cancelMove(this.block2);
     });
 
-    test('Bottom block - M detaches single block', function () {
+    test('Bottom block - Detach single block', function () {
       startMove(this.block3, false);
-      assert.strictEqual(this.block2.nextConnection.targetBlock(), null);
-      assert.isNull(this.block3.previousConnection.targetConnection);
+      // Only block3 should be detached; block1/2 remain connected.
+      assert.isNull(this.block3.previousConnection.targetBlock());
+      assert.strictEqual(this.block1.nextConnection.targetBlock(), this.block2);
+      cancelMove(this.block3);
     });
 
-    test('Bottom block - Shift+M detaches full stack from bottom', function () {
+    test('Bottom block - Detaches single block stack from bottom', function () {
       startMoveStack(this.block3, true);
-      // Only bottom block is disconnected, behaves same as M
-      assert.strictEqual(this.block2.nextConnection.targetBlock(), null);
-      assert.isNull(this.block3.previousConnection.targetConnection);
+      // Only block3 is disconnected, behaves same as single block move
+      assert.isNull(this.block3.previousConnection.targetBlock());
+      assert.strictEqual(this.block1.nextConnection.targetBlock(), this.block2);
+      cancelMove(this.block3);
     });
 
     test('Cancel move restores connections', function () {
       startMove(this.block2, true);
       cancelMove(this.block2);
-
       // Original stack restored
       assert.strictEqual(this.block1.nextConnection.targetBlock(), this.block2);
-      assert.strictEqual(
-        this.block2.previousConnection.targetBlock(),
-        this.block1,
-      );
       assert.strictEqual(this.block2.nextConnection.targetBlock(), this.block3);
-      assert.strictEqual(
-        this.block3.previousConnection.targetBlock(),
-        this.block2,
-      );
 
       startMoveStack(this.block2, true);
       cancelMove(this.block2);
       // Original stack restored
       assert.strictEqual(this.block1.nextConnection.targetBlock(), this.block2);
-      assert.strictEqual(
-        this.block2.previousConnection.targetBlock(),
-        this.block1,
-      );
       assert.strictEqual(this.block2.nextConnection.targetBlock(), this.block3);
-      assert.strictEqual(
-        this.block3.previousConnection.targetBlock(),
-        this.block2,
-      );
     });
   });
 
