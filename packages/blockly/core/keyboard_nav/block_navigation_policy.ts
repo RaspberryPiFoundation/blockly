@@ -124,22 +124,46 @@ function getBlockNavigationCandidates(
 
   for (const input of block.inputList) {
     if (!input.isVisible()) continue;
+
     candidates.push(...input.fieldRow);
-    if (input.connection?.targetBlock()) {
-      const connectedBlock = input.connection.targetBlock() as BlockSvg;
-      if (input.connection.type === ConnectionType.NEXT_STATEMENT && !forward) {
+
+    const connection = input.connection as RenderedConnection | null;
+    if (!connection) continue;
+
+    const connectedBlock = connection.targetBlock();
+    if (connectedBlock) {
+      if (connection.type === ConnectionType.NEXT_STATEMENT && !forward) {
         const lastStackBlock = connectedBlock
           .lastConnectionInStack(false)
           ?.getSourceBlock();
         if (lastStackBlock) {
-          candidates.push(lastStackBlock);
+          // When navigating backward, the last next connection in a stack in a
+          // statement input is navigable.
+          candidates.push(lastStackBlock.nextConnection);
         }
       } else {
+        // When navigating forward, a child block connected to a statement
+        // input is navigable.
         candidates.push(connectedBlock);
       }
-    } else if (input.connection?.type === ConnectionType.INPUT_VALUE) {
-      candidates.push(input.connection as RenderedConnection);
+    } else if (
+      connection.type === ConnectionType.INPUT_VALUE ||
+      connection.type === ConnectionType.NEXT_STATEMENT
+    ) {
+      // Empty input or statement connections are navigable.
+      candidates.push(connection);
     }
+  }
+
+  if (
+    block.nextConnection &&
+    !block.nextConnection.targetBlock() &&
+    (block.lastConnectionInStack(true) !== block.nextConnection ||
+      !!block.getSurroundParent())
+  ) {
+    // The empty next connection on the last block in a stack inside of a
+    // statement input is navigable.
+    candidates.push(block.nextConnection);
   }
 
   return candidates;
@@ -157,7 +181,8 @@ function getBlockNavigationCandidates(
  * `delta` relative to the current element's stack when navigating backwards.
  */
 export function navigateStacks(current: ISelectable, delta: number) {
-  const stacks: IFocusableNode[] = (current.workspace as WorkspaceSvg)
+  const workspace = current.workspace as WorkspaceSvg;
+  const stacks: IFocusableNode[] = workspace
     .getTopBoundedElements(true)
     .filter((element: IBoundedElement) => isFocusableNode(element));
   const currentIndex = stacks.indexOf(
@@ -174,9 +199,14 @@ export function navigateStacks(current: ISelectable, delta: number) {
   }
 
   // When navigating to a previous block stack, our previous sibling is the last
-  // block in it.
+  // block or nested next connection in it.
   if (delta < 0 && result instanceof BlockSvg) {
-    return result.lastConnectionInStack(false)?.getSourceBlock() ?? result;
+    result = result.lastConnectionInStack(false)?.getSourceBlock() ?? result;
+
+    if (result instanceof BlockSvg && result.statementInputCount > 0) {
+      const candidates = getBlockNavigationCandidates(result, false);
+      result = candidates[candidates.length - 1] ?? result;
+    }
   }
 
   return result;

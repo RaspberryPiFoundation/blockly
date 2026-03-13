@@ -1905,4 +1905,42 @@ export class BlockSvg
   canBeFocused(): boolean {
     return true;
   }
+
+  /**
+   * Returns a set of all of the parent blocks of the given block.
+   *
+   * @internal
+   * @param block The block to retrieve the parents of.
+   * @returns A set of the parents of the given block.
+   */
+  getParents(): Set<BlockSvg> {
+    const parents = new Set<BlockSvg>();
+    let parent = this.getParent();
+    while (parent) {
+      parents.add(parent);
+      parent = parent.getParent();
+    }
+
+    return parents;
+  }
+
+  /**
+   * Returns a set of all of the parent blocks connected to an output of the
+   * given block or one of its parents. Also includes the given block.
+   *
+   * @internal
+   * @param block The block to retrieve the output-connected parents of.
+   * @returns A set of the output-connected parents of the given block.
+   */
+  getOutputParents(): Set<BlockSvg> {
+    const parents = new Set<BlockSvg>();
+    parents.add(this);
+    let parent = this.outputConnection?.targetBlock();
+    while (parent) {
+      parents.add(parent);
+      parent = parent.outputConnection?.targetBlock();
+    }
+
+    return parents;
+  }
 }

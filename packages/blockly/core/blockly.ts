@@ -177,15 +177,12 @@ import {
 import {IVariableMap} from './interfaces/i_variable_map.js';
 import {IVariableModel, IVariableState} from './interfaces/i_variable_model.js';
 import * as internalConstants from './internal_constants.js';
-import {LineCursor} from './keyboard_nav/line_cursor.js';
-import {Marker} from './keyboard_nav/marker.js';
 import {
   KeyboardNavigationController,
   keyboardNavigationController,
 } from './keyboard_navigation_controller.js';
 import type {LayerManager} from './layer_manager.js';
 import * as layers from './layers.js';
-import {MarkerManager} from './marker_manager.js';
 import {Menu} from './menu.js';
 import {MenuItem} from './menuitem.js';
 import {MetricsManager} from './metrics_manager.js';
@@ -471,7 +468,6 @@ export {
   DragTarget,
   Events,
   Extensions,
-  LineCursor,
   Procedures,
   ShortcutItems,
   Themes,
@@ -596,8 +592,6 @@ export {
   KeyboardNavigationController,
   LabelFlyoutInflater,
   LayerManager,
-  Marker,
-  MarkerManager,
   Menu,
   MenuGenerator,
   MenuGeneratorFunction,
