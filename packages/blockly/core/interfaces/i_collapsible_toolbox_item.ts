@@ -6,7 +6,10 @@
 
 // Former goog.module ID: Blockly.ICollapsibleToolboxItem
 
-import type {ISelectableToolboxItem} from './i_selectable_toolbox_item.js';
+import {
+  type ISelectableToolboxItem,
+  isSelectableToolboxItem,
+} from './i_selectable_toolbox_item.js';
 import type {IToolboxItem} from './i_toolbox_item.js';
 
 /**
@@ -30,4 +33,19 @@ export interface ICollapsibleToolboxItem extends ISelectableToolboxItem {
 
   /** Toggles whether or not the toolbox item is expanded. */
   toggleExpanded(): void;
+}
+
+/**
+ * Type guard that checks whether an object is an ICollapsibleToolboxItem.
+ */
+export function isCollapsibleToolboxItem(
+  obj: any,
+): obj is ICollapsibleToolboxItem {
+  return (
+    typeof obj.getChildToolboxItems === 'function' &&
+    typeof obj.isExpanded === 'function' &&
+    typeof obj.toggleExpanded === 'function' &&
+    isSelectableToolboxItem(obj) &&
+    obj.isCollapsible()
+  );
 }

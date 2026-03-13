@@ -5,7 +5,7 @@
  */
 
 import type {IFlyout} from '../interfaces/i_flyout.js';
-import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
+import {type IFocusableNode} from '../interfaces/i_focusable_node.js';
 import type {INavigationPolicy} from '../interfaces/i_navigation_policy.js';
 
 /**
@@ -26,11 +26,11 @@ export class FlyoutNavigationPolicy<T> implements INavigationPolicy<T> {
   /**
    * Returns null to prevent navigating into flyout items.
    *
-   * @param _current The flyout item to navigate from.
+   * @param current The flyout item to navigate from.
    * @returns Null to prevent navigating into flyout items.
    */
-  getFirstChild(_current: T): IFocusableNode | null {
-    return null;
+  getFirstChild(current: T): IFocusableNode | null {
+    return this.policy.getFirstChild(current);
   }
 
   /**
@@ -60,6 +60,12 @@ export class FlyoutNavigationPolicy<T> implements INavigationPolicy<T> {
     if (index === -1) return null;
     index++;
     if (index >= flyoutContents.length) {
+      const loops = this.flyout
+        .getWorkspace()
+        .getNavigator()
+        .getNavigationLoops();
+      if (!loops) return null;
+
       index = 0;
     }
 
@@ -83,6 +89,12 @@ export class FlyoutNavigationPolicy<T> implements INavigationPolicy<T> {
     if (index === -1) return null;
     index--;
     if (index < 0) {
+      const loops = this.flyout
+        .getWorkspace()
+        .getNavigator()
+        .getNavigationLoops();
+      if (!loops) return null;
+
       index = flyoutContents.length - 1;
     }
 
@@ -96,7 +108,13 @@ export class FlyoutNavigationPolicy<T> implements INavigationPolicy<T> {
    * @returns True if the given flyout item can be focused.
    */
   isNavigable(current: T): boolean {
-    return this.policy.isNavigable(current);
+    return (
+      this.policy.isNavigable(current) &&
+      this.flyout
+        .getContents()
+        .map((item) => item.getElement())
+        .includes(current as any)
+    );
   }
 
   /**

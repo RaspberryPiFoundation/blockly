@@ -7,6 +7,7 @@
 // Former goog.module ID: Blockly.IToolboxItem
 
 import type {IFocusableNode} from './i_focusable_node.js';
+import type {IToolbox} from './i_toolbox.js';
 
 /**
  * Interface for an item in the toolbox.
@@ -80,4 +81,26 @@ export interface IToolboxItem extends IFocusableNode {
    * @param isVisible True if category should be visible.
    */
   setVisible_(isVisible: boolean): void;
+
+  getParentToolbox(): IToolbox;
+}
+
+/**
+ * Type guard that checks whether an object is an IToolboxItem.
+ */
+export function isToolboxItem(obj: any): obj is IToolboxItem {
+  return (
+    obj &&
+    typeof obj.init === 'function' &&
+    typeof obj.getDiv === 'function' &&
+    typeof obj.getId === 'function' &&
+    typeof obj.getParent === 'function' &&
+    typeof obj.getLevel === 'function' &&
+    typeof obj.isSelectable === 'function' &&
+    typeof obj.isCollapsible === 'function' &&
+    typeof obj.dispose === 'function' &&
+    typeof obj.getClickTarget === 'function' &&
+    typeof obj.setVisible_ === 'function' &&
+    typeof obj.getParentToolbox === 'function'
+  );
 }
