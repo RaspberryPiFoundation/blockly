@@ -416,8 +416,6 @@ suite('Keyboard-driven movement', function () {
 
   suite('to disconnect blocks', function () {
     setup(function () {
-      // Clear workspace and build 3-block stack.
-      this.workspace.clear();
       this.block1 = this.workspace.newBlock('draw_emoji');
       this.block1.initSvg();
       this.block1.render();
@@ -446,6 +444,7 @@ suite('Keyboard-driven movement', function () {
     test('from middle block - Detaches single block', function () {
       Blockly.getFocusManager().focusNode(this.block2);
       startMove(this.workspace);
+      assert.isNull(this.block2.previousConnection.targetBlock());
       assert.isNull(this.block2.nextConnection.targetBlock());
       assert.equal(this.block1.isDragging(), false);
       assert.equal(this.block2.isDragging(), true);
@@ -456,7 +455,7 @@ suite('Keyboard-driven movement', function () {
     test('from bottom block - Detaches single block', function () {
       Blockly.getFocusManager().focusNode(this.block3);
       startMove(this.workspace);
-      assert.isNull(this.block3.nextConnection.targetBlock());
+      assert.isNull(this.block3.previousConnection.targetBlock());
       assert.equal(this.block1.isDragging(), false);
       assert.equal(this.block2.isDragging(), false);
       assert.equal(this.block3.isDragging(), true);
@@ -477,6 +476,7 @@ suite('Keyboard-driven movement', function () {
     test('from middle block - Detaches two-block stack from middle down', function () {
       Blockly.getFocusManager().focusNode(this.block2);
       startMoveStack(this.workspace);
+      assert.isNull(this.block2.previousConnection.targetBlock());
       assert.strictEqual(this.block2.nextConnection.targetBlock(), this.block3);
       assert.equal(this.block1.isDragging(), false);
       assert.equal(this.block2.isDragging(), true);
@@ -487,7 +487,7 @@ suite('Keyboard-driven movement', function () {
     test('from bottom block - Detaches single-block stack from bottom', function () {
       Blockly.getFocusManager().focusNode(this.block3);
       startMoveStack(this.workspace);
-      assert.isNull(this.block3.nextConnection.targetBlock());
+      assert.isNull(this.block3.previousConnection.targetBlock());
       assert.equal(this.block1.isDragging(), false);
       assert.equal(this.block2.isDragging(), false);
       assert.equal(this.block3.isDragging(), true);
