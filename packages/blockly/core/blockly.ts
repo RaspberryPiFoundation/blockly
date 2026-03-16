@@ -177,6 +177,7 @@ import {
 import {IVariableMap} from './interfaces/i_variable_map.js';
 import {IVariableModel, IVariableState} from './interfaces/i_variable_model.js';
 import * as internalConstants from './internal_constants.js';
+import {ToolboxNavigator} from './keyboard_nav/navigators/toolbox_navigator.js';
 import {
   KeyboardNavigationController,
   keyboardNavigationController,
@@ -613,6 +614,7 @@ export {
   Toolbox,
   ToolboxCategory,
   ToolboxItem,
+  ToolboxNavigator,
   ToolboxSeparator,
   Trashcan,
   UnattachedFieldError,
