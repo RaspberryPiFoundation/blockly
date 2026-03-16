@@ -607,6 +607,7 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
           (node instanceof BlockSvg && node.isSimpleReporter())) &&
         node !== this.getSourceBlock();
 
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
       let target: IFocusableNode | null | undefined = this;
       do {
         target = e.shiftKey
