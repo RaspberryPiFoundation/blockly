@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {RenderedWorkspaceComment} from '../comments/rendered_workspace_comment.js';
-import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
-import type {INavigationPolicy} from '../interfaces/i_navigation_policy.js';
+import {RenderedWorkspaceComment} from '../../comments/rendered_workspace_comment.js';
+import type {IFocusableNode} from '../../interfaces/i_focusable_node.js';
+import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
 import {navigateStacks} from './block_navigation_policy.js';
 
 /**

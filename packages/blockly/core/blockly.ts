@@ -437,16 +437,22 @@ Names.prototype.populateProcedures = function (
 };
 // clang-format on
 
-export * from './flyout_navigator.js';
 export * from './interfaces/i_navigation_policy.js';
-export * from './keyboard_nav/block_navigation_policy.js';
-export * from './keyboard_nav/connection_navigation_policy.js';
-export * from './keyboard_nav/field_navigation_policy.js';
-export * from './keyboard_nav/flyout_button_navigation_policy.js';
-export * from './keyboard_nav/flyout_navigation_policy.js';
-export * from './keyboard_nav/flyout_separator_navigation_policy.js';
-export * from './keyboard_nav/workspace_navigation_policy.js';
-export * from './navigator.js';
+export * from './keyboard_nav/navigation_policies/block_comment_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/block_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/comment_bar_button_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/comment_editor_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/connection_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/field_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/flyout_button_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/flyout_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/flyout_separator_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/icon_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/toolbox_item_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/workspace_comment_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/workspace_navigation_policy.js';
+export * from './keyboard_nav/navigators/flyout_navigator.js';
+export * from './keyboard_nav/navigators/navigator.js';
 export * from './toast.js';
 
 // Re-export submodules that no longer declareLegacyNamespace.

@@ -4,24 +4,24 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {BlockSvg} from './block_svg.js';
-import {RenderedWorkspaceComment} from './comments/rendered_workspace_comment.js';
-import {ConnectionType} from './connection_type.js';
-import {Field} from './field.js';
-import {getFocusManager} from './focus_manager.js';
-import {Icon} from './icons/icon.js';
-import type {IFocusableNode} from './interfaces/i_focusable_node.js';
-import type {INavigationPolicy} from './interfaces/i_navigation_policy.js';
-import {BlockCommentNavigationPolicy} from './keyboard_nav/block_comment_navigation_policy.js';
-import {BlockNavigationPolicy} from './keyboard_nav/block_navigation_policy.js';
-import {CommentBarButtonNavigationPolicy} from './keyboard_nav/comment_bar_button_navigation_policy.js';
-import {CommentEditorNavigationPolicy} from './keyboard_nav/comment_editor_navigation_policy.js';
-import {ConnectionNavigationPolicy} from './keyboard_nav/connection_navigation_policy.js';
-import {FieldNavigationPolicy} from './keyboard_nav/field_navigation_policy.js';
-import {IconNavigationPolicy} from './keyboard_nav/icon_navigation_policy.js';
-import {WorkspaceCommentNavigationPolicy} from './keyboard_nav/workspace_comment_navigation_policy.js';
-import {WorkspaceNavigationPolicy} from './keyboard_nav/workspace_navigation_policy.js';
-import {RenderedConnection} from './rendered_connection.js';
+import {BlockSvg} from '../../block_svg.js';
+import {RenderedWorkspaceComment} from '../../comments/rendered_workspace_comment.js';
+import {ConnectionType} from '../../connection_type.js';
+import {Field} from '../../field.js';
+import {getFocusManager} from '../../focus_manager.js';
+import {Icon} from '../../icons/icon.js';
+import type {IFocusableNode} from '../../interfaces/i_focusable_node.js';
+import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
+import {RenderedConnection} from '../../rendered_connection.js';
+import {BlockCommentNavigationPolicy} from '../navigation_policies/block_comment_navigation_policy.js';
+import {BlockNavigationPolicy} from '../navigation_policies/block_navigation_policy.js';
+import {CommentBarButtonNavigationPolicy} from '../navigation_policies/comment_bar_button_navigation_policy.js';
+import {CommentEditorNavigationPolicy} from '../navigation_policies/comment_editor_navigation_policy.js';
+import {ConnectionNavigationPolicy} from '../navigation_policies/connection_navigation_policy.js';
+import {FieldNavigationPolicy} from '../navigation_policies/field_navigation_policy.js';
+import {IconNavigationPolicy} from '../navigation_policies/icon_navigation_policy.js';
+import {WorkspaceCommentNavigationPolicy} from '../navigation_policies/workspace_comment_navigation_policy.js';
+import {WorkspaceNavigationPolicy} from '../navigation_policies/workspace_navigation_policy.js';
 
 type RuleList<T> = INavigationPolicy<T>[];
 

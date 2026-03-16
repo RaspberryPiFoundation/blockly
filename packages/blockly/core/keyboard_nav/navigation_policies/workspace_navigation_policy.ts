@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
-import type {INavigationPolicy} from '../interfaces/i_navigation_policy.js';
-import {WorkspaceSvg} from '../workspace_svg.js';
+import type {IFocusableNode} from '../../interfaces/i_focusable_node.js';
+import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
+import {WorkspaceSvg} from '../../workspace_svg.js';
 
 /**
  * Set of rules controlling keyboard navigation from a workspace.

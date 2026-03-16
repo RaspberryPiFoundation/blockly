@@ -8,8 +8,8 @@ import {getFocusManager} from '../../focus_manager.js';
 import type {IFocusableNode} from '../../interfaces/i_focusable_node.js';
 import {isSelectableToolboxItem} from '../../interfaces/i_selectable_toolbox_item.js';
 import type {IToolbox} from '../../interfaces/i_toolbox.js';
-import {NavigationDirection, Navigator} from '../../navigator.js';
-import {ToolboxItemNavigationPolicy} from '../toolbox_item_navigation_policy.js';
+import {ToolboxItemNavigationPolicy} from '../navigation_policies/toolbox_item_navigation_policy.js';
+import {NavigationDirection, Navigator} from './navigator.js';
 
 /**
  * Navigator that handles keyboard navigation within a toolbox.

@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {IFocusableNode} from './blockly.js';
-import type {IFlyout} from './interfaces/i_flyout.js';
-import {FlyoutButtonNavigationPolicy} from './keyboard_nav/flyout_button_navigation_policy.js';
-import {FlyoutNavigationPolicy} from './keyboard_nav/flyout_navigation_policy.js';
-import {FlyoutSeparatorNavigationPolicy} from './keyboard_nav/flyout_separator_navigation_policy.js';
+import {IFocusableNode} from '../../blockly.js';
+import type {IFlyout} from '../../interfaces/i_flyout.js';
+import {FlyoutButtonNavigationPolicy} from '../navigation_policies/flyout_button_navigation_policy.js';
+import {FlyoutNavigationPolicy} from '../navigation_policies/flyout_navigation_policy.js';
+import {FlyoutSeparatorNavigationPolicy} from '../navigation_policies/flyout_separator_navigation_policy.js';
 import {NavigationDirection, Navigator} from './navigator.js';
 
 /**

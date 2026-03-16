@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type {IFlyout} from '../interfaces/i_flyout.js';
-import {type IFocusableNode} from '../interfaces/i_focusable_node.js';
-import type {INavigationPolicy} from '../interfaces/i_navigation_policy.js';
+import type {IFlyout} from '../../interfaces/i_flyout.js';
+import {type IFocusableNode} from '../../interfaces/i_focusable_node.js';
+import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
 
 /**
  * Generic navigation policy that navigates between items in the flyout.

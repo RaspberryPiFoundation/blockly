@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {BlockSvg} from '../block_svg.js';
-import {getFocusManager} from '../focus_manager.js';
-import {CommentIcon} from '../icons/comment_icon.js';
-import {Icon} from '../icons/icon.js';
-import {MutatorIcon} from '../icons/mutator_icon.js';
-import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
-import type {INavigationPolicy} from '../interfaces/i_navigation_policy.js';
+import {BlockSvg} from '../../block_svg.js';
+import {getFocusManager} from '../../focus_manager.js';
+import {CommentIcon} from '../../icons/comment_icon.js';
+import {Icon} from '../../icons/icon.js';
+import {MutatorIcon} from '../../icons/mutator_icon.js';
+import type {IFocusableNode} from '../../interfaces/i_focusable_node.js';
+import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
 import {navigateBlock} from './block_navigation_policy.js';
 
 /**

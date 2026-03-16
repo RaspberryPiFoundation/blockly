@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {TextInputBubble} from '../bubbles/textinput_bubble.js';
-import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
-import type {INavigationPolicy} from '../interfaces/i_navigation_policy.js';
+import {TextInputBubble} from '../../bubbles/textinput_bubble.js';
+import type {IFocusableNode} from '../../interfaces/i_focusable_node.js';
+import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
 
 /**
  * Set of rules controlling keyboard navigation from an TextInputBubble.

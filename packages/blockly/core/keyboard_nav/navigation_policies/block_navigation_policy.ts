@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {BlockSvg} from '../block_svg.js';
-import {ConnectionType} from '../connection_type.js';
-import type {Field} from '../field.js';
-import type {Icon} from '../icons/icon.js';
-import type {IBoundedElement} from '../interfaces/i_bounded_element.js';
-import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
-import {isFocusableNode} from '../interfaces/i_focusable_node.js';
-import type {INavigationPolicy} from '../interfaces/i_navigation_policy.js';
-import type {ISelectable} from '../interfaces/i_selectable.js';
-import {RenderedConnection} from '../rendered_connection.js';
-import {WorkspaceSvg} from '../workspace_svg.js';
+import {BlockSvg} from '../../block_svg.js';
+import {ConnectionType} from '../../connection_type.js';
+import type {Field} from '../../field.js';
+import type {Icon} from '../../icons/icon.js';
+import type {IBoundedElement} from '../../interfaces/i_bounded_element.js';
+import type {IFocusableNode} from '../../interfaces/i_focusable_node.js';
+import {isFocusableNode} from '../../interfaces/i_focusable_node.js';
+import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
+import type {ISelectable} from '../../interfaces/i_selectable.js';
+import {RenderedConnection} from '../../rendered_connection.js';
+import {WorkspaceSvg} from '../../workspace_svg.js';
 
 /**
  * Set of rules controlling keyboard navigation from a block.

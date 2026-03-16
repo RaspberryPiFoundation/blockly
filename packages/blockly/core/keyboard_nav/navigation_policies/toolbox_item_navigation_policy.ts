@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {isCollapsibleToolboxItem} from '../interfaces/i_collapsible_toolbox_item.js';
-import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
-import type {INavigationPolicy} from '../interfaces/i_navigation_policy.js';
+import {isCollapsibleToolboxItem} from '../../interfaces/i_collapsible_toolbox_item.js';
+import type {IFocusableNode} from '../../interfaces/i_focusable_node.js';
+import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
 import {
   isToolboxItem,
   type IToolboxItem,
-} from '../interfaces/i_toolbox_item.js';
+} from '../../interfaces/i_toolbox_item.js';
 
 /**
  * Set of rules controlling keyboard navigation from a toolbox item.

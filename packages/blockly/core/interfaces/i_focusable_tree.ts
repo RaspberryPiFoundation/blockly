@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type {Navigator} from '../navigator.js';
+import type {Navigator} from '../keyboard_nav/navigators/navigator';
 import type {IFocusableNode} from './i_focusable_node.js';
 
 /**
