@@ -531,7 +531,7 @@ suite('Keyboard-driven movement', function () {
       testExemptedShortcutsAllowed();
     });
 
-    suite.only('in constrained mode', function () {
+    suite('in constrained mode', function () {
       test('prompts to use unconstrained mode when no destinations are available', function () {
         const toastSpy = sinon.spy(Blockly.Toast, 'show');
         const beepSpy = sinon.spy(this.workspace.getAudioManager(), 'beep');
