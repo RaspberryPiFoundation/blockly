@@ -21,6 +21,9 @@ suite('Keyboard Shortcut Registry Test', function () {
   });
   teardown(function () {
     sharedTestTeardown.call(this);
+    this.registry.reset();
+    Blockly.ShortcutItems.registerDefaultShortcuts();
+    Blockly.ShortcutItems.registerKeyboardNavigationShortcuts();
   });
 
   suite('Registering', function () {
@@ -528,6 +531,4 @@ suite('Keyboard Shortcut Registry Test', function () {
       assert.throws(shouldThrow, Error, 's is not a valid modifier key.');
     });
   });
-
-  teardown(function () {});
 });

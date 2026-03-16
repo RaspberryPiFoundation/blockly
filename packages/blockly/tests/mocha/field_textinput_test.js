@@ -447,6 +447,7 @@ suite('Text Input Fields', function () {
           this.workspace.getBlockById('right_input_block');
         const leftField = this.getFieldFromShadowBlock(leftInputBlock);
         const rightField = this.getFieldFromShadowBlock(rightInputBlock);
+        Blockly.getFocusManager().focusNode(leftField);
         leftField.showEditor();
         // This must be called to avoid editor resize logic throwing an error.
         await Blockly.renderManagement.finishQueuedRenders();
@@ -530,6 +531,7 @@ suite('Text Input Fields', function () {
           this.workspace.getBlockById('right_input_block');
         const leftField = this.getFieldFromShadowBlock(leftInputBlock);
         const rightField = this.getFieldFromShadowBlock(rightInputBlock);
+        Blockly.getFocusManager().focusNode(leftField);
         leftField.showEditor();
         // This must be called to avoid editor resize logic throwing an error.
         await Blockly.renderManagement.finishQueuedRenders();
