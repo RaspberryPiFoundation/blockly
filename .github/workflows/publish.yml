@@ -40,7 +40,7 @@ jobs:
         id: bump
         working-directory: packages/blockly
         run: |
-          RELEASE_TYPE=$(npx conventional-recommended-bump --preset conventionalcommits)
+          RELEASE_TYPE=$(npx conventional-recommended-bump --preset conventionalcommits -t blockly-)
           echo "release_type=$RELEASE_TYPE" >> "$GITHUB_OUTPUT"
           echo "Recommended bump: $RELEASE_TYPE"
 
