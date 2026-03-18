@@ -380,7 +380,7 @@ export class BlockDragStrategy implements IDragStrategy {
 
       if (this.moveMode === MoveMode.CONSTRAINED) {
         showUnconstrainedMoveHint(this.workspace, true);
-        this.workspace.getAudioManager().beep(260);
+        this.workspace.getAudioManager().playErrorBeep();
       }
     }
   }
