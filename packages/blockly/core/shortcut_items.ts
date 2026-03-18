@@ -649,7 +649,7 @@ export function registerFocusWorkspace() {
     return workspace.getRootWorkspace() ?? workspace;
   };
 
-  const contextMenuShortcut: KeyboardShortcut = {
+  const focusWorkspaceShortcut: KeyboardShortcut = {
     name: names.FOCUS_WORKSPACE,
     preconditionFn: (workspace) => !workspace.isDragging(),
     callback: (workspace) => {
@@ -659,14 +659,14 @@ export function registerFocusWorkspace() {
     },
     keyCodes: [KeyCodes.W],
   };
-  ShortcutRegistry.registry.register(contextMenuShortcut);
+  ShortcutRegistry.registry.register(focusWorkspaceShortcut);
 }
 
 /**
  * Registers keyboard shortcut to focus the toolbox.
  */
 export function registerFocusToolbox() {
-  const contextMenuShortcut: KeyboardShortcut = {
+  const focusToolboxShortcut: KeyboardShortcut = {
     name: names.FOCUS_TOOLBOX,
     preconditionFn: (workspace) => !workspace.isDragging(),
     callback: (workspace) => {
@@ -679,7 +679,7 @@ export function registerFocusToolbox() {
     },
     keyCodes: [KeyCodes.T],
   };
-  ShortcutRegistry.registry.register(contextMenuShortcut);
+  ShortcutRegistry.registry.register(focusToolboxShortcut);
 }
 
 /**
