@@ -671,11 +671,18 @@ export function registerFocusToolbox() {
     preconditionFn: (workspace) => !workspace.isDragging(),
     callback: (workspace) => {
       const toolbox = workspace.getToolbox();
-      if (!toolbox) return false;
+      if (toolbox) {
+        keyboardNavigationController.setIsActive(true);
+        getFocusManager().focusTree(toolbox);
+        return true;
+      } else {
+        const flyout = workspace.getFlyout();
+        if (!flyout) return false;
 
-      keyboardNavigationController.setIsActive(true);
-      getFocusManager().focusTree(toolbox);
-      return true;
+        keyboardNavigationController.setIsActive(true);
+        getFocusManager().focusTree(flyout.getWorkspace());
+        return true;
+      }
     },
     keyCodes: [KeyCodes.T],
   };
