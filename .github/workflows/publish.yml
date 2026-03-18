@@ -17,10 +17,12 @@ jobs:
   ci:
     uses: ./.github/workflows/build.yml
 
-  publish:
+  version:
     needs: ci
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -56,38 +58,69 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "New version: $VERSION"
 
+      - name: Update lockfile
+        run: npm install
+
+      - name: Upload versioned files
+        uses: actions/upload-artifact@v4
+        with:
+          name: versioned-files
+          path: |
+            packages/blockly/package.json
+            package-lock.json
+
+  publish:
+    needs: version
+    runs-on: ubuntu-latest
+    if: ${{ !inputs.dry_run }}
+    environment: release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Download versioned files
+        uses: actions/download-artifact@v4
+        with:
+          name: versioned-files
+
       - name: Commit and push version bump
-        if: ${{ !inputs.dry_run }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add packages/blockly/package.json package-lock.json
-          git commit -m "chore: release v${{ steps.version.outputs.version }}"
+          git commit -m "release: v${{ needs.version.outputs.version }}"
           git push
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22.x
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Build package
-        if: ${{ !inputs.dry_run }}
         working-directory: packages/blockly
         run: npm run package
 
       - name: Publish to npm
-        if: ${{ !inputs.dry_run }}
         working-directory: packages/blockly/dist
         run: npm publish
 
       - name: Create tarball
-        if: ${{ !inputs.dry_run }}
         working-directory: packages/blockly
         run: npm pack ./dist
 
       - name: Create GitHub release
-        if: ${{ !inputs.dry_run }}
         working-directory: packages/blockly
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TARBALL=$(ls blockly-*.tgz)
-          gh release create "blockly-v${{ steps.version.outputs.version }}" "$TARBALL" \
+          TARBALL="blockly-${{ needs.version.outputs.version }}.tgz"
+          gh release create "blockly-v${{ needs.version.outputs.version }}" "$TARBALL" \
             --repo "$GITHUB_REPOSITORY" \
-            --title "blockly-v${{ steps.version.outputs.version }}" \
+            --title "blockly-v${{ needs.version.outputs.version }}" \
             --generate-notes
