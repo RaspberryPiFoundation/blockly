@@ -6,6 +6,7 @@
 
 import type {BlocklyOptions} from '../blockly_options.js';
 import {Abstract as AbstractEvent} from '../events/events_abstract.js';
+import {getFocusManager} from '../focus_manager.js';
 import {KeyboardMover} from '../keyboard_nav/keyboard_mover.js';
 import {Options} from '../options.js';
 import {Coordinate} from '../utils/coordinate.js';
@@ -286,5 +287,13 @@ export class MiniWorkspaceBubble extends Bubble {
       'The implementation of newWorkspaceSvg should be ' +
         'monkey-patched in by blockly.ts',
     );
+  }
+
+  /**
+   * Handles the user acting on this bubble via keyboard navigation by focusing
+   * the mutator workspace.
+   */
+  performAction() {
+    getFocusManager().focusTree(this.getWorkspace());
   }
 }

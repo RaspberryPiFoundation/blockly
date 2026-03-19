@@ -425,5 +425,7 @@
 	"WORKSPACE_CONTENTS_BLOCKS_ONE": "One stack of blocks%2 in workspace.",
 	"WORKSPACE_CONTENTS_BLOCKS_ZERO": "No blocks%2 in workspace.",
 	"WORKSPACE_CONTENTS_COMMENTS_MANY": " and %1 comments",
-	"WORKSPACE_CONTENTS_COMMENTS_ONE": " and one comment"
+	"WORKSPACE_CONTENTS_COMMENTS_ONE": " and one comment",
+	"KEYBOARD_NAV_BLOCK_NAVIGATION_HINT": "Use the right arrow key to navigate inside of blocks",
+	"KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT": "Use the arrow keys to navigate"
 }

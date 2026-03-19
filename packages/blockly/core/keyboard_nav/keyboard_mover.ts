@@ -102,7 +102,7 @@ export class KeyboardMover {
    * @param event The keyboard event that triggered this move.
    * @returns True iff a move has successfully begun.
    */
-  startMove(draggable: IDraggable, event: KeyboardEvent) {
+  startMove(draggable: IDraggable, event?: KeyboardEvent) {
     if (!this.canMove(draggable) || this.isMoving()) return false;
 
     const DraggerClass = registry.getClassFromOptions(

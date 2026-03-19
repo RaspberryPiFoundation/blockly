@@ -1718,3 +1718,9 @@ Blockly.Msg.WORKSPACE_CONTENTS_COMMENTS_MANY = ' and %1 comments';
 /** @type {string} */
 /// ARIA live region phrase appended when there is exactly one workspace comment.
 Blockly.Msg.WORKSPACE_CONTENTS_COMMENTS_ONE = ' and one comment';
+/** @type {string} */
+/// Message shown when a user presses Enter with a navigable block focused.
+Blockly.Msg.KEYBOARD_NAV_BLOCK_NAVIGATION_HINT = 'Use the right arrow key to navigate inside of blocks';
+/** @type {string} */
+/// Message shown when a user presses Enter with the workspace focused.
+Blockly.Msg.KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT = 'Use the arrow keys to navigate';

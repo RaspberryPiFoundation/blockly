@@ -6,11 +6,15 @@
 
 import {Msg} from './msg.js';
 import {Toast} from './toast.js';
+import {getShortActionShortcut} from './utils/shortcut_formatting.js';
 import * as userAgent from './utils/useragent.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 
 const unconstrainedMoveHintId = 'unconstrainedMoveHint';
 const constrainedMoveHintId = 'constrainedMoveHint';
+const helpHintId = 'helpHint';
+const blockNavigationHintId = 'blockNavigationHint';
+const workspaceNavigationHintId = 'workspaceNavigationHint';
 
 /**
  * Nudge the user to use unconstrained movement.
@@ -61,4 +65,38 @@ export function showConstrainedMovementHint(workspace: WorkspaceSvg) {
 export function clearMoveHints(workspace: WorkspaceSvg) {
   Toast.hide(workspace, constrainedMoveHintId);
   Toast.hide(workspace, unconstrainedMoveHintId);
+}
+
+/**
+ * Nudge the user to open the help.
+ *
+ * @param workspace The workspace.
+ */
+export function showHelpHint(workspace: WorkspaceSvg) {
+  const shortcut = getShortActionShortcut('list_shortcuts');
+  const message = Msg['HELP_PROMPT'].replace('%1', shortcut);
+  const id = helpHintId;
+  Toast.show(workspace, {message, id});
+}
+
+/**
+ * Tell the user how to navigate inside blocks.
+ *
+ * @param workspace The workspace.
+ */
+export function showBlockNavigationHint(workspace: WorkspaceSvg) {
+  const message = Msg['KEYBOARD_NAV_BLOCK_NAVIGATION_HINT'];
+  const id = blockNavigationHintId;
+  Toast.show(workspace, {message, id});
+}
+
+/**
+ * Tell the user how to navigate inside the workspace.
+ *
+ * @param workspace The workspace.
+ */
+export function showWorkspaceNavigationHint(workspace: WorkspaceSvg) {
+  const message = Msg['KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT'];
+  const id = workspaceNavigationHintId;
+  Toast.show(workspace, {message, id});
 }

@@ -35,6 +35,7 @@ import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
 import {FieldLabel} from './field_label.js';
 import {getFocusManager} from './focus_manager.js';
+import * as hints from './hints.js';
 import {IconType} from './icons/icon_types.js';
 import {MutatorIcon} from './icons/mutator_icon.js';
 import {WarningIcon} from './icons/warning_icon.js';
@@ -52,6 +53,7 @@ import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
 import {IIcon} from './interfaces/i_icon.js';
 import * as internalConstants from './internal_constants.js';
+import {KeyboardMover} from './keyboard_nav/keyboard_mover.js';
 import {Msg} from './msg.js';
 import * as renderManagement from './render_management.js';
 import {RenderedConnection} from './rendered_connection.js';
@@ -1901,6 +1903,34 @@ export class BlockSvg
   /** See IFocusableNode.canBeFocused. */
   canBeFocused(): boolean {
     return true;
+  }
+
+  /**
+   * Handles the user acting on this block via keyboard navigation.
+   * If this block is in the flyout, a new copy is spawned in move mode on the
+   * main workspace. If this block has a single full-block field, that field
+   * will be focused. Otherwise, this is a no-op.
+   */
+  performAction() {
+    if (this.workspace.isFlyout) {
+      KeyboardMover.mover.startMove(this);
+      return;
+    } else if (this.isSimpleReporter()) {
+      for (const input of this.inputList) {
+        for (const field of input.fieldRow) {
+          if (field.isClickable() && field.isFullBlockField()) {
+            field.showEditor();
+            return;
+          }
+        }
+      }
+    }
+
+    if (this.workspace.getNavigator().getFirstChild(this)) {
+      hints.showBlockNavigationHint(this.workspace);
+    } else {
+      hints.showHelpHint(this.workspace);
+    }
   }
 
   /**

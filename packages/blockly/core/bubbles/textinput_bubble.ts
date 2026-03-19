@@ -279,6 +279,14 @@ export class TextInputBubble extends Bubble {
   getEditor() {
     return this.editor;
   }
+
+  /**
+   * Handles the user acting on this bubble via keyboard navigation by focusing
+   * the comment editor.
+   */
+  performAction() {
+    getFocusManager().focusNode(this.getEditor());
+  }
 }
 
 Css.register(`

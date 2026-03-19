@@ -1396,6 +1396,14 @@ export abstract class Field<T = any>
   }
 
   /**
+   * Handles the user acting on this field via keyboard navigation.
+   * Shows and focuses the field editor.
+   */
+  performAction() {
+    this.showEditor();
+  }
+
+  /**
    * Subclasses should reimplement this method to construct their Field
    * subclass from a JSON arg object.
    *

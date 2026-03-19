@@ -358,4 +358,13 @@ export class RenderedWorkspaceComment
   canBeFocused(): boolean {
     return true;
   }
+
+  /**
+   * Handles the user acting on this comment via keyboard navigation.
+   * Expands the comment and focuses its editor.
+   */
+  performAction() {
+    this.setCollapsed(false);
+    getFocusManager().focusNode(this.getEditorFocusableNode());
+  }
 }

@@ -432,5 +432,7 @@
 	"WORKSPACE_CONTENTS_BLOCKS_ONE": "ARIA live region message announcing there is one stack of blocks in the workspace, optionally including a count of comments. \n\nParameters:\n* %2 - optional phrase announcing comments, including leading space \n\nExamples:\n* 'One stack of blocks in workspace.'\n* 'One stack of blocks and 1 comment in workspace.'",
 	"WORKSPACE_CONTENTS_BLOCKS_ZERO": "ARIA live region message announcing there are no blocks in the workspace, optionally including a count of comments. \n\nParameters:\n* %2 - optional phrase announcing comments, including leading space \n\nExamples:\n* 'No blocks in workspace.'\n* 'No blocks and 3 comments in workspace.'",
 	"WORKSPACE_CONTENTS_COMMENTS_MANY": "ARIA live region phrase appended when there are multiple workspace comments. \n\nParameters:\n* %1 - the number of comments (integer greater than 1)",
-	"WORKSPACE_CONTENTS_COMMENTS_ONE": "ARIA live region phrase appended when there is exactly one workspace comment."
+	"WORKSPACE_CONTENTS_COMMENTS_ONE": "ARIA live region phrase appended when there is exactly one workspace comment.",
+	"KEYBOARD_NAV_BLOCK_NAVIGATION_HINT": "Message shown when a user presses Enter with a navigable block focused.",
+	"KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT": "Message shown when a user presses Enter with the workspace focused."
 }

@@ -7,10 +7,12 @@
 import type {Block} from '../block.js';
 import type {BlockSvg} from '../block_svg.js';
 import * as browserEvents from '../browser_events.js';
+import {getFocusManager} from '../focus_manager.js';
 import type {IContextMenu} from '../interfaces/i_contextmenu.js';
 import type {IFocusableTree} from '../interfaces/i_focusable_tree.js';
 import {hasBubble} from '../interfaces/i_has_bubble.js';
 import type {IIcon} from '../interfaces/i_icon.js';
+import * as renderManagement from '../render_management.js';
 import * as tooltip from '../tooltip.js';
 import {Coordinate} from '../utils/coordinate.js';
 import * as dom from '../utils/dom.js';
@@ -187,6 +189,22 @@ export abstract class Icon implements IIcon, IContextMenu {
   /** See IFocusableNode.canBeFocused. */
   canBeFocused(): boolean {
     return true;
+  }
+
+  /**
+   * Handles the user acting on this icon via keyboard navigation.
+   * Performs the same action as a click would, and focuses this icon's bubble
+   * if it has one.
+   */
+  performAction() {
+    this.onClick();
+    renderManagement.finishQueuedRenders().then(() => {
+      if (hasBubble(this) && this.bubbleIsVisible()) {
+        const bubble = this.getBubble();
+        if (!bubble) return;
+        getFocusManager().focusNode(bubble);
+      }
+    });
   }
 
   /**

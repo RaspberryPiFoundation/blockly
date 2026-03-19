@@ -99,6 +99,13 @@ export interface IFocusableNode {
    * @returns Whether this node can be focused by FocusManager.
    */
   canBeFocused(): boolean;
+
+  /**
+   * Optional method invoked when this node has focus and the user acts on it by
+   * pressing Enter or Space. Behavior should generally be similar to the node
+   * being clicked on.
+   */
+  performAction?(): void;
 }
 
 /**

@@ -421,6 +421,19 @@ export class FlyoutButton
   getId() {
     return this.id;
   }
+
+  /**
+   * Handles the user acting on this button via keyboard navigation.
+   * Invokes the click handler callback.
+   */
+  performAction(): void {
+    if (!this.isFlyoutLabel) {
+      const callback = this.targetWorkspace.getButtonCallback(this.callbackKey);
+      if (callback) {
+        callback(this);
+      }
+    }
+  }
 }
 
 /** CSS for buttons and labels. See css.js for use. */

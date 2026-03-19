@@ -45,6 +45,7 @@ import type {FlyoutButton} from './flyout_button.js';
 import {getFocusManager} from './focus_manager.js';
 import {Gesture} from './gesture.js';
 import {Grid} from './grid.js';
+import * as hints from './hints.js';
 import {MutatorIcon} from './icons/mutator_icon.js';
 import {isAutoHideable} from './interfaces/i_autohideable.js';
 import type {IBoundedElement} from './interfaces/i_bounded_element.js';
@@ -2850,6 +2851,14 @@ export class WorkspaceSvg
       if (toolbox && nextTree === toolbox) return;
       if (isAutoHideable(toolbox)) toolbox.autoHide(false);
     }
+  }
+
+  /**
+   * Handles the user acting on this workspace via keyboard navigation by
+   * prompting them to use the arrow keys (instead of Enter) to navigate.
+   */
+  performAction() {
+    hints.showWorkspaceNavigationHint(this);
   }
 
   /**

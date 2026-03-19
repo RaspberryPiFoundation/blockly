@@ -59,6 +59,7 @@ export enum names {
   NEXT_STACK = 'next_stack',
   PREVIOUS_STACK = 'previous_stack',
   INFORMATION = 'information',
+  PERFORM_ACTION = 'perform_action',
 }
 
 /**
@@ -841,6 +842,29 @@ export function registerStackNavigation() {
 }
 
 /**
+ * Registers keyboard shortcut to perform an action on the focused element.
+ */
+export function registerPerformAction() {
+  const performActionShortcut: KeyboardShortcut = {
+    name: names.PERFORM_ACTION,
+    preconditionFn: (workspace) => !workspace.isDragging(),
+    callback: (_workspace, e) => {
+      keyboardNavigationController.setIsActive(true);
+      const focusedNode = getFocusManager().getFocusedNode();
+      if (focusedNode && 'performAction' in focusedNode) {
+        e.preventDefault();
+        focusedNode.performAction?.();
+        return true;
+      }
+      return false;
+    },
+    keyCodes: [KeyCodes.ENTER, KeyCodes.SPACE],
+    allowCollision: true,
+  };
+  ShortcutRegistry.registry.register(performActionShortcut);
+}
+
+/**
  * Registers all default keyboard shortcut item. This should be called once per
  * instance of KeyboardShortcutRegistry.
  *
@@ -868,6 +892,7 @@ export function registerKeyboardNavigationShortcuts() {
   registerArrowNavigation();
   registerDisconnectBlock();
   registerStackNavigation();
+  registerPerformAction();
 }
 
 /**
