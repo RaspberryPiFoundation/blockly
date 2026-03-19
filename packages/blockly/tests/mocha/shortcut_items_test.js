@@ -20,7 +20,7 @@ suite('Keyboard Shortcut Items', function () {
   setup(function () {
     sharedTestSetup.call(this);
     const toolbox = document.getElementById('toolbox-test');
-    this.workspace = Blockly.inject('blocklyDiv', {toolbox});
+    this.workspace = Blockly.inject('blocklyDiv', {toolbox, renderer: 'zelos'});
     this.injectionDiv = this.workspace.getInjectionDiv();
     Blockly.ContextMenuRegistry.registry.reset();
     Blockly.ContextMenuItems.registerDefaultOptions();
@@ -628,22 +628,6 @@ suite('Keyboard Shortcut Items', function () {
   });
 
   suite('Focus Toolbox (T)', function () {
-    setup(function () {
-      Blockly.defineBlocksWithJsonArray([
-        {
-          'type': 'basic_block',
-          'message0': '%1',
-          'args0': [
-            {
-              'type': 'field_input',
-              'name': 'TEXT',
-              'text': 'default',
-            },
-          ],
-        },
-      ]);
-    });
-
     test('Does not change focus when toolbox item is already focused', function () {
       const item = this.workspace.getToolbox().getToolboxItems()[1];
       Blockly.getFocusManager().focusNode(item);
@@ -1026,6 +1010,218 @@ suite('Keyboard Shortcut Items', function () {
         Blockly.getFocusManager().getFocusedNode(),
         this.block2,
       );
+    });
+  });
+
+  suite('Perform Action (Enter)', function () {
+    test('Shows a toast with navigation hints on the workspace', function () {
+      const toastSpy = sinon.spy(Blockly.Toast, 'show');
+
+      Blockly.getFocusManager().focusNode(this.workspace);
+
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+
+      sinon.assert.calledWith(toastSpy, this.workspace, {
+        id: 'workspaceNavigationHint',
+        message: Blockly.Msg['KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT'],
+      });
+
+      toastSpy.restore();
+    });
+
+    test('Inserts blocks from the flyout in move mode', function () {
+      this.workspace.getToolbox().selectItemByPosition(0);
+      const block = this.workspace
+        .getNavigator()
+        .getFirstChild(this.workspace.getFlyout().getWorkspace());
+      assert.instanceOf(block, Blockly.BlockSvg);
+      Blockly.getFocusManager().focusNode(block);
+
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+
+      const movingBlock = Blockly.getFocusManager().getFocusedNode();
+      assert.notEqual(block, movingBlock);
+      assert.instanceOf(movingBlock, Blockly.BlockSvg);
+      assert.isTrue(movingBlock.isDragging());
+      assert.isFalse(movingBlock.workspace.isFlyout);
+
+      Blockly.KeyboardMover.mover.abortMove();
+    });
+
+    test('Shows a toast with navigation hints for navigable blocks', function () {
+      const toastSpy = sinon.spy(Blockly.Toast, 'show');
+
+      const block = this.workspace.newBlock('controls_if');
+      block.initSvg();
+      block.render();
+      Blockly.getFocusManager().focusNode(block);
+
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+
+      sinon.assert.calledWith(toastSpy, this.workspace, {
+        id: 'blockNavigationHint',
+        message: Blockly.Msg['KEYBOARD_NAV_BLOCK_NAVIGATION_HINT'],
+      });
+      toastSpy.restore();
+    });
+
+    test('Shows a toast with instructions to view help for non-navigable blocks', function () {
+      const toastSpy = sinon.spy(Blockly.Toast, 'show');
+
+      const block = this.workspace.newBlock('test_align_dummy_right');
+      block.initSvg();
+      block.render();
+      Blockly.getFocusManager().focusNode(block);
+
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+
+      sinon.assert.calledWith(toastSpy, this.workspace, {
+        id: 'helpHint',
+        message: Blockly.Msg['HELP_PROMPT'].replace('%1', ''),
+      });
+      toastSpy.restore();
+    });
+
+    test('Focuses field editor for blocks with full-block fields', function () {
+      const block = this.workspace.newBlock('math_number');
+      block.initSvg();
+      block.render();
+      Blockly.getFocusManager().focusNode(block);
+
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+
+      const field = block.getField('NUM');
+      assert.isTrue(Blockly.WidgetDiv.isVisible());
+      assert.isTrue(field.isBeingEdited_);
+    });
+
+    test('Focuses field editor for fields', function () {
+      const block = this.workspace.newBlock('logic_compare');
+      block.initSvg();
+      block.render();
+      const field = block.getField('OP');
+      Blockly.getFocusManager().focusNode(field);
+
+      assert.isFalse(Blockly.DropDownDiv.isVisible());
+
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+
+      assert.isTrue(Blockly.DropDownDiv.isVisible());
+    });
+
+    test('Expands and focuses workspace comment editors', function () {
+      const comment = this.workspace.newComment();
+      comment.setCollapsed(true);
+      Blockly.getFocusManager().focusNode(comment);
+
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        comment.getEditorFocusableNode(),
+      );
+      assert.isFalse(comment.view.isCollapsed());
+    });
+
+    test('Focuses mutator workspace for mutator bubble', async function () {
+      const block = this.workspace.newBlock('controls_if');
+      block.initSvg();
+      block.render();
+      const icon = block.getIcon(Blockly.icons.MutatorIcon.TYPE);
+      await icon.setBubbleVisible(true);
+      Blockly.getFocusManager().focusNode(icon.getBubble());
+
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedTree(),
+        icon.getWorkspace(),
+      );
+    });
+
+    test('Focuses comment editor for block comment bubble', async function () {
+      const block = this.workspace.newBlock('controls_if');
+      block.initSvg();
+      block.render();
+      block.setCommentText('Hello');
+      const icon = block.getIcon(Blockly.icons.CommentIcon.TYPE);
+      await icon.setBubbleVisible(true);
+      Blockly.getFocusManager().focusNode(icon.getBubble());
+
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        icon.getBubble().getEditor(),
+      );
+    });
+
+    test('Focuses bubble for icons', async function () {
+      const block = this.workspace.newBlock('controls_if');
+      block.initSvg();
+      block.render();
+
+      block.setCommentText('Hello world');
+      block.setWarningText('Danger!');
+
+      const iconTypes = [
+        Blockly.icons.CommentIcon.TYPE,
+        Blockly.icons.WarningIcon.TYPE,
+        Blockly.icons.MutatorIcon.TYPE,
+      ];
+
+      for (const iconType of iconTypes) {
+        const icon = block.getIcon(iconType);
+        Blockly.getFocusManager().focusNode(icon);
+
+        const bubbleShown = new Promise((resolve) => {
+          this.workspace.addChangeListener((event) => {
+            if (event.type === Blockly.Events.BUBBLE_OPEN) {
+              resolve();
+            }
+          });
+        });
+
+        const event = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+        this.workspace.getInjectionDiv().dispatchEvent(event);
+
+        this.clock.tick(100);
+
+        await bubbleShown;
+        assert.strictEqual(
+          Blockly.getFocusManager().getFocusedNode(),
+          icon.getBubble(),
+        );
+      }
+    });
+
+    test('Triggers flyout button actions', function () {
+      const toolbox = this.workspace.getToolbox();
+      toolbox.selectItemByPosition(3);
+      const button = this.workspace.getFlyout().getContents()[0].getElement();
+      assert.instanceOf(button, Blockly.FlyoutButton);
+      Blockly.getFocusManager().focusNode(button);
+
+      const oldCallback = this.workspace.getButtonCallback('CREATE_VARIABLE');
+      let called = false;
+      this.workspace.registerButtonCallback('CREATE_VARIABLE', () => {
+        called = true;
+      });
+
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+
+      assert.isTrue(called);
+      this.workspace.registerButtonCallback('CREATE_VARIABLE', oldCallback);
     });
   });
 });
