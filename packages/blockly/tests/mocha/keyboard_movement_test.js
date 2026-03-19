@@ -638,14 +638,10 @@ suite('Keyboard-driven movement', function () {
          * pressing right (or down) arrow n times.
          */
         const EXPECTED_COMPLEX_RIGHT = [
-          // TODO(#702): With the current behavior, certain connection
-          // candidates that can be found using the mouse are not visited when
-          // doing a keyboard move. They appear in the list below, but commented
-          // out for now. They should be uncommented if the behavior is changed.
           {id: 'p5_canvas', index: 1, ownIndex: 0}, // Next; starting location again.
-          // {id: 'text_print', index: 0, ownIndex: 1}, // Previous to own next.
+          {id: 'text_print', index: 0, ownIndex: 1}, // Previous to own next.
           {id: 'text_print', index: 0, ownIndex: 4}, // Previous to own else input.
-          // {id: 'text_print', index: 0, ownIndex: 3}, // Previous to own if input.
+          {id: 'text_print', index: 0, ownIndex: 3}, // Previous to own if input.
           {id: 'text_print', index: 1, ownIndex: 0}, // Next.
           {id: 'controls_if', index: 3, ownIndex: 0}, // "If" statement input.
           {id: 'controls_repeat_ext', index: 3, ownIndex: 0}, // Statement input.
@@ -817,12 +813,8 @@ suite('Keyboard-driven movement', function () {
          * pressing ArrowRight n times.
          */
         const EXPECTED_COMPLEX_RIGHT = EXPECTED_SIMPLE_RIGHT.concat([
-          // TODO(#702): With the current behavior, certain connection
-          // candidates that can be found using the mouse are not visited when
-          // doing a keyboard move. They appear in the list below, but commented
-          // out for now. They should be uncommented if the behavior is changed.
           {id: 'join0', index: 0, ownIndex: 2}, // Unattached block to own input.
-          // {id: 'join0', index: 0, ownIndex: 1}, // Unattached block to own input.
+          {id: 'join0', index: 0, ownIndex: 1}, // Unattached block to own input.
         ]);
         /**
          * Expected connection candidates when moving row consisting of
