@@ -7,10 +7,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/google/blockly.git"
+    "url": "git+https://github.com/RaspberryPiFoundation/blockly.git"
   },
   "bugs": {
-    "url": "https://github.com/google/blockly/issues"
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
   },
   "homepage": "https://developers.google.com/blockly/",
   "author": {
