@@ -4,7 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Dry run'
+        description: 'Dry run - print the version that would be published, but do not commit or publish anything.'
+        required: false
+        default: false
+        type: boolean
+      skip_versioning:
+        description: >
+          Skip version bump - use the version already in the repo
+          (e.g. retry after npm publish failed but the release commit is already pushed).
         required: false
         default: false
         type: boolean
@@ -36,10 +43,12 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
+        if: ${{ !inputs.skip_versioning }}
         run: npm ci
 
       - name: Determine version bump
         id: bump
+        if: ${{ !inputs.skip_versioning }}
         working-directory: packages/blockly
         run: |
           RELEASE_TYPE=$(npx conventional-recommended-bump --preset conventionalcommits -t blockly-)
@@ -47,21 +56,20 @@ jobs:
           echo "Recommended bump: $RELEASE_TYPE"
 
       - name: Apply version bump
+        if: ${{ !inputs.skip_versioning }}
         working-directory: packages/blockly
         run: npm version ${{ steps.bump.outputs.release_type }} --no-git-tag-version
 
-      - name: Read new version
+      - name: Read package version
         id: version
         working-directory: packages/blockly
         run: |
           VERSION=$(node -p "require('./package.json').version")
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "New version: $VERSION"
-
-      - name: Update lockfile
-        run: npm install
+          echo "Version: $VERSION"
 
       - name: Upload versioned files
+        if: ${{ !inputs.skip_versioning }}
         uses: actions/upload-artifact@v4
         with:
           name: versioned-files
@@ -82,11 +90,13 @@ jobs:
           ssh-key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
 
       - name: Download versioned files
+        if: ${{ !inputs.skip_versioning }}
         uses: actions/download-artifact@v4
         with:
           name: versioned-files
 
       - name: Commit and push version bump
+        if: ${{ !inputs.skip_versioning }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -109,7 +119,7 @@ jobs:
 
       - name: Publish to npm
         working-directory: packages/blockly/dist
-        run: npm publish
+        run: npm publish --verbose
 
       - name: Create tarball
         working-directory: packages/blockly
