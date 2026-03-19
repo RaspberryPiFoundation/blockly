@@ -791,9 +791,6 @@ export class BlockDragStrategy implements IDragStrategy {
    * Get the nearest valid candidate connection in traversal order.
    *
    * @param draggingBlock The root block being dragged.
-   * @param localConns The list of connections on the dragging block(s) that are
-   *     available to connect to.
-   * @param direction The cardinal direction in which the block is being moved.
    * @returns A candidate connection and radius, or null if none was found.
    */
   findTraversalCandidate(direction: Direction): ConnectionCandidate | null {
