@@ -536,4 +536,126 @@ input[type=number] {
   height: 1px;
   overflow: hidden;
 }
+
+.injectionDiv {
+  --blockly-active-node-color: #fff200;
+  --blockly-active-tree-color: #60a5fa;
+  --blockly-selection-width: 3px;
+}
+
+/* Active focus cases: */
+/* Blocks with active focus. */
+.blocklyKeyboardNavigation
+  .blocklyActiveFocus:is(.blocklyPath, .blocklyHighlightedConnectionPath),
+/* Fields with active focus, */
+.blocklyKeyboardNavigation
+  .blocklyActiveFocus.blocklyField
+  > .blocklyFieldRect,
+/* Icons with active focus. */
+.blocklyKeyboardNavigation
+  .blocklyActiveFocus.blocklyIconGroup
+  > .blocklyIconShape:first-child {
+  stroke: var(--blockly-active-node-color);
+  stroke-width: var(--blockly-selection-width);
+}
+
+/* Passive focus cases: */
+/* Blocks with passive focus except when widget/dropdown div in use. */
+.blocklyKeyboardNavigation:not(
+        :has(
+            .blocklyDropDownDiv:focus-within,
+            .blocklyWidgetDiv:focus-within
+          )
+      )
+  .blocklyPassiveFocus:is(
+    .blocklyPath:not(.blocklyFlyout .blocklyPath),
+    .blocklyHighlightedConnectionPath
+  ),
+/* Fields with passive focus except when widget/dropdown div in use. */
+.blocklyKeyboardNavigation:not(
+        :has(
+            .blocklyDropDownDiv:focus-within,
+            .blocklyWidgetDiv:focus-within
+          )
+      )
+  .blocklyPassiveFocus.blocklyField
+  > .blocklyFieldRect,
+/* Icons with passive focus except when widget/dropdown div in use. */
+.blocklyKeyboardNavigation:not(
+        :has(
+            .blocklyDropDownDiv:focus-within,
+            .blocklyWidgetDiv:focus-within
+          )
+      )
+  .blocklyPassiveFocus.blocklyIconGroup
+  > .blocklyIconShape:first-child {
+  stroke: var(--blockly-active-node-color);
+  stroke-dasharray: 5px 3px;
+  stroke-width: var(--blockly-selection-width);
+}
+
+/* Workaround for unexpectedly hidden connection path due to core style. */
+.blocklyKeyboardNavigation
+  .blocklyPassiveFocus.blocklyHighlightedConnectionPath {
+  display: unset !important;
+}
+
+/* Different ways for toolbox/flyout to be the active tree: */
+/* Active focus in the flyout. */
+.blocklyKeyboardNavigation .blocklyFlyout:has(.blocklyActiveFocus),
+/* Active focus in the toolbox. */
+.blocklyKeyboardNavigation .blocklyToolbox:has(.blocklyActiveFocus),
+/* Active focus on the toolbox/flyout. */
+.blocklyKeyboardNavigation
+  .blocklyActiveFocus:is(.blocklyFlyout, .blocklyToolbox) {
+  outline-offset: calc(var(--blockly-selection-width) * -1);
+  outline: var(--blockly-selection-width) solid
+    var(--blockly-active-tree-color);
+}
+
+/* Suppress default outline. */
+.blocklyKeyboardNavigation
+  .blocklyToolboxCategoryContainer:focus-visible {
+  outline: none;
+}
+
+ /* Different ways for the workspace to be the active tree: */
+/* Active focus within workspace. */
+.blocklyKeyboardNavigation
+  .blocklyWorkspace:has(.blocklyActiveFocus)
+  .blocklyWorkspaceFocusRing,
+/* Active focus within drag layer. */
+.blocklyKeyboardNavigation
+  .blocklySvg:has(~ .blocklyBlockDragSurface .blocklyActiveFocus)
+  .blocklyWorkspaceFocusRing,
+/* Active focus on workspace. */
+.blocklyKeyboardNavigation
+  .blocklyWorkspace.blocklyActiveFocus
+  .blocklyWorkspaceFocusRing,
+/* Focus in widget/dropdown div considered to be in workspace. */
+.blocklyKeyboardNavigation:has(
+  .blocklyWidgetDiv:focus-within,
+  .blocklyDropDownDiv:focus-within
+)
+  .blocklyWorkspace
+  .blocklyWorkspaceFocusRing {
+  stroke: var(--blockly-active-tree-color);
+  stroke-width: calc(var(--blockly-selection-width) * 2);
+}
+
+/* The workspace itself is the active node. */
+.blocklyKeyboardNavigation
+  .blocklyWorkspace.blocklyActiveFocus
+  .blocklyWorkspaceSelectionRing {
+  stroke: var(--blockly-active-node-color);
+  stroke-width: var(--blockly-selection-width);
+}
+
+/* The workspace itself is the active node. */
+.blocklyKeyboardNavigation
+  .blocklyBubble.blocklyActiveFocus
+  .blocklyDraggable {
+  stroke: var(--blockly-active-node-color);
+  stroke-width: var(--blockly-selection-width);
+}
 `;
