@@ -642,7 +642,6 @@ export class BlockDragStrategy implements IDragStrategy {
     inputConnections.reverse();
 
     return [...nonInputConnections, ...inputConnections];
-    return available;
   }
 
   /**
