@@ -583,6 +583,7 @@ suite('Keyboard-driven movement', function () {
           {id: 'controls_if', index: 6, ownIndex: 0}, // "Else" statement input.
           {id: 'controls_if', index: 1, ownIndex: 0}, // Next.
           {id: 'p5_draw', index: 0, ownIndex: 0}, // Statement input.
+          null, // Disconnected on workspace
         ];
         /**
          * Expected connection candidates when moving STATEMENT_SIMPLE after
@@ -653,6 +654,7 @@ suite('Keyboard-driven movement', function () {
           {id: 'controls_if', index: 6, ownIndex: 0}, // "Else" statement input.
           {id: 'controls_if', index: 1, ownIndex: 0}, // Next.
           {id: 'p5_draw', index: 0, ownIndex: 0}, // Statement input.
+          null, // Disconnected on workspace
         ];
         /**
          * Expected connection candidates when moving STATEMENT_COMPLEX after
@@ -761,6 +763,7 @@ suite('Keyboard-driven movement', function () {
           {id: 'join2', index: 1, ownIndex: 0}, // Join block ADD0 input.
           {id: 'join2', index: 2, ownIndex: 0}, // Join block ADD1 input.
           // Skip input of unattached join block.
+          null, // Disconnected on workspace
         ];
         /**
          * Expected connection candidates when moving BLOCK_SIMPLE, after

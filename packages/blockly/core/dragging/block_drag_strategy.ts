@@ -573,18 +573,13 @@ export class BlockDragStrategy implements IDragStrategy {
       const direction = this.getDirectionToNewLocation(
         Coordinate.sum(this.startLoc!, delta),
       );
-      const candidate = this.findTraversalCandidate(direction);
-      if (candidate) {
-        return candidate;
-      }
-
-      delta = new Coordinate(0, 0);
+      return this.findTraversalCandidate(direction);
     }
 
     // If we do not have a candidate yet, we fallback to the closest one nearby.
     let radius = this.getSearchRadius();
     const localConns = this.getLocalConnections(this.block);
-    let candidate = null;
+    let candidate: ConnectionCandidate | null = null;
 
     for (const conn of localConns) {
       const {connection: neighbour, radius: rad} = conn.closest(radius, delta);
@@ -775,30 +770,40 @@ export class BlockDragStrategy implements IDragStrategy {
    * @returns A candidate connection and radius, or null if none was found.
    */
   findTraversalCandidate(direction: Direction): ConnectionCandidate | null {
-    const currentPairIndex = this.allConnectionPairs.findIndex(
+    const pairs = this.allConnectionPairs;
+    if (direction === Direction.NONE || !pairs.length) {
+      return this.connectionCandidate;
+    }
+    const forwardTraversal =
+      direction === Direction.RIGHT || direction === Direction.DOWN;
+    const currentPairIndex = pairs.findIndex(
       (pair) =>
         this.connectionCandidate?.local === pair.local &&
         this.connectionCandidate?.neighbour === pair.neighbour,
     );
-    if (currentPairIndex !== -1) {
-      if (direction === Direction.UP || direction === Direction.LEFT) {
-        const nextPair =
-          this.allConnectionPairs[currentPairIndex - 1] ??
-          this.allConnectionPairs[this.allConnectionPairs.length - 1];
-        return {...nextPair, distance: 0};
-      } else if (
-        direction === Direction.DOWN ||
-        direction === Direction.RIGHT
-      ) {
-        const nextPair =
-          this.allConnectionPairs[currentPairIndex + 1] ??
-          this.allConnectionPairs[0];
-        return {...nextPair, distance: 0};
+
+    if (forwardTraversal) {
+      if (currentPairIndex === -1) {
+        return this.pairToCandidate(pairs[0]);
+      } else if (currentPairIndex === pairs.length - 1) {
+        return null;
+      } else {
+        return this.pairToCandidate(pairs[currentPairIndex + 1]);
+      }
+    } else {
+      if (currentPairIndex === -1) {
+        return this.pairToCandidate(pairs[pairs.length - 1]);
+      } else if (currentPairIndex === 0) {
+        return null;
+      } else {
+        return this.pairToCandidate(pairs[currentPairIndex - 1]);
       }
     }
-    return null;
   }
 
+  private pairToCandidate(pair: ConnectionPair): ConnectionCandidate {
+    return {...pair, distance: 0};
+  }
   /**
    * Returns the cardinal direction that the block being dragged would have to
    * move in to reach the given location.
