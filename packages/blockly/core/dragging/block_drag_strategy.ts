@@ -457,6 +457,7 @@ export class BlockDragStrategy implements IDragStrategy {
       // we're in keyboard-driven constrained mode.
       if (this.moveMode === MoveMode.CONSTRAINED) {
         showUnconstrainedMoveHint(this.workspace, true);
+        this.workspace.getAudioManager().playErrorBeep();
       }
     }
   }

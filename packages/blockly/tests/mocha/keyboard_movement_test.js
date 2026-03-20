@@ -534,6 +534,7 @@ suite('Keyboard-driven movement', function () {
     suite('in constrained mode', function () {
       test('prompts to use unconstrained mode when no destinations are available', function () {
         const toastSpy = sinon.spy(Blockly.Toast, 'show');
+        const beepSpy = sinon.spy(this.workspace.getAudioManager(), 'beep');
         Blockly.getFocusManager().focusNode(this.element);
         const originalBounds = this.element.getBoundingRectangle();
         startMove(this.workspace);
@@ -547,6 +548,8 @@ suite('Keyboard-driven movement', function () {
             ? 'Hold ⌘ Command and use arrow keys to move freely, then Enter to accept the position'
             : 'Hold Ctrl and use arrow keys to move freely, then Enter to accept the position',
         );
+        sinon.assert.calledOnce(beepSpy);
+        beepSpy.restore();
         toastSpy.restore();
       });
 
