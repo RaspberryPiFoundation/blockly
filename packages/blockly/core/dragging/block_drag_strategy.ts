@@ -67,8 +67,6 @@ export class BlockDragStrategy implements IDragStrategy {
    */
   private startChildConn: RenderedConnection | null = null;
 
-  private initialConnectionPair: ConnectionCandidate | null = null;
-
   private startLoc: Coordinate | null = null;
 
   private connectionCandidate: ConnectionCandidate | null = null;
@@ -76,9 +74,6 @@ export class BlockDragStrategy implements IDragStrategy {
   private connectionPreviewer: IConnectionPreviewer | null = null;
 
   private dragging = false;
-
-  private localConnections: RenderedConnection[] | null = null;
-  private workspaceConnections: RenderedConnection[] | null = null;
 
   /** List of all connections available on the workspace. */
   private allConnectionPairs: ConnectionPair[] = [];
@@ -173,7 +168,6 @@ export class BlockDragStrategy implements IDragStrategy {
 
     this.startLoc = this.block.getRelativeToSurfaceXY();
 
-    this.initialConnectionPair = null;
     this.connectionCandidate = null;
     const previewerConstructor = registry.getClassFromOptions(
       registry.Type.CONNECTION_PREVIEWER,
@@ -193,7 +187,6 @@ export class BlockDragStrategy implements IDragStrategy {
       this.disconnectBlock(healStack);
     }
 
-    this.localConnections = this.getLocalConnections(this.block, true);
     this.block.setDragging(true);
     this.workspace.getLayerManager()?.moveToDragLayer(this.block);
     this.getVisibleBubbles(this.block).forEach((bubble) => {
@@ -207,7 +200,6 @@ export class BlockDragStrategy implements IDragStrategy {
 
       // Scooch the block to be offset from the connection preview indicator.
       this.block.moveDuringDrag(this.startLoc);
-      this.connectionCandidate = this.initialConnectionPair;
       const neighbour = this.updateConnectionPreview(
         this.block,
         new Coordinate(0, 0),
@@ -239,16 +231,14 @@ export class BlockDragStrategy implements IDragStrategy {
    */
   private cacheAllConnectionPairs() {
     const connectionChecker = this.block.workspace.connectionChecker;
+    const workspaceConns = [];
     this.allConnectionPairs = [];
-    this.workspaceConnections = [];
-    if (!this.localConnections) {
-      this.localConnections = this.getLocalConnections(this.block, true);
-    }
+    const localConns = this.getLocalConnections(this.block);
     for (const topBlock of this.block.workspace.getTopBlocks(true)) {
-      this.workspaceConnections.push(...this.getAllConnections(topBlock));
+      workspaceConns.push(...this.getAllConnections(topBlock));
     }
-    for (const neighbour of this.workspaceConnections) {
-      for (const local of this.localConnections) {
+    for (const neighbour of workspaceConns) {
+      for (const local of localConns) {
         if (
           connectionChecker.canConnect(local, neighbour, true, Infinity) &&
           !neighbour.targetBlock()?.isInsertionMarker()
@@ -356,20 +346,20 @@ export class BlockDragStrategy implements IDragStrategy {
 
     this.startParentConn = parentTargetConn;
     if (localParentConn && parentTargetConn) {
-      this.initialConnectionPair = {
+      this.connectionCandidate = {
         local: localParentConn,
         neighbour: parentTargetConn,
         distance: 0,
       };
     } else {
-      // If there is no parent conenction and we are moving a single block,
+      // If there is no parent connection and we are moving a single block,
       // use the next connection.
       if (healStack) {
         const localNextConn = this.block.nextConnection;
         const nextTargetConn = localNextConn?.targetConnection;
 
         if (localNextConn && nextTargetConn) {
-          this.initialConnectionPair = {
+          this.connectionCandidate = {
             local: localNextConn,
             neighbour: nextTargetConn,
             distance: 0,
@@ -578,16 +568,11 @@ export class BlockDragStrategy implements IDragStrategy {
   private getConnectionCandidate(
     delta: Coordinate,
   ): ConnectionCandidate | null {
-    const localConns = this.localConnections;
-    let candidate = null;
-    if (!localConns) {
-      return candidate;
-    }
     if (this.moveMode === MoveMode.CONSTRAINED) {
       const direction = this.getDirectionToNewLocation(
         Coordinate.sum(this.startLoc!, delta),
       );
-      candidate = this.findTraversalCandidate(direction);
+      const candidate = this.findTraversalCandidate(direction);
       if (candidate) {
         return candidate;
       }
@@ -597,6 +582,8 @@ export class BlockDragStrategy implements IDragStrategy {
 
     // If we do not have a candidate yet, we fallback to the closest one nearby.
     let radius = this.getSearchRadius();
+    const localConns = this.getLocalConnections(this.block);
+    let candidate = null;
 
     for (const conn of localConns) {
       const {connection: neighbour, radius: rad} = conn.closest(radius, delta);
@@ -630,10 +617,7 @@ export class BlockDragStrategy implements IDragStrategy {
    * Includes any connections on the dragging block, and any last next
    * connection on the stack (if one exists).
    */
-  private getLocalConnections(
-    draggingBlock: BlockSvg,
-    natural: boolean,
-  ): RenderedConnection[] {
+  private getLocalConnections(draggingBlock: BlockSvg): RenderedConnection[] {
     const available = draggingBlock.getConnections_(false);
     const lastOnStack = draggingBlock.lastConnectionInStack(true);
     if (lastOnStack && lastOnStack !== draggingBlock.nextConnection) {
@@ -642,25 +626,22 @@ export class BlockDragStrategy implements IDragStrategy {
 
     // Reversing the order of input connections provides a more natural traversal
     // experience. With each move right/down, the dragging block should move in
-    // one of those directions (except when wrapping back to the first option).
-    // This is a separate parameter in case we eventually want to make it configurable.
-    if (natural) {
-      const nonInputConnections = [
-        draggingBlock.outputConnection,
-        draggingBlock.previousConnection,
-        draggingBlock.nextConnection,
-      ].filter(Boolean); // Removes falsy (null) values.
-      const inputConnections: RenderedConnection[] = [];
+    // one of those directions (except when wrapping to the other end of the list).
+    const nonInputConnections = [
+      draggingBlock.outputConnection,
+      draggingBlock.previousConnection,
+      draggingBlock.nextConnection,
+    ].filter(Boolean); // Removes falsy (null) values.
+    const inputConnections: RenderedConnection[] = [];
 
-      for (const conn of available) {
-        if (!nonInputConnections.includes(conn)) {
-          inputConnections.push(conn);
-        }
+    for (const conn of available) {
+      if (!nonInputConnections.includes(conn)) {
+        inputConnections.push(conn);
       }
-      inputConnections.reverse();
-
-      return [...nonInputConnections, ...inputConnections];
     }
+    inputConnections.reverse();
+
+    return [...nonInputConnections, ...inputConnections];
     return available;
   }
 
