@@ -84,14 +84,7 @@ let content = `
 
 .blocklyBlockCanvas.blocklyCanvasTransitioning,
 .blocklyBubbleCanvas.blocklyCanvasTransitioning {
-  transition: transform .15s;
-}
-
-@media (prefers-reduced-motion) {
-  .blocklyBlockCanvas.blocklyCanvasTransitioning,
-  .blocklyBubbleCanvas.blocklyCanvasTransitioning {
-    transition: none;
-  }
+  transition: transform .5s;
 }
 
 .blocklyEmboss {

@@ -373,10 +373,8 @@ export class ZoomControls implements IPositionable {
    * @param e A mouse down event.
    */
   private zoom(amount: number, e: PointerEvent) {
-    this.workspace.beginCanvasTransition();
     this.workspace.markFocused();
     this.workspace.zoomCenter(amount);
-    setTimeout(this.workspace.endCanvasTransition.bind(this.workspace), 150);
     this.fireZoomEvent();
     Touch.clearTouchIdentifier(); // Don't block future drags.
     e.stopPropagation(); // Don't start a workspace scroll.
@@ -461,7 +459,7 @@ export class ZoomControls implements IPositionable {
     this.workspace.zoomCenter(amount);
     this.workspace.scrollCenter();
 
-    setTimeout(this.workspace.endCanvasTransition.bind(this.workspace), 150);
+    setTimeout(this.workspace.endCanvasTransition.bind(this.workspace), 500);
     this.fireZoomEvent();
     Touch.clearTouchIdentifier(); // Don't block future drags.
     e.stopPropagation(); // Don't start a workspace scroll.
