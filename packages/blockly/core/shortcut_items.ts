@@ -47,6 +47,7 @@ export enum names {
   MOVE_DOWN = 'move_down',
   MOVE_LEFT = 'move_left',
   MOVE_RIGHT = 'move_right',
+  DISCONNECT = 'disconnect',
 }
 
 /**
@@ -570,6 +571,33 @@ export function registerFocusWorkspace() {
 }
 
 /**
+ * Registers keyboard shortcut to disconnect the focused block.
+ */
+export function registerDisconnectBlock() {
+  const shiftX = ShortcutRegistry.registry.createSerializedKey(KeyCodes.X, [
+    KeyCodes.SHIFT,
+  ]);
+  const disconnectShortcut: ShortcutRegistry.KeyboardShortcut = {
+    name: names.DISCONNECT,
+    preconditionFn: (workspace) =>
+      !workspace.isDragging() && !workspace.isReadOnly(),
+    callback: (_workspace, event) => {
+      keyboardNavigationController.setIsActive(true);
+      const curNode = getFocusManager().getFocusedNode();
+      if (!(curNode instanceof BlockSvg)) return false;
+
+      const healStack = !(event instanceof KeyboardEvent && event.shiftKey);
+      eventUtils.setGroup(true);
+      curNode.unplug(healStack);
+      eventUtils.setGroup(false);
+      return true;
+    },
+    keyCodes: [KeyCodes.X, shiftX],
+  };
+  ShortcutRegistry.registry.register(disconnectShortcut);
+}
+
+/**
  * Registers all default keyboard shortcut item. This should be called once per
  * instance of KeyboardShortcutRegistry.
  *
@@ -593,6 +621,7 @@ export function registerKeyboardNavigationShortcuts() {
   registerShowContextMenu();
   registerMovementShortcuts();
   registerFocusWorkspace();
+  registerDisconnectBlock();
 }
 
 registerDefaultShortcuts();

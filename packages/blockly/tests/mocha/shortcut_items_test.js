@@ -6,7 +6,10 @@
 
 import * as Blockly from '../../build/src/core/blockly.js';
 import {assert} from '../../node_modules/chai/index.js';
-import {defineStackBlock} from './test_helpers/block_definitions.js';
+import {
+  defineRowBlock,
+  defineStackBlock,
+} from './test_helpers/block_definitions.js';
 import {
   sharedTestSetup,
   sharedTestTeardown,
@@ -21,6 +24,8 @@ suite('Keyboard Shortcut Items', function () {
     this.injectionDiv = this.workspace.getInjectionDiv();
     Blockly.ContextMenuRegistry.registry.reset();
     Blockly.ContextMenuItems.registerDefaultOptions();
+    defineStackBlock();
+    defineRowBlock();
   });
   teardown(function () {
     sharedTestTeardown.call(this);
@@ -32,7 +37,6 @@ suite('Keyboard Shortcut Items', function () {
    * @return {Blockly.Block} The block being selected.
    */
   function setSelectedBlock(workspace) {
-    defineStackBlock();
     const block = workspace.newBlock('stack_block');
     Blockly.common.setSelected(block);
     sinon.stub(Blockly.getFocusManager(), 'getFocusedNode').returns(block);
@@ -44,7 +48,6 @@ suite('Keyboard Shortcut Items', function () {
    * @param {Blockly.Workspace} workspace The workspace to create a new block on.
    */
   function setSelectedConnection(workspace) {
-    defineStackBlock();
     const block = workspace.newBlock('stack_block');
     sinon
       .stub(Blockly.getFocusManager(), 'getFocusedNode')
@@ -546,6 +549,204 @@ suite('Keyboard Shortcut Items', function () {
           .getWorkspace();
         this.testFocusChange(mutatorFlyoutWorkspace);
       });
+    });
+  });
+
+  suite('Disconnect Block (X)', function () {
+    setup(function () {
+      this.blockA = this.workspace.newBlock('stack_block');
+      this.blockB = this.workspace.newBlock('stack_block');
+      this.blockC = this.workspace.newBlock('stack_block');
+      this.blockD = this.workspace.newBlock('stack_block');
+
+      this.blockB.nextConnection.connect(this.blockC.previousConnection);
+      this.blockC.nextConnection.connect(this.blockD.previousConnection);
+
+      this.blockE = this.workspace.newBlock('row_block');
+      this.blockF = this.workspace.newBlock('row_block');
+      this.blockG = this.workspace.newBlock('row_block');
+      this.blockH = this.workspace.newBlock('row_block');
+      for (const block of [
+        this.blockE,
+        this.blockF,
+        this.blockG,
+        this.blockH,
+      ]) {
+        block.setInputsInline(false);
+      }
+
+      this.blockF.inputList[0].connection.connect(this.blockG.outputConnection);
+      this.blockG.inputList[0].connection.connect(this.blockH.outputConnection);
+
+      for (const block of this.workspace.getAllBlocks()) {
+        block.initSvg();
+        block.render();
+      }
+    });
+    test('Does nothing for single top-level stack block', function () {
+      Blockly.getFocusManager().focusNode(this.blockA);
+      const bounds = this.blockA.getBoundingRectangle();
+
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.X),
+      );
+
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.blockA,
+      );
+      assert.deepEqual(bounds, this.blockA.getBoundingRectangle());
+    });
+
+    test('Does nothing for single top-level value block', function () {
+      Blockly.getFocusManager().focusNode(this.blockE);
+      const bounds = this.blockE.getBoundingRectangle();
+
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.X),
+      );
+
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.blockE,
+      );
+      assert.deepEqual(bounds, this.blockE.getBoundingRectangle());
+    });
+
+    test('Disconnects child blocks when triggered on top stack block', function () {
+      Blockly.getFocusManager().focusNode(this.blockB);
+      assert.isTrue(this.blockB.nextConnection.isConnected());
+      assert.isTrue(this.blockC.previousConnection.isConnected());
+
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.X),
+      );
+
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.blockB,
+      );
+      // Blocks B and C should have been disconnected.
+      assert.isFalse(this.blockB.nextConnection.isConnected());
+      assert.isFalse(this.blockC.previousConnection.isConnected());
+
+      // Blocks C and D should remain connected.
+      assert.isTrue(this.blockC.nextConnection.isConnected());
+      assert.isTrue(this.blockD.previousConnection.isConnected());
+    });
+
+    test('Disconnects and heals stack when triggered on mid-stack block', function () {
+      Blockly.getFocusManager().focusNode(this.blockC);
+      assert.isTrue(this.blockC.nextConnection.isConnected());
+      assert.isTrue(this.blockC.previousConnection.isConnected());
+
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.X),
+      );
+
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.blockC,
+      );
+      // Block C should be disconnected
+      assert.isFalse(this.blockC.nextConnection.isConnected());
+      assert.isFalse(this.blockC.previousConnection.isConnected());
+
+      // Blocks B and D should be connected to each other due to stack healing.
+      assert.isTrue(this.blockB.nextConnection.isConnected());
+      assert.isTrue(this.blockD.previousConnection.isConnected());
+      assert.strictEqual(this.blockB.nextConnection.targetBlock(), this.blockD);
+      assert.strictEqual(
+        this.blockD.previousConnection.targetBlock(),
+        this.blockB,
+      );
+    });
+
+    test('Disconnects and heals stack when triggered on mid-row value block', function () {
+      Blockly.getFocusManager().focusNode(this.blockG);
+      assert.isTrue(this.blockF.inputList[0].connection.isConnected());
+      assert.isTrue(this.blockG.outputConnection.isConnected());
+
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.X),
+      );
+
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.blockG,
+      );
+      // Block G should be disconnected
+      assert.isFalse(this.blockG.outputConnection.isConnected());
+      assert.isFalse(this.blockG.inputList[0].connection.isConnected());
+
+      // Blocks F and H should be connected to each other due to stack healing.
+      assert.isTrue(this.blockF.inputList[0].connection.isConnected());
+      assert.isTrue(this.blockH.outputConnection.isConnected());
+      assert.strictEqual(
+        this.blockF.inputList[0].connection.targetBlock(),
+        this.blockH,
+      );
+      assert.strictEqual(
+        this.blockH.outputConnection.targetBlock(),
+        this.blockF,
+      );
+    });
+
+    test('Includes subsequent stack blocks when triggered with Shift', function () {
+      Blockly.getFocusManager().focusNode(this.blockC);
+      assert.isTrue(this.blockC.nextConnection.isConnected());
+      assert.isTrue(this.blockC.previousConnection.isConnected());
+
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.X, [
+          Blockly.utils.KeyCodes.SHIFT,
+        ]),
+      );
+
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.blockC,
+      );
+      // Block C should be disconnected from block B but still connected to
+      // Block D.
+      assert.isFalse(this.blockB.nextConnection.isConnected());
+      assert.isFalse(this.blockC.previousConnection.isConnected());
+      assert.isTrue(this.blockC.nextConnection.isConnected());
+      assert.strictEqual(this.blockC.nextConnection.targetBlock(), this.blockD);
+      assert.strictEqual(
+        this.blockD.previousConnection.targetBlock(),
+        this.blockC,
+      );
+    });
+
+    test('Includes subsequent value blocks when triggered with Shift', function () {
+      Blockly.getFocusManager().focusNode(this.blockG);
+      assert.isTrue(this.blockF.inputList[0].connection.isConnected());
+      assert.isTrue(this.blockG.outputConnection.isConnected());
+
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.X, [
+          Blockly.utils.KeyCodes.SHIFT,
+        ]),
+      );
+
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.blockG,
+      );
+      // Block G should be disconnected from block F but still connected to
+      // Block H.
+      assert.isFalse(this.blockF.inputList[0].connection.isConnected());
+      assert.isFalse(this.blockG.outputConnection.isConnected());
+      assert.isTrue(this.blockG.inputList[0].connection.isConnected());
+      assert.strictEqual(
+        this.blockG.inputList[0].connection.targetBlock(),
+        this.blockH,
+      );
+      assert.strictEqual(
+        this.blockH.outputConnection.targetBlock(),
+        this.blockG,
+      );
     });
   });
 });
