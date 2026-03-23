@@ -314,9 +314,6 @@ export class WorkspaceSvg
   /** Cached parent SVG. */
   private cachedParentSvg: SVGElement | null = null;
 
-  /** True if keyboard accessibility mode is on, false otherwise. */
-  keyboardAccessibilityMode = false;
-
   /** The list of top-level bounded elements on the workspace. */
   private topBoundedElements: IBoundedElement[] = [];
 

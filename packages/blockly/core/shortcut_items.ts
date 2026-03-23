@@ -538,7 +538,6 @@ export function registerShowContextMenu() {
     },
     callback: (workspace, e) => {
       keyboardNavigationController.setIsActive(true);
-      workspace.keyboardAccessibilityMode = true;
       const target = getFocusManager().getFocusedNode();
       if (hasContextMenu(target)) {
         target.showContextMenu(e);

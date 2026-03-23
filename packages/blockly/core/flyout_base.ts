@@ -210,7 +210,6 @@ export abstract class Flyout
     // Keep the workspace visibility consistent with the flyout's visibility.
     this.workspace_.setVisible(this.visible);
     this.workspace_.setNavigator(new FlyoutNavigator(this));
-    this.workspace_.keyboardAccessibilityMode = true;
 
     /**
      * The unique id for this component that is used to register with the

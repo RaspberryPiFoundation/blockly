@@ -205,9 +205,6 @@ suite('Checkbox Fields', function () {
         field.sourceBlock_ = {
           RTL: false,
           rendered: true,
-          workspace: {
-            keyboardAccessibilityMode: false,
-          },
           queueRender: function () {
             field.render_();
           },
