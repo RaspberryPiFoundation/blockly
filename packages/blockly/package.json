@@ -126,7 +126,6 @@
     "gulp-concat": "^2.6.1",
     "gulp-gzip": "^1.4.2",
     "gulp-header": "^2.0.9",
-    "gulp-insert": "^0.5.0",
     "gulp-rename": "^2.0.0",
     "gulp-replace": "^1.0.0",
     "gulp-series": "^1.0.2",
