@@ -17,6 +17,7 @@ import {Options} from './options.js';
 import {ScrollbarPair} from './scrollbar_pair.js';
 import * as Tooltip from './tooltip.js';
 import * as Touch from './touch.js';
+import * as aria from './utils/aria.js';
 import * as dom from './utils/dom.js';
 import {Svg} from './utils/svg.js';
 import * as WidgetDiv from './widgetdiv.js';
@@ -54,6 +55,9 @@ export function inject(
     dom.addClass(subContainer, 'blocklyRTL');
   }
 
+  // Ignore the subcontainer in aria since it is not focusable.
+  aria.setRole(subContainer, aria.Role.PRESENTATION);
+
   containerElement!.appendChild(subContainer);
   const svg = createDom(subContainer, options);
 
@@ -77,6 +81,8 @@ export function inject(
     null,
     common.globalShortcutHandler,
   );
+
+  aria.createLiveRegion(subContainer);
 
   return workspace;
 }
