@@ -33,6 +33,16 @@ export class CommentEditorNavigationPolicy
   }
 
   /**
+   * Returns the row ID of the given comment editor.
+   *
+   * @param current The comment editor to retrieve the row ID of.
+   * @returns The row ID of the given comment editor.
+   */
+  getRowId(current: CommentEditor) {
+    return current.id;
+  }
+
+  /**
    * Returns whether or not the given comment editor can be navigated to.
    *
    * @param current The instance to check for navigability.

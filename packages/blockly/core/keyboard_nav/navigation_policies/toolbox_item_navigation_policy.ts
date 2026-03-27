@@ -22,8 +22,7 @@ export class ToolboxItemNavigationPolicy
    * Returns the first child of the given toolbox item.
    *
    * @param current The toolbox item to return the first child of.
-   * @returns The child item of a collapsible toolbox item, or the flyout
-   *     workspace for non-collapsible flyout items.
+   * @returns The child item of a collapsible toolbox item, otherwise null.
    */
   getFirstChild(current: IToolboxItem): IFocusableNode | null {
     if (isCollapsibleToolboxItem(current)) {
@@ -65,6 +64,16 @@ export class ToolboxItemNavigationPolicy
     const items = current.getParentToolbox().getToolboxItems();
     const index = items.indexOf(current);
     return items[index - 1] ?? null;
+  }
+
+  /**
+   * Returns the row ID of the given toolbox item.
+   *
+   * @param current The toolbox item to retrieve the row ID of.
+   * @returns The row ID of the given toolbox item.
+   */
+  getRowId(current: IToolboxItem) {
+    return current.getId();
   }
 
   /**

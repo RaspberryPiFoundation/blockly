@@ -18,16 +18,11 @@ export class ConnectionNavigationPolicy
   implements INavigationPolicy<RenderedConnection>
 {
   /**
-   * Returns the first child of the given connection.
+   * Returns the first child of a connection.
    *
-   * @param current The connection to return the first child of.
-   * @returns The connection's first child element, or null if not none.
+   * @returns Null, as connections do not have children.
    */
-  getFirstChild(current: RenderedConnection): IFocusableNode | null {
-    if (current.getParentInput()) {
-      return current.targetConnection;
-    }
-
+  getFirstChild(): IFocusableNode | null {
     return null;
   }
 
@@ -35,7 +30,7 @@ export class ConnectionNavigationPolicy
    * Returns the parent of the given connection.
    *
    * @param current The connection to return the parent of.
-   * @returns The given connection's parent connection or block.
+   * @returns The given connection's parent block.
    */
   getParent(current: RenderedConnection): IFocusableNode | null {
     return current.getSourceBlock();
@@ -49,29 +44,28 @@ export class ConnectionNavigationPolicy
    */
   getNextSibling(current: RenderedConnection): IFocusableNode | null {
     if (current.getParentInput()) {
-      return navigateBlock(current, 1);
-    } else if (current.type === ConnectionType.NEXT_STATEMENT) {
-      const nextBlock = current.targetConnection;
-      // If this connection is the last one in the stack, our next sibling is
-      // the next block stack.
-      const sourceBlock = current.getSourceBlock();
-      if (
-        !nextBlock &&
-        sourceBlock.getRootBlock().lastConnectionInStack(false) === current
-      ) {
-        const topBlocks = sourceBlock.workspace.getTopBlocks(true);
-        let targetIndex = topBlocks.indexOf(sourceBlock.getRootBlock()) + 1;
-        if (targetIndex >= topBlocks.length) {
-          targetIndex = 0;
-        }
-        const nextBlock = topBlocks[targetIndex];
-        return this.getParentConnection(nextBlock) ?? nextBlock;
-      }
-
-      return nextBlock;
+      return navigateBlock(current.getSourceBlock(), current, 1);
+    } else if (
+      current.type === ConnectionType.NEXT_STATEMENT &&
+      current.getSourceBlock().getSurroundParent() &&
+      !current.targetConnection
+    ) {
+      return navigateBlock(
+        current.getSourceBlock().getSurroundParent()!,
+        current,
+        1,
+      );
     }
 
-    return current.getSourceBlock();
+    switch (current.type) {
+      case ConnectionType.NEXT_STATEMENT:
+        return current.targetConnection;
+      case ConnectionType.PREVIOUS_STATEMENT:
+      case ConnectionType.OUTPUT_VALUE:
+        return current.getSourceBlock();
+    }
+
+    return null;
   }
 
   /**
@@ -82,55 +76,40 @@ export class ConnectionNavigationPolicy
    */
   getPreviousSibling(current: RenderedConnection): IFocusableNode | null {
     if (current.getParentInput()) {
-      return navigateBlock(current, -1);
-    } else if (
-      current.type === ConnectionType.PREVIOUS_STATEMENT ||
-      current.type === ConnectionType.OUTPUT_VALUE
-    ) {
-      const previousConnection =
-        current.targetConnection && !current.targetConnection.getParentInput()
-          ? current.targetConnection
-          : null;
-
-      // If this connection is a disconnected previous/output connection, our
-      // previous sibling is the previous block stack's last connection/block.
-      const sourceBlock = current.getSourceBlock();
-      if (
-        !previousConnection &&
-        this.getParentConnection(sourceBlock.getRootBlock()) === current
-      ) {
-        const topBlocks = sourceBlock.workspace.getTopBlocks(true);
-        let targetIndex = topBlocks.indexOf(sourceBlock.getRootBlock()) - 1;
-        if (targetIndex < 0) {
-          targetIndex = topBlocks.length - 1;
-        }
-        const previousRootBlock = topBlocks[targetIndex];
-        return (
-          previousRootBlock.lastConnectionInStack(false) ?? previousRootBlock
-        );
-      }
-
-      return previousConnection;
-    } else if (current.type === ConnectionType.NEXT_STATEMENT) {
-      return current.getSourceBlock();
+      return navigateBlock(
+        current.getParentInput()!.getSourceBlock() as BlockSvg,
+        current,
+        -1,
+      );
     }
+    switch (current.type) {
+      case ConnectionType.NEXT_STATEMENT:
+        return current.getSourceBlock();
+      case ConnectionType.PREVIOUS_STATEMENT:
+      case ConnectionType.OUTPUT_VALUE:
+        return current.targetConnection;
+    }
+
     return null;
   }
 
   /**
-   * Gets the parent connection on a block.
-   * This is either an output connection, previous connection or undefined.
-   * If both connections exist return the one that is actually connected
-   * to another block.
+   * Returns the row ID of the given connection.
    *
-   * @param block The block to find the parent connection on.
-   * @returns The connection connecting to the parent of the block.
+   * @param current The connection to retrieve the row ID of.
+   * @returns The row ID of the given connection.
    */
-  protected getParentConnection(block: BlockSvg) {
-    if (!block.outputConnection || block.previousConnection?.isConnected()) {
-      return block.previousConnection;
+  getRowId(current: RenderedConnection) {
+    switch (current.type) {
+      case ConnectionType.NEXT_STATEMENT:
+      case ConnectionType.PREVIOUS_STATEMENT:
+        return current.id;
+      case ConnectionType.INPUT_VALUE:
+        return current.getParentInput()!.getRowId();
+      case ConnectionType.OUTPUT_VALUE:
+      default:
+        return current.getSourceBlock().getRowId();
     }
-    return block.outputConnection;
   }
 
   /**
@@ -140,7 +119,22 @@ export class ConnectionNavigationPolicy
    * @returns True if the given connection can be focused.
    */
   isNavigable(current: RenderedConnection): boolean {
-    return current.canBeFocused();
+    // Empty next connections on block stacks inside of a C shaped block are
+    // navigable.
+    if (current.type === ConnectionType.NEXT_STATEMENT) {
+      if (current.targetBlock()) return false;
+
+      const rootBlock =
+        current.getSourceBlock().getRootBlock() ?? current.getSourceBlock();
+      if (current === rootBlock.lastConnectionInStack(false)) return false;
+
+      return true;
+    }
+
+    // Empty input connections are navigable.
+    return (
+      current.type === ConnectionType.INPUT_VALUE && !current.targetBlock()
+    );
   }
 
   /**

@@ -41,7 +41,7 @@ export class FieldNavigationPolicy implements INavigationPolicy<Field<any>> {
    * @returns The next field or input in the given field's block.
    */
   getNextSibling(current: Field<any>): IFocusableNode | null {
-    return navigateBlock(current, 1);
+    return navigateBlock(current.getSourceBlock() as BlockSvg, current, 1);
   }
 
   /**
@@ -51,7 +51,17 @@ export class FieldNavigationPolicy implements INavigationPolicy<Field<any>> {
    * @returns The preceding field or input in the given field's block.
    */
   getPreviousSibling(current: Field<any>): IFocusableNode | null {
-    return navigateBlock(current, -1);
+    return navigateBlock(current.getSourceBlock() as BlockSvg, current, -1);
+  }
+
+  /**
+   * Returns the row ID of the given field.
+   *
+   * @param current The field to retrieve the row ID of.
+   * @returns The row ID of the given field.
+   */
+  getRowId(current: Field<any>) {
+    return current.getParentInput().getRowId();
   }
 
   /**

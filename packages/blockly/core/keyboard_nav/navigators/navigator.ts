@@ -5,7 +5,6 @@
  */
 
 import {BlockSvg} from '../../block_svg.js';
-import {RenderedWorkspaceComment} from '../../comments/rendered_workspace_comment.js';
 import {ConnectionType} from '../../connection_type.js';
 import {Field} from '../../field.js';
 import {getFocusManager} from '../../focus_manager.js';
@@ -59,8 +58,6 @@ export class Navigator {
   /** Whether or not navigation loops around when reaching the end. */
   protected navigationLoops = false;
 
-  protected relativeNode: IFocusableNode | null = null;
-
   /**
    * Adds a navigation ruleset to this Navigator.
    *
@@ -94,7 +91,7 @@ export class Navigator {
   getFirstChild(current: IFocusableNode): IFocusableNode | null {
     const result = this.get(current)?.getFirstChild(current);
     if (!result) return null;
-    if (!this.get(result)?.isNavigable(result)) {
+    if (!this.isNavigable(result)) {
       return this.getFirstChild(result) || this.getNextSibling(result);
     }
     return result;
@@ -109,7 +106,7 @@ export class Navigator {
   getParent(current: IFocusableNode): IFocusableNode | null {
     const result = this.get(current)?.getParent(current);
     if (!result) return null;
-    if (!this.get(result)?.isNavigable(result)) return this.getParent(result);
+    if (!this.isNavigable(result)) return this.getParent(result);
     return result;
   }
 
@@ -122,7 +119,7 @@ export class Navigator {
   getNextSibling(current: IFocusableNode): IFocusableNode | null {
     const result = this.get(current)?.getNextSibling(current);
     if (!result) return null;
-    if (!this.get(result)?.isNavigable(result)) {
+    if (!this.isNavigable(result)) {
       return this.getNextSibling(result);
     }
     return result;
@@ -137,7 +134,7 @@ export class Navigator {
   getPreviousSibling(current: IFocusableNode): IFocusableNode | null {
     const result = this.get(current)?.getPreviousSibling(current);
     if (!result) return null;
-    if (!this.get(result)?.isNavigable(result)) {
+    if (!this.isNavigable(result)) {
       return this.getPreviousSibling(result);
     }
     return result;
@@ -154,8 +151,26 @@ export class Navigator {
   getPreviousNode(
     node = getFocusManager().getFocusedNode(),
   ): IFocusableNode | null {
-    this.relativeNode = node;
-    return this.getPreviousNodeImpl(node, NavigationDirection.PREVIOUS);
+    if (!node) return null;
+
+    let previous = this.getPreviousNodeImpl(
+      node,
+      node,
+      NavigationDirection.PREVIOUS,
+    );
+
+    // If the previous node is the root focusable tree or null, we need to
+    // traverse stacks of top-level items on the tree. Since we're going
+    // backwards to the previous stack, we actually want the last node in the
+    // stack (most adjacent to the current node) rather than the root of the
+    // stack.
+    if (!previous || (previous as any) === node.getFocusableTree()) {
+      const stackRoot = this.navigateStacks(node, -1);
+      if (!stackRoot) return null;
+      previous = this.getLastNodeInStack(stackRoot, node);
+    }
+
+    return this.getLeftmostSibling(previous);
   }
 
   /**
@@ -167,8 +182,25 @@ export class Navigator {
    *     "row" as the given node, or null if there is none.
    */
   getOutNode(node = getFocusManager().getFocusedNode()): IFocusableNode | null {
-    this.relativeNode = node;
-    return this.getPreviousNodeImpl(node, NavigationDirection.OUT);
+    // Special case: blocks and input value connections on blocks with external
+    // inputs should always navigate to the parent block, even though they're
+    // not necessarily on the same visual row.
+    const connection =
+      node instanceof BlockSvg
+        ? node.outputConnection?.targetConnection
+        : node instanceof RenderedConnection &&
+            node.type === ConnectionType.INPUT_VALUE
+          ? node
+          : null;
+    if (
+      connection &&
+      !connection.getSourceBlock().getInputsInline() &&
+      connection !== connection.getSourceBlock().inputList[0].connection
+    ) {
+      return connection.getSourceBlock();
+    }
+
+    return this.getPreviousNodeImpl(node, node, NavigationDirection.OUT);
   }
 
   /**
@@ -182,8 +214,13 @@ export class Navigator {
   getNextNode(
     node = getFocusManager().getFocusedNode(),
   ): IFocusableNode | null {
-    this.relativeNode = node;
-    return this.getNextNodeImpl(node, NavigationDirection.NEXT);
+    const next = this.getNextNodeImpl(node, node, NavigationDirection.NEXT);
+
+    if (node && next === null) {
+      return this.navigateStacks(node, 1);
+    }
+
+    return next;
   }
 
   /**
@@ -195,13 +232,13 @@ export class Navigator {
    *     "row" as the given node, or null if there is none.
    */
   getInNode(node = getFocusManager().getFocusedNode()): IFocusableNode | null {
-    this.relativeNode = node;
-    return this.getNextNodeImpl(node, NavigationDirection.IN);
+    return this.getNextNodeImpl(node, node, NavigationDirection.IN);
   }
 
   /**
    * Returns the previous sibling/parent node relative to the given node.
    *
+   * @param startNode The node that navigation is starting from.
    * @param node The node to navigate relative to.
    * @param direction The direction to navigate, either OUT or PREVIOUS.
    * @param visitedNodes Set of already-visited nodes used to avoid cycles,
@@ -210,15 +247,12 @@ export class Navigator {
    *     node was not provided.
    */
   private getPreviousNodeImpl(
+    startNode: IFocusableNode | null,
     node: IFocusableNode | null,
     direction: NavigationDirection.PREVIOUS | NavigationDirection.OUT,
     visitedNodes: Set<IFocusableNode> = new Set<IFocusableNode>(),
   ): IFocusableNode | null {
-    if (
-      !node ||
-      visitedNodes.has(node) ||
-      (!this.getNavigationLoops() && node === this.getFirstNode())
-    ) {
+    if (!node || !startNode || visitedNodes.has(node)) {
       return null;
     }
 
@@ -226,11 +260,18 @@ export class Navigator {
       this.getRightMostChild(this.getPreviousSibling(node), node) ||
       this.getParent(node);
 
-    const isValid = this.getValidationFunction(direction);
-    if (newNode && isValid(newNode)) return newNode;
+    if (newNode && this.transitionAllowed(startNode, newNode, direction)) {
+      return newNode;
+    }
+
     if (newNode) {
       visitedNodes.add(node);
-      return this.getPreviousNodeImpl(newNode, direction, visitedNodes);
+      return this.getPreviousNodeImpl(
+        startNode,
+        newNode,
+        direction,
+        visitedNodes,
+      );
     }
     return null;
   }
@@ -238,6 +279,7 @@ export class Navigator {
   /**
    * Returns the next sibling/child node relative to the given node.
    *
+   * @param startNode The node that navigation is starting from.
    * @param node The node to navigate relative to.
    * @param direction The direction to navigate, either IN or NEXT.
    * @param visitedNodes Set of already-visited nodes used to avoid cycles,
@@ -246,11 +288,12 @@ export class Navigator {
    *     node was not provided.
    */
   private getNextNodeImpl(
+    startNode: IFocusableNode | null,
     node: IFocusableNode | null,
     direction: NavigationDirection.NEXT | NavigationDirection.IN,
     visitedNodes: Set<IFocusableNode> = new Set<IFocusableNode>(),
   ): IFocusableNode | null {
-    if (!node || visitedNodes.has(node)) {
+    if (!node || !startNode || visitedNodes.has(node)) {
       return null;
     }
 
@@ -261,17 +304,15 @@ export class Navigator {
       const parent = this.getParent(target);
       if (!parent) break;
       newNode = this.getNextSibling(parent);
-      if (newNode === this.getFirstNode()) return null;
       target = parent;
     }
 
-    const isValid = this.getValidationFunction(direction);
-    if (newNode && isValid(newNode)) {
+    if (newNode && this.transitionAllowed(startNode, newNode, direction)) {
       return newNode;
     }
     if (newNode) {
       visitedNodes.add(node);
-      return this.getNextNodeImpl(newNode, direction, visitedNodes);
+      return this.getNextNodeImpl(startNode, newNode, direction, visitedNodes);
     }
 
     return null;
@@ -340,141 +381,128 @@ export class Navigator {
   }
 
   /**
-   * Returns a function that will be used to determine whether a candidate for
-   * navigation is valid.
+   * Determines whether navigation is allowed between two nodes.
    *
+   * @param current The starting node for proposed navigation.
+   * @param candidate The proposed destination node.
    * @param direction The direction in which the user is navigating.
-   * @returns A function that takes a proposed navigation candidate and returns
-   *     true if navigation should be allowed to proceed to it, or false to find
+   * @returns True if navigation should be allowed to proceed, or false to find
    *     a different candidate.
    */
-  getValidationFunction(
+  protected transitionAllowed(
+    current: IFocusableNode,
+    candidate: IFocusableNode,
     direction: NavigationDirection,
-  ): (node: IFocusableNode) => boolean {
+  ) {
     switch (direction) {
       case NavigationDirection.IN:
       case NavigationDirection.OUT:
-        return (candidate: IFocusableNode) => {
-          const candidateBlock = this.getSourceBlockFromNode(candidate);
-          const currentBlock = this.getSourceBlockFromNode(this.relativeNode);
-
-          // Preventing escaping the current block/comment/etc by:
-          // Disallow moving from a node with a block to a non-block node (other than a block comment editor)
-          // Disallow moving from a non-block node to a block node
-          // Disallow moving to the workspace
-          if (
-            (currentBlock && !candidateBlock) ||
-            (!currentBlock && candidateBlock) ||
-            (candidate as unknown) === this.relativeNode?.getFocusableTree()
-          ) {
-            return false;
-          }
-
-          if (!candidateBlock || !currentBlock) return true;
-
-          const currentParents = currentBlock.getOutputParents();
-          const candidateParents = candidateBlock.getOutputParents();
-          // If we're navigating from a block (or nested element) to a block
-          // (or nested element), ensure that we're not crossing a statement
-          // block boundary (i.e. moving to a next or previous block vertically)
-          // by verifying that the two blocks in question are either the same
-          // or have a common parent accessible only by traversing output
-          // connections, meaning that they are part of the same row.
-          return (
-            (candidateParents as any).intersection(currentParents).size > 0
-          );
-        };
+        return this.getRowId(current) === this.getRowId(candidate);
       case NavigationDirection.NEXT:
       case NavigationDirection.PREVIOUS:
-        return (candidate: IFocusableNode | null) => {
-          if (
-            (candidate instanceof BlockSvg &&
-              !candidate.outputConnection?.targetBlock()) ||
-            candidate instanceof RenderedWorkspaceComment ||
-            (candidate instanceof RenderedConnection &&
-              (candidate.type === ConnectionType.NEXT_STATEMENT ||
-                (candidate.type === ConnectionType.INPUT_VALUE &&
-                  candidate.getSourceBlock().statementInputCount &&
-                  candidate.getSourceBlock().inputList[0] !==
-                    candidate.getParentInput())))
-          ) {
-            return true;
-          }
-
-          const currentNode = this.relativeNode;
-          if (direction === NavigationDirection.PREVIOUS) {
-            // Don't visit rightmost/nested blocks in statement blocks when
-            // navigating to the previous block.
-            if (
-              currentNode instanceof RenderedConnection &&
-              currentNode.type === ConnectionType.NEXT_STATEMENT &&
-              !currentNode.getParentInput() &&
-              candidate !== currentNode.getSourceBlock()
-            ) {
-              return false;
-            }
-
-            // Don't visit the first value/input block in a block with statement
-            // inputs when navigating to the previous block. This is consistent
-            // with the behavior when navigating to the next block and avoids
-            // duplicative screen reader narration. Also don't visit value
-            // blocks nested in non-statement inputs.
-            if (
-              candidate instanceof BlockSvg &&
-              candidate.outputConnection?.targetConnection
-            ) {
-              const parentInput =
-                candidate.outputConnection.targetConnection.getParentInput();
-              if (
-                !parentInput?.getSourceBlock().statementInputCount ||
-                parentInput?.getSourceBlock().inputList[0] === parentInput
-              ) {
-                return false;
-              }
-            }
-          }
-
-          const currentBlock = this.getSourceBlockFromNode(currentNode);
-          if (
-            candidate instanceof BlockSvg &&
-            currentBlock instanceof BlockSvg
-          ) {
-            // If the candidate's parent uses inline inputs, disallow the
-            // candidate; it follows that it must be on the same row as its
-            // parent.
-            if (candidate.outputConnection?.targetBlock()?.getInputsInline()) {
-              return false;
-            }
-
-            const candidateParents = candidate.getParents();
-            // If the candidate block is an (in)direct child of the current
-            // block, disallow it; it cannot be on a different row than the
-            // current block.
-            if (
-              currentBlock === this.relativeNode &&
-              candidateParents.has(currentBlock)
-            ) {
-              return false;
-            }
-
-            const currentParents = currentBlock.getParents();
-
-            const sharedParents = (currentParents as any).intersection(
-              candidateParents,
-            );
-            // Allow the candidate if it and the current block have no parents
-            // in common, or if they have a shared parent with external inputs.
-            const result =
-              !sharedParents.size ||
-              sharedParents
-                .values()
-                .some((block: BlockSvg) => !block.getInputsInline());
-            return result;
-          }
-
-          return false;
-        };
+        return this.getRowId(current) !== this.getRowId(candidate);
     }
+  }
+
+  /**
+   * Returns the leftmost node in the same row as the given node.
+   *
+   * @param node The node to find the leftmost sibling of.
+   * @returns The leftmost sibling of the given node in the same row.
+   */
+  private getLeftmostSibling(node: IFocusableNode | null) {
+    if (!node) return null;
+
+    let left = node;
+    let temp;
+    while (
+      (temp = this.getPreviousNodeImpl(left, left, NavigationDirection.OUT))
+    ) {
+      left = temp;
+    }
+
+    return left;
+  }
+
+  /**
+   * Returns the last node in a stack of blocks or other top-level workspace
+   * entity.
+   *
+   * @param stackRoot A top-level item to get the last node of.
+   * @param stopIfFound A sentinel node that terminates traversal if
+   *     encountered; typically the root node of the next stack.
+   * @returns The last node in the given stack.
+   */
+  private getLastNodeInStack(
+    stackRoot: IFocusableNode,
+    stopIfFound: IFocusableNode,
+  ) {
+    let target = stackRoot;
+    let temp;
+    while (
+      (temp = this.getNextNodeImpl(target, target, NavigationDirection.NEXT)) &&
+      temp !== stopIfFound
+    ) {
+      target = temp;
+    }
+
+    return target;
+  }
+
+  private getRowId(node: IFocusableNode) {
+    return this.get(node)?.getRowId(node);
+  }
+
+  /**
+   * Returns the next/previous stack relative to the given element's stack.
+   *
+   * @param current The element whose stack will be navigated relative to.
+   * @param delta The difference in index to navigate; positive values navigate
+   *     to the nth next stack, while negative values navigate to the nth
+   *     previous stack.
+   * @returns The first element in the stack offset by `delta` relative to the
+   *     current element's stack, or the last element in the stack offset by
+   * `delta` relative to the current element's stack when navigating backwards.
+   */
+  protected navigateStacks(current: IFocusableNode, delta: number) {
+    const stacks = this.getTopLevelItems(current);
+    const root =
+      this.getSourceBlockFromNode(current)?.getRootBlock() ?? current;
+    const currentIndex = stacks.indexOf(root);
+    const targetIndex = currentIndex + delta;
+    let result: IFocusableNode | null = null;
+    if (targetIndex >= 0 && targetIndex < stacks.length) {
+      result = stacks[targetIndex];
+    } else if (targetIndex < 0 && this.getNavigationLoops()) {
+      result = stacks[stacks.length - 1];
+    } else if (targetIndex >= stacks.length && this.getNavigationLoops()) {
+      result = stacks[0];
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns a list of all top-level focusable items on the given node's
+   * focusable tree.
+   *
+   * @param current The node whose root focusable tree to retrieve the top-level
+   *     items of.
+   * @returns A list of all top-level items on the given node's parent tree.
+   */
+  protected getTopLevelItems(current: IFocusableNode): IFocusableNode[] {
+    const workspace = current.getFocusableTree();
+    return (workspace as any).getTopBoundedElements(true);
+  }
+
+  /**
+   * Returns whether or not the given node is navigable.
+   *
+   * @param node A focusable node to check the navigability of.
+   * @returns True if the node is navigable, otherwise false.
+   */
+  protected isNavigable(node: IFocusableNode) {
+    return this.get(node)?.isNavigable(node);
   }
 
   /**

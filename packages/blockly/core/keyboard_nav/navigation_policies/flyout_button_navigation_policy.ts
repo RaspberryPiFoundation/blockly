@@ -55,6 +55,16 @@ export class FlyoutButtonNavigationPolicy
   }
 
   /**
+   * Returns the row ID of the given flyout button.
+   *
+   * @param current The flyout button to retrieve the row ID of.
+   * @returns The row ID of the given flyout button.
+   */
+  getRowId(current: FlyoutButton) {
+    return current.getButtonText();
+  }
+
+  /**
    * Returns whether or not the given flyout button can be navigated to.
    *
    * @param current The instance to check for navigability.

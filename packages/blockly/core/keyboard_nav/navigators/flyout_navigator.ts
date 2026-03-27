@@ -7,9 +7,8 @@
 import {IFocusableNode} from '../../blockly.js';
 import type {IFlyout} from '../../interfaces/i_flyout.js';
 import {FlyoutButtonNavigationPolicy} from '../navigation_policies/flyout_button_navigation_policy.js';
-import {FlyoutNavigationPolicy} from '../navigation_policies/flyout_navigation_policy.js';
 import {FlyoutSeparatorNavigationPolicy} from '../navigation_policies/flyout_separator_navigation_policy.js';
-import {NavigationDirection, Navigator} from './navigator.js';
+import {Navigator} from './navigator.js';
 
 /**
  * Navigator that handles keyboard navigation within a flyout.
@@ -20,9 +19,6 @@ export class FlyoutNavigator extends Navigator {
     this.rules.push(
       new FlyoutButtonNavigationPolicy(),
       new FlyoutSeparatorNavigationPolicy(),
-    );
-    this.rules = this.rules.map(
-      (rule) => new FlyoutNavigationPolicy(rule, flyout),
     );
   }
 
@@ -37,17 +33,28 @@ export class FlyoutNavigator extends Navigator {
   }
 
   /**
-   * Returns a function used to validate navigation candidates. Always allows
-   * up/down navigation, never allows left/right.
+   * Returns a list of top-level navigable flyout items.
    */
-  override getValidationFunction(direction: NavigationDirection) {
-    if (
-      direction === NavigationDirection.NEXT ||
-      direction === NavigationDirection.PREVIOUS
-    ) {
-      return () => true;
-    } else {
-      return () => false;
-    }
+  protected override getTopLevelItems(): IFocusableNode[] {
+    return this.flyout
+      .getContents()
+      .map((item) => item.getElement())
+      .filter((element) => this.isNavigable(element));
+  }
+
+  /**
+   * Returns whether or not the given node is navigable.
+   *
+   * @param node A focusable node to check the navigability of.
+   * @returns True if the node is navigable, otherwise false.
+   */
+  protected override isNavigable(node: IFocusableNode) {
+    return (
+      super.isNavigable(node) &&
+      this.flyout
+        .getContents()
+        .map((item): IFocusableNode => item.getElement())
+        .includes(node)
+    );
   }
 }

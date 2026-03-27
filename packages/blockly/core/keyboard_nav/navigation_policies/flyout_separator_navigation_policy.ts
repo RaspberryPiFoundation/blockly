@@ -32,6 +32,16 @@ export class FlyoutSeparatorNavigationPolicy
   }
 
   /**
+   * Returns the row ID of the given flyout separator.
+   *
+   * @param current The flyout separator to retrieve the row ID of.
+   * @returns Dummy row ID, as flyout separators are never navigable.
+   */
+  getRowId(_current: FlyoutSeparator) {
+    return 'error';
+  }
+
+  /**
    * Returns whether or not the given flyout separator can be navigated to.
    *
    * @param _current The instance to check for navigability.

@@ -56,6 +56,16 @@ export class WorkspaceNavigationPolicy
   }
 
   /**
+   * Returns the row ID of the given workspace.
+   *
+   * @param current The workspace to retrieve the row ID of.
+   * @returns The row ID of the given workspace.
+   */
+  getRowId(current: WorkspaceSvg) {
+    return current.id;
+  }
+
+  /**
    * Returns whether or not the given workspace can be navigated to.
    *
    * @param current The instance to check for navigability.

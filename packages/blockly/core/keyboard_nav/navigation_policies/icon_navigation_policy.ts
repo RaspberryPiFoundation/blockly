@@ -58,7 +58,7 @@ export class IconNavigationPolicy implements INavigationPolicy<Icon> {
    * @returns The next icon, field or input following this icon, if any.
    */
   getNextSibling(current: Icon): IFocusableNode | null {
-    return navigateBlock(current, 1);
+    return navigateBlock(current.getSourceBlock() as BlockSvg, current, 1);
   }
 
   /**
@@ -68,7 +68,17 @@ export class IconNavigationPolicy implements INavigationPolicy<Icon> {
    * @returns The icon's previous icon, if any.
    */
   getPreviousSibling(current: Icon): IFocusableNode | null {
-    return navigateBlock(current, -1);
+    return navigateBlock(current.getSourceBlock() as BlockSvg, current, -1);
+  }
+
+  /**
+   * Returns the row ID of the given icon.
+   *
+   * @param current The icon to retrieve the row ID of.
+   * @returns The row ID of the given icon.
+   */
+  getRowId(current: Icon) {
+    return (current.getSourceBlock() as BlockSvg).getRowId();
   }
 
   /**

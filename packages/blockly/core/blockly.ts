@@ -445,7 +445,6 @@ export * from './keyboard_nav/navigation_policies/comment_editor_navigation_poli
 export * from './keyboard_nav/navigation_policies/connection_navigation_policy.js';
 export * from './keyboard_nav/navigation_policies/field_navigation_policy.js';
 export * from './keyboard_nav/navigation_policies/flyout_button_navigation_policy.js';
-export * from './keyboard_nav/navigation_policies/flyout_navigation_policy.js';
 export * from './keyboard_nav/navigation_policies/flyout_separator_navigation_policy.js';
 export * from './keyboard_nav/navigation_policies/icon_navigation_policy.js';
 export * from './keyboard_nav/navigation_policies/toolbox_item_navigation_policy.js';

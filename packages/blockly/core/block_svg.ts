@@ -1941,4 +1941,22 @@ export class BlockSvg
 
     return parents;
   }
+
+  /**
+   * Returns an ID for the visual "row" this block is part of.
+   *
+   * @internal
+   */
+  getRowId(): string {
+    const connectedInput =
+      this.outputConnection?.targetConnection?.getParentInput();
+    // Blocks with an output value have the same ID as the input they're
+    // connected to.
+    if (connectedInput) {
+      return connectedInput.getRowId();
+    }
+
+    // All other blocks are their own row.
+    return this.id;
+  }
 }

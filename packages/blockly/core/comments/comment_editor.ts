@@ -25,7 +25,7 @@ export const COMMENT_EDITOR_FOCUS_IDENTIFIER = '_comment_textarea_';
 
 /** The part of a comment that can be typed into. */
 export class CommentEditor implements IFocusableNode {
-  id?: string;
+  id: string;
   /** The foreignObject containing the HTML text area. */
   private foreignObject: SVGForeignObjectElement;
 
@@ -42,7 +42,7 @@ export class CommentEditor implements IFocusableNode {
 
   constructor(
     public workspace: WorkspaceSvg,
-    commentId?: string,
+    commentId: string,
     private onFinishEditing?: () => void,
   ) {
     this.foreignObject = dom.createSvgElement(Svg.FOREIGNOBJECT, {
@@ -67,10 +67,8 @@ export class CommentEditor implements IFocusableNode {
     body.appendChild(this.textArea);
     this.foreignObject.appendChild(body);
 
-    if (commentId) {
-      this.id = commentId + COMMENT_EDITOR_FOCUS_IDENTIFIER;
-      this.textArea.setAttribute('id', this.id);
-    }
+    this.id = commentId + COMMENT_EDITOR_FOCUS_IDENTIFIER;
+    this.textArea.setAttribute('id', this.id);
 
     // Register browser event listeners for the user typing in the textarea.
     browserEvents.conditionalBind(

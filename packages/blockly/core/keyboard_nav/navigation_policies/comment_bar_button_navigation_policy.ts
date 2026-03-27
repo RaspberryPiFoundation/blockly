@@ -67,6 +67,16 @@ export class CommentBarButtonNavigationPolicy
   }
 
   /**
+   * Returns the row ID of the given CommentBarButton.
+   *
+   * @param current The CommentBarButton to retrieve the row ID of.
+   * @returns The row ID of the given CommentBarButton.
+   */
+  getRowId(current: CommentBarButton) {
+    return current.getCommentView().commentId;
+  }
+
+  /**
    * Returns whether or not the given CommentBarButton can be navigated to.
    *
    * @param current The instance to check for navigability.

@@ -55,6 +55,16 @@ export class BlockCommentNavigationPolicy
   }
 
   /**
+   * Returns the row ID of the given block comment.
+   *
+   * @param current The block comment to retrieve the row ID of.
+   * @returns The row ID of the given block comment.
+   */
+  getRowId(current: TextInputBubble) {
+    return current.id;
+  }
+
+  /**
    * Returns whether or not the given block comment can be navigated to.
    *
    * @param current The instance to check for navigability.
