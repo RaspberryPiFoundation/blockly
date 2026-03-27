@@ -139,6 +139,13 @@ export class WorkspaceAudio {
   }
 
   /**
+   * Plays a standard error beep.
+   */
+  async playErrorBeep() {
+    return this.beep(260);
+  }
+
+  /**
    * Returns whether or not playing sounds is currently allowed.
    *
    * @returns False if audio is muted or a sound has just been played, otherwise

@@ -534,6 +534,7 @@ suite('Keyboard-driven movement', function () {
     suite('in constrained mode', function () {
       test('prompts to use unconstrained mode when no destinations are available', function () {
         const toastSpy = sinon.spy(Blockly.Toast, 'show');
+        const beepSpy = sinon.spy(this.workspace.getAudioManager(), 'beep');
         Blockly.getFocusManager().focusNode(this.element);
         const originalBounds = this.element.getBoundingRectangle();
         startMove(this.workspace);
@@ -547,6 +548,8 @@ suite('Keyboard-driven movement', function () {
             ? 'Hold ⌘ Command and use arrow keys to move freely, then Enter to accept the position'
             : 'Hold Ctrl and use arrow keys to move freely, then Enter to accept the position',
         );
+        sinon.assert.calledOnce(beepSpy);
+        beepSpy.restore();
         toastSpy.restore();
       });
 
@@ -580,6 +583,7 @@ suite('Keyboard-driven movement', function () {
           {id: 'controls_if', index: 6, ownIndex: 0}, // "Else" statement input.
           {id: 'controls_if', index: 1, ownIndex: 0}, // Next.
           {id: 'p5_draw', index: 0, ownIndex: 0}, // Statement input.
+          null, // Disconnected on workspace
         ];
         /**
          * Expected connection candidates when moving STATEMENT_SIMPLE after
@@ -638,14 +642,10 @@ suite('Keyboard-driven movement', function () {
          * pressing right (or down) arrow n times.
          */
         const EXPECTED_COMPLEX_RIGHT = [
-          // TODO(#702): With the current behavior, certain connection
-          // candidates that can be found using the mouse are not visited when
-          // doing a keyboard move. They appear in the list below, but commented
-          // out for now. They should be uncommented if the behavior is changed.
           {id: 'p5_canvas', index: 1, ownIndex: 0}, // Next; starting location again.
-          // {id: 'text_print', index: 0, ownIndex: 1}, // Previous to own next.
+          {id: 'text_print', index: 0, ownIndex: 1}, // Previous to own next.
           {id: 'text_print', index: 0, ownIndex: 4}, // Previous to own else input.
-          // {id: 'text_print', index: 0, ownIndex: 3}, // Previous to own if input.
+          {id: 'text_print', index: 0, ownIndex: 3}, // Previous to own if input.
           {id: 'text_print', index: 1, ownIndex: 0}, // Next.
           {id: 'controls_if', index: 3, ownIndex: 0}, // "If" statement input.
           {id: 'controls_repeat_ext', index: 3, ownIndex: 0}, // Statement input.
@@ -654,6 +654,7 @@ suite('Keyboard-driven movement', function () {
           {id: 'controls_if', index: 6, ownIndex: 0}, // "Else" statement input.
           {id: 'controls_if', index: 1, ownIndex: 0}, // Next.
           {id: 'p5_draw', index: 0, ownIndex: 0}, // Statement input.
+          null, // Disconnected on workspace
         ];
         /**
          * Expected connection candidates when moving STATEMENT_COMPLEX after
@@ -762,6 +763,7 @@ suite('Keyboard-driven movement', function () {
           {id: 'join2', index: 1, ownIndex: 0}, // Join block ADD0 input.
           {id: 'join2', index: 2, ownIndex: 0}, // Join block ADD1 input.
           // Skip input of unattached join block.
+          null, // Disconnected on workspace
         ];
         /**
          * Expected connection candidates when moving BLOCK_SIMPLE, after
@@ -817,12 +819,8 @@ suite('Keyboard-driven movement', function () {
          * pressing ArrowRight n times.
          */
         const EXPECTED_COMPLEX_RIGHT = EXPECTED_SIMPLE_RIGHT.concat([
-          // TODO(#702): With the current behavior, certain connection
-          // candidates that can be found using the mouse are not visited when
-          // doing a keyboard move. They appear in the list below, but commented
-          // out for now. They should be uncommented if the behavior is changed.
           {id: 'join0', index: 0, ownIndex: 2}, // Unattached block to own input.
-          // {id: 'join0', index: 0, ownIndex: 1}, // Unattached block to own input.
+          {id: 'join0', index: 0, ownIndex: 1}, // Unattached block to own input.
         ]);
         /**
          * Expected connection candidates when moving row consisting of

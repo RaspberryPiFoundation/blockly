@@ -16,6 +16,9 @@
   "author": {
     "name": "Neil Fraser"
   },
+  "browser": {
+    "jsdom": false
+  },
   "scripts": {
     "build": "gulp build",
     "build-debug": "gulp build --verbose --debug",
@@ -120,7 +123,7 @@
     "eslint-plugin-prettier": "^5.2.1",
     "glob": "^11.0.1",
     "globals": "^16.0.0",
-    "google-closure-compiler": "^20260225.0.0",
+    "google-closure-compiler": "^20260315.0.0",
     "gulp": "^5.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-gzip": "^1.4.2",
@@ -133,6 +136,7 @@
     "gulp-sourcemaps": "^3.0.0",
     "gulp-umd": "^2.0.0",
     "http-server": "^14.0.0",
+    "jsdom": "27.4.0",
     "json5": "^2.2.0",
     "markdown-tables-to-json": "^0.1.7",
     "mocha": "^11.3.0",
@@ -147,10 +151,10 @@
     "webdriverio": "^9.0.7",
     "yargs": "^17.2.1"
   },
-  "dependencies": {
-    "jsdom": "26.1.0"
-  },
   "engines": {
     "node": ">=22"
+  },
+  "peerDependencies": {
+    "jsdom": "^27.4.0"
   }
 }
