@@ -10,7 +10,7 @@ import {
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
 
-suite('Aria', function () {
+suite('Aria Live Region', function () {
   setup(function () {
     sharedTestSetup.call(this);
     this.workspace = Blockly.inject('blocklyDiv', {});
