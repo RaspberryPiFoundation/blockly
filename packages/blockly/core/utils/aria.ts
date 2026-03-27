@@ -18,7 +18,7 @@ const ROLE_ATTRIBUTE = 'role';
  * ARIA state values for LivePriority.
  * Copied from Closure's goog.a11y.aria.LivePriority
  */
-export enum LivePriority {
+export enum LiveRegionAssertiveness {
   // This information has the highest priority and assistive technologies
   // SHOULD notify the user immediately. Because an interruption may disorient
   // users or cause them to not complete their current task, authors SHOULD NOT
@@ -31,6 +31,23 @@ export enum LivePriority {
   // the next graceful opportunity, such as at the end of speaking the current
   // sentence or when the users pauses typing.
   POLITE = 'polite',
+}
+
+/**
+ * Customization options that can be passed when using `announceDynamicAriaState`.
+ */
+export interface DynamicAnnouncementOptions {
+  /** The custom ARIA `Role` that should be used for the announcement container. */
+  role?: Role;
+
+  /**
+   * How assertive the announcement should be.
+   *
+   * Important*: It was found through testing that `ASSERTIVE` announcements are
+   * often outright ignored by some screen readers, so it's generally recommended
+   * to always use `POLITE` unless specifically tested across supported readers.
+   */
+  assertiveness?: LiveRegionAssertiveness;
 }
 
 /**
@@ -182,84 +199,74 @@ export function setState(
   element.setAttribute(attrStateName, `${value}`);
 }
 
+let liveRegionElement: HTMLElement | null = null;
+
 /**
- * Creates the centralized ARIA live region used to announce dynamic state
- * changes to screen readers. This live region is visually hidden but exposed to
- * assistive technologies.
+ * Creates an ARIA live region under the specified parent Element to be used
+ * for all dynamic announcements via `announceDynamicAriaState`. This must be
+ * called only once and before any dynamic announcements can be made.
  *
- * Only one live region should exist per Blockly injection. This function should
- * be called during workspace/injection setup to create the region inside the
- * Blockly container.
- *
- * See: https://stackoverflow.com/a/48590836 for a reference.
- *
- * @param container The container element to which the live region will be
- *     appended.
+ * @param parent The container element to which the live region will be appended.
  */
-export function createLiveRegion(container: HTMLDivElement) {
+export function initializeGlobalAriaLiveRegion(parent: HTMLDivElement) {
+  if (liveRegionElement && document.contains(liveRegionElement)) {
+    return;
+  }
   const ariaAnnouncementDiv = document.createElement('div');
   ariaAnnouncementDiv.textContent = '';
   ariaAnnouncementDiv.id = 'blocklyAriaAnnounce';
   dom.addClass(ariaAnnouncementDiv, 'hiddenForAria');
-  setState(ariaAnnouncementDiv, State.LIVE, LivePriority.POLITE);
-  container.appendChild(ariaAnnouncementDiv);
+  setState(ariaAnnouncementDiv, State.LIVE, LiveRegionAssertiveness.POLITE);
+  setRole(ariaAnnouncementDiv, Role.STATUS);
+  ariaAnnouncementDiv.setAttribute('aria-atomic', 'true');
+  parent.appendChild(ariaAnnouncementDiv);
+  liveRegionElement = ariaAnnouncementDiv;
 }
 
 let ariaAnnounceTimeout: ReturnType<typeof setTimeout>;
 let addBreakingSpace = false;
 
 /**
- * Requests that the specified text be announced to the user via a centrally
- * managed ARIA live region, if a screen reader is active.
+ * Requests that the specified text be read to the user if a screen reader is
+ * currently active.
  *
- * Announcements are scheduled asynchronously. If this function is called again
- * before a pending announcement is inserted into the live region, the pending
- * announcement is canceled and replaced with the new one.
+ * This relies on a centrally managed ARIA live region that is hidden from the
+ * visual DOM. This live region is designed to try and ensure the text is read,
+ * including if the same text is issued multiple times consecutively. Note that
+ * `initializeGlobalAriaLiveRegion` must be called before this can be used.
  *
- * The live region element must have id `blocklyAriaAnnounce`. Its `aria-live`
- * politeness setting and optional `role` are updated before the message is
- * inserted so screen readers announce the content correctly.
+ * Callers should use this judiciously. It's often considered bad practice to
+ * over-announce information that can be inferred from other sources on the page,
+ * so this ought to be used only when certain context cannot be easily determined
+ * (such as dynamic states that may not have perfect ARIA representations or
+ * indications).
  *
- * A non-breaking space is alternated at the end of the message to ensure that
- * repeated messages are still announced by screen readers.
- *
- * Callers should use this judiciously. Over-announcing can reduce usability,
- * so this should primarily be used for dynamic states or information that
- * cannot be conveyed through standard ARIA semantics.
- *
- * @param text The text to announce to the user.
- * @param options Configuration options for the announcement.
- * @param options.assertiveness The ARIA live region priority
- * @param options.role Optional ARIA role to apply to the live region before
+ * @param text The text to read to the user.
+ * @param options Custom options to configure the announcement. This defaults to no
+ *    custom `Role` and polite assertiveness.
  */
+
 export function announceDynamicAriaState(
   text: string,
-  options: {
-    assertiveness: LivePriority;
-    role: Role | null;
-  } = {
-    assertiveness: LivePriority.POLITE,
-    role: null,
-  },
+  options?: DynamicAnnouncementOptions,
 ) {
-  const ariaAnnouncementContainer = document.getElementById(
-    'blocklyAriaAnnounce',
-  );
-  if (!ariaAnnouncementContainer) {
-    throw new Error('Expected element with id blocklyAriaAnnounce to exist.');
+  if (!liveRegionElement) {
+    throw new Error('ARIA live region not initialized.');
   }
-  const {assertiveness, role} = options;
-
-  // Clear previous content.
-  ariaAnnouncementContainer.replaceChildren();
-  setState(ariaAnnouncementContainer, State.LIVE, assertiveness);
+  const ariaAnnouncementContainer = liveRegionElement;
+  const {assertiveness = LiveRegionAssertiveness.POLITE, role = null} =
+    options || {};
 
   clearTimeout(ariaAnnounceTimeout);
   ariaAnnounceTimeout = setTimeout(() => {
+    // Clear previous content.
+    ariaAnnouncementContainer.replaceChildren();
+    setState(ariaAnnouncementContainer, State.LIVE, assertiveness);
     setRole(ariaAnnouncementContainer, role);
-    const p = document.createElement('p');
-    p.textContent = text + (addBreakingSpace ? '\u00A0' : '');
+
+    const span = document.createElement('span');
+    span.textContent = text + (addBreakingSpace ? '\u00A0' : '');
     addBreakingSpace = !addBreakingSpace;
-    ariaAnnouncementContainer.appendChild(p);
+    ariaAnnouncementContainer.appendChild(span);
   }, 10);
 }

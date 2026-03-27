@@ -535,6 +535,5 @@ input[type=number] {
   width: 1px;
   height: 1px;
   overflow: hidden;
-  white-space: nowrap;
 }
 `;
