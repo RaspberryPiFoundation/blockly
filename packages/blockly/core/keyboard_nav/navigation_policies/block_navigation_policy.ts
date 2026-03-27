@@ -118,6 +118,9 @@ export class BlockNavigationPolicy implements INavigationPolicy<BlockSvg> {
  * @returns A list of navigable/focusable children of the given block.
  */
 function getBlockNavigationCandidates(block: BlockSvg): IFocusableNode[] {
+  // Collapsed blocks have no navigable children.
+  if (block.isCollapsed()) return [];
+
   // Icons are navigable.
   const candidates: IFocusableNode[] = block.getIcons();
 

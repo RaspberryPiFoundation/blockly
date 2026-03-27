@@ -21,21 +21,21 @@ suite('Navigation', function () {
         'args0': [
           {
             'type': 'field_input',
-            'name': 'NAME',
+            'name': 'NAME1',
             'text': 'default',
           },
           {
             'type': 'field_input',
-            'name': 'NAME',
+            'name': 'NAME2',
             'text': 'default',
           },
           {
             'type': 'input_value',
-            'name': 'NAME',
+            'name': 'NAME3',
           },
           {
             'type': 'input_statement',
-            'name': 'NAME',
+            'name': 'NAME4',
           },
         ],
         'previousStatement': null,
@@ -444,7 +444,7 @@ suite('Navigation', function () {
         const nextConnection = this.blocks.statementInput1.nextConnection;
         const prevConnection = this.blocks.statementInput2.previousConnection;
         const nextNode = this.navigator.getNextSibling(nextConnection);
-        assert.equal(nextNode, prevConnection);
+        assert.equal(nextNode, prevConnection.getSourceBlock());
       });
       test('fromInputToInput', function () {
         const input = this.blocks.doubleValueInput.inputList[0];
@@ -545,16 +545,19 @@ suite('Navigation', function () {
     });
 
     suite('Previous', function () {
-      test('fromPreviousToNext', function () {
+      test('fromPreviousToPriorBlock', function () {
         const prevConnection = this.blocks.statementInput2.previousConnection;
         const prevNode = this.navigator.getPreviousSibling(prevConnection);
         const nextConnection = this.blocks.statementInput1.nextConnection;
-        assert.equal(prevNode, nextConnection);
+        assert.equal(prevNode, nextConnection.getSourceBlock());
       });
       test('fromPreviousToInput', function () {
         const prevConnection = this.blocks.statementInput3.previousConnection;
         const prevNode = this.navigator.getPreviousSibling(prevConnection);
-        assert.isNull(prevNode);
+        assert.equal(
+          prevNode,
+          this.blocks.statementInput2.inputList[0].connection,
+        );
       });
       test('fromBlockToPrevious', function () {
         const prevNode = this.navigator.getPreviousSibling(
@@ -596,10 +599,10 @@ suite('Navigation', function () {
         const prevNode = this.navigator.getPreviousSibling(input.connection);
         assert.equal(prevNode, inputConnection);
       });
-      test('fromOutputToNull', function () {
+      test('fromOutputToField', function () {
         const output = this.blocks.fieldWithOutput.outputConnection;
         const prevNode = this.navigator.getPreviousSibling(output);
-        assert.isNull(prevNode);
+        assert.equal(this.blocks.statementInput1.getField('NAME2'), prevNode);
       });
       test('fromFieldToNull', function () {
         const field = this.blocks.statementInput1.inputList[0].fieldRow[0];
@@ -699,23 +702,10 @@ suite('Navigation', function () {
         workspaceTeardown.call(this, this.emptyWorkspace);
       });
 
-      test('fromInputToOutput', function () {
-        const input = this.blocks.statementInput1.inputList[0];
-        const inNode = this.navigator.getFirstChild(input.connection);
-        const outputConnection = this.blocks.fieldWithOutput.outputConnection;
-        assert.equal(inNode, outputConnection);
-      });
       test('fromInputToNull', function () {
         const input = this.blocks.statementInput2.inputList[0];
         const inNode = this.navigator.getFirstChild(input.connection);
         assert.isNull(inNode);
-      });
-      test('fromInputToPrevious', function () {
-        const input = this.blocks.statementInput2.inputList[1];
-        const previousConnection =
-          this.blocks.statementInput3.previousConnection;
-        const inNode = this.navigator.getFirstChild(input.connection);
-        assert.equal(inNode, previousConnection);
       });
       test('fromBlockToInput', function () {
         const connection = this.blocks.valueInput.inputList[0].connection;

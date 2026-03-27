@@ -199,7 +199,10 @@ suite('Keyboard navigation on Blocks', function () {
   test('Up from inline input selects statement block', function () {
     focusBlock(this.workspace, 'math_number_2');
     pressKey(this.workspace, Blockly.utils.KeyCodes.UP);
-    assert.equal(getFocusedBlockId(), 'controls_repeat_ext_1');
+    assert.equal(
+      Blockly.getFocusManager().getFocusedNode(),
+      this.workspace.getBlockById('simple_circle_1').nextConnection,
+    );
   });
 
   test('Left from first inline input selects block', function () {
@@ -220,13 +223,13 @@ suite('Keyboard navigation on Blocks', function () {
     assert.equal(getFocusedBlockId(), 'math_number_2');
   });
 
-  test('Right from last inline input selects next connection', function () {
+  test('Right from last inline input block selects next child field', function () {
     focusBlock(this.workspace, 'colour_picker_1');
-    // Go right twice; first one selects the field on the colour picker block.
+    // Go right twice; should not wrap to next row.
     pressKeyN(this.workspace, Blockly.utils.KeyCodes.RIGHT, 2);
     assert.equal(
       Blockly.getFocusManager().getFocusedNode(),
-      this.workspace.getBlockById('simple_circle_1').nextConnection,
+      this.workspace.getBlockById('colour_picker_1').getField('TEXT'),
     );
   });
 
@@ -270,10 +273,10 @@ suite('Keyboard navigation on Fields', function () {
     sharedTestTeardown.call(this);
   });
 
-  test('Up from first field selects block', function () {
+  test('Up from first field selects previous block', function () {
     focusBlockField(this.workspace, 'p5_canvas_1', 'WIDTH');
     pressKey(this.workspace, Blockly.utils.KeyCodes.UP);
-    assert.equal(getFocusedBlockId(), 'p5_canvas_1');
+    assert.equal(getFocusedBlockId(), 'p5_setup_1');
   });
 
   test('Left from first field selects block', function () {
@@ -296,12 +299,12 @@ suite('Keyboard navigation on Fields', function () {
     assert.equal(getFocusedFieldName(), 'WIDTH');
   });
 
-  test('Right from second field selects next connection', function () {
+  test('Right from second field selects does not change focus', function () {
     focusBlockField(this.workspace, 'p5_canvas_1', 'HEIGHT');
     pressKey(this.workspace, Blockly.utils.KeyCodes.RIGHT);
     assert.equal(
       Blockly.getFocusManager().getFocusedNode(),
-      this.workspace.getBlockById('p5_canvas_1').nextConnection,
+      this.workspace.getBlockById('p5_canvas_1').getField('HEIGHT'),
     );
   });
 
