@@ -15,10 +15,6 @@ suite('Aria Live Region', function () {
     sharedTestSetup.call(this);
     this.workspace = Blockly.inject('blocklyDiv', {});
     this.liveRegion = document.getElementById('blocklyAriaAnnounce');
-    this.messageInLiveRegion = (message) => {
-      const liveRegion = this.liveRegion;
-      return !!(liveRegion && liveRegion.textContent === message);
-    };
   });
 
   teardown(function () {
