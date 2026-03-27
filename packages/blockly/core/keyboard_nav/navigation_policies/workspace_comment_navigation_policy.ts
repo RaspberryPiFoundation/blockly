@@ -46,7 +46,6 @@ export class WorkspaceCommentNavigationPolicy
   /**
    * Returns the previous peer node of the given workspace comment.
    *
-   * @param current The workspace comment to find the preceding element of.
    * @returns Null, as workspace comments do not have peers.
    */
   getPreviousSibling(): IFocusableNode | null {
