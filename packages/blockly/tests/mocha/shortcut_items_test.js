@@ -598,6 +598,7 @@ suite('Keyboard Shortcut Items', function () {
       assert.strictEqual(
         Blockly.getFocusManager().getFocusedTree(),
         mutatorWorkspace.getFlyout().getWorkspace(),
+      );
     });
   });
 
