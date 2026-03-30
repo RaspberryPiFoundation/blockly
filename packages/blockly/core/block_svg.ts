@@ -160,12 +160,9 @@ export class BlockSvg
   private visuallyDisabled = false;
 
   override workspace: WorkspaceSvg;
-  // TODO(b/109816955): remove '!', see go/strict-prop-init-fix.
-  override outputConnection!: RenderedConnection;
-  // TODO(b/109816955): remove '!', see go/strict-prop-init-fix.
-  override nextConnection!: RenderedConnection;
-  // TODO(b/109816955): remove '!', see go/strict-prop-init-fix.
-  override previousConnection!: RenderedConnection;
+  override outputConnection: RenderedConnection | null = null;
+  override nextConnection: RenderedConnection | null = null;
+  override previousConnection: RenderedConnection | null = null;
 
   private translation = '';
 
