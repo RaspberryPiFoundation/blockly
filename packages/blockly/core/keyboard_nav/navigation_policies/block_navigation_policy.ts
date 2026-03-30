@@ -51,7 +51,7 @@ export class BlockNavigationPolicy implements INavigationPolicy<BlockSvg> {
   getNextSibling(current: BlockSvg): IFocusableNode | null {
     if (current.nextConnection) {
       return current.nextConnection.targetBlock() ?? current.nextConnection;
-    } else if (current.outputConnection.targetConnection) {
+    } else if (current.outputConnection?.targetConnection) {
       const parent = this.getParent(current) as BlockSvg;
       return navigateBlock(parent, current, 1);
     }
