@@ -119,6 +119,8 @@ export class ConnectionNavigationPolicy
    * @returns True if the given connection can be focused.
    */
   isNavigable(current: RenderedConnection): boolean {
+    if (!current.canBeFocused()) return false;
+
     // Empty next connections on block stacks inside of a C shaped block are
     // navigable.
     if (current.type === ConnectionType.NEXT_STATEMENT) {
