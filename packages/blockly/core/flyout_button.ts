@@ -414,6 +414,13 @@ export class FlyoutButton
   canBeFocused(): boolean {
     return true;
   }
+
+  /**
+   * Returns the ID of this FlyoutButton.
+   */
+  getId() {
+    return this.id;
+  }
 }
 
 /** CSS for buttons and labels. See css.js for use. */

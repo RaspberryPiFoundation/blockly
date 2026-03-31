@@ -61,7 +61,7 @@ export class FlyoutButtonNavigationPolicy
    * @returns The row ID of the given flyout button.
    */
   getRowId(current: FlyoutButton) {
-    return current.getButtonText();
+    return current.getId();
   }
 
   /**
