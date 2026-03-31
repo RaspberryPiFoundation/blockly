@@ -25,7 +25,7 @@ export enum LiveRegionAssertiveness {
   // use the assertive value unless the interruption is imperative.
   ASSERTIVE = 'assertive',
   // Updates to the region will not be presented to the user unless the
-  // assistive teechnology is currently focused on that region.
+  // assistive technology is currently focused on that region.
   OFF = 'off',
   // (Background change) Assistive technologies SHOULD announce the updates at
   // the next graceful opportunity, such as at the end of speaking the current
@@ -94,6 +94,8 @@ export enum Role {
   STATUS = 'status',
 }
 
+const DEFAULT_LIVE_REGION_ROLE = Role.STATUS;
+
 /**
  * ARIA states and properties.
  * Copied from Closure's goog.a11y.aria.State
@@ -102,6 +104,9 @@ export enum State {
   // ARIA property for setting the currently active descendant of an element,
   // for example the selected item in a list box. Value: ID of an element.
   ACTIVEDESCENDANT = 'activedescendant',
+  // ARIA property that, if true, indicates that all of a changed region should
+  // be presented, instead of only parts. Value: one of {true, false}.
+  ATOMIC = 'atomic',
   // ARIA property defines the total number of columns in a table, grid, or
   // treegrid.
   // Value: integer.
@@ -169,12 +174,8 @@ export enum State {
  * @param element DOM node to set role of.
  * @param roleName Role name.
  */
-export function setRole(element: Element, roleName: Role | null) {
-  if (roleName) {
-    element.setAttribute(ROLE_ATTRIBUTE, roleName);
-  } else {
-    element.removeAttribute(ROLE_ATTRIBUTE);
-  }
+export function setRole(element: Element, roleName: Role) {
+  element.setAttribute(ROLE_ATTRIBUTE, roleName);
 }
 
 /**
@@ -217,8 +218,8 @@ export function initializeGlobalAriaLiveRegion(parent: HTMLDivElement) {
   ariaAnnouncementDiv.id = 'blocklyAriaAnnounce';
   dom.addClass(ariaAnnouncementDiv, 'hiddenForAria');
   setState(ariaAnnouncementDiv, State.LIVE, LiveRegionAssertiveness.POLITE);
-  setRole(ariaAnnouncementDiv, Role.STATUS);
-  ariaAnnouncementDiv.setAttribute('aria-atomic', 'true');
+  setRole(ariaAnnouncementDiv, DEFAULT_LIVE_REGION_ROLE);
+  setState(ariaAnnouncementDiv, State.ATOMIC, true);
   parent.appendChild(ariaAnnouncementDiv);
   liveRegionElement = ariaAnnouncementDiv;
 }
@@ -242,10 +243,9 @@ let addBreakingSpace = false;
  * indications).
  *
  * @param text The text to read to the user.
- * @param options Custom options to configure the announcement. This defaults to no
- *    custom `Role` and polite assertiveness.
+ * @param options Custom options to configure the announcement. This defaults to
+ *    the status role and polite assertiveness.
  */
-
 export function announceDynamicAriaState(
   text: string,
   options?: DynamicAnnouncementOptions,
@@ -254,9 +254,14 @@ export function announceDynamicAriaState(
     throw new Error('ARIA live region not initialized.');
   }
   const ariaAnnouncementContainer = liveRegionElement;
-  const {assertiveness = LiveRegionAssertiveness.POLITE, role = null} =
-    options || {};
+  const {
+    assertiveness = LiveRegionAssertiveness.POLITE,
+    role = DEFAULT_LIVE_REGION_ROLE,
+  } = options || {};
 
+  // We use a short delay so rapid successive calls collapse into a single
+  // announcement, and to ensure assistive technologies reliably detect the
+  // DOM change.
   clearTimeout(ariaAnnounceTimeout);
   ariaAnnounceTimeout = setTimeout(() => {
     // Clear previous content.
@@ -265,6 +270,8 @@ export function announceDynamicAriaState(
     setRole(ariaAnnouncementContainer, role);
 
     const span = document.createElement('span');
+    // The non-breaking space toggle ensures otherwise identical consecutive
+    // messages are still announced.
     span.textContent = text + (addBreakingSpace ? '\u00A0' : '');
     addBreakingSpace = !addBreakingSpace;
     ariaAnnouncementContainer.appendChild(span);
