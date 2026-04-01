@@ -167,15 +167,32 @@ export enum State {
 }
 
 /**
- * Sets the role of an element.
+ * Removes the ARIA role from an element.
  *
- * Similar to Closure's goog.a11y.aria
+ * Similar to Closure's goog.a11y.aria.removeRole
+ *
+ * @param element DOM element to remove the role from.
+ */
+export function removeRole(element: Element) {
+  element.removeAttribute(ROLE_ATTRIBUTE);
+}
+
+/**
+ * Sets the ARIA role of an element. If `roleName` is null,
+ * the role is removed.
+ *
+ * Similar to Closure's goog.a11y.aria.setRole
  *
  * @param element DOM node to set role of.
- * @param roleName Role name.
+ * @param roleName Role name, or null to remove the role.
  */
-export function setRole(element: Element, roleName: Role) {
-  element.setAttribute(ROLE_ATTRIBUTE, roleName);
+export function setRole(element: Element, roleName: Role | null) {
+  if (!roleName) {
+    console.log('Removing role from element', element, roleName);
+    removeRole(element);
+  } else {
+    element.setAttribute(ROLE_ATTRIBUTE, roleName);
+  }
 }
 
 /**
