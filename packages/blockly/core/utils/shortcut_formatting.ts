@@ -28,7 +28,7 @@ export function getShortActionShortcut(action: string): string {
 
 /**
  * Find the relevant shortcuts for the given action for the current platform.
- * Keys are returned in a long user facing format.
+ * Keys are returned in a long user facing format, e.g. "Command ⌘ Option ⌥ C"
  *
  * @internal
  * @param action The action name, e.g. "cut".
@@ -52,7 +52,7 @@ const shortModifierNames: Record<string, string> = {
 
 /**
  * Find the relevant shortcuts for the given action for the current platform.
- * Keys are returned in a user facing format.
+ * Keys are returned in a short user facing format, e.g. "⌘ ⌥ C"
  *
  * This could be considerably simpler if we only bound shortcuts relevant to the
  * current platform or tagged them with a platform.
