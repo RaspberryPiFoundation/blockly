@@ -114,7 +114,7 @@ suite('Toasts', function () {
       Blockly.utils.aria.LiveRegionAssertiveness.POLITE,
     );
   });
-  
+
   test('respects assertiveness option', function () {
     const message = 'texas toast';
     Blockly.Toast.show(this.workspace, {
