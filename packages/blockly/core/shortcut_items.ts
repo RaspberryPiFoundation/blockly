@@ -736,7 +736,7 @@ export function registerStackNavigation() {
     for (
       let parent: IFocusableNode | null = node;
       parent && parent !== workspace;
-      parent = navigator.getParent(node)
+      parent = navigator.getParent(parent)
     ) {
       node = parent;
     }
