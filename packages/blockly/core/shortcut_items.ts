@@ -19,7 +19,9 @@ import {type IDraggable, isDraggable} from './interfaces/i_draggable.js';
 import {type IFocusableNode} from './interfaces/i_focusable_node.js';
 import {Direction, KeyboardMover} from './keyboard_nav/keyboard_mover.js';
 import {keyboardNavigationController} from './keyboard_navigation_controller.js';
+import {Msg} from './msg.js';
 import {KeyboardShortcut, ShortcutRegistry} from './shortcut_registry.js';
+import {aria} from './utils.js';
 import {Coordinate} from './utils/coordinate.js';
 import {KeyCodes} from './utils/keycodes.js';
 import {Rect} from './utils/rect.js';
@@ -53,6 +55,7 @@ export enum names {
   NAVIGATE_UP = 'up',
   NAVIGATE_DOWN = 'down',
   DISCONNECT = 'disconnect',
+  INFORMATION = 'information',
 }
 
 /**
@@ -635,20 +638,20 @@ export function registerArrowNavigation() {
   }
 }
 
+const resolveWorkspace = (workspace: WorkspaceSvg) => {
+  if (workspace.isFlyout) {
+    const target = workspace.targetWorkspace;
+    if (target) {
+      return resolveWorkspace(target);
+    }
+  }
+  return workspace.getRootWorkspace() ?? workspace;
+};
+
 /**
  * Registers keyboard shortcut to focus the workspace.
  */
 export function registerFocusWorkspace() {
-  const resolveWorkspace = (workspace: WorkspaceSvg) => {
-    if (workspace.isFlyout) {
-      const target = workspace.targetWorkspace;
-      if (target) {
-        return resolveWorkspace(target);
-      }
-    }
-    return workspace.getRootWorkspace() ?? workspace;
-  };
-
   const focusWorkspaceShortcut: KeyboardShortcut = {
     name: names.FOCUS_WORKSPACE,
     preconditionFn: (workspace) => !workspace.isDragging(),
@@ -687,6 +690,55 @@ export function registerFocusToolbox() {
     keyCodes: [KeyCodes.T],
   };
   ShortcutRegistry.registry.register(focusToolboxShortcut);
+}
+
+/**
+ * Registers keyboard shortcut to get count of block stacks and comments.
+ */
+export function registerWorkspaceOverview() {
+  const shortcut: KeyboardShortcut = {
+    name: names.INFORMATION,
+    preconditionFn: (workspace, scope) => {
+      const focused = scope.focusedNode;
+      return focused === workspace;
+    },
+    callback: (_workspace) => {
+      const workspace = resolveWorkspace(_workspace);
+      const stacks = workspace.getTopBlocks().length;
+      const comments = workspace.getTopComments().length;
+
+      // Build base string with block stack count.
+      let baseMsgKey;
+      if (stacks === 0) {
+        baseMsgKey = 'ARIA_WORKSPACE_BLOCKS_ZERO';
+      } else if (stacks === 1) {
+        baseMsgKey = 'ARIA_WORKSPACE_BLOCKS_ONE';
+      } else {
+        baseMsgKey = 'ARIA_WORKSPACE_BLOCKS_MANY';
+      }
+
+      // Build comment suffix.
+      let suffix = '';
+      if (comments > 0) {
+        suffix = Msg[
+          comments === 1
+            ? 'ARIA_WORKSPACE_COMMENTS_ONE'
+            : 'ARIA_WORKSPACE_COMMENTS_MANY'
+        ].replace('%1', String(comments));
+      }
+
+      // Build final message.
+      const msg = Msg[baseMsgKey]
+        .replace('%1', String(stacks))
+        .replace('%2', suffix);
+
+      aria.announceDynamicAriaState(msg);
+
+      return true;
+    },
+    keyCodes: [KeyCodes.I],
+  };
+  ShortcutRegistry.registry.register(shortcut);
 }
 
 /**
@@ -745,5 +797,13 @@ export function registerKeyboardNavigationShortcuts() {
   registerDisconnectBlock();
 }
 
+/**
+ * Registers keyboard shortcuts used to announce screen reader information.
+ */
+export function registerScreenReaderShortcuts() {
+  registerWorkspaceOverview();
+}
+
 registerDefaultShortcuts();
 registerKeyboardNavigationShortcuts();
+registerScreenReaderShortcuts();

@@ -427,5 +427,10 @@
 	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "Message shown to inform users how to move blocks to arbitrary locations with the keyboard.",
 	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Message shown to inform users how to move blocks with the keyboard.",
 	"KEYBOARD_NAV_COPIED_HINT": "Message shown when an item is copied in keyboard navigation mode.",
-	"KEYBOARD_NAV_CUT_HINT": "Message shown when an item is cut in keyboard navigation mode."
+	"KEYBOARD_NAV_CUT_HINT": "Message shown when an item is cut in keyboard navigation mode.",
+	"ARIA_WORKSPACE_BLOCKS_MANY": "ARIA live region message announcing the number of stacks of blocks in the workspace, optionally including comments. \n\nParameters:\n* %1 - the number of stacks (integer greater than 1)\n* %2 - optional phrase announcing comments, including leading space",
+	"ARIA_WORKSPACE_BLOCKS_ONE": "ARIA live region message announcing there is one stack of blocks in the workspace, optionally including comments. \n\nParameters:\n* %2 - optional phrase announcing comments, including leading space",
+	"ARIA_WORKSPACE_BLOCKS_ZERO": "ARIA live region message announcing there are no blocks in the workspace, optionally including comments. \n\nParameters:\n* %2 - optional phrase announcing comments, including leading space",
+	"ARIA_WORKSPACE_COMMENTS_MANY": "ARIA live region phrase appended when there are multiple workspace comments. \n\nParameters:\n* %1 - the number of comments (integer greater than 1)",
+	"ARIA_WORKSPACE_COMMENTS_ONE": "ARIA live region phrase appended when there is exactly one workspace comment."
 }

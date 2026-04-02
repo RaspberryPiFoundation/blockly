@@ -1696,3 +1696,22 @@ Blockly.Msg.KEYBOARD_NAV_COPIED_HINT = 'Copied. Press %1 to paste.';
 /** @type {string} */
 /// Message shown when an item is cut in keyboard navigation mode.
 Blockly.Msg.KEYBOARD_NAV_CUT_HINT = 'Cut. Press %1 to paste.';
+/** @type {string} */
+/// ARIA live region message announcing the number of stacks of blocks in the workspace, optionally including comments.
+/// \n\nParameters:\n* %1 - the number of stacks (integer greater than 1)\n* %2 - optional phrase announcing comments, including leading space
+Blockly.Msg.ARIA_WORKSPACE_BLOCKS_MANY = '%1 stacks of blocks%2 in workspace.';
+/** @type {string} */
+/// ARIA live region message announcing there is one stack of blocks in the workspace, optionally including comments.
+/// \n\nParameters:\n* %2 - optional phrase announcing comments, including leading space
+Blockly.Msg.ARIA_WORKSPACE_BLOCKS_ONE = 'One stack of blocks%2 in workspace.';
+/** @type {string} */
+/// ARIA live region message announcing there are no blocks in the workspace, optionally including comments.
+/// \n\nParameters:\n* %2 - optional phrase announcing comments, including leading space
+Blockly.Msg.ARIA_WORKSPACE_BLOCKS_ZERO = 'No blocks%2 in workspace.';
+/** @type {string} */
+/// ARIA live region phrase appended when there are multiple workspace comments.
+/// \n\nParameters:\n* %1 - the number of comments (integer greater than 1)
+Blockly.Msg.ARIA_WORKSPACE_COMMENTS_MANY = ' and %1 comments';
+/** @type {string} */
+/// ARIA live region phrase appended when there is exactly one workspace comment.
+Blockly.Msg.ARIA_WORKSPACE_COMMENTS_ONE = ' and one comment';

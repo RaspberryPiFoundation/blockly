@@ -188,7 +188,6 @@ export function removeRole(element: Element) {
  */
 export function setRole(element: Element, roleName: Role | null) {
   if (!roleName) {
-    console.log('Removing role from element', element, roleName);
     removeRole(element);
   } else {
     element.setAttribute(ROLE_ATTRIBUTE, roleName);

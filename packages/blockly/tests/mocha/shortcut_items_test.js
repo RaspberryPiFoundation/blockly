@@ -552,6 +552,81 @@ suite('Keyboard Shortcut Items', function () {
     });
   });
 
+  suite('Workspace Information (I)', function () {
+    setup(function () {
+      const keyEvent = createKeyDownEvent(Blockly.utils.KeyCodes.I);
+      // Helper to trigger the shortcut and assert the live region text.
+      this.assertAnnouncement = (expected) => {
+        this.injectionDiv.dispatchEvent(keyEvent);
+        // Wait for the live region to update after the event.
+        this.clock.tick(11);
+        // The announcement may include an additional non-breaking space.
+        assert.include(this.liveRegion.textContent, expected);
+      };
+      this.liveRegion = document.getElementById('blocklyAriaAnnounce');
+    });
+
+    test('Announces block stacks and comments', function () {
+      // Start with empty workspace.
+      Blockly.getFocusManager().focusNode(this.workspace);
+      this.assertAnnouncement('No blocks in workspace.');
+
+      // Add one block.
+      const block1 = this.workspace.newBlock('stack_block');
+      Blockly.getFocusManager().focusNode(this.workspace);
+      this.assertAnnouncement('One stack of blocks in workspace.');
+
+      // Add second block.
+      const block2 = this.workspace.newBlock('stack_block');
+      Blockly.getFocusManager().focusNode(this.workspace);
+      this.assertAnnouncement('2 stacks of blocks in workspace.');
+
+      // Add one comment.
+      const comment1 = this.workspace.newComment();
+      Blockly.getFocusManager().focusNode(this.workspace);
+      this.assertAnnouncement(
+        '2 stacks of blocks and one comment in workspace.',
+      );
+
+      // Add second comment.
+      const comment2 = this.workspace.newComment();
+      Blockly.getFocusManager().focusNode(this.workspace);
+      this.assertAnnouncement(
+        '2 stacks of blocks and 2 comments in workspace.',
+      );
+
+      // Remove second block stack.
+      block2.dispose();
+      Blockly.getFocusManager().focusNode(this.workspace);
+      this.assertAnnouncement(
+        'One stack of blocks and 2 comments in workspace.',
+      );
+
+      // Remove last block.
+      block1.dispose();
+      Blockly.getFocusManager().focusNode(this.workspace);
+      this.assertAnnouncement('No blocks and 2 comments in workspace.');
+
+      // Remove second comment.
+      comment2.dispose();
+      Blockly.getFocusManager().focusNode(this.workspace);
+      this.assertAnnouncement('No blocks and one comment in workspace.');
+
+      // Remove last comment.
+      comment1.dispose();
+      Blockly.getFocusManager().focusNode(this.workspace);
+      this.assertAnnouncement('No blocks in workspace.');
+    });
+
+    suite('Preconditions', function () {
+      test('Not called when focus is not on workspace', function () {
+        this.block = this.workspace.newBlock('stack_block');
+        Blockly.getFocusManager().focusNode(this.block);
+        this.assertAnnouncement('');
+      });
+    });
+  });
+
   suite('Focus Toolbox (T)', function () {
     setup(function () {
       Blockly.defineBlocksWithJsonArray([
