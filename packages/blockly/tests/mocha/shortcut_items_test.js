@@ -817,6 +817,24 @@ suite('Keyboard Shortcut Items', function () {
       this.comment2.moveBy(0, 300);
     });
 
+    test('First stack navigating back is a no-op', function () {
+      Blockly.getFocusManager().focusNode(this.block1);
+      this.injectionDiv.dispatchEvent(keyPrevStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.block1,
+      );
+    });
+
+    test('Last stack navigating forward is a no-op', function () {
+      Blockly.getFocusManager().focusNode(this.block3);
+      this.injectionDiv.dispatchEvent(keyNextStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.block3,
+      );
+    });
+
     test('Block forward to block', function () {
       Blockly.getFocusManager().focusNode(this.block1);
       this.injectionDiv.dispatchEvent(keyNextStack());
