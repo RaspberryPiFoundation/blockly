@@ -552,6 +552,56 @@ suite('Keyboard Shortcut Items', function () {
     });
   });
 
+  suite('Focus Toolbox (T)', function () {
+    setup(function () {
+      Blockly.defineBlocksWithJsonArray([
+        {
+          'type': 'basic_block',
+          'message0': '%1',
+          'args0': [
+            {
+              'type': 'field_input',
+              'name': 'TEXT',
+              'text': 'default',
+            },
+          ],
+        },
+      ]);
+    });
+
+    test('Does not change focus when toolbox item is already focused', function () {
+      const item = this.workspace.getToolbox().getToolboxItems()[1];
+      Blockly.getFocusManager().focusNode(item);
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.T);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+      assert.strictEqual(Blockly.getFocusManager().getFocusedNode(), item);
+    });
+
+    test('Focuses toolbox when workspace is focused', function () {
+      Blockly.getFocusManager().focusTree(this.workspace);
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.T);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedTree(),
+        this.workspace.getToolbox(),
+      );
+    });
+
+    test('Focuses mutator flyout when mutator workspace is focused', async function () {
+      const block = this.workspace.newBlock('controls_if');
+      const icon = block.getIcon(Blockly.icons.MutatorIcon.TYPE);
+      await icon.setBubbleVisible(true);
+      const mutatorWorkspace = icon.getWorkspace();
+      Blockly.getFocusManager().focusTree(mutatorWorkspace);
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.T);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedTree(),
+        mutatorWorkspace.getFlyout().getWorkspace(),
+      );
+    });
+  });
+
   suite('Disconnect Block (X)', function () {
     setup(function () {
       this.blockA = this.workspace.newBlock('stack_block');

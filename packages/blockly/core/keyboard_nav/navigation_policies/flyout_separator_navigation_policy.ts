@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {FlyoutSeparator} from '../flyout_separator.js';
-import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
-import type {INavigationPolicy} from '../interfaces/i_navigation_policy.js';
+import {FlyoutSeparator} from '../../flyout_separator.js';
+import type {IFocusableNode} from '../../interfaces/i_focusable_node.js';
+import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
 
 /**
  * Set of rules controlling keyboard navigation from a flyout separator.
@@ -29,6 +29,15 @@ export class FlyoutSeparatorNavigationPolicy
 
   getPreviousSibling(_current: FlyoutSeparator): IFocusableNode | null {
     return null;
+  }
+
+  /**
+   * Returns the row ID of the given flyout separator.
+   *
+   * @returns Dummy row ID, as flyout separators are never navigable.
+   */
+  getRowId() {
+    return 'error';
   }
 
   /**

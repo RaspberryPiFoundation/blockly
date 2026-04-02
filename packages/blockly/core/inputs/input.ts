@@ -17,7 +17,7 @@ import '../field_label.js';
 import type {Block} from '../block.js';
 import type {BlockSvg} from '../block_svg.js';
 import type {Connection} from '../connection.js';
-import type {ConnectionType} from '../connection_type.js';
+import {ConnectionType} from '../connection_type.js';
 import type {Field} from '../field.js';
 import * as fieldRegistry from '../field_registry.js';
 import {RenderedConnection} from '../rendered_connection.js';
@@ -313,5 +313,38 @@ export class Input {
    */
   protected makeConnection(type: ConnectionType): Connection {
     return this.sourceBlock.makeConnection_(type);
+  }
+
+  /**
+   * Returns an ID for the visual "row" this input is part of.
+   *
+   * @internal
+   */
+  getRowId(): string {
+    const inputs = this.getSourceBlock().inputList;
+
+    // The first input in a block has the same ID as its parent block.
+    if (this === inputs[0]) {
+      return (this.getSourceBlock() as BlockSvg).getRowId();
+    }
+
+    const inputIndex = inputs.indexOf(this);
+    const precedingStatementInput =
+      inputs[inputIndex - 1].connection?.type === ConnectionType.NEXT_STATEMENT;
+
+    // Each subsequent (a) external input (b) statement input or (c) inline
+    // input following a statement input is on its own row and has its own row
+    // ID.
+    if (
+      !this.getSourceBlock().getInputsInline() ||
+      this.connection?.type === ConnectionType.NEXT_STATEMENT ||
+      precedingStatementInput
+    ) {
+      return `${this.getSourceBlock().id}-input${inputIndex}`;
+    }
+
+    // Value inputs on a inline input block have the same row ID as their
+    // preceding input, since they're all on one row.
+    return inputs[inputIndex - 1].getRowId();
   }
 }

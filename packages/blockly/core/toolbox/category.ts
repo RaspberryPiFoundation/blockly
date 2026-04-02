@@ -594,6 +594,16 @@ export class ToolboxCategory
   }
 
   /**
+   * Handles this toolbox category gaining focus by informing its parent
+   * toolbox that it has been selected.
+   */
+  override onNodeFocus(): void {
+    if (this.getParentToolbox().getSelectedItem() !== this) {
+      this.getParentToolbox().setSelectedItem(this);
+    }
+  }
+
+  /**
    * Gets the contents of the category. These are items that are meant to be
    * displayed in the flyout.
    *

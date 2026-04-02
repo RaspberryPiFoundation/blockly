@@ -21,21 +21,21 @@ suite('Navigation', function () {
         'args0': [
           {
             'type': 'field_input',
-            'name': 'NAME',
+            'name': 'NAME1',
             'text': 'default',
           },
           {
             'type': 'field_input',
-            'name': 'NAME',
+            'name': 'NAME2',
             'text': 'default',
           },
           {
             'type': 'input_value',
-            'name': 'NAME',
+            'name': 'NAME3',
           },
           {
             'type': 'input_statement',
-            'name': 'NAME',
+            'name': 'NAME4',
           },
         ],
         'previousStatement': null,
@@ -444,7 +444,7 @@ suite('Navigation', function () {
         const nextConnection = this.blocks.statementInput1.nextConnection;
         const prevConnection = this.blocks.statementInput2.previousConnection;
         const nextNode = this.navigator.getNextSibling(nextConnection);
-        assert.equal(nextNode, prevConnection);
+        assert.equal(nextNode, prevConnection.getSourceBlock());
       });
       test('fromInputToInput', function () {
         const input = this.blocks.doubleValueInput.inputList[0];
@@ -471,8 +471,6 @@ suite('Navigation', function () {
       });
       test('fromFieldToNestedBlock', function () {
         const field = this.blocks.statementInput1.inputList[0].fieldRow[1];
-        const inputConnection =
-          this.blocks.statementInput1.inputList[0].connection;
         const nextNode = this.navigator.getNextSibling(field);
         assert.equal(nextNode, this.blocks.fieldWithOutput);
       });
@@ -531,13 +529,6 @@ suite('Navigation', function () {
         );
         assert.equal(nextNode, field);
       });
-      test('fromBlockToFieldSkippingInput', function () {
-        const field = this.blocks.buttonBlock.getField('BUTTON3');
-        const nextNode = this.navigator.getNextSibling(
-          this.blocks.buttonInput2,
-        );
-        assert.equal(nextNode, field);
-      });
       test('skipsChildrenOfCollapsedBlocks', function () {
         this.blocks.buttonBlock.setCollapsed(true);
         const nextNode = this.navigator.getNextSibling(this.blocks.buttonBlock);
@@ -545,6 +536,7 @@ suite('Navigation', function () {
       });
       test('fromFieldSkipsHiddenInputs', function () {
         this.blocks.buttonBlock.inputList[2].setVisible(false);
+        this.blocks.buttonBlock.inputList[3].setVisible(false);
         const fieldStart = this.blocks.buttonBlock.getField('BUTTON2');
         const fieldEnd = this.blocks.buttonBlock.getField('BUTTON3');
         const nextNode = this.navigator.getNextSibling(fieldStart);
@@ -553,16 +545,19 @@ suite('Navigation', function () {
     });
 
     suite('Previous', function () {
-      test('fromPreviousToNext', function () {
+      test('fromPreviousToPriorBlock', function () {
         const prevConnection = this.blocks.statementInput2.previousConnection;
         const prevNode = this.navigator.getPreviousSibling(prevConnection);
         const nextConnection = this.blocks.statementInput1.nextConnection;
-        assert.equal(prevNode, nextConnection);
+        assert.equal(prevNode, nextConnection.getSourceBlock());
       });
       test('fromPreviousToInput', function () {
         const prevConnection = this.blocks.statementInput3.previousConnection;
         const prevNode = this.navigator.getPreviousSibling(prevConnection);
-        assert.isNull(prevNode);
+        assert.equal(
+          prevNode,
+          this.blocks.statementInput2.inputList[0].connection,
+        );
       });
       test('fromBlockToPrevious', function () {
         const prevNode = this.navigator.getPreviousSibling(
@@ -575,7 +570,6 @@ suite('Navigation', function () {
         const prevNode = this.navigator.getPreviousSibling(
           this.blocks.fieldWithOutput,
         );
-        const outputConnection = this.blocks.fieldWithOutput.outputConnection;
         assert.equal(prevNode, [...this.blocks.statementInput1.getFields()][1]);
       });
       test('fromNextToBlock', function () {
@@ -605,10 +599,10 @@ suite('Navigation', function () {
         const prevNode = this.navigator.getPreviousSibling(input.connection);
         assert.equal(prevNode, inputConnection);
       });
-      test('fromOutputToNull', function () {
+      test('fromOutputToField', function () {
         const output = this.blocks.fieldWithOutput.outputConnection;
         const prevNode = this.navigator.getPreviousSibling(output);
-        assert.isNull(prevNode);
+        assert.equal(this.blocks.statementInput1.getField('NAME2'), prevNode);
       });
       test('fromFieldToNull', function () {
         const field = this.blocks.statementInput1.inputList[0].fieldRow[0];
@@ -622,8 +616,6 @@ suite('Navigation', function () {
         );
 
         const field = this.blocks.fieldAndInputs2.inputList[1].fieldRow[0];
-        const inputConnection =
-          this.blocks.fieldAndInputs2.inputList[0].connection;
         const prevNode = this.navigator.getPreviousSibling(field);
         assert.equal(prevNode, outputBlock);
       });
@@ -692,6 +684,7 @@ suite('Navigation', function () {
       });
       test('fromFieldSkipsHiddenInputs', function () {
         this.blocks.buttonBlock.inputList[2].setVisible(false);
+        this.blocks.buttonBlock.inputList[3].setVisible(false);
         const fieldStart = this.blocks.buttonBlock.getField('BUTTON3');
         const fieldEnd = this.blocks.buttonBlock.getField('BUTTON2');
         const nextNode = this.navigator.getPreviousSibling(fieldStart);
@@ -709,23 +702,10 @@ suite('Navigation', function () {
         workspaceTeardown.call(this, this.emptyWorkspace);
       });
 
-      test('fromInputToOutput', function () {
-        const input = this.blocks.statementInput1.inputList[0];
-        const inNode = this.navigator.getFirstChild(input.connection);
-        const outputConnection = this.blocks.fieldWithOutput.outputConnection;
-        assert.equal(inNode, outputConnection);
-      });
       test('fromInputToNull', function () {
         const input = this.blocks.statementInput2.inputList[0];
         const inNode = this.navigator.getFirstChild(input.connection);
         assert.isNull(inNode);
-      });
-      test('fromInputToPrevious', function () {
-        const input = this.blocks.statementInput2.inputList[1];
-        const previousConnection =
-          this.blocks.statementInput3.previousConnection;
-        const inNode = this.navigator.getFirstChild(input.connection);
-        assert.equal(inNode, previousConnection);
       });
       test('fromBlockToInput', function () {
         const connection = this.blocks.valueInput.inputList[0].connection;

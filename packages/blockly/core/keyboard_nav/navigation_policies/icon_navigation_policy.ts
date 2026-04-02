@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {BlockSvg} from '../block_svg.js';
-import {getFocusManager} from '../focus_manager.js';
-import {CommentIcon} from '../icons/comment_icon.js';
-import {Icon} from '../icons/icon.js';
-import {MutatorIcon} from '../icons/mutator_icon.js';
-import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
-import type {INavigationPolicy} from '../interfaces/i_navigation_policy.js';
+import {BlockSvg} from '../../block_svg.js';
+import {getFocusManager} from '../../focus_manager.js';
+import {CommentIcon} from '../../icons/comment_icon.js';
+import {Icon} from '../../icons/icon.js';
+import {MutatorIcon} from '../../icons/mutator_icon.js';
+import type {IFocusableNode} from '../../interfaces/i_focusable_node.js';
+import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
 import {navigateBlock} from './block_navigation_policy.js';
 
 /**
@@ -58,7 +58,7 @@ export class IconNavigationPolicy implements INavigationPolicy<Icon> {
    * @returns The next icon, field or input following this icon, if any.
    */
   getNextSibling(current: Icon): IFocusableNode | null {
-    return navigateBlock(current, 1);
+    return navigateBlock(current.getSourceBlock() as BlockSvg, current, 1);
   }
 
   /**
@@ -68,7 +68,17 @@ export class IconNavigationPolicy implements INavigationPolicy<Icon> {
    * @returns The icon's previous icon, if any.
    */
   getPreviousSibling(current: Icon): IFocusableNode | null {
-    return navigateBlock(current, -1);
+    return navigateBlock(current.getSourceBlock() as BlockSvg, current, -1);
+  }
+
+  /**
+   * Returns the row ID of the given icon.
+   *
+   * @param current The icon to retrieve the row ID of.
+   * @returns The row ID of the given icon.
+   */
+  getRowId(current: Icon) {
+    return (current.getSourceBlock() as BlockSvg).getRowId();
   }
 
   /**

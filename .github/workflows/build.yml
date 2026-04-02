@@ -3,7 +3,9 @@
 
 name: Node.js CI
 
-on: [pull_request]
+on:
+  pull_request:
+  workflow_call:
 
 permissions:
   contents: read

@@ -13,7 +13,6 @@ import {
 import {
   getBasicToolbox,
   getCategoryJSON,
-  getChildItem,
   getCollapsibleItem,
   getDeeplyNestedJSON,
   getInjectedToolbox,
@@ -26,21 +25,16 @@ import {
 suite('Toolbox', function () {
   setup(function () {
     sharedTestSetup.call(this);
+    this.toolbox = getInjectedToolbox();
     defineStackBlock();
   });
 
   teardown(function () {
+    this.toolbox.dispose();
     sharedTestTeardown.call(this);
   });
 
   suite('init', function () {
-    setup(function () {
-      this.toolbox = getInjectedToolbox();
-    });
-    teardown(function () {
-      this.toolbox.dispose();
-    });
-
     test('Init called -> HtmlDiv is created', function () {
       assert.isDefined(this.toolbox.HtmlDiv);
     });
@@ -87,12 +81,6 @@ suite('Toolbox', function () {
   });
 
   suite('render', function () {
-    setup(function () {
-      this.toolbox = getInjectedToolbox();
-    });
-    teardown(function () {
-      this.toolbox.dispose();
-    });
     test('Render called with valid toolboxDef -> Contents are created', function () {
       const positionStub = sinon.stub(this.toolbox, 'position');
       this.toolbox.render({
@@ -184,13 +172,6 @@ suite('Toolbox', function () {
   });
 
   suite('focus management', function () {
-    setup(function () {
-      this.toolbox = getInjectedToolbox();
-    });
-    teardown(function () {
-      this.toolbox.dispose();
-    });
-
     test('Losing focus hides autoclosing flyout', function () {
       // Focus the toolbox and select a category to open the flyout.
       const target = this.toolbox.HtmlDiv.querySelector(
@@ -235,13 +216,6 @@ suite('Toolbox', function () {
   });
 
   suite('onClick_', function () {
-    setup(function () {
-      this.toolbox = getInjectedToolbox();
-    });
-    teardown(function () {
-      this.toolbox.dispose();
-    });
-
     test('Toolbox clicked -> Should close flyout', function () {
       const hideChaffStub = sinon.stub(
         Blockly.WorkspaceSvg.prototype,
@@ -267,220 +241,251 @@ suite('Toolbox', function () {
     });
   });
 
-  suite('onKeyDown_', function () {
-    setup(function () {
-      this.toolbox = getInjectedToolbox();
-    });
-    teardown(function () {
-      this.toolbox.dispose();
+  suite('on key down', function () {
+    test('Down arrow should select next item', function () {
+      const items = this.toolbox.getToolboxItems();
+      Blockly.getFocusManager().focusNode(items[0]);
+      const oldIndex = items.indexOf(this.toolbox.getSelectedItem());
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.DOWN,
+      });
+      this.toolbox.getWorkspace().getInjectionDiv().dispatchEvent(event);
+      const newIndex = items.indexOf(this.toolbox.getSelectedItem());
+      assert.equal(oldIndex + 1, newIndex);
     });
 
-    function createKeyDownMock(key) {
-      return {
-        'key': key,
-        'preventDefault': function () {},
-      };
-    }
-
-    function testCorrectFunctionCalled(toolbox, key, funcName) {
-      const event = createKeyDownMock(key);
-      const preventDefaultEvent = sinon.stub(event, 'preventDefault');
-      const selectMethodStub = sinon.stub(toolbox, funcName);
-      selectMethodStub.returns(true);
-      toolbox.onKeyDown_(event);
-      sinon.assert.called(selectMethodStub);
-      sinon.assert.called(preventDefaultEvent);
-    }
-
-    test('Down button is pushed -> Should call selectNext', function () {
-      testCorrectFunctionCalled(this.toolbox, 'ArrowDown', 'selectNext', true);
+    test('Down arrow should skip separators', function () {
+      const items = this.toolbox.getToolboxItems();
+      Blockly.getFocusManager().focusNode(items[1]);
+      const oldIndex = items.indexOf(this.toolbox.getSelectedItem());
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.DOWN,
+      });
+      this.toolbox.getWorkspace().getInjectionDiv().dispatchEvent(event);
+      const newIndex = items.indexOf(this.toolbox.getSelectedItem());
+      // Item at index 2 is a separator, new index should have incremented by
+      // 2 instead of 1 to bypass it.
+      assert.equal(oldIndex + 2, newIndex);
     });
-    test('Up button is pushed -> Should call selectPrevious', function () {
-      testCorrectFunctionCalled(
-        this.toolbox,
-        'ArrowUp',
-        'selectPrevious',
-        true,
+
+    test('Down arrow should skip children of collapsed item', function () {
+      const items = this.toolbox.getToolboxItems();
+      const collapsibleItem = items[4];
+      Blockly.getFocusManager().focusNode(collapsibleItem);
+      assert.isFalse(collapsibleItem.isExpanded());
+      const oldIndex = items.indexOf(this.toolbox.getSelectedItem());
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.DOWN,
+      });
+      this.toolbox.getWorkspace().getInjectionDiv().dispatchEvent(event);
+      const newIndex = items.indexOf(this.toolbox.getSelectedItem());
+      // Collapsible item is not expanded, so down should skip its child item
+      // and advance to the next regular item.
+      assert.equal(oldIndex + 2, newIndex);
+    });
+
+    test('Down arrow should go to first child of expanded item', function () {
+      const items = this.toolbox.getToolboxItems();
+      const collapsibleItem = items[4];
+      Blockly.getFocusManager().focusNode(collapsibleItem);
+      collapsibleItem.setExpanded(true);
+      assert.isTrue(collapsibleItem.isExpanded());
+      const oldIndex = items.indexOf(this.toolbox.getSelectedItem());
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.DOWN,
+      });
+      this.toolbox.getWorkspace().getInjectionDiv().dispatchEvent(event);
+      const newIndex = items.indexOf(this.toolbox.getSelectedItem());
+      // Collapsible item is expanded, so down should focus its child item.
+      assert.equal(oldIndex + 1, newIndex);
+    });
+
+    test('Down arrow on last item should be a no-op', function () {
+      const items = this.toolbox.getToolboxItems();
+      Blockly.getFocusManager().focusNode(items[6]);
+      const oldIndex = items.indexOf(this.toolbox.getSelectedItem());
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.DOWN,
+      });
+      this.toolbox.getWorkspace().getInjectionDiv().dispatchEvent(event);
+      const newIndex = items.indexOf(this.toolbox.getSelectedItem());
+      assert.equal(oldIndex, newIndex);
+    });
+
+    test('Up arrow should select previous item', function () {
+      const items = this.toolbox.getToolboxItems();
+      Blockly.getFocusManager().focusNode(items[1]);
+      const oldIndex = items.indexOf(this.toolbox.getSelectedItem());
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.UP,
+      });
+      this.toolbox.getWorkspace().getInjectionDiv().dispatchEvent(event);
+      const newIndex = items.indexOf(this.toolbox.getSelectedItem());
+      assert.equal(oldIndex - 1, newIndex);
+    });
+
+    test('Up arrow should skip separators', function () {
+      const items = this.toolbox.getToolboxItems();
+      Blockly.getFocusManager().focusNode(items[3]);
+      const oldIndex = items.indexOf(this.toolbox.getSelectedItem());
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.UP,
+      });
+      this.toolbox.getWorkspace().getInjectionDiv().dispatchEvent(event);
+      const newIndex = items.indexOf(this.toolbox.getSelectedItem());
+      // Item at index 2 is a separator, new index should have decremented by
+      // 2 instead of 1 to bypass it.
+      assert.equal(oldIndex - 2, newIndex);
+    });
+
+    test('Up arrow should skip children of collapsed item', function () {
+      const items = this.toolbox.getToolboxItems();
+      Blockly.getFocusManager().focusNode(items[6]);
+      const oldIndex = items.indexOf(this.toolbox.getSelectedItem());
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.UP,
+      });
+      this.toolbox.getWorkspace().getInjectionDiv().dispatchEvent(event);
+      const newIndex = items.indexOf(this.toolbox.getSelectedItem());
+      // Collapsible item is not expanded, so up should skip its child item
+      // and advance to it directly.
+      assert.equal(oldIndex - 2, newIndex);
+    });
+
+    test('Up arrow should go to parent from child item', function () {
+      const items = this.toolbox.getToolboxItems();
+      items[4].setExpanded(true);
+      Blockly.getFocusManager().focusNode(items[5]);
+      const oldIndex = items.indexOf(this.toolbox.getSelectedItem());
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.UP,
+      });
+      this.toolbox.getWorkspace().getInjectionDiv().dispatchEvent(event);
+      const newIndex = items.indexOf(this.toolbox.getSelectedItem());
+      // Collapsible item is expanded, so up from its child should go to it.
+      assert.equal(oldIndex - 1, newIndex);
+    });
+
+    test('Up arrow on first item should be a no-op', function () {
+      const items = this.toolbox.getToolboxItems();
+      Blockly.getFocusManager().focusNode(items[0]);
+      const oldIndex = items.indexOf(this.toolbox.getSelectedItem());
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.UP,
+      });
+      this.toolbox.getWorkspace().getInjectionDiv().dispatchEvent(event);
+      const newIndex = items.indexOf(this.toolbox.getSelectedItem());
+      assert.equal(oldIndex, newIndex);
+    });
+
+    test('Left arrow should collapse expanded item', function () {
+      const items = this.toolbox.getToolboxItems();
+      const collapsibleItem = items[4];
+      Blockly.getFocusManager().focusNode(collapsibleItem);
+      collapsibleItem.setExpanded(true);
+      assert.isTrue(collapsibleItem.isExpanded());
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.LEFT,
+        key: 'ArrowLeft',
+      });
+      this.toolbox.contentsDiv_.dispatchEvent(event);
+      assert.isFalse(collapsibleItem.isExpanded());
+    });
+
+    test('Left arrow from normal item should be a no-op', function () {
+      const items = this.toolbox.getToolboxItems();
+      Blockly.getFocusManager().focusNode(items[0]);
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.LEFT,
+        key: 'ArrowLeft',
+      });
+      this.toolbox.getWorkspace().getInjectionDiv().dispatchEvent(event);
+      assert.strictEqual(Blockly.getFocusManager().getFocusedNode(), items[0]);
+    });
+
+    test('Left arrow from collapsed item should be a no-op', function () {
+      const items = this.toolbox.getToolboxItems();
+      items[4].setExpanded(true);
+      Blockly.getFocusManager().focusNode(items[4]);
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.LEFT,
+        key: 'ArrowLeft',
+      });
+      this.toolbox.getWorkspace().getInjectionDiv().dispatchEvent(event);
+      assert.strictEqual(Blockly.getFocusManager().getFocusedNode(), items[4]);
+    });
+
+    test('Left arrow from child item should be a no-op', function () {
+      const items = this.toolbox.getToolboxItems();
+      items[4].setExpanded(true);
+      Blockly.getFocusManager().focusNode(items[5]);
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.LEFT,
+        key: 'ArrowLeft',
+      });
+      this.toolbox.getWorkspace().getInjectionDiv().dispatchEvent(event);
+      assert.strictEqual(Blockly.getFocusManager().getFocusedNode(), items[5]);
+    });
+
+    test('Right arrow should expand collapsed item', function () {
+      const items = this.toolbox.getToolboxItems();
+      const collapsibleItem = items[4];
+      Blockly.getFocusManager().focusNode(collapsibleItem);
+      assert.isFalse(collapsibleItem.isExpanded());
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.RIGHT,
+        key: 'ArrowRight',
+      });
+      this.toolbox.contentsDiv_.dispatchEvent(event);
+      assert.isTrue(collapsibleItem.isExpanded());
+    });
+
+    test('Right arrow from normal item should focus flyout', function () {
+      const items = this.toolbox.getToolboxItems();
+      Blockly.getFocusManager().focusNode(items[0]);
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.RIGHT,
+        key: 'ArrowRight',
+      });
+      this.toolbox.getWorkspace().getInjectionDiv().dispatchEvent(event);
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedTree(),
+        this.toolbox.getFlyout().getWorkspace(),
       );
     });
-    test('Left button is pushed -> Should call selectParent', function () {
-      testCorrectFunctionCalled(
-        this.toolbox,
-        'ArrowLeft',
-        'selectParent',
-        true,
+
+    test('Right arrow from expanded item should focus flyout', function () {
+      const items = this.toolbox.getToolboxItems();
+      items[4].setExpanded(true);
+      Blockly.getFocusManager().focusNode(items[4]);
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.RIGHT,
+        key: 'ArrowRight',
+      });
+      this.toolbox.getWorkspace().getInjectionDiv().dispatchEvent(event);
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedTree(),
+        this.toolbox.getFlyout().getWorkspace(),
       );
     });
-    test('Right button is pushed -> Should call selectChild', function () {
-      testCorrectFunctionCalled(
-        this.toolbox,
-        'ArrowRight',
-        'selectChild',
-        true,
+
+    test('Right arrow from child item should focus flyout', function () {
+      const items = this.toolbox.getToolboxItems();
+      items[4].setExpanded(true);
+      Blockly.getFocusManager().focusNode(items[5]);
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.RIGHT,
+        key: 'ArrowRight',
+      });
+      this.toolbox.getWorkspace().getInjectionDiv().dispatchEvent(event);
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedTree(),
+        this.toolbox.getFlyout().getWorkspace(),
       );
-    });
-    test('Enter button is pushed -> Should toggle expanded', function () {
-      this.toolbox.selectedItem_ = getCollapsibleItem(this.toolbox);
-      const toggleExpandedStub = sinon.stub(
-        this.toolbox.selectedItem_,
-        'toggleExpanded',
-      );
-      const event = createKeyDownMock('Enter');
-      const preventDefaultEvent = sinon.stub(event, 'preventDefault');
-      this.toolbox.onKeyDown_(event);
-      sinon.assert.called(toggleExpandedStub);
-      sinon.assert.called(preventDefaultEvent);
-    });
-    test('Enter button is pushed when no item is selected -> Should not call prevent default', function () {
-      this.toolbox.selectedItem_ = null;
-      const event = createKeyDownMock('Enter');
-      const preventDefaultEvent = sinon.stub(event, 'preventDefault');
-      this.toolbox.onKeyDown_(event);
-      sinon.assert.notCalled(preventDefaultEvent);
-    });
-  });
-
-  suite('Select Methods', function () {
-    setup(function () {
-      this.toolbox = getInjectedToolbox();
-    });
-    teardown(function () {
-      this.toolbox.dispose();
-    });
-
-    suite('selectChild', function () {
-      test('No item is selected -> Should not handle event', function () {
-        this.toolbox.selectedItem_ = null;
-        const handled = this.toolbox.selectChild();
-        assert.isFalse(handled);
-      });
-      test('Selected item is not collapsible -> Should not handle event', function () {
-        this.toolbox.selectedItem_ = getNonCollapsibleItem(this.toolbox);
-        const handled = this.toolbox.selectChild();
-        assert.isFalse(handled);
-      });
-      test('Selected item is collapsible -> Should expand', function () {
-        const collapsibleItem = getCollapsibleItem(this.toolbox);
-        this.toolbox.selectedItem_ = collapsibleItem;
-        const handled = this.toolbox.selectChild();
-        assert.isTrue(handled);
-        assert.isTrue(collapsibleItem.isExpanded());
-        assert.equal(this.toolbox.selectedItem_, collapsibleItem);
-      });
-
-      test('Selected item is expanded -> Should select child', function () {
-        const collapsibleItem = getCollapsibleItem(this.toolbox);
-        collapsibleItem.expanded_ = true;
-        const selectNextStub = sinon.stub(this.toolbox, 'selectNext');
-        this.toolbox.selectedItem_ = collapsibleItem;
-        const handled = this.toolbox.selectChild();
-        assert.isTrue(handled);
-        sinon.assert.called(selectNextStub);
-      });
-    });
-
-    suite('selectParent', function () {
-      test('No item selected -> Should not handle event', function () {
-        this.toolbox.selectedItem_ = null;
-        const handled = this.toolbox.selectParent();
-        assert.isFalse(handled);
-      });
-      test('Selected item is expanded -> Should collapse', function () {
-        const collapsibleItem = getCollapsibleItem(this.toolbox);
-        collapsibleItem.expanded_ = true;
-        this.toolbox.selectedItem_ = collapsibleItem;
-        const handled = this.toolbox.selectParent();
-        assert.isTrue(handled);
-        assert.isFalse(collapsibleItem.isExpanded());
-        assert.equal(this.toolbox.selectedItem_, collapsibleItem);
-      });
-      test('Selected item is not expanded -> Should get parent', function () {
-        const childItem = getChildItem(this.toolbox);
-        this.toolbox.selectedItem_ = childItem;
-        const handled = this.toolbox.selectParent();
-        assert.isTrue(handled);
-        assert.equal(this.toolbox.selectedItem_, childItem.getParent());
-      });
-    });
-
-    suite('selectNext', function () {
-      test('No item is selected -> Should not handle event', function () {
-        this.toolbox.selectedItem_ = null;
-        const handled = this.toolbox.selectNext();
-        assert.isFalse(handled);
-      });
-      test('Next item is selectable -> Should select next item', function () {
-        const items = [...this.toolbox.contents.values()];
-        const item = items[0];
-        this.toolbox.selectedItem_ = item;
-        const handled = this.toolbox.selectNext();
-        assert.isTrue(handled);
-        assert.equal(this.toolbox.selectedItem_, items[1]);
-      });
-      test('Selected item is last item -> Should not handle event', function () {
-        const items = [...this.toolbox.contents.values()];
-        const item = items.at(-1);
-        this.toolbox.selectedItem_ = item;
-        const handled = this.toolbox.selectNext();
-        assert.isFalse(handled);
-        assert.equal(this.toolbox.selectedItem_, item);
-      });
-      test('Selected item is collapsed -> Should skip over its children', function () {
-        const item = getCollapsibleItem(this.toolbox);
-        const childItem = item.flyoutItems_[0];
-        item.expanded_ = false;
-        this.toolbox.selectedItem_ = item;
-        const handled = this.toolbox.selectNext();
-        assert.isTrue(handled);
-        assert.notEqual(this.toolbox.selectedItem_, childItem);
-      });
-    });
-
-    suite('selectPrevious', function () {
-      test('No item is selected -> Should not handle event', function () {
-        this.toolbox.selectedItem_ = null;
-        const handled = this.toolbox.selectPrevious();
-        assert.isFalse(handled);
-      });
-      test('Selected item is first item -> Should not handle event', function () {
-        const item = [...this.toolbox.contents.values()][0];
-        this.toolbox.selectedItem_ = item;
-        const handled = this.toolbox.selectPrevious();
-        assert.isFalse(handled);
-        assert.equal(this.toolbox.selectedItem_, item);
-      });
-      test('Previous item is selectable -> Should select previous item', function () {
-        const items = [...this.toolbox.contents.values()];
-        const item = items[1];
-        const prevItem = items[0];
-        this.toolbox.selectedItem_ = item;
-        const handled = this.toolbox.selectPrevious();
-        assert.isTrue(handled);
-        assert.equal(this.toolbox.selectedItem_, prevItem);
-      });
-      test('Previous item is collapsed -> Should skip over children of the previous item', function () {
-        const childItem = getChildItem(this.toolbox);
-        const parentItem = childItem.getParent();
-        const items = [...this.toolbox.contents.values()];
-        const parentIdx = items.indexOf(parentItem);
-        // Gets the item after the parent.
-        const item = items[parentIdx + 1];
-        this.toolbox.selectedItem_ = item;
-        const handled = this.toolbox.selectPrevious();
-        assert.isTrue(handled);
-        assert.notEqual(this.toolbox.selectedItem_, childItem);
-      });
     });
   });
 
   suite('setSelectedItem', function () {
-    setup(function () {
-      this.toolbox = getInjectedToolbox();
-    });
-    teardown(function () {
-      this.toolbox.dispose();
-    });
-
     function setupSetSelected(toolbox, oldItem, newItem) {
       toolbox.selectedItem_ = oldItem;
       const newItemStub = sinon.stub(newItem, 'setSelected');
@@ -526,13 +531,6 @@ suite('Toolbox', function () {
   });
 
   suite('updateFlyout_', function () {
-    setup(function () {
-      this.toolbox = getInjectedToolbox();
-    });
-    teardown(function () {
-      this.toolbox.dispose();
-    });
-
     function testHideFlyout(toolbox, oldItem, newItem) {
       const updateFlyoutStub = sinon.stub(toolbox.getFlyout(), 'hide');
       toolbox.updateFlyout_(oldItem, newItem);
@@ -778,12 +776,6 @@ suite('Toolbox', function () {
     });
   });
   suite('Nested Categories', function () {
-    setup(function () {
-      this.toolbox = getInjectedToolbox();
-    });
-    teardown(function () {
-      this.toolbox.dispose();
-    });
     test('Child categories visible if all ancestors expanded', function () {
       this.toolbox.render(getDeeplyNestedJSON());
       const items = [...this.toolbox.contents.values()];

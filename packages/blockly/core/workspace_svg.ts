@@ -60,12 +60,9 @@ import {hasBubble} from './interfaces/i_has_bubble.js';
 import type {IMetricsManager} from './interfaces/i_metrics_manager.js';
 import type {IToolbox} from './interfaces/i_toolbox.js';
 import {KeyboardMover} from './keyboard_nav/keyboard_mover.js';
-import type {LineCursor} from './keyboard_nav/line_cursor.js';
-import type {Marker} from './keyboard_nav/marker.js';
+import {Navigator} from './keyboard_nav/navigators/navigator.js';
 import {LayerManager} from './layer_manager.js';
-import {MarkerManager} from './marker_manager.js';
 import {Msg} from './msg.js';
-import {Navigator} from './navigator.js';
 import {Options} from './options.js';
 import * as Procedures from './procedures.js';
 import * as registry from './registry.js';
@@ -296,7 +293,6 @@ export class WorkspaceSvg
   private readonly highlightedBlocks: BlockSvg[] = [];
   private audioManager: WorkspaceAudio;
   private grid: Grid | null;
-  private markerManager: MarkerManager;
 
   /**
    * Map from function names to callbacks, for deciding what to do when a
@@ -317,9 +313,6 @@ export class WorkspaceSvg
 
   /** Cached parent SVG. */
   private cachedParentSvg: SVGElement | null = null;
-
-  /** True if keyboard accessibility mode is on, false otherwise. */
-  keyboardAccessibilityMode = false;
 
   /** The list of top-level bounded elements on the workspace. */
   private topBoundedElements: IBoundedElement[] = [];
@@ -384,9 +377,6 @@ export class WorkspaceSvg
       ? new Grid(this.options.gridPattern, options.gridOptions)
       : null;
 
-    /** Manager in charge of markers and cursors. */
-    this.markerManager = new MarkerManager(this);
-
     if (Variables && Variables.internalFlyoutCategory) {
       this.registerToolboxCategoryCallback(
         Variables.CATEGORY_NAME,
@@ -433,15 +423,6 @@ export class WorkspaceSvg
   }
 
   /**
-   * Get the marker manager for this workspace.
-   *
-   * @returns The marker manager.
-   */
-  getMarkerManager(): MarkerManager {
-    return this.markerManager;
-  }
-
-  /**
    * Gets the metrics manager for this workspace.
    *
    * @returns The metrics manager.
@@ -468,27 +449,6 @@ export class WorkspaceSvg
    */
   getComponentManager(): ComponentManager {
     return this.componentManager;
-  }
-
-  /**
-   * Get the marker with the given ID.
-   *
-   * @param id The ID of the marker.
-   * @returns The marker with the given ID or null if no marker with the given
-   *     ID exists.
-   * @internal
-   */
-  getMarker(id: string): Marker | null {
-    return this.markerManager.getMarker(id);
-  }
-
-  /**
-   * The cursor for this workspace.
-   *
-   * @returns The cursor for the workspace.
-   */
-  getCursor(): LineCursor {
-    return this.markerManager.getCursor();
   }
 
   /**
@@ -834,12 +794,6 @@ export class WorkspaceSvg
       this.grid.update(this.scale);
     }
     this.recordDragTargets();
-    const CursorClass = registry.getClassFromOptions(
-      registry.Type.CURSOR,
-      this.options,
-    );
-
-    if (CursorClass) this.markerManager.setCursor(new CursorClass(this));
 
     const isParentWorkspace = this.options.parentWorkspace === null;
     this.renderer.createDom(
@@ -896,7 +850,6 @@ export class WorkspaceSvg
     }
 
     this.renderer.dispose();
-    this.markerManager.dispose();
 
     super.dispose();
 

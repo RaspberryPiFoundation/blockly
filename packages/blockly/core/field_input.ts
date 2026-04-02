@@ -15,6 +15,7 @@
 import './events/events_block_change.js';
 
 import {BlockSvg} from './block_svg.js';
+import {IFocusableNode} from './blockly.js';
 import * as browserEvents from './browser_events.js';
 import * as bumpObjects from './bump_objects.js';
 import * as dialog from './dialog.js';
@@ -28,7 +29,6 @@ import {
   UnattachedFieldError,
 } from './field.js';
 import {getFocusManager} from './focus_manager.js';
-import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import {Msg} from './msg.js';
 import * as renderManagement from './render_management.js';
 import * as aria from './utils/aria.js';
@@ -600,16 +600,20 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
       dropDownDiv.hideWithoutAnimation();
     } else if (e.key === 'Tab') {
       e.preventDefault();
-      const cursor = this.workspace_?.getCursor();
+      const navigator = this.workspace_?.getNavigator();
 
       const isValidDestination = (node: IFocusableNode | null) =>
         (node instanceof FieldInput ||
           (node instanceof BlockSvg && node.isSimpleReporter())) &&
         node !== this.getSourceBlock();
 
-      let target = e.shiftKey
-        ? cursor?.getPreviousNode(this, isValidDestination, false)
-        : cursor?.getNextNode(this, isValidDestination, false);
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
+      let target: IFocusableNode | null | undefined = this;
+      do {
+        target = e.shiftKey
+          ? navigator?.getOutNode(target)
+          : navigator?.getInNode(target);
+      } while (target && !isValidDestination(target));
       target =
         target instanceof BlockSvg && target.isSimpleReporter()
           ? target.getFields().next().value
@@ -625,7 +629,9 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
           targetSourceBlock instanceof BlockSvg
         ) {
           getFocusManager().focusNode(targetSourceBlock);
-        } else getFocusManager().focusNode(target);
+        } else {
+          getFocusManager().focusNode(target);
+        }
         target.showEditor();
       }
     }

@@ -170,7 +170,6 @@
       import './connection_test.js';
       import './contextmenu_items_test.js';
       import './contextmenu_test.js';
-      import './cursor_test.js';
       import './dialog_test.js';
       import './dropdowndiv_test.js';
       import './event_test.js';
@@ -222,6 +221,7 @@
       import './json_test.js';
       import './keyboard_movement_test.js';
       import './keyboard_navigation_controller_test.js';
+      import './keyboard_navigation_test.js';
       import './layering_test.js';
       import './blocks/lists_test.js';
       import './blocks/logic_ternary_test.js';
@@ -339,9 +339,10 @@
       <sep toolboxitemid="separator" gap="-1"></sep>
       <category name="Variables" custom="VARIABLE"></category>
       <category name="NestedCategory">
-        <category
-          toolboxitemid="nestedCategory"
-          name="NestedItemOne"></category>
+        <category toolboxitemid="nestedCategory" name="NestedItemOne">
+          <block type="stack_block"></block>
+        </category>
+        <block type="stack_block"></block>
       </category>
       <category name="lastItem"></category>
     </xml>

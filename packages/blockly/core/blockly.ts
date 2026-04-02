@@ -177,15 +177,13 @@ import {
 import {IVariableMap} from './interfaces/i_variable_map.js';
 import {IVariableModel, IVariableState} from './interfaces/i_variable_model.js';
 import * as internalConstants from './internal_constants.js';
-import {LineCursor} from './keyboard_nav/line_cursor.js';
-import {Marker} from './keyboard_nav/marker.js';
+import {ToolboxNavigator} from './keyboard_nav/navigators/toolbox_navigator.js';
 import {
   KeyboardNavigationController,
   keyboardNavigationController,
 } from './keyboard_navigation_controller.js';
 import type {LayerManager} from './layer_manager.js';
 import * as layers from './layers.js';
-import {MarkerManager} from './marker_manager.js';
 import {Menu} from './menu.js';
 import {MenuItem} from './menuitem.js';
 import {MetricsManager} from './metrics_manager.js';
@@ -439,16 +437,21 @@ Names.prototype.populateProcedures = function (
 };
 // clang-format on
 
-export * from './flyout_navigator.js';
 export * from './interfaces/i_navigation_policy.js';
-export * from './keyboard_nav/block_navigation_policy.js';
-export * from './keyboard_nav/connection_navigation_policy.js';
-export * from './keyboard_nav/field_navigation_policy.js';
-export * from './keyboard_nav/flyout_button_navigation_policy.js';
-export * from './keyboard_nav/flyout_navigation_policy.js';
-export * from './keyboard_nav/flyout_separator_navigation_policy.js';
-export * from './keyboard_nav/workspace_navigation_policy.js';
-export * from './navigator.js';
+export * from './keyboard_nav/navigation_policies/block_comment_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/block_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/comment_bar_button_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/comment_editor_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/connection_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/field_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/flyout_button_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/flyout_separator_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/icon_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/toolbox_item_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/workspace_comment_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/workspace_navigation_policy.js';
+export * from './keyboard_nav/navigators/flyout_navigator.js';
+export * from './keyboard_nav/navigators/navigator.js';
 export * from './toast.js';
 
 // Re-export submodules that no longer declareLegacyNamespace.
@@ -471,7 +474,6 @@ export {
   DragTarget,
   Events,
   Extensions,
-  LineCursor,
   Procedures,
   ShortcutItems,
   Themes,
@@ -596,8 +598,6 @@ export {
   KeyboardNavigationController,
   LabelFlyoutInflater,
   LayerManager,
-  Marker,
-  MarkerManager,
   Menu,
   MenuGenerator,
   MenuGeneratorFunction,
@@ -619,6 +619,7 @@ export {
   Toolbox,
   ToolboxCategory,
   ToolboxItem,
+  ToolboxNavigator,
   ToolboxSeparator,
   Trashcan,
   UnattachedFieldError,

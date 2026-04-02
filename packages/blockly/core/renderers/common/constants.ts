@@ -1153,6 +1153,9 @@ export class ConstantProvider {
   protected getCSS_(selector: string): string[] {
     // prettier-ignore
     return [
+      `${selector}.injectionDiv {`,
+        `--blockly-active-node-color: #fc3;`,
+      `}`,
       // Text.
       `${selector} .blocklyText, `,
       `${selector} .blocklyFlyoutLabelText {`,

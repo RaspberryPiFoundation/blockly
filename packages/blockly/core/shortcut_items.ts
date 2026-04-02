@@ -39,6 +39,7 @@ export enum names {
   REDO = 'redo',
   MENU = 'menu',
   FOCUS_WORKSPACE = 'focus_workspace',
+  FOCUS_TOOLBOX = 'focus_toolbox',
   START_MOVE = 'start_move',
   START_MOVE_STACK = 'start_move_stack',
   FINISH_MOVE = 'finish_move',
@@ -47,6 +48,10 @@ export enum names {
   MOVE_DOWN = 'move_down',
   MOVE_LEFT = 'move_left',
   MOVE_RIGHT = 'move_right',
+  NAVIGATE_RIGHT = 'right',
+  NAVIGATE_LEFT = 'left',
+  NAVIGATE_UP = 'up',
+  NAVIGATE_DOWN = 'down',
   DISCONNECT = 'disconnect',
 }
 
@@ -396,7 +401,11 @@ export function registerMovementShortcuts() {
   ): IDraggable | undefined => {
     const node = getFocusManager().getFocusedNode();
     if (isDraggable(node)) return node;
-    return workspace.getCursor().getSourceBlock() ?? undefined;
+    return (
+      workspace
+        .getNavigator()
+        .getSourceBlockFromNode(getFocusManager().getFocusedNode()) ?? undefined
+    );
   };
 
   const shiftM = ShortcutRegistry.registry.createSerializedKey(KeyCodes.M, [
@@ -528,7 +537,8 @@ export function registerShowContextMenu() {
     preconditionFn: (workspace) => {
       return !workspace.isDragging();
     },
-    callback: (_workspace, e) => {
+    callback: (workspace, e) => {
+      keyboardNavigationController.setIsActive(true);
       const target = getFocusManager().getFocusedNode();
       if (hasContextMenu(target)) {
         target.showContextMenu(e);
@@ -541,6 +551,88 @@ export function registerShowContextMenu() {
     keyCodes: [ctrlEnter],
   };
   ShortcutRegistry.registry.register(contextMenuShortcut);
+}
+
+/**
+ * Registers keyboard shortcuts to navigate around the Blockly interface.
+ */
+export function registerArrowNavigation() {
+  const shortcuts: {
+    [name: string]: ShortcutRegistry.KeyboardShortcut;
+  } = {
+    /** Go to the next location to the right. */
+    right: {
+      name: names.NAVIGATE_RIGHT,
+      preconditionFn: (workspace) => !workspace.isDragging(),
+      callback: (workspace) => {
+        keyboardNavigationController.setIsActive(true);
+        const node = workspace.RTL
+          ? getFocusManager().getFocusedTree()?.getNavigator().getOutNode()
+          : getFocusManager().getFocusedTree()?.getNavigator().getInNode();
+        if (!node) return false;
+        getFocusManager().focusNode(node);
+        return true;
+      },
+      keyCodes: [KeyCodes.RIGHT],
+      allowCollision: true,
+    },
+
+    /** Go to the next location to the left. */
+    left: {
+      name: names.NAVIGATE_LEFT,
+      preconditionFn: (workspace) => !workspace.isDragging(),
+      callback: (workspace) => {
+        keyboardNavigationController.setIsActive(true);
+        const node = workspace.RTL
+          ? getFocusManager().getFocusedTree()?.getNavigator().getInNode()
+          : getFocusManager().getFocusedTree()?.getNavigator().getOutNode();
+        if (!node) return false;
+        getFocusManager().focusNode(node);
+        return true;
+      },
+      keyCodes: [KeyCodes.LEFT],
+      allowCollision: true,
+    },
+
+    /** Go down to the next location. */
+    down: {
+      name: names.NAVIGATE_DOWN,
+      preconditionFn: (workspace) => !workspace.isDragging(),
+      callback: () => {
+        keyboardNavigationController.setIsActive(true);
+        const node = getFocusManager()
+          .getFocusedTree()
+          ?.getNavigator()
+          .getNextNode();
+        if (!node) return false;
+        getFocusManager().focusNode(node);
+        return true;
+      },
+      keyCodes: [KeyCodes.DOWN],
+      allowCollision: true,
+    },
+    /** Go up to the previous location. */
+    up: {
+      name: names.NAVIGATE_UP,
+      preconditionFn: (workspace) => !workspace.isDragging(),
+      callback: () => {
+        keyboardNavigationController.setIsActive(true);
+        const node = getFocusManager()
+          .getFocusedTree()
+          ?.getNavigator()
+          .getPreviousNode();
+        if (!node) return false;
+        getFocusManager().focusNode(node);
+        return true;
+      },
+      keyCodes: [KeyCodes.UP],
+      allowCollision: true,
+    },
+  };
+
+  for (const shortcut of Object.values(shortcuts)) {
+    ShortcutRegistry.registry.register(shortcut);
+  }
 }
 
 /**
@@ -557,7 +649,7 @@ export function registerFocusWorkspace() {
     return workspace.getRootWorkspace() ?? workspace;
   };
 
-  const contextMenuShortcut: KeyboardShortcut = {
+  const focusWorkspaceShortcut: KeyboardShortcut = {
     name: names.FOCUS_WORKSPACE,
     preconditionFn: (workspace) => !workspace.isDragging(),
     callback: (workspace) => {
@@ -567,7 +659,34 @@ export function registerFocusWorkspace() {
     },
     keyCodes: [KeyCodes.W],
   };
-  ShortcutRegistry.registry.register(contextMenuShortcut);
+  ShortcutRegistry.registry.register(focusWorkspaceShortcut);
+}
+
+/**
+ * Registers keyboard shortcut to focus the toolbox.
+ */
+export function registerFocusToolbox() {
+  const focusToolboxShortcut: KeyboardShortcut = {
+    name: names.FOCUS_TOOLBOX,
+    preconditionFn: (workspace) => !workspace.isDragging(),
+    callback: (workspace) => {
+      const toolbox = workspace.getToolbox();
+      if (toolbox) {
+        keyboardNavigationController.setIsActive(true);
+        getFocusManager().focusTree(toolbox);
+        return true;
+      } else {
+        const flyout = workspace.getFlyout();
+        if (!flyout) return false;
+
+        keyboardNavigationController.setIsActive(true);
+        getFocusManager().focusTree(flyout.getWorkspace());
+        return true;
+      }
+    },
+    keyCodes: [KeyCodes.T],
+  };
+  ShortcutRegistry.registry.register(focusToolboxShortcut);
 }
 
 /**
@@ -621,6 +740,8 @@ export function registerKeyboardNavigationShortcuts() {
   registerShowContextMenu();
   registerMovementShortcuts();
   registerFocusWorkspace();
+  registerFocusToolbox();
+  registerArrowNavigation();
   registerDisconnectBlock();
 }
 

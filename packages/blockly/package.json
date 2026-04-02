@@ -1,16 +1,16 @@
 {
   "name": "blockly",
-  "version": "12.4.1",
+  "version": "12.5.1",
   "description": "Blockly is a library for building visual programming editors.",
   "keywords": [
     "blockly"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/google/blockly.git"
+    "url": "git+https://github.com/RaspberryPiFoundation/blockly.git"
   },
   "bugs": {
-    "url": "https://github.com/google/blockly/issues"
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
   },
   "homepage": "https://developers.google.com/blockly/",
   "author": {
@@ -41,8 +41,6 @@
     "prepareDemos": "gulp prepareDemos",
     "publish": "npm ci && gulp publish",
     "publish:beta": "npm ci && gulp publishBeta",
-    "recompile": "gulp recompile",
-    "release": "gulp gitCreateRC",
     "start": "npm run build && concurrently -n tsc,server \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"http-server ./ -s -o /tests/playground.html -c-1\"",
     "tsc": "gulp tsc",
     "test": "gulp test",
@@ -50,7 +48,8 @@
     "test:generators": "gulp testGenerators",
     "test:mocha:interactive": "npm run build && concurrently -n tsc,server \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"gulp interactiveMocha\"",
     "test:compile:advanced": "gulp buildAdvancedCompilationTest --debug",
-    "updateGithubPages": "npm ci && gulp gitUpdateGithubPages"
+    "updateGithubPages": "npm ci && gulp updateGithubPages --upstream",
+    "updateGithubPages:staging": "npm ci && gulp updateGithubPages --use-local"
   },
   "exports": {
     ".": {
@@ -114,6 +113,8 @@
     "async-done": "^2.0.0",
     "chai": "^6.0.1",
     "concurrently": "^9.0.1",
+    "conventional-changelog-conventionalcommits": "^7.0.2",
+    "conventional-recommended-bump": "^9.0.0",
     "eslint": "^9.15.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^10.1.1",
@@ -122,16 +123,13 @@
     "eslint-plugin-prettier": "^5.2.1",
     "glob": "^11.0.1",
     "globals": "^16.0.0",
-    "google-closure-compiler": "^20260315.0.0",
+    "google-closure-compiler": "^20260330.0.0",
     "gulp": "^5.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-gzip": "^1.4.2",
     "gulp-header": "^2.0.9",
-    "gulp-insert": "^0.5.0",
     "gulp-rename": "^2.0.0",
     "gulp-replace": "^1.0.0",
-    "gulp-series": "^1.0.2",
-    "gulp-shell": "^0.8.0",
     "gulp-sourcemaps": "^3.0.0",
     "gulp-umd": "^2.0.0",
     "http-server": "^14.0.0",

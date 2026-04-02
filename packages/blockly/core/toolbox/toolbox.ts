@@ -11,7 +11,6 @@
  */
 // Former goog.module ID: Blockly.Toolbox
 
-// Unused import preserved for side-effects. Remove if unneeded.
 import {BlockSvg} from '../block_svg.js';
 import * as browserEvents from '../browser_events.js';
 import * as common from '../common.js';
@@ -23,7 +22,10 @@ import {EventType} from '../events/type.js';
 import * as eventUtils from '../events/utils.js';
 import {getFocusManager} from '../focus_manager.js';
 import {type IAutoHideable} from '../interfaces/i_autohideable.js';
-import type {ICollapsibleToolboxItem} from '../interfaces/i_collapsible_toolbox_item.js';
+import {
+  isCollapsibleToolboxItem,
+  type ICollapsibleToolboxItem,
+} from '../interfaces/i_collapsible_toolbox_item.js';
 import {isDeletable} from '../interfaces/i_deletable.js';
 import type {IDraggable} from '../interfaces/i_draggable.js';
 import type {IFlyout} from '../interfaces/i_flyout.js';
@@ -35,6 +37,7 @@ import {isSelectableToolboxItem} from '../interfaces/i_selectable_toolbox_item.j
 import type {IStyleable} from '../interfaces/i_styleable.js';
 import type {IToolbox} from '../interfaces/i_toolbox.js';
 import type {IToolboxItem} from '../interfaces/i_toolbox_item.js';
+import {ToolboxNavigator} from '../keyboard_nav/navigators/toolbox_navigator.js';
 import * as registry from '../registry.js';
 import type {KeyboardShortcut} from '../shortcut_registry.js';
 import * as Touch from '../touch.js';
@@ -110,6 +113,9 @@ export class Toolbox
 
   /** Whether the mouse is currently being clicked. */
   private mouseDown = false;
+
+  /** Object used by keyboard navigation to move focus in this toolbox. */
+  private navigator = new ToolboxNavigator(this);
 
   /** @param workspace The workspace in which to create new blocks. */
   constructor(workspace: WorkspaceSvg) {
@@ -192,7 +198,7 @@ export class Toolbox
     aria.setRole(this.contentsDiv_, aria.Role.TREE);
     container.appendChild(this.contentsDiv_);
 
-    svg.parentNode!.insertBefore(container, svg);
+    svg.parentNode?.insertBefore(container, svg);
 
     this.attachEvents_(container, this.contentsDiv_);
     return container;
@@ -281,7 +287,7 @@ export class Toolbox
       const itemId = (targetElement as Element).getAttribute('id');
       if (itemId) {
         const item = this.getToolboxItemById(itemId);
-        if (item!.isSelectable()) {
+        if (item?.isSelectable()) {
           this.setSelectedItem(item);
           (item as ISelectableToolboxItem).onClick(e);
         }
@@ -300,40 +306,17 @@ export class Toolbox
   protected onKeyDown_(e: KeyboardEvent) {
     let handled = false;
     switch (e.key) {
-      case 'ArrowDown':
-        handled = this.selectNext();
-        break;
-      case 'ArrowUp':
-        handled = this.selectPrevious();
-        break;
       case 'ArrowLeft':
-        handled = this.selectParent();
+        handled = this.toggleSelectedItem(false);
         break;
       case 'ArrowRight':
-        handled = this.selectChild();
+        handled = this.toggleSelectedItem(true);
         break;
-      case 'Enter':
-      case ' ':
-        if (this.selectedItem_ && this.selectedItem_.isCollapsible()) {
-          const collapsibleItem = this.selectedItem_ as ICollapsibleToolboxItem;
-          collapsibleItem.toggleExpanded();
-          handled = true;
-        }
-        break;
-      default:
-        handled = false;
-        break;
-    }
-    if (!handled && this.selectedItem_) {
-      // TODO(#6097): Figure out who implements onKeyDown and which interface it
-      // should be part of.
-      if ((this.selectedItem_ as any).onKeyDown) {
-        handled = (this.selectedItem_ as any).onKeyDown(e);
-      }
     }
 
     if (handled) {
       e.preventDefault();
+      e.stopPropagation();
     }
   }
 
@@ -396,7 +379,7 @@ export class Toolbox
       const toolboxItemDef = toolboxDef[i];
       this.createToolboxItem(toolboxItemDef, fragment);
     }
-    this.contentsDiv_!.appendChild(fragment);
+    this.contentsDiv_?.appendChild(fragment);
   }
 
   /**
@@ -435,9 +418,7 @@ export class Toolbox
       }
       // Adds the ID to the HTML element that can receive a click.
       // This is used in onClick_ to find the toolboxItem that was clicked.
-      if (toolboxItem.getClickTarget()) {
-        toolboxItem.getClickTarget()!.setAttribute('id', toolboxItem.getId());
-      }
+      toolboxItem.getClickTarget()?.setAttribute('id', toolboxItem.getId());
     }
   }
 
@@ -722,7 +703,7 @@ export class Toolbox
       this.width_ = toolboxDiv.offsetWidth;
       this.height_ = workspaceMetrics.viewHeight;
     }
-    this.flyout!.position();
+    this.flyout?.position();
   }
 
   /**
@@ -731,10 +712,11 @@ export class Toolbox
    * @internal
    */
   handleToolboxItemResize() {
+    if (!this.HtmlDiv) return;
     // Reposition the workspace so that (0,0) is in the correct position
     // relative to the new absolute edge (ie toolbox edge).
     const workspace = this.workspace_;
-    const rect = this.HtmlDiv!.getBoundingClientRect();
+    const rect = this.HtmlDiv.getBoundingClientRect();
     const flyout = this.getFlyout();
     const newX =
       this.toolboxPosition === toolbox.Position.LEFT
@@ -786,7 +768,7 @@ export class Toolbox
       this.selectedItem_.isSelectable() &&
       this.selectedItem_.getContents().length
     ) {
-      this.flyout!.show(this.selectedItem_.getContents());
+      this.flyout?.show(this.selectedItem_.getContents());
     }
   }
 
@@ -800,7 +782,9 @@ export class Toolbox
       return;
     }
 
-    this.HtmlDiv!.style.display = isVisible ? 'block' : 'none';
+    if (this.HtmlDiv) {
+      this.HtmlDiv.style.display = isVisible ? 'block' : 'none';
+    }
     this.isVisible_ = isVisible;
     // Invisible toolbox is ignored as drag targets and must have the drag
     // target updated.
@@ -944,10 +928,10 @@ export class Toolbox
       (oldItem === newItem && !newItem.isCollapsible()) ||
       !newItem.getContents().length
     ) {
-      this.flyout!.hide();
+      this.flyout?.hide();
     } else {
-      this.flyout!.show(newItem.getContents());
-      this.flyout!.scrollToStart();
+      this.flyout?.show(newItem.getContents());
+      this.flyout?.scrollToStart();
     }
   }
 
@@ -976,106 +960,28 @@ export class Toolbox
   }
 
   /**
-   * Closes the current item if it is expanded, or selects the parent.
+   * Sets the currently selected item's expansion state, if possible.
    *
-   * @returns True if a parent category was selected, false otherwise.
+   * @param expanded True to expand the item or false to collapse it.
+   * @returns True if the selected item's expansion state was updated.
    */
-  private selectParent(): boolean {
-    if (!this.selectedItem_) {
-      return false;
-    }
-
+  private toggleSelectedItem(expanded: boolean): boolean {
     if (
-      this.selectedItem_.isCollapsible() &&
-      (this.selectedItem_ as ICollapsibleToolboxItem).isExpanded()
+      isCollapsibleToolboxItem(this.selectedItem_) &&
+      this.selectedItem_?.isCollapsible() &&
+      this.selectedItem_?.isExpanded() !== expanded
     ) {
-      const collapsibleItem = this.selectedItem_ as ICollapsibleToolboxItem;
-      collapsibleItem.toggleExpanded();
-      return true;
-    } else if (
-      this.selectedItem_.getParent() &&
-      this.selectedItem_.getParent()!.isSelectable()
-    ) {
-      this.setSelectedItem(this.selectedItem_.getParent());
+      this.selectedItem_.toggleExpanded();
       return true;
     }
-    return false;
-  }
 
-  /**
-   * Selects the first child of the currently selected item, or nothing if the
-   * toolbox item has no children.
-   *
-   * @returns True if a child category was selected, false otherwise.
-   */
-  private selectChild(): boolean {
-    if (!this.selectedItem_ || !this.selectedItem_.isCollapsible()) {
-      return false;
-    }
-    const collapsibleItem = this.selectedItem_ as ICollapsibleToolboxItem;
-    if (!collapsibleItem.isExpanded()) {
-      collapsibleItem.toggleExpanded();
-      return true;
-    } else {
-      this.selectNext();
-      return true;
-    }
-  }
-
-  /**
-   * Selects the next visible toolbox item.
-   *
-   * @returns True if a next category was selected, false otherwise.
-   */
-  private selectNext(): boolean {
-    if (!this.selectedItem_) {
-      return false;
-    }
-
-    const items = [...this.contents.values()];
-    let nextItemIdx = items.indexOf(this.selectedItem_) + 1;
-    if (nextItemIdx > -1 && nextItemIdx < items.length) {
-      let nextItem = items[nextItemIdx];
-      while (nextItem && !nextItem.isSelectable()) {
-        nextItem = items[++nextItemIdx];
-      }
-      if (nextItem && nextItem.isSelectable()) {
-        this.setSelectedItem(nextItem);
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Selects the previous visible toolbox item.
-   *
-   * @returns True if a previous category was selected, false otherwise.
-   */
-  private selectPrevious(): boolean {
-    if (!this.selectedItem_) {
-      return false;
-    }
-
-    const items = [...this.contents.values()];
-    let prevItemIdx = items.indexOf(this.selectedItem_) - 1;
-    if (prevItemIdx > -1 && prevItemIdx < items.length) {
-      let prevItem = items[prevItemIdx];
-      while (prevItem && !prevItem.isSelectable()) {
-        prevItem = items[--prevItemIdx];
-      }
-      if (prevItem && prevItem.isSelectable()) {
-        this.setSelectedItem(prevItem);
-        return true;
-      }
-    }
     return false;
   }
 
   /** Disposes of this toolbox. */
   dispose() {
     this.workspace_.getComponentManager().removeComponent('toolbox');
-    this.flyout!.dispose();
+    this.flyout?.dispose();
     this.contents.forEach((item) => item.dispose());
 
     for (let j = 0; j < this.boundEvents_.length; j++) {
@@ -1166,6 +1072,14 @@ export class Toolbox
     if (!nextTree || nextTree !== this.flyout?.getWorkspace()) {
       this.autoHide(false);
     }
+  }
+
+  /**
+   * Returns the Navigator instance to use to move between items in this
+   * toolbox.
+   */
+  getNavigator(): ToolboxNavigator {
+    return this.navigator;
   }
 }
 

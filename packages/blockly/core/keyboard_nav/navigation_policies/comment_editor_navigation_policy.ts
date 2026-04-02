@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {CommentEditor} from '../comments/comment_editor.js';
-import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
-import type {INavigationPolicy} from '../interfaces/i_navigation_policy.js';
+import {CommentEditor} from '../../comments/comment_editor.js';
+import type {IFocusableNode} from '../../interfaces/i_focusable_node.js';
+import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
 
 /**
  * Set of rules controlling keyboard navigation from a comment editor.
@@ -30,6 +30,16 @@ export class CommentEditorNavigationPolicy
 
   getPreviousSibling(_current: CommentEditor): IFocusableNode | null {
     return null;
+  }
+
+  /**
+   * Returns the row ID of the given comment editor.
+   *
+   * @param current The comment editor to retrieve the row ID of.
+   * @returns The row ID of the given comment editor.
+   */
+  getRowId(current: CommentEditor) {
+    return current.id;
   }
 
   /**
