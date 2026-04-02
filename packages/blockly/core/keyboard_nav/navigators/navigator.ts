@@ -456,6 +456,7 @@ export class Navigator {
   /**
    * Returns the next/previous stack relative to the given element's stack.
    *
+   * @internal
    * @param current The element whose stack will be navigated relative to.
    * @param delta The difference in index to navigate; positive values navigate
    *     to the nth next stack, while negative values navigate to the nth
@@ -464,7 +465,7 @@ export class Navigator {
    *     current element's stack, or the last element in the stack offset by
    * `delta` relative to the current element's stack when navigating backwards.
    */
-  protected navigateStacks(current: IFocusableNode, delta: number) {
+  navigateStacks(current: IFocusableNode, delta: number) {
     const stacks = this.getTopLevelItems(current);
     const root =
       this.getSourceBlockFromNode(current)?.getRootBlock() ?? current;
