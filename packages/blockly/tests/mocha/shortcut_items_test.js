@@ -19,7 +19,7 @@ import {createKeyDownEvent} from './test_helpers/user_input.js';
 suite('Keyboard Shortcut Items', function () {
   setup(function () {
     sharedTestSetup.call(this);
-    const toolbox = document.getElementById('toolbox-categories');
+    const toolbox = document.getElementById('toolbox-test');
     this.workspace = Blockly.inject('blocklyDiv', {toolbox});
     this.injectionDiv = this.workspace.getInjectionDiv();
     Blockly.ContextMenuRegistry.registry.reset();
@@ -871,6 +871,160 @@ suite('Keyboard Shortcut Items', function () {
       assert.strictEqual(
         this.blockH.outputConnection.targetBlock(),
         this.blockG,
+      );
+    });
+  });
+
+  suite('Stack navigation (N / B)', function () {
+    const keyNextStack = () => createKeyDownEvent(Blockly.utils.KeyCodes.N);
+    const keyPrevStack = () => createKeyDownEvent(Blockly.utils.KeyCodes.B);
+
+    setup(function () {
+      this.block1 = this.workspace.newBlock('controls_if');
+      this.block2 = this.workspace.newBlock('stack_block');
+      this.block3 = this.workspace.newBlock('stack_block');
+      this.block2.moveBy(0, 100);
+      this.block3.moveBy(0, 400);
+
+      this.comment1 = this.workspace.newComment();
+      this.comment2 = this.workspace.newComment();
+      this.comment1.moveBy(0, 200);
+      this.comment2.moveBy(0, 300);
+    });
+
+    test('First stack navigating back is a no-op', function () {
+      Blockly.getFocusManager().focusNode(this.block1);
+      this.injectionDiv.dispatchEvent(keyPrevStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.block1,
+      );
+    });
+
+    test('Last stack navigating forward is a no-op', function () {
+      Blockly.getFocusManager().focusNode(this.block3);
+      this.injectionDiv.dispatchEvent(keyNextStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.block3,
+      );
+    });
+
+    test('Block forward to block', function () {
+      Blockly.getFocusManager().focusNode(this.block1);
+      this.injectionDiv.dispatchEvent(keyNextStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.block2,
+      );
+    });
+
+    test('Block back to block', function () {
+      Blockly.getFocusManager().focusNode(this.block2);
+      this.injectionDiv.dispatchEvent(keyPrevStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.block1,
+      );
+    });
+
+    test('Block forward to workspace comment', function () {
+      Blockly.getFocusManager().focusNode(this.block2);
+      this.injectionDiv.dispatchEvent(keyNextStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.comment1,
+      );
+    });
+
+    test('Block back to workspace comment', function () {
+      Blockly.getFocusManager().focusNode(this.block3);
+      this.injectionDiv.dispatchEvent(keyPrevStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.comment2,
+      );
+    });
+
+    test('Workspace comment forward to workspace comment', function () {
+      Blockly.getFocusManager().focusNode(this.comment1);
+      this.injectionDiv.dispatchEvent(keyNextStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.comment2,
+      );
+    });
+
+    test('Workspace comment back to workspace comment', function () {
+      Blockly.getFocusManager().focusNode(this.comment2);
+      this.injectionDiv.dispatchEvent(keyPrevStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.comment1,
+      );
+    });
+
+    test('Workspace comment forward to block', function () {
+      Blockly.getFocusManager().focusNode(this.comment2);
+      this.injectionDiv.dispatchEvent(keyNextStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.block3,
+      );
+    });
+
+    test('Workspace comment back to block', function () {
+      Blockly.getFocusManager().focusNode(this.comment1);
+      this.injectionDiv.dispatchEvent(keyPrevStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.block2,
+      );
+    });
+
+    test('Block forward to block in mutator workspace', async function () {
+      const icon = this.block1.getIcon(Blockly.icons.MutatorIcon.TYPE);
+      await icon.setBubbleVisible(true);
+      this.clock.runAll();
+      const mutatorWorkspace = icon.getWorkspace();
+      const stack1 = mutatorWorkspace.newBlock('controls_if_elseif');
+      const stack2 = mutatorWorkspace.newBlock('controls_if_elseif');
+      stack1.initSvg();
+      stack2.initSvg();
+      stack1.render();
+      stack2.render();
+      stack1.moveBy(0, 100);
+      stack2.moveBy(0, 200);
+      Blockly.getFocusManager().focusNode(stack1);
+      this.injectionDiv.dispatchEvent(keyNextStack());
+      assert.strictEqual(Blockly.getFocusManager().getFocusedNode(), stack2);
+    });
+
+    test('Block back to block in mutator workspace', async function () {
+      const icon = this.block1.getIcon(Blockly.icons.MutatorIcon.TYPE);
+      await icon.setBubbleVisible(true);
+      this.clock.runAll();
+      const mutatorWorkspace = icon.getWorkspace();
+      const stack1 = mutatorWorkspace.newBlock('controls_if_elseif');
+      const stack2 = mutatorWorkspace.newBlock('controls_if_elseif');
+      stack1.initSvg();
+      stack2.initSvg();
+      stack1.render();
+      stack2.render();
+      stack1.moveBy(0, 100);
+      stack2.moveBy(0, 200);
+      Blockly.getFocusManager().focusNode(stack2);
+      this.injectionDiv.dispatchEvent(keyPrevStack());
+      assert.strictEqual(Blockly.getFocusManager().getFocusedNode(), stack1);
+    });
+
+    test('Next stack from nested element', async function () {
+      const icon = this.block1.getIcon(Blockly.icons.MutatorIcon.TYPE);
+      Blockly.getFocusManager().focusNode(icon);
+      this.injectionDiv.dispatchEvent(keyNextStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.block2,
       );
     });
   });

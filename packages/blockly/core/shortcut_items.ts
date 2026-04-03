@@ -17,6 +17,7 @@ import {isCopyable as isICopyable} from './interfaces/i_copyable.js';
 import {isDeletable as isIDeletable} from './interfaces/i_deletable.js';
 import {type IDraggable, isDraggable} from './interfaces/i_draggable.js';
 import {type IFocusableNode} from './interfaces/i_focusable_node.js';
+import {isSelectable} from './interfaces/i_selectable.js';
 import {Direction, KeyboardMover} from './keyboard_nav/keyboard_mover.js';
 import {keyboardNavigationController} from './keyboard_navigation_controller.js';
 import {Msg} from './msg.js';
@@ -55,6 +56,8 @@ export enum names {
   NAVIGATE_UP = 'up',
   NAVIGATE_DOWN = 'down',
   DISCONNECT = 'disconnect',
+  NEXT_STACK = 'next_stack',
+  PREVIOUS_STACK = 'previous_stack',
   INFORMATION = 'information',
 }
 
@@ -769,6 +772,75 @@ export function registerDisconnectBlock() {
 }
 
 /**
+ * Registers keyboard shortcuts to jump between stacks/top-level items on the
+ * workspace.
+ */
+export function registerStackNavigation() {
+  /**
+   * Finds the stack root of the currently focused or specified item.
+   */
+  const resolveStack = (
+    workspace: WorkspaceSvg,
+    node = getFocusManager().getFocusedNode(),
+  ) => {
+    const navigator = workspace.getNavigator();
+
+    for (
+      let parent: IFocusableNode | null = node;
+      parent && parent !== workspace;
+      parent = navigator.getParent(parent)
+    ) {
+      node = parent;
+    }
+
+    if (!isSelectable(node)) return null;
+
+    return node;
+  };
+
+  const nextStackShortcut: KeyboardShortcut = {
+    name: names.NEXT_STACK,
+    preconditionFn: (workspace) =>
+      !workspace.isDragging() && !!resolveStack(workspace),
+    callback: (workspace) => {
+      keyboardNavigationController.setIsActive(true);
+      const start = resolveStack(workspace);
+      if (!start) return false;
+      const target = workspace.getNavigator().navigateStacks(start, 1);
+      if (!target) return false;
+      getFocusManager().focusNode(target);
+      return true;
+    },
+    keyCodes: [KeyCodes.N],
+  };
+
+  const previousStackShortcut: KeyboardShortcut = {
+    name: names.PREVIOUS_STACK,
+    preconditionFn: (workspace) =>
+      !workspace.isDragging() && !!resolveStack(workspace),
+    callback: (workspace) => {
+      keyboardNavigationController.setIsActive(true);
+      const start = resolveStack(workspace);
+      if (!start) return false;
+      // navigateStacks() returns the last connection in the stack when going
+      // backwards, but we want the root block, so resolve the stack from the
+      // element we get back.
+      const target = resolveStack(
+        workspace,
+        workspace.getNavigator().navigateStacks(start, -1),
+      );
+      if (!target) return false;
+      getFocusManager().focusNode(target);
+      return true;
+    },
+    keyCodes: [KeyCodes.B],
+  };
+
+  ShortcutRegistry.registry.register(nextStackShortcut);
+  ShortcutRegistry.registry.register(previousStackShortcut);
+}
+
+/**
  * Registers all default keyboard shortcut item. This should be called once per
  * instance of KeyboardShortcutRegistry.
  *
@@ -795,6 +867,7 @@ export function registerKeyboardNavigationShortcuts() {
   registerFocusToolbox();
   registerArrowNavigation();
   registerDisconnectBlock();
+  registerStackNavigation();
 }
 
 /**

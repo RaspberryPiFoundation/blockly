@@ -422,7 +422,7 @@ export class Drawer {
       const x =
         this.info_.startX + this.info_.outputConnection.connectionOffsetX;
       const connX = this.info_.RTL ? -x : x;
-      this.block_.outputConnection.setOffsetInBlock(
+      this.block_.outputConnection?.setOffsetInBlock(
         connX,
         this.info_.outputConnection.connectionOffsetY,
       );

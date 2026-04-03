@@ -366,7 +366,7 @@ export class BlockDragStrategy implements IDragStrategy {
           };
         }
 
-        this.startChildConn = nextTargetConn;
+        this.startChildConn = nextTargetConn ?? null;
       }
     }
   }
@@ -627,7 +627,7 @@ export class BlockDragStrategy implements IDragStrategy {
       draggingBlock.outputConnection,
       draggingBlock.previousConnection,
       draggingBlock.nextConnection,
-    ].filter(Boolean); // Removes falsy (null) values.
+    ].filter((c) => !!c); // Removes falsy (null) values.
     const inputConnections: RenderedConnection[] = [];
 
     for (const conn of available) {
@@ -727,14 +727,20 @@ export class BlockDragStrategy implements IDragStrategy {
     this.connectionPreviewer?.hidePreview();
     this.connectionCandidate = null;
 
-    this.startChildConn?.connect(this.block.nextConnection);
+    if (this.block.nextConnection) {
+      this.startChildConn?.connect(this.block.nextConnection);
+    }
     if (this.startParentConn) {
       switch (this.startParentConn.type) {
         case ConnectionType.INPUT_VALUE:
-          this.startParentConn.connect(this.block.outputConnection);
+          if (this.block.outputConnection) {
+            this.startParentConn.connect(this.block.outputConnection);
+          }
           break;
         case ConnectionType.NEXT_STATEMENT:
-          this.startParentConn.connect(this.block.previousConnection);
+          if (this.block.previousConnection) {
+            this.startParentConn.connect(this.block.previousConnection);
+          }
       }
     } else {
       this.block.moveTo(this.startLoc!, ['drag']);

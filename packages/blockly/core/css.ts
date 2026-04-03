@@ -648,4 +648,15 @@ input[type=number] {
   stroke: var(--blockly-active-node-color);
   stroke-width: var(--blockly-selection-width);
 }
+/* Flyout buttons and labels */
+.blocklyKeyboardNavigation .blocklyFlyout .blocklyFlyoutLabel.blocklyActiveFocus,
+.blocklyKeyboardNavigation .blocklyFlyout .blocklyFlyoutButton.blocklyActiveFocus {
+  outline: none;
+}
+.blocklyKeyboardNavigation .blocklyFlyout .blocklyFlyoutLabel.blocklyActiveFocus > .blocklyFlyoutLabelText,
+.blocklyKeyboardNavigation .blocklyFlyout .blocklyFlyoutButton.blocklyActiveFocus > .blocklyFlyoutButtonBackground {
+  outline-offset: 2px;
+  outline: var(--blockly-selection-width) solid var(--blockly-active-node-color);
+  border-radius: 2px;
+}
 `;

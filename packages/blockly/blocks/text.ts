@@ -757,13 +757,15 @@ const JOIN_MUTATOR_MIXIN = {
       'text_create_join_container',
     ) as BlockSvg;
     containerBlock.initSvg();
-    let connection = containerBlock.getInput('STACK')!.connection!;
+    let connection = containerBlock.getInput('STACK')?.connection;
     for (let i = 0; i < this.itemCount_; i++) {
       const itemBlock = workspace.newBlock(
         'text_create_join_item',
       ) as JoinItemBlock;
       itemBlock.initSvg();
-      connection.connect(itemBlock.previousConnection);
+      if (itemBlock.previousConnection) {
+        connection?.connect(itemBlock.previousConnection);
+      }
       connection = itemBlock.nextConnection;
     }
     return containerBlock;
