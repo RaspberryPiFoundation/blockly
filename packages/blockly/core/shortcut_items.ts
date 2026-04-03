@@ -707,32 +707,32 @@ export function registerWorkspaceOverview() {
     },
     callback: (_workspace) => {
       const workspace = resolveWorkspace(_workspace);
-      const stacks = workspace.getTopBlocks().length;
-      const comments = workspace.getTopComments().length;
+      const stackCount = workspace.getTopBlocks().length;
+      const commentCount = workspace.getTopComments().length;
 
       // Build base string with block stack count.
       let baseMsgKey;
-      if (stacks === 0) {
-        baseMsgKey = 'ARIA_WORKSPACE_BLOCKS_ZERO';
-      } else if (stacks === 1) {
-        baseMsgKey = 'ARIA_WORKSPACE_BLOCKS_ONE';
+      if (stackCount === 0) {
+        baseMsgKey = 'WORKSPACE_CONTENTS_BLOCKS_ZERO';
+      } else if (stackCount === 1) {
+        baseMsgKey = 'WORKSPACE_CONTENTS_BLOCKS_ONE';
       } else {
-        baseMsgKey = 'ARIA_WORKSPACE_BLOCKS_MANY';
+        baseMsgKey = 'WORKSPACE_CONTENTS_BLOCKS_MANY';
       }
 
       // Build comment suffix.
       let suffix = '';
-      if (comments > 0) {
+      if (commentCount > 0) {
         suffix = Msg[
-          comments === 1
-            ? 'ARIA_WORKSPACE_COMMENTS_ONE'
-            : 'ARIA_WORKSPACE_COMMENTS_MANY'
-        ].replace('%1', String(comments));
+          commentCount === 1
+            ? 'WORKSPACE_CONTENTS_COMMENTS_ONE'
+            : 'WORKSPACE_CONTENTS_COMMENTS_MANY'
+        ].replace('%1', String(commentCount));
       }
 
       // Build final message.
       const msg = Msg[baseMsgKey]
-        .replace('%1', String(stacks))
+        .replace('%1', String(stackCount))
         .replace('%2', suffix);
 
       aria.announceDynamicAriaState(msg);

@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-04-01 11:22:00.739918",
+		"lastupdated": "2026-04-03 10:36:19.846436",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -421,9 +421,9 @@
 	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Use the arrow keys to move, then %1 to accept the position",
 	"KEYBOARD_NAV_COPIED_HINT": "Copied. Press %1 to paste.",
 	"KEYBOARD_NAV_CUT_HINT": "Cut. Press %1 to paste.",
-	"ARIA_WORKSPACE_BLOCKS_MANY": "%1 stacks of blocks%2 in workspace.",
-	"ARIA_WORKSPACE_BLOCKS_ONE": "One stack of blocks%2 in workspace.",
-	"ARIA_WORKSPACE_BLOCKS_ZERO": "No blocks%2 in workspace.",
-	"ARIA_WORKSPACE_COMMENTS_MANY": " and %1 comments",
-	"ARIA_WORKSPACE_COMMENTS_ONE": " and one comment"
+	"WORKSPACE_CONTENTS_BLOCKS_MANY": "%1 stacks of blocks%2 in workspace.",
+	"WORKSPACE_CONTENTS_BLOCKS_ONE": "One stack of blocks%2 in workspace.",
+	"WORKSPACE_CONTENTS_BLOCKS_ZERO": "No blocks%2 in workspace.",
+	"WORKSPACE_CONTENTS_COMMENTS_MANY": " and %1 comments",
+	"WORKSPACE_CONTENTS_COMMENTS_ONE": " and one comment"
 }
