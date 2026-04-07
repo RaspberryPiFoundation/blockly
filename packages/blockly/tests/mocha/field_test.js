@@ -818,4 +818,131 @@ suite('Abstract Fields', function () {
       });
     });
   });
+
+  suite('Aria', function () {
+    class TestField extends Blockly.Field {
+      constructor(value, config = undefined) {
+        super(value, null, config);
+      }
+    }
+
+    suite('getAriaTypeName', function () {
+      test('Default returns null', function () {
+        const field = new TestField();
+        assert.isNull(field.getAriaTypeName());
+      });
+
+      test('Returns configured ariaTypeName (JS)', function () {
+        const field = new TestField('value', {ariaTypeName: 'number'});
+        assert.equal(field.getAriaTypeName(), 'number');
+      });
+
+      test('Returns configured ariaTypeName (JSON)', function () {
+        class CustomField extends Blockly.Field {
+          constructor(opt_config) {
+            super('value', null, opt_config);
+          }
+
+          static fromJson(options) {
+            return new CustomField(options);
+          }
+        }
+
+        const field = CustomField.fromJson({ariaTypeName: 'text input'});
+        assert.equal(field.getAriaTypeName(), 'text input');
+      });
+    });
+
+    suite('getAriaValue', function () {
+      test('Returns string value', function () {
+        const field = new TestField('hello');
+        assert.equal(field.getAriaValue(), 'hello');
+      });
+
+      test('Returns stringified number', function () {
+        const field = new TestField(123);
+        assert.equal(field.getAriaValue(), '123');
+      });
+
+      test('Returns null for null value', function () {
+        const field = new TestField(null);
+        assert.isNull(field.getAriaValue());
+      });
+
+      test('Returns null for undefined value', function () {
+        const field = new TestField(undefined);
+        assert.isNull(field.getAriaValue());
+      });
+    });
+
+    suite('computeAriaLabel', function () {
+      test('Value only (default)', function () {
+        const field = new TestField('hello');
+        assert.equal(field.computeAriaLabel(), 'hello');
+      });
+
+      test('Value only when includeTypeInfo=false', function () {
+        const field = new TestField('hello', {ariaTypeName: 'text'});
+        assert.equal(field.computeAriaLabel(false), 'hello');
+      });
+
+      test('Type and value when includeTypeInfo=true', function () {
+        const field = new TestField('hello', {ariaTypeName: 'text'});
+        assert.equal(field.computeAriaLabel(true), 'text: hello');
+      });
+
+      test('Type only when value is null', function () {
+        const field = new TestField(null, {ariaTypeName: 'text'});
+        assert.equal(field.computeAriaLabel(true), 'text');
+      });
+
+      test('Empty string when no type or value', function () {
+        const field = new TestField(null);
+        assert.equal(field.computeAriaLabel(true), '');
+      });
+
+      test('Handles missing type with includeTypeInfo=true', function () {
+        const field = new TestField('hello');
+        assert.equal(field.computeAriaLabel(true), 'hello');
+      });
+    });
+
+    suite('Subclass overrides', function () {
+      class CustomValueField extends TestField {
+        getAriaValue() {
+          return 'custom value';
+        }
+      }
+
+      class CustomTypeField extends TestField {
+        getAriaTypeName() {
+          return 'custom type';
+        }
+      }
+
+      class FullCustomField extends TestField {
+        getAriaValue() {
+          return 'custom value';
+        }
+        getAriaTypeName() {
+          return 'custom type';
+        }
+      }
+
+      test('Uses overridden getAriaValue', function () {
+        const field = new CustomValueField('ignored');
+        assert.equal(field.computeAriaLabel(), 'custom value');
+      });
+
+      test('Uses overridden getAriaTypeName', function () {
+        const field = new CustomTypeField('value');
+        assert.equal(field.computeAriaLabel(true), 'custom type: value');
+      });
+
+      test('Uses both overrides', function () {
+        const field = new FullCustomField();
+        assert.equal(field.computeAriaLabel(true), 'custom type: custom value');
+      });
+    });
+  });
 });

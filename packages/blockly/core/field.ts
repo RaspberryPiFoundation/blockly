@@ -98,6 +98,8 @@ export abstract class Field<T = any>
   /** Validation function called when user edits an editable field. */
   protected validator_: FieldValidator<T> | null = null;
 
+  protected ariaTypeName_: string | null = null;
+
   /**
    * Used to cache the field's tooltip value if setTooltip is called when the
    * field is not yet initialized. Is *not* guaranteed to be accurate.
@@ -250,6 +252,9 @@ export abstract class Field<T = any>
     if (config.tooltip) {
       this.setTooltip(parsing.replaceMessageReferences(config.tooltip));
     }
+    if (config.ariaTypeName) {
+      this.ariaTypeName_ = config.ariaTypeName;
+    }
   }
 
   /**
@@ -298,6 +303,88 @@ export abstract class Field<T = any>
    */
   getSourceBlock(): Block | null {
     return this.sourceBlock_;
+  }
+
+  /**
+   * Gets an ARIA-friendly label representation of this field's type.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's type.
+   *
+   * @returns An ARIA representation of the field's type or null if it is
+   *     unspecified.
+   */
+  getAriaTypeName(): string | null {
+    return this.ariaTypeName_;
+  }
+
+  /**
+   * Gets an ARIA-friendly label representation of this field's value.
+   *
+   * Note that implementations should generally always override this value to
+   * ensure a non-null value is returned since the default implementation relies
+   * on 'getValue' which may return null, and a null return value for this
+   * function will prompt ARIA label generation to skip the field's value
+   * entirely when there may be a better contextual placeholder to use, instead,
+   * specific to the field.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's value.
+   *
+   * @returns An ARIA representation of the field's value, or null if no value
+   *     is currently defined or known for the field.
+   */
+  getAriaValue(): string | null {
+    const value = this.getValue();
+
+    if (value === null || value === undefined) {
+      return null;
+    }
+
+    return String(value);
+  }
+
+  /**
+   * Computes a descriptive ARIA label to represent this field with configurable
+   * verbosity.
+   *
+   * A 'verbose' label includes type information, if available, whereas a
+   * non-verbose label only contains the field's value.
+   *
+   * Note that this will always return the latest representation of the field's
+   * label which may differ from any previously set ARIA label for the field
+   * itself. Implementations are largely responsible for ensuring that the
+   * field's ARIA label is set correctly at relevant moments in the field's
+   * lifecycle (such as when its value changes).
+   *
+   * Finally, it is never guaranteed that implementations use the label returned
+   * by this method for their actual ARIA label. Some implementations may rely
+   * on other contexts to convey information like the field's value. Example:
+   * checkboxes represent their checked/non-checked status (i.e. value) through
+   * a separate ARIA property.
+   *
+   * It's possible this returns an empty string if the field doesn't supply type
+   * or value information for certain cases (such as a null value). This can
+   * lead to the field being potentially COMPLETELY HIDDEN for screen reader
+   * navigation so it's crucial for implementations to ensure a non-empty value
+   * is returned here.
+   *
+   * @param includeTypeInfo Whether to include the field's type information in
+   *     the returned label, if available.
+   */
+  computeAriaLabel(includeTypeInfo: boolean = false): string {
+    const ariaTypeName = includeTypeInfo ? this.getAriaTypeName() : null;
+    const ariaValue = this.getAriaValue();
+
+    if (!ariaTypeName && !ariaValue) {
+      return '';
+    }
+
+    if (ariaTypeName && ariaValue) {
+      return `${ariaTypeName}: ${ariaValue}`;
+    }
+
+    return ariaTypeName ?? ariaValue ?? '';
   }
 
   /**
@@ -1417,6 +1504,7 @@ export abstract class Field<T = any>
  */
 export interface FieldConfig {
   tooltip?: string;
+  ariaTypeName?: string;
 }
 
 /**
