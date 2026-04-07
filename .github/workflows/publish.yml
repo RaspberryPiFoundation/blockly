@@ -93,8 +93,8 @@ jobs:
               minor) npm version preminor --preid=beta --no-git-tag-version ;;
               patch) npm version prepatch --preid=beta --no-git-tag-version ;;
               *)
-                echo "Unexpected release_type='${RELEASE_TYPE}', defaulting to prepatch"
-                npm version prepatch --preid=beta --no-git-tag-version
+                echo "::error title=Invalid release bump::conventional-recommended-bump returned '${RELEASE_TYPE}' (expected major, minor, or patch). Fix commits/tags or set version_override." >&2
+                exit 1
                 ;;
             esac
           fi
