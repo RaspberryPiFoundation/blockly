@@ -51,119 +51,229 @@ export interface DynamicAnnouncementOptions {
 }
 
 /**
- * ARIA role values.
- * Copied from Closure's goog.a11y.aria.Role
+ * A valid ARIA role for a Blockly DOM element. See also setRole() and getRole().
+ *
+ * This should be used instead of directly setting an element's role attribute.
  */
 export enum Role {
-  // ARIA role for an interactive control of tabular data.
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/application_role. */
+  APPLICATION = 'application',
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/button_role. */
+  BUTTON = 'button',
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/checkbox_role. */
+  CHECKBOX = 'checkbox',
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/dialog_role. */
+  DIALOG = 'dialog',
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/figure_role. */
+  FIGURE = 'figure',
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/generic_role. */
+  GENERIC = 'generic',
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/grid_role. */
   GRID = 'grid',
-
-  // ARIA role for a cell in a grid.
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/gridcell_role. */
   GRIDCELL = 'gridcell',
-  // ARIA role for a group of related elements like tree item siblings.
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/group_role. */
   GROUP = 'group',
-
-  // ARIA role for a listbox.
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/list_role. */
+  LIST = 'list',
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/listbox_role. */
   LISTBOX = 'listbox',
-
-  // ARIA role for a popup menu.
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/listitem_role. */
+  LISTITEM = 'listitem',
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/menu_role. */
   MENU = 'menu',
-
-  // ARIA role for menu item elements.
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/menuitem_role. */
   MENUITEM = 'menuitem',
-  // ARIA role for a checkbox box element inside a menu.
-  MENUITEMCHECKBOX = 'menuitemcheckbox',
-  // ARIA role for option items that are  children of combobox, listbox, menu,
-  // radiogroup, or tree elements.
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/option_role. */
   OPTION = 'option',
-  // ARIA role for ignorable cosmetic elements with no semantic significance.
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/presentation_role. */
   PRESENTATION = 'presentation',
-
-  // ARIA role for a row of cells in a grid.
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/region_role. */
+  REGION = 'region',
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/row_role. */
   ROW = 'row',
-  // ARIA role for a tree.
-  TREE = 'tree',
-
-  // ARIA role for a tree item that sometimes may be expanded or collapsed.
-  TREEITEM = 'treeitem',
-
-  // ARIA role for a visual separator in e.g. a menu.
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/separator_role. */
   SEPARATOR = 'separator',
-
-  // ARIA role for a live region providing information.
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/status_role. */
   STATUS = 'status',
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/textbox_role. */
+  TEXTBOX = 'textbox',
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/tree_role. */
+  TREE = 'tree',
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/treeitem_role. */
+  TREEITEM = 'treeitem',
 }
 
 const DEFAULT_LIVE_REGION_ROLE = Role.STATUS;
 
 /**
- * ARIA states and properties.
- * Copied from Closure's goog.a11y.aria.State
+ * A possible ARIA attribute state for a Blockly DOM element. See also setState() and getState().
+ *
+ * This should be used instead of directly setting aria-* attributes on elements.
  */
 export enum State {
-  // ARIA property for setting the currently active descendant of an element,
-  // for example the selected item in a list box. Value: ID of an element.
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-activedescendant.
+   *
+   * Value: ID of a DOM element.
+   */
   ACTIVEDESCENDANT = 'activedescendant',
-  // ARIA property that, if true, indicates that all of a changed region should
-  // be presented, instead of only parts. Value: one of {true, false}.
-  ATOMIC = 'atomic',
-  // ARIA property defines the total number of columns in a table, grid, or
-  // treegrid.
-  // Value: integer.
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-atomic.
+   *
+   * Value: one of {true, false}.
+   */
+  ATOMIC = 'ATOMIC',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-checked.
+   *
+   * Value: one of {true, false, mixed, undefined}.
+   */
+  CHECKED = 'checked',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-colcount.
+   *
+   * Value: an integer representing the number of columns in a grid.
+   */
   COLCOUNT = 'colcount',
-  // ARIA state for a disabled item. Value: one of {true, false}.
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-controls.
+   *
+   * Value: an array of element IDs.
+   */
+  CONTROLS = 'controls',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-disabled.
+   *
+   * Value: one of {true, false}.
+   */
   DISABLED = 'disabled',
-
-  // ARIA state for setting whether the element like a tree node is expanded.
-  // Value: one of {true, false, undefined}.
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-expanded.
+   *
+   * Value: one of {true, false, undefined}.
+   */
   EXPANDED = 'expanded',
-
-  // ARIA state indicating that the entered value does not conform. Value:
-  // one of {false, true, 'grammar', 'spelling'}
-  INVALID = 'invalid',
-
-  // ARIA property that provides a label to override any other text, value, or
-  // contents used to describe this element. Value: string.
-  LABEL = 'label',
-  // ARIA property for setting the element which labels another element.
-  // Value: space-separated IDs of elements.
-  LABELLEDBY = 'labelledby',
-
-  // ARIA property for setting the level of an element in the hierarchy.
-  // Value: integer.
-  LEVEL = 'level',
-  // ARIA property indicating if the element is horizontal or vertical.
-  // Value: one of {'vertical', 'horizontal'}.
-  ORIENTATION = 'orientation',
-
-  // ARIA property that defines an element's number of position in a list.
-  // Value: integer.
-  POSINSET = 'posinset',
-
-  // ARIA property defines the total number of rows in a table, grid, or
-  // treegrid.
-  // Value: integer.
-  ROWCOUNT = 'rowcount',
-
-  // ARIA state for setting the currently selected item in the list.
-  // Value: one of {true, false, undefined}.
-  SELECTED = 'selected',
-  // ARIA property defining the number of items in a list. Value: integer.
-  SETSIZE = 'setsize',
-
-  // ARIA property for slider maximum value. Value: number.
-  VALUEMAX = 'valuemax',
-
-  // ARIA property for slider minimum value. Value: number.
-  VALUEMIN = 'valuemin',
-
-  // ARIA property for live region chattiness.
-  // Value: one of {polite, assertive, off}.
-  LIVE = 'live',
-
-  // ARIA property for removing elements from the accessibility tree.
-  // Value: one of {true, false, undefined}.
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-haspopup.
+   *
+   * Value: one of {true, false, menu, listbox, tree, grid, dialog}.
+   */
+  HASPOPUP = 'haspopup',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-hidden.
+   *
+   * Value: one of {true, false,undefined}.
+   */
   HIDDEN = 'hidden',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-invalid.
+   *
+   * Value: one of {true, false, grammar, spelling}.
+   */
+  INVALID = 'invalid',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-label.
+   *
+   * Value: a string.
+   */
+  LABEL = 'label',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-labelledby.
+   *
+   * Value: an array of element IDs.
+   */
+  LABELLEDBY = 'labelledby',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-level.
+   *
+   * Value: an integer.
+   */
+  LEVEL = 'level',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-live.
+   *
+   * Value: one of {polite, assertive, off}.
+   */
+  LIVE = 'live',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-orientation.
+   *
+   * Value: one of {horizontal, vertical, undefined}.
+   */
+  ORIENTATION = 'orientation',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-posinset.
+   *
+   * Value: an integer representing the position of the element within a set of related elements.
+   */
+  POSINSET = 'posinset',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-pressed.
+   *
+   * Value: one of {true, false, mixed, undefined}.
+   */
+  PRESSED = 'pressed',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-readonly.
+   *
+   * Value: one of {true, false}.
+   */
+  READONLY = 'readonly',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-required.
+   *
+   * Value: one of {true, false}.
+   */
+  REQUIRED = 'required',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-roledescription.
+   *
+   * Value: a string.
+   */
+  ROLEDESCRIPTION = 'roledescription',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-rowcount.
+   *
+   * Value: an integer representing the number of rows in a grid or table.
+   */
+  ROWCOUNT = 'rowcount',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-rowindex.
+   *
+   * Value: an integer representing the index of the element within a set of related elements.
+   */
+  ROWINDEX = 'rowindex',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-rowspan.
+   *
+   * Value: an integer representing the number of rows a cell spans in a grid or table.
+   */
+  ROWSPAN = 'rowspan',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-selected.
+   *
+   * Value:one of {true, false, undefined}.
+   */
+  SELECTED = 'selected',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-setsize.
+   *
+   * Value: an integer representing the total number of elements in a set of related elements.
+   */
+  SETSIZE = 'setsize',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-valuemax.
+   *
+   * Value: a number representing the maximum allowed value for a range widget.
+   */
+  VALUEMAX = 'valuemax',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-valuemin.
+   *
+   * Value: a number representing the minimum allowed value for a range widget.
+   */
+  VALUEMIN = 'valuemin',
 }
 
 /**
@@ -178,13 +288,11 @@ export function removeRole(element: Element) {
 }
 
 /**
- * Sets the ARIA role of an element. If `roleName` is null,
- * the role is removed.
+ * Updates the specific role for the specified element.
  *
- * Similar to Closure's goog.a11y.aria.setRole
- *
- * @param element DOM node to set role of.
- * @param roleName Role name, or null to remove the role.
+ * @param element The element whose ARIA role should be changed.
+ * @param roleName The new role for the specified element, or null if its role
+ *     should be cleared.
  */
 export function setRole(element: Element, roleName: Role | null) {
   if (!roleName) {
@@ -195,14 +303,31 @@ export function setRole(element: Element, roleName: Role | null) {
 }
 
 /**
- * Sets the state or property of an element.
- * Copied from Closure's goog.a11y.aria
+ * Returns the ARIA role of the specified element, or null if it either doesn't
+ * have a designated role or if that role is unknown.
  *
- * @param element DOM node where we set state.
- * @param stateName State attribute being set.
- *     Automatically adds prefix 'aria-' to the state name if the attribute is
- * not an extra attribute.
- * @param value Value for the state attribute.
+ * @param element The element from which to retrieve its ARIA role.
+ * @returns The ARIA role of the element, or null if undefined or unknown.
+ */
+export function getRole(element: Element): Role | null {
+  const role = element.getAttribute(ROLE_ATTRIBUTE);
+  if (role && Object.values(Role).includes(role as Role)) {
+    return role as Role;
+  }
+  return null;
+}
+
+/**
+ * Sets the specified ARIA state by its name and value for the specified
+ * element.
+ *
+ * Note that the type of value is not validated against the specific type of
+ * state being changed, so it's up to callers to ensure the correct value is
+ * used for the given state.
+ *
+ * @param element The element whose ARIA state may be changed.
+ * @param stateName The state to change.
+ * @param value The new value to specify for the provided state.
  */
 export function setState(
   element: Element,
@@ -214,6 +339,36 @@ export function setState(
   }
   const attrStateName = ARIA_PREFIX + stateName;
   element.setAttribute(attrStateName, `${value}`);
+}
+
+/**
+ * Clears the specified ARIA state by removing any related attributes from the
+ * specified element that have been set using setState().
+ *
+ * @param element The element whose ARIA state may be changed.
+ * @param stateName The state to clear from the provided element.
+ */
+export function clearState(element: Element, stateName: State) {
+  const attrStateName = ARIA_PREFIX + stateName;
+  element.removeAttribute(attrStateName);
+}
+
+/**
+ * Returns a string representation of the specified state for the specified
+ * element, or null if it's not defined or specified.
+ *
+ * Note that an explicit set state of 'null' will return the 'null' string, not
+ * the value null.
+ *
+ * @param element The element whose state is being retrieved.
+ * @param stateName The state to retrieve.
+ * @returns The string representation of the requested state for the specified
+ *     element, or null if not defined.
+ */
+export function getState(element: Element, stateName: State): string | null {
+  const attrStateName = ARIA_PREFIX + stateName;
+  const value = element.getAttribute(attrStateName);
+  return value ? value : null;
 }
 
 let liveRegionElement: HTMLElement | null = null;
