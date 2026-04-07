@@ -27,6 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
+          ref: ${{ github.ref }}
           persist-credentials: false
 
       - name: Reconfigure git to use HTTP authentication
@@ -58,6 +59,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
 
       - name: Use Node.js 20.x
         uses: actions/setup-node@v5
@@ -75,6 +78,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
 
       - name: Use Node.js 20.x
         uses: actions/setup-node@v5
