@@ -98,7 +98,8 @@ export abstract class Field<T = any>
   /** Validation function called when user edits an editable field. */
   protected validator_: FieldValidator<T> | null = null;
 
-  protected ariaTypeName_: string | null = null;
+  /** The ARIA-friendly label representation of this field's type. */
+  protected ariaTypeName: string | null = null;
 
   /**
    * Used to cache the field's tooltip value if setTooltip is called when the
@@ -253,7 +254,7 @@ export abstract class Field<T = any>
       this.setTooltip(parsing.replaceMessageReferences(config.tooltip));
     }
     if (config.ariaTypeName) {
-      this.ariaTypeName_ = config.ariaTypeName;
+      this.ariaTypeName = config.ariaTypeName;
     }
   }
 
@@ -315,7 +316,7 @@ export abstract class Field<T = any>
    *     unspecified.
    */
   getAriaTypeName(): string | null {
-    return this.ariaTypeName_;
+    return this.ariaTypeName;
   }
 
   /**
