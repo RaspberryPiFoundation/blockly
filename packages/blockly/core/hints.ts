@@ -74,6 +74,8 @@ export function clearMoveHints(workspace: WorkspaceSvg) {
  */
 export function showHelpHint(workspace: WorkspaceSvg) {
   const shortcut = getShortActionShortcut('list_shortcuts');
+  if (!shortcut) return;
+
   const message = Msg['HELP_PROMPT'].replace('%1', shortcut);
   const id = helpHintId;
   Toast.show(workspace, {message, id});
