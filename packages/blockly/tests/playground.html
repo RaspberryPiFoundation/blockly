@@ -19,6 +19,68 @@
       await loadScript('playgrounds/screenshot.js');
       await loadScript('../node_modules/@blockly/dev-tools/dist/index.js');
 
+      // Test-only blocks for the Shadow Variables toolboxes.
+      //
+      // shadow_var_parent / shadow_var_wrapper / shadow_var_two_field mirror
+      // the three block types defined inline in
+      // tests/mocha/shadow_variable_fields_test.js so an operator can reach
+      // the same scenarios as that spec from the playground UI.
+      //
+      // shadow_var_host is playground-only scaffolding: a statement block
+      // with one value input that gives shadow_var_parent (a value block)
+      // somewhere to plug in so the workspace tree has a proper top-level
+      // statement parent instead of dangling value blocks. It is not part of
+      // the spec.
+      Blockly.defineBlocksWithJsonArray([
+        {
+          'type': 'shadow_var_host',
+          'message0': 'host %1',
+          'args0': [
+            {
+              'type': 'input_value',
+              'name': 'VALUE',
+            },
+          ],
+          'previousStatement': null,
+          'nextStatement': null,
+          'colour': 230,
+        },
+        {
+          'type': 'shadow_var_parent',
+          'message0': 'parent %1',
+          'args0': [
+            {
+              'type': 'input_value',
+              'name': 'VALUE',
+            },
+          ],
+          'output': null,
+          'colour': 330,
+        },
+        {
+          'type': 'shadow_var_wrapper',
+          'message0': 'wrap %1',
+          'args0': [
+            {
+              'type': 'input_value',
+              'name': 'INNER',
+            },
+          ],
+          'output': null,
+          'colour': 330,
+        },
+        {
+          'type': 'shadow_var_two_field',
+          'message0': 'two %1 %2',
+          'args0': [
+            {'type': 'field_variable', 'name': 'VAR1', 'variable': 'item'},
+            {'type': 'field_variable', 'name': 'VAR2', 'variable': 'item'},
+          ],
+          'output': null,
+          'colour': 330,
+        },
+      ]);
+
       var workspace = null;
 
       function start() {
@@ -139,6 +201,8 @@
           'toolbox-categories-typed-variables',
           'toolbox-simple',
           'toolbox-test-blocks',
+          'toolbox-shadow-variables',
+          'toolbox-shadow-variables-typed',
         ];
         var toolboxSuffix = getToolboxSuffix();
         document.forms.options.elements.toolbox.selectedIndex =
@@ -548,6 +612,8 @@
         </option>
         <option value="simple">Simple</option>
         <option value="test-blocks">Test Blocks</option>
+        <option value="shadow-variables">Shadow Variables</option>
+        <option value="shadow-variables-typed">Shadow Variables (typed)</option>
       </select>
     </form>
     <p>
@@ -1275,6 +1341,127 @@
         name="Functions"
         categorystyle="procedure_category"
         custom="PROCEDURE"></category>
+    </xml>
+
+    <!-- toolbox-shadow-variables is the minimum block configuration that
+  lets a human reach every scenario covered by
+  tests/mocha/shadow_variable_fields_test.js for the patch that allows
+  variables_get to be used as a shadow block. The four entries are:
+   1. shadow_var_parent + shadow variables_get
+        -- basic / Case 1 / Case 2 / rename / delete / save-load
+   2. shadow_var_parent + shadow shadow_var_wrapper + shadow variables_get
+        -- nested shadow
+   3. shadow_var_parent + shadow shadow_var_two_field
+        -- mixed Case 1 / Case 2
+   4. shadow_var_host + shadow_var_parent + shadow variables_get
+        -- shadow_var_parent attached to a statement parent (real-world
+           connection layout) -->
+    <xml
+      xmlns="https://developers.google.com/blockly/xml"
+      id="toolbox-shadow-variables"
+      style="display: none">
+      <category name="Shadow tests" categorystyle="variable_category">
+        <label
+          text="Shadow variables_get test blocks:"
+          web-class="ioLabel"></label>
+        <block type="shadow_var_parent">
+          <value name="VALUE">
+            <shadow type="variables_get">
+              <field name="VAR" id="item_id">item</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="shadow_var_parent">
+          <value name="VALUE">
+            <shadow type="shadow_var_wrapper">
+              <value name="INNER">
+                <shadow type="variables_get">
+                  <field name="VAR" id="item_id">item</field>
+                </shadow>
+              </value>
+            </shadow>
+          </value>
+        </block>
+        <block type="shadow_var_parent">
+          <value name="VALUE">
+            <shadow type="shadow_var_two_field">
+              <field name="VAR1" id="item_id">item</field>
+              <field name="VAR2" id="item_id">item</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="shadow_var_host">
+          <value name="VALUE">
+            <shadow type="variables_get">
+              <field name="VAR" id="item_id">item</field>
+            </shadow>
+          </value>
+        </block>
+      </category>
+      <sep></sep>
+      <category
+        name="Variables"
+        categorystyle="variable_category"
+        custom="VARIABLE"></category>
+    </xml>
+
+    <!-- toolbox-shadow-variables-typed is the typed-variable variant of
+  the same minimum configuration. It exercises the FieldVariable shadow
+  patch through variables_get_dynamic, which carries the type-enforcing
+  onchange handler, paired with the dynamic Variables category so the
+  user can create typed variables on the fly. The four entries mirror
+  the untyped toolbox 1:1, swapping only the leaf shadow type. -->
+    <xml
+      xmlns="https://developers.google.com/blockly/xml"
+      id="toolbox-shadow-variables-typed"
+      style="display: none">
+      <category name="Shadow tests" categorystyle="variable_category">
+        <label
+          text="Shadow variables_get_dynamic test blocks:"
+          web-class="ioLabel"></label>
+        <block type="shadow_var_parent">
+          <value name="VALUE">
+            <shadow type="variables_get_dynamic">
+              <field name="VAR" id="num_id">num</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="shadow_var_parent">
+          <value name="VALUE">
+            <shadow type="shadow_var_wrapper">
+              <value name="INNER">
+                <shadow type="variables_get_dynamic">
+                  <field name="VAR" id="num_id">num</field>
+                </shadow>
+              </value>
+            </shadow>
+          </value>
+        </block>
+        <block type="shadow_var_parent">
+          <value name="VALUE">
+            <shadow type="shadow_var_two_field">
+              <field name="VAR1" id="num_id">num</field>
+              <field name="VAR2" id="num_id">num</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="shadow_var_host">
+          <value name="VALUE">
+            <block type="shadow_var_parent">
+              <value name="VALUE">
+                <shadow type="variables_get_dynamic">
+                  <field name="VAR" id="num_id">num</field>
+                </shadow>
+              </value>
+            </block>
+          </value>
+        </block>
+      </category>
+      <sep></sep>
+      <category
+        name="Variables"
+        categorystyle="variable_category"
+        custom="VARIABLE_DYNAMIC"></category>
     </xml>
   </body>
 </html>
