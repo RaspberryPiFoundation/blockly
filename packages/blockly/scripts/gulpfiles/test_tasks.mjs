@@ -153,7 +153,7 @@ function build() {
  * @return {Promise} Asynchronous result.
  */
 function renamings() {
-  return runTestCommand('renamings', 'tests/migration/validate-renamings.mjs');
+  return runTestCommand('renamings', 'node tests/migration/validate-renamings.mjs');
 }
 
 /**
