@@ -20,6 +20,7 @@ suite('Keyboard Shortcut Items', function () {
   setup(function () {
     sharedTestSetup.call(this);
     const toolbox = document.getElementById('toolbox-test');
+    // Zelos has full-block fields, which we want to exercise in tests.
     this.workspace = Blockly.inject('blocklyDiv', {toolbox, renderer: 'zelos'});
     this.injectionDiv = this.workspace.getInjectionDiv();
     Blockly.ContextMenuRegistry.registry.reset();
