@@ -10,6 +10,7 @@
 var webdriverio = require('webdriverio');
 var fs = require('fs');
 var path = require('path');
+var {posixPath} = require('../../scripts/helpers');
 
 
 /**
@@ -60,7 +61,7 @@ async function runGeneratorsInBrowser(outputDir) {
     options.capabilities['goog:chromeOptions'].args.push('--disable-gpu');
   }
 
-  var url = 'file://' + __dirname + '/index.html';
+  var url = 'file://' + posixPath(__dirname) + '/index.html';
   var prefix = path.join(outputDir, 'generated');
 
   console.log('Starting webdriverio...');
