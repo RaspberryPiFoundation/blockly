@@ -329,6 +329,11 @@ export abstract class Field<T = any>
    * entirely when there may be a better contextual placeholder to use, instead,
    * specific to the field.
    *
+   * For example, a text input field may have a value of null when empty. To
+   * avoid hiding this field from screen reader, implementations should ensure
+   * that if the value is null, this function would return an appropriate,
+   * localized value such as "empty text".
+   *
    * Implementations are responsible for, and encouraged to, return a localized
    * version of the ARIA representation of the field's value.
    *
