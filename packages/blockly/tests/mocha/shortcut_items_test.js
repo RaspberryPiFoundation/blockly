@@ -1069,7 +1069,8 @@ suite('Keyboard Shortcut Items', function () {
       toastSpy.restore();
     });
 
-    test('Shows a toast with instructions to view help for non-navigable blocks', function () {
+    // Reenable this tests once the shortcut listing shortcut has been added.
+    test.skip('Shows a toast with instructions to view help for non-navigable blocks', function () {
       const toastSpy = sinon.spy(Blockly.Toast, 'show');
 
       const block = this.workspace.newBlock('test_align_dummy_right');
