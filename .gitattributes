@@ -1,1 +1,4 @@
-* text=auto
+# Force LF on checkout for all detected text files. Without this, Windows
+# users with core.autocrlf=true get CRLF in source files, which makes
+# Prettier (run as an ESLint rule) fail with "Delete `␍`" errors.
+* text=auto eol=lf
