@@ -14,7 +14,6 @@
 // Unused import preserved for side-effects. Remove if unneeded.
 import './events/events_block_change.js';
 
-import type {Block} from './block.js';
 import {Field, FieldConfig, UnattachedFieldError} from './field.js';
 import {
   FieldDropdown,
@@ -277,18 +276,6 @@ export class FieldVariable extends FieldDropdown {
       state['type'] || '',
     );
     this.setValue(variable.getId());
-  }
-
-  /**
-   * Attach this field to a block.
-   *
-   * @param block The block containing this field.
-   */
-  override setSourceBlock(block: Block) {
-    if (block.isShadow()) {
-      throw Error('Variable fields are not allowed to exist on shadow blocks.');
-    }
-    super.setSourceBlock(block);
   }
 
   /**
