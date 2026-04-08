@@ -363,7 +363,7 @@ export class Navigator {
     const root = getFocusManager().getFocusedTree()?.getRootFocusableNode();
     if (!root) return null;
 
-    return this.getFirstChild(root);
+    return this.getTopLevelItems(root)[0];
   }
 
   /**
@@ -372,12 +372,10 @@ export class Navigator {
    * @returns The last navigable node on the workspace, or null.
    */
   getLastNode(): IFocusableNode | null {
-    const first = this.getFirstNode();
-    const oldLooping = this.getNavigationLoops();
-    this.setNavigationLoops(true);
-    const lastNode = this.getPreviousNode(first);
-    this.setNavigationLoops(oldLooping);
-    return lastNode;
+    const root = getFocusManager().getFocusedTree()?.getRootFocusableNode();
+    if (!root) return null;
+
+    return this.getTopLevelItems(root).slice(-1)[0];
   }
 
   /**

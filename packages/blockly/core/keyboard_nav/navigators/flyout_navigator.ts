@@ -6,9 +6,11 @@
 
 import {IFocusableNode} from '../../blockly.js';
 import type {IFlyout} from '../../interfaces/i_flyout.js';
+import {Position} from '../../utils/toolbox.js';
 import {FlyoutButtonNavigationPolicy} from '../navigation_policies/flyout_button_navigation_policy.js';
 import {FlyoutSeparatorNavigationPolicy} from '../navigation_policies/flyout_separator_navigation_policy.js';
 import {Navigator} from './navigator.js';
+import {getPhysicalToolboxPosition} from './toolbox_navigator.js';
 
 /**
  * Navigator that handles keyboard navigation within a flyout.
@@ -23,13 +25,112 @@ export class FlyoutNavigator extends Navigator {
   }
 
   /**
-   * Returns the toolbox when navigating to the left in a flyout.
+   * Returns the parent toolbox item or previous flyout item when navigating out
+   * (left arrow) from a flyout.
+   *
+   * @param node The flyout item to navigate relative to.
+   * @param bypassAdjustments True to skip adjusting navigation based on the
+   *     flyout's layout; false (default) to take it into account.
    */
-  override getOutNode(): IFocusableNode | null {
+  override getOutNode(
+    node?: IFocusableNode | null,
+    bypassAdjustments = false,
+  ): IFocusableNode | null {
+    if (!bypassAdjustments && this.flyout.targetWorkspace) {
+      const position = getPhysicalToolboxPosition(this.flyout.targetWorkspace);
+      switch (position) {
+        case Position.TOP:
+        case Position.BOTTOM:
+          return this.flyout.RTL
+            ? this.getNextNode(node, true)
+            : this.getPreviousNode(node, true);
+        case Position.RIGHT:
+          return null;
+      }
+    }
+
     const toolbox = this.flyout.targetWorkspace?.getToolbox();
     if (toolbox) return toolbox.getSelectedItem();
 
     return null;
+  }
+
+  /**
+   * Returns the parent toolbox item or next flyout item when navigating in
+   * (right arrow) from a flyout.
+   *
+   * @param node The flyout item to navigate relative to.
+   * @param bypassAdjustments True to skip adjusting navigation based on the
+   *     flyout's layout; false (default) to take it into account.
+   */
+  override getInNode(
+    node?: IFocusableNode | null,
+    bypassAdjustments = false,
+  ): IFocusableNode | null {
+    if (!bypassAdjustments && this.flyout.targetWorkspace) {
+      const position = getPhysicalToolboxPosition(this.flyout.targetWorkspace);
+      switch (position) {
+        case Position.TOP:
+        case Position.BOTTOM:
+          return this.flyout.RTL
+            ? this.getPreviousNode(node, true)
+            : this.getNextNode(node, true);
+        case Position.RIGHT:
+          return this.getOutNode(node, true);
+      }
+    }
+
+    return super.getInNode(node);
+  }
+
+  /**
+   * Returns the parent toolbox item or next flyout item when navigating next
+   * (down arrow) from a flyout.
+   *
+   * @param node The flyout item to navigate relative to.
+   * @param bypassAdjustments True to skip adjusting navigation based on the
+   *     flyout's layout; false (default) to take it into account.
+   */
+  override getNextNode(
+    node?: IFocusableNode | null,
+    bypassAdjustments = false,
+  ): IFocusableNode | null {
+    if (!bypassAdjustments && this.flyout.targetWorkspace) {
+      const position = getPhysicalToolboxPosition(this.flyout.targetWorkspace);
+      switch (position) {
+        case Position.TOP:
+          return null;
+        case Position.BOTTOM:
+          return this.getOutNode(node, true);
+      }
+    }
+
+    return super.getNextNode(node);
+  }
+
+  /**
+   * Returns the parent toolbox item or previous flyout item when navigating
+   * previous (up arrow) from a flyout.
+   *
+   * @param node The flyout item to navigate relative to.
+   * @param bypassAdjustments True to skip adjusting navigation based on the
+   *     flyout's layout; false (default) to take it into account.
+   */
+  override getPreviousNode(
+    node?: IFocusableNode | null,
+    bypassAdjustments = false,
+  ): IFocusableNode | null {
+    if (!bypassAdjustments && this.flyout.targetWorkspace) {
+      const position = getPhysicalToolboxPosition(this.flyout.targetWorkspace);
+      switch (position) {
+        case Position.TOP:
+          return this.getOutNode(node, true);
+        case Position.BOTTOM:
+          return null;
+      }
+    }
+
+    return super.getPreviousNode(node);
   }
 
   /**

@@ -394,7 +394,6 @@ const tasks = [
   // Build must run before the remaining tasks
   build,
   renamings,
-  metadata,
   mocha,
   generators,
   node,

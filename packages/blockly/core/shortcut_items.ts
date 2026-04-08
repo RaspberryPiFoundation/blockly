@@ -570,7 +570,8 @@ export function registerArrowNavigation() {
     right: {
       name: names.NAVIGATE_RIGHT,
       preconditionFn: (workspace) => !workspace.isDragging(),
-      callback: (workspace) => {
+      callback: (workspace, e) => {
+        e.preventDefault();
         keyboardNavigationController.setIsActive(true);
         const node = workspace.RTL
           ? getFocusManager().getFocusedTree()?.getNavigator().getOutNode()
@@ -587,7 +588,8 @@ export function registerArrowNavigation() {
     left: {
       name: names.NAVIGATE_LEFT,
       preconditionFn: (workspace) => !workspace.isDragging(),
-      callback: (workspace) => {
+      callback: (workspace, e) => {
+        e.preventDefault();
         keyboardNavigationController.setIsActive(true);
         const node = workspace.RTL
           ? getFocusManager().getFocusedTree()?.getNavigator().getInNode()
@@ -604,7 +606,8 @@ export function registerArrowNavigation() {
     down: {
       name: names.NAVIGATE_DOWN,
       preconditionFn: (workspace) => !workspace.isDragging(),
-      callback: () => {
+      callback: (_workspace, e) => {
+        e.preventDefault();
         keyboardNavigationController.setIsActive(true);
         const node = getFocusManager()
           .getFocusedTree()
@@ -621,7 +624,8 @@ export function registerArrowNavigation() {
     up: {
       name: names.NAVIGATE_UP,
       preconditionFn: (workspace) => !workspace.isDragging(),
-      callback: () => {
+      callback: (_workspace, e) => {
+        e.preventDefault();
         keyboardNavigationController.setIsActive(true);
         const node = getFocusManager()
           .getFocusedTree()
