@@ -354,10 +354,47 @@ export async function generators() {
 }
 
 /**
+ * Ensure tests/node/node_modules/blockly-test resolves to the packaged
+ * blockly bundle in dist/.
+ *
+ * The repository stores this path as a git symlink (mode 120000) pointing at
+ * ../../../dist. On Windows without core.symlinks enabled (the default), git
+ * checks it out as a plain text file containing the link target, which makes
+ * `import 'blockly-test'` in tests/node/run_node_test.mjs fail with
+ * ERR_MODULE_NOT_FOUND. Detect that case and replace it with a junction so the
+ * node tests can resolve the packaged blockly bundle. Also mark the path as
+ * skip-worktree so the resulting "deleted symlink" diff doesn't pollute
+ * `git status`.
+ */
+function ensureBlocklyTestLink() {
+  const linkPath = path.join('tests', 'node', 'node_modules', 'blockly-test');
+  // throwIfNoEntry:false → returns undefined instead of throwing on ENOENT,
+  // so unrelated errors (EACCES, etc.) still propagate normally.
+  const stat = fs.lstatSync(linkPath, {throwIfNoEntry: false});
+  if (stat && (stat.isSymbolicLink() || stat.isDirectory())) return;
+  if (stat) fs.rmSync(linkPath, {force: true});
+  fs.mkdirSync(path.dirname(linkPath), {recursive: true});
+  fs.symlinkSync(path.resolve(RELEASE_DIR), linkPath, 'junction');
+  // Best-effort: silence the resulting "deleted symlink" diff in git status.
+  // Expected failure modes (not a git checkout, git not on PATH, file not in
+  // index) are non-fatal — the junction itself is enough to make the test
+  // pass. Surface anything unexpected as a warning so it isn't fully hidden.
+  try {
+    execSync(`git update-index --skip-worktree ${linkPath}`, {stdio: 'pipe'});
+  } catch (e) {
+    console.warn(
+        `ensureBlocklyTestLink: could not mark ${linkPath} skip-worktree ` +
+        `(${e.stderr?.toString().trim() || e.message}). ` +
+        `'git status' may show this file as deleted.`);
+  }
+}
+
+/**
  * Run Node tests.
  * @return {Promise} Asynchronous result.
  */
 function node() {
+  ensureBlocklyTestLink();
   return runTestCommand('node', 'mocha tests/node --config tests/node/.mocharc.js');
 }
 
