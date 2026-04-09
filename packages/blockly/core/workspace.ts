@@ -96,6 +96,17 @@ export class Workspace {
   isClearing = false;
 
   /**
+   * If true, `Connection.respawnShadow_` becomes a no-op. Set scoped to a
+   * try/finally inside `VariableMap.deleteVariable` so that the cascade's
+   * non-shadow dispose loop does not auto-spawn a stale shadow whose
+   * stored state may reference the variable being deleted (which would
+   * silently re-create the variable through `getOrCreateVariablePackage`).
+   *
+   * @internal
+   */
+  suppressShadowRespawn = false;
+
+  /**
    * Maximum number of undo events in stack. `0` turns off undo, `Infinity`
    * sets it to unlimited.
    */
