@@ -123,19 +123,13 @@ export enum State {
    *
    * Value: one of {true, false}.
    */
-  ATOMIC = 'ATOMIC',
+  ATOMIC = 'atomic',
   /**
    * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-checked.
    *
    * Value: one of {true, false, mixed, undefined}.
    */
   CHECKED = 'checked',
-  /**
-   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-colcount.
-   *
-   * Value: an integer representing the number of columns in a grid.
-   */
-  COLCOUNT = 'colcount',
   /**
    * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-controls.
    *
@@ -197,71 +191,17 @@ export enum State {
    */
   LIVE = 'live',
   /**
-   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-orientation.
-   *
-   * Value: one of {horizontal, vertical, undefined}.
-   */
-  ORIENTATION = 'orientation',
-  /**
-   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-posinset.
-   *
-   * Value: an integer representing the position of the element within a set of related elements.
-   */
-  POSINSET = 'posinset',
-  /**
-   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-pressed.
-   *
-   * Value: one of {true, false, mixed, undefined}.
-   */
-  PRESSED = 'pressed',
-  /**
-   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-readonly.
-   *
-   * Value: one of {true, false}.
-   */
-  READONLY = 'readonly',
-  /**
-   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-required.
-   *
-   * Value: one of {true, false}.
-   */
-  REQUIRED = 'required',
-  /**
    * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-roledescription.
    *
    * Value: a string.
    */
   ROLEDESCRIPTION = 'roledescription',
   /**
-   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-rowcount.
-   *
-   * Value: an integer representing the number of rows in a grid or table.
-   */
-  ROWCOUNT = 'rowcount',
-  /**
-   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-rowindex.
-   *
-   * Value: an integer representing the index of the element within a set of related elements.
-   */
-  ROWINDEX = 'rowindex',
-  /**
-   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-rowspan.
-   *
-   * Value: an integer representing the number of rows a cell spans in a grid or table.
-   */
-  ROWSPAN = 'rowspan',
-  /**
    * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-selected.
    *
    * Value:one of {true, false, undefined}.
    */
   SELECTED = 'selected',
-  /**
-   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-setsize.
-   *
-   * Value: an integer representing the total number of elements in a set of related elements.
-   */
-  SETSIZE = 'setsize',
   /**
    * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-valuemax.
    *
