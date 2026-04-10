@@ -425,7 +425,7 @@ suite('ARIA', function () {
 
     test('Blocks without inputs are properly labeled', function () {
       const block = this.makeBlock('math_random_float');
-      let label = Blockly.utils.aria.getState(
+      const label = Blockly.utils.aria.getState(
         block.getSvgRoot(),
         Blockly.utils.aria.State.LABEL,
       );
@@ -434,7 +434,7 @@ suite('ARIA', function () {
 
     test('Blocks with one input are properly labeled', function () {
       const block = this.makeBlock('logic_negate');
-      let label = Blockly.utils.aria.getState(
+      const label = Blockly.utils.aria.getState(
         block.getSvgRoot(),
         Blockly.utils.aria.State.LABEL,
       );
@@ -443,7 +443,7 @@ suite('ARIA', function () {
 
     test('Blocks with multiple inputs are properly labeled', function () {
       const block = this.makeBlock('logic_ternary');
-      let label = Blockly.utils.aria.getState(
+      const label = Blockly.utils.aria.getState(
         block.getSvgRoot(),
         Blockly.utils.aria.State.LABEL,
       );
