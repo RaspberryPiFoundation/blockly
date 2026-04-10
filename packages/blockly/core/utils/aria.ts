@@ -281,7 +281,7 @@ export enum State {
  */
 export enum Verbosity {
   TERSE,
-  NORMAL,
+  STANDARD,
   LOQUACIOUS,
 }
 

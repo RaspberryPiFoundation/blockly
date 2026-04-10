@@ -42,17 +42,17 @@ import {Role, setRole, setState, State, Verbosity} from './utils/aria.js';
  */
 export function computeAriaLabel(
   block: BlockSvg,
-  verbosity = Verbosity.NORMAL,
+  verbosity = Verbosity.STANDARD,
 ) {
   return [
     getBeginStackLabel(block),
     getParentInputLabel(block),
     ...getInputLabels(block),
     verbosity === Verbosity.LOQUACIOUS && getParentToolboxCategoryLabel(block),
-    verbosity >= Verbosity.NORMAL && getDisabledLabel(block),
-    verbosity >= Verbosity.NORMAL && getCollapsedLabel(block),
-    verbosity >= Verbosity.NORMAL && getReplaceableLabel(block),
-    verbosity >= Verbosity.NORMAL && getInputCountLabel(block),
+    verbosity >= Verbosity.STANDARD && getDisabledLabel(block),
+    verbosity >= Verbosity.STANDARD && getCollapsedLabel(block),
+    verbosity >= Verbosity.STANDARD && getReplaceableLabel(block),
+    verbosity >= Verbosity.STANDARD && getInputCountLabel(block),
   ]
     .filter((label) => !!label)
     .join(', ');
