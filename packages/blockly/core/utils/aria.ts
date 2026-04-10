@@ -277,6 +277,15 @@ export enum State {
 }
 
 /**
+ * Used to control how verbose generated a11y labels are.
+ */
+export enum Verbosity {
+  TERSE,
+  NORMAL,
+  LOQUACIOUS,
+}
+
+/**
  * Removes the ARIA role from an element.
  *
  * Similar to Closure's goog.a11y.aria.removeRole

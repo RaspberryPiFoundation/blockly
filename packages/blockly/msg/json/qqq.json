@@ -1,17 +1,4 @@
 {
-	"@metadata": {
-		"authors": [
-			"Ajeje Brazorf",
-			"Amire80",
-			"Espertus",
-			"Liuxinyu970226",
-			"McDutchie",
-			"Metalhead64",
-			"Nike",
-			"Robby",
-			"Shirayuki"
-		]
-	},
 	"VARIABLES_DEFAULT_NAME": "default name - A simple, general default name for a variable, preferably short. For more context, see [[Translating:Blockly#infrequent_message_types]].\n{{Identical|Item}}",
 	"UNNAMED_KEY": "default name - A simple, default name for an unnamed function or variable. Preferably indicates that the item is unnamed.",
 	"TODAY": "button text - Button that sets a calendar to today's date.\n{{Identical|Today}}",
@@ -434,5 +421,16 @@
 	"WORKSPACE_CONTENTS_COMMENTS_MANY": "ARIA live region phrase appended when there are multiple workspace comments. \n\nParameters:\n* %1 - the number of comments (integer greater than 1)",
 	"WORKSPACE_CONTENTS_COMMENTS_ONE": "ARIA live region phrase appended when there is exactly one workspace comment.",
 	"KEYBOARD_NAV_BLOCK_NAVIGATION_HINT": "Message shown when a user presses Enter with a navigable block focused.",
-	"KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT": "Message shown when a user presses Enter with the workspace focused."
+	"KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT": "Message shown when a user presses Enter with the workspace focused.",
+	"BLOCK_LABEL_BEGIN_STACK": "Part of an accessibility label for a block that indicates it is the first block in the stack.",
+	"BLOCK_LABEL_BEGIN_PREFIX": "Part of an accessibility label for a block that indicates it is the first block inside of a statement input. Placeholder corresponds to the parent statement input's accessibility label.",
+	"BLOCK_LABEL_TOOLBOX_CATEGORY": "Part of an accessibility label for a block that indicates its parent toolbox category. Placeholder corresponds to a category name, e.g. 'Logic' or 'Math'.",
+	"BLOCK_LABEL_DISABLED": "Part of an accessibility label for a block that indicates that it is disabled.",
+	"BLOCK_LABEL_COLLAPSED": "Part of an accessibility label for a block that indicates that it is collapsed.",
+	"BLOCK_LABEL_REPLACEABLE": "Part of an accessibility label for a block that indicates that it is replaceable, i.e. that it is a shadow block.",
+	"BLOCK_LABEL_HAS_INPUT": "Part of an accessibility label for a block that indicates that it has a single input.",
+	"BLOCK_LABEL_HAS_INPUTS": "Part of an accessibility label for a block that indicates that it has more than one input.",
+	"BLOCK_LABEL_STATEMENT": "Part of an accessibility label for a block that indicates that it is a statement block, i.e. that it has a next or previous connection.",
+	"BLOCK_LABEL_CONTAINER": "Part of an accessibility label for a block that indicates that it is a container block, i.e. that it has one or more statement inputs.",
+	"BLOCK_LABEL_VALUE": "Part of an accessibility label for a block that indicates that it is a value block, i.e. that it has an output connection."
 }

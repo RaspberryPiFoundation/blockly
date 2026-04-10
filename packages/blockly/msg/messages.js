@@ -1724,3 +1724,49 @@ Blockly.Msg.KEYBOARD_NAV_BLOCK_NAVIGATION_HINT = 'Use the right arrow key to nav
 /** @type {string} */
 /// Message shown when a user presses Enter with the workspace focused.
 Blockly.Msg.KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT = 'Use the arrow keys to navigate';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates it is the first
+/// block in the stack.
+Blockly.Msg.BLOCK_LABEL_BEGIN_STACK = 'Begin stack';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates it is the first
+/// block inside of a statement input. Placeholder corresponds to the parent
+/// statement input's accessibility label.
+Blockly.Msg.BLOCK_LABEL_BEGIN_PREFIX = 'Begin %1';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates its parent toolbox
+/// category. Placeholder corresponds to a category name, e.g. "Logic" or
+/// "Math".
+Blockly.Msg.BLOCK_LABEL_TOOLBOX_CATEGORY = '%1 category';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates that it is
+/// disabled.
+Blockly.Msg.BLOCK_LABEL_DISABLED = 'disabled';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates that it is
+/// collapsed.
+Blockly.Msg.BLOCK_LABEL_COLLAPSED = 'collapsed';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates that it is
+/// replaceable, i.e. that it is a shadow block.
+Blockly.Msg.BLOCK_LABEL_REPLACEABLE = 'replaceable';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates that it has a
+/// single input.
+Blockly.Msg.BLOCK_LABEL_HAS_INPUT = 'has input';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates that it has more
+/// than one input.
+Blockly.Msg.BLOCK_LABEL_HAS_INPUTS = 'has inputs';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates that it is
+/// a statement block, i.e. that it has a next or previous connection.
+Blockly.Msg.BLOCK_LABEL_STATEMENT = 'statement';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates that it is
+/// a container block, i.e. that it has one or more statement inputs.
+Blockly.Msg.BLOCK_LABEL_CONTAINER = 'container';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates that it is
+/// a value block, i.e. that it has an output connection.
+Blockly.Msg.BLOCK_LABEL_VALUE = 'value';

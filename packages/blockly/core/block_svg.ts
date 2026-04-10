@@ -16,6 +16,7 @@ import './events/events_selected.js';
 
 import {Block} from './block.js';
 import * as blockAnimations from './block_animations.js';
+import {computeARIALabel, configureARIARole} from './block_aria_composer.js';
 import * as browserEvents from './browser_events.js';
 import {BlockCopyData, BlockPaster} from './clipboard/block_paster.js';
 import * as common from './common.js';
@@ -62,6 +63,7 @@ import * as blocks from './serialization/blocks.js';
 import type {BlockStyle} from './theme.js';
 import * as Tooltip from './tooltip.js';
 import {idGenerator} from './utils.js';
+import * as aria from './utils/aria.js';
 import {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
 import {Rect} from './utils/rect.js';
@@ -244,6 +246,7 @@ export class BlockSvg
     if (!svg.parentNode) {
       this.workspace.getCanvas().appendChild(svg);
     }
+    this.recomputeARIAAttributes();
     this.initialized = true;
   }
 
@@ -606,6 +609,7 @@ export class BlockSvg
       this.getInput(collapsedInputName) ||
       this.appendDummyInput(collapsedInputName);
     input.appendField(new FieldLabel(text), collapsedFieldName);
+    this.recomputeARIAAttributes();
   }
 
   /**
@@ -842,6 +846,7 @@ export class BlockSvg
   override setShadow(shadow: boolean) {
     super.setShadow(shadow);
     this.applyColour();
+    this.recomputeARIAAttributes();
   }
 
   /**
@@ -1062,6 +1067,7 @@ export class BlockSvg
     for (const child of this.getChildren(false)) {
       child.updateDisabled();
     }
+    this.recomputeARIAAttributes();
   }
 
   /**
@@ -1885,6 +1891,7 @@ export class BlockSvg
 
   /** See IFocusableNode.onNodeFocus. */
   onNodeFocus(): void {
+    this.recomputeARIAAttributes();
     this.select();
     if (getFocusManager().getFocusedNode() !== this) {
       renderManagement.finishQueuedRenders().then(() => {
@@ -1985,5 +1992,13 @@ export class BlockSvg
 
     // All other blocks are their own row.
     return this.id;
+  }
+
+  /**
+   * Updates the ARIA label, role and roledescription for this block.
+   */
+  private recomputeARIAAttributes() {
+    aria.setState(this.getSvgRoot(), aria.State.LABEL, computeARIALabel(this));
+    configureARIARole(this);
   }
 }

@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-04-03 10:36:19.846436",
+		"lastupdated": "2026-04-09 14:28:47.213464",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -427,5 +427,16 @@
 	"WORKSPACE_CONTENTS_COMMENTS_MANY": " and %1 comments",
 	"WORKSPACE_CONTENTS_COMMENTS_ONE": " and one comment",
 	"KEYBOARD_NAV_BLOCK_NAVIGATION_HINT": "Use the right arrow key to navigate inside of blocks",
-	"KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT": "Use the arrow keys to navigate"
+	"KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT": "Use the arrow keys to navigate",
+	"BLOCK_LABEL_BEGIN_STACK": "Begin stack",
+	"BLOCK_LABEL_BEGIN_PREFIX": "Begin %1",
+	"BLOCK_LABEL_TOOLBOX_CATEGORY": "%1 category",
+	"BLOCK_LABEL_DISABLED": "disabled",
+	"BLOCK_LABEL_COLLAPSED": "collapsed",
+	"BLOCK_LABEL_REPLACEABLE": "replaceable",
+	"BLOCK_LABEL_HAS_INPUT": "has input",
+	"BLOCK_LABEL_HAS_INPUTS": "has inputs",
+	"BLOCK_LABEL_STATEMENT": "statement",
+	"BLOCK_LABEL_CONTAINER": "container",
+	"BLOCK_LABEL_VALUE": "value"
 }
