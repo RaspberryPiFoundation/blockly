@@ -10,10 +10,24 @@ import {
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
 
-suite('Aria', function () {
+suite('ARIA', function () {
   setup(function () {
     sharedTestSetup.call(this);
-    this.workspace = Blockly.inject('blocklyDiv', {});
+    Blockly.defineBlocksWithJsonArray([
+      {
+        type: 'basic_block',
+        message0: '%1',
+        args0: [
+          {
+            type: 'field_input',
+            name: 'TEXT',
+            text: 'default',
+          },
+        ],
+      },
+    ]);
+    const toolbox = document.getElementById('toolbox-categories');
+    this.workspace = Blockly.inject('blocklyDiv', {toolbox});
     this.liveRegion = document.getElementById('blocklyAriaAnnounce');
   });
 
@@ -261,6 +275,179 @@ suite('Aria', function () {
         'three',
       ]);
       assert.equal(element.getAttribute('aria-label'), 'one two three');
+    });
+  });
+
+  suite('Blocks', function () {
+    setup(function () {
+      this.makeBlock = (blockType) => {
+        const block = this.workspace.newBlock(blockType);
+        block.initSvg();
+        block.render();
+        Blockly.getFocusManager().focusNode(block);
+        return block;
+      };
+    });
+
+    test('Statement blocks have correct role description', function () {
+      const block = this.makeBlock('text_print');
+      const roleDescription = Blockly.utils.aria.getState(
+        block.getSvgRoot(),
+        Blockly.utils.aria.State.ROLEDESCRIPTION,
+      );
+      assert.equal(roleDescription, 'statement');
+    });
+
+    test('Value blocks have correct role description', function () {
+      const block = this.makeBlock('logic_boolean');
+      const roleDescription = Blockly.utils.aria.getState(
+        block.getSvgRoot(),
+        Blockly.utils.aria.State.ROLEDESCRIPTION,
+      );
+      assert.equal(roleDescription, 'value');
+    });
+
+    test('Container blocks have correct role description', function () {
+      const block = this.makeBlock('controls_if');
+      const roleDescription = Blockly.utils.aria.getState(
+        block.getSvgRoot(),
+        Blockly.utils.aria.State.ROLEDESCRIPTION,
+      );
+      assert.equal(roleDescription, 'container');
+    });
+
+    test('Workspace blocks have the correct role', function () {
+      const block = this.makeBlock('text_print');
+      const role = Blockly.utils.aria.getRole(block.getSvgRoot());
+      assert.equal(role, Blockly.utils.aria.Role.FIGURE);
+    });
+
+    test('Flyout blocks have the correct role', function () {
+      Blockly.getFocusManager().focusNode(
+        this.workspace.getToolbox().getToolboxItems()[0],
+      );
+      const block = this.workspace.getFlyout().getWorkspace().getTopBlocks()[0];
+      const role = Blockly.utils.aria.getRole(block.getSvgRoot());
+      assert.equal(role, Blockly.utils.aria.Role.LISTITEM);
+    });
+
+    test('Root workspace blocks indicate that in their labels', function () {
+      const block = this.makeBlock('text_print');
+      const label = Blockly.utils.aria.getState(
+        block.getSvgRoot(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.isTrue(label.startsWith('Begin stack'));
+    });
+
+    test('Flyout blocks are not labeled as beginning a stack', function () {
+      Blockly.getFocusManager().focusNode(
+        this.workspace.getToolbox().getToolboxItems()[0],
+      );
+      const block = this.workspace.getFlyout().getWorkspace().getTopBlocks()[0];
+      const label = Blockly.utils.aria.getState(
+        block.getSvgRoot(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.notInclude(label, 'Begin stack');
+    });
+
+    test('Nested statement blocks in first statement input do not include their parent input in their label', function () {
+      const ifBlock = this.makeBlock('controls_ifelse');
+      const printBlock = this.makeBlock('text_print');
+      ifBlock.getInput('IF0').connection.connect(printBlock.previousConnection);
+      const label = Blockly.utils.aria.getState(
+        printBlock.getSvgRoot(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.isFalse(label.startsWith('Begin do'));
+    });
+
+    test('Nested statement blocks in subsequent statement inputs include their parent input in their label', function () {
+      const ifBlock = this.makeBlock('controls_ifelse');
+      const printBlock = this.makeBlock('text_print');
+      ifBlock
+        .getInput('ELSE')
+        .connection.connect(printBlock.previousConnection);
+      const label = Blockly.utils.aria.getState(
+        printBlock.getSvgRoot(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.isTrue(label.startsWith('Begin else'));
+    });
+
+    test('Disabled blocks indicate that in their label', function () {
+      const block = this.makeBlock('text_print');
+      let label = Blockly.utils.aria.getState(
+        block.getSvgRoot(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.notInclude(label, 'disabled');
+      block.setDisabledReason(true, 'testing');
+      label = Blockly.utils.aria.getState(
+        block.getSvgRoot(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.include(label, 'disabled');
+    });
+
+    test('Collapsed blocks indicate that in their label', function () {
+      const block = this.makeBlock('text_print');
+      let label = Blockly.utils.aria.getState(
+        block.getSvgRoot(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.notInclude(label, 'collapsed');
+      block.setCollapsed(true);
+      label = Blockly.utils.aria.getState(
+        block.getSvgRoot(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.include(label, 'collapsed');
+    });
+
+    test('Shadow blocks indicate that in their label', function () {
+      const block = this.makeBlock('text_print');
+      const text = this.makeBlock('text');
+      text.outputConnection.connect(block.inputList[0].connection);
+      let label = Blockly.utils.aria.getState(
+        text.getSvgRoot(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.notInclude(label, 'replaceable');
+      text.setShadow(true);
+      label = Blockly.utils.aria.getState(
+        text.getSvgRoot(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.include(label, 'replaceable');
+    });
+
+    test('Blocks without inputs are properly labeled', function () {
+      const block = this.makeBlock('math_random_float');
+      let label = Blockly.utils.aria.getState(
+        block.getSvgRoot(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.notInclude(label, 'input');
+    });
+
+    test('Blocks with one input are properly labeled', function () {
+      const block = this.makeBlock('logic_negate');
+      let label = Blockly.utils.aria.getState(
+        block.getSvgRoot(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.isTrue(label.endsWith('has input'));
+    });
+
+    test('Blocks with multiple inputs are properly labeled', function () {
+      const block = this.makeBlock('logic_ternary');
+      let label = Blockly.utils.aria.getState(
+        block.getSvgRoot(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.isTrue(label.endsWith('has inputs'));
     });
   });
 });
