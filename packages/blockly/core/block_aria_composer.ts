@@ -65,7 +65,7 @@ export function computeAriaLabel(
  * @internal
  * @param block The block to set ARIA role and roledescription attributes on.
  */
-export function configureARIARole(block: BlockSvg) {
+export function configureAriaRole(block: BlockSvg) {
   setRole(block.getSvgRoot(), block.isInFlyout ? Role.LISTITEM : Role.FIGURE);
 
   let roleDescription = Msg['BLOCK_LABEL_STATEMENT'];
