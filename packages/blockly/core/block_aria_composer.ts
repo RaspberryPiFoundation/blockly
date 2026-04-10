@@ -51,7 +51,7 @@ export function computeAriaLabel(
     verbosity === Verbosity.LOQUACIOUS && getParentToolboxCategoryLabel(block),
     verbosity >= Verbosity.STANDARD && getDisabledLabel(block),
     verbosity >= Verbosity.STANDARD && getCollapsedLabel(block),
-    verbosity >= Verbosity.STANDARD && getReplaceableLabel(block),
+    verbosity >= Verbosity.STANDARD && getShadowBlockLabel(block),
     verbosity >= Verbosity.STANDARD && getInputCountLabel(block),
   ]
     .filter((label) => !!label)
@@ -284,7 +284,7 @@ function getCollapsedLabel(block: BlockSvg) {
  * @returns A label indicating that the block is a shadow (if it is), otherwise
  *     undefined.
  */
-function getReplaceableLabel(block: BlockSvg) {
+function getShadowBlockLabel(block: BlockSvg) {
   return block.isShadow() ? Msg['BLOCK_LABEL_REPLACEABLE'] : undefined;
 }
 
