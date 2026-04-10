@@ -16,7 +16,7 @@ import './events/events_selected.js';
 
 import {Block} from './block.js';
 import * as blockAnimations from './block_animations.js';
-import {computeARIALabel, configureARIARole} from './block_aria_composer.js';
+import {computeAriaLabel, configureARIARole} from './block_aria_composer.js';
 import * as browserEvents from './browser_events.js';
 import {BlockCopyData, BlockPaster} from './clipboard/block_paster.js';
 import * as common from './common.js';
@@ -1998,7 +1998,7 @@ export class BlockSvg
    * Updates the ARIA label, role and roledescription for this block.
    */
   private recomputeARIAAttributes() {
-    aria.setState(this.getSvgRoot(), aria.State.LABEL, computeARIALabel(this));
+    aria.setState(this.getSvgRoot(), aria.State.LABEL, computeAriaLabel(this));
     configureARIARole(this);
   }
 }

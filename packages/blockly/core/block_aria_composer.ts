@@ -40,7 +40,7 @@ import {Role, setRole, setState, State, Verbosity} from './utils/aria.js';
  * @param verbosity How much detail to include in the description.
  * @returns The ARIA representation for the specified block.
  */
-export function computeARIALabel(
+export function computeAriaLabel(
   block: BlockSvg,
   verbosity = Verbosity.NORMAL,
 ) {
