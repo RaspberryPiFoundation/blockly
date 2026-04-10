@@ -859,7 +859,7 @@ export function registerPerformAction() {
       const focusedNode = getFocusManager().getFocusedNode();
       if (focusedNode && 'performAction' in focusedNode) {
         e.preventDefault();
-        focusedNode.performAction?.();
+        focusedNode.performAction?.(e);
         return true;
       }
       return false;

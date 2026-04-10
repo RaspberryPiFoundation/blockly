@@ -1911,9 +1911,9 @@ export class BlockSvg
    * main workspace. If this block has a single full-block field, that field
    * will be focused. Otherwise, this is a no-op.
    */
-  performAction() {
+  performAction(e?: KeyboardEvent) {
     if (this.workspace.isFlyout) {
-      KeyboardMover.mover.startMove(this);
+      KeyboardMover.mover.startMove(this, e);
       return;
     } else if (this.isSimpleReporter()) {
       for (const input of this.inputList) {

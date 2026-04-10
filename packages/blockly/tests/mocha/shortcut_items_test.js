@@ -1037,6 +1037,10 @@ suite('Keyboard Shortcut Items', function () {
     });
 
     test('Inserts blocks from the flyout in move mode', function () {
+      const first = this.workspace.newBlock('stack_block');
+      first.initSvg();
+      first.render();
+
       this.workspace.getToolbox().selectItemByPosition(0);
       const block = this.workspace
         .getNavigator()
@@ -1052,6 +1056,12 @@ suite('Keyboard Shortcut Items', function () {
       assert.instanceOf(movingBlock, Blockly.BlockSvg);
       assert.isTrue(movingBlock.isDragging());
       assert.isFalse(movingBlock.workspace.isFlyout);
+
+      const hasInsertionMarker = this.workspace
+        .getTopBlocks()
+        .flatMap((b) => b.getChildren())
+        .some((b) => b.isInsertionMarker());
+      assert.isTrue(hasInsertionMarker);
 
       Blockly.KeyboardMover.mover.abortMove();
     });
