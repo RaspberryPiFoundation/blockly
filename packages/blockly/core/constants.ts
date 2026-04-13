@@ -21,3 +21,9 @@ export const COLLAPSED_FIELD_NAME = '_TEMP_COLLAPSED_FIELD';
  * because the user manually disabled it, such as via the context menu.
  */
 export const MANUALLY_DISABLED = 'MANUALLY_DISABLED';
+
+/**
+ * The language-neutral ID for when the reason why a block is disabled is
+ * because it is not connected to a valid parent block.
+ */
+export const ORPHANED_BLOCK_DISABLED_REASON = 'ORPHANED_BLOCK';

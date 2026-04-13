@@ -8,6 +8,7 @@
 
 import type {Block} from '../block.js';
 import * as common from '../common.js';
+import * as constants from '../constants.js';
 import * as registry from '../registry.js';
 import * as idGenerator from '../utils/idgenerator.js';
 import type {Workspace} from '../workspace.js';
@@ -58,7 +59,7 @@ let disabled = 0;
  * The language-neutral ID for when the reason why a block is disabled is
  * because the block is not descended from a root block.
  */
-const ORPHANED_BLOCK_DISABLED_REASON = 'ORPHANED_BLOCK';
+const ORPHANED_BLOCK_DISABLED_REASON = constants.ORPHANED_BLOCK_DISABLED_REASON;
 
 /**
  * Type of events that cause objects to be bumped back into the visible

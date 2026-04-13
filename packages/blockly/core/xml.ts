@@ -11,7 +11,10 @@ import type {BlockSvg} from './block_svg.js';
 import {RenderedWorkspaceComment} from './comments/rendered_workspace_comment.js';
 import {WorkspaceComment} from './comments/workspace_comment.js';
 import type {Connection} from './connection.js';
-import {MANUALLY_DISABLED} from './constants.js';
+import {
+  MANUALLY_DISABLED,
+  ORPHANED_BLOCK_DISABLED_REASON,
+} from './constants.js';
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
 import type {Field} from './field.js';
@@ -473,7 +476,12 @@ export function domToWorkspace(xml: Element, workspace: Workspace): string[] {
         // Allow top-level shadow blocks if recordUndo is disabled since
         // that means an undo is in progress.  Such a block is expected
         // to be moved to a nested destination in the next operation.
-        const block = domToBlockInternal(xmlChildElement, workspace);
+        const recoveredBlocks: RecoveredBlockInfo[] = [];
+        const block = domToBlockInternal(
+          xmlChildElement,
+          workspace,
+          recoveredBlocks,
+        );
         newBlockIds.push(block.id);
         const blockX = parseInt(xmlChildElement.getAttribute('x') ?? '10', 10);
         const blockY = parseInt(xmlChildElement.getAttribute('y') ?? '10', 10);
@@ -481,6 +489,10 @@ export function domToWorkspace(xml: Element, workspace: Workspace): string[] {
           block.moveBy(workspace.RTL ? width - blockX : blockX, blockY, [
             'create',
           ]);
+        }
+        positionRecoveredBlocks(recoveredBlocks, workspace);
+        for (const recoveredBlock of recoveredBlocks) {
+          newBlockIds.push(recoveredBlock.block.id);
         }
         variablesFirst = false;
       } else if (name === 'shadow') {
@@ -632,24 +644,28 @@ export function domToBlock(xmlBlock: Element, workspace: Workspace): Block {
 export function domToBlockInternal(
   xmlBlock: Element,
   workspace: Workspace,
+  recoveredBlocks?: RecoveredBlockInfo[],
 ): Block {
   // Create top-level block.
   eventUtils.disable();
   const variablesBeforeCreation = workspace.getVariableMap().getAllVariables();
   let topBlock;
+  const localRecoveredBlocks = recoveredBlocks ?? [];
   try {
-    topBlock = domToBlockHeadless(xmlBlock, workspace);
+    topBlock = domToBlockHeadless(
+      xmlBlock,
+      workspace,
+      undefined,
+      undefined,
+      localRecoveredBlocks,
+    );
     // Generate list of all blocks.
     if (workspace.rendered) {
       const topBlockSvg = topBlock as BlockSvg;
-      const blocks = topBlock.getDescendants(false);
       topBlockSvg.setConnectionTracking(false);
-      // Render each block.
-      for (let i = blocks.length - 1; i >= 0; i--) {
-        (blocks[i] as BlockSvg).initSvg();
-      }
-      for (let i = blocks.length - 1; i >= 0; i--) {
-        (blocks[i] as BlockSvg).queueRender();
+      initializeBlockTree(topBlock, workspace);
+      for (const recoveredBlock of localRecoveredBlocks) {
+        initializeBlockTree(recoveredBlock.block, workspace);
       }
       // Populating the connection database may be deferred until after the
       // blocks have rendered.
@@ -662,13 +678,16 @@ export function domToBlockInternal(
       // TODO(@picklesrus): #387. Remove when domToBlock avoids resizing.
       (workspace as WorkspaceSvg).resizeContents();
     } else {
-      const blocks = topBlock.getDescendants(false);
-      for (let i = blocks.length - 1; i >= 0; i--) {
-        blocks[i].initModel();
+      initializeBlockTree(topBlock, workspace);
+      for (const recoveredBlock of localRecoveredBlocks) {
+        initializeBlockTree(recoveredBlock.block, workspace);
       }
     }
   } finally {
     eventUtils.enable();
+  }
+  if (!recoveredBlocks) {
+    positionRecoveredBlocks(localRecoveredBlocks, workspace);
   }
   if (eventUtils.isEnabled()) {
     const newVariables = Variables.getAddedVariables(
@@ -713,6 +732,53 @@ interface childNodeTagMap {
   field: Element[];
   input: Element[];
   next: Element[];
+}
+
+interface RecoveredBlockInfo {
+  block: Block;
+  intendedParent: Block;
+}
+
+const RECOVERED_BLOCK_X_OFFSET = 80;
+const RECOVERED_BLOCK_Y_OFFSET = 40;
+
+function initializeBlockTree(block: Block, workspace: Workspace) {
+  const blocks = block.getDescendants(false);
+  if (workspace.rendered) {
+    for (let i = blocks.length - 1; i >= 0; i--) {
+      const blockSvg = blocks[i] as BlockSvg;
+      blockSvg.initSvg();
+    }
+    for (let i = blocks.length - 1; i >= 0; i--) {
+      (blocks[i] as BlockSvg).queueRender();
+    }
+  } else {
+    for (let i = blocks.length - 1; i >= 0; i--) {
+      blocks[i].initModel();
+    }
+  }
+}
+
+function positionRecoveredBlocks(
+  recoveredBlocks: RecoveredBlockInfo[],
+  workspace: Workspace,
+) {
+  const blocksByParent = new Map<string, number>();
+  for (const recoveredBlock of recoveredBlocks) {
+    const count = blocksByParent.get(recoveredBlock.intendedParent.id) ?? 0;
+    blocksByParent.set(recoveredBlock.intendedParent.id, count + 1);
+
+    const parentXY = recoveredBlock.intendedParent.getRelativeToSurfaceXY();
+    const blockXY = recoveredBlock.block.getRelativeToSurfaceXY();
+    const xOffset = workspace.RTL
+      ? -RECOVERED_BLOCK_X_OFFSET
+      : RECOVERED_BLOCK_X_OFFSET;
+    const targetX = parentXY.x + xOffset;
+    const targetY = parentXY.y + RECOVERED_BLOCK_Y_OFFSET * (count + 1);
+    recoveredBlock.block.moveBy(targetX - blockXY.x, targetY - blockXY.y, [
+      'create',
+    ]);
+  }
 }
 
 /**
@@ -895,6 +961,7 @@ function applyInputTagNodes(
   workspace: Workspace,
   block: Block,
   prototypeName: string,
+  recoveredBlocks?: RecoveredBlockInfo[],
 ) {
   for (let i = 0; i < xmlChildren.length; i++) {
     const xmlChild = xmlChildren[i];
@@ -919,6 +986,7 @@ function applyInputTagNodes(
         workspace,
         input.connection,
         false,
+        recoveredBlocks,
       );
     }
     // Set shadow after so we don't create a shadow we delete immediately.
@@ -939,6 +1007,7 @@ function applyNextTagNodes(
   xmlChildren: Element[],
   workspace: Workspace,
   block: Block,
+  recoveredBlocks?: RecoveredBlockInfo[],
 ) {
   for (let i = 0; i < xmlChildren.length; i++) {
     const xmlChild = xmlChildren[i];
@@ -957,6 +1026,7 @@ function applyNextTagNodes(
         workspace,
         block.nextConnection,
         true,
+        recoveredBlocks,
       );
     }
     // Set shadow after so we don't create a shadow we delete immediately.
@@ -983,6 +1053,7 @@ function domToBlockHeadless(
   workspace: Workspace,
   parentConnection?: Connection,
   connectedToParentNext?: boolean,
+  recoveredBlocks?: RecoveredBlockInfo[],
 ): Block {
   let block = null;
   const prototypeName = xmlBlock.getAttribute('type');
@@ -1004,28 +1075,49 @@ function domToBlockHeadless(
 
   // Connect parent after processing mutation and before setting fields.
   if (parentConnection) {
+    let childConnection: Connection;
+    let connected = false;
     if (connectedToParentNext) {
       if (block.previousConnection) {
-        parentConnection.connect(block.previousConnection);
+        childConnection = block.previousConnection;
+        connected = parentConnection.connect(childConnection);
       } else {
         throw TypeError('Next block does not have previous statement.');
       }
     } else {
       if (block.outputConnection) {
-        parentConnection.connect(block.outputConnection);
+        childConnection = block.outputConnection;
+        connected = parentConnection.connect(childConnection);
       } else if (block.previousConnection) {
-        parentConnection.connect(block.previousConnection);
+        childConnection = block.previousConnection;
+        connected = parentConnection.connect(childConnection);
       } else {
         throw TypeError(
           'Child block does not have output or previous statement.',
         );
       }
     }
+    if (!connected) {
+      recoveredBlocks?.push({
+        block,
+        intendedParent: parentConnection.getSourceBlock(),
+      });
+      block.setDisabledReason(true, ORPHANED_BLOCK_DISABLED_REASON);
+      console.warn(
+        `Recovered invalid XML connection: kept disconnected block ${block.type}.`,
+      );
+    }
   }
 
   applyFieldTagNodes(xmlChildNameMap.field, block);
-  applyInputTagNodes(xmlChildNameMap.input, workspace, block, prototypeName);
-  applyNextTagNodes(xmlChildNameMap.next, workspace, block);
+  applyInputTagNodes(
+    xmlChildNameMap.input,
+    workspace,
+    block,
+    prototypeName,
+    recoveredBlocks,
+  );
+  applyNextTagNodes(xmlChildNameMap.next, workspace, block, recoveredBlocks);
 
   if (shouldCallInitSvg) {
     // This shouldn't even be called here

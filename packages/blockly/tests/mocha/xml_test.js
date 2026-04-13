@@ -726,6 +726,39 @@ suite('XML', function () {
             },
           ],
         },
+        {
+          'type': 'xml_parent_value_check_int',
+          'message0': '%1',
+          'args0': [
+            {
+              'type': 'input_value',
+              'name': 'VALUE',
+              'check': 'Int',
+            },
+          ],
+        },
+        {
+          'type': 'xml_child_output_check_long',
+          'message0': '%1',
+          'args0': [
+            {
+              'type': 'field_input',
+              'name': 'TEXT',
+              'text': 'default text',
+            },
+          ],
+          'output': 'Long',
+        },
+        {
+          'type': 'xml_parent_next_check_int',
+          'message0': '',
+          'nextStatement': 'Int',
+        },
+        {
+          'type': 'xml_child_previous_check_long',
+          'message0': '',
+          'previousStatement': 'Long',
+        },
       ]);
     });
     teardown(function () {
@@ -804,6 +837,177 @@ suite('XML', function () {
       );
       assert.throws(function () {
         Blockly.Xml.domToWorkspace(dom, this.workspace);
+      });
+    });
+    test('Recovers incompatible value input connection', function () {
+      const dom = Blockly.utils.xml.textToDom(
+        '<xml xmlns="https://developers.google.com/blockly/xml">' +
+          '  <block type="xml_parent_value_check_int">' +
+          '    <value name="VALUE">' +
+          '      <block type="xml_child_output_check_long"></block>' +
+          '    </value>' +
+          '  </block>' +
+          '</xml>',
+      );
+      Blockly.Xml.domToWorkspace(dom, this.workspace);
+      const blocks = this.workspace.getAllBlocks(false);
+      assert.equal(blocks.length, 2, 'Block count');
+      const parent = this.workspace.getTopBlocks(false).find((block) => {
+        return block.type === 'xml_parent_value_check_int';
+      });
+      const recovered = this.workspace.getTopBlocks(false).find((block) => {
+        return block.type === 'xml_child_output_check_long';
+      });
+      assert.isOk(parent, 'expected parent block');
+      assert.isOk(recovered, 'expected recovered block');
+      assert.isTrue(parent.initialized, 'parent should be initialized');
+      assert.isTrue(
+        recovered.initialized,
+        'recovered block should be initialized',
+      );
+      assert.isNull(
+        recovered.getParent(),
+        'recovered block should be top-level',
+      );
+      assert.isFalse(
+        recovered.isEnabled(),
+        'recovered block should be disabled',
+      );
+      assert.isAbove(
+        recovered.getRelativeToSurfaceXY().y,
+        parent.getRelativeToSurfaceXY().y,
+        'recovered block should be moved below the parent',
+      );
+    });
+    test('Recovers incompatible next connection', function () {
+      const dom = Blockly.utils.xml.textToDom(
+        '<xml xmlns="https://developers.google.com/blockly/xml">' +
+          '  <block type="xml_parent_next_check_int">' +
+          '    <next>' +
+          '      <block type="xml_child_previous_check_long"></block>' +
+          '    </next>' +
+          '  </block>' +
+          '</xml>',
+      );
+      Blockly.Xml.domToWorkspace(dom, this.workspace);
+      const blocks = this.workspace.getAllBlocks(false);
+      assert.equal(blocks.length, 2, 'Block count');
+      const parent = this.workspace.getTopBlocks(false).find((block) => {
+        return block.type === 'xml_parent_next_check_int';
+      });
+      const recovered = this.workspace.getTopBlocks(false).find((block) => {
+        return block.type === 'xml_child_previous_check_long';
+      });
+      assert.isOk(parent, 'expected parent block');
+      assert.isOk(recovered, 'expected recovered block');
+      assert.isTrue(parent.initialized, 'parent should be initialized');
+      assert.isTrue(
+        recovered.initialized,
+        'recovered block should be initialized',
+      );
+      assert.isNull(
+        recovered.getParent(),
+        'recovered block should be top-level',
+      );
+      assert.isFalse(
+        recovered.isEnabled(),
+        'recovered block should be disabled',
+      );
+      assert.isAbove(
+        recovered.getRelativeToSurfaceXY().y,
+        parent.getRelativeToSurfaceXY().y,
+        'recovered block should be moved below the parent',
+      );
+    });
+    test('Recovered block preserves field values', function () {
+      const dom = Blockly.utils.xml.textToDom(
+        '<xml xmlns="https://developers.google.com/blockly/xml">' +
+          '  <block type="xml_parent_value_check_int">' +
+          '    <value name="VALUE">' +
+          '      <block type="xml_child_output_check_long">' +
+          '        <field name="TEXT">preserved text</field>' +
+          '      </block>' +
+          '    </value>' +
+          '  </block>' +
+          '</xml>',
+      );
+      Blockly.Xml.domToWorkspace(dom, this.workspace);
+      const recovered = this.workspace.getTopBlocks(false).find((block) => {
+        return block.type === 'xml_child_output_check_long';
+      });
+      assert.isOk(recovered, 'expected recovered block');
+      assert.equal(
+        recovered.getFieldValue('TEXT'),
+        'preserved text',
+        'recovered block should preserve field values',
+      );
+    });
+    test('Returns recovered block ids from domToWorkspace', function () {
+      const dom = Blockly.utils.xml.textToDom(
+        '<xml xmlns="https://developers.google.com/blockly/xml">' +
+          '  <block type="xml_parent_value_check_int" id="parent_id">' +
+          '    <value name="VALUE">' +
+          '      <block type="xml_child_output_check_long" id="child_id"></block>' +
+          '    </value>' +
+          '  </block>' +
+          '</xml>',
+      );
+      const newBlockIds = Blockly.Xml.domToWorkspace(dom, this.workspace);
+      assert.sameMembers(newBlockIds, ['parent_id', 'child_id']);
+    });
+    suite('Rendered recovery', function () {
+      setup(function () {
+        this.renderedWorkspace = Blockly.inject('blocklyDiv', {});
+      });
+      teardown(function () {
+        workspaceTeardown.call(this, this.renderedWorkspace);
+      });
+
+      test('Recovered block is rendered, disabled, and top-level', function () {
+        const dom = Blockly.utils.xml.textToDom(
+          '<xml xmlns="https://developers.google.com/blockly/xml">' +
+            '  <block type="xml_parent_value_check_int">' +
+            '    <value name="VALUE">' +
+            '      <block type="xml_child_output_check_long">' +
+            '        <field name="TEXT">render me</field>' +
+            '      </block>' +
+            '    </value>' +
+            '  </block>' +
+            '</xml>',
+        );
+        Blockly.Xml.domToWorkspace(dom, this.renderedWorkspace);
+        this.clock.runAll();
+
+        const parent = this.renderedWorkspace
+          .getTopBlocks(false)
+          .find((block) => block.type === 'xml_parent_value_check_int');
+        const recovered = this.renderedWorkspace
+          .getTopBlocks(false)
+          .find((block) => block.type === 'xml_child_output_check_long');
+
+        assert.isOk(parent, 'expected parent block');
+        assert.isOk(recovered, 'expected recovered block');
+        assert.isNull(
+          recovered.getParent(),
+          'recovered block should be top-level',
+        );
+        assert.isFalse(
+          recovered.isEnabled(),
+          'recovered block should be disabled',
+        );
+        assert.isOk(
+          recovered.getSvgRoot(),
+          'recovered block should be rendered',
+        );
+        assert.isTrue(
+          recovered.getSvgRoot().classList.contains('blocklyDisabled'),
+          'recovered block should have disabled styling',
+        );
+        assert.isAbove(
+          recovered.getRelativeToSurfaceXY().y,
+          parent.getRelativeToSurfaceXY().y,
+          'recovered block should be moved below the parent',
+        );
       });
     });
   });
