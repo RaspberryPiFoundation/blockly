@@ -601,18 +601,27 @@ function tryToConnectParent(
 
   if (!connected) {
     const checker = child.workspace.connectionChecker;
-    throw new BadConnectionCheck(
-      checker.getErrorMessage(
-        checker.canConnectWithReason(childConnection, parentConnection, false),
-        childConnection,
-        parentConnection,
-      ),
-      parentConnection.type === inputTypes.VALUE
-        ? 'output connection'
-        : 'previous connection',
-      child,
-      state,
+    const reason = checker.getErrorMessage(
+      checker.canConnectWithReason(childConnection, parentConnection, false),
+      childConnection,
+      parentConnection,
     );
+    if (child.isShadow()) {
+      throw new BadConnectionCheck(
+        reason,
+        parentConnection.type === inputTypes.VALUE
+          ? 'output connection'
+          : 'previous connection',
+        child,
+        state,
+      );
+    }
+    console.warn(
+      `Connection check failed during JSON deserialization: ${reason}. ` +
+        `Block "${child.type}" (${child.id}) will be placed as a ` +
+        `top-level block instead.`,
+    );
+    child.setDisabledReason(true, 'orphaned_connection_check');
   }
 }
 

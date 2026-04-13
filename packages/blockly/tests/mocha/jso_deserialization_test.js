@@ -14,6 +14,7 @@ import {
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
 suite('JSO Deserialization', function () {
@@ -630,10 +631,50 @@ suite('JSO Deserialization', function () {
             ],
           },
         };
-        this.assertThrows(
-          state,
-          Blockly.serialization.exceptions.BadConnectionCheck,
-        );
+        Blockly.serialization.workspaces.load(state, this.workspace);
+
+        const allBlocks = this.workspace.getAllBlocks(false);
+        assert.equal(allBlocks.length, 2, 'Both blocks exist');
+
+        const mathBlock = allBlocks.find((b) => b.type === 'math_number');
+        assert.isNotNull(mathBlock, 'math_number block exists');
+        assert.isNull(mathBlock.getParent(), 'Orphan has no parent');
+      });
+
+      test('Bad checks - orphan SVG is initialized on rendered workspace', function () {
+        const workspace = Blockly.inject('blocklyDiv');
+        try {
+          const state = {
+            'blocks': {
+              'blocks': [
+                {
+                  'type': 'logic_operation',
+                  'inputs': {
+                    'A': {
+                      'block': {
+                        'type': 'math_number',
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          };
+          Blockly.serialization.workspaces.load(state, workspace);
+          this.clock.runAll();
+
+          const allBlocks = workspace.getAllBlocks(false);
+          assert.equal(allBlocks.length, 2, 'Both blocks exist');
+
+          const mathBlock = allBlocks.find((b) => b.type === 'math_number');
+          assert.isNotNull(mathBlock, 'math_number block exists');
+          assert.isNotNull(
+            mathBlock.getSvgRoot().parentNode,
+            'Orphan SVG is in the DOM',
+          );
+        } finally {
+          workspaceTeardown.call(this, workspace);
+        }
       });
     });
 

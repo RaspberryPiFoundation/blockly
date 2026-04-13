@@ -636,6 +636,7 @@ export function domToBlockInternal(
   // Create top-level block.
   eventUtils.disable();
   const variablesBeforeCreation = workspace.getVariableMap().getAllVariables();
+  const topBlocksBefore = new Set(workspace.getTopBlocks(false));
   let topBlock;
   try {
     topBlock = domToBlockHeadless(xmlBlock, workspace);
@@ -651,6 +652,30 @@ export function domToBlockInternal(
       for (let i = blocks.length - 1; i >= 0; i--) {
         (blocks[i] as BlockSvg).queueRender();
       }
+
+      // Initialize any orphaned blocks that failed to connect during
+      // deserialization (e.g. due to connection type check failures).
+      // These blocks were created but are not descendants of topBlock.
+      const connectedBlocks = new Set(blocks);
+      for (const block of workspace.getTopBlocks(false)) {
+        if (topBlocksBefore.has(block) || connectedBlocks.has(block)) continue;
+        const orphanSvg = block as BlockSvg;
+        orphanSvg.setConnectionTracking(false);
+        block.setDisabledReason(true, 'orphaned_connection_check');
+        const orphanDescendants = block.getDescendants(false);
+        for (let i = orphanDescendants.length - 1; i >= 0; i--) {
+          (orphanDescendants[i] as BlockSvg).initSvg();
+        }
+        for (let i = orphanDescendants.length - 1; i >= 0; i--) {
+          (orphanDescendants[i] as BlockSvg).queueRender();
+        }
+        setTimeout(function () {
+          if (!orphanSvg.disposed) {
+            orphanSvg.setConnectionTracking(true);
+          }
+        }, 1);
+      }
+
       // Populating the connection database may be deferred until after the
       // blocks have rendered.
       setTimeout(function () {
@@ -665,6 +690,16 @@ export function domToBlockInternal(
       const blocks = topBlock.getDescendants(false);
       for (let i = blocks.length - 1; i >= 0; i--) {
         blocks[i].initModel();
+      }
+      // Initialize orphaned blocks on headless workspaces too.
+      const connectedBlocks = new Set(blocks);
+      for (const block of workspace.getTopBlocks(false)) {
+        if (topBlocksBefore.has(block) || connectedBlocks.has(block)) continue;
+        block.setDisabledReason(true, 'orphaned_connection_check');
+        const orphanDescendants = block.getDescendants(false);
+        for (let i = orphanDescendants.length - 1; i >= 0; i--) {
+          orphanDescendants[i].initModel();
+        }
       }
     }
   } finally {

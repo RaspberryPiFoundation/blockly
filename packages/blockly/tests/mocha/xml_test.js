@@ -890,4 +890,90 @@ suite('XML', function () {
       });
     });
   });
+
+  suite('Connection check failures', function () {
+    setup(function () {
+      Blockly.defineBlocksWithJsonArray([
+        {
+          'type': 'typed_input_block',
+          'message0': '%1',
+          'args0': [
+            {
+              'type': 'input_value',
+              'name': 'INPUT',
+              'check': 'Int',
+            },
+          ],
+        },
+        {
+          'type': 'typed_output_block',
+          'message0': '',
+          'output': 'Long',
+        },
+      ]);
+      addBlockTypeToCleanup(this.sharedCleanup, 'typed_input_block');
+      addBlockTypeToCleanup(this.sharedCleanup, 'typed_output_block');
+    });
+
+    test('Orphaned block SVG is in the DOM on rendered workspace', function () {
+      this.workspace = Blockly.inject('blocklyDiv');
+      const xml = Blockly.utils.xml.textToDom(
+        '<xml>' +
+          '<block type="typed_input_block" x="10" y="10">' +
+          '  <value name="INPUT">' +
+          '    <block type="typed_output_block"/>' +
+          '  </value>' +
+          '</block>' +
+          '</xml>',
+      );
+      Blockly.Xml.domToWorkspace(xml, this.workspace);
+      this.clock.runAll();
+
+      const allBlocks = this.workspace.getAllBlocks(false);
+      assert.equal(allBlocks.length, 2, 'Both blocks exist');
+
+      const topBlocks = this.workspace.getTopBlocks(false);
+      assert.equal(topBlocks.length, 2, 'Both blocks are top-level');
+
+      const outputBlock = allBlocks.find(
+        (b) => b.type === 'typed_output_block',
+      );
+      assert.isNotNull(
+        outputBlock.getSvgRoot().parentNode,
+        'Orphaned block SVG is in the DOM',
+      );
+      assert.isNull(outputBlock.getParent(), 'Orphaned block has no parent');
+
+      workspaceTeardown.call(this, this.workspace);
+    });
+
+    test('Orphaned block is initialized on headless workspace', function () {
+      const workspace = new Blockly.Workspace();
+      try {
+        const xml = Blockly.utils.xml.textToDom(
+          '<xml>' +
+            '<block type="typed_input_block" x="10" y="10">' +
+            '  <value name="INPUT">' +
+            '    <block type="typed_output_block"/>' +
+            '  </value>' +
+            '</block>' +
+            '</xml>',
+        );
+        Blockly.Xml.domToWorkspace(xml, workspace);
+
+        const allBlocks = workspace.getAllBlocks(false);
+        assert.equal(allBlocks.length, 2, 'Both blocks exist');
+
+        const topBlocks = workspace.getTopBlocks(false);
+        assert.equal(topBlocks.length, 2, 'Both blocks are top-level');
+
+        const outputBlock = allBlocks.find(
+          (b) => b.type === 'typed_output_block',
+        );
+        assert.isNull(outputBlock.getParent(), 'Orphaned block has no parent');
+      } finally {
+        workspaceTeardown.call(this, workspace);
+      }
+    });
+  });
 });
