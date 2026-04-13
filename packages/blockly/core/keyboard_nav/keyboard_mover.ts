@@ -317,9 +317,10 @@ export class KeyboardMover {
     // hierarchy until one is found with the same y position as the starting
     // block, meaning is is the rightmost top-level value block in the same row
     // as the starting block.
+    const topline = block.getBoundingRectangleWithoutChildren().getOrigin().y;
     while (
       targetBlock?.getBoundingRectangleWithoutChildren().getOrigin().y !==
-      block.getBoundingRectangleWithoutChildren().getOrigin().y
+      topline
     ) {
       targetBlock = targetBlock?.getParent() ?? null;
     }
