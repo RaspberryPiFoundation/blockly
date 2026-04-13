@@ -6,6 +6,7 @@
 			"Papuass",
 			"Peridot Nation",
 			"RFenichel",
+			"Rusjanis",
 			"Silraks"
 		]
 	},
@@ -18,10 +19,11 @@
 	"DUPLICATE_COMMENT": "Izveidot komentāra duplikātu",
 	"EXTERNAL_INPUTS": "Ārējie ievaddati",
 	"INLINE_INPUTS": "Iekšējie ievaddati",
-	"DELETE_BLOCK": "Izmest bloku",
-	"DELETE_X_BLOCKS": "Izmest %1 blokus",
-	"DELETE_ALL_BLOCKS": "Izdzēst visus %1 blokus?",
+	"DELETE_BLOCK": "Dzēst bloku",
+	"DELETE_X_BLOCKS": "Dzēst %1 blokus",
+	"DELETE_ALL_BLOCKS": "Vai dzēst visus %1 blokus?",
 	"CLEAN_UP": "Sakopt blokus",
+	"CLOSE": "Aizvērt",
 	"COLLAPSE_BLOCK": "Sakļaut bloku",
 	"COLLAPSE_ALL": "Sakļaut blokus",
 	"EXPAND_BLOCK": "Izvērst bloku",
@@ -320,5 +322,12 @@
 	"WORKSPACE_ARIA_LABEL": "Blockly Darbavieta",
 	"COLLAPSED_WARNINGS_WARNING": "Sakļautie bloki satur brīdinājumus.",
 	"DIALOG_OK": "Labi",
-	"DIALOG_CANCEL": "Atcelt"
+	"DIALOG_CANCEL": "Atcelt",
+	"ALT_KEY": "Alt",
+	"CUT_SHORTCUT": "Izgriezt",
+	"COPY_SHORTCUT": "Kopēt",
+	"PASTE_SHORTCUT": "Ielīmēt",
+	"SHORTCUTS_GENERAL": "Vispārīgi",
+	"SHORTCUTS_EDITING": "Labošana",
+	"SHORTCUTS_CODE_NAVIGATION": "Koda navigācija"
 }

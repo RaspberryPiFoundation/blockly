@@ -20,7 +20,8 @@
 			"Ryo567",
 			"SpikeShroom",
 			"VegaDark",
-			"WeSiToS"
+			"WeSiToS",
+			"Wotancito"
 		]
 	},
 	"VARIABLES_DEFAULT_NAME": "elemento",
@@ -357,5 +358,15 @@
 	"WORKSPACE_ARIA_LABEL": "Espacio de trabajo de Blockly",
 	"COLLAPSED_WARNINGS_WARNING": "Bloques colapsados contienen advertencias.",
 	"DIALOG_OK": "Aceptar",
-	"DIALOG_CANCEL": "Cancelar"
+	"DIALOG_CANCEL": "Cancelar",
+	"EDIT_BLOCK_CONTENTS": "Editar contenido bloqueado",
+	"MOVE_BLOCK": "Mover bloque",
+	"WINDOWS": "Windows",
+	"MAC_OS": "macOS",
+	"CHROME_OS": "ChromeOS",
+	"LINUX": "Linux",
+	"UNKNOWN": "Desconocido",
+	"CONTROL_KEY": "Ctrl",
+	"COMMAND_KEY": "Comando ⌘",
+	"OPTION_KEY": "⌥ Opción"
 }

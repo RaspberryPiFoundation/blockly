@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Eitvys200",
+			"Gsmoffln",
 			"Jurgis",
 			"Nokeoo",
 			"Nuodas",
@@ -21,6 +22,7 @@
 	"DELETE_X_BLOCKS": "Ištrinti %1 blokus",
 	"DELETE_ALL_BLOCKS": "Ištrinti visus %1 blokus?",
 	"CLEAN_UP": "Išvalyti blokus",
+	"CLOSE": "Užverti",
 	"COLLAPSE_BLOCK": "Suskleisti bloką",
 	"COLLAPSE_ALL": "Suskleisti blokus",
 	"EXPAND_BLOCK": "Išskleisti bloką",

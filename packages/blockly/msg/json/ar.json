@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Diyariq",
 			"DonAdnan",
 			"Dr-Taher",
 			"Meno25",
@@ -29,6 +28,7 @@
 	"DELETE_X_BLOCKS": "احذف %1 كتلة",
 	"DELETE_ALL_BLOCKS": "حذف %1 كتلة؟",
 	"CLEAN_UP": "تنظيف الكتل",
+	"CLOSE": "إغلاق",
 	"COLLAPSE_BLOCK": "انهيار الكتلة",
 	"COLLAPSE_ALL": "انهيار الكتل",
 	"EXPAND_BLOCK": "وسٌّع الكتلة",
@@ -351,5 +351,27 @@
 	"WORKSPACE_ARIA_LABEL": "مساحة عمل بلوكلي",
 	"COLLAPSED_WARNINGS_WARNING": "الكتل المطوية تحتوي على تحذيرات.",
 	"DIALOG_OK": "موافق",
-	"DIALOG_CANCEL": "إلغاء"
+	"DIALOG_CANCEL": "إلغاء",
+	"EDIT_BLOCK_CONTENTS": "تحرير محتويات المنع",
+	"MOVE_BLOCK": "نقل المنع",
+	"WINDOWS": "ويندوز",
+	"MAC_OS": "ماك أو إس",
+	"CHROME_OS": "نظام التشغيل ChromeOS",
+	"LINUX": "لينكس",
+	"UNKNOWN": "مجهول",
+	"CONTROL_KEY": "كنترول",
+	"COMMAND_KEY": "⌘ الأمر",
+	"OPTION_KEY": "⌥ الخيار",
+	"ALT_KEY": "بديل",
+	"CUT_SHORTCUT": "قطع",
+	"COPY_SHORTCUT": "نسخ",
+	"PASTE_SHORTCUT": "لصق",
+	"HELP_PROMPT": "اضغط على %1 للحصول على مساعدة بشأن عناصر التحكم بلوحة المفاتيح",
+	"SHORTCUTS_GENERAL": "عام",
+	"SHORTCUTS_EDITING": "التحرير",
+	"SHORTCUTS_CODE_NAVIGATION": "التنقل عبر الكود",
+	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "اضغط باستمرار على %1 واستخدم مفاتيح الأسهم للتحرك بحرية، ثم اضغط على %2 لقبول الموضع",
+	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "استخدم مفاتيح الأسهم للتحرك، ثم استخدم %1 لقبول الموضع",
+	"KEYBOARD_NAV_COPIED_HINT": "تم النسخ. اضغط %1 للصق.",
+	"KEYBOARD_NAV_CUT_HINT": "قص. اضغط على %1 للصق."
 }

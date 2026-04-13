@@ -4,6 +4,7 @@
 			"Arianit",
 			"Eraldkerciku",
 			"Liridon",
+			"Xhulianoo",
 			"아라"
 		]
 	},
@@ -20,6 +21,7 @@
 	"DELETE_X_BLOCKS": "Fshij %1 blloqe",
 	"DELETE_ALL_BLOCKS": "Fshijë të gjitha %1 të blloqeve?",
 	"CLEAN_UP": "Pastro blloqet",
+	"CLOSE": "Mbyll",
 	"COLLAPSE_BLOCK": "Mbyll bllokun",
 	"COLLAPSE_ALL": "Mbyll blloqet",
 	"EXPAND_BLOCK": "Zmadho bllokun",
@@ -339,5 +341,13 @@
 	"WORKSPACE_ARIA_LABEL": "Hapësira e punës e Blockly",
 	"COLLAPSED_WARNINGS_WARNING": "Blloqet e shembura përmbajnë paralajmërime.",
 	"DIALOG_OK": "Në rregull",
-	"DIALOG_CANCEL": "Anulo"
+	"DIALOG_CANCEL": "Anulo",
+	"UNKNOWN": "I panjohur",
+	"CUT_SHORTCUT": "Prit",
+	"COPY_SHORTCUT": "Kopjo",
+	"PASTE_SHORTCUT": "Ngjit",
+	"SHORTCUTS_GENERAL": "Të përgjithshme",
+	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Përdor tastet e shigjetave për të lëvizur, pastaj %1 për të pranuar pozicionin",
+	"KEYBOARD_NAV_COPIED_HINT": "U kopjua. Shtyp %1 për ta ngjitur.",
+	"KEYBOARD_NAV_CUT_HINT": "U pre. Shtyp %1 për ta ngjitur."
 }

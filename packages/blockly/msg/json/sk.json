@@ -12,6 +12,7 @@
 			"Oujon",
 			"Pmikolas44",
 			"TomášPolonec",
+			"Username1233219128",
 			"Yardom78"
 		]
 	},
@@ -28,6 +29,7 @@
 	"DELETE_X_BLOCKS": "Odstrániť %1 blokov",
 	"DELETE_ALL_BLOCKS": "Zmazať všetkých %1 dielcov?",
 	"CLEAN_UP": "Narovnať bloky",
+	"CLOSE": "Zatvoriť",
 	"COLLAPSE_BLOCK": "Zvinúť blok",
 	"COLLAPSE_ALL": "Zvinúť bloky",
 	"EXPAND_BLOCK": "Rozvinúť blok",
