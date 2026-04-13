@@ -15,7 +15,6 @@
 import './events/events_block_change.js';
 
 import {BlockSvg} from './block_svg.js';
-import {IFocusableNode} from './blockly.js';
 import * as browserEvents from './browser_events.js';
 import * as bumpObjects from './bump_objects.js';
 import * as dialog from './dialog.js';
@@ -29,6 +28,7 @@ import {
   UnattachedFieldError,
 } from './field.js';
 import {getFocusManager} from './focus_manager.js';
+import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import {Msg} from './msg.js';
 import * as renderManagement from './render_management.js';
 import * as aria from './utils/aria.js';
