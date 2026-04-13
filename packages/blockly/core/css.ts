@@ -529,7 +529,7 @@ input[type=number] {
 
 .injectionDiv {
   --blockly-active-node-color: #fff200;
-  --blockly-active-tree-color: #60a5fa;
+  --blockly-active-tree-color: #1379f6;
   --blockly-selection-width: 3px;
 }
 
