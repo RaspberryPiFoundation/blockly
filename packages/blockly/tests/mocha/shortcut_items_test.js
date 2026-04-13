@@ -871,10 +871,15 @@ suite('Keyboard Shortcut Items', function () {
 
     setup(function () {
       this.block1 = this.workspace.newBlock('controls_if');
-      this.block2 = this.workspace.newBlock('stack_block');
+      this.block2 = this.workspace.newBlock('logic_compare');
       this.block3 = this.workspace.newBlock('stack_block');
       this.block2.moveBy(0, 100);
       this.block3.moveBy(0, 400);
+
+      for (const block of [this.block1, this.block2, this.block3]) {
+        block.initSvg();
+        block.render();
+      }
 
       this.comment1 = this.workspace.newComment();
       this.comment2 = this.workspace.newComment();
@@ -1012,6 +1017,50 @@ suite('Keyboard Shortcut Items', function () {
       const icon = this.block1.getIcon(Blockly.icons.MutatorIcon.TYPE);
       Blockly.getFocusManager().focusNode(icon);
       this.injectionDiv.dispatchEvent(keyNextStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.block2,
+      );
+    });
+
+    test('Navigating forward is inhibited when widgetdiv is visible', function () {
+      Blockly.getFocusManager().focusNode(this.block2);
+      this.block2.showContextMenu();
+      assert.isTrue(Blockly.WidgetDiv.isVisible());
+      this.injectionDiv.dispatchEvent(keyNextStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.block2,
+      );
+    });
+
+    test('Navigating forward is inhibited when dropdowndiv is visible', function () {
+      Blockly.getFocusManager().focusNode(this.block2);
+      this.block2.getField('OP').showEditor();
+      assert.isTrue(Blockly.DropDownDiv.isVisible());
+      this.injectionDiv.dispatchEvent(keyNextStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.block2,
+      );
+    });
+
+    test('Navigating backward is inhibited when widgetdiv is visible', function () {
+      Blockly.getFocusManager().focusNode(this.block2);
+      this.block2.showContextMenu();
+      assert.isTrue(Blockly.WidgetDiv.isVisible());
+      this.injectionDiv.dispatchEvent(keyPrevStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.block2,
+      );
+    });
+
+    test('Navigating backward is inhibited when dropdowndiv is visible', function () {
+      Blockly.getFocusManager().focusNode(this.block2);
+      this.block2.getField('OP').showEditor();
+      assert.isTrue(Blockly.DropDownDiv.isVisible());
+      this.injectionDiv.dispatchEvent(keyPrevStack());
       assert.strictEqual(
         Blockly.getFocusManager().getFocusedNode(),
         this.block2,
@@ -1229,6 +1278,38 @@ suite('Keyboard Shortcut Items', function () {
 
       assert.isTrue(called);
       this.workspace.registerButtonCallback('CREATE_VARIABLE', oldCallback);
+    });
+
+    test('Is inhibited when dropdowndiv is visible', function () {
+      const block = this.workspace.newBlock('logic_compare');
+      block.initSvg();
+      block.render();
+      const field = block.getField('OP');
+      Blockly.getFocusManager().focusNode(field);
+      field.showEditor();
+
+      assert.isTrue(Blockly.DropDownDiv.isVisible());
+
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+
+      assert.isTrue(Blockly.DropDownDiv.isVisible());
+    });
+
+    test('Is inhibited when widgetdiv is visible', function () {
+      const block = this.workspace.newBlock('logic_compare');
+      block.initSvg();
+      block.render();
+      const field = block.getField('OP');
+      block.showContextMenu();
+      Blockly.getFocusManager().focusNode(field);
+
+      assert.isTrue(Blockly.WidgetDiv.isVisible());
+
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+
+      assert.isTrue(Blockly.WidgetDiv.isVisible());
     });
   });
 });

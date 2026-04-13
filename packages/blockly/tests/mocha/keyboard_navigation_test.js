@@ -255,6 +255,37 @@ suite('Keyboard navigation on Blocks', function () {
     pressKey(this.workspace, Blockly.utils.KeyCodes.RIGHT);
     assert.include(getFocusNodeId(), 'text_1_field_');
   });
+
+  test('Is inhibited when widgetdiv is visible', function () {
+    focusBlock(this.workspace, 'text_print_1');
+    this.workspace.getBlockById('text_print_1').showContextMenu();
+    assert.isTrue(Blockly.WidgetDiv.isVisible());
+    pressKey(this.workspace, Blockly.utils.KeyCodes.RIGHT);
+    assert.equal(getFocusedBlockId(), 'text_print_1');
+    pressKey(this.workspace, Blockly.utils.KeyCodes.LEFT);
+    assert.equal(getFocusedBlockId(), 'text_print_1');
+    pressKey(this.workspace, Blockly.utils.KeyCodes.UP);
+    assert.equal(getFocusedBlockId(), 'text_print_1');
+    pressKey(this.workspace, Blockly.utils.KeyCodes.DOWN);
+    assert.equal(getFocusedBlockId(), 'text_print_1');
+  });
+
+  test('Is inhibited when dropdowndiv is visible', function () {
+    focusBlock(this.workspace, 'logic_boolean_1');
+    this.workspace
+      .getBlockById('logic_boolean_1')
+      .getField('BOOL')
+      .showEditor();
+    assert.isTrue(Blockly.DropDownDiv.isVisible());
+    pressKey(this.workspace, Blockly.utils.KeyCodes.RIGHT);
+    assert.equal(getFocusedBlockId(), 'logic_boolean_1');
+    pressKey(this.workspace, Blockly.utils.KeyCodes.LEFT);
+    assert.equal(getFocusedBlockId(), 'logic_boolean_1');
+    pressKey(this.workspace, Blockly.utils.KeyCodes.UP);
+    assert.equal(getFocusedBlockId(), 'logic_boolean_1');
+    pressKey(this.workspace, Blockly.utils.KeyCodes.DOWN);
+    assert.equal(getFocusedBlockId(), 'logic_boolean_1');
+  });
 });
 
 suite('Keyboard navigation on Fields', function () {
