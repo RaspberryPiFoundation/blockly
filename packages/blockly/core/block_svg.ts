@@ -1926,7 +1926,7 @@ export class BlockSvg
       }
     }
 
-    if (this.workspace.getNavigator().getFirstChild(this)) {
+    if (this.workspace.getNavigator().getInNode(this)) {
       hints.showBlockNavigationHint(this.workspace);
     } else {
       hints.showHelpHint(this.workspace);
