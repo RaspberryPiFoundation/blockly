@@ -3,14 +3,16 @@
  * Copyright 2026 Raspberry Pi Foundation
  * SPDX-License-Identifier: Apache-2.0
  */
+import type {BlockSvg} from '../block_svg.js';
 import type {IDraggable} from '../interfaces/i_draggable.js';
 import type {IDragger} from '../interfaces/i_dragger.js';
+import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
 import * as registry from '../registry.js';
+import * as renderManagement from '../render_management.js';
 import {ShortcutRegistry} from '../shortcut_registry.js';
 import {Coordinate} from '../utils/coordinate.js';
 import {KeyCodes} from '../utils/keycodes.js';
 import {MoveIndicator} from './move_indicator.js';
-
 /**
  * Cardinal directions in which a move can proceed.
  */
@@ -263,12 +265,68 @@ export class KeyboardMover {
    * Repositions the move indicator to the corner of the item being moved.
    */
   private repositionMoveIndicator() {
-    const bounds = this.draggable?.getBoundingRectangle();
-    if (!bounds) return;
+    renderManagement.finishQueuedRenders().then(() => {
+      let bounds = this.draggable?.getBoundingRectangle();
+      if (
+        this.draggable &&
+        'getBoundingRectangleWithoutChildren' in this.draggable
+      ) {
+        bounds = this.positionForBlockMoveIndicator(this.draggable as BlockSvg);
+      }
 
-    this.moveIndicator?.moveTo(
-      this.draggable?.workspace.RTL ? bounds.left : bounds.right,
-      bounds.top,
+      if (!bounds) return;
+
+      this.moveIndicator?.moveTo(
+        this.draggable?.workspace.RTL ? bounds.left : bounds.right,
+        bounds.top,
+      );
+    });
+  }
+
+  /**
+   * Returns a bounding box used for positioning the move indicator on a block.
+   * Blocks require special treatment because `BlockSvg.getBoundingRectangle()`
+   * includes the bounds of nested and subsequent blocks. Since the move
+   * indicator is positioned at the top right corner of the bounds, this can
+   * result in it appearing to float in empty space when e.g. a small block has
+   * a much wider block nested inside a statement input. BlockSvg also provides
+   * `getBoundingRectangleWithoutChildren()`, which addresses that case, but is
+   * insufficient because in the case of nested *value* blocks in a row, the
+   * child blocks' bounds should contribute to the bounding box.
+   *
+   * @param block The block to retrieve an adjusted bounding box for.
+   * @returns A bounding box for the given block whose top-right corner
+   *     corresponds to the maximum visual extent of the given block's row.
+   */
+  private positionForBlockMoveIndicator(block: BlockSvg) {
+    const navigator = block.workspace.getNavigator();
+    let rightmost: IFocusableNode = block;
+    let nextCandidate = null;
+    // Find the rightmost element on the same visual row as the starting block.
+    while ((nextCandidate = navigator.getInNode(rightmost))) {
+      rightmost = nextCandidate;
+    }
+
+    // Get the parent block of the rightmost element in the case where it is
+    // e.g. a field.
+    let targetBlock = navigator.getSourceBlockFromNode(rightmost);
+
+    // Work backwards from the rightmost block; deeply nested value blocks do
+    // not have the same y position as their parent because they are visually
+    // depicted as being inside of it. Keep working up the parent block
+    // hierarchy until one is found with the same y position as the starting
+    // block, meaning is is the rightmost top-level value block in the same row
+    // as the starting block.
+    while (
+      targetBlock?.getBoundingRectangleWithoutChildren().getOrigin().y !==
+      block.getBoundingRectangleWithoutChildren().getOrigin().y
+    ) {
+      targetBlock = targetBlock?.getParent() ?? null;
+    }
+
+    return (
+      targetBlock?.getBoundingRectangleWithoutChildren() ??
+      block.getBoundingRectangleWithoutChildren()
     );
   }
 
