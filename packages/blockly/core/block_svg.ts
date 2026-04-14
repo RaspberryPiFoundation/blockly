@@ -2001,4 +2001,15 @@ export class BlockSvg
     aria.setState(this.getSvgRoot(), aria.State.LABEL, computeAriaLabel(this));
     configureAriaRole(this);
   }
+
+  /**
+   * Returns a description of this block suitable for screenreaders or use in
+   * ARIA attributes.
+   *
+   * @param verbosity How much detail to include in the description.
+   * @returns An accessibility description of this block.
+   */
+  getAriaLabel(verbosity: aria.Verbosity) {
+    return computeAriaLabel(this, verbosity);
+  }
 }
