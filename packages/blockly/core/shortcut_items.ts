@@ -60,6 +60,7 @@ export enum names {
   PREVIOUS_STACK = 'previous_stack',
   INFORMATION = 'information',
   PERFORM_ACTION = 'perform_action',
+  DUPLICATE = 'duplicate',
 }
 
 /**
@@ -871,6 +872,34 @@ export function registerPerformAction() {
 }
 
 /**
+ * Registers keyboard shortcut to duplicate a block or workspace comment.
+ */
+export function registerDuplicate() {
+  const performActionShortcut: KeyboardShortcut = {
+    name: names.DUPLICATE,
+    preconditionFn: (workspace, scope) => {
+      const {focusedNode} = scope;
+      return (
+        !workspace.isDragging() &&
+        !workspace.isReadOnly() &&
+        (focusedNode instanceof BlockSvg ? focusedNode.isDuplicatable() : true)
+      );
+    },
+    callback: (workspace, _e, _shortcut, scope) => {
+      keyboardNavigationController.setIsActive(true);
+      const copyable = isICopyable(scope.focusedNode) && scope.focusedNode;
+      if (!copyable) return false;
+      const data = copyable.toCopyData();
+      if (!data) return false;
+      return !!clipboard.paste(data, workspace);
+    },
+    keyCodes: [KeyCodes.D],
+    allowCollision: true,
+  };
+  ShortcutRegistry.registry.register(performActionShortcut);
+}
+
+/**
  * Registers all default keyboard shortcut item. This should be called once per
  * instance of KeyboardShortcutRegistry.
  *
@@ -899,6 +928,7 @@ export function registerKeyboardNavigationShortcuts() {
   registerDisconnectBlock();
   registerStackNavigation();
   registerPerformAction();
+  registerDuplicate();
 }
 
 /**
