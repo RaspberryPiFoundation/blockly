@@ -1231,4 +1231,43 @@ suite('Keyboard Shortcut Items', function () {
       this.workspace.registerButtonCallback('CREATE_VARIABLE', oldCallback);
     });
   });
+
+  suite('Clean up workspace (C)', function () {
+    test('Arranges all blocks in a vertical column', function () {
+      this.workspace.newBlock('controls_if');
+      const block2 = this.workspace.newBlock('controls_if');
+      block2.moveBy(300, 20);
+      const block3 = this.workspace.newBlock('controls_if');
+      block3.moveBy(-75, -60);
+
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.C);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+
+      for (const block of this.workspace.getTopBlocks()) {
+        assert.equal(block.relativeCoords.x, 0);
+      }
+    });
+
+    test('Does nothing on a readonly workspace', function () {
+      this.workspace.newBlock('controls_if');
+      const block2 = this.workspace.newBlock('controls_if');
+      block2.moveBy(300, 20);
+      const block3 = this.workspace.newBlock('controls_if');
+      block3.moveBy(-75, -60);
+
+      this.workspace.setIsReadOnly(true);
+
+      const oldBounds = this.workspace
+        .getTopBlocks(true)
+        .map((b) => b.getBoundingRectangle());
+
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.C);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+
+      const newBounds = this.workspace
+        .getTopBlocks(true)
+        .map((b) => b.getBoundingRectangle());
+      assert.deepEqual(oldBounds, newBounds);
+    });
+  });
 });
