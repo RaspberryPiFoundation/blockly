@@ -1231,4 +1231,62 @@ suite('Keyboard Shortcut Items', function () {
       this.workspace.registerButtonCallback('CREATE_VARIABLE', oldCallback);
     });
   });
+
+  suite('Duplicate (D)', function () {
+    test('Can duplicate blocks', function () {
+      const block = this.workspace.newBlock('controls_if');
+      Blockly.getFocusManager().focusNode(block);
+      assert.equal(this.workspace.getTopBlocks().length, 1);
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.D);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+      const topBlocks = this.workspace.getTopBlocks(true);
+      assert.equal(topBlocks.length, 2);
+      assert.notEqual(topBlocks[1], block);
+      assert.equal(topBlocks[1].type, block.type);
+    });
+
+    test('Can duplicate workspace comments', function () {
+      const comment = this.workspace.newComment();
+      comment.setText('Hello');
+      Blockly.getFocusManager().focusNode(comment);
+      assert.equal(this.workspace.getTopComments().length, 1);
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.D);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+      const topComments = this.workspace.getTopComments(true);
+      assert.equal(topComments.length, 2);
+      assert.notEqual(topComments[1], comment);
+      assert.equal(topComments[1].getText(), comment.getText());
+    });
+
+    test('Does not duplicate blocks on a readonly workspace', function () {
+      const block = this.workspace.newBlock('controls_if');
+      this.workspace.setIsReadOnly(true);
+      Blockly.getFocusManager().focusNode(block);
+      assert.equal(this.workspace.getTopBlocks().length, 1);
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.D);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+      assert.equal(this.workspace.getTopBlocks().length, 1);
+    });
+
+    test('Does not duplicate blocks that are not duplicatable', function () {
+      const block = this.workspace.newBlock('controls_if');
+      this.workspace.options.maxBlocks = 1;
+      assert.isFalse(block.isDuplicatable());
+      assert.equal(this.workspace.getTopBlocks().length, 1);
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.D);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+      assert.equal(this.workspace.getTopBlocks().length, 1);
+    });
+
+    test('Does not duplicate workspace comments on a readonly workspace', function () {
+      const comment = this.workspace.newComment();
+      comment.setText('Hello');
+      this.workspace.setIsReadOnly(true);
+      Blockly.getFocusManager().focusNode(comment);
+      assert.equal(this.workspace.getTopComments().length, 1);
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.D);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+      assert.equal(this.workspace.getTopComments().length, 1);
+    });
+  });
 });
