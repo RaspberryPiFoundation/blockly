@@ -875,7 +875,7 @@ export function registerPerformAction() {
  * Registers keyboard shortcut to duplicate a block or workspace comment.
  */
 export function registerDuplicate() {
-  const performActionShortcut: KeyboardShortcut = {
+  const duplicateShortcut: KeyboardShortcut = {
     name: names.DUPLICATE,
     preconditionFn: (workspace, scope) => {
       const {focusedNode} = scope;
@@ -896,7 +896,7 @@ export function registerDuplicate() {
     keyCodes: [KeyCodes.D],
     allowCollision: true,
   };
-  ShortcutRegistry.registry.register(performActionShortcut);
+  ShortcutRegistry.registry.register(duplicateShortcut);
 }
 
 /**
