@@ -61,6 +61,7 @@ export enum names {
   INFORMATION = 'information',
   PERFORM_ACTION = 'perform_action',
   DUPLICATE = 'duplicate',
+  CLEANUP = 'cleanup',
 }
 
 /**
@@ -900,6 +901,25 @@ export function registerDuplicate() {
 }
 
 /**
+ * Registers keyboard shortcut to clean up the workspace.
+ */
+export function registerCleanup() {
+  const cleanupShortcut: KeyboardShortcut = {
+    name: names.CLEANUP,
+    preconditionFn: (workspace) =>
+      !workspace.isDragging() && !workspace.isReadOnly(),
+    callback: (workspace) => {
+      keyboardNavigationController.setIsActive(true);
+      workspace.cleanUp();
+      return true;
+    },
+    keyCodes: [KeyCodes.C],
+    allowCollision: true,
+  };
+  ShortcutRegistry.registry.register(cleanupShortcut);
+}
+
+/**
  * Registers all default keyboard shortcut item. This should be called once per
  * instance of KeyboardShortcutRegistry.
  *
@@ -929,6 +949,7 @@ export function registerKeyboardNavigationShortcuts() {
   registerStackNavigation();
   registerPerformAction();
   registerDuplicate();
+  registerCleanup();
 }
 
 /**
