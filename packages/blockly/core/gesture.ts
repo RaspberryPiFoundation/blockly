@@ -1004,8 +1004,8 @@ export class Gesture {
       this.setTargetBlock(block.getParent()!);
     } else {
       this.targetBlock = block;
-      getFocusManager().focusNode(this.targetBlock);
       this.targetBlock.bringToFront();
+      getFocusManager().focusNode(this.targetBlock);
     }
   }
 
