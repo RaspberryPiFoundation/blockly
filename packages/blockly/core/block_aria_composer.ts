@@ -79,7 +79,7 @@ export function configureAriaRole(block: BlockSvg) {
 }
 
 /**
- * Returns an ARIA representation of the 'field row' for the specified Input.
+ * Returns a list of ARIA labels for the 'field row' for the specified Input.
  *
  * 'Field row' essentially means the horizontal run of readable fields that
  * precede the Input. Together, these provide the domain context for the input,
@@ -88,14 +88,12 @@ export function configureAriaRole(block: BlockSvg) {
  * `lookback` attribute is specified, all of the fields on the row immediately
  * above the Input will be used instead.
  *
- * Returns undefined if no fields precede the given Input.
- *
  * @internal
  * @param input The Input to compute a description/context label for.
- * @param lookback If true, will use fields on the previous row to compute a
- *     label for the given input if it has no fields itself.
- * @returns An accessibility label for the given input, or undefined if one
- *     cannot be computed.
+ * @param lookback If true, will use labels for fields on the previous row if
+ *     the given input's row has no fields itself.
+ * @returns A list of labels for fields on the same row (or previous row, if
+ *     lookback is specified) as the given input.
  */
 export function computeFieldRowLabel(
   input: Input,
