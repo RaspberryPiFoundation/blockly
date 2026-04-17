@@ -1154,22 +1154,12 @@ suite('Keyboard-driven movement', function () {
 
         this.moveAndAssert(
           moveRight,
-          [
-            'moving',
-            'inside',
-            this.getBlockLabel(textJoin),
-            'input 2',
-          ],
+          ['moving', 'inside', this.getBlockLabel(textJoin), 'input 2'],
           [this.getBlockLabel(text)],
         );
         this.moveAndAssert(
           moveRight,
-          [
-            'moving',
-            'inside',
-            this.getBlockLabel(textJoin),
-            'input 3',
-          ],
+          ['moving', 'inside', this.getBlockLabel(textJoin), 'input 3'],
           [this.getBlockLabel(text)],
         );
 
