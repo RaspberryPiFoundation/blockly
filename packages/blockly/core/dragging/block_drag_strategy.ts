@@ -456,7 +456,7 @@ export class BlockDragStrategy implements IDragStrategy {
       // suggest using unconstrained mode to arbitrarily position the block if
       // we're in keyboard-driven constrained mode.
       if (this.moveMode === MoveMode.CONSTRAINED) {
-        showUnconstrainedMoveHint(this.workspace, true);
+        showUnconstrainedMoveHint(this.workspace);
         this.workspace.getAudioManager().playErrorBeep();
       }
     }
