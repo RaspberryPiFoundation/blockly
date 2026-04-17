@@ -601,15 +601,23 @@ export class BlockDragStrategy implements IDragStrategy {
     delta: Coordinate,
   ): ConnectionCandidate | null {
     if (this.moveMode === MoveMode.CONSTRAINED) {
-      const direction = this.getDirectionToNewLocation(
-        Coordinate.sum(this.startLoc!, delta),
-      );
-      return this.findTraversalCandidate(direction);
+      return this.findTraversalCandidate(delta);
     }
 
     // If we do not have a candidate yet, we fallback to the closest one nearby.
+    return this.getClosestCandidate(this.block, delta);
+  }
+
+  /**
+   * Returns the closest connection candidate for the given block.
+   *
+   * @param block The block to find a connection for.
+   * @param delta The distance the block has traveled since dragging began.
+   * @returns The closest available connection candidate, if any.
+   */
+  private getClosestCandidate(block: BlockSvg, delta: Coordinate) {
     let radius = this.getSearchRadius();
-    const localConns = this.getLocalConnections(this.block);
+    const localConns = this.getLocalConnections(block);
     let candidate: ConnectionCandidate | null = null;
 
     for (const conn of localConns) {
@@ -806,7 +814,10 @@ export class BlockDragStrategy implements IDragStrategy {
    * @param direction The cardinal direction in which the block is being moved.
    * @returns A candidate connection and radius, or null if none was found.
    */
-  findTraversalCandidate(direction: Direction): ConnectionCandidate | null {
+  findTraversalCandidate(delta: Coordinate): ConnectionCandidate | null {
+    const direction = this.getDirectionToNewLocation(
+      Coordinate.sum(this.startLoc!, delta),
+    );
     const pairs = this.allConnectionPairs;
     if (direction === Direction.NONE || !pairs.length) {
       return this.connectionCandidate;
@@ -819,9 +830,16 @@ export class BlockDragStrategy implements IDragStrategy {
         this.connectionCandidate?.neighbour === pair.neighbour,
     );
 
+    const navigator = this.block.workspace.getNavigator();
     if (forwardTraversal) {
       if (currentPairIndex === -1) {
-        return this.pairToCandidate(pairs[0]);
+        const terminal = this.isInTerminalPosition(this.block, Direction.DOWN);
+        if (navigator.getNavigationLoops()) {
+          return this.pairToCandidate(pairs[0]);
+        } else if (!terminal) {
+          return this.getClosestCandidate(this.block, delta);
+        }
+        return null;
       } else if (currentPairIndex === pairs.length - 1) {
         return null;
       } else {
@@ -829,7 +847,13 @@ export class BlockDragStrategy implements IDragStrategy {
       }
     } else {
       if (currentPairIndex === -1) {
-        return this.pairToCandidate(pairs[pairs.length - 1]);
+        const terminal = this.isInTerminalPosition(this.block, Direction.UP);
+        if (navigator.getNavigationLoops()) {
+          return this.pairToCandidate(pairs[pairs.length - 1]);
+        } else if (!terminal) {
+          return this.getClosestCandidate(this.block, delta);
+        }
+        return null;
       } else if (currentPairIndex === 0) {
         return null;
       } else {
@@ -838,9 +862,63 @@ export class BlockDragStrategy implements IDragStrategy {
     }
   }
 
+  /**
+   * Returns whether or not the given block is at a terminal position (start or
+   * end) of the blocks on the workspace. This helps distinguish between a block
+   * that is at the end of the line because all valid connections have been
+   * visited and the proposed constrained move destination is now to drop it on
+   * the workspace as a top-level block (in which case it will be in a terminal
+   * position), and a block that just entered move mode as a top-level block,
+   * and should therefore still be able to move to another connection point
+   * even if looping is disabled.
+   *
+   * @param block The block to check.
+   * @param direction The current dragging direction.
+   * @returns True if the block is at the start or end of its possible positions
+   *     on the workspace.
+   */
+  private isInTerminalPosition(
+    block: BlockSvg,
+    direction: Direction.UP | Direction.DOWN,
+  ) {
+    if (block.getParent()) {
+      return false;
+    }
+
+    const topBlocks = block.workspace.getTopBlocks(true);
+
+    const index = topBlocks.indexOf(block);
+    const delta = direction === Direction.UP ? -1 : 1;
+    const start = index + delta;
+
+    // Generally terminal blocks will be at the start or end of the sorted list
+    // of top blocks, but it still counts if all of the blocks before/after it
+    // have no valid connection points for the block in question.
+    const blockConnections = block.getConnections_(false);
+    for (let i = start; i >= 0 && i < topBlocks.length; i += delta) {
+      const topBlock = topBlocks[i];
+      for (const a of blockConnections) {
+        for (const b of topBlock.getConnections_(false)) {
+          if (
+            block.workspace.connectionChecker.canConnect(a, b, true, Infinity)
+          ) {
+            return false;
+          }
+        }
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Converts a connection pair to a connection candidate with a default
+   * distance of 0.
+   */
   private pairToCandidate(pair: ConnectionPair): ConnectionCandidate {
     return {...pair, distance: 0};
   }
+
   /**
    * Returns the cardinal direction that the block being dragged would have to
    * move in to reach the given location.
