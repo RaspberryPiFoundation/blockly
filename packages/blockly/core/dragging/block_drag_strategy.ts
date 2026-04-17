@@ -159,8 +159,9 @@ export class BlockDragStrategy implements IDragStrategy {
   /**
    * Announces a move on the ARIA live region for assistive technologies.
    *
-   * @param options Options for the move announcement, such as whether to use a count of stack
-   * blocks as the label for the moving block.
+   * @param isMoveStart Whether this announcement is for the start of a move. If false,
+   * skip announcing the block label since it should have already been announced at the
+   * start of the move.
    */
   private announceMove(isMoveStart: boolean = false) {
     let announcementTemplate = '';
