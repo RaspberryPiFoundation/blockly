@@ -15,6 +15,7 @@
 import '../field_label.js';
 
 import type {Block} from '../block.js';
+import {computeFieldRowLabel, getInputLabels} from '../block_aria_composer.js';
 import type {BlockSvg} from '../block_svg.js';
 import type {Connection} from '../connection.js';
 import {ConnectionType} from '../connection_type.js';
@@ -346,5 +347,36 @@ export class Input {
     // Value inputs on a inline input block have the same row ID as their
     // preceding input, since they're all on one row.
     return inputs[inputIndex - 1].getRowId();
+  }
+
+  /**
+   * Returns an accessibility label describing this input, including the labels
+   * of any fields on the input and the labels of any connected blocks, to help
+   * disambiguate this input from others on the same block.
+   *
+   * @internal
+   */
+  getLabel(): string {
+    if (!this.isVisible()) return '';
+
+    const labels = computeFieldRowLabel(this, false);
+
+    if (this.connection?.type === ConnectionType.INPUT_VALUE) {
+      const childBlock = this.connection.targetBlock();
+      if (childBlock && !childBlock.isInsertionMarker()) {
+        labels.push(getInputLabels(childBlock as BlockSvg).join(' '));
+      }
+    }
+    return labels.join(' ');
+  }
+
+  /**
+   * Returns the index of this input on its source block.
+   *
+   * @internal
+   */
+  getIndex(): number {
+    const inputs = this.getSourceBlock().inputList;
+    return inputs.indexOf(this);
   }
 }

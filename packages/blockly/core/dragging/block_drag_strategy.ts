@@ -6,6 +6,7 @@
 
 import type {Block} from '../block.js';
 import * as blockAnimation from '../block_animations.js';
+import {computeMoveLabel} from '../block_aria_composer.js';
 import type {BlockSvg} from '../block_svg.js';
 import * as bumpObjects from '../bump_objects.js';
 import {config} from '../config.js';
@@ -22,11 +23,13 @@ import {DragDisposition} from '../interfaces/i_draggable.js';
 import {IHasBubble, hasBubble} from '../interfaces/i_has_bubble.js';
 import {Direction} from '../keyboard_nav/keyboard_mover.js';
 import * as layers from '../layers.js';
+import {Msg} from '../msg.js';
 import * as registry from '../registry.js';
 import {finishQueuedRenders} from '../render_management.js';
 import type {RenderedConnection} from '../rendered_connection.js';
 import * as blocks from '../serialization/blocks.js';
 import {Coordinate} from '../utils.js';
+import * as aria from '../utils/aria.js';
 import * as dom from '../utils/dom.js';
 import * as svgMath from '../utils/svg_math.js';
 import type {WorkspaceSvg} from '../workspace_svg.js';
@@ -154,6 +157,57 @@ export class BlockDragStrategy implements IDragStrategy {
   }
 
   /**
+   * Announces a move on the ARIA live region for assistive technologies.
+   *
+   * @param options Options for the move announcement, such as whether to use a count of stack
+   * blocks as the label for the moving block.
+   */
+  private announceMove(isMoveStart: boolean = false) {
+    let announcementTemplate = '';
+    let announcement = '';
+    if (this.connectionCandidate) {
+      announcement = computeMoveLabel(
+        this.connectionCandidate.local,
+        this.connectionCandidate.neighbour,
+        this.hasMultipleCompatibleConnections.bind(this),
+        isMoveStart,
+      );
+    } else {
+      const blockLabel = isMoveStart
+        ? this.block.getStackBlocksCountLabel()
+        : '';
+      announcementTemplate = Msg['ANNOUNCE_MOVE_WORKSPACE'];
+      announcement = announcementTemplate.replace('%1', blockLabel);
+    }
+    // Collapse whitespace from unused template substitutions.
+    aria.announceDynamicAriaState(announcement.replace(/\s+/g, ' '));
+  }
+
+  /**
+   * Checks if there are multiple compatible connections for the specified side of the pair.
+   *
+   * @param forLocal Whether we are considering the local or neighbour side of the pair
+   * @returns True if there are multiple compatible connections, false otherwise
+   */
+  private hasMultipleCompatibleConnections(forLocal: boolean = true): boolean {
+    const connectionCandidate = this.connectionCandidate;
+    if (!connectionCandidate) {
+      return false;
+    }
+    const currentSide = forLocal ? 'local' : 'neighbour';
+    const oppositeSide = forLocal ? 'neighbour' : 'local';
+
+    const filteredPairs = this.allConnectionPairs.filter(
+      (pair) =>
+        pair[oppositeSide] === connectionCandidate[oppositeSide] &&
+        pair[currentSide] !==
+          connectionCandidate[currentSide].getSourceBlock().nextConnection &&
+        pair[currentSide].getSourceBlock().id ===
+          connectionCandidate[currentSide].getSourceBlock().id,
+    );
+    return filteredPairs.length > 1;
+  }
+  /**
    * Handles any setup for starting the drag, including disconnecting the block
    * from any parent blocks.
    */
@@ -222,6 +276,7 @@ export class BlockDragStrategy implements IDragStrategy {
       }
     }
 
+    this.announceMove(true);
     return this.block;
   }
 
@@ -460,6 +515,7 @@ export class BlockDragStrategy implements IDragStrategy {
         this.workspace.getAudioManager().playErrorBeep();
       }
     }
+    this.announceMove();
   }
 
   /**
@@ -767,6 +823,7 @@ export class BlockDragStrategy implements IDragStrategy {
 
     this.block.setDragging(false);
     this.dragging = false;
+    aria.announceDynamicAriaState(Msg['ANNOUNCE_MOVE_CANCELED']);
   }
 
   /**
@@ -824,19 +881,11 @@ export class BlockDragStrategy implements IDragStrategy {
     const actualPosition = this.block.getRelativeToSurfaceXY();
     const delta = Coordinate.difference(newLocation, actualPosition);
     const {x, y} = delta;
-    if (x) {
-      if (x < 0) {
-        return Direction.LEFT;
-      } else if (x > 0) {
-        return Direction.RIGHT;
-      }
-    } else if (y) {
-      if (y < 0) {
-        return Direction.UP;
-      } else if (y > 0) {
-        return Direction.DOWN;
-      }
-    }
+
+    if (x < 0) return Direction.LEFT;
+    if (x > 0) return Direction.RIGHT;
+    if (y < 0) return Direction.UP;
+    if (y > 0) return Direction.DOWN;
     return Direction.NONE;
   }
 

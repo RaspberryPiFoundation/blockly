@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {getInputLabelsSubset} from '../../build/src/core/block_aria_composer.js';
 import * as Blockly from '../../build/src/core/blockly.js';
 import {assert} from '../../node_modules/chai/index.js';
 import {
@@ -937,6 +938,242 @@ suite('Keyboard-driven movement', function () {
             );
           });
         }
+      });
+    });
+
+    suite('Announcement tests', function () {
+      setup(function () {
+        this.liveRegion = document.getElementById('blocklyAriaAnnounce');
+        this.moveAndAssert = (moveFn, incPhrases, exclPhrases = []) => {
+          moveFn(this.workspace);
+          this.clock.tick(11);
+          let text = this.liveRegion.textContent;
+          exclPhrases.forEach((unexpected) => {
+            assert.notInclude(text, unexpected);
+          });
+          incPhrases.forEach((expected) => {
+            assert.include(text, expected);
+            const index = text.indexOf(expected);
+            text =
+              text.slice(0, index) +
+              text.slice(index + expected.toString().length);
+          });
+        };
+        this.getBlockLabel = (block) =>
+          block.getAriaLabel(Blockly.utils.aria.Verbosity.TERSE);
+        this.element.dispose();
+        this.block1 = this.workspace.newBlock('draw_emoji');
+        this.block1.initSvg();
+        this.block1.render();
+      });
+
+      test('announces simple block moving on workspace', async function () {
+        Blockly.getFocusManager().focusNode(this.block1);
+        this.moveAndAssert(
+          startMove,
+          ['moving', this.getBlockLabel(this.block1), 'on workspace'],
+          [],
+        );
+        cancelMove(this.workspace);
+      });
+
+      test('announces stack count when moving stack', async function () {
+        const block2 = this.workspace.newBlock('draw_emoji');
+        block2.setFieldValue('✨', 'emoji');
+        block2.initSvg();
+        block2.render();
+        this.block1.nextConnection.connect(block2.previousConnection);
+
+        Blockly.getFocusManager().focusNode(this.block1);
+        this.moveAndAssert(startMoveStack, [
+          'moving',
+          '2 stack blocks',
+          'on workspace',
+        ]);
+        cancelMove(this.workspace);
+      });
+
+      test('announces "before" when moving before a block', function () {
+        const block2 = this.workspace.newBlock('draw_emoji');
+        block2.setFieldValue('✨', 'emoji');
+        block2.initSvg();
+        block2.render();
+
+        Blockly.getFocusManager().focusNode(this.block1);
+        startMove(this.workspace);
+
+        this.moveAndAssert(
+          moveRight,
+          ['moving', 'before', this.getBlockLabel(block2)],
+          [this.getBlockLabel(this.block1)],
+        );
+
+        cancelMove(this.workspace);
+      });
+      test('announces "after" when moving after a block', function () {
+        const block2 = this.workspace.newBlock('draw_emoji');
+        block2.setFieldValue('✨', 'emoji');
+        block2.initSvg();
+        block2.render();
+
+        this.block1.nextConnection.connect(block2.previousConnection);
+
+        Blockly.getFocusManager().focusNode(block2);
+
+        this.moveAndAssert(startMove, [
+          'moving',
+          this.getBlockLabel(block2),
+          'after',
+          this.getBlockLabel(this.block1),
+        ]);
+
+        cancelMove(this.workspace);
+      });
+      test('announces "inside" for value connections', function () {
+        const valueBlock = this.workspace.newBlock('text');
+        valueBlock.initSvg();
+        valueBlock.render();
+
+        const parent = this.workspace.newBlock('text_print');
+        parent.initSvg();
+        parent.render();
+
+        Blockly.getFocusManager().focusNode(valueBlock);
+        startMove(this.workspace);
+
+        this.moveAndAssert(
+          moveRight,
+          ['moving', 'inside', this.getBlockLabel(parent)],
+          [this.getBlockLabel(valueBlock)],
+        );
+
+        cancelMove(this.workspace);
+      });
+      test('announces "around" when wrapping a block', function () {
+        const loop = this.workspace.newBlock('controls_repeat_ext');
+        loop.initSvg();
+        loop.render();
+
+        Blockly.getFocusManager().focusNode(loop);
+        startMove(this.workspace);
+        moveRight(this.workspace);
+
+        this.moveAndAssert(
+          moveRight,
+          ['moving', 'around', this.getBlockLabel(this.block1)],
+          [
+            this.getBlockLabel(loop),
+            getInputLabelsSubset(loop, loop.getInput('DO')).join(', '),
+          ],
+        );
+
+        cancelMove(this.workspace);
+      });
+      test('disambiguates between multiple statement inputs', function () {
+        const ifBlock = this.workspace.newBlock('controls_if');
+        ifBlock.initSvg();
+        ifBlock.elseifCount_ = 1;
+        ifBlock.elseCount_ = 1;
+        ifBlock.updateShape_();
+        ifBlock.render();
+        this.workspace.cleanUp();
+
+        Blockly.getFocusManager().focusNode(ifBlock);
+        startMove(this.workspace); // on workspace
+        moveRight(this.workspace); // before block1
+        this.moveAndAssert(
+          moveRight,
+          [
+            'moving',
+            getInputLabelsSubset(ifBlock, ifBlock.getInput('DO1')).join(', '),
+            'around',
+            this.getBlockLabel(this.block1),
+          ],
+          [this.getBlockLabel(ifBlock)],
+        );
+        this.moveAndAssert(
+          moveRight,
+          [
+            'moving',
+            getInputLabelsSubset(ifBlock, ifBlock.getInput('DO0')).join(', '),
+            'around',
+            this.getBlockLabel(this.block1),
+          ],
+          [this.getBlockLabel(ifBlock)],
+        );
+
+        cancelMove(this.workspace);
+      });
+      test('disambiguates between multiple value inputs', function () {
+        const compare = this.workspace.newBlock('logic_compare');
+        compare.initSvg();
+        compare.render();
+        const boolean = this.workspace.newBlock('logic_boolean');
+        boolean.initSvg();
+        boolean.render();
+
+        Blockly.getFocusManager().focusNode(boolean);
+        startMove(this.workspace);
+
+        this.moveAndAssert(
+          moveRight,
+          [
+            'moving',
+            'inside',
+            this.getBlockLabel(compare),
+            getInputLabelsSubset(compare, compare.getInput('A')).join(', '),
+          ],
+          [this.getBlockLabel(boolean)],
+        );
+        this.moveAndAssert(
+          moveRight,
+          [
+            'moving',
+            'inside',
+            this.getBlockLabel(compare),
+            getInputLabelsSubset(compare, compare.getInput('B')).join(', '),
+          ],
+          [this.getBlockLabel(boolean)],
+        );
+
+        cancelMove(this.workspace);
+      });
+      test('disambiguates between unlabeled value inputs', function () {
+        const textJoin = this.workspace.newBlock('text_join');
+        textJoin.itemCount_ = 3;
+        textJoin.updateShape_();
+        textJoin.initSvg();
+        textJoin.render();
+        const text = this.workspace.newBlock('text');
+        text.initSvg();
+        text.render();
+
+        Blockly.getFocusManager().focusNode(text);
+        startMove(this.workspace);
+        moveRight(this.workspace); // First labeled input
+
+        this.moveAndAssert(
+          moveRight,
+          [
+            'moving',
+            'inside',
+            this.getBlockLabel(textJoin),
+            'input 2',
+          ],
+          [this.getBlockLabel(text)],
+        );
+        this.moveAndAssert(
+          moveRight,
+          [
+            'moving',
+            'inside',
+            this.getBlockLabel(textJoin),
+            'input 3',
+          ],
+          [this.getBlockLabel(text)],
+        );
+
+        cancelMove(this.workspace);
       });
     });
   });

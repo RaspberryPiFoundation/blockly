@@ -2012,4 +2012,25 @@ export class BlockSvg
   getAriaLabel(verbosity: aria.Verbosity) {
     return computeAriaLabel(this, verbosity);
   }
+
+  /**
+   * Count the number of blocks in this stack (connected by next connections)
+   * and return a label to describe it. Uses the standard label if there is only one block.
+   *
+   * @internal
+   */
+  getStackBlocksCountLabel(): string {
+    let count = 1;
+    let block = this.getNextBlock();
+    while (block) {
+      count++;
+      block = block.getNextBlock();
+    }
+    if (count <= 1) {
+      return this.getAriaLabel(aria.Verbosity.TERSE);
+    }
+
+    const labelTemplate = Msg['BLOCK_LABEL_STACK_BLOCKS'];
+    return labelTemplate.replace('%1', count.toString());
+  }
 }

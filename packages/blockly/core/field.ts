@@ -323,31 +323,27 @@ export abstract class Field<T = any>
    * Gets an ARIA-friendly label representation of this field's value.
    *
    * Note that implementations should generally always override this value to
-   * ensure a non-null value is returned since the default implementation relies
-   * on 'getValue' which may return null, and a null return value for this
+   * ensure a non-null value is returned. The default implementation relies on
+   * 'getText' which may return an empty string. A null return value from this
    * function will prompt ARIA label generation to skip the field's value
-   * entirely when there may be a better contextual placeholder to use, instead,
-   * specific to the field.
+   * entirely when there may be a better contextual placeholder to use isstead.
    *
-   * For example, a text input field may have a value of null when empty. To
-   * avoid hiding this field from screen reader, implementations should ensure
-   * that if the value is null, this function would return an appropriate,
-   * localized value such as "empty text".
+   * For example, to avoid hiding an empty text input field from screen reader,
+   * implementations should ensure that if the text is an empty string, this
+   * function would return an appropriate, localized value such as "empty text".
    *
    * Implementations are responsible for, and encouraged to, return a localized
    * version of the ARIA representation of the field's value.
    *
-   * @returns An ARIA representation of the field's value, or null if no value
-   *     is currently defined or known for the field.
+   * @returns An ARIA representation of the field's text, or null if no text is
+   *     currently defined or known for the field.
    */
   getAriaValue(): string | null {
-    const value = this.getValue();
-
-    if (value === null || value === undefined) {
+    const fieldText = this.getText();
+    if (fieldText === 'null' || fieldText === '') {
       return null;
     }
-
-    return String(value);
+    return this.getText();
   }
 
   /**

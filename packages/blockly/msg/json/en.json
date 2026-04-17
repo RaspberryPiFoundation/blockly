@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-04-09 14:28:47.213464",
+		"lastupdated": "2026-04-17 10:50:25.909642",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -438,5 +438,14 @@
 	"BLOCK_LABEL_HAS_INPUTS": "has inputs",
 	"BLOCK_LABEL_STATEMENT": "statement",
 	"BLOCK_LABEL_CONTAINER": "container",
-	"BLOCK_LABEL_VALUE": "value"
+	"BLOCK_LABEL_VALUE": "value",
+	"BLOCK_LABEL_STACK_BLOCKS": "%1 stack blocks",
+	"INPUT_LABEL_INDEX": "input %1",
+	"ANNOUNCE_MOVE_WORKSPACE": "moving %1 on workspace",
+	"ANNOUNCE_MOVE_BEFORE": "moving %1 before %3",
+	"ANNOUNCE_MOVE_AFTER": "moving %1 after %3",
+	"ANNOUNCE_MOVE_INSIDE": "moving %1 inside %3 %4",
+	"ANNOUNCE_MOVE_AROUND": "moving %1 %2 around %3",
+	"ANNOUNCE_MOVE_TO": "moving %1 %2 to %3 %4",
+	"ANNOUNCE_MOVE_CANCELED": "Canceled movement"
 }

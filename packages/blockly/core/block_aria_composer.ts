@@ -5,6 +5,7 @@
  */
 
 import type {BlockSvg} from './block_svg.js';
+import {RenderedConnection} from './blockly.js';
 import {ConnectionType} from './connection_type.js';
 import type {Input} from './inputs/input.js';
 import {inputTypes} from './inputs/input_types.js';
@@ -14,6 +15,18 @@ import {
 } from './interfaces/i_selectable_toolbox_item.js';
 import {Msg} from './msg.js';
 import {Role, setRole, setState, State, Verbosity} from './utils/aria.js';
+
+/**
+ * Prepositions to use when describing the relationship between two blocks based
+ * on their connection types.
+ */
+export enum ConnectionPreposition {
+  BEFORE,
+  AFTER,
+  AROUND,
+  INSIDE,
+  UNKNOWN,
+}
 
 /**
  * Returns an ARIA representation of the specified block.
@@ -45,7 +58,7 @@ export function computeAriaLabel(
   verbosity = Verbosity.STANDARD,
 ) {
   return [
-    getBeginStackLabel(block),
+    verbosity >= Verbosity.STANDARD && getBeginStackLabel(block),
     getParentInputLabel(block),
     ...getInputLabels(block),
     verbosity === Verbosity.LOQUACIOUS && getParentToolboxCategoryLabel(block),
@@ -129,6 +142,7 @@ function getParentInputLabel(block: BlockSvg) {
   )?.targetConnection?.getParentInput();
   const parentBlock = parentInput?.getSourceBlock();
 
+  if (parentBlock?.isInsertionMarker()) return undefined;
   if (!parentBlock?.statementInputCount) return undefined;
 
   const firstStatementInput = parentBlock.inputList.find(
@@ -172,21 +186,58 @@ function getBeginStackLabel(block: BlockSvg) {
  * @param block The block to retrieve a list of field/input labels for.
  * @returns A list of field/input labels for the given block.
  */
-function getInputLabels(block: BlockSvg): string[] {
+export function getInputLabels(block: BlockSvg): string[] {
   return block.inputList
     .filter((input) => input.isVisible())
-    .flatMap((input) => {
-      const labels = computeFieldRowLabel(input, false);
+    .map((input) => input.getLabel());
+}
 
-      if (input.connection?.type === ConnectionType.INPUT_VALUE) {
-        const childBlock = input.connection.targetBlock();
-        if (childBlock) {
-          labels.push(getInputLabels(childBlock as BlockSvg).join(' '));
-        }
-      }
+/**
+ * Returns a subset of accessibility labels for fields and inputs on a block,
+ * ending at the given input.
+ *
+ * The returned labels correspond only to the contiguous sequence of inputs of
+ * the same type as the provided input, starting immediately after the previous
+ * input of that type (if any) and including the provided input itself.
+ * Each entry in the returned array corresponds to one of: (a) a label for a
+ * continuous run of non-interactable fields, (b) a label for an editable field,
+ * (c) a label for an input. When an input contains nested blocks/fields/inputs,
+ * their contents are returned as a single item in the array per top-level
+ * input.
+ *
+ * @internal
+ * @param block The block to retrieve a list of field/input labels for.
+ * @param input The input that defines the end of the subset.
+ * @returns A list of field/input labels for the given block.
+ */
+export function getInputLabelsSubset(block: BlockSvg, input: Input): string[] {
+  const inputIndex = block.inputList.indexOf(input);
+  if (inputIndex === -1) {
+    throw new Error('Input not found on block.');
+  }
 
-      return labels;
-    });
+  const targetType = input.type;
+
+  // Find the last index before inputIndex with the same type
+  let startIndex = 0;
+  for (let i = inputIndex - 1; i >= 0; i--) {
+    if (block.inputList[i].type === targetType) {
+      startIndex = i + 1;
+      break;
+    }
+  }
+
+  return block.inputList
+    .slice(startIndex, inputIndex + 1)
+    .filter((input) => input.isVisible())
+    .map(
+      (input) =>
+        input.getLabel() ||
+        Msg['INPUT_LABEL_INDEX'].replace(
+          '%1',
+          (input.getIndex() + 1).toString(),
+        ),
+    );
 }
 
 /**
@@ -251,6 +302,122 @@ function getParentToolboxCategoryLabel(block: BlockSvg) {
 }
 
 /**
+ * Returns a translated string describing an in-progress move of a block to a new
+ * connection, suitable for announcement on the ARIA live region. The returned string
+ * will be assembled based on the types of the local and neighbour connections and
+ * the presence of any readable fields on the block's inputs. If multiple potential
+ * candidate connections are present, additional context will be included in the
+ * returned string to help disambiguate between them.
+ *
+ * @param local The moving side of the candidate connection pair
+ * @param neighbour The target side of the candidate connection pair
+ * @param disambiguationPolicy A function that determines whether it's useful to
+ *     include parent input labels for disambiguation.
+ * @param isMoveStart Whether this announcement is for the start of a move. If false,
+ *     skip announcing the block label since it should have already been announced.
+ */
+export function computeMoveLabel(
+  local: RenderedConnection,
+  neighbour: RenderedConnection,
+  disambiguationPolicy: (forLocal: boolean) => boolean,
+  isMoveStart = false,
+): string {
+  const preposition = getConnectionPreposition(local, neighbour);
+  const neighbourBlock = neighbour.getSourceBlock() as BlockSvg;
+  const neighbourBlockLabel = neighbourBlock.getAriaLabel(Verbosity.TERSE);
+  const blockLabel = isMoveStart
+    ? local.getSourceBlock().getStackBlocksCountLabel()
+    : '';
+
+  let announcementTemplate;
+  // Message strings take a format like 'moving %1 %2 to %3 %4' where:
+  // "to" is replaced with a preposition based on the type of the connection candidate
+  // (e.g. "before", "after", "inside", "around", etc), and the placeholders are replaced with:
+  // %1 = optional label for the block being moved
+  // %2 = optional label for the local connection
+  // %3 = label for the neighbour block
+  // %4 = optional label for the neighbour connection
+  switch (preposition) {
+    case ConnectionPreposition.BEFORE:
+      announcementTemplate = Msg['ANNOUNCE_MOVE_BEFORE'];
+      break;
+    case ConnectionPreposition.AFTER:
+      announcementTemplate = Msg['ANNOUNCE_MOVE_AFTER'];
+      break;
+    case ConnectionPreposition.INSIDE:
+      announcementTemplate = Msg['ANNOUNCE_MOVE_INSIDE'];
+      break;
+    case ConnectionPreposition.AROUND:
+      announcementTemplate = Msg['ANNOUNCE_MOVE_AROUND'];
+      break;
+    case ConnectionPreposition.UNKNOWN:
+      announcementTemplate = Msg['ANNOUNCE_MOVE_UNKNOWN'];
+  }
+
+  // If multiple compatible candidate connections exist for either/both pairs of the
+  // current connection candidate, increase the verbosity of the announcement to help
+  // disambiguate them.
+  const requiresDisambiguation = [
+    ConnectionPreposition.INSIDE,
+    ConnectionPreposition.AROUND,
+  ].includes(preposition);
+  const describeLocal = requiresDisambiguation && disambiguationPolicy(true);
+  const describeNeighbour =
+    requiresDisambiguation && disambiguationPolicy(false);
+
+  const localInput = local.getParentInput();
+  const neighbourInput = neighbour.getParentInput();
+
+  const localConnLabel =
+    (describeLocal &&
+      localInput &&
+      getInputLabelsSubset(local.getSourceBlock(), localInput).join(', ')) ||
+    '';
+  const neighbourConnLabel =
+    (describeNeighbour &&
+      neighbourInput &&
+      getInputLabelsSubset(neighbourBlock, neighbourInput).join(', ')) ||
+    '';
+
+  return announcementTemplate
+    .replace('%1', `[${blockLabel}]`)
+    .replace('%2', `[${localConnLabel}]`)
+    .replace('%3', `[${neighbourBlockLabel}]`)
+    .replace('%4', `[${neighbourConnLabel}]`);
+}
+
+/**
+ * Returns the appropriate preposition to use in the move announcement based on the
+ * relationship between the local and neighbour connections.
+ */
+function getConnectionPreposition(
+  local: RenderedConnection,
+  neighbour: RenderedConnection,
+): ConnectionPreposition {
+  switch (local.type) {
+    case ConnectionType.OUTPUT_VALUE:
+      return ConnectionPreposition.INSIDE;
+    case ConnectionType.INPUT_VALUE:
+      return ConnectionPreposition.AROUND;
+    case ConnectionType.NEXT_STATEMENT:
+      if (local === local.getSourceBlock().nextConnection) {
+        return ConnectionPreposition.BEFORE;
+      } else {
+        return ConnectionPreposition.AROUND;
+      }
+    case ConnectionType.PREVIOUS_STATEMENT:
+      if (neighbour === neighbour.getSourceBlock().nextConnection) {
+        return ConnectionPreposition.AFTER;
+      } else {
+        return ConnectionPreposition.INSIDE;
+      }
+  }
+  // Not normally reachable since we should always have a connection candidate
+  // with valid connection types. Satisfies the return type.
+  return ConnectionPreposition.UNKNOWN;
+}
+
+/**
  * Returns a label indicating that the block is disabled.
  *
  * @internal
@@ -258,7 +425,7 @@ function getParentToolboxCategoryLabel(block: BlockSvg) {
  * @returns A label indicating that the block is disabled (if it is), otherwise
  *     undefined.
  */
-export function getDisabledLabel(block: BlockSvg) {
+function getDisabledLabel(block: BlockSvg) {
   return block.isEnabled() ? undefined : Msg['BLOCK_LABEL_DISABLED'];
 }
 
