@@ -56,7 +56,7 @@ export class Navigator {
   ];
 
   /** Whether or not navigation loops around when reaching the end. */
-  protected navigationLoops = false;
+  protected navigationLoops = true;
 
   /**
    * Adds a navigation ruleset to this Navigator.
