@@ -760,7 +760,7 @@ function positionInternal(
   div.style.top = initialY + 'px';
 
   // Show the div.
-  div.style.display = 'block';
+  div.style.visibility = 'visible';
   div.style.opacity = '1';
   // Add final translate, animated through `transition`.
   // Coordinates are relative to (initialX, initialY),

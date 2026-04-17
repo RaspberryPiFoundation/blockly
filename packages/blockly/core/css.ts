@@ -123,7 +123,7 @@ const content = `
   left: 0;
   top: 0;
   z-index: 1000;
-  display: none;
+  visibility: hidden;
   border: 1px solid;
   border-color: #dadce0;
   background-color: #fff;
