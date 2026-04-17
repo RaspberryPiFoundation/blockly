@@ -301,6 +301,7 @@ suite('Toolbox', function () {
     });
 
     test('Down arrow on last item should be a no-op', function () {
+      this.toolbox.getNavigator().setNavigationLoops(false);
       const items = this.toolbox.getToolboxItems();
       Blockly.getFocusManager().focusNode(items[6]);
       const oldIndex = items.indexOf(this.toolbox.getSelectedItem());
@@ -367,6 +368,7 @@ suite('Toolbox', function () {
     });
 
     test('Up arrow on first item should be a no-op', function () {
+      this.toolbox.getNavigator().setNavigationLoops(false);
       const items = this.toolbox.getToolboxItems();
       Blockly.getFocusManager().focusNode(items[0]);
       const oldIndex = items.indexOf(this.toolbox.getSelectedItem());

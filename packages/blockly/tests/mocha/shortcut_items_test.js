@@ -39,8 +39,10 @@ suite('Keyboard Shortcut Items', function () {
    */
   function setSelectedBlock(workspace) {
     const block = workspace.newBlock('stack_block');
+    block.initSvg();
+    block.render();
     Blockly.common.setSelected(block);
-    sinon.stub(Blockly.getFocusManager(), 'getFocusedNode').returns(block);
+    Blockly.getFocusManager().focusNode(block);
     return block;
   }
 
@@ -146,9 +148,6 @@ suite('Keyboard Shortcut Items', function () {
     });
     // Do not delete anything if a connection is focused.
     test('Not called when connection is focused', function () {
-      // Restore the stub behavior called during setup
-      Blockly.getFocusManager().getFocusedNode.restore();
-
       setSelectedConnection(this.workspace);
       const event = createKeyDownEvent(Blockly.utils.KeyCodes.DELETE);
       this.injectionDiv.dispatchEvent(event);
@@ -203,9 +202,6 @@ suite('Keyboard Shortcut Items', function () {
       sinon.assert.notCalled(this.hideChaffSpy);
     });
     test('Not called when connection is focused', function () {
-      // Restore the stub behavior called during setup
-      Blockly.getFocusManager().getFocusedNode.restore();
-
       setSelectedConnection(this.workspace);
       const event = createKeyDownEvent(Blockly.utils.KeyCodes.C, [
         Blockly.utils.KeyCodes.CTRL,
@@ -216,7 +212,6 @@ suite('Keyboard Shortcut Items', function () {
     });
     // Copy a comment.
     test('Workspace comment', function () {
-      Blockly.getFocusManager().getFocusedNode.restore();
       this.comment = setSelectedComment(this.workspace);
       this.copySpy = sinon.spy(this.comment, 'toCopyData');
 
@@ -279,9 +274,6 @@ suite('Keyboard Shortcut Items', function () {
       sinon.assert.notCalled(this.hideChaffSpy);
     });
     test('Not called when connection is focused', function () {
-      // Restore the stub behavior called during setup
-      Blockly.getFocusManager().getFocusedNode.restore();
-
       setSelectedConnection(this.workspace);
       const event = createKeyDownEvent(Blockly.utils.KeyCodes.C, [
         Blockly.utils.KeyCodes.CTRL,
@@ -294,7 +286,6 @@ suite('Keyboard Shortcut Items', function () {
 
     // Cut a comment.
     test('Workspace comment', function () {
-      Blockly.getFocusManager().getFocusedNode.restore();
       this.comment = setSelectedComment(this.workspace);
       this.copySpy = sinon.spy(this.comment, 'toCopyData');
       this.disposeSpy = sinon.spy(this.comment, 'dispose');
@@ -435,7 +426,7 @@ suite('Keyboard Shortcut Items', function () {
           contextMenuKeyEvent,
         );
       for (const option of menuOptions) {
-        assert.include(menu.getElement().innerText, option.text);
+        assert.include(menu.getElement().textContent, option.text);
       }
     });
 
@@ -451,7 +442,7 @@ suite('Keyboard Shortcut Items', function () {
           contextMenuKeyEvent,
         );
       for (const option of menuOptions) {
-        assert.include(menu.getElement().innerText, option.text);
+        assert.include(menu.getElement().textContent, option.text);
       }
     });
 
@@ -468,7 +459,7 @@ suite('Keyboard Shortcut Items', function () {
           contextMenuKeyEvent,
         );
       for (const option of menuOptions) {
-        assert.include(menu.getElement().innerText, option.text);
+        assert.include(menu.getElement().textContent, option.text);
       }
     });
 
@@ -888,6 +879,7 @@ suite('Keyboard Shortcut Items', function () {
     });
 
     test('First stack navigating back is a no-op', function () {
+      this.workspace.getNavigator().setNavigationLoops(false);
       Blockly.getFocusManager().focusNode(this.block1);
       this.injectionDiv.dispatchEvent(keyPrevStack());
       assert.strictEqual(
@@ -896,12 +888,33 @@ suite('Keyboard Shortcut Items', function () {
       );
     });
 
+    test('First stack navigating back loops', function () {
+      this.workspace.getNavigator().setNavigationLoops(true);
+      Blockly.getFocusManager().focusNode(this.block1);
+      this.injectionDiv.dispatchEvent(keyPrevStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.block3,
+      );
+    });
+
     test('Last stack navigating forward is a no-op', function () {
+      this.workspace.getNavigator().setNavigationLoops(false);
       Blockly.getFocusManager().focusNode(this.block3);
       this.injectionDiv.dispatchEvent(keyNextStack());
       assert.strictEqual(
         Blockly.getFocusManager().getFocusedNode(),
         this.block3,
+      );
+    });
+
+    test('Last stack navigating forward loops', function () {
+      this.workspace.getNavigator().setNavigationLoops(true);
+      Blockly.getFocusManager().focusNode(this.block3);
+      this.injectionDiv.dispatchEvent(keyNextStack());
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.block1,
       );
     });
 
@@ -1096,9 +1109,12 @@ suite('Keyboard Shortcut Items', function () {
         .getFirstChild(this.workspace.getFlyout().getWorkspace());
       assert.instanceOf(block, Blockly.BlockSvg);
       Blockly.getFocusManager().focusNode(block);
+      first.moveTo(new Blockly.utils.Coordinate(500, 500));
 
       const event = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
       this.workspace.getInjectionDiv().dispatchEvent(event);
+      const event2 = createKeyDownEvent(Blockly.utils.KeyCodes.UP);
+      this.workspace.getInjectionDiv().dispatchEvent(event2);
 
       const movingBlock = Blockly.getFocusManager().getFocusedNode();
       assert.notEqual(block, movingBlock);
