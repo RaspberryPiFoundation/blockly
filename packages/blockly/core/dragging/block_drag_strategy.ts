@@ -117,7 +117,7 @@ export class BlockDragStrategy implements IDragStrategy {
       newBlock.workspace,
       screenCoordinate,
     );
-    newBlock.moveTo(workspaceCoordinates);
+    newBlock.moveDuringDrag(workspaceCoordinates);
   }
 
   /**
@@ -743,7 +743,7 @@ export class BlockDragStrategy implements IDragStrategy {
           }
       }
     } else {
-      this.block.moveTo(this.startLoc!, ['drag']);
+      this.block.moveDuringDrag(this.startLoc!);
       this.workspace
         .getLayerManager()
         ?.moveOffDragLayer(this.block, layers.BLOCK);
