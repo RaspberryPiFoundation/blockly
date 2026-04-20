@@ -455,7 +455,10 @@ export class BlockDragStrategy implements IDragStrategy {
       // No connection was available or adequately close to the dragged block;
       // suggest using unconstrained mode to arbitrarily position the block if
       // we're in keyboard-driven constrained mode.
-      if (this.moveMode === MoveMode.CONSTRAINED) {
+      if (
+        this.moveMode === MoveMode.CONSTRAINED &&
+        !this.allConnectionPairs.length
+      ) {
         showUnconstrainedMoveHint(this.workspace);
         this.workspace.getAudioManager().playErrorBeep();
       }
