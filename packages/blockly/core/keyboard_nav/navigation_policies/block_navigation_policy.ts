@@ -6,6 +6,7 @@
 
 import {BlockSvg} from '../../block_svg.js';
 import type {IFocusableNode} from '../../interfaces/i_focusable_node.js';
+import {hasBubble} from '../../interfaces/i_has_bubble.js';
 import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
 import {RenderedConnection} from '../../rendered_connection.js';
 
@@ -121,8 +122,20 @@ function getBlockNavigationCandidates(block: BlockSvg): IFocusableNode[] {
   // Collapsed blocks have no navigable children.
   if (block.isCollapsed()) return [];
 
-  // Icons are navigable.
-  const candidates: IFocusableNode[] = block.getIcons();
+  const candidates: IFocusableNode[] = [];
+
+  // Icons and open bubbles are navigable.
+  for (const icon of block.getIcons()) {
+    candidates.push(icon);
+    let bubble;
+    if (
+      hasBubble(icon) &&
+      icon.bubbleIsVisible() &&
+      (bubble = icon.getBubble())
+    ) {
+      candidates.push(bubble);
+    }
+  }
 
   for (const input of block.inputList) {
     // Invisible inputs are not valid navigation candidates.

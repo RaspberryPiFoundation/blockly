@@ -644,7 +644,7 @@ input[type=number] {
 /* The workspace itself is the active node. */
 .blocklyKeyboardNavigation
   .blocklyBubble.blocklyActiveFocus
-  .blocklyDraggable {
+  .blocklyEmboss .blocklyDraggable {
   stroke: var(--blockly-active-node-color);
   stroke-width: var(--blockly-selection-width);
 }

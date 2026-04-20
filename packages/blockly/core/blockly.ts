@@ -438,8 +438,8 @@ Names.prototype.populateProcedures = function (
 // clang-format on
 
 export * from './interfaces/i_navigation_policy.js';
-export * from './keyboard_nav/navigation_policies/block_comment_navigation_policy.js';
 export * from './keyboard_nav/navigation_policies/block_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/bubble_navigation_policy.js';
 export * from './keyboard_nav/navigation_policies/comment_bar_button_navigation_policy.js';
 export * from './keyboard_nav/navigation_policies/comment_editor_navigation_policy.js';
 export * from './keyboard_nav/navigation_policies/connection_navigation_policy.js';

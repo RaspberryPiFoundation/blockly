@@ -7,6 +7,8 @@
 import type {BlocklyOptions} from '../blockly_options.js';
 import {Abstract as AbstractEvent} from '../events/events_abstract.js';
 import {getFocusManager} from '../focus_manager.js';
+import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
+import type {IHasBubble} from '../interfaces/i_has_bubble.js';
 import {KeyboardMover} from '../keyboard_nav/keyboard_mover.js';
 import {Options} from '../options.js';
 import {Coordinate} from '../utils/coordinate.js';
@@ -52,8 +54,9 @@ export class MiniWorkspaceBubble extends Bubble {
     public readonly workspace: WorkspaceSvg,
     protected anchor: Coordinate,
     protected ownerRect?: Rect,
+    protected owner?: IHasBubble & IFocusableNode,
   ) {
-    super(workspace, anchor, ownerRect);
+    super(workspace, anchor, ownerRect, undefined, owner);
     const options = new Options(workspaceOptions);
     this.validateWorkspaceOptions(options);
 

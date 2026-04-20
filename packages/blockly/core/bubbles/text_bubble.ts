@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
+import type {IHasBubble} from '../interfaces/i_has_bubble.js';
 import {Coordinate} from '../utils/coordinate.js';
 import * as dom from '../utils/dom.js';
 import {Rect} from '../utils/rect.js';
@@ -23,8 +25,9 @@ export class TextBubble extends Bubble {
     public readonly workspace: WorkspaceSvg,
     protected anchor: Coordinate,
     protected ownerRect?: Rect,
+    protected owner?: IHasBubble & IFocusableNode,
   ) {
-    super(workspace, anchor, ownerRect);
+    super(workspace, anchor, ownerRect, undefined, owner);
     this.paragraph = this.stringToSvg(text, this.contentContainer);
     this.updateBubbleSize();
     dom.addClass(this.svgRoot, 'blocklyTextBubble');

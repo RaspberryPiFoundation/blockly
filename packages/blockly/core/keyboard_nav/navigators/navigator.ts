@@ -12,8 +12,8 @@ import {Icon} from '../../icons/icon.js';
 import type {IFocusableNode} from '../../interfaces/i_focusable_node.js';
 import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
 import {RenderedConnection} from '../../rendered_connection.js';
-import {BlockCommentNavigationPolicy} from '../navigation_policies/block_comment_navigation_policy.js';
 import {BlockNavigationPolicy} from '../navigation_policies/block_navigation_policy.js';
+import {BubbleNavigationPolicy} from '../navigation_policies/bubble_navigation_policy.js';
 import {CommentBarButtonNavigationPolicy} from '../navigation_policies/comment_bar_button_navigation_policy.js';
 import {CommentEditorNavigationPolicy} from '../navigation_policies/comment_editor_navigation_policy.js';
 import {ConnectionNavigationPolicy} from '../navigation_policies/connection_navigation_policy.js';
@@ -51,7 +51,7 @@ export class Navigator {
     new IconNavigationPolicy(),
     new WorkspaceCommentNavigationPolicy(),
     new CommentBarButtonNavigationPolicy(),
-    new BlockCommentNavigationPolicy(),
+    new BubbleNavigationPolicy(),
     new CommentEditorNavigationPolicy(),
   ];
 

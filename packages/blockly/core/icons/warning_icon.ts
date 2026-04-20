@@ -182,6 +182,7 @@ export class WarningIcon extends Icon implements IHasBubble {
         this.sourceBlock.workspace,
         this.getAnchorLocation(),
         this.getBubbleOwnerRect(),
+        this,
       );
       this.applyColour();
     } else {
