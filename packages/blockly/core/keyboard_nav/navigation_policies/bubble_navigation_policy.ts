@@ -18,8 +18,8 @@ export class BubbleNavigationPolicy implements INavigationPolicy<Bubble> {
   /**
    * Returns the first child of the given bubble.
    *
-   * @param current The bubble to return the first child of.
-   * @returns The text editor of the given block comment bubble.
+   * @param _current The bubble to return the first child of.
+   * @returns Null.
    */
   getFirstChild(_current: Bubble): IFocusableNode | null {
     return null;
@@ -38,8 +38,8 @@ export class BubbleNavigationPolicy implements INavigationPolicy<Bubble> {
   /**
    * Returns the next peer node of the given bubble.
    *
-   * @param _current The bubble to find the following element of.
-   * @returns Null.
+   * @param current The bubble to find the following element of.
+   * @returns The next navigable item on the bubble's icon's parent block.
    */
   getNextSibling(current: Bubble): IFocusableNode | null {
     return navigateBlock(
@@ -52,8 +52,8 @@ export class BubbleNavigationPolicy implements INavigationPolicy<Bubble> {
   /**
    * Returns the previous peer node of the given bubble.
    *
-   * @param _current The bubble to find the preceding element of.
-   * @returns Null.
+   * @param current The bubble to find the preceding element of.
+   * @returns The previous navigable item on the bubble's icon's parent block.
    */
   getPreviousSibling(current: Bubble): IFocusableNode | null {
     return navigateBlock(
