@@ -28,6 +28,7 @@ import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
 import type {IKeyboardAccessible} from './interfaces/i_keyboard_accessible.js';
 import type {IRegistrable} from './interfaces/i_registrable.js';
 import {ISerializable} from './interfaces/i_serializable.js';
+import {Msg} from './msg.js';
 import type {ConstantProvider} from './renderers/common/constants.js';
 import type {KeyboardShortcut} from './shortcut_registry.js';
 import * as Tooltip from './tooltip.js';
@@ -316,7 +317,7 @@ export abstract class Field<T = any>
    *     unspecified.
    */
   getAriaTypeName(): string | null {
-    return this.ariaTypeName;
+    return this.ariaTypeName || null;
   }
 
   /**
@@ -339,11 +340,11 @@ export abstract class Field<T = any>
    *     currently defined or known for the field.
    */
   getAriaValue(): string | null {
-    const fieldText = this.getText();
-    if (fieldText === 'null' || fieldText === '') {
+    if (this.getValue() == null) {
       return null;
+    } else {
+      return this.getText();
     }
-    return this.getText();
   }
 
   /**
@@ -365,28 +366,24 @@ export abstract class Field<T = any>
    * checkboxes represent their checked/non-checked status (i.e. value) through
    * a separate ARIA property.
    *
-   * It's possible this returns an empty string if the field doesn't supply type
-   * or value information for certain cases (such as a null value). This can
-   * lead to the field being potentially COMPLETELY HIDDEN for screen reader
-   * navigation so it's crucial for implementations to ensure a non-empty value
-   * is returned here.
+   * It's not expected that this method, under normal operations, returns an empty
+   * string. If the field's value is empty then it will return a localized
+   * placeholder indicating that its value is empty.
    *
    * @param includeTypeInfo Whether to include the field's type information in
    *     the returned label, if available.
    */
   computeAriaLabel(includeTypeInfo: boolean = false): string {
     const ariaTypeName = includeTypeInfo ? this.getAriaTypeName() : null;
-    const ariaValue = this.getAriaValue();
-
-    if (!ariaTypeName && !ariaValue) {
-      return '';
+    let ariaValue = this.getAriaValue();
+    if (ariaValue === null || ariaValue === '') {
+      ariaValue = Msg['FIELD_LABEL_EMPTY'];
     }
 
-    if (ariaTypeName && ariaValue) {
+    if (ariaTypeName) {
       return `${ariaTypeName}: ${ariaValue}`;
     }
-
-    return ariaTypeName ?? ariaValue ?? '';
+    return ariaValue;
   }
 
   /**

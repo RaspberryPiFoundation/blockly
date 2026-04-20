@@ -1819,3 +1819,6 @@ Blockly.Msg.ANNOUNCE_MOVE_TO = 'moving %1 %2 to %3 %4';
 /** @type {string} */
 /// ARIA live region message announcing a block movement has been canceled.
 Blockly.Msg.ANNOUNCE_MOVE_CANCELED = 'Canceled movement';
+/** @type {string} */
+///  Label for an empty field, used by screen readers to identify fields that have no content.
+Blockly.Msg.FIELD_LABEL_EMPTY = 'empty';

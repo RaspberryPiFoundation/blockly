@@ -873,6 +873,11 @@ suite('Abstract Fields', function () {
         const field = new TestField(undefined);
         assert.isNull(field.getAriaValue());
       });
+
+      test('Returns empty string for empty text value', function () {
+        const field = new TestField('');
+        assert.equal(field.getAriaValue(), '');
+      });
     });
 
     suite('computeAriaLabel', function () {
@@ -891,14 +896,36 @@ suite('Abstract Fields', function () {
         assert.equal(field.computeAriaLabel(true), 'text: hello');
       });
 
-      test('Type only when value is null', function () {
+      test('Type and placeholder when value is null', function () {
         const field = new TestField(null, {ariaTypeName: 'text'});
-        assert.equal(field.computeAriaLabel(true), 'text');
+        assert.equal(
+          field.computeAriaLabel(true),
+          `text: ${Blockly.Msg['FIELD_LABEL_EMPTY']}`,
+        );
       });
 
-      test('Empty string when no type or value', function () {
+      test('Placeholder when when value is null and no type', function () {
         const field = new TestField(null);
-        assert.equal(field.computeAriaLabel(true), '');
+        assert.equal(
+          field.computeAriaLabel(true),
+          Blockly.Msg['FIELD_LABEL_EMPTY'],
+        );
+      });
+
+      test('Placeholder when value is empty string', function () {
+        const field = new TestField('');
+        assert.equal(
+          field.computeAriaLabel(true),
+          Blockly.Msg['FIELD_LABEL_EMPTY'],
+        );
+      });
+
+      test('Type and placeholder when value is empty string', function () {
+        const field = new TestField('', {ariaTypeName: 'text'});
+        assert.equal(
+          field.computeAriaLabel(true),
+          `text: ${Blockly.Msg['FIELD_LABEL_EMPTY']}`,
+        );
       });
 
       test('Handles missing type with includeTypeInfo=true', function () {
@@ -908,6 +935,20 @@ suite('Abstract Fields', function () {
     });
 
     suite('Subclass overrides', function () {
+      test('Override returning empty string still results in placeholder', function () {
+        class EmptyOverrideField extends TestField {
+          getAriaValue() {
+            return '';
+          }
+        }
+
+        const field = new EmptyOverrideField();
+        assert.equal(
+          field.computeAriaLabel(),
+          Blockly.Msg['FIELD_LABEL_EMPTY'],
+        );
+      });
+
       class CustomValueField extends TestField {
         getAriaValue() {
           return 'custom value';

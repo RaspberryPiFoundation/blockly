@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-04-17 10:50:25.909642",
+		"lastupdated": "2026-04-20 12:26:14.946401",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -447,5 +447,6 @@
 	"ANNOUNCE_MOVE_INSIDE": "moving %1 inside %3 %4",
 	"ANNOUNCE_MOVE_AROUND": "moving %1 %2 around %3",
 	"ANNOUNCE_MOVE_TO": "moving %1 %2 to %3 %4",
-	"ANNOUNCE_MOVE_CANCELED": "Canceled movement"
+	"ANNOUNCE_MOVE_CANCELED": "Canceled movement",
+	"FIELD_LABEL_EMPTY": "empty"
 }

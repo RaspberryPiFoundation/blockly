@@ -454,5 +454,6 @@
 	"ANNOUNCE_MOVE_INSIDE": "ARIA live region message announcing a block is being moved inside another block, optionally including connection-specific label for disambiguation.",
 	"ANNOUNCE_MOVE_AROUND": "ARIA live region message announcing a block is being moved around another block, optionally including connection-specific label for disambiguation. \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks \n* %2 - optional phrase describing the local connection label \n* %3 - the label of the target (neighbour) block \n\nExamples:\n* 'moving around print abc'\n* 'moving if, do else statement around print abc'",
 	"ANNOUNCE_MOVE_TO": "ARIA live region message announcing a block is being moved to a workspace location where the relationship is not specifically known. \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks \n* %2 - optional phrase describing the local connection label \n* %3 - the label of the target (neighbour) block or location \n* %4 - optional phrase describing the target connection label \n\nExamples:\n* 'moving to repeat 10, times, do'\n* 'moving 2 stack blocks else statement to repeat 10, times, do previous connection'",
-	"ANNOUNCE_MOVE_CANCELED": "ARIA live region message announcing a block movement has been canceled."
+	"ANNOUNCE_MOVE_CANCELED": "ARIA live region message announcing a block movement has been canceled.",
+	"FIELD_LABEL_EMPTY": "Label for an empty field, used by screen readers to identify fields that have no content."
 }

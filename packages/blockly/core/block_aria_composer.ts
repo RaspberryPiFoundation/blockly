@@ -21,11 +21,11 @@ import {Role, setRole, setState, State, Verbosity} from './utils/aria.js';
  * on their connection types.
  */
 export enum ConnectionPreposition {
+  UNKNOWN,
   BEFORE,
   AFTER,
   AROUND,
   INSIDE,
-  UNKNOWN,
 }
 
 /**
@@ -193,17 +193,15 @@ export function getInputLabels(block: BlockSvg): string[] {
 }
 
 /**
- * Returns a subset of accessibility labels for fields and inputs on a block,
- * ending at the given input.
+ * Returns a subset of labels for inputs on the given block, ending at the
+ * specified input.
  *
- * The returned labels correspond only to the contiguous sequence of inputs of
- * the same type as the provided input, starting immediately after the previous
- * input of that type (if any) and including the provided input itself.
- * Each entry in the returned array corresponds to one of: (a) a label for a
- * continuous run of non-interactable fields, (b) a label for an editable field,
- * (c) a label for an input. When an input contains nested blocks/fields/inputs,
- * their contents are returned as a single item in the array per top-level
- * input.
+ * The subset is determined based on the input type:
+ * - For non-statement inputs, only the label for the given input is returned.
+ * - For statement inputs, labels are collected from the start of the current
+ *   statement section up to and including the given input. A statement section
+ *   begins immediately after the previous statement input, or at the start of
+ *   the block if none exists.
  *
  * @internal
  * @param block The block to retrieve a list of field/input labels for.
@@ -213,19 +211,13 @@ export function getInputLabels(block: BlockSvg): string[] {
 export function getInputLabelsSubset(block: BlockSvg, input: Input): string[] {
   const inputIndex = block.inputList.indexOf(input);
   if (inputIndex === -1) {
-    throw new Error('Input not found on block.');
+    throw new Error(`Input with name "${input.name}" not found on block.`);
   }
 
-  const targetType = input.type;
-
-  // Find the last index before inputIndex with the same type
-  let startIndex = 0;
-  for (let i = inputIndex - 1; i >= 0; i--) {
-    if (block.inputList[i].type === targetType) {
-      startIndex = i + 1;
-      break;
-    }
-  }
+  const startIndex =
+    input.type === inputTypes.STATEMENT
+      ? findStartOfStatementSection(block.inputList, inputIndex)
+      : inputIndex;
 
   return block.inputList
     .slice(startIndex, inputIndex + 1)
@@ -238,6 +230,30 @@ export function getInputLabelsSubset(block: BlockSvg, input: Input): string[] {
           (input.getIndex() + 1).toString(),
         ),
     );
+}
+
+/**
+ * Finds the starting index of the current statement section within a list of inputs.
+ *
+ * A statement section is defined as the group of inputs that follow the most
+ * recent preceding statement input. If no prior statement input exists, the
+ * section starts at index 0.
+ *
+ * @param inputs The list of inputs to search.
+ * @param fromIndex The index of the current statement input.
+ * @returns The index of the first input in the current statement section.
+ */
+function findStartOfStatementSection(
+  inputs: Input[],
+  fromIndex: number,
+): number {
+  // Find the first input after the previous statement input.
+  for (let i = fromIndex - 1; i >= 0; i--) {
+    if (inputs[i].type === inputTypes.STATEMENT) {
+      return i + 1;
+    }
+  }
+  return 0;
 }
 
 /**
@@ -380,10 +396,10 @@ export function computeMoveLabel(
     '';
 
   return announcementTemplate
-    .replace('%1', `[${blockLabel}]`)
-    .replace('%2', `[${localConnLabel}]`)
-    .replace('%3', `[${neighbourBlockLabel}]`)
-    .replace('%4', `[${neighbourConnLabel}]`);
+    .replace('%1', blockLabel)
+    .replace('%2', localConnLabel)
+    .replace('%3', neighbourBlockLabel)
+    .replace('%4', neighbourConnLabel);
 }
 
 /**

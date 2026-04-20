@@ -943,6 +943,7 @@ suite('Keyboard-driven movement', function () {
 
     suite('Announcement tests', function () {
       setup(function () {
+        this.workspace.clear();
         this.liveRegion = document.getElementById('blocklyAriaAnnounce');
         this.moveAndAssert = (moveFn, incPhrases, exclPhrases = []) => {
           moveFn(this.workspace);
@@ -961,13 +962,12 @@ suite('Keyboard-driven movement', function () {
         };
         this.getBlockLabel = (block) =>
           block.getAriaLabel(Blockly.utils.aria.Verbosity.TERSE);
-        this.element.dispose();
         this.block1 = this.workspace.newBlock('draw_emoji');
         this.block1.initSvg();
         this.block1.render();
       });
 
-      test('announces simple block moving on workspace', async function () {
+      test('announces simple block moving on workspace', function () {
         Blockly.getFocusManager().focusNode(this.block1);
         this.moveAndAssert(
           startMove,
@@ -977,7 +977,7 @@ suite('Keyboard-driven movement', function () {
         cancelMove(this.workspace);
       });
 
-      test('announces stack count when moving stack', async function () {
+      test('announces stack count when moving stack', function () {
         const block2 = this.workspace.newBlock('draw_emoji');
         block2.setFieldValue('✨', 'emoji');
         block2.initSvg();
