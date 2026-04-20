@@ -211,7 +211,9 @@ export function getInputLabels(block: BlockSvg): string[] {
 export function getInputLabelsSubset(block: BlockSvg, input: Input): string[] {
   const inputIndex = block.inputList.indexOf(input);
   if (inputIndex === -1) {
-    throw new Error(`Input with name "${input.name}" not found on block.`);
+    throw new Error(
+      `Input with name "${input.name}" not found on block with id "${block.id}".`,
+    );
   }
 
   const startIndex =
