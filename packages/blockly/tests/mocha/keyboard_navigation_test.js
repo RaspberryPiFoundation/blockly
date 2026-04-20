@@ -5,7 +5,7 @@
  */
 
 import * as Blockly from '../../build/src/core/blockly.js';
-import {assert, config} from '../../node_modules/chai/index.js';
+import {assert} from '../../node_modules/chai/index.js';
 import {navigationTestBlocks} from './test_helpers/navigation_test_blocks.js';
 import {p5blocks} from './test_helpers/p5_blocks.js';
 import {
@@ -13,8 +13,6 @@ import {
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
 import {createKeyDownEvent} from './test_helpers/user_input.js';
-
-config.showDiff = false;
 
 /**
  * Dispatches a keydown event with the given keycode on the workspace injection
