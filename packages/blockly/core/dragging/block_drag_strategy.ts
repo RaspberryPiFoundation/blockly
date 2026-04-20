@@ -498,7 +498,9 @@ export class BlockDragStrategy implements IDragStrategy {
         case Direction.UP:
           destination = new Coordinate(
             bounds.getOrigin().x,
-            bounds.getOrigin().y - 20 - draggingBlock.getHeightWidth().height,
+            bounds.getOrigin().y -
+              this.BLOCK_CONNECTION_OFFSET * 2 -
+              draggingBlock.getHeightWidth().height,
           );
           break;
         case Direction.RIGHT:
@@ -506,7 +508,9 @@ export class BlockDragStrategy implements IDragStrategy {
         default:
           destination = new Coordinate(
             bounds.getOrigin().x,
-            bounds.getOrigin().y + bounds.getHeight() + 20,
+            bounds.getOrigin().y +
+              bounds.getHeight() +
+              this.BLOCK_CONNECTION_OFFSET * 2,
           );
           break;
       }
