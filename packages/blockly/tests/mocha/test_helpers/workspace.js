@@ -1295,7 +1295,7 @@ export function testAWorkspace() {
 
           this.workspace.undo();
           this.workspace.undo();
-          
+
           assert.isNull(this.variableMap.getVariableById('id1'));
           assert.isNull(this.variableMap.getVariableById('id2'));
           this.workspace.redo();
