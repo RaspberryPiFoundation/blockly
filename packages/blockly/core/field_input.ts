@@ -811,15 +811,26 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
     return text;
   }
 
-  /**
-   * Provide a default type if none is specified.
+ /**
+   * Gets an ARIA-friendly label representation of this field's type.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's type.
+   *
+   * @returns An ARIA representation of the field's type or a default if it is
+   *     unspecified.
    */
   override getAriaTypeName(): string | null {
     return this.ariaTypeName || Msg['ARIA_TYPE_FIELD_INPUT'];
   }
 
-  /**
-   * Text inputs should always expose a meaningful value, even when empty.
+ /**
+   * Gets an ARIA-friendly label representation of this field's value.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's value.
+   *
+   * @returns An ARIA representation of the field's text.
    */
   override getAriaValue(): string | null {
     return this.getText() || Msg['FIELD_LABEL_EMPTY_INPUT'];
