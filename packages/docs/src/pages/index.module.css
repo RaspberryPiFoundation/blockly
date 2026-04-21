@@ -1,0 +1,134 @@
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+:root {
+  --hero-description-color: #000000;
+  --get-started-button: #1967d2;
+}
+
+[data-theme='dark'] {
+  --hero-description-color: #e3e3e3;
+  --get-started-button: #25c2a0;
+}
+
+.heroBanner {
+  padding: 5rem 0 4rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.heroContent {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+  justify-content: space-between;
+}
+
+.heroText {
+  flex: 1;
+  text-align: left;
+}
+
+.developerDocsLabel {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: #e8eaed;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  vertical-align: middle;
+  text-transform: uppercase;
+  color: #3c4043;
+}
+
+.heroDescription {
+  font-size: 1rem;
+  color: var(--hero-description-color);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 600px;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.button {
+  border: 1px solid #4285f4;
+  background-color: #4285f4;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 0.5rem 1.25rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    background-color 0.2s cubic-bezier(0.55, 0.085, 0.68, 0.53),
+    border-color 0.2s cubic-bezier(0.55, 0.055, 0.675, 0.19),
+    color 0.2s cubic-bezier(0.55, 0.085, 0.68, 0.53),
+    transform 0.3s;
+}
+
+.button:hover {
+  border-color: #1a73e8;
+  background-color: #1a73e8;
+  transform: scale(1.05);
+}
+
+.heroVisual {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 400px;
+  min-width: 300px;
+}
+
+.blocklyGif {
+  max-width: 100%;
+  max-height: 250px;
+  width: auto;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 2rem;
+  }
+
+  .heroContent {
+    flex-direction: column;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .heroText {
+    text-align: center;
+  }
+
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+
+  .buttons {
+    justify-content: center;
+  }
+
+  .heroVisual {
+    max-width: 100%;
+    min-width: auto;
+  }
+
+  .blocklyGif {
+    max-width: 60%;
+    max-height: 200px;
+  }
+}

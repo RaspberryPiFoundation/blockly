@@ -1,0 +1,221 @@
+---
+description: Advanced methods for evaluating generated JavaScript code.
+title: Generate and run JavaScript
+image: images/blockly_banner.png
+---
+
+# Generate and run JavaScript
+
+Blockly applications often generate JavaScript as their output language,
+generally to run within a web page (possibly the same, or a embedded WebView).
+Like any generator, the first step is to include the JavaScript generator.
+
+```js
+import { javascriptGenerator } from 'blockly/javascript';
+```
+
+To generate JavaScript from the workspace, call:
+
+```js
+javascriptGenerator.addReservedWords('code');
+var code = javascriptGenerator.workspaceToCode(workspace);
+```
+
+The resulting code can be executed right in the destination web page:
+
+:::warning
+Executing JavaScript with `eval` is a [serious security
+risk](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval)
+and should be done only during prototyping. In a production application, use a
+sandboxed JavaScript interpreter such as [JS-interpreter](#js-interpreter).
+:::
+
+```js
+try {
+  eval(code);
+} catch (e) {
+  alert(e);
+}
+```
+
+Basically, the above snippet just generates the code and evals it. However,
+there are a couple of refinements. One refinement is that the eval is wrapped in
+a `try`/`catch` so that any runtime errors are visible, instead of failing
+quietly. Another refinement is that `code` is added to the list of reserved
+words so that if the user's code contains a variable of that name it will be
+automatically renamed instead of colliding. Any local variables should be
+reserved in this way.
+
+## Highlight Blocks
+
+Highlighting the currently executing block as the code runs helps users
+understand their program's behaviour. Highlighting may be done on a
+statement-by-statement level by setting `STATEMENT_PREFIX` prior to
+generating the JavaScript code:
+
+```js
+javascriptGenerator.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
+javascriptGenerator.addReservedWords('highlightBlock');
+```
+
+Define `highlightBlock` to mark the block on the workspace.
+
+```js
+function highlightBlock(id) {
+  workspace.highlightBlock(id);
+}
+```
+
+This results in the statement `highlightBlock('123');` being added to before
+every statement, where `123` is the serial number of the block to be
+highlighted.
+
+## Infinite Loops
+
+Although the resulting code is guaranteed to be syntactically correct at all
+times, it may contain infinite loops. Since solving the
+[Halting problem](https://en.wikipedia.org/wiki/Halting_problem) is beyond
+Blockly's scope (!) the best approach for dealing with these cases is to
+maintain a counter and decrement it every time an iteration is performed.
+To accomplish this, just set `javascriptGenerator.INFINITE_LOOP_TRAP` to a code
+snippet which will be inserted into every loop and every function. Here is an
+example:
+
+```js
+window.LoopTrap = 1000;
+javascriptGenerator.INFINITE_LOOP_TRAP =
+  'if(--window.LoopTrap == 0) throw "Infinite loop.";\n';
+var code = javascriptGenerator.workspaceToCode(workspace);
+```
+
+## Example
+
+Here is [a live
+demo](https://raspberrypifoundation.github.io/blockly-samples/examples/generator-demo/) of
+generating and executing JavaScript.
+
+## JS-Interpreter
+
+If you are serious about running the user's blocks properly, then the
+[JS-Interpreter project](https://github.com/NeilFraser/JS-Interpreter) is the way to go.
+This project is separate from Blockly, but was specifically written for Blockly.
+
+- Execute code at any speed.
+- Pause/resume/step-through execution.
+- Highlight blocks as they execute.
+- Completely isolated from browser's JavaScript.
+
+### Run the Interpreter
+
+First, download the JS-Interpreter from GitHub:
+
+- [Download zip file](https://github.com/NeilFraser/JS-Interpreter/zipball/master)
+- [Download tar file](https://github.com/NeilFraser/JS-Interpreter/tarball/master)
+- [View on GitHub](https://github.com/NeilFraser/JS-Interpreter)
+
+Then add it to your page:
+
+```html
+<script src="acorn_interpreter.js"></script>
+```
+
+The simplest method of calling it is to generate the JavaScript, create the
+interpreter, and run the code:
+
+```js
+var code = javascriptGenerator.workspaceToCode(workspace);
+var myInterpreter = new Interpreter(code);
+myInterpreter.run();
+```
+
+### Step the Interpreter
+
+In order to execute the code slower, or in a more controlled manner, replace the
+call to `run` with a loop that steps (in this case one step every 10ms):
+
+```js
+function nextStep() {
+  if (myInterpreter.step()) {
+    setTimeout(nextStep, 10);
+  }
+}
+nextStep();
+```
+
+Note that each step is not a line or a block, it is a semantic unit in
+JavaScript, which may be extremely fine-grained.
+
+### Add an API
+
+The JS-Interpreter is a sandbox that is completely isolated from the browser.
+Any blocks that perform actions with the outside world require an API added to
+the interpreter. For a full description, see the
+[JS-Interpreter documentation](https://neil.fraser.name/software/JS-Interpreter/docs.html).
+But to start with, here is the API needed to support the alert and prompt blocks:
+
+```js
+function initApi(interpreter, globalObject) {
+  // Add an API function for the alert() block.
+  var wrapper = function (text) {
+    return alert(arguments.length ? text : '');
+  };
+  interpreter.setProperty(
+    globalObject,
+    'alert',
+    interpreter.createNativeFunction(wrapper),
+  );
+
+  // Add an API function for the prompt() block.
+  wrapper = function (text) {
+    return prompt(text);
+  };
+  interpreter.setProperty(
+    globalObject,
+    'prompt',
+    interpreter.createNativeFunction(wrapper),
+  );
+}
+```
+
+Then modify your interpreter initialization to pass in the initApi function:
+
+```js
+var myInterpreter = new Interpreter(code, initApi);
+```
+
+The alert and prompt blocks are the only two blocks in the default set of blocks
+that require a custom API for the interpreter.
+
+### Connecting `highlightBlock()`
+
+When running in JS-Interpreter, `highlightBlock()` should be executed
+immediately, outside the sandbox, as the user steps through the program. To do
+this, create a wrapper function `highlightBlock()` to capture the function
+argument, and register it as a native function.
+
+```js
+function initApi(interpreter, globalObject) {
+  // Add an API function for highlighting blocks.
+  var wrapper = function (id) {
+    return workspace.highlightBlock(id);
+  };
+  interpreter.setProperty(
+    globalObject,
+    'highlightBlock',
+    interpreter.createNativeFunction(wrapper),
+  );
+}
+```
+
+More sophisticated applications might wish to repeatedly execute steps without
+pause until a highlight command is reached, then pause. This strategy simulates
+line-by-line execution. The example below uses this approach.
+
+### JS-Interpreter Example
+
+Here is [a live
+demo](https://raspberrypifoundation.github.io/blockly-samples/examples/interpreter-demo/step-execution.html)
+of interpreting JavaScript step by step. And [this
+demo](https://raspberrypifoundation.github.io/blockly-samples/examples/interpreter-demo/async-execution.html)
+includes a wait block, a good example to use for other asynchronous behavior
+(e.g., speech or audio, user input).

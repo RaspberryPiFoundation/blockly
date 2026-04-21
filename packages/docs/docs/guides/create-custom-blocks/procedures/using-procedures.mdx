@@ -1,0 +1,79 @@
+---
+description: How to use built-in procedure blocks in your application.
+title: Use built-in procedure blocks
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Use built-in procedure blocks
+
+## Using the plugin
+
+To use procedure blocks, we recommend using the
+[@blockly/block-shareable-procedures][shareable-procedures] plugin.
+For the difference between the plugin blocks and the built-in blocks see the
+[overview](/guides/create-custom-blocks/procedures/overview).
+
+### Installation
+
+Yarn:
+
+```shell
+yarn add @blockly/block-shareable-procedures
+```
+
+NPM:
+
+```shell
+npm install @blockly/block-shareable-procedures
+```
+
+### Usage
+
+```js
+import Blockly from 'blockly';
+import {blocks, unregisterProcedureBlocks} '@blockly/block-shareable-procedures';
+
+unregisterProcedureBlocks();
+Blockly.common.defineBlocks(blocks);
+```
+
+This will define procedure blocks that have the same names as the legacy
+built-in procedure blocks. So if you are loading JSON or XML that was saved
+with the old procedure blocks, they will continue to load properly.
+
+#### Adding them to the toolbox
+
+After you have defined your blocks (either the plugin ones, or the legacy
+built-in ones), you need to make them available to your users. This requires
+you to use a category style toolbox, because the procedure category is populated
+dynamically, which is not supported by the flyout toolbox.
+
+You can add the dynamic category to your toolbox like so:
+
+<Tabs groupId="group-1">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "kind": "categoryToolbox",
+    "contents": [
+      {
+        "kind": "category",
+        "name": "Functions",
+        "custom": "PROCEDURE"
+      }
+    ]
+  };
+  ```
+  </TabItem>
+  <TabItem value="xml" label="XML">
+  ```xml
+  <xml id="toolbox" style="display: none">
+    <category name="Functions" custom="PROCEDURE">
+  </xml>
+  ```
+  </TabItem>
+</Tabs>
+[shareable-procedures]: https://www.npmjs.com/package/@blockly/block-shareable-procedures

@@ -1,0 +1,324 @@
+---
+description: How to define a mutator.
+title: Mutators
+image: images/blockly_banner.png
+---
+
+# Mutators
+
+A mutator is a mixin that adds extra serialization (extra state that gets saved
+and loaded) to a block. For example, the built-in `controls_if` and
+`list_create_with` blocks need extra serialization so that they can save how
+many inputs they have. It may also add a UI so the user can change the block's
+shape.
+
+![Three mutations of a create list block: no inputs, three inputs, and five
+inputs.](/images/lists-mutated.png)
+
+![Two mutations of an if/do block: if-do and if-do-else-if-do-else.](/images/if-mutated.png)
+
+Note that changing the shape of your block _does not necessarily_ mean you need
+extra serialization. For example, the `math_number_property` block changes
+shape, but it does that based on a dropdown field, whose value already gets
+serialized. As such, it can just use a [field
+validator](/guides/create-custom-blocks/fields/validators), and doesn't
+need a mutator.
+
+![The `math_number_property` block with its dropdown set to `even`. It has a
+single value input.](/images/is-even.png) ![The `math_number_property`
+block with its dropdown set to `divisible by`. It has two value
+inputs.](/images/is-divisible-by.png)
+
+See the [serialization
+page](/guides/configure/web/serialization#when-to-save-extra-state) for
+more information about when you need a mutator and when you don't.
+
+Mutators also provide a built-in UI for users to change the shapes of blocks if
+you provide some optional methods.
+
+## Serialization hooks
+
+Mutators have two pairs of serialization hooks they work with. One pair of hooks
+works with the new JSON serialization system, and the other pair works with the
+old XML serialization system. You have to provide at least one of these pairs.
+
+### saveExtraState and loadExtraState
+
+`saveExtraState` and `loadExtraState` are serialization hooks that work with the
+new JSON serialization system. `saveExtraState` returns a JSON serializable
+value which represents the extra state of the block, and `loadExtraState`
+accepts that same JSON serializable value, and applies it to the block.
+
+```js
+// These are the serialization hooks for the lists_create_with block.
+saveExtraState: function() {
+  return {
+    'itemCount': this.itemCount_,
+  };
+},
+
+loadExtraState: function(state) {
+  this.itemCount_ = state['itemCount'];
+  // This is a helper function which adds or removes inputs from the block.
+  this.updateShape_();
+},
+```
+
+The resulting JSON will look like:
+
+```json
+{
+  "type": "lists_create_with",
+  "extraState": {
+    "itemCount": 3 // or whatever the count is
+  }
+}
+```
+
+#### No state
+
+If your block is in its default state when it is serialized, then your
+`saveExtraState` method can return `null` to indicate this. If your
+`saveExtraState` method returns `null` then no `extraState` property is added to
+the JSON. This keeps your save file size small.
+
+#### Full serialization and backing data
+
+`saveExtraState` also receives an optional `doFullSerialization` parameter. This
+is used by blocks that reference state serialized by a different
+[serializer][serializer] (like backing data models). The parameter signals that
+the referenced state won't be available when the block is deserialized, so the
+block should serialize all of the backing state itself. For example, this is
+true when an individual block is serialized, or when a block is copy-pasted.
+
+Two common use cases for this are:
+
+- When an individual block is loaded into a workspace where the backing data
+  model doesn't exist, it has enough information in its own state to
+  create a new data model.
+- When a block is copy-pasted, it always creates a new backing
+  data model instead of referencing an existing one.
+
+Some blocks that use this are the
+[@blockly/block-shareable-procedures][shareable-procedures] blocks. Normally
+they serialize a reference to a backing data model, which stores their state.
+But if the `doFullSerialization` parameter is true, then they serialize all of
+their state. The shareable procedure blocks use this to make sure that when they
+are copy-pasted they create a new backing data model, instead of referencing an
+existing model.
+
+### mutationToDom and domToMutation
+
+`mutationToDom` and `domToMutation` are serialization hooks that work with the
+old XML serialization system. Only use these hooks if you have to (e.g. you're
+working on an old code-base that hasn't migrated yet), otherwise use
+`saveExtraState` and `loadExtraState`.
+
+`mutationToDom` returns an XML node which represents the extra state of the
+block, and `domToMutation` accepts that same XML node and applies the state to
+the block.
+
+```js
+// These are the old XML serialization hooks for the lists_create_with block.
+mutationToDom: function() {
+  // You *must* create a <mutation></mutation> element.
+  // This element can have children.
+  var container = Blockly.utils.xml.createElement('mutation');
+  container.setAttribute('items', this.itemCount_);
+  return container;
+},
+
+domToMutation: function(xmlElement) {
+  this.itemCount_ = parseInt(xmlElement.getAttribute('items'), 10);
+  // This is a helper function which adds or removes inputs from the block.
+  this.updateShape_();
+},
+```
+
+The resulting XML will look like:
+
+```xml
+<block type="lists_create_with">
+  <mutation items="3"></mutation>
+</block>
+```
+
+If your `mutationToDom` function returns null, then no extra element will be
+added to the XML.
+
+## UI Hooks
+
+If you provide certain functions as part of your mutator, Blockly will add a
+default "mutator" UI to your block.
+
+![An if-do block with its mutator bubble open. This lets users add else-if and
+else clauses to the if-do block.](/images/mutator-annot.png)
+
+You don't have to use this UI if you want to add extra serialization. You could
+use a custom UI, like the [blocks-plus-minus
+plugin](https://github.com/RaspberryPiFoundation/blockly-samples/tree/main/plugins/block-plus-minus)
+provides, or you could use no UI at all!
+
+### compose and decompose
+
+The default UI relies on the `compose` and `decompose` functions.
+
+`decompose` "explodes" the block into smaller sub-blocks which can be moved
+around, added and deleted. This function should return a "top block" which is
+the main block in the mutator workspace that sub-blocks connect to.
+
+`compose` then interprets the configuration of the sub-blocks and uses them to
+modify the main block. This function should accept the "top block" which was
+returned by `decompose` as a parameter.
+
+Note that these functions get "mixed in" to the block being "mutated" so `this`
+can be used to refer to that block.
+
+```js
+// These are the decompose and compose functions for the lists_create_with block.
+decompose: function(workspace) {
+  // This is a special sub-block that only gets created in the mutator UI.
+  // It acts as our "top block"
+  var topBlock = workspace.newBlock('lists_create_with_container');
+  topBlock.initSvg();
+
+  // Then we add one sub-block for each item in the list.
+  var connection = topBlock.getInput('STACK').connection;
+  for (var i = 0; i < this.itemCount_; i++) {
+    var itemBlock = workspace.newBlock('lists_create_with_item');
+    itemBlock.initSvg();
+    connection.connect(itemBlock.previousConnection);
+    connection = itemBlock.nextConnection;
+  }
+
+  // And finally we have to return the top-block.
+  return topBlock;
+},
+
+// The container block is the top-block returned by decompose.
+compose: function(topBlock) {
+  // First we get the first sub-block (which represents an input on our main block).
+  var itemBlock = topBlock.getInputTargetBlock('STACK');
+
+  // Then we collect up all of the connections of on our main block that are
+  // referenced by our sub-blocks.
+  // This relates to the saveConnections hook (explained below).
+  var connections = [];
+  while (itemBlock && !itemBlock.isInsertionMarker()) {  // Ignore insertion markers!
+    connections.push(itemBlock.valueConnection_);
+    itemBlock = itemBlock.nextConnection &&
+        itemBlock.nextConnection.targetBlock();
+  }
+
+  // Then we disconnect any children where the sub-block associated with that
+  // child has been deleted/removed from the stack.
+  for (var i = 0; i < this.itemCount_; i++) {
+    var connection = this.getInput('ADD' + i).connection.targetConnection;
+    if (connection && connections.indexOf(connection) == -1) {
+      connection.disconnect();
+    }
+  }
+
+  // Then we update the shape of our block (removing or adding iputs as necessary).
+  // `this` refers to the main block.
+  this.itemCount_ = connections.length;
+  this.updateShape_();
+
+  // And finally we reconnect any child blocks.
+  for (var i = 0; i < this.itemCount_; i++) {
+    connections[i].reconnect(this, 'ADD' + i);
+  }
+},
+```
+
+### saveConnections
+
+Optionally, you can also define a `saveConnections` function which works with
+the default UI. This function gives you a chance to associate children of your
+main block (which exists on the main workspace) with sub-blocks that exist in
+your mutator workspace. You can then use this data to make sure your `compose`
+function properly re-connects the children of your main block when your
+sub-blocks are reorganized.
+
+`saveConnections` should accept the "top block" returned by your `decompose`
+function as a parameter. If the `saveConnections` function is defined, Blockly
+will call it before calling `compose`.
+
+```js
+saveConnections: function(topBlock) {
+  // First we get the first sub-block (which represents an input on our main block).
+  var itemBlock = topBlock.getInputTargetBlock('STACK');
+
+  // Then we go through and assign references to connections on our main block
+  // (input.connection.targetConnection) to properties on our sub blocks
+  // (itemBlock.valueConnection_).
+  var i = 0;
+  while (itemBlock) {
+    // `this` refers to the main block (which is being "mutated").
+    var input = this.getInput('ADD' + i);
+    // This is the important line of this function!
+    itemBlock.valueConnection_ = input && input.connection.targetConnection;
+    i++;
+    itemBlock = itemBlock.nextConnection &&
+        itemBlock.nextConnection.targetBlock();
+  }
+},
+```
+
+## Registering
+
+Mutators are just a special kind of mixin, so they also have to be
+registered before you can use them in your block type's [JSON
+definition](/guides/create-custom-blocks/define/json-and-js).
+
+```js
+// Function signature.
+Blockly.Extensions.registerMutator(name, mixinObj, opt_helperFn, opt_blockList);
+
+// Example call.
+Blockly.Extensions.registerMutator(
+  'controls_if_mutator',
+  {
+    /* mutator methods */
+  },
+  undefined,
+  ['controls_if_elseif', 'controls_if_else'],
+);
+```
+
+- `name`: A string to associate with the mutator so you can use it in JSON.
+- `mixinObj`: An object containing the various mutation methods. E.g.
+  `saveExtraState` and `loadExtraState`.
+- `opt_helperFn`: An optional [helper function](#helper-function) that will
+  run on the block after the mixin is mixed in.
+- `opt_blockList`: An optional array of block types (as strings) that will be
+  added to the flyout in the default mutator UI, if the UI methods are also
+  defined.
+
+Note that unlike extensions, each block type may only have one mutator.
+
+```js
+{
+  //...
+  "mutator": "controls_if_mutator"
+}
+```
+
+### Helper function
+
+Along with the mixin, a mutator may register a helper function. This function is
+run on each block of the given type after it is created and the `mixinObj` is
+added. It can be used to add additional triggers or effects to a mutation.
+
+For example, you could add a helper to your list-like block that sets the
+initial number of items:
+
+```js
+var helper = function () {
+  this.itemCount_ = 5;
+  this.updateShape();
+};
+```
+
+[shareable-procedures]: https://www.npmjs.com/package/@blockly/block-shareable-procedures
+[serializer]: /guides/configure/web/serialization#serializer-hooks

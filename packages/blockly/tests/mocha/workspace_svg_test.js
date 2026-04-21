@@ -16,6 +16,7 @@ import {
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
+import {dispatchPointerEvent} from './test_helpers/user_input.js';
 import {testAWorkspace} from './test_helpers/workspace.js';
 
 suite('WorkspaceSvg', function () {
@@ -112,6 +113,17 @@ suite('WorkspaceSvg', function () {
     inputConnection.connect(block.outputConnection);
     assert.equal(false, block.isDeadOrDying());
     assert.equal(true, shadowBlock.isDeadOrDying());
+  });
+
+  test('getGesture returns null when no gesture is in progress', function () {
+    const gesture = this.workspace.getGesture();
+    assert.isNull(gesture);
+  });
+
+  test('getGesture returns the current gesture when one is in progress', function () {
+    dispatchPointerEvent(this.workspace.getSvgGroup(), 'pointerdown');
+    const gesture = this.workspace.getGesture();
+    assert.isNotNull(gesture);
   });
 
   suite('updateToolbox', function () {

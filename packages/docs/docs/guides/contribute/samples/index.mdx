@@ -1,0 +1,63 @@
+---
+description: Learn how to contribute changes to Blockly Samples.
+title: Contribute to samples
+image: images/blockly_banner.png
+slug: /guides/contribute/samples/index
+---
+
+# Contribute to samples
+
+[Blockly samples](https://github.com/RaspberryPiFoundation/blockly-samples) contains extra
+content related to Blockly that isn't part of the core repository, including
+plugins and example code. For more details about each of these, see
+the [Repository
+Structure](/guides/contribute/samples/repository_structure) page.
+
+## Need to Know
+
+Here is a quick overview of facts about blockly-samples you need to know in
+order to create a PR.
+
+- The working branch is **main** and all PRs should be made against main.
+- **Run `npm install` at the root level of blockly-samples,** not at the
+  individual plugin level. Blockly-samples is a monorepo, meaning it contains
+  multiple packages in the same repository, and installing at the root level
+  is part of the workflow for managing the monorepo with Lerna.
+- Code must conform to either Google's [JavaScript Style Guide](https://google.github.io/styleguide/jsguide.html)
+  or [TypeScript Style
+  Guide](https://google.github.io/styleguide/tsguide.html) depending on the
+  language used.
+- Use [conventional commits](/guides/contribute/get-started/commits)
+  in your commit messages and pull request titles.
+- Any new code files must be prefixed with the Apache License v2.0:
+
+  ```js
+  /**
+   *   @license
+   *   Copyright <Current YYYY> Google LLC
+   *   SPDX-License-Identifier: Apache-2.0
+   */
+  ```
+
+## Make and Verify a Change
+
+1.  Run `npm install` at the root level of blockly-samples to install
+    dependencies.
+1.  Run `npm run start` in a plugin's directory to build and start up a server
+    running the plugin's test page. You can use this page to see the existing
+    behavior of a plugin, or if you're adding a new plugin you will need to make
+    this a useful test page so that others can see what your plugin does. See
+    the [playground](/guides/contribute/get-started/playground) page for
+    more information.
+1.  Make any necessary changes to the plugin's code.
+1.  If you've left the server running, your changes will load automatically.
+    Otherwise, restart the server and verify the plugin behaves as expected and
+    there are no errors or warnings in the console.
+1.  Run `npm run build` and ensure there are no build errors.
+1.  Write automated mocha tests in the `test/` directory.
+1.  Run `npm run test` to run the automated tests.
+1.  Run `npm run lint:fix` to fix lint errors. Address any remaining warnings or
+    errors.
+1.  Run `npm run format` to run the autoformatter.
+1.  If all tests pass, you are ready to open a PR against **main** with your
+    changes.

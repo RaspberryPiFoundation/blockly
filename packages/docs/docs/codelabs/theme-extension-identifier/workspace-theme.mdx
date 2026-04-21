@@ -1,0 +1,40 @@
+---
+slug: /codelabs/theme-extension-identifier/workspace-theme
+description: How to create a theme.
+---
+
+# Customizing your themes
+
+## 3. Workspace Theme
+
+In this section you will create a very basic halloween theme, then inject it to display in the workspace.
+
+### Themes
+
+Themes are a way to customize the look and feel of Blockly. Currently, we support customizing block colours, category colours and certain components through the Themes class.
+
+A theme can be created using the constructor or by using defineTheme. Using `defineTheme` makes it easy to extend a pre existing theme and set all values with a single object.
+
+Add the below code in `index.js` right before function start()
+
+```js
+Blockly.Themes.Halloween = Blockly.Theme.defineTheme('halloween', {
+  base: Blockly.Themes.Classic,
+});
+```
+
+And then add a line to inject this theme in function start() in `index.js`
+
+```js
+function start() {
+  // Create main workspace.
+  workspace = Blockly.inject('blocklyDiv', {
+    toolbox: toolboxCategories,
+    theme: Blockly.Themes.Halloween,
+  });
+}
+```
+
+:::note
+At this point, we have just created a new theme. But it does not have any customizations. We will do that next.
+:::

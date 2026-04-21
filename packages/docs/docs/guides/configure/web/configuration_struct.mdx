@@ -1,0 +1,80 @@
+---
+title: Create a workspace
+description: Simple configuration options that Blockly surfaces during injection.
+image: images/blockly_banner.png
+---
+
+# Create a workspace
+
+You can create a workspace and inject it into the DOM in a single call, or
+just create a workspace.
+
+## Injection
+
+You can create a Blockly workspace and inject it into the DOM with a call to
+`Blockly.inject(location, options)`. The first argument tells Blockly where to
+inject the workspace in the DOM. The second argument is an object containing
+configuration options.
+
+:::note
+The configuration options object has a type of `Blockly.BlocklyOptions`.
+The injection code uses it to create an instance of `Blockly.Options`. These
+two are different and should not be confused.
+:::
+
+For more information, see [Create a
+workspace](/guides/get-started/workspace-creation).
+
+## Direct creation
+
+You can create a workspace directly by calling `new Blockly.WorkspaceSvg(new
+Blockly.Options(options))`. When you make this call, be sure to pass your
+configuration options in a call to `new Blockly.Options(options)` -- the
+`WorkspaceSvg` constructor cannot accept your configuration options object
+directly.
+
+## Configuration options \{#the-options-dictionary\}
+
+The configuration object implements
+[`Blockly.BlocklyOptions`](/reference/blockly.blocklyoptions)
+and has the following options. Note that several of these options change their
+default value based on whether the provided toolbox has categories or not.
+
+| Name                  | Type                | Description                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| --------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `collapse`            | boolean             | Whether block context menus include an item to collapse or expand blocks. Defaults to `true` if the toolbox has categories, `false` otherwise.                                                                                                                                                                                                                                                                                   |
+| `comments`            | boolean             | Whether block context menus include an item to add or remove comments. Defaults to `true` if the toolbox has categories,`false` otherwise.                                                                                                                                                                                                                                                                                       |
+| `css`                 | boolean             | If false, don't inject CSS (providing CSS becomes the document's responsibility). Defaults to `true`.                                                                                                                                                                                                                                                                                                                            |
+| `disable`             | boolean             | Whether block context menus include an item to disable or enable blocks. Defaults to `true` if the toolbox has categories, `false` otherwise.                                                                                                                                                                                                                                                                                    |
+| `grid`                | object              | Configures a grid which blocks may snap to. See [Grid].                                                                                                                                                                                                                                                                                                                                                                          |
+| `horizontalLayout`    | boolean             | If `true` toolbox is horizontal, if `false` toolbox is vertical. Defaults to `false`.                                                                                                                                                                                                                                                                                                                                            |
+| `maxBlocks`           | number              | Maximum number of blocks that may be created. Useful for student exercises. Defaults to `Infinity`.                                                                                                                                                                                                                                                                                                                              |
+| `maxInstances`        | object              | Map from block types to maximum number of blocks of that type that may be created. Undeclared types default to `Infinity`.Example: `maxInstances\: {'controls_if'\: 3, 'math_number'\: 42}`                                                                                                                                                                                                                                      |
+| `maxTrashcanContents` | number              | Maximum number of deleted items that will appear in the trashcan flyout. `'0'` disables the feature. Defaults to `'32'`.                                                                                                                                                                                                                                                                                                         |
+| `media`               | string              | Path from page (or frame) to the Blockly media directory. Defaults to `'https\://blockly-demo.appspot.com/static/media/'`. See [Media folder][media].                                                                                                                                                                                                                                                                            |
+| `modalInputs`         | boolean             | If `true` show modal editors for text input fields and their subclasses when on mobile devices, and an inline editor on desktop. If `false` show an inline editor on both desktop and mobile. Defaults to `true`.                                                                                                                                                                                                                |
+| `move`                | object              | Configures behavior for how users can move around the workspace. See [Move].                                                                                                                                                                                                                                                                                                                                                     |
+| `oneBasedIndex`       | boolean             | If `true` list and string operations should index from `1`, if `false` index from `0`. Defaults to `true`.                                                                                                                                                                                                                                                                                                                       |
+| `plugins`             | object              | An object mapping registry type names to replacement classes or the registered names of replacement classes. See [Inject your replacement class][replacement].                                                                                                                                                                                                                                                                   |
+| `readOnly`            | boolean             | If `true`, prevent the user from editing. Suppresses the toolbox and trashcan. Defaults to `false`. See also [`setIsReadOnly`][setIsReadOnly] and [`isReadOnly`][isReadOnly].                                                                                                                                                                                                                                                    |
+| `renderer`            | string              | Determines the renderer used by blockly. Pre-packaged renderers include `'geras'` (the default), `'thrasos'`, and `'zelos'` (a Scratch-like renderer). For information about custom renderers, see [Create custom renderers][renderer].                                                                                                                                                                                          |
+| `rtl`                 | boolean             | If `true`, mirror the editor (for Arabic or Hebrew locales).See [RTL demo]. Defaults to `false`.                                                                                                                                                                                                                                                                                                                                 |
+| `scrollbars`          | object or boolean   | Sets whether the workspace has vertical or horizontal scrollbars. Takes an object where the `horizontal` property determines if horizontal scrolling is enabled and the `vertical` property determines if vertical scrolling is enabled. If a boolean is passed then it is equivalent to passing an object with both `horizontal` and `vertical` properties set as that value. Defaults to `true` if the toolbox has categories. |
+| `sounds`              | boolean             | If `false`, disables sounds. Defaults to `true`.                                                                                                                                                                                                                                                                                                                                                                                 |
+| `theme`               | Theme               | Defaults to classic theme if no theme is provided. See [Themes].                                                                                                                                                                                                                                                                                                                                                                 |
+| `toolbox`             | string, XML or JSON | Tree structure of categories and blocks available to the user. See [defining the toolbox] for more information.                                                                                                                                                                                                                                                                                                                  |
+| `toolboxPosition`     | string              | If `'start'` toolbox is on top (if horizontal) or left (if vertical and LTR) or right (if vertical and RTL). If `'end'` toolbox is on opposite side. Defaults to `'start'`.                                                                                                                                                                                                                                                      |
+| `trashcan`            | boolean             | Displays or hides the trashcan. Defaults to `true` if the toolbox has categories, `false` otherwise.                                                                                                                                                                                                                                                                                                                             |
+| `zoom`                | object              | Configures zooming behaviour. See [Zoom].                                                                                                                                                                                                                                                                                                                                                                                        |
+
+[Grid]: /guides/configure/web/grid
+[media]: /guides/configure/web/media
+[Move]: /guides/configure/web/move
+[setIsReadOnly]: /reference/blockly.workspace.setisreadonly
+[isReadOnly]: /reference/blockly.workspace.isreadonly
+[renderer]: /guides/create-custom-blocks/renderers/create-custom-renderers/basic-implementation
+[RTL demo]: https://raspberrypifoundation.github.io/blockly-samples/examples/rtl-demo/
+[Themes]: /guides/configure/web/appearance/themes
+[defining the toolbox]: /guides/configure/web/toolboxes/toolbox
+[Zoom]: /guides/configure/web/zoom
+[replacement]: /guides/configure/web/customization#injecting-subclasses

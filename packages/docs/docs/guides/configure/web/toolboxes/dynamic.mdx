@@ -1,0 +1,136 @@
+---
+description: How to create dynamic categories in a toolbox.
+title: Dynamic categories
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Dynamic categories
+
+Dynamic categories are categories that are dynamically repopulated based on a
+function each time they are opened.
+
+Blockly supports this by allowing you to associate a category with a function
+via a registered string key. The function should return a definition of a
+category's contents (including blocks, buttons, labels, etc). The contents can
+be specified as JSON or XML, although JSON is recommended.
+
+Also note that the function is provided the target workspace as a parameter, so
+the blocks in your dynamic category can be based on the state of the workspace.
+
+<Tabs groupId="code-format">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  // Returns an array of objects.
+  var coloursFlyoutCallback = function(workspace) {
+    // Returns an array of hex colours, e.g. ['#4286f4', '#ef0447']
+    var colourList = getPalette();
+    var blockList = [];
+    for (var i = 0; i < colourList.length; i++) {
+      blockList.push({
+        'kind': 'block',
+        'type': 'colour_picker',
+        'fields': {
+          'COLOUR': colourList[i]
+        }
+      });
+    }
+    return blockList;
+  };
+  
+  // Associates the function with the string 'COLOUR_PALETTE'
+  myWorkspace.registerToolboxCategoryCallback(
+      'COLOUR_PALETTE', coloursFlyoutCallback);
+  ```
+  </TabItem>
+  <TabItem value="xml" label="XML">
+  ```js
+  // Returns an array of XML nodes.
+  var coloursFlyoutCallback = function(workspace) {
+    // Returns an array of hex colours, e.g. ['#4286f4', '#ef0447']
+    var colourList = getPalette();
+    var blockList = [];
+    for (var i = 0; i < colourList.length; i++) {
+      var block = document.createElement('block');
+      block.setAttribute('type', 'colour_picker');
+      var field = document.createElement('field');
+      field.setAttribute('name', 'COLOUR');
+      field.innerText = colourList[i];
+      block.appendChild(field);
+      blockList.push(block);
+    }
+    return blockList;
+  };
+  
+  // Associates the function with the string 'COLOUR_PALETTE'
+  myWorkspace.registerToolboxCategoryCallback(
+      'COLOUR_PALETTE', coloursFlyoutCallback);
+  ```
+  </TabItem>
+</Tabs>
+After the dynamic category functions are associated with a string key (aka
+registered) you can assign this string key to the `custom` property of
+your category definition to make the category dynamic.
+
+<Tabs groupId="code-format">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "kind": "category",
+    "name": "Colours",
+    "custom": "COLOUR_PALETTE"
+  }
+  ```
+  </TabItem>
+  <TabItem value="xml" label="XML">
+  ```xml
+  <category name="Colours" custom="COLOUR_PALETTE"></category>
+  ```
+  </TabItem>
+</Tabs>
+## Built-in dynamic categories
+
+Blockly provides three built-in dynamic categories.
+
+- `'VARIABLE'` creates a category for [_untyped_ variables][untyped-variable].
+- `'VARIABLE_DYNAMIC'` creates a category for
+  [_typed_ variables][typed-variable]. It has buttons to create strings,
+  numbers, and colours.
+- `'PROCEDURE'` creates a category for function blocks.
+
+<Tabs groupId="code-format">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "kind": "category",
+    "name": "Variables",
+    "custom": "VARIABLE"
+  },
+  {
+    "kind": "category",
+    "name": "Variables",
+    "custom": "VARIABLE_DYNAMIC"
+  },
+  {
+    "kind": "category",
+    "name": "Functions",
+    "custom": "PROCEDURE"
+  }
+  ```
+  </TabItem>
+  <TabItem value="xml" label="XML">
+  ```xml
+  <category name="Variables" custom="VARIABLE"></category>
+  <category name="Variables" custom="VARIABLE_DYNAMIC"></category>
+  <category name="Functions" custom="PROCEDURE"></category>
+  ```
+  </TabItem>
+</Tabs>
+_Note: The word 'procedure' is used throughout the Blockly codebase, but the
+word 'function' has found to be more understandable by students.
+Sorry for the mismatch._
+
+[untyped-variable]: /guides/create-custom-blocks/variables#untyped-variable-blocks
+[typed-variable]: /guides/create-custom-blocks/variables#typed-variable-blocks

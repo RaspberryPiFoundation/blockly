@@ -1,0 +1,58 @@
+---
+description: Basic information about creating a toolbox, which allows users to access your blocks.
+title: Add a toolbox
+image: images/blockly_banner.png
+---
+
+# Add a toolbox
+
+The toolbox contains the blocks that you use to program. The blocks can be
+dragged onto the workspace.
+
+For more information about what a toolbox looks like, see the [visual
+glossary][visual-glossary-toolbox].
+
+## Basic definition
+
+A toolbox definition specifies what blocks get included in the toolbox, and in
+what order. Most of the look and style of your toolbox is specified in other
+ways.
+
+We recommend defining your toolbox using JSON.
+
+This code snippet defines a flyout toolbox with two blocks:
+
+```js
+const toolbox = {
+  // There are two kinds of toolboxes. The simpler one is a flyout toolbox.
+  kind: 'flyoutToolbox',
+  // The contents is the blocks and other items that exist in your toolbox.
+  contents: [
+    {
+      kind: 'block',
+      type: 'controls_if',
+    },
+    {
+      kind: 'block',
+      type: 'controls_whileUntil',
+    },
+    // You can add more blocks to this array.
+  ],
+};
+
+// The toolbox gets passed to the configuration options during injection.
+const workspace = Blockly.inject('blocklyDiv', { toolbox: toolbox });
+```
+
+![Toolbox with if-do and repeat-while
+blocks.](/images/toolbox-minimal.png)
+
+For more information about how to define and configure your toolbox, see
+[Toolbox overview][toolbox-overview].
+
+For more information about injection, see
+[Workspace creation][workspace-creation].
+
+[visual-glossary-toolbox]: /guides/get-started/workspace-anatomy#toolbox
+[toolbox-overview]: /guides/configure/web/toolboxes/toolbox
+[workspace-creation]: /guides/get-started/workspace-creation

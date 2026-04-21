@@ -1,0 +1,219 @@
+---
+description: How to limit the range of valid values that can be held by a field.
+title: Validators
+image: images/blockly_banner.png
+---
+
+# Validators
+
+A validator is a function that takes in the fields new value, and then acts on
+it. They are a simple way to customize a field. They allow you to trigger
+functionality when a field's value changes, modify input, or limit which values
+are acceptable.
+
+Some common examples:
+
+- Restricting a text field to only accept letters.
+- Requiring that a text field be non-empty.
+- Requiring that a date be in the future.
+- Modifying a block's shape based on a dropdown.
+
+:::note
+Validators modify a field's
+[_value_ not its _text_](/guides/create-custom-blocks/fields/anatomy-of-a-field#value).
+:::
+
+## Types of validators
+
+Validators execute at different times depending on what kind of validator they
+are.
+
+**Class validators** are part of a field type's class definition, and are
+usually used to restrict the _type_ of value allowed by the field (e.g. number
+fields only accept numeric characters). Class validators are run on all values
+passed to the field (including the value passed to the constructor).
+
+For more information about class validators see the
+[Implementing a class validator](/guides/create-custom-blocks/fields/customizing-fields/creating#implementing-a-class-validator)
+section in Creating a Custom Field.
+
+**Local validators** are defined at the time of a field's construction. Local
+validators run on all values passed to the field _except the value passed to the
+constructor_. This means they run on:
+
+- Values contained in XML.
+- Values passed to `setValue`.
+- Values passed to `setFieldValue`.
+- Values changed by the user.
+
+Class validators are run before local validators because they act like
+gatekeepers. They make sure that the value is of the correct type before passing
+it on.
+
+For more information about the sequence of value validation, and values in
+general see Values.
+
+## Registering a local validator
+
+Local validators can be registered in two ways:
+
+- Directly added in a field's constructor.
+
+:::note
+The signature of the field
+constructor may be different depending on the field type.
+:::
+
+```js
+Blockly.Blocks['validator_example'] = {
+  init: function () {
+    // Remove all 'a' characters from the text input's value.
+    var validator = function (newValue) {
+      return newValue.replace(/\a/g, '');
+    };
+
+    this.appendDummyInput().appendField(
+      new Blockly.FieldTextInput('default', validator),
+    );
+  },
+};
+```
+
+- With
+  [`setValidator`](/reference/blockly.field.setvalidator).
+
+```js
+Blockly.Blocks['validator_example'] = {
+  init: function () {
+    // Remove all 'a' characters from the text input's value.
+    var validator = function (newValue) {
+      return newValue.replace(/\a/g, '');
+    };
+
+    var field = new Blockly.FieldTextInput('default');
+    field.setValidator(validator);
+
+    this.appendDummyInput().appendField(field);
+  },
+};
+```
+
+Either of the above methods can be wrapped in an
+[extension](/guides/create-custom-blocks/define/extensions), to support
+the JSON format.
+
+The field's value may be very different depending on the type of field being
+validated (e.g. a number field will store a number, while a text input field
+will store a string) so it is best to read the documentation for your specific
+field before creating a validator.
+
+:::note
+Only editable fields accept validators, so be sure to check the specific
+field's documentation.
+:::
+
+## Return values
+
+The return value of the validator determines what the field does next. There
+are three possibilities:
+
+**Modified Return Value**
+
+A modified or different value, which then becomes the field's new value.
+This is often used to clean up a value, such as by removing trailing
+whitespace.
+
+Example of a Modifying Validator:
+
+```js
+// Remove all 'a' characters from the text input's value.
+var validator = function (newValue) {
+  return newValue.replace(/\a/g, '');
+};
+```
+
+![Text input field with a modifying validator](/images/fields/modifying_validator.gif)
+
+**Null Return Value**
+
+Null, which means the given value is invalid. In most cases the field will
+ignore the input value. The exact behaviour is specified by the field's
+`doValueInvalid_`
+[function](/guides/create-custom-blocks/fields/customizing-fields/creating#handling-invalid-values).
+
+Example of a Nulling Validator:
+
+```js
+// Any value containing a 'b' character is invalid.  Other values are valid.
+var validator = function (newValue) {
+  if (newValue.indexOf('b') != -1) {
+    return null;
+  }
+  return newValue;
+};
+```
+
+![Text input field with a nulling validator](/images/fields/nulling_validator.gif)
+
+**Undefined Return Value**
+
+Undefined (or no return statement) or the input value, which means that the
+input value should become the field's new value. These types of validators
+generally act as change listeners.
+
+Example of a Listener Validator:
+
+```js
+// Log the new value to console.
+var validator = function (newValue) {
+  console.log(newValue);
+};
+```
+
+Note once again how the display _text_ does not necessarily reflect the field's
+_value_.
+
+## Value of this
+
+Inside of a validator `this` refers to the field, not the block. If you need to
+access the block inside of a validator use the `getSourceBlock` function. You
+can also use the
+[`bind`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind)
+function to set the context within which the validator is called.
+
+Sample code using `getSourceBlock`:
+
+```js
+Blockly.Blocks['colour_match'] = {
+  init: function () {
+    this.appendDummyInput().appendField(
+      new Blockly.FieldColour(null, this.validate),
+      'COLOUR',
+    );
+    this.setColour(this.getFieldValue('COLOUR'));
+  },
+
+  validate: function (colourHex) {
+    this.getSourceBlock().setColour(colourHex);
+  },
+};
+```
+
+Sample code using
+[`bind`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind):
+
+```js
+Blockly.Blocks['colour_match'] = {
+  init: function () {
+    this.appendDummyInput().appendField(
+      new Blockly.FieldColour(null, this.validate.bind(this)),
+      'COLOUR',
+    );
+    this.validate(this.getFieldValue('COLOUR'));
+  },
+
+  validate: function (colourHex) {
+    this.setColour(colourHex);
+  },
+};
+```

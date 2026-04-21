@@ -1,0 +1,74 @@
+---
+description: How to add functionality to an existing field.
+title: Extend an existing field
+image: images/blockly_banner.png
+---
+
+# Extend an existing field
+
+In order to extend an existing field you must subclass a built in field (e.g
+`FieldTextInput`, `FieldColour`) and then modify part of it to fit your needs.
+Some parts of a field you can modify are:
+
+- Its
+  [editor](/guides/create-custom-blocks/fields/anatomy-of-a-field#editor-display).
+- Its
+  [on-block display](/guides/create-custom-blocks/fields/anatomy-of-a-field#on-block-display).
+- The
+  [text](/guides/create-custom-blocks/fields/anatomy-of-a-field#text)
+  it displays.
+
+If you want to [create a
+custom field](/guides/create-custom-blocks/fields/customizing-fields/creating)
+that does not need behaviour from any built-in field you should subclass `Field`.
+
+## Common extensions
+
+Most custom fields extend one of these three types:
+
+- [Text Input](/guides/create-custom-blocks/fields/built-in-fields/text-input): If you want your users to type into your field, you should extend
+  `FieldTextInput`.
+- [Number](/guides/create-custom-blocks/fields/built-in-fields/number): If you want to store a number, you should extend `FieldNumber`.
+- [Dropdown](/guides/create-custom-blocks/fields/built-in-fields/dropdown): If you want to create a dropdown, but you want it to store a different model
+  than the default string or image model, you should extend `FieldDropdown`. - Caution: Before extending `FieldDropdown`, check that the dropdown field's
+  [customization options](/guides/create-custom-blocks/fields/built-in-fields/dropdown#customization) cannot fulfill your needs.
+
+Under certain circumstances you may wish to extend a different field type. For
+example `FieldLabelSerializable` extends `FieldLabel`.
+
+## Subclassing
+
+```js
+import * as Blockly from 'blockly';
+
+export class MyCustomTextField extends Blockly.FieldTextInput {
+  constructor(value, validator, config) {
+    super(value, validator, config);
+  }
+}
+```
+
+The constructor for a field's subclass looks very similar to the [constructor for
+a custom field](/guides/create-custom-blocks/fields/customizing-fields/creating#implementing-a-constructor). The signature of the sub-constructor should
+generally match the signature of the super-constructor.
+
+## JSON and registration
+
+You should also register the field once:
+
+```js
+Blockly.fieldRegistry.register('my_custom_text_field', MyCustomTextField);
+```
+
+and provide an implementation of `fromJson` in the class so that it works with
+the JSON format:
+
+```js
+static fromJson(options) {
+  const value = Blockly.utils.parsing.replaceMessageReferences(options.value);
+  return new MyCustomTextField(value);
+}
+```
+
+For more information about registering a field see the [JSON and registration](/guides/create-custom-blocks/fields/customizing-fields/creating#json-and-registration)
+section in Creating a Custom Field.

@@ -1,0 +1,68 @@
+---
+description: Basic information about generating code for blocks.
+title: Generate code
+image: images/blockly_banner.png
+---
+
+# Generate code
+
+Code generation is the process of turning the blocks on a workspace into a
+string of code that can be executed.
+
+Code generation is extremely important, because it is what allows your blocks to
+actually _do_ things, like evaluate arithmetic expressions, move a character
+through a maze, or configure an online shop!
+
+Blockly doesn't "run" blocks directly. Instead you generate code strings, and
+then execute those.
+
+## Code generators
+
+To generate code, you use a code generator instance.
+
+This code snippet shows how to generate JavaScript code for the blocks in a
+workspace:
+
+```js
+// javascriptGenerator is a code generator that makes JavaScript strings.
+import { javascriptGenerator } from 'blockly/javascript';
+
+const code = javascriptGenerator.workspaceToCode(myWorkspace);
+```
+
+For more information about the different code generators that Blockly provides
+and how to access them, see [Language code generators][code-generator-overview].
+
+## Block-code generators
+
+Each block has an associated block-code generator that defines what code it
+generates. A block-code generator has to be defined for each individual language
+you want to generate.
+
+This code snippets defines a JavaScript block-code generator for a "move
+forward" block:
+
+```js
+javascriptGenerator.forBlock['my_custom_block'] = function (block, generator) {
+  const steps = block.getFieldValue('FIELD_NAME');
+  // moveForward is a function you would have to define yourself and provide
+  // within your execution context.
+  return `moveForward(${steps});\n`;
+};
+```
+
+For more information about how to define your block-code generators, see
+[Block-code generators][block-code-generators].
+
+## Execution
+
+After you've generated the code, you need to figure out how to execute it.
+Deciding how to execute it is very application-specific, and outside the scope
+of Blockly.
+
+For more information about ways to execute code, see
+[Generate and run code][code-execution].
+
+[code-generator-overview]: /guides/create-custom-blocks/code-generation/overview#language-code-generators
+[block-code-generators]: /guides/create-custom-blocks/code-generation/overview#block-code-generators
+[code-execution]: /guides/create-custom-blocks/code-generation/overview#generate-and-run-code

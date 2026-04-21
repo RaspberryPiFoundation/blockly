@@ -5,6 +5,7 @@
 			"No Sleep till Krupki",
 			"Plaga med",
 			"SimondR",
+			"Ucukor",
 			"ZlyiLev"
 		]
 	},
@@ -322,5 +323,5 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Калі першае значэнне ісцінае, вяртае другое значэнне.",
 	"PROCEDURES_IFRETURN_WARNING": "Папярэджанне: гэты блок можа выкарыстоўвацца толькі ўнутры вызначэння функцыі.",
 	"DIALOG_OK": "Добра",
-	"DIALOG_CANCEL": "Адмяніць"
+	"DIALOG_CANCEL": "Скасаваць"
 }

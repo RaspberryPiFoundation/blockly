@@ -1,0 +1,91 @@
+---
+description: How to set block state.
+title: Block state
+image: images/blockly_banner.png
+---
+
+# Block state
+
+Block instances have a number of properties that configure how they behave to
+the user. While these can be set in the block definition, they are more commonly
+used to constrain blocks in the workspace to reflect certain properties of the
+domain (e.g., there is exactly one 'start' event), or focus the user's effort
+(e.g., a tutorial).
+
+## Deletable state
+
+```js
+block.setDeletable(false);
+```
+
+When set to `false`, the user will not be able to delete the block. Blocks
+default to deletable on an editable workspace.
+
+Any block, (even undeletable ones) may be deleted programmatically:
+
+```js
+block.dispose();
+```
+
+## Editable state
+
+```js
+block.setEditable(false);
+```
+
+When set to `false`, the user will not be able to change the block's fields
+(e.g. dropdowns and text inputs). Blocks default to editable on an editable
+workspace.
+
+## Movable state
+
+```js
+block.setMovable(false);
+```
+
+When set to `false`, the user will not be able to move the block directly. An
+immovable block that is a child of another block may not be disconnected from
+that block, though it will move with its parent if the parent is moved. Blocks
+default to movable on an editable workspace.
+
+Any block (even immovable ones) may be moved programmatically once it is on a
+workspace.
+
+```js
+block.moveBy(dx, dy);
+```
+
+The starting position for a block on a workspace defaults to `(0, 0)`.
+
+## Block data
+
+```js
+block.data = '16dcb3a4-bd39-11e4-8dfc-aa07a5b093db';
+```
+
+Data is an optional and arbitrary string that is attached to the block. When the
+block is serialized the data string is serialized with it. This includes when
+the block is duplicated or copy/pasted.
+
+Often this is used to associate a block with an external resource.
+
+When serialized to JSON, the data is stored as a top-level property in the
+block:
+
+```json
+{
+  "type": "my_block",
+  "data": "16dcb3a4-bd39-11e4-8dfc-aa07a5b093db"
+  // etc..
+}
+```
+
+When serialized to XML (the old iceboxed serialization system) the data string
+is stored in a `<data></data>` tag within the block:
+
+```xml
+<block type="my_block">
+  <data>16dcb3a4-bd39-11e4-8dfc-aa07a5b093db</data>
+  <!-- etc... -->
+</block>
+```

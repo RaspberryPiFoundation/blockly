@@ -11,7 +11,6 @@
  */
 // Former goog.module ID: Blockly.Toolbox
 
-// Unused import preserved for side-effects. Remove if unneeded.
 import {BlockSvg} from '../block_svg.js';
 import * as browserEvents from '../browser_events.js';
 import * as common from '../common.js';
@@ -192,7 +191,7 @@ export class Toolbox
     aria.setRole(this.contentsDiv_, aria.Role.TREE);
     container.appendChild(this.contentsDiv_);
 
-    svg.parentNode!.insertBefore(container, svg);
+    svg.parentNode?.insertBefore(container, svg);
 
     this.attachEvents_(container, this.contentsDiv_);
     return container;
@@ -281,7 +280,7 @@ export class Toolbox
       const itemId = (targetElement as Element).getAttribute('id');
       if (itemId) {
         const item = this.getToolboxItemById(itemId);
-        if (item!.isSelectable()) {
+        if (item?.isSelectable()) {
           this.setSelectedItem(item);
           (item as ISelectableToolboxItem).onClick(e);
         }
@@ -396,7 +395,7 @@ export class Toolbox
       const toolboxItemDef = toolboxDef[i];
       this.createToolboxItem(toolboxItemDef, fragment);
     }
-    this.contentsDiv_!.appendChild(fragment);
+    this.contentsDiv_?.appendChild(fragment);
   }
 
   /**
@@ -435,9 +434,7 @@ export class Toolbox
       }
       // Adds the ID to the HTML element that can receive a click.
       // This is used in onClick_ to find the toolboxItem that was clicked.
-      if (toolboxItem.getClickTarget()) {
-        toolboxItem.getClickTarget()!.setAttribute('id', toolboxItem.getId());
-      }
+      toolboxItem.getClickTarget()?.setAttribute('id', toolboxItem.getId());
     }
   }
 
@@ -722,7 +719,7 @@ export class Toolbox
       this.width_ = toolboxDiv.offsetWidth;
       this.height_ = workspaceMetrics.viewHeight;
     }
-    this.flyout!.position();
+    this.flyout?.position();
   }
 
   /**
@@ -731,10 +728,11 @@ export class Toolbox
    * @internal
    */
   handleToolboxItemResize() {
+    if (!this.HtmlDiv) return;
     // Reposition the workspace so that (0,0) is in the correct position
     // relative to the new absolute edge (ie toolbox edge).
     const workspace = this.workspace_;
-    const rect = this.HtmlDiv!.getBoundingClientRect();
+    const rect = this.HtmlDiv.getBoundingClientRect();
     const flyout = this.getFlyout();
     const newX =
       this.toolboxPosition === toolbox.Position.LEFT
@@ -786,7 +784,7 @@ export class Toolbox
       this.selectedItem_.isSelectable() &&
       this.selectedItem_.getContents().length
     ) {
-      this.flyout!.show(this.selectedItem_.getContents());
+      this.flyout?.show(this.selectedItem_.getContents());
     }
   }
 
@@ -800,7 +798,9 @@ export class Toolbox
       return;
     }
 
-    this.HtmlDiv!.style.display = isVisible ? 'block' : 'none';
+    if (this.HtmlDiv) {
+      this.HtmlDiv.style.display = isVisible ? 'block' : 'none';
+    }
     this.isVisible_ = isVisible;
     // Invisible toolbox is ignored as drag targets and must have the drag
     // target updated.
@@ -944,10 +944,10 @@ export class Toolbox
       (oldItem === newItem && !newItem.isCollapsible()) ||
       !newItem.getContents().length
     ) {
-      this.flyout!.hide();
+      this.flyout?.hide();
     } else {
-      this.flyout!.show(newItem.getContents());
-      this.flyout!.scrollToStart();
+      this.flyout?.show(newItem.getContents());
+      this.flyout?.scrollToStart();
     }
   }
 
@@ -992,10 +992,7 @@ export class Toolbox
       const collapsibleItem = this.selectedItem_ as ICollapsibleToolboxItem;
       collapsibleItem.toggleExpanded();
       return true;
-    } else if (
-      this.selectedItem_.getParent() &&
-      this.selectedItem_.getParent()!.isSelectable()
-    ) {
+    } else if (this.selectedItem_.getParent()?.isSelectable()) {
       this.setSelectedItem(this.selectedItem_.getParent());
       return true;
     }
@@ -1075,7 +1072,7 @@ export class Toolbox
   /** Disposes of this toolbox. */
   dispose() {
     this.workspace_.getComponentManager().removeComponent('toolbox');
-    this.flyout!.dispose();
+    this.flyout?.dispose();
     this.contents.forEach((item) => item.dispose());
 
     for (let j = 0; j < this.boundEvents_.length; j++) {

@@ -1,0 +1,104 @@
+---
+description: How to create your own custom renderer.
+title: Create custom renderers
+image: images/blockly_banner.png
+---
+
+import Image from '@site/src/components/Image';
+
+# Create custom renderers
+
+:::note
+If you haven't read through the [renderer concept docs][renderer-concept]
+or completed the [custom renderers codelab][custom-renderer-codelab] we
+recommend doing those first!
+:::
+
+To create a custom renderer, you need to subclass the [`Renderer`][Renderer]
+class. Refer to the [renderer concept docs][renderer-concept] for more
+information about what a renderer is and what it does.
+
+```js
+class CustomRenderer extends Blockly.blockRendering.Renderer {
+  constructor() {
+    super();
+  }
+}
+```
+
+Without any customization, the default renderer looks like this:
+
+<Image
+  alt="base renderer"
+  src="/images/rendering/renderers/base-renderer.png"
+  width={300}
+/>
+
+You can also subclass one of the other [built-in renderers][built-in-renderers]
+and then override parts of it.
+
+```js
+class CustomRenderer extends Blockly.thrasos.Renderer {
+  constructor() {
+    super();
+  }
+}
+```
+
+## Subclass other renderer components
+
+The actual shape of the block is determined by the
+[subcomponents][renderer-component] of the renderer.
+
+By default, the [`Renderer`][Renderer] class provides working versions of
+all the [renderer components][renderer-component]. This lets you modify a
+single component, without having to worry about the others.
+
+For example, if you want to
+[change the shapes of connections][connection-shape], you can override the
+[constants][constants] without having to touch the other components.
+
+Check out the [renderer component docs][renderer-component] for more
+information about what each individual component does.
+
+## Override factory methods
+
+After subclassing the [renderer components][renderer-component], you need to
+override the [`Renderer`][Renderer]'s factory methods for the components you
+subclassed. This lets the renderer properly wire the different components
+together.
+
+There is a method for each kind of component:
+
+- [`makeConstants_`][makeConstants]
+- [`makeRenderInfo_`][makeRenderInfo]
+- [`makePathObject`][makePathObject] (note there is no underscore)
+- [`makeDrawer_`][makeDrawer]
+
+## Register the renderer
+
+Finally, once you've completed the creation of your custom renderer, you need to
+register it. This associates the renderer with a string so that you can pass it
+to your [configuration options][inject-config].
+
+```js
+Blockly.blockRendering.register('custom_renderer', CustomRenderer);
+
+const workspace = Blockly.inject(blocklyDiv, {
+  renderer: 'custom_renderer',
+});
+```
+
+[Renderer]: /reference/blockly.blockrendering.renderer
+[renderer-concept]: /guides/create-custom-blocks/renderers/concepts/renderer
+[base-renderer-image]: /images/rendering/renderers/base-renderer.png
+[built-in-renderers]: /guides/create-custom-blocks/renderers/overview#built-in-renderers
+[renderer-component]: /guides/create-custom-blocks/renderers/concepts/overview
+[connection-shape]: /guides/create-custom-blocks/renderers/create-custom-renderers/connection-shapes
+[constants]: /guides/create-custom-blocks/renderers/concepts/constants
+[makeConstants]: /reference/blockly.blockrendering.renderer.makeconstants_
+[makeRenderInfo]: /reference/blockly.blockrendering.renderer.makerenderinfo_
+[makePathObject]: /reference/blockly.blockrendering.renderer.makepathobject
+[makeDrawer]: /reference/blockly.blockrendering.renderer.makedrawer_
+[inject-config]: /guides/configure/web/configuration_struct
+[custom-renderer-codelab]: /codelabs/custom-renderer/codelab-overview

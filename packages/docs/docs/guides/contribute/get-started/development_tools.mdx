@@ -1,0 +1,98 @@
+---
+description: Tools used to contribute code to Blockly.
+title: Development tools
+image: images/blockly_banner.png
+---
+
+# Development tools
+
+Blockly uses some tools and libraries for development, including Git, npm, and
+the Closure Compiler. This section will provide some basic descriptions of each
+tool, as well as links to where you can find more information about each tool.
+
+We use many of these tools through scripts. You may not need to ever run
+them directly. Knowing the names may still be helpful for debugging or filing
+issues or feature requests.
+
+### Git
+
+[Git](https://git-scm.com/) is a version control system that we use to track and
+manage changes to files.
+
+### GitHub
+
+[GitHub](https://github.com/) is a hosting platform for version control,
+collaboration, and distribution of open-source code. Git tracks the files;
+GitHub provides smooth interfaces for reviewing code, tracking issues, and
+viewing change history.
+
+**Getting started**: If you're new to Git and GitHub, work through GitHub's
+[quickstart](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/quickstart)
+tutorials to get comfortable with the basics.
+
+### Node
+
+[Node.js](https://nodejs.org/) is a way to run JavaScript on the server (rather
+than in a browser). npm (see below) runs on Node.
+
+### npm
+
+[npm](https://www.npmjs.com/) is two things:
+
+- A command-line tool that we use to install dependencies and run scripts.
+- An online registry where we publish our code, which makes it easy for
+  other developers to use Blockly.
+
+**Getting started**: [Install](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+Node and npm.
+
+### Closure Compiler
+
+The [Closure Compiler](https://github.com/google/closure-compiler) is a tool for
+making JavaScript download and run faster. We use it to combine all of our
+JavaScript files into a single library; we also use it to check syntax and
+types.
+
+**Getting started**: You don't need to install or run the Closure Compiler
+directly: we install and run it through npm.
+
+**Read more**: Closure compiler documentation on [JavaScript types](https://github.com/google/closure-compiler/wiki/Types-in-the-Closure-Type-System)
+and [type annotations](https://github.com/google/closure-compiler/wiki/Annotating-JavaScript-for-the-Closure-Compiler).
+
+### ESLint
+
+[ESLint](https://eslint.org/) is a static analyzer that finds problems with
+JavaScript code. We use it to define and enforce a consistent style across our
+codebase. Small problems with code (missing semicolons, inconsistent spacing,
+etc.) are often called _lint_. ESLint automatically runs when you send us a pull
+request. You can also run it locally.
+
+**Getting started**: In both Blockly core and blockly-samples, you can run
+ESLint with `npm run lint`. Many code editors also have ESLint integrations to
+show problems as you type.
+
+**Read more**: Each ESLint rule has a [documentation page](https://eslint.org/docs/rules/no-unreachable)
+that describes the rule and gives examples of correct and incorrect code.
+
+### Mocha
+
+[Mocha](https://mochajs.org/) is a JavaScript test framework. We use it to run
+tests in the browser and on Node.js (for headless use cases).
+
+**Getting started**: In both Blockly core and blockly-samples, you can run our
+Mocha tests with `npm run test`. In Blockly core this will also run other tests.
+Blockly core's Mocha tests are defined in the [tests/mocha](https://github.com/RaspberryPiFoundation/blockly/tree/main/tests/mocha)
+directory.
+
+**Read more**: Mocha allows developers to define [hooks](https://mochajs.org/#hooks),
+which allow you to define centralized setup and teardown functions for your
+tests.
+
+### Chai
+
+[Chai](https://www.chaijs.com/) is an assertion library that we use in our Mocha
+tests.
+
+**Read more**: Chai has multiple "flavors" of syntax, to make it easy to
+integrate with existing projects. Blockly uses the
+[assert](https://www.chaijs.com/api/assert/) flavor.

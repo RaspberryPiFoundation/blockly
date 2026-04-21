@@ -1,0 +1,271 @@
+---
+description: How to create custom procedure blocks.
+title: Create custom procedure blocks
+image: images/blockly_banner.png
+---
+
+# Create custom procedure blocks
+
+Creating custom procedure blocks requires that you:
+
+1.  Install the [@blockly/block-shareable-procedures][shareable-procedures]
+    plugin, as described on the [using procedures
+    page](/guides/create-custom-blocks/procedures/using-procedures).
+2.  Use the JSON serialization system, as explained on the [overview
+    page](/guides/create-custom-blocks/procedures/overview).
+
+:::note
+If you defined custom procedure blocks to work with the legacy procedure
+system (before [@blockly/block-shareable-procedures][shareable-procedures] was
+available) you can upgrade them to work with the new
+[@blockly/block-shareable-procedures][shareable-procedures] blocks by following
+the steps that follow.
+:::
+
+## Add data models to the workspace
+
+Both procedure definition and procedure caller blocks reference a backing data
+model which defines the signature of the procedure (name, parameters, and
+return). This enables more flexibility in how you design your application (e.g.
+you could allow procedures to be defined in one workspace, and referenced in
+another).
+
+This means that you will need to add the procedure data models to the workspace
+for your blocks to work. There are many ways you could do this (e.g. custom
+UIs).
+
+The [@blockly/block-shareable-procedures][shareable-procedures] does this by
+having procedure-definition blocks dynamically create their backing data models
+when they are instantiated into the workspace. To implement this yourself, you
+create the model in `init` and delete it in `destroy`.
+
+```js
+import {ObservableProcedureModel} from '@blockly/block-shareable-procedures';
+
+Blockly.Blocks['my_procedure_def'] = {
+  init: function() {
+    this.model = new ObservableProcedureModel('default name');
+    this.workspace.getProcedureMap().add(model);
+    // etc...
+  }
+
+  destroy: function() {
+    // (Optionally) Destroy the model when the definition block is deleted.
+
+    // Insertion markers reference the model of the original block.
+    if (this.isInsertionMarker()) return;
+    this.workpace.getProcedureMap().delete(model.getId());
+  }
+}
+```
+
+## Return information about the blocks
+
+Your procedure definition and procedure call blocks need to implement the
+`getProcedureModel`, `isProcedureDef`, and `getVarModels` methods. These are the
+hooks Blockly code uses to get information about your procedure blocks.
+
+```js
+Blockly.Blocks['my_procedure_def'] = {
+  getProcedureModel() {
+    return this.model;
+  },
+
+  isProcedureDef() {
+    return true;
+  },
+
+  getVarModels() {
+    // If your procedure references variables
+    // then you should return those models here.
+    return [];
+  },
+};
+
+Blockly.Blocks['my_procedure_call'] = {
+  getProcedureModel() {
+    return this.model;
+  },
+
+  isProcedureDef() {
+    return false;
+  },
+
+  getVarModels() {
+    // If your procedure references variables
+    // then you should return those models here.
+    return [];
+  },
+};
+```
+
+## Trigger rerendering on updates
+
+Your procedure definition and procedure call blocks need to implement the
+`doProcedureUpdate` method. This is the hook the data models call to tell your
+procedure blocks to re-render themselves.
+
+```js
+Blockly.Blocks['my_procedure_def'] = {
+  doProcedureUpdate() {
+    this.setFieldValue(this.model.getName(), 'NAME');
+    this.setFieldValue(
+        this.model.getParameters()
+            .map((p) => p.getName())
+            .join(',')
+        'PARAMS');
+    this.setFieldValue(
+        this.model.getReturnTypes().join(','), 'RETURN');
+  }
+};
+
+Blockly.Blocks['my_procedure_call'] = {
+  doProcedureUpdate() {
+    // Similar to the def block above...
+  }
+};
+```
+
+## Add custom serialization
+
+Serialization for procedure blocks must do two separate things.
+
+1.  When loading from JSON your blocks will need to grab a _reference_ to their
+    backing data model, because the blocks and models are serialized separately.
+2.  When copying and pasting a procedure block, the block will need to serialize
+    the entire state of its procedure model, so that it can be replicated.
+
+Both of these things are handled through `saveExtraState` and `loadExtraState`.
+Note again that custom procedure blocks are only supported when using the JSON
+serialization system, so we only need to define JSON serialization hooks.
+
+```js
+import {
+    ObservableProcedureModel,
+    ObservableParameterModel,
+    isProcedureBlock
+} from '@blockly/block-shareable-procedures';
+
+Blockly.Blocks['my_procedure_def'] = {
+  // When doFullSerialization is true, we should serialize the full state of
+  // the model.
+  saveExtraState(doFullSerialization) {
+    const state = Object.create(null);
+    state['procedureId']: this.model.getId();
+
+    if (doFullSerialization) {
+      state['name'] = this.model.getName();
+      state['parameters'] = this.model.getParameters().map((p) => {
+        return {name: p.getName(), p.getId()};
+      });
+      state['returnTypes'] = this.model.getReturnTypes();
+
+      // Flag for deserialization.
+      state['createNewModel'] = true;
+    }
+
+    return state;
+  },
+
+  loadExtraState(state) {
+    const id = state['procedureId']
+    const map = this.workspace.getProcedureMap();
+
+    if (map.has(id) && !state['createNewModel']) {
+      // Delete the existing model (created in init).
+      map.delete(this.model.getId());
+      // Grab a reference to the model we're supposed to reference.
+      this.model = map.get(id);
+      this.doProcedureUpdate();
+      return;
+    }
+
+    // There is no existing procedure model (we are likely pasting), so
+    // generate it from JSON.
+    this.model
+        .setName(state['name'])
+        .setReturnTypes(state['returnTypes']);
+    for (const [i, param] of state['parameters'].entries()) {
+      this.model.insertParameter(
+          i,
+          new ObservableParameterModel(
+              this.workspace, param['name'], param['id']));
+    }
+    this.doProcedureUpdate();
+  },
+};
+
+Blockly.Blocks['my_procedure_call'] = {
+  saveExtraState() {
+    return {
+      'procedureId': this.model.getId(),
+    };
+  },
+
+  loadExtraState(state) {
+    // Delete our existing model (created in init).
+    this.workspace.getProcedureMap().delete(model.getId());
+    // Grab a reference to the new model.
+    this.model = this.workspace.getProcedureMap()
+        .get(state['procedureId']);
+    if (this.model) this.doProcedureUpdate();
+  },
+
+  // Handle pasting after the procedure definition has been deleted.
+  onchange(event) {
+    if (event.type === Blockly.Events.BLOCK_CREATE &&
+        event.blockId === this.id) {
+      if(!this.model) { // Our procedure definition doesn't exist =(
+        this.dispose();
+      }
+    }
+  }
+};
+```
+
+## Optionally modify the procedure model
+
+You can also add the ability for users to modify the procedure model. Calling
+the `insertParameter`, `deleteParameter`, or `setReturnTypes`
+[methods](/reference/blockly.procedures.iproceduremodel)
+will automatically trigger your blocks to rerender (via `doProcedureUpdate`).
+
+Options for creating UIs to modify the procedure model include using
+[mutators](/guides/create-custom-blocks/mutators#ui-hooks) (which the
+built-in procedure blocks use), image fields with click handlers, something
+completely external to Blockly, etc.
+
+## Add blocks to the toolbox
+
+Blockly’s built-in dynamic procedure category is specific to Blockly’s built-in
+procedure blocks. So to be able to access your blocks, you will need to define
+your own [custom dynamic
+category](/guides/configure/web/toolboxes/dynamic), and [add it
+to your toolbox](/guides/configure/web/toolboxes/dynamic).
+
+```js
+const proceduresFlyoutCallback = function (workspace) {
+  const blockList = [];
+  blockList.push({
+    kind: 'block',
+    type: 'my_procedure_def',
+  });
+  for (const model of workspace.getProcedureMap().getProcedures()) {
+    blockList.push({
+      kind: 'block',
+      type: 'my_procedure_call',
+      extraState: {
+        procedureId: model.getId(),
+      },
+    });
+  }
+  return blockList;
+};
+
+myWorkspace.registerToolboxCategoryCallback(
+  'MY_PROCEDURES',
+  proceduresFlyoutCallback,
+);
+```
+
+[shareable-procedures]: https://www.npmjs.com/package/@blockly/block-shareable-procedures

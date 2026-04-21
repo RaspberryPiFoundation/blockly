@@ -1,0 +1,103 @@
+---
+description: Design considerations for block appearance.
+title: Block appearance
+image: images/blockly_banner.png
+---
+
+# Block appearance
+
+The appearance of blocks provides important clues on how they are to be used.
+Here are some things to consider when styling your own blocks.
+
+## Use visible borders
+
+In the 2000s the 'Aqua' look was in style and every onscreen object was
+decorated with highlighting and shadows. In the 2010s the 'Material Design' look
+came into style and every onscreen object was simplified to a clean, flat,
+borderless shape. Most block programming environments have highlighting and
+shadows around each block, so when today's graphic designers see this they
+invariably strip off these outdated decorations.
+
+![Blocks without visible borders. It is difficult to see where the block
+boundaries are.](/images/mistakes02.png)
+
+As can be seen in the above example of five blocks (from scriptr.io), these
+'outdated decorations' are vital for distinguishing connected blocks that are
+the same colour.
+
+_Recommendation: If reskinning Blockly, don't let today's fashions break your
+app._
+
+## Add directional arrows
+
+![A block with a circular arrow that shows a right turn is
+clockwise.](/images/language05.png)
+
+Feedback from children in the US (though interestingly not from other nations)
+revealed rampant confusion between left and right. This was resolved with the
+addition of arrows. If direction is relative (to an avatar, for example) the
+style of arrow is important. A → straight arrow or a ↱ turn arrow is confusing
+when the avatar is facing the opposite direction. Most helpful is a ⟳ circular
+arrow, even in cases where the angle turned is smaller than the arrow indicates.
+
+_Recommendation: Supplement text with Unicode icons where possible._
+
+## Use different horizontal and vertical connectors
+
+Blockly has two different connection types: the horizontal puzzle shapes and the
+vertical stacking notches. A good user interface should strive to minimize the
+number of design elements. Accordingly, many designers try to make both
+connection types look the same (as shown below).
+
+![Counterexample showing the same style used for both horizontal and vertical
+connectors.](/images/rotate.png)
+
+The result creates confusion among new users as they search for ways to _rotate_
+blocks so that they can fit into incompatible connections. Blockly makes
+programming elements visual and tangible, so one has to be mindful of
+inadvertently suggesting user interactions which are not supported.
+
+Accordingly, Blockly uses a tightly-fitting puzzle shape for value connections,
+and a visually distinct alignment notch for statement stacking.
+
+_Recommendation: If reskinning Blockly, ensure horizontal and vertical
+connections look different._
+
+## Show that nesting statements can be stacked
+
+'C'-shaped blocks invariably have a connector on the inside-top, but some
+environments also have a connector on the inside bottom (e.g. Wonder Workshop)
+whereas others do not (e.g. Blockly and Scratch). Since most statement blocks
+have both a top and bottom connector, some users do not immediately see that
+statements will fit inside a 'C' that does not have a bottom connector.
+
+![Blocks with statement inputs, one which has a bottom connector and two which
+do not. A green check mark shows that it is easy to see that a statement block
+fits in the block with the bottom connector.](/images/mistakes03a.png)
+
+Once users figure out that one statement block fits inside a 'C', they then need
+to figure out that more than one statement will also fit. Some environments nest
+the first statement's lower connection into the bottom of the 'C' (e.g. Wonder
+Workshop and Scratch) whereas others leave a small gap (e.g. Blockly). Snug
+nesting leaves no hint that more blocks can be stacked.
+
+![Blocks with nested statements. The block without a bottom connector has a gap
+between the nested statement and the bottom of the statement input, which shows
+that more statement blocks can be added.](/images/mistakes03b.png)
+
+These two issues interact badly with each other. If an inside bottom connector
+exists (Wonder Workshop) then the initial statement's connection is made more
+obvious, but at the expense of the ability to discover stacking. If no inside
+bottom connector exists (Blockly) then the initial statement's connection is not
+obvious, but stacking is discoverable. Having no inside bottom connector and
+nesting the statement's bottom connector (Scratch) fared the worst for
+discoverability when tested with Blockly.
+
+Our experience was that the initial statement's connection is a lesser challenge
+for users than discovering stacking. And once discovered, the former is never
+forgotten, whereas the latter needs prompting. Blockly tried both the Wonder
+Workshop and the Scratch approaches until one day a rendering bug occurred which
+added the small gap. We saw a marked improvement in user studies with Blockly
+due to this bug (now a 'feature' we are proud of).
+
+_Recommendation: If reskinning Blockly, leave the existing stacking UI._

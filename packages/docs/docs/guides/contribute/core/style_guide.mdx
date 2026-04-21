@@ -1,0 +1,134 @@
+---
+description: The style guide for code contributions to Blockly.
+title: Style guide
+image: images/blockly_banner.png
+---
+
+# Style guide
+
+Follow the [Google TypeScript style
+guide](https://google.github.io/styleguide/tsguide.html).
+
+## Migration to TypeScript & ES6
+
+Blockly was originally written in ES5.1 in compliance with an [older,
+then-current version of the Google JavaScript style
+guide](https://google.github.io/styleguide/javascriptguide.xml). Newly-written
+code should comply with the current style guide and use ES6 language features
+like `let`, `const`, `class`, destructuring assignment where applicable.
+Existing code may be updated or may be left out of compliance. The Blockly team
+tries to make the best decision taking into account code consistency and the
+experience for users of the library - for example, we may opt not to rename
+public functions that no longer comply with the style guide.
+
+## Do
+
+- Use linting and formatting tools.
+  - We use [eslint](http://eslint.org/) and have an [`eslint.config.mjs`
+    file](https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/blockly/eslint.config.mjs)
+    set up with rules for our preferred style.
+  - We use [prettier](https://prettier.io/) for automatic formatting.
+  - Run `npm run lint` to run the linter and `npm run format` to run the
+    formatter.
+- Indent with spaces, not tabs.
+- Use [semicolons][semicolons-rule].
+- Use `camelCase` for variables and functions.
+- Use `TitleCase` for classes.
+- Use `ALL_CAPS` for constants.
+- [Use braces](https://google.github.io/styleguide/jsguide.html#formatting-braces-all)
+  for all control structures.
+  - Exception: You may omit the braces for single-line `if` statements.
+- Use single quotes (except when writing JSON).
+- Redeclare variables in `for` loops. That is, always write `for (const i = 0;
+...)` instead of `for (i = 0; ...)`.
+  - Not doing so raises the risk that after a refactor higher up in the
+    function the variable will be orphaned and become a surprise global.
+- Start comments with capital letters and end them with periods.
+- Create GitHub issues with TODOs and link them using `TODO(#issueNumber)`.
+- Annotate everything with [TSDoc](#tsdoc).
+
+## Don't
+
+- Indent with tabs.
+- Use underlines at the ends of variable or function names.
+  - Some earlier code uses underscores for private or internal properties or
+    functions. While these may continue to exist, no new code should be
+    added following this convention.
+- Use `snake_case`.
+- Use double quotes (except when writing JSON).
+- Use malformed TSDoc.
+  - Our TSDoc is automatically published as part of our documentation.
+- Write `TODO (username)`.
+  - Instead create GitHub issues with TODOs and link them using
+    `TODO(#issueNumber)`.
+- Use `string.startsWith`. Use `Blockly.utils.string.startsWith` instead.
+
+## TSDoc
+
+The Blockly team uses [TSDoc](https://tsdoc.org/) to annotate our code and
+generate documentation. We expect TSDoc for all public properties of classes,
+and for all exported functions.
+
+TSDoc comments must start with `/**` and end with `*/` to be parsed correctly.
+
+### Types
+
+Types are omitted from TSDoc because that information is in the TypeScript code
+directly. If you are editing one of the few remaining JavaScript files, include
+type annotations according to the [Closure Compiler
+documentation](https://github.com/google/closure-compiler/wiki/Annotating-JavaScript-for-the-Closure-Compiler).
+
+### Visibility
+
+Functions or properties that should only be accessed within the Blockly library
+should be annotated with `@internal`. This prevents these properties from
+appearing in the public documentation. Other [visibility
+modifiers](/guides/programming/using_blockly_apis) should be placed in
+the TypeScript code directly, not in the TSDoc.
+
+### Properties
+
+TSDoc for properties should include a description of the property. The
+description may be omitted for self-explanatory properties.
+
+```ts
+/**
+ *   The location of the top left of this block (in workspace coordinates)
+ *   relative to either its parent block, or the workspace origin if it has no
+ *   parent.
+ *
+ *   @internal
+ */
+relativeCoords = new Coordinate(0, 0);
+```
+
+### Functions
+
+Annotations for functions should include
+
+- A description of the function
+- One [`@param`](https://tsdoc.org/pages/tags/param/) tag per parameter,
+  including
+  - Name
+  - Description
+- A [`@returns`](https://tsdoc.org/pages/tags/returns/) tag if the function
+  will return a value, with a description of the returned value.
+
+Descriptions may omitted for functions, parameters, or return values if they are
+self-explanatory.
+
+For example:
+
+```ts
+/**
+ *   Find the workspace with the specified ID.
+ *
+ *   @param id ID of workspace to find.
+ *   @returns The sought after workspace or null if not found.
+ */
+export function getWorkspaceById(id: string): Workspace | null {
+  return WorkspaceDB_[id] || null;
+}
+```
+
+[semicolons-rule]: https://google.github.io/styleguide/jsguide.html#formatting-semicolons-are-required

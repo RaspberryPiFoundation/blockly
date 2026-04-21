@@ -19,6 +19,7 @@
 	"DELETE_X_BLOCKS": "%1 ਬਲਾਕ ਮਿਟਾਉ",
 	"DELETE_ALL_BLOCKS": "ਕੀ ਸਾਰੇ %1 ਬਲਾਕ ਮਿਟਾਉਣੇ ਹਨ?",
 	"CLEAN_UP": "ਬਲਾਕ ਸਾਫ਼ ਕਰੋ",
+	"CLOSE": "ਬੰਦ ਕਰੋ",
 	"COLLAPSE_BLOCK": "ਬਲਾਕ ਸਮੇਟੋ",
 	"COLLAPSE_ALL": "ਬਲਾਕਾਂ ਨੂੰ ਸਮੇਟੋ",
 	"EXPAND_BLOCK": "ਬਲਾਕ ਫੈਲਾਉ",
@@ -65,11 +66,17 @@
 	"MATH_SINGLE_OP_ROOT": "ਵਰਗ ਮੂਲ",
 	"MATH_SINGLE_TOOLTIP_ROOT": "ਇੱਕ ਅੰਕ ਦਾ ਵਰਗ ਮੂਲ ਮੋੜੋ।",
 	"LISTS_GET_INDEX_FIRST": "ਪਹਿਲਾ",
-	"LISTS_GET_INDEX_LAST": "ਆਖੀਰਲਾ",
+	"LISTS_GET_INDEX_LAST": "ਅਖ਼ੀਰਲਾ",
 	"LISTS_GET_INDEX_RANDOM": "ਰਲ਼ਵਾਂ",
 	"LISTS_SORT_ORDER_ASCENDING": "ਚੜ੍ਹਦੀ ਤਰਤੀਬ ਵਿੱਚ",
 	"LISTS_SORT_ORDER_DESCENDING": "ਲਹਿੰਦੀ ਤਰਤੀਬ ਵਿੱਚ",
 	"PROCEDURES_DEFRETURN_RETURN": "ਮੋੜੋ",
 	"DIALOG_OK": "ਠੀਕ ਹੈ।",
-	"DIALOG_CANCEL": "ਰੱਦ ਕਰੋ"
+	"DIALOG_CANCEL": "ਰੱਦ ਕਰੋ",
+	"LINUX": "ਲੀਨਕਸ",
+	"UNKNOWN": "ਅਣਜਾਣ",
+	"OPTION_KEY": "⌥ ਚੋਣ",
+	"ALT_KEY": "ਬਦਲਵਾਂ",
+	"SHORTCUTS_GENERAL": "ਆਮ",
+	"SHORTCUTS_EDITING": "ਸੁਧਾਈ"
 }

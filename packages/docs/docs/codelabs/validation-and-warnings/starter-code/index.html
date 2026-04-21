@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Validation and Warnings Codelab</title>
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+    <script src="index.js"></script>
+
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+      }
+
+      h1 {
+        font-weight: normal;
+        font-size: 1.4em;
+        margin: 10px;
+      }
+
+      .region {
+        flex-grow: 1;
+        height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      button {
+        width: max-content;
+        margin: 1em;
+      }
+
+      #generatedCodeContainer {
+        flex-grow: 1;
+        resize: none;
+      }
+    </style>
+  </head>
+
+  <body onload="start()">
+    <h1>Validation and Warnings Codelab</h1>
+    <div class="region" id="blocklyDiv"></div>
+    <button onclick="executeCode()">Execute the JavaScript code below</button>
+    <div class="region">
+      <textarea
+        id="generatedCodeContainer"
+        readonly
+        placeholder="Generated JavaScript will go here..."></textarea>
+    </div>
+  </body>
+</html>

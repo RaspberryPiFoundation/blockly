@@ -1,0 +1,133 @@
+---
+description: Reducing the size of Blockly using Closure Compiler.
+title: Advanced compilation
+image: images/blockly_banner.png
+---
+
+# Advanced compilation
+
+The regular [build process](/guides/contribute/core/building) uses Google's online JavaScript compiler to reduce Blockly to a half a dozen files totaling about 720kb (160kb zipped). Alternatively one can use the Google's offline JavaScript compiler in "advanced compilation" mode which has a number of advantages:
+
+- Total Blockly size reduced to 300kb (100kb zipped) due to tree shaking.
+- Faster build times and no network traffic due to local compiler execution.
+- Unlimited compilations (the online compiler is rate-limited).
+
+## Setup
+
+For the purposes of this minimal tutorial, start by creating a new directory in the Blockly root directory.
+
+### Download Closure Compiler.
+
+Download [`compiler.jar`](https://unpkg.com/google-closure-compiler-java/compiler.jar), rename it to `closure-compiler.jar`, and place it in your directory.
+
+Verify that your Java Runtime Environment can run the compiler by running this
+on the command line:
+
+```shell
+java -jar closure-compiler.jar --version
+```
+
+### Boiler Plate
+
+First, create an HTML file which defines a minimal Blockly toolbox and a `div`
+in which to inject it. To do so, create a file in your directory called
+`index.html` that contains this code:
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Blockly: Advanced Compilation</title>
+    <script src="main_compressed.js"></script>
+    <script src="../msg/en.js"></script>
+  </head>
+  <body>
+    <h1>Blockly: Advanced Compilation</h1>
+    <div id="blocklyDiv" style="height: 480px; width: 600px;"></div>
+    <xml id="toolbox" style="display: none">
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+      <block type="controls_repeat_ext"></block>
+      <block type="math_number"></block>
+      <block type="math_arithmetic"></block>
+      <block type="text"></block>
+      <block type="text_print"></block>
+    </xml>
+  </body>
+</html>
+```
+
+Be sure to edit the language path (`../msg/en.js`) as required for
+your path to Blockly and for your desired language.
+
+Second, create a JavaScript file that loads Blockly and any necessary message
+files or block definitions, then injects Blockly into the provided `div`.
+To do so, create a file in your directory called `main.js` that contains
+this code:
+
+```js
+goog.provide('Main');
+// Core
+goog.require('Blockly.requires');
+// Blocks
+goog.require('Blockly.Constants.Logic');
+goog.require('Blockly.Constants.Loops');
+goog.require('Blockly.Constants.Math');
+goog.require('Blockly.Constants.Text');
+
+Main.init = function () {
+  Blockly.inject('blocklyDiv', {
+    toolbox: document.getElementById('toolbox'),
+  });
+};
+window.addEventListener('load', Main.init);
+```
+
+### Compile
+
+Compile `main.js`, Blockly, and Closure Library together by running the
+Closure Compiler from the command line:
+
+```shell
+java -jar closure-compiler.jar --js='main.js' \
+  --js='../blocks/**.js' \
+  --js='../core/**.js' \
+  --js='../generators/**.js' \
+  --generate_exports \
+  --externs ../externs/svg-externs.js \
+  --compilation_level ADVANCED_OPTIMIZATIONS \
+  --dependency_mode=PRUNE --entry_point=Main \
+  --js_output_file main_compressed.js
+```
+
+Or by using our advanced compilation script:
+
+```
+npm run test:compile:advanced
+```
+
+Point a browser at `index.html` to verify everything worked.
+
+### Even More Advanced
+
+For even greater reductions in size, you can include only the Blockly components
+that your application actually uses. For example, if your application isn't
+configured to have a trashcan, then you can remove the trashcan from the list
+of components that are compiled in. To do so, delete the requirement for
+`Blockly.requires` from your code:
+
+```js
+// Core
+goog.require('Blockly.requires');
+```
+
+In its place, open `core/requires.js` and copy all the require statements into
+your code. You can then comment out the ones you don't need.
+
+Note that the Closure Compiler preserves licences in the compiled output.
+Feel free to strip the Apache licenses from this output file to reduce the
+size further.
+
+The Closure Compiler has a lot of features and options, do check out their
+[documentation](https://developers.google.com/closure/compiler/docs/gettingstarted_app).

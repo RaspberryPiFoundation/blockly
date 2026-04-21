@@ -427,7 +427,13 @@ Css.register(`
   fill: #666;
 }
 
-.blocklyFlyoutButton:hover {
+@media (hover: hover) {
+  .blocklyFlyoutButton:hover {
+    fill: #aaa;
+  }
+}
+
+.blocklyFlyoutButton:active {
   fill: #aaa;
 }
 

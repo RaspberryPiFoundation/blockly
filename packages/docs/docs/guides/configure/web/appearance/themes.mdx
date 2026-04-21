@@ -1,0 +1,342 @@
+---
+description: Customizing the look and feel of Blockly with themes.
+title: Themes
+image: images/blockly_banner.png
+---
+
+import Image from '@site/src/components/Image';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Themes
+
+Themes are a way to customize the look and feel of Blockly. You can customize
+block colours, category colours and certain components through the `Themes`
+class. If you want to customize additional components, we provide the theme name
+as a class on the injection `div`. This allows users to change the look of any
+unsupported components through CSS. Our main goal in creating themes is to
+empower developers to create Blockly experiences that are more accessible.
+
+For a practical introduction to using themes, see the [Customizing your themes](/codelabs/theme-extension-identifier/codelab-overview)
+
+:::note
+The easiest way to style Blockly is with themes. If you need finer-grained control, use [CSS](/guides/configure/web/appearance/css).
+:::
+
+:::note
+If you only want to control the main colour of a block, rather than have
+more fine-grained control over the appearance, you can set the colour in the
+[block definition](/guides/configure/web/appearance/block-colour#set-block-colour)
+instead of creating a theme. If you want to change the shape of a block instead
+of its colour, learn more about
+[renderers](/guides/create-custom-blocks/renderers/overview).
+:::
+
+## Theme Properties
+
+A theme is an object with several properties: the base theme to extend from, a
+style object for blocks, categories, components, and fonts, and a whether or not
+to use hats for start blocks.
+
+:::info
+Code in Blockly uses the non-US spelling of `colour`. All colour
+properties can be defined in either hue or hex values.
+:::
+
+### Block Style
+
+A block style is made up of four fields:
+
+- `colourPrimary` (required) - The background colour of the block.
+- `colourSecondary` (optional) - The background colour if the block is a
+  shadow block.
+- `colourTertiary` (optional) - The border or highlight colour of the block.
+- `hat` (optional) - Adds a hat to a block, if the value is set to `cap`.
+  Learn more about
+  [hats](/guides/design/applications#event-driven-program).
+
+<Image
+  alt="Block with arrows pointing to primary, secondary and tertiary colour"
+  src="/images/ColourExplanation.png"
+  srcDark="/images/ColourExplanation-dark.png"
+  width={450}
+/>
+
+```js
+const listBlocks = {
+  colourPrimary: '#4a148c',
+  colourSecondary: '#AD7BE9',
+  colourTertiary: '#CDB6E9',
+  hat: 'cap',
+};
+```
+
+A theme will include a mapping of block style name to block style object:
+
+```js
+const blockStyles = {
+  list_blocks: {
+    colourPrimary: '#4a148c',
+    colourSecondary: '#AD7BE9',
+    colourTertiary: '#CDB6E9',
+  },
+  logic_blocks: {
+    colourPrimary: '#01579b',
+    colourSecondary: '#64C7FF',
+    colourTertiary: '#C5EAFF',
+  },
+};
+```
+
+### Category Style
+
+A category style only holds a colour property.
+
+- Colour (required) - The colour of the category in the toolbox. Usually these
+  colours should be the same as the `colourPrimary` on the majority of blocks
+  in the category. This makes it easy for users to tell which blocks belong in
+  a given category.
+
+<Image
+  alt="Screenshot of toolbox with different category colours"
+  src="/images/CategoryColours.png"
+  srcDark="/images/CategoryColours-dark.png"
+/>
+
+```js
+const mathCategory = {
+  colour: '290',
+};
+```
+
+A theme will include a mapping of category name to category style object:
+
+```js
+const categoryStyles = {
+  list_category: {
+    colour: '#4a148c',
+  },
+  logic_category: {
+    colour: '#01579b',
+  },
+};
+```
+
+### Component Styles
+
+A theme can set the colour or value of the below components:
+
+- `workspaceBackgroundColour`: The workspace background colour
+- `toolboxBackgroundColour`: Toolbox background colour
+- `toolboxForegroundColour`: Toolbox category text colour
+- `flyoutBackgroundColour`: Flyout background colour
+- `flyoutForegroundColour`: Flyout label text colour
+- `flyoutOpacity`: Flyout opacity
+- `scrollbarColour`: Scrollbar colour
+- `scrollbarOpacity`: Scrollbar opacity
+- `insertionMarkerColour`: The insertion marker colour (Does not accept colour
+  names)
+- `insertionMarkerOpacity`: The insertion marker opacity
+- `markerColour`: The colour of the marker displayed in keyboard navigation
+  mode
+- `cursorColour`: The colour of the cursor displayed in keyboard navigation
+  mode
+
+Most other components can be changed by using the theme name in your CSS.
+However, if there is a component you would like to change that is not already a
+part of this list and cannot be changed using CSS, please file an
+[issue](https://github.com/RaspberryPiFoundation/blockly/issues) with more
+information.
+
+```js
+const componentStyle = {
+  workspaceBackgroundColour: '#1e1e1e',
+  toolboxBackgroundColour: '#333',
+};
+```
+
+### Font Styles
+
+A font style is an object that holds the family, weight and size of a font.
+
+```js
+const fontStyle = {
+  family: 'Georgia, serif',
+  weight: 'bold',
+  size: 12,
+};
+```
+
+### Start Hats
+
+:::tip
+Learn more about the use cases of start hats on our
+[application design page](/guides/design/applications#event-driven-program).
+:::
+
+If you set `startHats: true` directly in a theme object, a hat will be added to
+all blocks with no previous or output connections. If you want more control over
+exactly which blocks get a hat, you can instead use the
+[block style](/guides/configure/web/appearance/themes/#block-style) property.
+
+## Custom Themes
+
+In order to add a theme to your Blockly application, you will need to do the
+following:
+
+1.  Create a theme
+2.  Add style names
+3.  Set your theme on a workspace
+
+### Create a Theme
+
+A theme can be created using the constructor or by using `defineTheme`. Using
+`defineTheme` makes it easy to extend a pre existing theme and set all values
+with a single object. A theme has a name, and is an object with the block
+styles, category styles, and other properties as discussed above.
+
+A theme can also have a base theme, which will provide default values for any
+values not specified in the custom theme.
+
+```js
+const theme = Blockly.Theme.defineTheme('themeName', {
+   'base': Blockly.Themes.Classic,
+   'blockStyles': {
+      'logic_blocks': {
+         'colourPrimary': '#4a148c'
+      },
+      'math_blocks': {...}
+   },
+   'categoryStyles': {...},
+   'componentStyles': {...},
+   'fontStyle': {...},
+   'startHats': true
+});
+```
+
+Here is an
+[example](https://github.com/RaspberryPiFoundation/blockly-samples/blob/aba88bea60bddf3d31ce630b836e2933836ed287/plugins/theme-dark/src/index.js#L21)
+of using `defineTheme`.
+
+### Add Style Names
+
+Now that we have created a theme we need to add the name of the styles to the
+block and category definitions.
+
+#### Categories
+
+To use one of the category styles defined in your theme's `categoryStyles`, add
+it to your category definition:
+
+<Tabs groupId="group-1">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+   "kind": "category",
+   "name": "Logic",
+   "categorystyle": "logic_category"
+  }
+  ```
+  </TabItem>
+  <TabItem value="xml" label="XML">
+  ```xml
+  <category name="Logic" categorystyle="logic_category"></category>
+  ```
+  </TabItem>
+</Tabs>
+#### Blocks
+
+To use one of the block styles defined in your theme's `blockStyles`, add it to
+your block definition:
+
+<Tabs groupId="javascript-json">
+  <TabItem value="json" label="JSON" default>
+    ```js "style":"logic_blocks" ```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+    ```js this.setStyle('logic_blocks'); ```
+  </TabItem>
+</Tabs>
+### Set your Theme
+
+You also need to tell Blockly which theme to use. By defining several themes
+that use the same block style and category names, you can allow the user to
+choose the theme that works best for them, and change it dynamically without
+having to change the block definitions themselves.
+
+#### Initial theme
+
+The best way to set an initial theme is by including the `theme` configuration
+option in your call to `Blockly.inject`. You can supply the theme in JSON or
+JavaScript.
+
+<Tabs groupId="javascript-json">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  Blockly.inject('blocklyDiv', {
+    theme: {
+       "blockStyles" : {
+          "list_blocks": {
+             "colourPrimary": "#4a148c",
+             "colourSecondary":"#AD7BE9",
+             "colourTertiary":"#CDB6E9"
+          }
+       },
+       "categoryStyles" : {
+          "list_category": {
+             "colour": "#4a148c"
+          }
+       },
+       "componentStyles" : {
+          "workspaceBackgroundColour": "#1e1e1e"
+       }
+    },
+    ...
+  });
+  ```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+  ```js
+  Blockly.inject('blocklyDiv', {
+    theme: Blockly.Theme.defineTheme('themeName', {
+       'blockStyles': blockStyles,
+       'categoryStyles': categoryStyles,
+       'componentStyles': componentStyles
+    }),
+    ...
+  });
+  ```
+  </TabItem>
+</Tabs>
+If no theme
+is provided then it will default to the
+[Classic Theme](https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/blockly/core/theme/classic.ts).
+
+#### Dynamic themes
+
+If you want to dynamically change your theme (for instance in the case of
+allowing users to choose a theme from a dropdown menu) then you can call
+`yourWorkspace.setTheme(theme)`.
+
+## Create Block Styles Script
+
+Blockly provides a script that will take in a map of hues or hex values and will
+calculate the secondary and tertiary colours for them. The script can be found
+in the
+[scripts/themes](https://github.com/RaspberryPiFoundation/blockly/tree/main/scripts/themes)
+folder.
+
+## Built-in themes \{#built-in\}
+
+Blockly provides a number of themes for accessibility, specifically certain
+types of colour vision deficiency:
+
+- [High contrast](https://raspberrypifoundation.github.io/blockly-samples/plugins/theme-highcontrast/test/)
+- [Deuteranopia/Protanopia](https://raspberrypifoundation.github.io/blockly-samples/plugins/theme-deuteranopia/test/)
+- [Tritanopia](https://raspberrypifoundation.github.io/blockly-samples/plugins/theme-tritanopia/test/)
+
+We also have:
+
+- Classic theme
+- [Modern](https://raspberrypifoundation.github.io/blockly-samples/plugins/theme-modern/test/)
+- [Dark mode](https://raspberrypifoundation.github.io/blockly-samples/plugins/theme-dark/test/)

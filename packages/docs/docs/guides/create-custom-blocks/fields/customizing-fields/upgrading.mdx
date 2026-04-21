@@ -1,0 +1,360 @@
+---
+description: Upgrading custom fields that were implemented before version 2.
+title: Upgrade a custom field
+image: images/blockly_banner.png
+---
+
+# Upgrade a custom field
+
+In July 2019 ([release 2.20190722](https://github.com/RaspberryPiFoundation/blockly/releases/tag/2.20190722.0))
+a more codified fields API was added. It is intended to
+be as backwards compatible as possible. This means that if you had created a
+custom field before July 2019 it will most likely continue to work.
+Before deciding whether your custom field needs to be upgraded you should read
+through the [Danger areas](#danger-areas) section, and give your field a thorough testing.
+
+Because there was a lack of standardization between fields before July 2019
+it is tricky to cover all changes a developer might need to make.
+This document tries to cover all likely changes, but if this document does not
+cover something you are interested in, please read the section on
+[getting upgrade assistance](#getting-upgrade-assistance).
+
+:::note
+If you have a small number of custom fields it may be easier to simply
+rewrite them using the [custom field creation instructions](/guides/create-custom-blocks/fields/customizing-fields/creating),
+rather than trying to upgrade them piecemeal.
+:::
+
+## Danger areas
+
+Danger areas are known places where the API has changed, and your field could be
+broken.
+
+### Blockly.Field.register
+
+Fields are not longer registered through `Blockly.Field.register();`. There is
+now a `fieldRegistry` namespace that handles registration.
+
+```js
+Blockly.Field.register('my_field_name', myFieldClass);
+```
+
+Becomes:
+
+```js
+Blockly.fieldRegistry.register('my_field_name', myFieldClass);
+```
+
+### setText
+
+The `setText` function is no longer called by the Blockly core, so if your `setText`
+function contains logic it will need to be moved to the
+[value handling](/guides/create-custom-blocks/fields/customizing-fields/creating#value-handling)
+suite of functions, the [`getText`](/guides/create-custom-blocks/fields/customizing-fields/creating#text)
+function, and the [rendering functions](/guides/create-custom-blocks/fields/customizing-fields/creating#updating-the-on-block-display)
+(depending on what exactly your `setText` function is doing).
+
+```js
+CustomFields.UpgradeField.prototype.setText = function (newText) {
+  // Do validation.
+  if (typeof newText != 'string' || newText === this.text_) {
+    return;
+  }
+
+  // Fire event.
+  if (this.sourceBlock_ && Blockly.Events.isEnabled()) {
+    Blockly.events.fire(
+      new Blockly.Events.BlockChange(
+        this.sourceBlock_,
+        'field',
+        this.name,
+        this.text_,
+        newText,
+      ),
+    );
+  }
+
+  // Update text value.
+  this.text_ = 'prefix' + newText;
+
+  // Rerender.
+  this.size_.width = 0;
+};
+```
+
+Becomes:
+
+```js
+CustomFields.UpgradeField.prototype.doClassValidation_ = function (newValue) {
+  if (typeof newValue != 'string') {
+    return null;
+  }
+  return newValue;
+};
+
+CustomFields.UpgradeField.prototype.getText = function () {
+  return 'prefix' + this.value_;
+};
+```
+
+Blockly automatically handles:
+
+- Checking if the new value is different than the old value.
+- Updating the value.
+- Firing change events.
+- Rerendering the field.
+
+You will need to handle:
+
+- [Value validation](/guides/create-custom-blocks/fields/customizing-fields/creating#value-handling) (`doClassValidation_`).
+- [Field text](/guides/create-custom-blocks/fields/customizing-fields/creating#text) (`getText`).
+- [Field UI](/guides/create-custom-blocks/fields/customizing-fields/creating#updating-the-on-block-display)
+
+:::note
+We recommend that you change any `setText` calls to
+`setValue` calls, as `setValue` supports validation and `setText` does not.
+:::
+
+## Recommended upgrades
+
+Recommended upgrades are places where the field API has been changed, but if you
+choose not to make changes your field will most likely still work.
+
+### SERIALIZABLE
+
+For more information about the `EDITABLE` and `SERIALIZABLE` properties see
+[Editable and serializable properties](/guides/create-custom-blocks/fields/customizing-fields/creating#editable-and-serializable-properties).
+
+```js
+CustomFields.UpgradeField.prototype.SERIALIZABLE = true;
+```
+
+The warning below is ignorable, but you can resolve it by defining the `SERIALIZABLE`
+property:
+
+```
+Detected an editable field that was not serializable. Please define
+SERIALIZABLE property as true on all editable custom fields. Proceeding
+with serialization.
+```
+
+The warning above means that Blockly believes you want the
+field to be serialized (because the `EDITABLE` property is true), but
+cannot be sure until you define the `SERIALIZABLE` property. If you choose to
+leave this alone everything will function properly, and your field will be
+serialized, but you will receive console warnings.
+
+### size\_.width
+
+```js
+this.size_.width = 0;
+```
+
+Becomes:
+
+```js
+this.isDirty_ = true;
+```
+
+The warning below is ignorable, but you can resolve it by setting the `isDirty_`
+property instead of the `size_.width` property:
+
+```
+Deprecated use of setting size_.width to 0 to rerender a field. Set
+field.isDirty_ to true instead.
+```
+
+The warning above means that Blockly has detected you are using an old method for rerendering a
+field, and would like you to use the new method.
+
+For more information about the `isDirty_` property see
+[isDirty\_](/guides/create-custom-blocks/fields/customizing-fields/creating#isdirty_).
+
+### init
+
+The `init` function has been made into a [template
+function](https://en.wikipedia.org/wiki/Template_method_pattern) to reduce
+duplicate code in subclasses.
+
+```js
+CustomFields.UpgradeField.prototype.init = function () {
+  if (this.fieldGroup_) {
+    // Already initialized once.
+    return;
+  }
+
+  // Call superclass.
+  CustomFields.UpgradeField.superClass_.init.call(this);
+
+  // Create DOM elements.
+  this.extraDom_ = Blockly.utils.dom.createSvgElement('image', {
+    height: '10px',
+    width: '10px',
+  });
+  this.extraDom_.setAttributeNS(
+    'http://www.w3.org/1999/xlink',
+    'xlink:href',
+    'image.svg',
+  );
+  this.extraDom_.style.cursor = 'pointer';
+  this.fieldGroup_.appendChild(this.extraDom_);
+
+  // Bind events.
+  this.mouseOverWrapper_ = Blockly.browserEvents.bind(
+    this.getClickTarget_(),
+    'mouseover',
+    this,
+    this.onMouseOver_,
+  );
+  this.mouseOutWrapper_ = Blockly.browserEvents.bind(
+    this.getClickTarget_(),
+    'mouseout',
+    this,
+    this.onMouseOut_,
+  );
+
+  // Render.
+  this.setValue(this.getValue());
+};
+```
+
+Becomes:
+
+```js
+CustomFields.UpgradeField.prototype.initView = function () {
+  CustomFields.UpgradeField.superClass_.initView.call(this);
+
+  this.extraDom_ = Blockly.utils.dom.createSvgElement('image', {
+    height: '10px',
+    width: '10px',
+  });
+  this.extraDom_.setAttributeNS(
+    'http://www.w3.org/1999/xlink',
+    'xlink:href',
+    'image.svg',
+  );
+  this.extraDom_.style.cursor = 'pointer';
+  this.fieldGroup_.appendChild(this.extraDom_);
+};
+
+CustomFields.UpgradeField.prototype.bindEvents_ = function () {
+  CustomFields.UpgradeField.superClass_.bindEvents_.call(this);
+
+  this.mouseOverWrapper_ = Blockly.bindEvent_(
+    this.getClickTarget_(),
+    'mouseover',
+    this,
+    this.onMouseOver_,
+  );
+  this.mouseOutWrapper_ = Blockly.bindEvent_(
+    this.getClickTarget_(),
+    'mouseout',
+    this,
+    this.onMouseOut_,
+  );
+};
+```
+
+This means that blockly now automatically handles:
+
+- Checking if the field is already initialized.
+- Creating the `fieldGroup_`.
+- Rendering the field.
+- Binding tooltip and show editor events.
+
+You will need to handle:
+
+- Adding additional
+  [DOM elements](/guides/create-custom-blocks/fields/customizing-fields/creating#on-block-display) (`initView`).
+- Adding additional
+  [event bindings](/guides/create-custom-blocks/fields/customizing-fields/creating#input-events) (`bindEvents_`).
+- [Disposing](/guides/create-custom-blocks/fields/customizing-fields/creating#disposing) of event bindings (`dispose`).
+
+:::info
+All DOM creation should be done inside `initView` as that is most
+efficient. Consider refactoring if you have DOM creation happening inside the
+constructor, `setText`, `setValue`, or `render_`.
+:::
+
+### onMouseDown\_
+
+```js
+CustomFields.UpgradeField.prototype.onMouseDown_ = function (e) {
+  // ...
+};
+```
+
+Becomes:
+
+```js
+CustomFields.UpgradeField.prototype.showEditor_ = function () {
+  // ...
+};
+```
+
+We recommend that you override the `showEditor_` function to handle mouse
+clicks rather than the `onMouseDown_` function as that allows input to pass
+through the gesture system.
+
+For more information on editors see [Editors](/guides/create-custom-blocks/fields/customizing-fields/creating#creating-an-editor).
+
+### setValue
+
+The `setValue` function is now a [template
+function](https://en.wikipedia.org/wiki/Template_method_pattern) to reduce
+duplicate code in subclasses. If your `setValue` function contains logic,
+consider refactoring it to fit the value handling paths described in [Value
+handling](/guides/create-custom-blocks/fields/customizing-fields/creating#value-handling).
+
+### text\_
+
+We recommend that you never access or update the `text_` property of your
+field directly. Instead, use the
+[`getText`](/reference/blockly.field.gettext_) function
+to access the user readable text of your field and the
+[`setValue`](/reference/blockly.field.setvalue) function
+to update the stored value of your field.
+
+For more information about a field's value vs its text see
+[Anatomy of a field](/guides/create-custom-blocks/fields/anatomy-of-a-field).
+
+## Getting upgrade assistance
+
+:::note
+Before asking for upgrade assistance please do your best to upgrade your
+field independently using the information provided.
+:::
+
+### What to provide
+
+When asking for assistance it is best to ask specific questions:
+
+Not recommended: "What's wrong with this field?"
+
+Also not recommended: "Help me upgrade this field."
+
+Recommended: "Field text is not updating properly."
+
+It is also necessary to provide resources to the people assisting you. These
+files should be easy for others to use.
+
+Not recommended:
+
+- Images of code.
+- Incomplete code.
+
+Recommended:
+
+- Complete field code in a text format.
+- Images of gifs of bad field behavior.
+- Steps to reproduce bad field behavior.
+- The version of blockly you are upgrading from.
+
+### Where to post
+
+Post upgrade questions on the [blockly developer
+forum](https://groups.google.com/g/blockly).
+
+If you are sure that the issue is a problem with the blockly core you can also
+[post an issue](https://github.com/RaspberryPiFoundation/blockly/issues) on the blockly GitHub.
+If you decide to post an issue, please fill out all requested information.

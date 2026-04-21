@@ -18,6 +18,8 @@ suite('Keyboard Shortcut Items', function () {
     sharedTestSetup.call(this);
     this.workspace = Blockly.inject('blocklyDiv', {});
     this.injectionDiv = this.workspace.getInjectionDiv();
+    Blockly.ContextMenuRegistry.registry.reset();
+    Blockly.ContextMenuItems.registerDefaultOptions();
   });
   teardown(function () {
     sharedTestTeardown.call(this);
@@ -158,87 +160,42 @@ suite('Keyboard Shortcut Items', function () {
         'hideChaff',
       );
     });
-    const testCases = [
-      [
-        'Control C',
-        createKeyDownEvent(Blockly.utils.KeyCodes.C, [
-          Blockly.utils.KeyCodes.CTRL,
-        ]),
-      ],
-      [
-        'Meta C',
-        createKeyDownEvent(Blockly.utils.KeyCodes.C, [
-          Blockly.utils.KeyCodes.META,
-        ]),
-      ],
-    ];
+    const keyEvent = createKeyDownEvent(Blockly.utils.KeyCodes.C, [
+      Blockly.utils.KeyCodes.CTRL_CMD,
+    ]);
     // Copy a block.
-    suite('Simple', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        test(testCaseName, function () {
-          this.injectionDiv.dispatchEvent(keyEvent);
-          sinon.assert.calledOnce(this.copySpy);
-          sinon.assert.calledOnce(this.hideChaffSpy);
-        });
-      });
+    test('Simple', function () {
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.calledOnce(this.copySpy);
+      sinon.assert.calledOnce(this.hideChaffSpy);
     });
     // Allow copying a block if a workspace is in readonly mode.
-    suite('Called when readOnly is true', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        test(testCaseName, function () {
-          this.workspace.setIsReadOnly(true);
-          this.injectionDiv.dispatchEvent(keyEvent);
-          sinon.assert.calledOnce(this.copySpy);
-          sinon.assert.calledOnce(this.hideChaffSpy);
-        });
-      });
+    test('Called when readOnly is true', function () {
+      this.workspace.setIsReadOnly(true);
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.calledOnce(this.copySpy);
+      sinon.assert.calledOnce(this.hideChaffSpy);
     });
     // Do not copy a block if a drag is in progress.
-    suite('Drag in progress', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        test(testCaseName, function () {
-          sinon.stub(this.workspace, 'isDragging').returns(true);
-          this.injectionDiv.dispatchEvent(keyEvent);
-          sinon.assert.notCalled(this.copySpy);
-          sinon.assert.notCalled(this.hideChaffSpy);
-        });
-      });
+    test('Drag in progress', function () {
+      sinon.stub(this.workspace, 'isDragging').returns(true);
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.notCalled(this.copySpy);
+      sinon.assert.notCalled(this.hideChaffSpy);
     });
     // Do not copy a block if is is not deletable.
-    suite('Block is not deletable', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        test(testCaseName, function () {
-          sinon
-            .stub(Blockly.common.getSelected(), 'isOwnDeletable')
-            .returns(false);
-          this.injectionDiv.dispatchEvent(keyEvent);
-          sinon.assert.notCalled(this.copySpy);
-          sinon.assert.notCalled(this.hideChaffSpy);
-        });
-      });
+    test('Block is not deletable', function () {
+      sinon.stub(Blockly.common.getSelected(), 'isOwnDeletable').returns(false);
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.notCalled(this.copySpy);
+      sinon.assert.notCalled(this.hideChaffSpy);
     });
     // Do not copy a block if it is not movable.
-    suite('Block is not movable', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        test(testCaseName, function () {
-          sinon
-            .stub(Blockly.common.getSelected(), 'isOwnMovable')
-            .returns(false);
-          this.injectionDiv.dispatchEvent(keyEvent);
-          sinon.assert.notCalled(this.copySpy);
-          sinon.assert.notCalled(this.hideChaffSpy);
-        });
-      });
+    test('Block is not movable', function () {
+      sinon.stub(Blockly.common.getSelected(), 'isOwnMovable').returns(false);
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.notCalled(this.copySpy);
+      sinon.assert.notCalled(this.hideChaffSpy);
     });
     test('Not called when connection is focused', function () {
       // Restore the stub behavior called during setup
@@ -254,19 +211,13 @@ suite('Keyboard Shortcut Items', function () {
     });
     // Copy a comment.
     test('Workspace comment', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        test(testCaseName, function () {
-          Blockly.getFocusManager().getFocusedNode.restore();
-          this.comment = setSelectedComment(this.workspace);
-          this.copySpy = sinon.spy(this.comment, 'toCopyData');
+      Blockly.getFocusManager().getFocusedNode.restore();
+      this.comment = setSelectedComment(this.workspace);
+      this.copySpy = sinon.spy(this.comment, 'toCopyData');
 
-          this.injectionDiv.dispatchEvent(keyEvent);
-          sinon.assert.calledOnce(this.copySpy);
-          sinon.assert.calledOnce(this.hideChaffSpy);
-        });
-      });
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.calledOnce(this.copySpy);
+      sinon.assert.calledOnce(this.hideChaffSpy);
     });
   });
 
@@ -280,92 +231,47 @@ suite('Keyboard Shortcut Items', function () {
         'hideChaff',
       );
     });
-    const testCases = [
-      [
-        'Control X',
-        createKeyDownEvent(Blockly.utils.KeyCodes.X, [
-          Blockly.utils.KeyCodes.CTRL,
-        ]),
-      ],
-      [
-        'Meta X',
-        createKeyDownEvent(Blockly.utils.KeyCodes.X, [
-          Blockly.utils.KeyCodes.META,
-        ]),
-      ],
-    ];
+    const keyEvent = createKeyDownEvent(Blockly.utils.KeyCodes.X, [
+      Blockly.utils.KeyCodes.CTRL_CMD,
+    ]);
     // Cut a block.
-    suite('Simple', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        test(testCaseName, function () {
-          this.injectionDiv.dispatchEvent(keyEvent);
-          sinon.assert.calledOnce(this.copySpy);
-          sinon.assert.calledOnce(this.disposeSpy);
-          sinon.assert.calledOnce(this.hideChaffSpy);
-        });
-      });
+    test('Simple', function () {
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.calledOnce(this.copySpy);
+      sinon.assert.calledOnce(this.disposeSpy);
+      sinon.assert.calledOnce(this.hideChaffSpy);
     });
     // Do not cut a block if a workspace is in readonly mode.
-    suite('Not called when readOnly is true', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        test(testCaseName, function () {
-          this.workspace.setIsReadOnly(true);
-          this.injectionDiv.dispatchEvent(keyEvent);
-          sinon.assert.notCalled(this.copySpy);
-          sinon.assert.notCalled(this.disposeSpy);
-          sinon.assert.notCalled(this.hideChaffSpy);
-        });
-      });
+    test('Not called when readOnly is true', function () {
+      this.workspace.setIsReadOnly(true);
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.notCalled(this.copySpy);
+      sinon.assert.notCalled(this.disposeSpy);
+      sinon.assert.notCalled(this.hideChaffSpy);
     });
     // Do not cut a block if a drag is in progress.
-    suite('Drag in progress', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        test(testCaseName, function () {
-          sinon.stub(this.workspace, 'isDragging').returns(true);
-          this.injectionDiv.dispatchEvent(keyEvent);
-          sinon.assert.notCalled(this.copySpy);
-          sinon.assert.notCalled(this.disposeSpy);
-          sinon.assert.notCalled(this.hideChaffSpy);
-        });
-      });
+    test('Drag in progress', function () {
+      sinon.stub(this.workspace, 'isDragging').returns(true);
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.notCalled(this.copySpy);
+      sinon.assert.notCalled(this.disposeSpy);
+      sinon.assert.notCalled(this.hideChaffSpy);
     });
     // Do not cut a block if is is not deletable.
-    suite('Block is not deletable', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        test(testCaseName, function () {
-          sinon
-            .stub(Blockly.common.getSelected(), 'isOwnDeletable')
-            .returns(false);
-          this.injectionDiv.dispatchEvent(keyEvent);
-          sinon.assert.notCalled(this.copySpy);
-          sinon.assert.notCalled(this.disposeSpy);
-          sinon.assert.notCalled(this.hideChaffSpy);
-        });
-      });
+    test('Block is not deletable', function () {
+      sinon.stub(Blockly.common.getSelected(), 'isOwnDeletable').returns(false);
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.notCalled(this.copySpy);
+      sinon.assert.notCalled(this.disposeSpy);
+      sinon.assert.notCalled(this.hideChaffSpy);
     });
     // Do not cut a block if it is not movable.
-    suite('Block is not movable', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        test(testCaseName, function () {
-          sinon
-            .stub(Blockly.common.getSelected(), 'isOwnMovable')
-            .returns(false);
-          this.injectionDiv.dispatchEvent(keyEvent);
-          sinon.assert.notCalled(this.copySpy);
-          sinon.assert.notCalled(this.disposeSpy);
-          sinon.assert.notCalled(this.hideChaffSpy);
-        });
-      });
+    test('Block is not movable', function () {
+      sinon.stub(Blockly.common.getSelected(), 'isOwnMovable').returns(false);
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.notCalled(this.copySpy);
+      sinon.assert.notCalled(this.disposeSpy);
+      sinon.assert.notCalled(this.hideChaffSpy);
     });
     test('Not called when connection is focused', function () {
       // Restore the stub behavior called during setup
@@ -382,21 +288,20 @@ suite('Keyboard Shortcut Items', function () {
     });
 
     // Cut a comment.
-    suite('Workspace comment', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        test(testCaseName, function () {
-          Blockly.getFocusManager().getFocusedNode.restore();
-          this.comment = setSelectedComment(this.workspace);
-          this.copySpy = sinon.spy(this.comment, 'toCopyData');
-          this.disposeSpy = sinon.spy(this.comment, 'dispose');
+    test('Workspace comment', function () {
+      Blockly.getFocusManager().getFocusedNode.restore();
+      this.comment = setSelectedComment(this.workspace);
+      this.copySpy = sinon.spy(this.comment, 'toCopyData');
+      this.disposeSpy = sinon.spy(this.comment, 'dispose');
 
-          this.injectionDiv.dispatchEvent(keyEvent);
-          sinon.assert.calledOnce(this.copySpy);
-          sinon.assert.calledOnce(this.disposeSpy);
-        });
-      });
+      this.injectionDiv.dispatchEvent(keyEvent);
+
+      const deleteEvents = this.workspace
+        .getUndoStack()
+        .filter((e) => e.type === 'comment_delete');
+      assert(deleteEvents[0].group !== ''); // Group string is not empty
+      sinon.assert.calledOnce(this.copySpy);
+      sinon.assert.calledOnce(this.disposeSpy);
     });
   });
 
@@ -421,52 +326,25 @@ suite('Keyboard Shortcut Items', function () {
         'hideChaff',
       );
     });
-    const testCases = [
-      [
-        'Control Z',
-        createKeyDownEvent(Blockly.utils.KeyCodes.Z, [
-          Blockly.utils.KeyCodes.CTRL,
-        ]),
-      ],
-      [
-        'Meta Z',
-        createKeyDownEvent(Blockly.utils.KeyCodes.Z, [
-          Blockly.utils.KeyCodes.META,
-        ]),
-      ],
-    ];
+    const keyEvent = createKeyDownEvent(Blockly.utils.KeyCodes.Z, [
+      Blockly.utils.KeyCodes.CTRL_CMD,
+    ]);
     // Undo.
-    suite('Simple', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        test(testCaseName, function () {
-          this.injectionDiv.dispatchEvent(keyEvent);
-          sinon.assert.calledOnce(this.undoSpy);
-          sinon.assert.calledOnce(this.hideChaffSpy);
-        });
-      });
+    test('Simple', function () {
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.calledOnce(this.undoSpy);
+      sinon.assert.calledOnce(this.hideChaffSpy);
     });
     // Do not undo if a drag is in progress.
-    suite('Drag in progress', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        test(testCaseName, function () {
-          sinon.stub(this.workspace, 'isDragging').returns(true);
-          this.injectionDiv.dispatchEvent(keyEvent);
-          sinon.assert.notCalled(this.undoSpy);
-          sinon.assert.notCalled(this.hideChaffSpy);
-        });
-      });
+    test('Drag in progress', function () {
+      sinon.stub(this.workspace, 'isDragging').returns(true);
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.notCalled(this.undoSpy);
+      sinon.assert.notCalled(this.hideChaffSpy);
     });
     // Do not undo if the workspace is in readOnly mode.
-    suite('Not called when readOnly is true', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        runReadOnlyTest(keyEvent, testCaseName);
-      });
+    test('Not called when readOnly is true', function () {
+      runReadOnlyTest(keyEvent);
     });
   });
 
@@ -478,54 +356,26 @@ suite('Keyboard Shortcut Items', function () {
         'hideChaff',
       );
     });
-    const testCases = [
-      [
-        'Control Shift Z',
-        createKeyDownEvent(Blockly.utils.KeyCodes.Z, [
-          Blockly.utils.KeyCodes.CTRL,
-          Blockly.utils.KeyCodes.SHIFT,
-        ]),
-      ],
-      [
-        'Meta Shift Z',
-        createKeyDownEvent(Blockly.utils.KeyCodes.Z, [
-          Blockly.utils.KeyCodes.META,
-          Blockly.utils.KeyCodes.SHIFT,
-        ]),
-      ],
-    ];
-    // Undo.
-    suite('Simple', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        test(testCaseName, function () {
-          this.injectionDiv.dispatchEvent(keyEvent);
-          sinon.assert.calledOnce(this.redoSpy);
-          sinon.assert.calledOnce(this.hideChaffSpy);
-        });
-      });
+    const keyEvent = createKeyDownEvent(Blockly.utils.KeyCodes.Z, [
+      Blockly.utils.KeyCodes.CTRL_CMD,
+      Blockly.utils.KeyCodes.SHIFT,
+    ]);
+    // Redo.
+    test('Simple', function () {
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.calledOnce(this.redoSpy);
+      sinon.assert.calledOnce(this.hideChaffSpy);
     });
     // Do not redo if a drag is in progress.
-    suite('Drag in progress', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        test(testCaseName, function () {
-          sinon.stub(this.workspace, 'isDragging').returns(true);
-          this.injectionDiv.dispatchEvent(keyEvent);
-          sinon.assert.notCalled(this.redoSpy);
-          sinon.assert.notCalled(this.hideChaffSpy);
-        });
-      });
+    test('Drag in progress', function () {
+      sinon.stub(this.workspace, 'isDragging').returns(true);
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.notCalled(this.redoSpy);
+      sinon.assert.notCalled(this.hideChaffSpy);
     });
     // Do not undo if the workspace is in readOnly mode.
-    suite('Not called when readOnly is true', function () {
-      testCases.forEach(function (testCase) {
-        const testCaseName = testCase[0];
-        const keyEvent = testCase[1];
-        runReadOnlyTest(keyEvent, testCaseName);
-      });
+    test('Not called when readOnly is true', function () {
+      runReadOnlyTest(keyEvent);
     });
   });
 
@@ -557,5 +407,86 @@ suite('Keyboard Shortcut Items', function () {
         Blockly.utils.KeyCodes.CTRL,
       ]),
     );
+  });
+
+  suite('Show context menu (Ctrl/Cmd+Enter)', function () {
+    const contextMenuKeyEvent = createKeyDownEvent(
+      Blockly.utils.KeyCodes.ENTER,
+      [Blockly.utils.KeyCodes.CTRL_CMD],
+    );
+
+    test('Displays context menu on a block using the keyboard shortcut', function () {
+      const block = setSelectedBlock(this.workspace);
+      this.injectionDiv.dispatchEvent(contextMenuKeyEvent);
+
+      const menu = Blockly.ContextMenu.getMenu();
+      assert.instanceOf(menu, Blockly.Menu, 'Context menu should be shown');
+
+      const menuOptions =
+        Blockly.ContextMenuRegistry.registry.getContextMenuOptions(
+          {block, focusedNode: block},
+          contextMenuKeyEvent,
+        );
+      for (const option of menuOptions) {
+        assert.include(menu.getElement().innerText, option.text);
+      }
+    });
+
+    test('Displays context menu on the workspace using the keyboard shortcut', function () {
+      Blockly.getFocusManager().focusNode(this.workspace);
+      this.injectionDiv.dispatchEvent(contextMenuKeyEvent);
+
+      const menu = Blockly.ContextMenu.getMenu();
+      assert.instanceOf(menu, Blockly.Menu, 'Context menu should be shown');
+      const menuOptions =
+        Blockly.ContextMenuRegistry.registry.getContextMenuOptions(
+          {workspace: this.workspace, focusedNode: this.workspace},
+          contextMenuKeyEvent,
+        );
+      for (const option of menuOptions) {
+        assert.include(menu.getElement().innerText, option.text);
+      }
+    });
+
+    test('Displays context menu on a workspace comment using the keyboard shortcut', function () {
+      Blockly.ContextMenuItems.registerCommentOptions();
+      const comment = setSelectedComment(this.workspace);
+      this.injectionDiv.dispatchEvent(contextMenuKeyEvent);
+
+      const menu = Blockly.ContextMenu.getMenu();
+      assert.instanceOf(menu, Blockly.Menu, 'Context menu should be shown');
+      const menuOptions =
+        Blockly.ContextMenuRegistry.registry.getContextMenuOptions(
+          {comment, focusedNode: comment},
+          contextMenuKeyEvent,
+        );
+      for (const option of menuOptions) {
+        assert.include(menu.getElement().innerText, option.text);
+      }
+    });
+
+    test('First menu item is highlighted when context menu is shown via keyboard shortcut', function () {
+      setSelectedBlock(this.workspace);
+      this.injectionDiv.dispatchEvent(contextMenuKeyEvent);
+
+      const menuEl = Blockly.ContextMenu.getMenu().getElement();
+      const firstMenuItem = menuEl.querySelector('.blocklyMenuItem');
+      assert.isTrue(
+        firstMenuItem.classList.contains('blocklyMenuItemHighlight'),
+      );
+    });
+
+    test('Context menu is not shown when shortcut is invoked while a field is focused', function () {
+      const block = this.workspace.newBlock('math_arithmetic');
+      block.initSvg();
+      const field = block.getField('OP');
+      Blockly.getFocusManager().focusNode(field);
+      this.injectionDiv.dispatchEvent(contextMenuKeyEvent);
+
+      assert.isNull(
+        Blockly.ContextMenu.getMenu(),
+        'Context menu should not be triggered when a field is focused',
+      );
+    });
   });
 });

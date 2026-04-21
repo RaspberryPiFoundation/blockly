@@ -1,0 +1,72 @@
+---
+description: Basic information about creating a block.
+title: Define custom blocks
+image: images/blockly_banner.png
+---
+
+import Image from '@site/src/components/Image';
+
+# Define custom blocks
+
+Blocks are what you use to program. They represent expressions and statements in
+text-based programming languages.
+
+For more information about blocks and their parts, see the
+[visual glossary][visual-glossary-blocks].
+
+## Block definition
+
+A block definition specifies the puzzle piece connections and fields on your
+block. Most of the look and style of your blocks is specified in other ways. The
+string (usually code) your block gets converted to is defined as a [block-code
+generator][block-code-generator].
+
+The easiest way to define simple blocks is using JSON.
+
+This code snippet defines a "move forward" block with next and previous
+connections, and one field for the distance.
+
+```js
+// Create the definition.
+const definitions = Blockly.common.createBlockDefinitionsFromJsonArray([
+  {
+    // The type is like the "class name" for your block. It is used to construct
+    // new instances. E.g. in the toolbox.
+    type: 'my_custom_block',
+    // The message defines the basic text of your block, and where inputs or
+    // fields will be inserted.
+    message0: 'move forward %1',
+    args0: [
+      // Each arg is associated with a %# in the message.
+      // This one gets substituted for %1.
+      {
+        // The type specifies the kind of input or field to be inserted.
+        type: 'field_number',
+        // The name allows you to reference the field and get its value.
+        name: 'FIELD_NAME',
+      },
+    ],
+    // Adds an untyped previous connection to the top of the block.
+    previousStatement: null,
+    // Adds an untyped next connection to the bottom of the block.
+    nextStatement: null,
+  },
+]);
+
+// Register the definition.
+Blockly.common.defineBlocks(definitions);
+```
+
+<Image
+  alt="A block for moving forward"
+  src="/images/example-blocks/move-forward.png"
+  width={150}
+/>
+
+For more information about how to define your blocks and add them to your
+toolbox, see [Custom blocks overview][define-blocks].
+
+[visual-glossary-blocks]: /guides/get-started/workspace-anatomy#blocks
+[block-code-generator]: /guides/get-started/code-generation
+[define-blocks]: /guides/create-custom-blocks/overview
+[move-forward]: /images/example-blocks/move-forward.png

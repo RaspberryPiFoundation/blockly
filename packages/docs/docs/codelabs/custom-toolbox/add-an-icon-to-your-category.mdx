@@ -1,0 +1,126 @@
+---
+slug: /codelabs/custom-toolbox/add-an-icon-to-your-category
+description: How to add an icon to your category.
+---
+
+import Image from '@site/src/components/Image';
+
+# Customizing a Blockly toolbox
+
+## 5. Add an icon to your category
+
+We are going to add an icon to our "Logic" category by adding an icon library to
+our `index.html` file, and setting the appropriate CSS class on our category definition.
+
+To start, we are going to grab an icon library and add it to `index.html`:
+
+```
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+```
+
+We are going to add a cog icon from this library to the "Logic" category.
+To do this, we will add the appropriate CSS classes to our category definition.
+
+In `index.html` scroll down to your toolbox definition and change the below line:
+
+```xml
+<category name="Logic" categorystyle="logic_category">
+```
+
+to be:
+
+```xml
+<category css-icon="customIcon fa fa-cog" name="Logic" categorystyle="logic_category">
+```
+
+All the classes used to create a category can be set similar to how we set the
+icon class above. See the [Blockly toolbox documentation](/guides/configure/web/toolboxes/appearance#category-css) for more information.
+
+### Add some CSS
+
+If you open `index.html` you will notice that the gear icon is positioned
+incorrectly and is a bit difficult to see. We will use the `customIcon` class to
+change the color of the icon and use the `blocklyTreeRowContentContainer` class
+to position the icon above the text.
+
+In your `toolbox_style.css` file add:
+
+```css
+/* Changes color of the icon to white. */
+.customIcon {
+  color: white;
+}
+/* Stacks the icon on top of the label. */
+.blocklyTreeRowContentContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.blocklyToolboxCategory {
+  height: initial;
+}
+```
+
+### Update setSelected
+
+If you open `index.html` and click on the "Logic" category you will notice
+that the white icon now blends into the white background.
+
+In order to fix this, we are going to update our `setSelected` method to set the
+color of the icon to the category color when the category has been selected.
+
+Inside `custom_category.js` add the below line to `setSelected` if the category
+has been selected:
+
+```js
+this.iconDom_.style.color = this.colour_;
+```
+
+Add the below line to `setSelected` if the category has not been selected:
+
+```js
+this.iconDom_.style.color = 'white';
+```
+
+Your `setSelected` method should look similar to below:
+
+```js
+  /** @override */
+  setSelected(isSelected){
+     // We do not store the label span on the category, so use getElementsByClassName.
+     var labelDom = this.rowDiv_.getElementsByClassName('blocklyToolboxCategoryLabel')[0];
+     if (isSelected) {
+       // Change the background color of the div to white.
+       this.rowDiv_.style.backgroundColor = 'white';
+       // Set the colour of the text to the colour of the category.
+       labelDom.style.color = this.colour_;
+       this.iconDom_.style.color = this.colour_;
+     } else {
+       // Set the background back to the original colour.
+       this.rowDiv_.style.backgroundColor = this.colour_;
+       // Set the text back to white.
+       labelDom.style.color = 'white';
+       this.iconDom_.style.color = 'white';
+     }
+     // This is used for accessibility purposes.
+     Blockly.utils.aria.setState(/** @type {!Element} */ (this.htmlDiv_),
+         Blockly.utils.aria.State.SELECTED, isSelected);
+  }
+```
+
+### The result
+
+If you open your `index.html` file, you should see a white gear above your "Logic"
+label, and it should change to blue when the category has been selected.
+
+<Image
+  src="/images/codelabs/custom-toolbox/category_gear.png"
+  alt='A white gear above the word "Logic" on a blue background.'
+  className="codelabImage"
+/>
+
+<Image
+  src="/images/codelabs/custom-toolbox/category_gear_selected.png"
+  alt='A blue gear above the word "Logic" on a white background.'
+  className="codelabImage"
+/>

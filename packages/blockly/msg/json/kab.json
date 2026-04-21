@@ -4,6 +4,7 @@
 			"Alem",
 			"Amaziɣ maziɣ",
 			"Belkacem77",
+			"ButterflyOfFire",
 			"K Messaoudi",
 			"SlimaneAmiri",
 			"YubaWissin"
@@ -22,6 +23,7 @@
 	"DELETE_X_BLOCKS": "Kkes %1 n yiḥedran",
 	"DELETE_ALL_BLOCKS": "Kkes akk %1 n yiḥedran?",
 	"CLEAN_UP": "Sfeḍ iḥedran",
+	"CLOSE": "Mdel",
 	"COLLAPSE_BLOCK": "Fneẓ iḥder",
 	"COLLAPSE_ALL": "Fneẓ iḥedran",
 	"EXPAND_BLOCK": "Snefli iḥder",
@@ -319,5 +321,13 @@
 	"WORKSPACE_ARIA_LABEL": "Tallunt n umahel Blockly",
 	"COLLAPSED_WARNINGS_WARNING": "Iḥedran yettin gebren ilɣa.",
 	"DIALOG_OK": "IH",
-	"DIALOG_CANCEL": "Sefsex"
+	"DIALOG_CANCEL": "Sefsex",
+	"WINDOWS": "Windows",
+	"MAC_OS": "macOS",
+	"CHROME_OS": "ChromeOS",
+	"LINUX": "Linux",
+	"UNKNOWN": "Arussin",
+	"CONTROL_KEY": "Ctrl",
+	"COPY_SHORTCUT": "Nɣel (%1)",
+	"SHORTCUTS_GENERAL": "Amatu"
 }

@@ -1,0 +1,64 @@
+---
+slug: /codelabs/custom-generator/block-generator-overview
+description: Introduction to block generators.
+---
+
+# Build a custom generator
+
+## 4. Block generator overview
+
+At its core, a block generator is a function that takes in a block (and optionally the language generator instance), translates the block into code, and returns that code as a string.
+
+Each language generator has a property called `forBlock`, which is a dictionary object where all block generator functions must be placed. For instance, here is the code to add a block generator for blocks of type `sample_block` on a language generator object (`sampleGenerator`).
+
+```js
+sampleGenerator.forBlock['sample_block'] = function (block, generator) {
+  return 'my code string';
+};
+```
+
+### Statement blocks
+
+Statement blocks represent code that does not return a value.
+
+A statement block's generator simply returns a string.
+
+For example, this code defines a block generator that always returns the same function call.
+
+```js
+sampleGenerator.forBlock['left_turn_block'] = function (block, generator) {
+  return 'turnLeft()';
+};
+```
+
+### Value blocks
+
+Value blocks represent code that returns a value.
+
+A value block's generator returns an array containing a string and a [precedence value](/guides/create-custom-blocks/code-generation/operator-precedence). The built-in generators have predefined operator precedence values exported as an `Order` enum.
+
+This code defines a block generator that always returns `1 + 1`:
+
+```js
+sampleGenerator.forBlock['two_block'] = function (block, generator) {
+  return ['1 + 1', Order.ADDITION];
+};
+```
+
+### Operator precedence
+
+Operator precedence rules determine how the correct order of operations is maintained during parsing. In Blockly's generators, operator precedence determines when to add parentheses.
+
+--> Read more about [operator precedence in JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence).
+
+--> Read more about [operator precedence in Blockly](/guides/create-custom-blocks/code-generation/operator-precedence).
+
+Since JSON does not allow values that are expressions, the code does not need to consider operator precedence for the generator being built in this codelab. The same value can be used everywhere a precedence value is required. Since parentheses never need to be added to the JSON, call this value `ATOMIC`.
+
+In `src/generators/json.js`, declare a new enum called `Order` and add the `ATOMIC` value:
+
+```js
+const Order = {
+  ATOMIC: 0,
+};
+```

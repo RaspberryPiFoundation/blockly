@@ -18,55 +18,6 @@ import * as packageTasks from './package_tasks.mjs';
 import {getPackageJson} from './helper_tasks.mjs';
 import {RELEASE_DIR} from './config.mjs';
 
-
-// Gets the current major version.
-function getMajorVersion() {
-  const { version } = getPackageJson();
-  const re = new RegExp(/^(\d)./);
-  const match = re.exec(version);
-  if (!match[0]) {
-    return null;
-  }
-  console.log(match[0]);
-  return parseInt(match[0]);
-}
-
-// Updates the version depending on user input.
-function updateVersion(done, updateType) {
-  const majorVersion = getMajorVersion();
-  if (!majorVersion) {
-    done(new Error('Something went wrong when getting the major version number.'));
-  } else if (!updateType) {
-    // User selected to cancel.
-    done(new Error('Cancelling process.'));
-  }
-
-  switch (updateType.toLowerCase()) {
-    case 'major':
-      majorVersion++;
-      execSync(`npm --no-git-tag-version version ${majorVersion}.$(date +'%Y%m%d').0`, {stdio: 'inherit'});
-      done();
-      break;
-    case 'minor':
-      execSync(`npm --no-git-tag-version version ${majorVersion}.$(date +'%Y%m%d').0`, {stdio: 'inherit'});
-      done();
-      break;
-    case 'patch':
-      execSync(`npm --no-git-tag-version version patch`, {stdio: 'inherit'});
-      done();
-      break;
-    default:
-      done(new Error('Unexpected update type was chosen.'))
-  }
-}
-
-// Prompt the user to figure out what kind of version update we should do.
-function updateVersionPrompt(done) {
-  const releaseTypes = ['Major', 'Minor', 'Patch'];
-  const index = readlineSync.keyInSelect(releaseTypes, 'Which version type?');
-  updateVersion(done, releaseTypes[index]);
-}
-
 // Checks with the user that they are on the correct git branch.
 function checkBranch(done) {
   const gitBranchName = execSync('git rev-parse --abbrev-ref HEAD').toString();
@@ -162,13 +113,3 @@ export const publishBeta = gulp.series(
   checkReleaseDir,
   loginAndPublishBeta
 );
-
-// Switch to a new branch, update the version number, build Blockly
-// and check in the resulting built files.
-export const recompile = gulp.series(
-  gitTasks.syncDevelop(),
-  gitTasks.createRebuildBranch,
-  updateVersionPrompt,
-  packageTasks.pack,  // Does clean + build.
-  gitTasks.pushRebuildBranch
-  );

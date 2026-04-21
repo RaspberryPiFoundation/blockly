@@ -1,0 +1,78 @@
+---
+slug: /codelabs/custom-generator/the-basics
+description: How to define and call a language generator.
+---
+
+# Build a custom generator
+
+## 3. The basics
+
+A _language generator_ defines the basic properties of a language, such as how indentation works. _Block generators_ define how individual blocks are turned into code, and must be defined for every block used.
+
+A language generator has a single entry point: `workspaceToCode`. This function takes in a workspace and:
+
+- Initializes the generator and any necessary state by calling `init`.
+- Walks the list of top blocks on the workspace and calls `blockToCode` on each top block.
+- Cleans up any leftover state by calling `finish`.
+- Returns the generated code.
+
+### Create the language generator
+
+The first step is to define and call the custom language generator.
+
+A custom language generator is simply an instance of `Blockly.Generator`. Create a new file `src/generators/json.js`. In it, import Blockly and call the `Blockly.Generator` constructor, passing in the generator's name and storing the result.
+
+```js
+import * as Blockly from 'blockly';
+
+export const jsonGenerator = new Blockly.CodeGenerator('JSON');
+```
+
+### Generate code
+
+Next, hook up the new generator with the sample app. First, remove the old code that imports the new block generator properties and assigns them to the `javascriptGenerator`. Remove these lines from `src/index.js`:
+
+```js
+// Remove these lines!
+import { forBlock } from './generators/javascript';
+import { javascriptGenerator } from 'blockly/javascript';
+
+// Also remove this line! (further down)
+Object.assign(javascriptGenerator.forBlock, forBlock);
+```
+
+Now import the new generator:
+
+```js
+import { jsonGenerator } from './generators/json';
+```
+
+Currently, there are two panels in the app next to the workspace. One shows the generated JavaScript code, and one executes it. The one panel showing the generated Javascript code will be changed to show the generated JSON code instead. Since JSON can't be directly executed, the panel that shows the execution will be left blank. Change the `runCode` function to the following:
+
+```js
+// This function resets the code div and shows the
+// generated code from the workspace.
+const runCode = () => {
+  const code = jsonGenerator.workspaceToCode(ws);
+  codeDiv.innerText = code;
+};
+```
+
+Since the bottom panel is not being modified, delete this line:
+
+```js
+// Remove this line!
+const outputDiv = document.getElementById('output');
+```
+
+The generated code will now be shown automatically in the top left panel. Refresh the sample app page to see the changes so far.
+
+### Test it
+
+Put a number block on the workspace and check the generator output area. It's empty, so check the console. You should see an error:
+
+```
+Language "JSON" does not know how to generate code for block type "math_number".
+```
+
+This error occurs because there has to be a block generator for each type of block. Read the next section for more details.

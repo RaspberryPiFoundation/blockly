@@ -17,6 +17,7 @@
 	"DELETE_X_BLOCKS": "%1 بلاکاں کوں مٹاؤ",
 	"DELETE_ALL_BLOCKS": "بھلا %1 بلاکاں کوں مٹاؤں؟",
 	"CLEAN_UP": "بلاک صاف کرو",
+	"CLOSE": "بند کرو",
 	"COLLAPSE_BLOCK": "بلا ک کٹھے کرو",
 	"COLLAPSE_ALL": "بلاک کٹھے کرو",
 	"EXPAND_BLOCK": "بلاک کھنڈاؤ",
@@ -113,5 +114,7 @@
 	"PROCEDURES_DEFRETURN_RETURN": "واپس آ ونڄو",
 	"PROCEDURES_MUTATORARG_TITLE": "ان پُٹ ناں:",
 	"DIALOG_OK": "ٹھیک ہے",
-	"DIALOG_CANCEL": "منسوخ"
+	"DIALOG_CANCEL": "منسوخ",
+	"UNKNOWN": "نامعلوم",
+	"SHORTCUTS_GENERAL": "عمومی"
 }

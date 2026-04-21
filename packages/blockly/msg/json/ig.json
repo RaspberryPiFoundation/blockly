@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Chikerenma Ndubuka",
 			"Mapmeld",
 			"Timzy D'Great",
 			"Ukabia"
@@ -19,6 +20,7 @@
 	"DELETE_X_BLOCKS": "Kpochapụ %1 Ngọngọ",
 	"DELETE_ALL_BLOCKS": "Mkpọchi %1 ngọngọ niile?",
 	"CLEAN_UP": "Hichapụ ngọngọ",
+	"CLOSE": "Mechie",
 	"COLLAPSE_BLOCK": "Kwada Ngọngọ",
 	"COLLAPSE_ALL": "Kwada Ngọngọ",
 	"EXPAND_BLOCK": "Gbasaa Ngọngọ",
@@ -301,6 +303,7 @@
 	"PROCEDURES_DEFNORETURN_PROCEDURE": "megharịa",
 	"PROCEDURES_BEFORE_PARAMS": "na:",
 	"PROCEDURES_CALL_BEFORE_PARAMS": "na:",
+	"PROCEDURES_CALL_DISABLED_DEF_WARNING": "Enweghị ike ikwado nkọwa ngwa onye ọrụ ihe dike'%1' n'ihi na egbochiela nkọ̀wa ngwá ọrụ a",
 	"PROCEDURES_DEFNORETURN_TOOLTIP": "Na emepụta ọrụ na-enweghị mmepụta.",
 	"PROCEDURES_DEFNORETURN_COMMENT": "Kọwaa ọrụ a...",
 	"PROCEDURES_DEFRETURN_RETURN": "weghachite",
@@ -318,6 +321,13 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Weghachite akara nke agbanwe a.",
 	"PROCEDURES_IFRETURN_WARNING": "Ịdọ aka ná ntị: Ọrụ a nwere ọnụọgụ abụọ.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Kwuo ihe ọ bụla...",
+	"WORKSPACE_ARIA_LABEL": "Ebe ọrụ akpọrọ Blockly",
 	"DIALOG_OK": "Ọ DỊ MMA",
-	"DIALOG_CANCEL": "Hapụ̀"
+	"DIALOG_CANCEL": "Hapụ̀",
+	"UNKNOWN": "Amaghi",
+	"CONTROL_KEY": "Ctrl",
+	"COMMAND_KEY": "⌘ Iwu",
+	"OPTION_KEY": "⌥ Nhọrọ",
+	"ALT_KEY": "Alt",
+	"CUT_SHORTCUT": "Bee"
 }

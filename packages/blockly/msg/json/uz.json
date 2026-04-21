@@ -1,13 +1,19 @@
 {
 	"@metadata": {
 		"authors": [
+			"Mainculprit",
 			"Nodirbek"
 		]
 	},
+	"UNNAMED_KEY": "nomlanmagan",
+	"TODAY": "Bugun",
+	"ADD_COMMENT": "Izoh qo‘shish",
+	"REMOVE_COMMENT": "Izohni olib tashlash",
 	"DELETE_BLOCK": "Blokni o'chirish",
 	"DELETE_X_BLOCKS": "%1 bloklarini o‘chirish",
 	"DELETE_ALL_BLOCKS": "Barcha %1 bloklar o'chirilsinmi?",
 	"CLEAN_UP": "Bloklarni tozalash",
+	"CLOSE": "Yopish",
 	"COLLAPSE_BLOCK": "Blokni yopish",
 	"COLLAPSE_ALL": "Bloklarni yopish",
 	"EXPAND_BLOCK": "Blokni kengaytirish",
@@ -18,6 +24,7 @@
 	"UNDO": "Bekor qilish",
 	"REDO": "Qaytarish",
 	"CHANGE_VALUE_TITLE": "Qiymatni o'zgartirish:",
+	"RENAME_VARIABLE": "Oʻzgaruvchaning nomini oʻzgartirish...",
 	"NEW_STRING_VARIABLE": "String o'zgaruvchisini yaratish ...",
 	"NEW_NUMBER_VARIABLE": "Raqam o'zgaruvchisini yarating ...",
 	"NEW_COLOUR_VARIABLE": "Rang o'zgaruvchisini yaratish ...",
@@ -31,6 +38,15 @@
 	"COLOUR_RGB_RED": "qizil",
 	"COLOUR_RGB_GREEN": "yashil",
 	"COLOUR_RGB_BLUE": "ko'k",
+	"COLOUR_BLEND_COLOUR1": "rang 1",
+	"COLOUR_BLEND_COLOUR2": "rang 2",
+	"MATH_TRIG_SIN": "sin",
+	"MATH_TRIG_COS": "cos",
+	"MATH_TRIG_TAN": "tan",
+	"MATH_TRIG_ASIN": "asin",
+	"MATH_TRIG_ACOS": "acos",
+	"MATH_TRIG_ATAN": "atan",
+	"MATH_SINGLE_OP_ROOT": "kvadrat ildiz",
 	"DIALOG_OK": "Mayli",
 	"DIALOG_CANCEL": "Bekor qilish"
 }

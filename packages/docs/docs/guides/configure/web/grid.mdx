@@ -1,0 +1,64 @@
+---
+description: Configuration options for Blockly's workspace grid.
+title: Grid option
+image: images/blockly_banner.png
+---
+
+# Grid option
+
+Blockly's main workspace may optionally have a grid. Blocks can be made to
+snap to the grid, enabling cleaner layout. This is particularly helpful in
+larger applications with multiple code groupings spread out over a
+large area.
+
+The grid's settings are defined by an object that is part of Blockly's
+[configuration
+options](/guides/configure/web/configuration_struct#the-options-dictionary).
+Here is an example:
+
+```js
+var workspace = Blockly.inject('blocklyDiv', {
+  toolbox: document.getElementById('toolbox'),
+  grid: { spacing: 20, length: 3, colour: '#ccc', snap: true },
+  trashcan: true,
+});
+```
+
+## Spacing
+
+The most important grid property is `spacing` which defines the distance
+between the grid's points. The default value is 0, which results in no grid.
+Here are examples of `spacing` set to 10, 20, and 40:
+
+![Three different workspaces with grid spacing set to 10, 20, and
+40.](/images/grid-spacing.png)
+
+## Length
+
+The `length` property is a number that defines the shape of the grid points.
+A length of 0 results in an invisible grid (but still one that may be snapped
+to), a length of 1 (the default value) results in dots, a longer length results
+in crosses, and a length equal or greater than the spacing results in graph
+paper. Here are examples of `length` set to 1, 5, and 20:
+
+![Three different workspaces with grid marker lengths of 1, 5, and 20. The first
+length results in dots, the second in crosses, and the third in graph
+paper.](/images/grid-length.png)
+
+## Colour
+
+The `colour` property is a string that sets the colour of the points.
+Note the British spelling. Use any CSS-compatible format, including `#f00`,
+`#ff0000`, or `rgb(255, 0, 0)`. The default value is `#888`.
+Here are examples of `colour` set to `#000`, `#ccc`, and `#f00`:
+
+![Three different workspaces with different grid
+colours.](/images/grid-colour.png)
+
+## Snap
+
+The `snap` property is a boolean that sets whether blocks should snap to the
+nearest grid point when placed on the workspace. The default value is `false`.
+
+![A workspace showing a block snapped to the grid and a workspace showing a
+block not snapped to the grid.](/images/grid-snap.png)

@@ -70,4 +70,25 @@ suite('Context Menu', function () {
       );
     });
   });
+
+  suite('getMenu', function () {
+    test('returns null when context menu is not shown', function () {
+      assert.isNull(Blockly.ContextMenu.getMenu());
+    });
+
+    test('returns Menu instance when context menu is shown', function () {
+      const e = new PointerEvent('pointerdown', {clientX: 10, clientY: 10});
+      const menuOptions = [
+        {text: 'Test option', enabled: true, callback: function () {}},
+      ];
+      Blockly.ContextMenu.show(e, menuOptions, false, this.workspace);
+
+      const menu = Blockly.ContextMenu.getMenu();
+      assert.instanceOf(menu, Blockly.Menu, 'getMenu() should return a Menu');
+      assert.include(menu.getElement().innerText, 'Test option');
+
+      Blockly.ContextMenu.hide();
+      assert.isNull(Blockly.ContextMenu.getMenu());
+    });
+  });
 });

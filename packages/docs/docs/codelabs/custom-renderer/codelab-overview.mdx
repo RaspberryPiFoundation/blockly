@@ -1,0 +1,35 @@
+---
+pagination_prev: null
+slug: /codelabs/custom-renderer/codelab-overview
+description: Overview of the "Build custom renderers" codelab.
+---
+
+# Build custom renderers
+
+## 1. Codelab overview
+
+### What you'll learn
+
+- How to define and register a custom renderer.
+- How to override renderer constants.
+- How to change the shape of connection notches.
+- How to set a connection's shape based on its type checks.
+
+### What you'll build
+
+This codelab builds and uses four renderers:
+
+1. A minimal custom renderer that extends `Blockly.blockRendering.Renderer` but makes no modifications.
+   ![Screenshot of a renderer with an appearance matching the base renderer.](../../../static/images/codelabs/custom-renderer/custom_renderer.png)
+1. A custom renderer which sets new values for the rendering-related constants `NOTCH_WIDTH`, `NOTCH_HEIGHT`,`CORNER_RADIUS`, and `TAB_HEIGHT` found in `Blockly.blockRendering.ConstantProvider`.
+   ![Screenshot of a custom renderer with notches, corners, and tabs that have similar shapes as the default but with different widths, heights, and radiuses.](../../../static/images/codelabs/custom-renderer/custom_constants.png)
+1. A custom renderer which overrides the functions `Blockly.blockRendering.ConstantProvider.init()` and `Blockly.blockRendering.ConstantProvider.shapeFor(connection)` to define and return custom [SVG paths](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/path).
+   ![Screenshot of a custom renderer with notches, corners, and tabs with fundamentally different shapes than the defaults.](../../../static/images/codelabs/custom-renderer/custom_notches.png)
+1. A custom renderer which overrides the function `Blockly.blockRendering.ConstantProvider.shapeFor(connection)` to return different shapes for the input/output connections depending on whether the their type is a `Number`, `String`, or `Boolean`.
+   ![Screenshot of a custom renderer with rectangles for the Number input/outputs and a puzzle tab for the Boolean input/output attached to an "if" block](../../../static/images/codelabs/custom-renderer/typed_connection_shapes.png)
+
+### What you'll need
+
+- Basic understanding of renderers and toolboxes in Blockly.
+- NPM installed ([instructions](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)).
+- Comfort using the command line/terminal.

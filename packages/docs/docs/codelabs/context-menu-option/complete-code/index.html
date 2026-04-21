@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Context Menu Codelab</title>
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+    <script src="https://unpkg.com/@blockly/dev-tools"></script>
+    <script src="./index.js"></script>
+
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        background-color: #fff;
+        font-family: sans-serif;
+        overflow: hidden;
+      }
+
+      h1 {
+        font-weight: normal;
+        font-size: 140%;
+        margin: 10px;
+      }
+
+      #blocklyDiv {
+        float: bottom;
+        height: 90%;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body onload="start()">
+    <h1>Context Menu Codelab</h1>
+    <div id="blocklyDiv"></div>
+  </body>
+</html>

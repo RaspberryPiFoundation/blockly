@@ -1,0 +1,71 @@
+---
+description: How to transform field values for use in generated code strings.
+title: Transform field values
+image: images/blockly_banner.png
+---
+
+# Transform field values
+
+Most field values are ready to be concatenated to your code string immediately.
+However, some field values require extra work before they are usable.
+
+## Strings
+
+Strings need to be quoted with either `quote_` or `multiline_quote_` before they
+can be concatenated. These functions perform language-specific character
+escaping, such as replacing `'` with `\'` in JavaScript.
+
+```js
+// For a single line text field.
+const str = generator.quote_(block.getFieldValue('STR'));
+
+// For a multiline text field.
+const str = generator.multiline_quote_(block.getFieldValue('STR'));
+```
+
+:::note
+the `quote_` and `multiline_quote_` methods follow an earlier naming
+convention with underscores, but they are public.
+:::
+
+## Variables
+
+For the built-in variable field, `getFieldValue` returns a variable ID, not a
+variable name. To get an actual variable name, call `getVariableName` in the
+code generator. This returns a name that is both unique and legal. Among other
+things, `getVariableName`:
+
+- Converts the non-ASCII characters to ASCII. This is necessary because users
+  can enter variable names in their own language. For example, it converts
+  "`متغير`" to "`_D9_85_D8_AA_D8_BA_D9_8A_D8_B1`".
+- Ensures variable names follow the rules set forth by programming languages.
+  For example, it converts spaces to underscores and adds the prefix `my_` to
+  variable names that start with a digit.
+- Resolves conflicts with reserved words or other variable or function names.
+  For example, it converts `for` to `for2`.
+
+```js
+const identifier = generator.getVariableName(block.getFieldValue('VAR'));
+```
+
+## Dropdowns
+
+For the built-in dropdown field, `getFieldValue` returns a language-neutral
+string that might not be directly usable in code. For example, a dropdown
+containing comparison operators might return `'EQUALS'`, `'LESS'`, or
+`'GREATER'`. This can be used to look up a string that is used in code.
+
+```js
+const OPERATORS = {
+  EQUALS: '==',
+  LESS: '<',
+  GREATER: '>',
+};
+const operator = OPERATORS[block.getFieldValue('OPERATOR')];
+```
+
+## Checkboxes
+
+For the built-in checkbox field, `getFieldValue` returns `'TRUE'` or `'FALSE'`.
+How you use this depends on the meaning of the checkbox. For example, you might
+use it for branching while generating code.

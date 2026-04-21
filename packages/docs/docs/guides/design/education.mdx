@@ -1,0 +1,98 @@
+---
+description: Recommendations for writing education applications.
+title: Educational applications
+image: images/blockly_banner.png
+---
+
+# Educational applications
+
+The Blockly team has many years of experience designing educational
+applications. The following are some of the things they have learned that might
+help you in designing your own educational application.
+
+## Prefer free-form to fill-in-the-blank exercises
+
+Exercises designed to teach a specific concept often provide partial solutions
+which the student needs to modify to reach the desired effect. A class of
+non-editable, non-movable, non-deletable blocks was created in Blockly to
+support this. However, students hated these fill-in-the-blank exercises.
+They have no sense of ownership over the solution.
+
+![As an example of a fill-in-the-blank exercise, a repeat block where the
+student must choose the number of repeats from a
+drop-down.](/images/mistakes07.png)
+
+Designing free-form exercises that teach the same concepts is more challenging.
+One technique that has proven successful is to use the student's own solution
+for one exercise as the starting point for the next exercise.
+
+_Recommendation: Don't write code for the user._
+
+## Use persistent instructions
+
+[Blockly Games](https://blockly.games/) is specifically designed to be
+self-teaching, no teacher or lesson plan needed. To accomplish this, the first
+version of Blockly Games had instructions on each level. Most students would not
+read them. We reduced them to a single sentence, increased the font size, and
+highlighted them in a yellow bubble. Most students would not read them. We
+created modal popups with the instructions. Most students instinctively closed
+the popups without reading them, then were lost.
+
+![An unclosable popup instruction with an arrow pointing to the block that
+needs to be changed.](/images/mistakes06.png)
+
+Finally we created popups that cannot be closed. They are programmed to monitor
+the student's actions and only close themselves when the student has performed
+the required action. These contextually-aware popups are challenging to program,
+but quite effective. It was also important for them to be in the field of view
+without interfering with the workspace.
+
+_Recommendation: Instructions should be short and persistent, but not
+obnoxious._
+
+## Use live block images in help
+
+![A ternary block with text in Hebrew.](/images/language04.png)
+
+Documentation for blocks should include images of the blocks it is referring to.
+Taking screenshots is easy. But if there are 50 such images, and the application
+is translated into 50 languages, suddenly one is maintaining 2,500 static
+images. Then the colour scheme changes, and 2,500 images need updating
+-- again.
+
+To extract ourselves from this maintenance nightmare, Blockly Games replaced all
+screenshots with instances of Blockly running in readonly mode. The result looks
+identical to a picture, but is guaranteed to be up to date. Readonly mode has
+made internationalization possible.
+
+_Recommendation: If you support more than one language, use readonly mode._
+
+## Have an exit strategy for students
+
+Block-based programming is often a starting point for programming. In the
+context of teaching computer programming, it is a gateway drug that gets
+students addicted, before moving them on to harder things. How long this
+block-based programming period should last for students is hotly debated,
+but if your goal is to teach programming it should be temporary.
+
+Given this, block-based programming environments used for teaching programming
+must have an off-ramp appropriate to their students. Blockly Games has four
+strategies:
+
+1. All text on the blocks (e.g. "if", "while") is lowercase to match text-based
+   programming languages.
+
+   ![A while block with parentheses and braces to show JavaScript syntax.](/images/mistakes99.png)
+
+1. The JavaScript version of the student's code is always displayed after each
+   level to increase familiarity.
+1. In the penultimate game the block text is replaced with actual JavaScript
+   (as shown to the right). At this point the student is programming in JavaScript.
+1. In the ultimate game the blocks editor is replaced with a text editor.
+
+Block-based programming environments used for teaching programming need to have
+a concrete plan for graduating their students. A solid exit strategy also goes
+a long way towards placating those who argue that block-based programming isn't
+"real programming".
+
+_Recommendation: Consider the user's end goals and design appropriately._

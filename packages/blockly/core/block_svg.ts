@@ -354,8 +354,8 @@ export class BlockSvg
    * @returns Object with .x and .y properties in workspace coordinates.
    */
   override getRelativeToSurfaceXY(): Coordinate {
-    const layerManger = this.workspace.getLayerManager();
-    if (!layerManger) {
+    const layerManager = this.workspace.getLayerManager();
+    if (!layerManager) {
       throw new Error(
         'Cannot calculate position because the workspace has not been appended',
       );
@@ -371,7 +371,7 @@ export class BlockSvg
         x += xy.x;
         y += xy.y;
         element = element.parentNode as SVGElement;
-      } while (element && !layerManger.hasLayer(element));
+      } while (element && !layerManager.hasLayer(element));
     }
     return new Coordinate(x, y);
   }
@@ -864,6 +864,32 @@ export class BlockSvg
   }
 
   /**
+   * Returns the closest live block to this one, if any.
+   */
+  private getNearestNeighbour() {
+    if (!this.workspace.rendered) return null;
+
+    const blocks = this.workspace
+      .getAllBlocks(false)
+      .filter((block) => !block.isDeadOrDying());
+    let nearestNeighbour = null;
+    let closestDistance = Number.MAX_SAFE_INTEGER;
+    const self = this.getRelativeToSurfaceXY();
+    for (const block of blocks) {
+      const other = block.getRelativeToSurfaceXY();
+      const distance = Math.sqrt(
+        Math.pow(other.x - self.x, 2) + Math.pow(other.y - self.y, 2),
+      );
+      if (distance < closestDistance) {
+        nearestNeighbour = block;
+        closestDistance = distance;
+      }
+    }
+
+    return nearestNeighbour;
+  }
+
+  /**
    * Dispose of this block.
    *
    * @param healStack If true, then try to heal any gap by connecting the next
@@ -904,7 +930,15 @@ export class BlockSvg
       if (parent) {
         focusManager.focusNode(parent);
       } else {
-        setTimeout(() => focusManager.focusTree(this.workspace), 0);
+        const nearestNeighbour = this.getNearestNeighbour();
+        if (nearestNeighbour) {
+          focusManager.focusNode(nearestNeighbour);
+        } else {
+          setTimeout(() => {
+            if (!this.workspace.rendered) return;
+            focusManager.focusTree(this.workspace);
+          }, 0);
+        }
       }
     }
 
@@ -1126,7 +1160,9 @@ export class BlockSvg
       if (this.isDeadOrDying()) return;
       const gesture = this.workspace.getGesture(e);
       if (gesture) {
+        this.bringToFront();
         gesture.setStartIcon(icon);
+        getFocusManager().focusNode(icon);
       }
     };
   }

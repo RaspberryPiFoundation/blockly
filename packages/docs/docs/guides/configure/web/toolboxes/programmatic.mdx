@@ -1,0 +1,42 @@
+---
+description: How to access categories programmatically.
+title: Programmatic access
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Programmatic access
+
+There are two ways you can access a category programmatically. You can either
+access it by index (where 0 is the top category):
+
+```js
+var category = toolbox.getToolboxItems()[0];
+```
+
+Or by ID:
+
+```js
+var category = toolbox.getToolboxItemById('categoryId');
+```
+
+Where the ID is specified in the toolbox definition:
+
+<Tabs groupId="group-1">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "kind": "category",
+    "name": "...",
+    "toolboxitemid": "categoryId"
+  }
+  ```
+  </TabItem>
+  <TabItem value="xml" label="XML">
+  ```xml
+  <category name="..." toolboxitemid="categoryId"></category>
+  ```
+  </TabItem>
+</Tabs>

@@ -1,0 +1,36 @@
+# Manual workflow to update GitHub Pages from a chosen source branch.
+# The gulp updateGithubPages task builds the repo and force-pushes to gh-pages.
+
+name: Update GitHub Pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_branch:
+        description: 'Source branch to build and deploy to GitHub Pages'
+        required: true
+        type: string
+        default: main
+
+permissions:
+  contents: write
+
+jobs:
+  update-gh-pages:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.source_branch }}
+          fetch-depth: 0
+
+      - name: Use Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24.x
+
+      - name: Update GitHub Pages
+        working-directory: ./packages/blockly
+        run: npm run updateGithubPages:staging

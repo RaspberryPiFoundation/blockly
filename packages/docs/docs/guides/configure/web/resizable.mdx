@@ -1,0 +1,79 @@
+---
+description: How to inject a Blockly workspace that is resizable.
+title: Resizable workspace
+image: images/blockly_banner.png
+---
+
+# Resizable workspace
+
+A good web application will resize Blockly to fill the available space on
+screen rather than being a fixed size. There are several ways to do this,
+including using an iframe, CSS, and JavaScript positioning.
+This page demonstrates an overlay approach which is robust and flexible.
+
+This is a three-step process. The first step is to define the area.
+The second step is to inject Blockly.
+The third step is to position Blockly over this area.
+
+## 1. Define the area
+
+Using either an HTML table or a `div` with CSS, create an empty area that
+reflows as the page is resized.
+Ensure that the area has an ID (on this page we will call it `blocklyArea`).
+
+Here is
+[a live demo](https://raspberrypifoundation.github.io/blockly-samples/examples/resizable-demo/index.html)
+of a table cell that fills the bottom of the screen.
+
+## 2. Inject the workspace
+
+Injecting Blockly is the same as the process described in
+[injecting fixed-sized Blockly](/guides/configure/web/fixed-size).
+Add the code, the `blocklyDiv` element, a toolbox, and an injection call.
+
+Blockly should now be running on the page, just not located where it should be
+(probably offscreen).
+
+## 3. Position the workspace
+
+The final step is to position the `blocklyDiv` element over the `blocklyArea`
+element. To do this, remove any `height` and `width` styles from `blocklyDiv`
+and add absolute positioning:
+
+```html
+<div id="blocklyDiv" style="position: absolute"></div>
+```
+
+Then replace the injection script with one that also positions `blocklyDiv` over
+`blocklyArea`:
+
+```js
+const blocklyArea = document.getElementById('blocklyArea');
+const blocklyDiv = document.getElementById('blocklyDiv');
+const workspace = Blockly.inject(blocklyDiv, {
+  toolbox: document.getElementById('toolbox'),
+});
+const onresize = function (e) {
+  // Compute the absolute coordinates and dimensions of blocklyArea.
+  const element = blocklyArea;
+  let x = 0;
+  let y = 0;
+  do {
+    x += element.offsetLeft;
+    y += element.offsetTop;
+    element = element.offsetParent;
+  } while (element);
+  // Position blocklyDiv over blocklyArea.
+  blocklyDiv.style.left = x + 'px';
+  blocklyDiv.style.top = y + 'px';
+  blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
+  blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+  Blockly.svgResize(workspace);
+};
+window.addEventListener('resize', onresize, false);
+onresize();
+```
+
+Here is
+[a live demo](https://raspberrypifoundation.github.io/blockly-samples/examples/resizable-demo/overlay.html)
+of Blockly that fills the bottom of the screen.

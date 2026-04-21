@@ -7,6 +7,7 @@
 import type {Block} from '../block.js';
 import type {BlockSvg} from '../block_svg.js';
 import * as browserEvents from '../browser_events.js';
+import type {IContextMenu} from '../interfaces/i_contextmenu.js';
 import type {IFocusableTree} from '../interfaces/i_focusable_tree.js';
 import {hasBubble} from '../interfaces/i_has_bubble.js';
 import type {IIcon} from '../interfaces/i_icon.js';
@@ -26,7 +27,7 @@ import type {IconType} from './icon_types.js';
  * block (such as warnings or comments) as opposed to fields, which provide
  * "actual" information, related to how a block functions.
  */
-export abstract class Icon implements IIcon {
+export abstract class Icon implements IIcon, IContextMenu {
   /**
    * The position of this icon relative to its blocks top-start,
    * in workspace units.
@@ -195,5 +196,9 @@ export abstract class Icon implements IIcon {
    */
   getSourceBlock(): Block {
     return this.sourceBlock;
+  }
+
+  showContextMenu(e: PointerEvent) {
+    (this.getSourceBlock() as BlockSvg).showContextMenu(e);
   }
 }

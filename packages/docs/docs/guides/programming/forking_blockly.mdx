@@ -1,0 +1,59 @@
+---
+title: Fork Blockly
+description: Why not to fork Blockly, and alternatives to it..
+image: images/blockly_banner.png
+---
+
+# Fork Blockly
+
+Forking is a common way to modify an open source project to make it your own.
+There are many successful forks of Blockly, including pxt-blockly,
+scratch-blocks, and App Inventor.
+
+However, forking Blockly can make it difficult for you to pull in updates and
+bugfixes in core Blockly. We strongly recommend that you customize Blockly using
+plugins and custom classes instead of by forking.
+
+For more information, see
+[Plugins](/guides/programming/plugin_overview) and [Advanced
+customization](/guides/configure/web/customization).
+
+## Alternatives
+
+### Ask on the forum
+
+Someone else may have implemented the behaviour you want. Search the forum for
+previous discussions, or post and ask if anyone else has already written that
+code.
+
+### Use an existing plugin
+
+If your change is a commonly requested feature, we may already have published it
+as a plugin on blockly-samples.
+
+### Write a plugin
+
+Write code that uses Blockly's publicly available APIs to make the change you
+need. For instance, changes to block rendering, toolbox appearance, and
+connection checking behaviour can all be implemented as plugins.
+
+### File a feature request
+
+If you need an API that isn't public, you can [file a
+bug](https://github.com/RaspberryPiFoundation/blockly/issues) against core Blockly
+to make that API public.
+
+### Make a pull request
+
+Blockly welcomes contributions! If your change is general-purpose, your best bet
+may be to make a pull request. Blockly improves, you don't have to maintain a
+fork, and everyone wins.
+
+Check out the [contributing](/guides/contribute/index) page to learn
+more.
+
+## Updating a fork
+
+We recommend that you merge in the latest version of Blockly on a regular basis.
+We publish Blockly quarterly, and each release includes release notes and a
+discussion of any breaking changes.

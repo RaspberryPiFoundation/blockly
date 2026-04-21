@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import * as userAgent from '../utils/useragent.js';
+
 // Former goog.module ID: Blockly.utils.KeyCodes
 
 /* eslint-disable @typescript-eslint/no-duplicate-enum-values */
@@ -151,4 +153,10 @@ export enum KeyCodes {
   // indicates a hardware/bios problem.
   // http://en.community.dell.com/support-forums/laptop/f/3518/p/19285957/19523128.aspx
   PHANTOM = 255,
+
+  // The primary modifier key on the current platform, i.e. Command on Apple
+  // platforms and Control elsewhere.
+  CTRL_CMD = userAgent.MAC || userAgent.IPHONE || userAgent.IPAD
+    ? MAC_WK_CMD_LEFT
+    : CTRL,
 }

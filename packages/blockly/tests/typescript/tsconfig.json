@@ -4,6 +4,7 @@
     "allowJs": false,
     "outDir": "dist",
     "baseUrl": ".",
+    "types": [],
     "paths": {
       "blockly-test/*": ["../../dist/*"]
     },

@@ -1,0 +1,209 @@
+---
+description: How to create your own custom icons.
+title: Create custom icons
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Create custom icons
+
+To create a custom icon you need to implement the [`IIcon`][IIcon] interface.
+This tells Blockly how you want your icon to be rendered, what you want it to
+do if it's clicked, etc.
+
+We recommend subclassing the [`Icon`][Icon] abstract class, because it already
+provides default implementations of many methods in the [`IIcon`][IIcon]
+interface.
+
+```js
+class MyIcon extends Blockly.icons.Icon {
+  // The constructor should always take in the source block so that svg elements
+  // can be properly created.
+  constructor(sourceBlock) {
+    super(sourceBlock);
+  }
+}
+```
+
+## Specify the icon's type
+
+The [`getType`][getType] method returns a value representing the type of the
+icon. It is used for [registering the icon][registering] for serialization, and
+retrieving the icon from [`getIcon`][getIcon].
+
+<Tabs groupId="group-1">
+  <TabItem value="javascript" label="JavaScript" default>
+  ```js
+  getType() {
+    return new Blockly.icons.IconType('my_icon');
+  }
+  ```
+  </TabItem>
+  <TabItem value="typescript" label="TypeScript">
+  ```ts
+  getType(): Blockly.icons.IconType<MyIcon> {
+    return new Blockly.icons.IconType<MyIcon>('my_icon');
+  }
+  ```
+  </TabItem>
+</Tabs>
+## Create the icon's view
+
+The icon's view refers to the SVG elements that live on the block.
+
+### Initialize the view
+
+The [`initView`][initView] method is where you create the SVG elements of your
+icon that live on the block. New elements should be children of the
+`this.svgRoot` element so that they get automatically cleaned up when the icon
+is destroyed.
+
+The [`Blockly.utils.dom`][blockly-utils-dom] module provides a clean interface
+for instantiating SVGs.
+
+```js
+initView(pointerdownListener) {
+  if (this.svgRoot) return;  // Already initialized.
+
+  // This adds the pointerdownListener to the svgRoot element.
+  // If you do not call `super` you must do this yourself.
+  super.initView(pointerdownListener);
+
+  Blockly.utils.dom.createSvgElement(
+    Blockly.utils.Svg.CIRCLE,
+    {
+      'class': 'my-css-class',
+      'r': '8',
+      'cx': '8',
+      'cy': '8',
+    },
+    this.svgRoot  // Append to the svgRoot.
+  );
+}
+```
+
+### Return the size
+
+The [`getSize`][getSize] method returns the size of the icon, so that the
+[renderer][renderer] can make the block wide enough for it.
+
+The size is in arbitrary "workspace units" (which don't change as the workspace
+changes scale).
+
+```js
+getSize() {
+  return new Blockly.utils.Size(16, 16);
+}
+```
+
+### Set the order
+
+Icons have a static order within the block. For example, the built-in mutator
+icons are always shown in front of comment icons, which are shown in front of
+warning icons.
+
+The order is controlled by the value returned by the [`getWeight`][getWeight]
+method. Icons with more positive weights are rendered after icons with less
+positive weights.
+
+```js
+getWeight() {
+  return 10;
+}
+```
+
+:::note
+the weight is only checked when the icon is appended to the block, so
+dynamic weights are not supported.
+:::
+
+## Implement onclick behavior
+
+Many icons are interactive and do something when they are clicked. For example,
+the built-in icons all show a [bubble][bubble] when they are clicked. You can
+use the [`onClick`][onClick] method to implement this.
+
+```js
+onClick() {
+  // Do something when clicked.
+}
+```
+
+## Respond to block changes
+
+Some icons also want to respond to changes in the block, in particular changes
+to editability and collapsed-ness.
+
+### Editability
+
+If your icon should behave differently depending on whether the block is
+editable or not (for example, not being clickable when the block is not
+editable), implement the [`updateEditable`][updateEditable] method. This method
+gets called automatically when the block's editable status changes.
+
+```js
+updateEditable() {
+  if (this.sourceBlock.isEditable()) {
+    // Do editable things.
+  } else {
+    // Do non-editable things.
+  }
+}
+```
+
+### Collapsed-ness
+
+Some icons are shown when the block is collapsed, but by default they are
+not. If you want your icon to be shown, override the
+[`isShownWhenCollapsed`][isShownWhenCollapsed] method to return `true`.
+
+```js
+isShownWhenCollapsed() {
+  return true;
+}
+```
+
+And then override the [`updateCollapsed`][updateCollapsed] method.
+
+```js
+updateCollapsed() {
+  // By default icons are hidden when the block is collapsed. We want it to
+  // be shown, so do nothing.
+}
+```
+
+## Dispose of the icon
+
+Icons should clean up any dom elements or external references when they are
+disposed. By default, anything that is appended to `this.svgRoot` gets
+destroyed, but other references need to be manually cleaned up. This should be
+done within the [`dispose`][dispose] method.
+
+```js
+dispose() {
+  // Always call super!
+  super.dispose();
+
+  this.myBubble?.dispose();
+  this.myOtherReference?.dispose();
+}
+```
+
+[bubble]: /guides/create-custom-blocks/icons/creating-custom-icons/use-bubbles
+[IIcon]: /reference/blockly.iicon
+[Icon]: /reference/blockly.icons.icon
+[getType]: /reference/blockly.iicon.gettype
+[registering]: /guides/create-custom-blocks/icons/creating-custom-icons/save-and-load#register-icon-classes
+[getIcon]: /reference/blockly.block.geticon
+[initView]: /reference/blockly.iicon.initview
+[blockly-utils-dom]: /reference/blockly.utils.dom
+[getSize]: /reference/blockly.iicon.getsize
+[renderer]: /guides/create-custom-blocks/renderers/overview
+[getWeight]: /reference/blockly.iicon.getweight
+[onClick]: /reference/blockly.iicon.onclick
+[updateEditable]: /reference/blockly.iicon.updateeditable
+[isShownWhenCollapsed]: /reference/blockly.iicon.isshownwhencollapsed
+[updateCollapsed]: /reference/blockly.iicon.updatecollapsed
+[dispose]: /reference/blockly.iicon.dispose

@@ -1,0 +1,34 @@
+---
+description: The order in which parts of a field are initialized.
+title: Lifecycle
+image: images/blockly_banner.png
+---
+
+# Lifecycle
+
+:::note
+When loading from XML the value of a field is set later than you might expect
+which can cause problems if your field constructor needs information from the workspace.
+:::
+
+:::note
+A field object is created before being attached to a block. This can cause
+problems if your field constructor needs information from the workspace.
+:::
+
+Field creation happens in the order below.
+
+1.  The field's constructor is called.
+    1. The constructor sets the value to the provided or default value.
+    1. The constructor sets the local validator but does not call it.
+
+1.  Field is appended to the block.
+    1.  `setSourceBlock` is called
+    1.  If the field is on a rendered workspace, init is called.
+        1.  The `fieldGroup_` is created and appended.
+        1.  `initView` is called.
+        1.  `bindEvents_` is called.
+
+1.  Field XML value is set.
+
+![Flowchart describing construction and initialization of a field](/images/fields/field_construction_flowchart.jpg)

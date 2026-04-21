@@ -8,17 +8,36 @@
  * @fileoverview Git-related gulp tasks for Blockly.
  */
 
+
 import * as gulp from 'gulp';
 import {execSync} from 'child_process';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
 import * as buildTasks from './build_tasks.mjs';
 import * as packageTasks from './package_tasks.mjs';
 
-const UPSTREAM_URL = 'https://github.com/google/blockly.git';
+const UPSTREAM_URL = 'git@github.com:RaspberryPiFoundation/blockly.git';
+
+// Use yargs to parse --remote argument
+const argv = yargs(hideBin(process.argv)).option('remote', {
+    type: 'string',
+    describe: 'Remote to push gh-pages to',
+    demandOption: false
+}).option('upstream', {
+  type: 'boolean',
+  describe: 'Push to RaspberryPiFoundation/blockly instead of origin',
+  demandOption: false
+}).option('use-local', {
+  type: 'boolean',
+  describe: 'Build and push from current branch instead of syncing with main',
+  demandOption: false
+}).help().argv;
+const remoteToUse = argv.upstream ? UPSTREAM_URL : resolveRemote(argv.remote);
 
 /**
  * Extra paths to include in the gh_pages branch (beyond the normal
- * contents of master / develop).  Passed to shell unquoted, so can
+ * contents of main).  Passed to shell unquoted, so can
  * include globs.
  */
 const EXTRAS = [
@@ -28,140 +47,122 @@ const EXTRAS = [
   'build/*.loader.mjs',
 ];
 
-let upstream = null;
-
 /**
- * Get name of git remote for upstream (typically 'upstream', but this
- * is just convention and can be changed.)
- */
-function getUpstream() {
-  if (upstream) return upstream;
-  for (const line of String(execSync('git remote -v')).split('\n')) {
-    if (line.includes('google/blockly')) {
-      upstream = line.split('\t')[0];
-      return upstream;
-    }
-  }
-  throw new Error('Unable to determine upstream URL');
-}
-
-/**
- * Stash current state, check out the named branch, and sync with
- * google/blockly.
+ * Stash current state, check out the named branch, and pull
+ * changes from RaspberryPiFoundation/blockly.
  */
 function syncBranch(branchName) {
   return function(done) {
     execSync('git stash save -m "Stash for sync"', { stdio: 'inherit' });
     checkoutBranch(branchName);
     execSync(`git pull ${UPSTREAM_URL} ${branchName}`, { stdio: 'inherit' });
-    execSync(`git push origin ${branchName}`, { stdio: 'inherit' });
     done();
   };
 }
 
 /**
- * Stash current state, check out develop, and sync with
- * google/blockly.
+ * Stash current state, check out main, and sync with
+ * RaspberryPiFoundation/blockly.
  */
-export function syncDevelop() {
-  return syncBranch('develop');
+export function syncMain() {
+  return syncBranch('main');
 };
 
 /**
- * Stash current state, check out master, and sync with
- * google/blockly.
- */
-export function syncMaster() {
-  return syncBranch('master');
-};
-
-/**
- * Helper function: get a name for a rebuild branch. Format:
- * rebuild_mm_dd_yyyy.
- */
-function getRebuildBranchName() {
-  const date = new Date();
-  const mm = date.getMonth() + 1;  // Month, 0-11
-  const dd = date.getDate();  // Day of the month, 1-31
-  const yyyy = date.getFullYear();
-  return `rebuild_${mm}_${dd}_${yyyy}`;
-};
-
-/**
- * Helper function: get a name for a rebuild branch. Format:
- * rebuild_yyyy_mm.
- */
-function getRCBranchName() {
-  const date = new Date();
-  const mm = date.getMonth() + 1;  // Month, 0-11
-  const yyyy = date.getFullYear();
-  return `rc_${yyyy}_${mm}`;
-};
-
-/**
- * If branch does not exist then create the branch.
  * If branch exists switch to branch.
+ * If branch does not exist then create the branch.
  */
 function checkoutBranch(branchName) {
-  execSync(`git switch -c ${branchName}`,
+  execSync(`git switch ${branchName} || git switch -c ${branchName}`,
       { stdio: 'inherit' });
 }
 
 /**
- * Create and push an RC branch.
- * Note that this pushes to google/blockly.
- */
-export const createRC = gulp.series(
-  syncDevelop(),
-  function(done) {
-    const branchName = getRCBranchName();
-    execSync(`git switch -C ${branchName}`, { stdio: 'inherit' });
-    execSync(`git push ${UPSTREAM_URL} ${branchName}`, { stdio: 'inherit' });
-    done();
-  }
-);
-
-/** Create the rebuild branch. */
-export function createRebuildBranch(done) {
-  const branchName = getRebuildBranchName();
-  console.log(`make-rebuild-branch: creating branch ${branchName}`);
-  execSync(`git switch -C ${branchName}`, { stdio: 'inherit' });
-  done();
-}
-
-/** Push the rebuild branch to origin. */
-export function pushRebuildBranch(done) {
-  console.log('push-rebuild-branch: committing rebuild');
-  execSync('git commit -am "Rebuild"', { stdio: 'inherit' });
-  const branchName = getRebuildBranchName();
-  execSync(`git push origin ${branchName}`, { stdio: 'inherit' });
-  console.log(`Branch ${branchName} pushed to GitHub.`);
-  console.log('Next step: create a pull request against develop.');
-  done();
-}
-
-/**
- * Update github pages with what is currently in develop.
+ * Update github pages with what is currently in main (or current branch if --use-local).
  *
  * Prerequisites (invoked): clean, build.
+ *
+ * Usage:
+ *   gulp updateGithubPages # sync main, then use origin if exists
+ *   gulp updateGithubPages --upstream # uses hardcoded upstream
+ *   gulp updateGithubPages --remote <remote> # uses named remote
+ *   gulp updateGithubPages --use-local # build from current branch, skip syncing main
+ *
  */
 export const updateGithubPages = gulp.series(
-  function(done) {
-    execSync('git stash save -m "Stash for sync"', { stdio: 'inherit' });
-    execSync('git switch -C gh-pages', { stdio: 'inherit' });
-    execSync(`git fetch ${getUpstream()}`, { stdio: 'inherit' });
-    execSync(`git reset --hard ${getUpstream()}/develop`, { stdio: 'inherit' });
-    done();
-  },
-  buildTasks.cleanBuildDir,
-  packageTasks.cleanReleaseDir,
-  buildTasks.build,
-  function(done) {
-    // Extra paths (e.g. build/, dist/ etc.) are normally gitignored,
-    // so we have to force add.
-    execSync(`git add -f ${EXTRAS.join(' ')}`, {stdio: 'inherit'});
-    execSync('git commit -am "Rebuild"', {stdio: 'inherit'});
-    execSync(`git push ${UPSTREAM_URL} gh-pages --force`, {stdio: 'inherit'});
-    done();
+    function (done) {
+        if (!remoteToUse) {
+          const attemptedRemote = argv.remote || 'origin';
+          const remoteLabel = argv.remote
+            ? `Remote '${attemptedRemote}'`
+            : "Remote 'origin' (default)";
+          const errMsg = `${remoteLabel} not found in git remotes. ` +
+            'Please add that remote or use --upstream.\n' +
+            'Usage: gulp updateGithubPages [--remote <remote> | --upstream]';
+          console.error(errMsg);
+          done(new Error(errMsg));
+          return;
+        }
+        done();
+    },
+    function (done) {
+      if (!argv.useLocal) {
+        done();
+        return;
+      }
+      const status = execSync('git status --porcelain', { encoding: 'utf8' });
+      if (status.trim()) {
+        const errMsg =
+          'You cannot push the local branch with uncommitted changes. ' +
+          'Please commit or stash your changes first.';
+        console.error(errMsg);
+        done(new Error(errMsg));
+        return;
+      }
+      done();
+    },
+    function (done) {
+      if (argv.useLocal) {
+        done();
+        return;
+      }
+      syncMain()(done);
+    },
+    function(done) {
+      const sourceRef = argv.useLocal
+        ? execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim()
+        : 'main';
+      execSync('git switch -C gh-pages', { stdio: 'inherit' });
+      execSync(`git reset --hard ${sourceRef}`, { stdio: 'inherit' });
+      done();
+    },
+    buildTasks.cleanBuildDir,
+    packageTasks.cleanReleaseDir,
+    buildTasks.build,
+    function(done) {
+      // Extra paths (e.g. build/, dist/ etc.) are normally gitignored,
+      // so we have to force add.
+      execSync(`git add -f ${EXTRAS.join(' ')}`, {stdio: 'inherit'});
+      execSync('git commit -am "Rebuild"', {stdio: 'inherit'});
+      execSync(`git push ${remoteToUse} gh-pages --force`, {stdio: 'inherit'});
+      done();
+    }
+  );
+
+/**
+ * Resolves which remote to use for pushing gh-pages.
+ * @param {string} remoteArg
+ * @returns {string|undefined} The remote name, or undefined if not found.
+ */
+function resolveRemote(remoteArg) {
+  const remoteName = remoteArg || 'origin';
+  try {
+    const remotes = execSync('git remote', {encoding: 'utf8'}).split(/\r?\n/).map(r => r.trim()).filter(Boolean);
+    if (remotes.includes(remoteName)) {
+      return remoteName;
+    }
+    return undefined;
+  } catch (e) {
+    return undefined;
   }
-);
+}

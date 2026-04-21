@@ -1,0 +1,174 @@
+---
+description: What a dragger is, and how to implement one.
+title: Custom draggers
+image: images/blockly_banner.png
+---
+
+# Custom draggers
+
+A dragger is a controller object that coordinates dragging
+[draggables][draggable] in response to user interactions.
+
+There are very few circumstances where you would want to implement a custom
+dragger, because there's not a lot that you might want to customize about
+coordinating a drag. The [scroll-options plugin][scroll-options-plugin]
+implements a custom dragger because it wanted to add scrolling at the edge of
+the workspace, which changes how pixel coordinates are converted to workspace
+coordinates.
+
+## Responsibilities
+
+The dragger has several responsibilities when executing drags:
+
+- Calling drag methods on the draggable.
+- Calculating the position the draggable should move to in workspace
+  coordinates.
+- Calling [drag target][drag-target] methods on any hovered drag targets.
+
+## Implementation
+
+To create a custom dragger you have to implement the [`IDragger`][IDragger]
+interface.
+
+```js
+class MyDragger implements IDragger {
+  // Takes in the draggable being dragged and the workspace the drag
+  // is occurring in.
+  constructor(draggable, workspace);
+}
+```
+
+You can also subclass the built-in `Blockly.dragging.Dragger`, which handles the
+basic responsibilities already.
+
+### Start drags
+
+The `onDragStart` method initializes a drag. It should store any data needed to
+execute the drag. It should also call `startDrag` on the draggable being
+dragged.
+
+:::note
+a new dragger is created for each drag action, so some initialization
+(like saving the starting location) can alternatively be done in the
+constructor.
+:::
+
+```js
+onDragStart(e) {
+  this.startLoc = this.draggable.getRelativeToSurfaceXY();
+
+  this.draggable.startDrag(e);
+}
+```
+
+### Drag
+
+The `onDrag` method executes a drag. It should calculate the new workspace
+position for the draggable based on the `totalDelta`, which is given in pixel
+coordinates.
+
+It should also update any drag targets that are being hovered over.
+
+- `wouldDelete` should always be called before calling other hooks on the drag
+  target.
+- `onDragExit` should always be called on the old drag target before calling
+  `onDragEnter` on the new drag target.
+- `onDragOver` should be called after `onDragEnter` the first time the drag
+  target is hovered, and on each additional call to `onDrag` where the drag
+  target is still hovered.
+
+```js
+onDrag(e, totalDelta) {
+  // Update the draggable location.
+  const delta = this.pixelsToWorkspaceUnits(totalDelta);
+  const newLoc = Coordinate.sum(this.startLoc, delta);
+  this.draggable.drag(newLoc, e);
+
+  // Call wouldDeleteDraggable.
+  if (isDeletable(this.draggable)) {
+    this.draggable.setDeleteStyle(
+      // Checks that the drag target is an `IDeleteArea` and calls `wouldDelete`
+      // on it.
+      this.wouldDeleteDraggable(e, this.draggable),
+    );
+  }
+
+  const newDragTarget = this.workspace.getDragTarget(e);
+  if (this.dragTarget !== newDragTarget) {
+    // Call `onDragExit` then `onDragEnter`.
+    this.dragTarget?.onDragExit(this.draggable);
+    newDragTarget?.onDragEnter(this.draggable);
+  }
+  // Always call `onDragOver`
+  newDragTarget?.onDragOver(this.draggable);
+  this.dragTarget = newDragTarget;
+}
+```
+
+### End drags
+
+The `onEndDrag` method ends a drag. It should notify the draggable that the drag
+has ended and any hovered drag target that the draggable has been dropped. It
+should also dispose of the draggable if the drag target is a delete area.
+
+- `onDrop` should always be called before other methods.
+- `revertDrag` should be called if the drag target prevents drags.
+- `endDrag` should be called after reverting the drag, but before disposing.
+- `dispose` should be called if the drag target is a delete area.
+
+```js
+onDragEnd(e) {
+  // Call `onDrop` first.
+  const dragTarget = this.workspace.getDragTarget(e);
+  if (dragTarget) {
+    this.dragTarget?.onDrop(this.draggable);
+  }
+
+  // Then revert the drag (if applicable).
+  if (this.shouldReturnToStart(e, this.draggable)) {
+    this.draggable.revertDrag();
+  }
+
+  // Then end the drag.
+  this.draggable.endDrag(e);
+
+  // Then delete the draggable (if applicable).
+  if (
+    isDeletable(this.draggable) &&
+    this.wouldDeleteDraggable(e, this.draggable)
+  ) {
+    this.draggable.dispose();
+  }
+}
+```
+
+### Registration
+
+Your dragger class needs to be registered so that it can be created when drags
+are detected.
+
+```js
+// Note that the type is BLOCK_DRAGGER even though draggers drag more than
+// blocks. The name is for backwards compatibility.
+Blockly.registry.register(registry.Type.BLOCK_DRAGGER, 'MY_DRAGGER', MyDragger);
+```
+
+## Usage
+
+After you have implemented your custom dragger you can use it by passing it to
+your configuration options.
+
+```js
+const myWorkspace = Blockly.inject('blocklyDiv', {
+  plugins: {
+    // Note that we pass this to blockDragger even though draggers drag more
+    // than blocks. The name is for backwards compatibility.
+    blockDragger: MyDragger,
+  },
+});
+```
+
+[draggable]: /guides/configure/web/dragging/draggable
+[drag-target]: /reference/blockly.dragtarget
+[scroll-options-plugin]: https://www.npmjs.com/package/@blockly/plugin-scroll-options
+[IDragger]: /reference/blockly.idragger

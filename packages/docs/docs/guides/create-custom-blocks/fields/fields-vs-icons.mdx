@@ -1,0 +1,30 @@
+---
+description: The differences and similarities between fields and icons.
+title: Fields vs icons
+image: images/blockly_banner.png
+---
+
+# Fields vs icons
+
+Fields and icons are both visual elements that appear on a block, but they have
+different purposes.
+
+Fields show or define data about a block that affects how a program functions.
+For example, the text block has two quotation marks, which indicate that you are
+defining a string, and a text input that lets you define that string. The
+quotation marks tell you about the function of the block, and the input lets
+you modify the function.
+
+Icons show or define "meta" information about the block itself. For example,
+you can append a comment icon to any block, which lets you write notes to
+yourself, but does not affect how the block functions within the program.
+
+## Comparison of functionality
+
+| Attribute     | Fields                                                                       | Icons                                                                            |
+| ------------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Rendering     | Fields can be made of whatever elements they want.                           | Icons can be made of whatever elements they want.                                |
+| Number        | Fields can each appear any number of times in a block.                       | Icons can each appear once in a block.                                           |
+| Placement     | Fields can be positioned in any location on any input of a block.            | Icons are always positioned at the top-start of a block.                         |
+| Serialization | Fields can be serialized, and often are.                                     | Icons can be serialized, but are often not, because they often don't have state. |
+| Collapsing    | Fields are hidden when a block is collapsed and their text is shown instead. | Icons can control whether they are shown or hidden when the block is collapsed.  |

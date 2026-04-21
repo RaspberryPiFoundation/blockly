@@ -1,0 +1,157 @@
+---
+description: A field for modeling true/false values.
+title: Checkbox fields
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Checkbox fields
+
+A checkbox field stores a string as its value, and a string as its text. Its
+value is either `'TRUE'` or `'FALSE'`, and its text is either `'true'` or
+`'false'`.
+
+#### Checkbox field
+
+![A block with the label "checkbox:" and a checkbox field with a check
+mark.](/images/fields/checkbox/on_block.png)
+
+#### Checkbox field on collapsed block
+
+![The same block after being collapsed. It has the label "variable: true" and a
+jagged right edge to show it is
+collapsed.](/images/fields/checkbox/collapsed.png)
+
+## Creation
+
+<Tabs groupId="group-1">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "type": "example_checkbox",
+    "message0": "checkbox: %1",
+    "args0": [
+      {
+        "type": "field_checkbox",
+        "name": "FIELDNAME",
+        "checked": true
+      }
+    ]
+  }
+  ```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+  ```js
+  Blockly.Blocks['example_checkbox'] = {
+    init: function() {
+      this.appendDummyInput()
+          .appendField('checkbox:')
+          .appendField(new Blockly.FieldCheckbox(true), 'FIELDNAME');
+    }
+  };
+  ```
+  </TabItem>
+</Tabs>
+The checkbox constructor takes in an optional value and an optional
+[validator](#creating-a-checkbox-validator). The optional value should be either
+`'TRUE'`, `'FALSE'`, or a boolean, otherwise it will default to `false`.
+
+## Serialization
+
+<Tabs groupId="group-2">
+  <TabItem value="json" label="JSON" default>
+  The JSON for a checkbox field looks like so:
+  
+  ```js
+  {
+    "fields": {
+      "FIELDNAME": true
+    }
+  }
+  ```
+  Where `FIELDNAME` is a string referencing a checkbox field, and
+  the value is the value to apply to the field. The value must be a boolean.
+  </TabItem>
+  <TabItem value="xml" label="XML">
+  The XML for a checkbox field looks like so:
+  
+  ```xml
+  <field name="FIELDNAME">TRUE</field>
+  ```
+  
+  or
+  
+  ```xml
+  <field name="FIELDNAME">true</field>
+  ```
+  :::note
+  Quotes do not need to be applied to the inner text.
+  :::
+  
+  Where the `name` attribute contains a string referencing an checkbox field,
+  and the inner text is the value to apply to the field. The inner text value
+  follows the same rules as the constructor value.
+  
+  Note that after being deserialized and reserialized all of the inner text
+  values will be in caps (`'TRUE'` or `'FALSE'`). This is sometimes important
+  when diffing workspaces.
+  </TabItem>
+</Tabs>
+## Customization
+
+### Checkmark character
+
+The `Blockly.FieldCheckbox.CHECK_CHAR` property can be used to change what the
+checkmark looks like. The value should be a string containing a unicode
+character.
+
+![Checkbox field with heart instead of check](/images/fields/checkbox/customized.png)
+
+The `CHECK_CHAR` property defaults to `\u2713` or ✓.
+
+This is a global property, so it will modify all checkbox fields when set.
+
+## Creating a checkbox validator
+
+:::note
+For information on validators in general see [Validators](/guides/create-custom-blocks/fields/validators).
+:::
+
+A checkbox field's value is either `'TRUE'` or `'FALSE'` so a validator should
+accept those values (i.e. a string) and return `'TRUE'`, `'FALSE'`, `null`, or
+`undefined`.
+
+:::warning
+the `getValueBoolean` method should not be used inside of validators,
+because it returns based on the current value, not the new value.
+:::
+
+Here's an example of a validator that hides or shows a text input field based on
+whether the checkbox is checked:
+
+```
+  validate: function(newValue) {
+    var sourceBlock = this.getSourceBlock();
+    sourceBlock.showTextField_ = newValue == 'TRUE';
+    sourceBlock.updateTextField();
+
+    return newValue;
+  },
+
+  updateTextField: function() {
+    var input = this.getInput('DUMMY');
+    if (this.showTextField_ && !this.getField('TEXT')) {
+      input.appendField(new Blockly.FieldTextInput(), 'TEXT');
+    } else if (!this.showTextField_ && this.getField('TEXT')) {
+      input.removeField('TEXT');
+    }
+  }
+```
+
+#### Checkbox field with a validator
+
+![An animated GIF that shows a checkbox being checked. When the checkbox is
+checked, a text field is
+displayed.](/images/fields/checkbox/validator.gif)

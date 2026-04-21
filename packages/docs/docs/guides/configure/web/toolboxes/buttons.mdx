@@ -1,0 +1,89 @@
+---
+description: How to define buttons and labels in your toolbox.
+title: Buttons and labels
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Buttons and labels
+
+You can put a button or label anywhere you can put a block in the toolbox.
+
+![A flyout toolbox with a comparison block, the label "A label" in italics, the
+label "Another label", a `not` block, a button labeled "A button", and a
+true-false block.](/images/label-and-button.png)
+
+<Tabs groupId="group-1">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "kind": "flyoutToolbox",
+    "contents": [
+      {
+        "kind": "block",
+        "type":"logic_operation"
+      },
+      {
+        "kind": "label",
+        "text": "A label",
+        "web-class": "myLabelStyle"
+      },
+      {
+        "kind": "label",
+        "text": "Another label"
+      },
+      {
+        "kind": "block",
+        "type": "logic_negate"
+      },
+      {
+        "kind": "button",
+        "text": "A button",
+        "callbackKey": "myFirstButtonPressed"
+      },
+      {
+        "kind": "block",
+        "type": "logic_boolean"
+      }
+    ]
+  }
+  ```
+  </TabItem>
+  <TabItem value="xml" label="XML">
+  ```xml
+  <xml id="toolbox" style="display: none">
+    <block type="logic_operation"></block>
+    <label text="A label" web-class="myLabelStyle"></label>
+    <label text="Another label"></label>
+    <block type="logic_negate"></block>
+    <button text="A button" callbackKey="myFirstButtonPressed"></button>
+    <block type="logic_boolean"></block>
+  </xml>
+  ```
+  </TabItem>
+</Tabs>
+```html
+<style>
+.myLabelStyle>.blocklyFlyoutLabelText {
+  font-style: italic;
+  fill: green;
+}
+</style>
+```
+
+You may specify a CSS class name to apply to your button or label.
+In the above example, the first label uses a custom style, while the second
+label uses the default style.
+
+Buttons should have callback functions; labels should not. To set the callback
+for a given button click, use
+
+```js
+yourWorkspace.registerButtonCallback(yourCallbackKey, yourFunction).
+```
+
+Your function should accept as an argument the button that was clicked.
+The "Create variable..." button in the variable category is a good example of a
+button with a callback.

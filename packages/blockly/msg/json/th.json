@@ -24,6 +24,7 @@
 	"DELETE_X_BLOCKS": "ลบ %1 บล็อก",
 	"DELETE_ALL_BLOCKS": "ลบ %1 บล็อกทั้งหมด?",
 	"CLEAN_UP": "จัดเรียงบล็อกให้เป็นแถว",
+	"CLOSE": "ปิด",
 	"COLLAPSE_BLOCK": "ย่อบล็อก",
 	"COLLAPSE_ALL": "ย่อบล็อก",
 	"EXPAND_BLOCK": "ขยายบล็อก",

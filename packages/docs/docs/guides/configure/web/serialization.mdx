@@ -1,0 +1,252 @@
+---
+description: Saving and loading the state of Blockly workspaces.
+title: Save and load
+image: images/blockly_banner.png
+---
+
+# Save and load
+
+Serialization is saving the state of your workspace so that it can be loaded
+back into the workspace later. This includes serializing the state of any
+blocks, variables, or [plugins](/guides/programming/plugin_overview)
+that you want to save. You can convert all of the data you need to save into a
+text-based format for easy storage, and then load that data back into a fully
+functional workspace later.
+
+Blockly provides two formats for this data: JSON and XML. We recommend using the
+JSON system for new projects, and encourage older projects using XML to upgrade.
+The XML system is the legacy save format. It will not be removed, but it will
+not receive new features.
+
+## JSON system
+
+:::note
+For information on how to migrate to JSON from XML, see the [migration
+guide].
+:::
+
+The JSON serialization system is made up of multiple serializers. There are
+built-in serializers for blocks and variables, and you can also register
+additional serializers. Each serializer is responsible for serializing and
+deserializing the state of a particular plugin or system.
+
+### Saving and Loading
+
+#### Workspaces
+
+You can serialize or deserialize the state of an entire workspace by calling the
+`save` and `load` methods on the `workspaces` namespace.
+
+```js
+const state = Blockly.serialization.workspaces.save(myWorkspace);
+Blockly.serialization.workspaces.load(state, myWorkspace);
+```
+
+These calls serialize or deserialize _all_ of the individual systems
+(represented by serializers) which are registered with the workspace.
+
+#### Individual blocks
+
+You can serialize or deserialize individual blocks by calling the `save` and
+`append` methods on the `blocks` namespace.
+
+```js
+const blockJson = Blockly.serialization.blocks.save(myBlock);
+const duplicateBlock = Blockly.serialization.blocks.append(
+  blockJson,
+  myWorkspace,
+);
+```
+
+#### Individual systems
+
+You can serialize or deserialize individual systems (e.g. blocks, variables,
+plugins, etc) by constructing the associated serializer, and calling its `save`
+and `load` methods.
+
+```js
+// Saves only the variables information for the workspace.
+const serializer = new Blockly.serialization.variables.VariableSerializer();
+const state = serializer.save(myWorkspace);
+serializer.load(state, myWorkspace);
+```
+
+### Deserialization order
+
+The JSON system has an explicit deserialization order, which makes it easier to
+prevent duplicating state within a save.
+
+When `Blockly.serialization.workspaces.load` is called, serializers are given
+state to deserialize in order of _priority_. This is explained further in the
+[Serializers](/guides/configure/web/serialization#serializer-hooks)
+section, and its purpose is to allow serializers to depend on state from other
+systems.
+
+The order for deserialization of built-in serializers is:
+
+1.  **Variable models are deserialized.**
+2.  **Procedure models are deserialized.**
+3.  **Blocks are deserialized.** Individual top-level blocks are
+    deserialized in an _arbitrary order_.
+    1.  **Type is deserialized.** This constructs the block, triggers its init
+        method, and mixes in extensions.
+    2.  **Attributes are deserialized.** This includes properties that can apply
+        to any block. For example: x, y, collapsed, disabled, and data.
+4.  **Extra state is deserialized.** See the
+    [Mutators](/guides/create-custom-blocks/mutators) documentation for
+    more info.
+5.  **The block is connected to its parent (if one exists).**
+    1.  **Icons are deserialized.** Individual icons are deserialized in an
+        _arbitrary order_.
+    2.  **Fields are deserialized.** Individual fields are deserialized in an
+        _arbitrary order_.
+    3.  **Input blocks are deserialized.** This includes blocks connected to
+        value inputs and statement inputs. Individual inputs are deserialized in
+        an _arbitrary order_.
+    4.  **Next blocks are deserialized.**
+
+### When to save extra state
+
+For blocks, if you have something lower in the order that depends on something
+higher in the order, you should duplicate that data and add it to your extra
+state.
+
+For example, if you have a field that only exists if a next block is connected,
+you should add info about that next block to your extra state, so the field can
+be added to your block before the field’s state is deserialized.
+
+However, if you have an input that only exists if a field has a certain value,
+you do not need to add info about the field to your extra state. This is because
+the state of your field will be deserialized first, and when it is, you can add
+the input to your block. Usually adding the input will be triggered by a
+[validator](/guides/create-custom-blocks/fields/validators#registering-a-local-validator).
+
+Note that the rule about duplicating state should also take into account that
+block stacks, icons, fields, and input blocks are deserialized in an arbitrary
+order. For example, if you have one field B that only exists if another field A
+has a certain value, you should add info about A to your extra state in case B
+is deserialized before A.
+
+### Block hooks
+
+For information about how to add extra serialization to blocks, see the
+[Mutators](/guides/create-custom-blocks/mutators) documentation.
+
+### Field hooks
+
+For information about how to serialize fields, see the [Custom
+fields](/guides/create-custom-blocks/fields/customizing-fields/creating#serialization)
+documentation.
+
+### Serializer hooks
+
+The JSON system allows you to register serializers which serialize and
+deserialize some state. Blockly's built-in serializers take care of serializing
+information about blocks and variables, but if you want to serialize other
+information you'll need to add your own serializer. For example, workspace-level
+comments are not serialized by default by the JSON system. If you want to
+serialize them, you will need to register an additional serializer.
+
+Additional serializers are often used to serialize and deserialize the state of
+a plugin.
+
+```js
+Blockly.serialization.registry.register(
+  'workspace-comments', // Name
+  {
+    save: saveFn, // Save function
+    load: loadFn, // Load function
+    clear: clearFn, // Clear function
+    priority: 10, // Priority
+  },
+);
+```
+
+When you register a serializer you must provide several things:
+
+- A name for the serializer, which the data is also saved under.
+- A function to `save` the state of the plugin/system associated with the
+  serializer.
+- A function to `clear` the state.
+- A function to `load` the state.
+- A `priority`, which is used to determine the [deserialization
+  order](/guides/configure/web/serialization#deserialization-order).
+
+  You can base the priority of your serializer on the [built-in
+  priorities](/reference/blockly.serialization.priorities)
+
+When `Blockly.serialization.workspaces.save` is called, each serializer's `save`
+function will be called, and its data will be added to the final JSON output:
+
+```json
+{
+  "blocks": { ... },
+  "workspaceComments": [ // Provided by workspace-comments serializer
+    {
+      "x": 239,
+      "y": 31,
+      "text": "Add 2 + 2"
+    },
+    // etc...
+  ]
+}
+```
+
+When `Blockly.serialization.workspaces.load` is called, each serializer is
+triggered in order of priority. Serializers with more positive priority values
+are triggered before serializers with less positive priority values.
+
+When a serializer is triggered, two things happen:
+
+1.  The provided `clear` function is called. This ensures that the state of your
+    plugin/system is clean before more state is loaded. For example, the
+    workspace-comments serializer would remove all existing comments from the
+    workspace.
+2.  The provided `load` function is called.
+
+## XML system
+
+The XML system allows you to serialize your workspace to an XML node. This was
+the original serialization system of Blockly. It has now been iceboxed, which
+means it will not receive new features. As such, we recommend using the JSON
+system if possible.
+
+:::note
+For information on how to migrate to JSON, see the [migration guide].
+:::
+
+### APIs
+
+For information about the XML system's APIs see the [reference
+documentation](/reference/blockly.xml).
+
+### Block hooks
+
+For information about how to add extra serialization to blocks, see the
+[Mutators](/guides/create-custom-blocks/mutators) documentation.
+
+### Field hooks
+
+For information about how to serialize fields, see the [Custom
+fields](/guides/create-custom-blocks/fields/customizing-fields/creating#serialization)
+documentation.
+
+## Choosing between JSON and XML
+
+We recommend the JSON serializer over XML. The JSON system allows you to
+serialize the state of your workspace to a JavaScript object. This is
+advantageous because:
+
+1.  JSON is easy to compress or convert to another format.
+2.  JSON is easy to work with programmatically.
+3.  JSON is easy to extend and append data to.
+
+In addition, the XML system will no longer receive updates, and it already lacks
+features compared to the JSON serializer. For example, you can register your own
+JSON serializer to easily save and load additional data, such as data for
+plugins or customizations you've added. This is not possible in the XML system.
+
+If you have previously used XML serialization, see the [migration guide] for
+information on how to upgrade.
+
+[migration guide]: https://docs.google.com/document/d/1wv5ORrO4icVHeU15FLSn37mdNLyJpQbMTo7mmTqsGl0/edit?usp=sharing

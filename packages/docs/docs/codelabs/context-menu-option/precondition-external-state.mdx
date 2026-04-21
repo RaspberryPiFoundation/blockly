@@ -1,0 +1,32 @@
+---
+slug: /codelabs/context-menu-option/precondition-external-state
+description: How to include a context menu item based on an external condition.
+---
+
+# Customizing context menus
+
+## 5. Precondition: External state
+
+Use of the `preconditionFn` is not limited to checking the type of the Blockly component that the context menu was invoked on. You can use it to check for conditions entirely outside of Blockly. For instance, let's disable `helloWorldItem` for the second half of every minute:
+
+```js
+    preconditionFn: function (scope) {
+      if (
+        scope.focusedNode instanceof Blockly.WorkspaceSvg ||
+        scope.focusedNode instanceof Blockly.BlockSvg
+      ) {
+        const now = new Date(Date.now());
+        if (now.getSeconds() < 30) {
+          return 'enabled';
+        }
+        return 'disabled';
+      }
+      return 'hidden';
+    },
+```
+
+### Test it
+
+Reload your workspace, check your watch, and open a context menu on the workspace to confirm the timing. The option will always be in the menu, but will sometimes be greyed out.
+
+![A context menu. The last option says "Hello World" but the text is grey, indicating that it cannot be selected.](../../../static/images/codelabs/context-menu-option/hello_world_grey.png)

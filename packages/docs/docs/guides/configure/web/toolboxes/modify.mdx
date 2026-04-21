@@ -1,0 +1,37 @@
+---
+description: How to modify a toolbox programmatically.
+title: Modify toolboxes
+image: images/blockly_banner.png
+---
+
+# Modify toolboxes
+
+The application may change the blocks available in the toolbox at any time with
+a single function call:
+
+```js
+workspace.updateToolbox(newTree);
+```
+
+As was the case during initial configuration, `newTree` may either be a tree of
+nodes, a string representation, or a JSON object. The only restriction is that
+the mode cannot be changed; that is if there were categories in the
+initially-defined toolbox then the new toolbox must also have categories
+(though the categories may change). Likewise, if the initially-defined toolbox
+did not have any categories, then the new toolbox may not have any categories.
+
+The contents of a single category can be updated by:
+
+```js
+var category = workspace.getToolbox().getToolboxItems()[0];
+category.updateFlyoutContents(flyoutContents);
+```
+
+Where `flyoutContents` can be a list of blocks defined using JSON, a tree of nodes,
+or a string representation.
+
+Be aware that at this time updating the toolbox causes some minor UI resets:
+
+- In a toolbox without categories, any fields changed by the user (such as a dropdown) will revert to the default.
+
+Here is [a live demo](https://raspberrypifoundation.github.io/blockly-samples/examples/toolbox-demo/) of a tree with categories and block groups.

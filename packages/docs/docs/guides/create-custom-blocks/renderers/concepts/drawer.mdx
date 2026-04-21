@@ -1,0 +1,24 @@
+---
+description: What the drawer class is and what it does.
+title: Drawer
+image: images/blockly_banner.png
+---
+
+# Drawer
+
+The [`Drawer`][Drawer] builds SVG [paths][paths] based on the
+[renderer info][render-info] and passes them to the [path object][path-object].
+
+It connects all of the different path representations of the different
+measurables (which are defined in the [constant provider][constants])
+together. The drawer uses the [SVG path utils][svg-path-utils] provided by
+Blockly to do this.
+
+The drawer also updates the offsets of connections within the block.
+
+[Drawer]: /reference/blockly.blockrendering.drawer
+[paths]: https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths
+[render-info]: /guides/create-custom-blocks/renderers/concepts/info
+[path-object]: /guides/create-custom-blocks/renderers/concepts/path-object
+[constants]: /guides/create-custom-blocks/renderers/concepts/constants
+[svg-path-utils]: /reference/blockly.utils.svgpaths

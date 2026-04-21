@@ -1,0 +1,130 @@
+---
+description: How to create custom procedure data models.
+title: Create custom procedure data models
+image: images/blockly_banner.png
+---
+
+# Create custom procedure data models
+
+Procedure blocks all reference backing data models which define the signature of
+the procedure (name, parameters, and return). The data models provided by the
+[@blockly/block-shareable-procedures][shareable-procedures] plugin are built to
+replicate the behavior of Blockly's legacy built-in procedure blocks.
+
+This includes some behavior that you may not want for your custom procedure
+blocks, including:
+
+- Return types are not supported
+- All parameters are associated with a global variable
+
+If you want different behavior, you can create your own custom procedure data
+models.
+
+## Procedure model implementation
+
+Your procedure data model needs to implement the
+[`IProcedureModel`][IProcedureModel] interface.
+
+```js
+class MyProcedureModel {
+  constructor(workspace, name, id) {
+    this.workspace = workspace;
+    this.name = name;
+    this.id = id;
+
+    // Note: construction should not add the model to the procedure map.
+  },
+
+  // Other methods are omitted for brevity...
+}
+```
+
+## Parameter model implementation
+
+Your parameter data model needs to implement the
+[`IParameterModel`][IParameterModel] interface.
+
+```js
+class MyParameterModel {
+  constructor(workspace, name, id) {
+    this.workspace = workspace;
+    this.name = name;
+    this.id = id;
+  },
+
+  setProcedureModel(model) {
+    this.model =  model;
+    return this;
+  }
+
+  // Other methods are omitted for brevity...
+}
+```
+
+## Trigger changes
+
+Any of the methods that trigger changes to the procedure model should also call
+`triggerProceduresUpdate` from the
+[@blockly/block-shareable-procedures][shareable-procedures] plugin. This will
+call `doProcedureUpdate` on any procedure blocks, causing them to rerender.
+
+```js
+import { triggerProceduresUpdate } from '@blockly/block-shareable-procedures';
+
+class MyProcedureModel {
+  setName(name) {
+    this.name = name;
+    triggerProcedureUpdate();
+    return this;
+  }
+
+  // Other methods are omitted for brevity...
+}
+
+class MyParameterModel {
+  setName(name) {
+    this.name = name;
+    triggerProcedureUpdate();
+    return this;
+  }
+
+  // Other methods are omitted for brevity...
+}
+```
+
+## Events
+
+The procedure models in the
+[@blockly/block-shareable-procedures][shareable-procedures] plugin also fire
+events when the procedures are modified. This allows multiple workspaces to be
+kept in sync, and procedure models to be shared across them. You can also choose
+to fire events if you want.
+
+## Deserialization
+
+Your classes also each need a `static loadState` method to support
+deserialization.
+
+```js
+class MyProcedureModel {
+  static loadState(state, workspace) {
+    // Note that the procedure model should not deserialize parameters.
+    // The deserializer will handle that.
+    return new MyProcedureModel(workspace, state.name, state.id);
+  }
+
+  // Other methods are omitted for brevity...
+}
+
+class MyParameterModel {
+  static loadState(state, workspace) {
+    return new MyParameterModel(workspace, state.name, state.id);
+  }
+
+  // Other methods are omitted for brevity...
+}
+```
+
+[shareable-procedures]: https://www.npmjs.com/package/@blockly/block-shareable-procedures
+[IProcedureModel]: /reference/blockly.procedures.iproceduremodel
+[IParameterModel]: /reference/blockly.procedures.iparametermodel

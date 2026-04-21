@@ -1,0 +1,25 @@
+---
+description: Configuration option for the media folder.
+title: Media folder option
+image: images/blockly_banner.png
+---
+
+# Media folder option
+
+The media folder is where Blockly looks for assets like sounds (e.g. the delete
+sound effect) and images (e.g. the trash can). By default, these assets are
+downloaded from `https://blockly-demo.appspot.com/static/media/`.
+
+If you want to customize any of these assets, such as using a different sound,
+or if you want your application to only make HTTP requests to your domain:
+
+1.  Download all of [Blockly's
+    assets](https://github.com/RaspberryPiFoundation/blockly/tree/main/media) from GitHub and
+    place them in your own media folder.
+1.  Replace any assets you want to customize.
+1.  Set the `media` property in the [configuration
+    options](/guides/configure/web/configuration_struct#the-options-dictionary)
+    to the URL of your media folder. This can be an absolute URL or a path
+    relative to the current file.
+1.  Deploy your media folder and all of its assets along with the rest of your
+    application.

@@ -238,6 +238,8 @@ function haltPropagation(e: Event) {
 export function hide() {
   WidgetDiv.hideIfOwner(dummyOwner);
   currentBlock = null;
+  menu_?.dispose();
+  menu_ = null;
 }
 
 /**
@@ -292,4 +294,11 @@ export function callbackFactory(
     getFocusManager().focusNode(newBlock);
     return newBlock;
   };
+}
+
+/**
+ * Returns the contextual menu if it is currently being shown.
+ */
+export function getMenu(): Menu | null {
+  return menu_;
 }

@@ -1,0 +1,104 @@
+---
+description: A field for showing images to the user.
+title: Image fields
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Image fields
+
+An image field stores a string as its value, and a string as its text. Its
+value is the src of the image, while its text is an alt string
+describing/representing the image.
+
+#### Image field
+
+![A block with the label "image:" and an image of a yellow
+star.](/images/fields/image/on_block.png)
+
+#### Image field on collapsed block
+
+![The same block after being collapsed. It has the label "variable: *", where
+"*" is the alt text for the image, and a jagged right edge to show it is
+collapsed.](/images/fields/image/collapsed.png)
+
+## Creation
+
+<Tabs groupId="group-1">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "type": "example_image",
+    "message0": "image: %1",
+    "args0": [
+      {
+        "type": "field_image",
+        "src": "https://www.gstatic.com/codesite/ph/images/star_on.gif",
+        "width": 15,
+        "height": 15,
+        "alt": "*"
+      }
+    ]
+  }
+  ```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+  ```js
+  Blockly.Blocks['example_image'] = {
+    init: function() {
+      this.appendDummyInput()
+        .appendField("image:")
+        .appendField(new Blockly.FieldImage(
+          "https://www.gstatic.com/codesite/ph/images/star_on.gif",
+          15,
+          15,
+          "*"));
+    }
+  };
+  ```
+  </TabItem>
+</Tabs>
+The image constructor takes in:
+
+| Parameter     | Description                                                                                                                                                                                     |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src`         | A string that points to a [raster image](https://developer.mozilla.org/en-US/docs/Glossary/raster_image) file.                                                                                  |
+| `width`       | Must cast to a non-zero number.                                                                                                                                                                 |
+| `height`      | Must cast to a non-zero number.                                                                                                                                                                 |
+| `opt_alt`     | (Optional) A string that accurately describes/represents the image. This is used instead of the image when the block is collapsed. If it is `null` or `undefined` an empty string will be used. |
+| `opt_onClick` | (Optional) A function to call when the field is clicked.                                                                                                                                        |
+| `opt_flipRtl` | (Optional) A boolean. If `true`, the image is flipped across the vertical axis when in right-to-left mode. Defaults to `false`. Useful for "turn left" and "turn right" icons.                  |
+
+## Serialization
+
+Image fields are not serializable.
+
+## Click handler
+
+:::note
+For information on validators in general see [Validators](/guides/create-custom-blocks/fields/validators).
+:::
+
+The image field does not accept a validator; instead it explicitly accepts a
+function that is called whenever the field is clicked. This means that images
+can act like buttons that exist on blocks.
+
+The on click handler can be set in the [JavaScript Constructor](#creation) or
+using the
+[`setOnClickHandler`](/reference/blockly.fieldimage.setonclickhandler)
+function.
+
+Here is an example of an on click handler that collapses the block when
+called.
+
+```
+function() {
+    this.getSourceBlock().setCollapsed(true);
+}
+```
+
+![An animated GIF showing the image being clicked, the block collapsing, a
+right-click to display the context menu, Expand Block being chosen, and the
+block being expanded.](/images/fields/image/click_handler.gif)

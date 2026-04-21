@@ -1,0 +1,167 @@
+---
+description: How the copy paste system works, and how to implement custom copy paste handling.
+title: Copy and paste
+image: images/blockly_banner.png
+---
+
+# Copy and paste
+
+Blockly supports copy, cut, and paste operations for a number of its built-in
+components, like blocks, workspace comments, and bubbles.
+
+## Default clipboard behavior
+
+Blockly core comes with [keyboard shortcuts][default-keyboard-shortcuts] that
+can cut, copy, or paste blocks, workspace comments, and any other components
+that implement the [`ICopyable`, `IDraggable`, and `IDeletable`
+interfaces](#custom-copyable-objects). It also comes with a [context menu
+option][context-menu-option] for duplicating a block. You can modify or remove
+those default shortcuts and menu items as needed.
+
+In the default clipboard implementation, copyable objects can only be pasted
+into the workspace they were copied from, or into the target workspace if they
+were copied from a flyout. This means you can copy a block from a flyout into
+that flyout's target workspace, but you can't copy a block from one main
+workspace to another.
+
+## Copy and paste across workspaces and tabs
+
+If you want to allow users to copy blocks from one workspace and paste them into
+another workspace, or even into a workspace in a copy of your application
+running in another tab, you can install the
+[`@blockly/plugin-cross-tab-copy-paste` plugin][cross-tab-copy-paste-plugin].
+
+## Custom clipboard behavior
+
+If you want different behavior, you can implement a custom clipboard by
+uninstalling the keyboard shortcuts that come with Blockly and installing others
+that work differently. To facilitate this, you can use methods in the
+[`Blockly.clipboard` namespace][clipboard-namespace] for copying, pasting, or
+more fine-grained control such as setting the workspace that an object was
+copied from.
+
+## Custom copyable objects
+
+Arbitrary items can be made compatible with the copy/paste system by using five
+interfaces: [`ICopyable`][ICopyable], [`IDraggable`][IDraggable], and
+[`IDeletable`][IDeletable] to represent objects that can be copied,
+[`ICopyData`][ICopyData] to represent copied objects, and [`IPaster`][IPaster]
+to represent objects which can turn copy data back into copyable objects. Every
+type of `ICopyable` needs an associated `IPaster` that can paste that data.
+
+Any object that implements `ICopyable`,`IDraggable`, and `IDeletable` and that
+has a corresponding `IPaster` and `ICopyData` will automatically work with the
+default clipboard system.
+
+There are very few circumstances where you would want to implement a custom
+copyable or a custom paster (e.g. the [multiselect plugin][multiselect-plugin]),
+because copyable objects are rendered, and you can't add new rendered objects to
+Blockly. The only rendered objects that can exist within a workspace are blocks,
+bubbles, and workspace comments.
+
+### Implement a copyable
+
+To create a copyable object, you need to implement the `ICopyable`,
+`IDraggable`, and `IDeletable` interfaces. The latter two interfaces are
+required so that a pasted object can be manipulated and deleted.
+
+#### Selectable
+
+The `ICopyable` interface extends the [`ISelectable`][ISelectable] interface,
+which means you need to implement those methods and properties as well.
+
+Being selectable is required because keyboard shortcuts look at the selected
+object to figure out what to copy.
+
+```js
+class MyCopyable implements ISelectable {
+  constructor(workspace) {
+    this.id = Blockly.utils.idGenerator.genUid();
+    this.workspace = workspace;
+  }
+
+  select() {
+    // Visually indicate this draggable is selected.
+  }
+
+  unselect() {
+    // Visually indicate this draggable is not selected.
+  }
+}
+```
+
+#### Copyable
+
+The `ICopyable` interface itself has only one required method, `toCopyData`,
+which returns a JSON-serializable representation of the copyable object's state,
+which can be used to recreate the copyable object.
+
+The copy data must also include a `paster` property, which holds the registered
+string-name associated with the paster that should paste this copy data. For
+more information about pasters, see [Implement a paster][implement-paster].
+
+```js
+class MyCopyable implements ICopyable {
+  constructor(workspace, state) {
+    this.workspace = workspace;
+    this.myState = state;
+  }
+
+  toCopyData() {
+    return {
+      // This string matches the string used to register the paster.
+      paster: 'MY_PASTER',
+      state: this.myState,
+    };
+  }
+}
+```
+
+`ICopyable` also has an optional method, `isCopyable`, which returns whether an
+object is currently copyable.
+
+#### Draggable and deletable
+
+For information on implementing `IDraggable` and `IDeletable`, see [Custom
+draggables][custom-draggables].
+
+### Implement a paster
+
+To create a paster, you need to implement the `IPaster` interface. It only has
+one method `paste` which takes in the copy data of the thing it pastes, the
+workspace to paste the thing into, and an optional coordinate, which is the
+location to paste the thing at.
+
+```js
+class MyPaster implements IPaster {
+  paste(copyData, workspace, coordinate) {
+    return new MyCopyable(workspace, copyData.state);
+    // Optionally position the copyable at the passed coordinate.
+    // Optionally select the copyable after it is pasted.
+  }
+}
+```
+
+#### Registration
+
+After you have implemented a paster, you need to register it so that you can
+find the paster associated with a given copy data from its `paster` property.
+
+```js
+// This string matches the string assigned to the 'paster' property.
+Blockly.clipboard.registry.register('MY_PASTER', new MyPaster());
+```
+
+[implement-paster]: /guides/configure/web/copy-paste#implement-a-paster
+[ICopyable]: /reference/blockly.icopyable
+[IDeletable]: /reference/blockly.ideletable
+[IDraggable]: /reference/blockly.idraggable
+[ICopyData]: /reference/blockly.icopyable.icopydata
+[IPaster]: /reference/blockly.ipaster
+[ISelectable]: /reference/blockly.iselectable
+[default-keyboard-shortcuts]: /guides/configure/web/keyboard-shortcuts#default-shortcuts
+[context-menu-option]: /guides/configure/web/context-menus
+[custom-draggables]: /guides/configure/web/dragging/draggable
+[multiselect-plugin]: https://www.npmjs.com/package/@mit-app-inventor/blockly-plugin-workspace-multiselect
+[cross-tab-copy-paste-plugin]: https://www.npmjs.com/package/@blockly/plugin-cross-tab-copy-paste
+[clipboard-namespace]: /reference/blockly.clipboard

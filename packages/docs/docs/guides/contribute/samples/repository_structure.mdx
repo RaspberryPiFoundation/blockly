@@ -1,0 +1,57 @@
+---
+description: The types of content available in blockly-samples.
+title: Repository structure
+image: images/blockly_banner.png
+---
+
+# Repository structure
+
+The blockly-samples repository contains a few different categories of projects.
+This page is meant to help you understand where the different categories live,
+and what each project in a category might contain.
+
+### Examples
+
+Examples are self-contained sample projects demonstrating techniques to include
+and extend the Blockly library. They usually consist of a demo web page, and
+some supporting code. While codelab walk you through building something
+step-by-step, Examples show you a finished product, and allow you to explore it
+at your own pace.
+
+![Screenshot of the blockly-react example](/images/structure-examples.png)
+
+Example code is meant to be extremely well-commented so that it is easy to copy.
+The target user may be reading the code, running it locally, or copying code
+snippets.
+
+The
+[examples directory](https://github.com/RaspberryPiFoundation/blockly-samples/tree/main/examples)
+has one folder per example. Each example can be run with `npm install && npm run
+start`, and has a `README.md` file with additional context or instructions.
+
+### Plugins
+
+Plugins are self-contained pieces of code that add functionality to Blockly.
+Plugins can add fields, define themes, create renderers, and much more. The
+target user is a developer who finds and uses the plugin through npm. Plugins
+defined in this repository are _first-party_ plugins, which means that they are
+supported by the Blockly team.
+
+![Screenshot of the "typed variable modal" plugin](/images/structure-plugin.png)
+
+The
+[plugins directory](https://github.com/RaspberryPiFoundation/blockly-samples/tree/main/plugins)
+has one folder per plugin. Each plugin has a `src` directory, where the code is
+contained, and a `test` directory, where a demo page lives. They also contain a
+`README.md` file, which gives developers information about what the plugin does,
+and how to use it.
+
+### Github Pages
+
+Blockly-samples has a [webpage](https://raspberrypifoundation.github.io/blockly-samples/) where
+many of the plugins and demos are available in a playground environment. This
+page is hosted on GitHub pages, and the code for this site is in the
+[gh-pages](https://github.com/RaspberryPiFoundation/blockly-samples/tree/main/gh-pages)
+directory of blockly-samples. This directory contains templates for the pages on
+the site. The actual site content is generated based on these templates and
+metadata from each plugin or example hosted.

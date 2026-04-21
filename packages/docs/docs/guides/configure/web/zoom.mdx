@@ -1,0 +1,70 @@
+---
+description: Configuration options for how the workspace can be zoomed.
+title: Zoom option
+image: images/blockly_banner.png
+---
+
+# Zoom option
+
+Blockly's main workspace may be scalable, either dynamically by the user,
+or statically by the developer.
+
+The zoom settings are defined by an object that is part of Blockly's
+[configuration
+options](/guides/configure/web/configuration_struct#the-options-dictionary).
+Here is an example:
+
+```js
+var workspace = Blockly.inject('blocklyDiv', {
+  toolbox: document.getElementById('toolbox'),
+  zoom: {
+    controls: true,
+    wheel: true,
+    startScale: 1.0,
+    maxScale: 3,
+    minScale: 0.3,
+    scaleSpeed: 1.2,
+    pinch: true,
+  },
+  trashcan: true,
+});
+```
+
+## controls
+
+Set to `true` to show zoom-centre, zoom-in, and zoom-out buttons.
+Defaults to `false`.
+
+![The zoom-centre, zoom-in, and zoom-out
+buttons.](/images/zoom-controls.png)
+
+## wheel
+
+Set to `true` to allow the mouse wheel to zoom. Defaults to `false`.
+
+## startScale
+
+Initial magnification factor. For applications with multiple levels,
+`startScale` is often set to a higher value on the first level, then
+incrementally decreased as subsequent levels become more complex.
+Defaults to `1.0`.
+
+## maxScale
+
+Maximum multiplication factor for how far one can zoom in. Defaults to `3`.
+
+## minScale
+
+Minimum multiplication factor for how far one can zoom out. Defaults to `0.3`.
+
+## scaleSpeed
+
+For each zooming in-out step the scale is multiplied or divided respectively by
+the scale speed, this means that: `scale = scaleSpeed ^ steps`. Note that in
+this formula steps of zoom-out are subtracted and zoom-in steps are added.
+Defaults to `1.2`.
+
+## pinch
+
+Set to `true` to enable pinch to zoom support on touch devices. Defaults to
+`true` if either the `wheel` or `controls` option is set to `true`.

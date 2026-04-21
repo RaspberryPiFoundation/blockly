@@ -1,0 +1,281 @@
+---
+description: How to add or remove keyboard shortcuts.
+title: Keyboard shortcuts
+image: images/blockly_banner.png
+---
+
+# Keyboard shortcuts
+
+Blockly maintains a registry of keyboard shortcuts that map keys (or key
+combinations like `ctrl-C`) to actions. The registry is
+[prepopulated](#default-shortcuts) with a number of shortcuts, such as `ctrl-C`
+and `meta-C` for copy. You can add shortcuts to and delete shortcuts from the
+registry.
+
+## How keyboard shortcuts work
+
+The shortcut registry contains objects that model keyboard shortcuts. When the
+user presses a key (or combination of keys), Blockly:
+
+1.  Checks the registry to see if any shortcuts apply to the key. If more than
+    one shortcut uses the key, the shortcuts are tried in reverse order of
+    registration. That is, the most recently registered shortcut is tried first.
+
+1.  Calls the shortcut's `preconditionFn` function, which determines whether the
+    shortcut applies to the current situation. For example, the copy shortcut
+    applies to blocks but not to the workspace. If the shortcut doesn't apply,
+    Blockly tries the next shortcut in the list, if any.
+
+1.  Calls the shortcut's `callback` function, which executes the shortcut's
+    action. For example, the copy shortcut makes a copy of the currently focused
+    object, such as a block. If this function returns `true`, processing stops.
+    If it returns `false`, Blockly tries the next shortcut in the list, if any.
+
+## Scope
+
+A
+[`Scope`](/reference/blockly.contextmenuregistry.scope)
+object identifies the Blockly component that currently has focus. Scope objects
+are passed to `preconditionFn` and `callback`, which use them to decide whether
+a shortcut applies to a particular component and, if so, how to apply it.
+
+To use a `Scope` object, use its `focusedNode` property. This is an object that
+implements
+[`IFocusableNode`](/reference/blockly.ifocusablenode). This
+interface is implemented by all Blockly components that the user can focus on,
+including workspaces, blocks, fields, comments, and your own custom components;
+for more information, see [Focus system](/guides/configure/web/focus).
+
+For example, a `preconditionFn` might use `focusedNode` to ensure that a
+shortcut only applies to blocks.
+
+```js
+preconditionFn(workspace, scope) {
+  return (scope.focusedNode instanceof Blockly.BlockSvg);
+}
+```
+
+## The KeyboardShortcut interface
+
+Objects in the shortcut registry implement the
+[`KeyboardShortcut`](/reference/blockly.shortcutregistry.keyboardshortcut)
+interface. This contains the following properties.
+
+### name (required)
+
+A unique name for the shortcut. This is not shown to users and does not need to
+be human-readable. It should not be translated.
+
+```js
+const logFieldsShortcut = {
+  name: 'logFields',
+  // ...
+};
+```
+
+### preconditionFn (optional)
+
+Blockly calls this function to decide if a shortcut applies to the current
+situation. If it returns `true`, Blockly calls `callback`. If it returns
+`false`, Blockly ignores this shortcut. For example:
+
+```js
+const logFieldsShortcut = {
+  // ...
+  preconditionFn(workspace, scope) {
+    // This shortcut only applies to blocks.
+    return scope.focusedNode instanceof Blockly.BlockSvg;
+  },
+  // ...
+};
+```
+
+A shortcut can omit this function if the shortcut always applies (uncommon).
+Shortcuts should not omit this function and then take action conditionally in
+`callback`. Doing so prevents Blockly from doing things like building contextual
+help menus that show applicable shortcuts.
+
+### callback (optional)
+
+This function executes the action associated with the shortcut. It is called
+only if `preconditionFn` returns `true` or does not exist. Its parameters are:
+
+- `workspace`: The current `WorkspaceSvg`.
+- `e`: The `Event` that initiated the shortcut.
+- `shortcut`: The `KeyboardShortcut` itself.
+- `scope`: The `Scope` to which the shortcut applies.
+
+It returns `true` if it succeeds and `false` if it fails.
+
+For example:
+
+```js
+const logFieldsShortcut = {
+  // ...
+  callback(workspace, event, shortcut, scope) {
+    // preconditionFn required focusedNode to be a BlockSvg.
+    for (input of scope.focusedNode.inputList) {
+      // Log the values of all named fields. (Label fields usually don't have names.)
+      for (field of input.fieldRow) {
+        if (field.name) {
+          console.log(field.name + ': ' + field.getText());
+        }
+      }
+    }
+    return true;
+  },
+  // ...
+};
+```
+
+Although `callback` is optional, there is generally no reason not to implement
+it.
+
+### keyCodes (optional)
+
+An array of keys (or combinations of keys) that activate this shortcut. To
+identify keys, use the keycodes in
+[`Blockly.utils.KeyCodes`](/reference/blockly.utils.keycodes).
+For example:
+
+```js
+const logFieldsShortcut = {
+  // ...
+  keyCodes: [Blockly.utils.KeyCodes.L],
+  // ...
+};
+```
+
+If you want map additional keys to an existing shortcut -- for example, you want
+to add keys to a [default shortcut](#default-shortcuts) -- you can call
+[`Blockly.ShortcutRegistry.registry.addKeyMapping`](/reference/blockly.shortcutregistry.addkeymapping).
+This is not common.
+
+#### Key combinations
+
+If your keyboard shortcut is activated by a combination of keys, such as holding
+`Control` and `C` simultaneously, create a serialized keycode by calling
+`Blockly.ShortcutRegistry.registry.createSerializedKey`:
+
+```js
+const ctrlC = Blockly.ShortcutRegistry.registry.createSerializedKey(
+  Blockly.utils.KeyCodes.C, // Keycode of main key
+  [Blockly.utils.KeyCodes.CTRL], // Array of modifier keys
+);
+
+const copyShortcut = {
+  // ...
+  keyCodes: [ctrlC], // Use the serialized keycode
+  // ...
+};
+```
+
+#### Control and Meta
+
+On Windows, many shortcuts are activated with the `Control` key. On Mac, these
+keyboard shortcuts use the `Command` key instead, which is recognized as the
+`META` keycode. To support both operating systems, register your shortcuts with
+both the `CTRL` keycode and the `META` keycode.
+
+```js
+const ctrlC = Blockly.ShortcutRegistry.registry.createSerializedKey(
+  Blockly.utils.KeyCodes.C,
+  [Blockly.utils.KeyCodes.CTRL],
+);
+const metaC = Blockly.ShortcutRegistry.registry.createSerializedKey(
+  Blockly.utils.KeyCodes.C,
+  [Blockly.utils.KeyCodes.META],
+);
+
+const copyShortcut = {
+  // ...
+  keyCodes: [ctrlC, metaC],
+  // ...
+};
+```
+
+#### Implementation note
+
+Blockly's keyboard event handlers use the [`keycode` property of
+`KeyboardEvent`](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode)
+even though it is deprecated.
+
+### allowCollision (optional)
+
+By default, you can only register one shortcut for a given key or key
+combination. Setting this property to `true` lets you register a key (or key
+combination) even if a shortcut with the same key (or key combination) has
+already been registered.
+
+Note that this property only applies when attempting to register this shortcut.
+It does not prevent other shortcuts from using the same key (or key
+combination). Whether they can be registered depends on the value of their
+`allowCollision` property.
+
+Regardless of how many shortcuts are registered for a given key or key
+combination, at most one will be successfully executed. Shortcuts are tried in
+the reverse order of registration (from last registered to first registered).
+After one of them returns `true` from their callback, no other shortcuts are
+tried.
+
+### metadata (optional)
+
+This is an arbitrary object containing additional information. It is available
+to `callback` through the `shortcut` parameter.
+
+## Add, delete, and modify shortcuts
+
+To add a new keyboard shortcut, call
+`Blockly.ShortcutRegistry.registry.register`:
+
+```js
+Blockly.ShortcutRegistry.registry.register(logFieldsShortcut);
+```
+
+This function has a second parameter (`allowOverrides`) that lets you replace an
+existing shortcut with the same name as your shortcut. Note that this is
+different from `KeyboardShortcut.allowCollision`, which lets you add a shortcut
+with a different name but uses the same key or key combination as an existing
+shortcut.
+
+To delete a keyboard shortcut, call
+`Blockly.ShortcutRegistry.registry.unregister` and pass the name of the
+shortcut:
+
+```js
+Blockly.ShortcutRegistry.registry.unregister('logFields');
+```
+
+You cannot modify a keyboard shortcut in place. Instead, you need to delete the
+existing shortcut and add a new one. For example:
+
+```js
+// Get the existing shortcut. getRegistry returns an object keyed by shortcut name.
+const allShortcuts = Blockly.ShortcutRegistry.registry.getRegistry();
+const modLogFieldsShortcut = allShortcuts[logFieldsShortcut.name];
+// Apply the shortcut only to math blocks,
+modLogFieldsShortcut.preconditionFn = function (workspace, scope) {
+  return (
+    scope.focusedNode instanceof Blockly.BlockSvg &&
+    scope.focusedNode.type.startsWith('math_')
+  );
+};
+// Delete the existing shortcut and add the modified shortcut.
+Blockly.ShortcutRegistry.registry.unregister(logFieldsShortcut.name);
+Blockly.ShortcutRegistry.registry.register(modLogFieldsShortcut);
+```
+
+## Default shortcuts
+
+The shortcut registry is prepopulated with a number of shortcuts. You can find
+these in
+[https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/blockly/core/shortcut_items.ts](https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/blockly/core/shortcut_items.ts).
+The shortcuts are defined in the `registerXxxx` functions.
+
+## Keyboard navigation shortcuts
+
+The [keyboard navigation plugin](/guides/configure/web/keyboard-nav)
+contains shortcuts that allow users to navigate Blockly with the keyboard, such
+as by using arrow keys. Keyboard navigation is essential for users who cannot
+use a mouse, such as those with motor or visual impairments. It is also useful
+for power users who may want to use keyboard shortcuts for efficiency.

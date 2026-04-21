@@ -1,0 +1,156 @@
+---
+slug: /codelabs/custom-renderer/change-connection-shapes
+description: How to change connection shapes.
+---
+
+# Build custom renderers
+
+## 7. Change connection shapes
+
+This step will define and use new shapes for previous/next connections and input/output connections. This takes three steps:
+
+1. Define new shape objects.
+1. Override `init()` to store the new shape objects.
+1. Override `shapeFor(connection)` to return the new objects.
+
+### Define a previous/next connection shape
+
+An outline path is drawn clockwise around the block, starting at the top left. As a result the previous connection is drawn from left-to-right, while the next connection is drawn from right-to-left.
+
+Previous and next connections are defined by the same object. The object has four properties:
+
+- `width`: The width of the connection.
+- `height`: The height of the connection.
+- `pathLeft`: The sub-path that describes the connection when drawn from left-to-right.
+- `pathRight`: The sub-path that describes the connection when drawn from right-to-left.
+
+Define a new function called `makeRectangularPreviousConn()` and put it inside the `CustomConstantProvider` class definition. Note that `NOTCH_WIDTH` and `NOTCH_HEIGHT` have already been overridden in the `constructor()`, so they'll be reused:
+
+```js
+  /**
+   * @returns Rectangular notch for use with previous and next connections.
+   */
+  makeRectangularPreviousConn() {
+    const width = this.NOTCH_WIDTH;
+    const height = this.NOTCH_HEIGHT;
+
+    /**
+     * Since previous and next connections share the same shape you can define
+     * a function to generate the path for both.
+     *
+     * @param dir Multiplier for the horizontal direction of the path (-1 or 1)
+     * @returns SVGPath line for use with previous and next connections.
+     */
+    function makeMainPath(dir) {
+      return Blockly.utils.svgPaths.line(
+          [
+            Blockly.utils.svgPaths.point(0, height),
+            Blockly.utils.svgPaths.point(dir * width, 0),
+            Blockly.utils.svgPaths.point(0, -height),
+          ]);
+    }
+    const pathLeft = makeMainPath(1);
+    const pathRight = makeMainPath(-1);
+
+    return {
+      width: width,
+      height: height,
+      pathLeft: pathLeft,
+      pathRight: pathRight,
+    };
+  }
+```
+
+### Define an input/output connection shape
+
+Just as previous/next connection shapes are drawn from left-to-right and right-to-left, input/output connection shapes are drawn from top-to-bottom and bottom-to-top.
+
+Input and output connections are defined by the same object. The object has four properties:
+
+- `width`: The width of the connection.
+- `height`: The height of the connection.
+- `pathUp`: The sub-path that describes the connection when drawn from top-to-bottom.
+- `pathDown`: The sub-path that describes the connection when drawn from bottom-to-top.
+
+Define a new function called `makeRectangularInputConn()` and put it inside the `CustomConstantProvider` class definition. Note that `TAB_WIDTH` and `TAB_HEIGHT` have already been overridden in the `constructor()` so they'll be reused:
+
+```js
+  /**
+   * @returns Rectangular puzzle tab for use with input and output connections.
+   */
+  makeRectangularInputConn() {
+    const width = this.TAB_WIDTH;
+    const height = this.TAB_HEIGHT;
+
+    /**
+     * Since input and output connections share the same shape you can define
+     * a function to generate the path for both.
+     *
+     * @param dir Multiplier for the vertical direction of the path (-1 or 1)
+     * @returns SVGPath line for use with input and output connections.
+     */
+    function makeMainPath(dir) {
+      return Blockly.utils.svgPaths.line(
+          [
+            Blockly.utils.svgPaths.point(-width, 0),
+            Blockly.utils.svgPaths.point(0, dir * height),
+            Blockly.utils.svgPaths.point(width, 0),
+          ]);
+    }
+    const pathUp = makeMainPath(-1);
+    const pathDown = makeMainPath(1);
+
+    return {
+      width: width,
+      height: height,
+      pathUp: pathUp,
+      pathDown: pathDown,
+    };
+  }
+```
+
+### Override init()
+
+Override the `init()` function in the `CustomConstantProvider` class definition and store the new shape objects as `RECT_PREV_NEXT` and `RECT_INPUT_OUTPUT`. Make sure to call the superclass `init()` function to store other objects that have not been overridden.
+
+```js
+  /**
+   * @override
+   */
+  init() {
+    // First, call init() in the base provider to store the default objects.
+    super.init();
+
+    // Add calls to create shape objects for the new connection shapes.
+    this.RECT_PREV_NEXT = this.makeRectangularPreviousConn();
+    this.RECT_INPUT_OUTPUT = this.makeRectangularInputConn();
+  }
+```
+
+### Override shapeFor(connection)
+
+Next, override the `shapeFor(connection)` function in the `CustomConstantProvider` class definition and return the new custom objects:
+
+```js
+  /**
+   * @override
+   */
+  shapeFor(connection) {
+    switch (connection.type) {
+      case Blockly.INPUT_VALUE:
+      case Blockly.OUTPUT_VALUE:
+        return this.RECT_INPUT_OUTPUT;
+      case Blockly.PREVIOUS_STATEMENT:
+      case Blockly.NEXT_STATEMENT:
+        return this.RECT_PREV_NEXT;
+      default:
+        throw Error('Unknown connection type');
+    }
+  }
+```
+
+### The result
+
+Return to the browser, click on the `Loops` entry, and drag out a repeat block. The resulting block should have rectangular connections for all four connection types.
+
+![[Screenshot of a custom renderer with notches, corners, and tabs with fundamentally different shapes than the defaults.]](../../../static/images/codelabs/custom-renderer/custom_notches.png)

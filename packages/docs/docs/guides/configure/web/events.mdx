@@ -1,0 +1,143 @@
+---
+description: Events that Blockly surfaces to allow you to react to user actions.
+title: Events
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Events
+
+Every change on the workspace triggers an event. These events fully describe
+the before and after state of each change.
+
+## Listen to events from the workspace
+
+Workspaces have `addChangeListener` and `removeChangeListener` methods that can
+be used to listen to the event stream. One example is the
+[real-time generation of code](/guides/app-integration/run-code#continuous-updates).
+Another example is the
+[maximum block limit demo](https://raspberrypifoundation.github.io/blockly-samples/examples/max-blocks-demo/).
+As is often the case, neither of these two examples care what the triggering
+event was. They simply look at the current state of the workspace.
+
+A more sophisticated event listener would look at the triggering event. The
+following example detects when the user creates their first comment,
+issues an alert, then stops listening so that no further alerts are triggered.
+
+```js
+function onFirstComment(event) {
+  if (
+    event.type == Blockly.Events.BLOCK_CHANGE &&
+    event.element == 'comment' &&
+    !event.oldValue &&
+    event.newValue
+  ) {
+    alert('Congratulations on creating your first comment!');
+    workspace.removeChangeListener(onFirstComment);
+  }
+}
+workspace.addChangeListener(onFirstComment);
+```
+
+In order to listen to any events that happen inside of a flyout a listener can
+be added to the flyout's workspace.
+
+```js
+var flyoutWorkspace = yourWorkspace.getFlyout().getWorkspace();
+flyoutWorkspace.addChangeListener(onFirstComment);
+```
+
+## Listen to events from blocks
+
+Blocks can have change listener functions that are called on any change to the
+workspace (including those unrelated to the block). These are often used to
+set the block's warning text, or similar user notification outside the
+workspace.
+
+The function is added by calling `Block.setOnChange` with a function and can be
+done during initialization or via a [JSON
+extension](/guides/create-custom-blocks/define/extensions) if you plan
+to use it on all platforms.
+
+<Tabs groupId="group-1">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    // ...,
+    "extensions":["warning_on_change"],
+  }
+  
+  Blockly.Extensions.register('warning_on_change', function() {
+    // Example validation upon block change:
+    this.setOnChange(function(changeEvent) {
+      if (this.getInput('NUM').connection.targetBlock()) {
+        this.setWarningText(null);
+      } else {
+        this.setWarningText('Must have an input block.');
+      }
+    });
+  });
+  ```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+  ```js
+  Blockly.Blocks['block_type'] = {
+    init: function() {
+      // Example validation upon block change:
+      this.setOnChange(function(changeEvent) {
+        if (this.getInput('NUM').connection.targetBlock()) {
+          this.setWarningText(null);
+        } else {
+          this.setWarningText('Must have an input block.');
+        }
+      });
+    }
+  }
+  ```
+  </TabItem>
+</Tabs>
+You can also set the `onchange` property directly on the block:
+
+<Tabs groupId="group-2">
+  <TabItem value="javascript" label="JavaScript" default>
+  ```js
+  Blockly.Blocks['block_type'] = {
+    init: function() {
+      // Example validation upon block change:
+      this.onchange = function(changeEvent) {
+        if (this.getInput('NUM').connection.targetBlock()) {
+          this.setWarningText(null);
+        } else {
+          this.setWarningText('Must have an input block.');
+        }
+      };
+    }
+  }
+  ```
+  </TabItem>
+</Tabs>
+The system calls the function, passing in the change event. Inside the function,
+`this` refers to the block instance.
+
+Because the function is called on any change, if used, developers should ensure
+the listener runs quickly. One should also be wary of changes to the workspace
+that might cascade or loop back to the listener.
+
+See the `controls_flow_statements`, `logic_compare`, and `procedures_ifreturn`
+blocks for examples.
+
+Note that editable fields have their own event listeners for input validation
+and causing side effects.
+
+## Event types
+
+Refer to the [reference documentation](/reference/blockly.events)
+for information about individual events.
+
+## Demo
+
+For an example of the cool things you can do with events, you can check out
+the [mirror demo](https://raspberrypifoundation.github.io/blockly-samples/examples/mirror-demo/).
+This demo has two Blockly workspaces that are kept in sync using events.

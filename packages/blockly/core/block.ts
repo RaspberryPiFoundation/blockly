@@ -1721,8 +1721,8 @@ export class Block {
 
     // Validate that each arg has a corresponding message
     let n = 0;
-    while (json['args' + n]) {
-      if (json['message' + n] === undefined) {
+    while (json[`args${n}`]) {
+      if (json[`message${n}`] === undefined) {
         throw Error(
           warningPrefix +
             `args${n} must have a corresponding message (message${n}).`,
@@ -1732,14 +1732,13 @@ export class Block {
     }
 
     // Set basic properties of block.
-    // Makes styles backward compatible with old way of defining hat style.
-    if (json['style'] && json['style'].hat) {
-      this.hat = json['style'].hat;
+    // Handle legacy style object format for backwards compatibility
+    if (json['style'] && typeof json['style'] === 'object') {
+      this.hat = (json['style'] as {hat?: string}).hat;
       // Must set to null so it doesn't error when checking for style and
       // colour.
       json['style'] = null;
     }
-
     if (json['style'] && json['colour']) {
       throw Error(warningPrefix + 'Must not have both a colour and a style.');
     } else if (json['style']) {
@@ -1750,12 +1749,12 @@ export class Block {
 
     // Interpolate the message blocks.
     let i = 0;
-    while (json['message' + i] !== undefined) {
+    while (json[`message${i}`] !== undefined) {
       this.interpolate(
-        json['message' + i],
-        json['args' + i] || [],
+        json[`message${i}`] || '',
+        json[`args${i}`] || [],
         // Backwards compatibility: lastDummyAlign aliases implicitAlign.
-        json['implicitAlign' + i] || json['lastDummyAlign' + i],
+        json[`implicitAlign${i}`] || (json as any)[`lastDummyAlign${i}`],
         warningPrefix,
       );
       i++;

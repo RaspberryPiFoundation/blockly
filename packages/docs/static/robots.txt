@@ -1,0 +1,8 @@
+# Algolia-Crawler-Verif: 836ECEE0BC07004B
+
+# Allow the Algolia Crawler to access the entire site
+User-agent: Algolia Crawler
+Allow: /
+
+User-agent: *
+Allow: /

@@ -1,0 +1,121 @@
+---
+description: What the render management system is, and how it works.
+title: Render management
+image: images/blockly_banner.png
+---
+
+# Render management
+
+The render management system tells the [renderer][renderer] when to rerender the
+blocks. It makes sure that when a block is modified (e.g. field values are set,
+or inputs are added) the shape of the block gets updated to match.
+
+## When to care
+
+You need to interact with this system if you are:
+
+- Adding methods to Blockly that modify the shape of the block.
+- Adding methods to Blockly that rely on updated size or positioning
+  information about a block.
+
+## How it works
+
+1.  **Automatically queue.** Whenever a block gets modified, Blockly "queues" a
+    render for that block. Some examples of modifications that queue a render
+    are:
+    - Setting a field's value
+    - Adding or removing an input
+    - Connecting or disconnecting a child block
+
+2.  **Create a set.** When a block gets queued, the render management system
+    adds it, and all of its parent blocks, to a set of blocks that need to be
+    rerendered.
+
+3.  **Request a callback.** Then the render management system requests a
+    callback using [`requestAnimationFrame`][requestFrame]. This callback gets
+    called by the browser _right_ before the current frame is drawn.
+
+4.  **Rerender the set (as a tree).** When the `requestAnimationFrame` callback
+    gets called, the render management system renders every block in the set
+    from leaf blocks to root blocks. This makes sure that child blocks have
+    accurate size information before their parent blocks are rendered so the
+    parent blocks can stretch around their children.
+
+:::note
+modifications that only affect the color of the block and not its shape
+(e.g. disabling the block) _don't_ queue a render. The colors are updated
+independently using `BlockSvg.prototype.applyColour`.
+:::
+
+## Why it works how it does
+
+Waiting to rerender blocks until right before the current frame is drawn allows
+the render management system to deduplicate rendering requests. If blocks were
+always rendered immediately, the same block might unnecessarily be rendered
+multiple times in a row. Instead the render requests are batched, and each
+changed block only gets drawn once at the end of the frame, after its state is
+finalized. Deduping rendering operations makes Blockly much more efficient.
+
+For example, inserting one block between two others queues 11 renders, but only
+3 actually occur (one for each block). That's a 3.6x performance boost.
+
+## How to use it
+
+You shouldn't usually have to care about the render management system, because
+it works automatically when you modify a block. But there are a few cases where
+you have to interact with it directly.
+
+### Queue renders
+
+If you are adding a new method to Blockly that should update the shape of a
+block, you need to call `BlockSvg.prototype.queueRender` to queue rendering the
+block.
+
+### Wait for renders to finish
+
+If you are adding a new method to Blockly that requires having updated sizing or
+positioning information about a block, you should await the
+`renderManagement.finishQueuedRenders()` promise. This promise resolves after
+any queued renders are completed, or immediately if there are no queued renders.
+
+```js
+import * as renderManagement from './renderManagement.js';
+
+function async myNewMethod() {
+  block.somethingThatModifiesTheShape();
+  // Await the promise.
+  await renderManagement.finishQueuedRenders();
+  myThingThatReliesOnPositioningInfo();
+}
+```
+
+### Trigger queued renders immediately
+
+If you are adding a new method to Blockly that requires having updated sizing or
+positioning information about a block, _and_ you cannot wait until the next
+frame for any renders to complete, you can call
+`renderManagement.triggerQueuedRenders` to force any queued renders to happen
+immediately.
+
+```js
+import * as renderManagement from './renderManagement.js';
+
+function async myNewMethod() {
+  block.somethingThatModifiesTheShape();
+  // Trigger an immediate render.
+  renderManagement.triggerQueuedRenders();
+  myThingThatReliesOnPositioningInfo();
+}
+```
+
+In general, you don't want to do this because it's less performant. It's only
+necessary in cases where a delay causes a bad user experience. For example,
+insertion markers need positioning information, and it's important that
+insertion markers give users immediate feedback, so they trigger an immediate
+render.
+
+There are also a few places in core where it triggers immediate renders for
+backwards compatibility reasons. These are planned to be removed in v11.
+
+[renderer]: /guides/create-custom-blocks/renderers/overview
+[requestFrame]: https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame

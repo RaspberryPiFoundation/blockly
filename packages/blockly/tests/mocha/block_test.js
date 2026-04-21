@@ -2946,4 +2946,119 @@ suite('Blocks', function () {
       );
     });
   });
+
+  suite('Disposal focus management', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv');
+      const firstBlock = this.workspace.newBlock('stack_block');
+      firstBlock.moveBy(-500, -500);
+    });
+
+    test('Deleting the sole block on the workspace focuses the workspace', function () {
+      const block = this.workspace.getTopBlocks(false)[0];
+      Blockly.getFocusManager().focusNode(block);
+      block.dispose();
+      this.clock.runAll();
+
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.workspace,
+        'Focus should move to the workspace when the focused block is deleted',
+      );
+    });
+
+    test('Deleting a block with several adjacent blocks focuses the closest one', function () {
+      this.workspace.newBlock('stack_block');
+      const blockMiddle = this.workspace.newBlock('stack_block');
+      const blockRight = this.workspace.newBlock('stack_block');
+      blockMiddle.moveBy(60, 0);
+      blockRight.moveBy(100, 0);
+
+      Blockly.getFocusManager().focusNode(blockMiddle);
+      blockMiddle.dispose();
+      this.clock.runAll();
+
+      const focused = Blockly.getFocusManager().getFocusedNode();
+      assert.strictEqual(
+        focused,
+        blockRight,
+        'Focus should move to the closest remaining block (blockRight at (100, 0))',
+      );
+    });
+
+    test('Bulk deleting blocks does not focus another dying block', function () {
+      const blocks = this.workspace.getTopBlocks(false);
+      for (let i = 0; i < 5; i++) {
+        blocks.push(this.workspace.newBlock('stack_block'));
+      }
+
+      // Focus the last block we added; clearing the workspace proceeds in block
+      // creation order, so if we focused an earlier block, it would (correctly)
+      // assign focus to a later-added block which is not yet dying, on down the
+      // chain. If we focus the last block, by the time deletion gets to it, all
+      // the other blocks will have already been marked as disposing, and should
+      // thus be ineligible to be focused.
+      Blockly.getFocusManager().focusNode(
+        this.workspace.getTopBlocks(false)[5],
+      );
+
+      const spy = sinon.spy(Blockly.getFocusManager(), 'focusNode');
+
+      this.workspace.clear();
+      this.clock.runAll();
+
+      for (const block of blocks) {
+        assert.isFalse(spy.calledWith(block));
+      }
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.workspace,
+        'Focus should move to the workspace, not a dying peer block',
+      );
+
+      spy.restore();
+    });
+
+    test('Deleting a block focuses its parent block', function () {
+      const parent = this.workspace.newBlock('stack_block');
+      const child = this.workspace.newBlock('stack_block');
+      parent.nextConnection.connect(child.previousConnection);
+
+      Blockly.getFocusManager().focusNode(child);
+      child.dispose();
+      this.clock.runAll();
+
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        parent,
+        'Focus should move to the parent block when a connected child is deleted',
+      );
+    });
+
+    test('Deleting an unfocused block does not change focus', function () {
+      const a = this.workspace.getTopBlocks(false)[0];
+      const b = this.workspace.newBlock('stack_block');
+      this.workspace.newBlock('stack_block');
+
+      Blockly.getFocusManager().focusNode(a);
+      b.dispose();
+      this.clock.runAll();
+
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        a,
+        'Focus should not change when an unfocused block is deleted',
+      );
+    });
+
+    test('Disposing a workspace with a focused block succeeds', function () {
+      Blockly.getFocusManager().focusNode(
+        this.workspace.getTopBlocks(false)[0],
+      );
+      this.workspace.dispose();
+      this.clock.runAll();
+
+      // No assert, this just shouldn't throw.
+    });
+  });
 });

@@ -1,0 +1,171 @@
+---
+description: Understanding the visibility of Blockly's APIs.
+title: API visibility
+image: images/blockly_banner.png
+---
+
+# API visibility
+
+This page describes best practices for calling functions and accessing
+properties in core Blockly. These principles apply to creating
+[plugins](/guides/programming/plugin_overview) for Blockly and to
+integrating Blockly into a standalone application.
+
+## Visibility \{#visibility\}
+
+We use [TypeScript access
+modifiers](https://www.typescriptlang.org/docs/handbook/2/classes.html#member-visibility)
+to mark visibility in the core library as `public`, `private`, or `protected`.
+Some properties may be annotated with `@internal` in their
+[TsDoc](https://api-extractor.com/pages/tsdoc/tag_internal/) comments.
+
+All `public` and `protected` properties are documented in the
+[References](/reference/blockly) section of the Blockly website. You
+can also check visibility by reading the code.
+
+:::warning
+While JavaScript does not enforce these visibility annotations, you
+should avoid accessing anything that is not `public`. The Blockly team does not
+guarantee stability of non-public properties and functions between releases.
+:::
+
+### public \{#annotations-public\}
+
+Anything marked `public` is part of our public API. Any property in a module
+that does not have a visibility modifier is considered public.
+
+We try to not change our public API frequently or without good reason and
+warning. The exception: we may make a new API public in one release and modify
+it in the next release in response to early feedback. After that you may
+consider a public function or property stable.
+
+Public functions may be called from anywhere, and overridden in subclasses as
+long as the signature does not change.
+
+### protected \{#annotations-protected\}
+
+Protected functions and properties may only be accessed by the defining class or
+a subclass.
+
+Subclasses are allowed to override protected functions and properties, without
+changing type signatures.
+
+For instance, a custom renderer that extends the base renderer class may access
+its protected properties.
+
+In each case you should make sure you understand how the function or property is
+used in the rest of the code.
+
+### private \{#annotations-private\}
+
+These can only be accessed by code in the same file as the definition. Directly
+accessing these properties may result in undefined behaviour.
+
+Subclasses are not allowed to override private functions and properties.
+
+Private properties are subject to change without warning, as they are not
+considered part of Blockly's public API.
+
+Some functions in Blockly do not have visibility annotations because they are
+not exported from their module. These functions are essentially local variables
+and cannot be used outside of their defining module. They should be considered
+equivalent to private properties.
+
+:::note
+Previously, Blockly used an underscore to denote private properties:
+`example_`. In keeping with the current Google style guide, we no longer do this
+in new code, and may change old code. Before calling a method in Blockly, ensure
+that it appears in the reference documentation or is not marked private in the
+code. In rare cases private functions were used so widely that they became
+public, so you may see public functions that end in an underscore.
+:::
+
+### internal \{#annotations-internal\}
+
+Internal functions and properties are intended to be used within the core
+library, but not externally. They are designated with the TsDoc `@internal`
+annotation.
+
+Internal properties are subject to change without warning, as they are not
+considered part of Blockly's public API.
+
+Internal properties may be accessed from anywhere within core, and overridden in
+subclasses in core as long as the signature does not change. They must not be
+accessed from outside of the core library.
+
+### deprecated \{#annotations-deprecated\}
+
+Anything marked `@deprecated` should not be used. Most deprecations include
+directions on the preferred code, either in a console warning or TSDoc.
+
+Where possible, deprecated functions will log a warning that includes the
+intended deletion date and a recommendation for a replacement function to call.
+
+## FAQs
+
+The following are some common questions the Blockly team has encountered.
+
+### What if the function I want to use isn't public?
+
+File a [feature
+request](https://github.com/RaspberryPiFoundation/blockly/issues/new?assignees=&labels=issue%3A+feature+request%2C+issue%3A+triage&template=feature_request.yaml)
+on core Blockly. Include a description of your use case and a statement of what
+you would like us to make public.
+
+We will use the feature to request to discuss whether to make it public, or
+whether there are other ways for you to get the same information.
+
+If we decide to make it public, either you or the Blockly team will make the
+appropriate change, and it will go live in the next Blockly release.
+
+If you choose to use a non-public member in a plugin, consider marking your
+plugin as a beta and include the information in your `README`.
+
+### What about monkeypatching?
+
+_Read up on
+[monkeypatching](https://en.wikipedia.org/wiki/Monkey_patch#Applications)._
+
+Monkeypatching is unsafe, because patches could stop working without notice due
+to using non-public pieces of the Blockly API. Patching in a plugin is
+especially dangerous, because your code may interact poorly with any other
+plugin that monkeypatches the same code. For this reason we **strongly**
+recommend against monkeypatching in applications and third party plugins, and
+will not accept it in first party plugins.
+
+### Can I override public functions?
+
+When subclassing: yes. Otherwise: no, that's monkeypatching.
+
+### Can I override protected functions?
+
+When subclassing: yes. Otherwise: no, that's monkeypatching.
+
+### Can I override internal or private functions?
+
+No, that's monkeypatching.
+
+### When can I access properties directly? When should I use a getter or a setter?
+
+If we publish a getter or a setter, please use that instead of directly
+accessing the property. If the property is not public, definitely use getters
+and setters.
+
+:::note
+Consistent usage of getters and setters in plugins gives us flexibility to
+make changes in core Blockly without breaking published code.
+:::
+
+### What if a property doesn't have an annotation?
+
+By default it's public, but please drop us a line in case we want to put a
+getter/setter pair in place for you.
+
+### What if a function doesn't have an annotation?
+
+It's public by default.
+
+### What if I'm still not sure?
+
+Ask a question on the [forum](https://groups.google.com/g/blockly) and we'll get
+back to you within a few days.

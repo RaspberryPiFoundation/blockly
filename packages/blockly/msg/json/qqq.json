@@ -9,7 +9,8 @@
 			"Metalhead64",
 			"Nike",
 			"Robby",
-			"Shirayuki"
+			"Shirayuki",
+			"YaronSh"
 		]
 	},
 	"VARIABLES_DEFAULT_NAME": "default name - A simple, general default name for a variable, preferably short. For more context, see [[Translating:Blockly#infrequent_message_types]].\n{{Identical|Item}}",
@@ -412,10 +413,10 @@
 	"CHROME_OS": "Name of the Google ChromeOS operating system displayed in a list of keyboard shortcuts.",
 	"LINUX": "Name of the GNU/Linux operating system displayed in a list of keyboard shortcuts.",
 	"UNKNOWN": "Placeholder name for an operating system that can't be identified in a list of keyboard shortcuts.",
-	"CONTROL_KEY": "Representation of the Control key used in keyboard shortcuts.",
-	"COMMAND_KEY": "Representation of the Mac Command key used in keyboard shortcuts.",
-	"OPTION_KEY": "Representation of the Mac Option key used in keyboard shortcuts.",
-	"ALT_KEY": "Representation of the Alt key used in keyboard shortcuts.",
+	"CONTROL_KEY": "{{optional}}\nRepresentation of the Control key used in keyboard shortcuts.",
+	"COMMAND_KEY": "{{optional}}\nRepresentation of the Mac Command key used in keyboard shortcuts.",
+	"OPTION_KEY": "{{optional}}\nRepresentation of the Mac Option key used in keyboard shortcuts.",
+	"ALT_KEY": "{{optional}}\nRepresentation of the Alt key used in keyboard shortcuts.",
 	"CUT_SHORTCUT": "menu label - Contextual menu item that cuts the focused item.",
 	"COPY_SHORTCUT": "menu label - Contextual menu item that copies the focused item.",
 	"PASTE_SHORTCUT": "menu label - Contextual menu item that pastes the previously copied item.",

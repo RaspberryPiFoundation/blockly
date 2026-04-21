@@ -2467,17 +2467,17 @@ export class WorkspaceSvg
    *     valid gesture exists.
    * @internal
    */
-  getGesture(e: PointerEvent): Gesture | null {
+  getGesture(e?: PointerEvent): Gesture | null {
     // TODO(#8960): Query Mover.isMoving to see if move is in progress
     // rather than relying on .keyboardMoveInProgress status flag.
     if (this.keyboardMoveInProgress) {
       // Normally these would be called from Gesture.doStart.
-      e.preventDefault();
-      e.stopPropagation();
+      e?.preventDefault();
+      e?.stopPropagation();
       return null;
     }
 
-    const isStart = e.type === 'pointerdown';
+    const isStart = e?.type === 'pointerdown';
     if (isStart && this.currentGesture_?.hasStarted()) {
       console.warn('Tried to start the same gesture twice.');
       // That's funny.  We must have missed a mouse up.

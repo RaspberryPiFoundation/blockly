@@ -1,0 +1,243 @@
+---
+description: What a draggable is, and how to implement one.
+title: Custom draggables
+image: images/blockly_banner.png
+---
+
+# Custom draggables
+
+A draggable is a rendered object that exists in the
+[workspace][workspace-visual-glossary] and can be dragged and dropped. They
+implement the [`IDraggable`][IDraggable] interface.
+
+There are very few circumstances when you would want to add a new draggable to
+Blockly (e.g. the [multiselect plugin][multiselect-plugin], or changing how an
+existing object handles drags), because you cannot add new rendered objects to
+Blockly. The only rendered objects that can exist within a workspace are blocks,
+bubbles, and workspace comments.
+
+## Responsibilities
+
+Draggables have several responsibilities when executing drags:
+
+- Moving svg elements to the drag layer.
+- Translating svg elements.
+- Firing move [events][events].
+
+## Implementation
+
+To create a new draggable, you have to implement the
+[`IRenderedElement`][IRenderedElement] and [`IDraggable`][IDraggable]
+interfaces. This lets Blockly know that your object is visible and can
+be dragged.
+
+```js
+class MyDraggable extends IRenderedElement, IDraggable {}
+```
+
+### Return the root SVG element
+
+The `getRootSvg` method returns the root svg element (usually a
+[group][svg-group]) that holds all of the other elements making up the view for
+the draggable.
+
+```js
+getSvgRoot() {
+  return this.rootSvg;
+}
+```
+
+### Return movability
+
+The `isMovable` method returns whether the draggable is currently movable (since
+you may want to temporarily disable dragging an object). If `isMovable` returns
+`false` the workspace is dragged instead.
+
+```js
+isMovable() {
+  return true;
+}
+```
+
+### Return position
+
+The `getRelativeToSurfaceXY` method returns a [`Coordinate`][Coordinate]
+specifying the location of the top-start corner of the draggable in workspace
+coordinates.
+
+Workspace coordinates have an origin at the absolute left and absolute top of
+the workspace. And they don't change when the workspace is scaled or moved.
+
+```js
+getRelativeToSurfaceXY() {
+  return this.loc;
+}
+```
+
+### Start drags
+
+The `startDrag` method initializes a drag on the draggable. This method doesn't
+move the draggable. But you should store any data or construct any objects you
+need to complete the drag. This includes any data you would need to revert the
+drag if `revertDrag` is called.
+
+It should also change the svg elements to be on the drag layer of the workspace,
+so they exist above any other elements.
+
+It also takes in an event, which you can use to check for pressed keys. This
+lets you (for example) treat a drag while shifting differently than a
+normal drag.
+
+```js
+startDrag(e) {
+  // Save the original location so we can revert the drag.
+  this.startLoc = this.getRelativeToSurfaceXY();
+
+  // Disable resizing the workspace for performance.
+  this.workspace.setResizesEnabled(false);
+
+  // Put the element on the drag layer.
+  this.workspace.getLayerManager()?.moveToDragLayer(this);
+
+  // Fire a drag event...
+
+  // etc...
+}
+```
+
+### Drag
+
+The `drag` method actually moves the draggable object. The `newLoc` is in
+workspace coordinates, and there is also an event passed that you can use to
+check for pressed keys.
+
+```js
+drag(newLoc, e) {
+  this.moveTo(newLoc);
+}
+```
+
+### Revert drags
+
+The `revertDrag` method returns the draggable to the position it was at at the
+beginning of the drag. This happens if, for example, the draggable is dropped on
+a [drag target][drag-target] that prevents movement.
+
+```js
+revertDrag() {
+  // Move back to the position that was stored in `startDrag`.
+  this.moveTo(this.startLoc);
+}
+```
+
+### End drags
+
+The `endDrag` method cleans up a drag, releasing any stored data or objects, and
+returning the draggable to its original layer.
+
+`endDrag` is always called after `revertDrag` if `revertDrag` is called.
+
+```js
+endDrag() {
+  // Put the element back on its original layer (in this case BLOCK).
+  this.workspace
+    .getLayerManager()
+    ?.moveOffDragLayer(this, Blockly.layers.BLOCK);
+
+  // Allow the workspace to start resizing again.
+  this.workspace.setResizesEnabled(true);
+}
+```
+
+## Selection
+
+The element that gets dragged is determined by the element that is _selected_ when
+a drag is detected.
+
+### ISelectable
+
+To be selected a draggable must implement the [`ISelectable`][ISelectable]
+interface.
+
+```js
+class MyDraggable implements ISelectable {
+  constructor(workspace) {
+    this.id = Blockly.utils.idGenerator.genUid();
+    this.workspace = workspace;
+  }
+
+  select() {
+    // Visually indicate this draggable is selected.
+  }
+
+  unselect() {
+    // Visually indicate this draggable is not selected.
+  }
+}
+```
+
+### Set selection
+
+The selected element can be set by calling
+`Blockly.common.setSelected()`. usually you'll want to do this
+in response to a `pointerdown` event from the user.
+
+```js
+  constructor() {
+    this.initSvg();
+
+    Blockly.browserEvents.conditionalBind(
+      this.getSvgRoot(),
+      'pointerdown',
+      this,
+      () => Blockly.common.setSelected(this));
+  }
+```
+
+## Compatibility
+
+Your draggable can implement additional interfaces so that it can interact with
+other systems in Blockly.
+
+### Deletable
+
+You can implement the [`IDeleteable`][IDeletable] interface to allow your
+draggable to be disposed by the trashcan or other delete targets.
+
+```js
+class MyDraggable implements IDeletable {
+  isDeletable() {
+    return true;
+  }
+
+  dispose() {
+    // Dispose of any references to data or SVG elements.
+  }
+
+  setDeleteStyle() {
+    // Visually indicate that the draggable is about to be deleted.
+  }
+}
+```
+
+### Copyable
+
+You can implement the `ICopyable` interface to allow your draggable to be copied
+and define an `IPaster` to allow it to be pasted.
+
+For more information about copying pasting see [Copy paste][copy-paste].
+
+[workspace-visual-glossary]: /guides/get-started/workspace-anatomy#workspace
+[multiselect-plugin]: https://www.npmjs.com/package/@mit-app-inventor/blockly-plugin-workspace-multiselect
+
+{/* This doesn't exist yet */}
+[events]: /guides/configure/web/events
+[IRenderedElement]: /reference/blockly.irenderedelement
+[IDraggable]: /reference/blockly.idraggable
+[IDeletable]: /reference/blockly.ideletable
+[ISelectable]: /reference/blockly.iselectable
+[setSelected]: /reference/blockly.common
+[svg-group]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/g
+[Coordinate]: /reference/blockly.utils.coordinate
+[drag-target]: /reference/blockly.dragtarget
+[copy-paste]: /guides/configure/web/copy-paste

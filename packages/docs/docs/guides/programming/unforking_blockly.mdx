@@ -1,0 +1,92 @@
+---
+description: How to unfork Blockly
+title: Unfork Blockly
+image: images/blockly_banner.png
+---
+
+# Unfork Blockly
+
+This document is aimed at developers that have previously forked Blockly and are
+looking to update to a recent release of Blockly, without patching the library.
+Although this seems like a daunting task, there are a few steps that you can
+take to make the process more manageable.
+
+## Understand Unforking
+
+Using mainline Blockly means you are using a recently released version of
+Blockly, and all of your customizations use public Blockly APIs without
+monkeypatching. Unforking is the work you need to do to implement your fork's
+custom functionality with mainline APIs.
+
+## Simple Unforking Cases
+
+Below are two common reasons you might have forked, and solutions for how to
+return to mainline:
+
+- **You created your own blocks and generators without changing any Blockly
+  code**: To unfork in this situation, you can simply move your custom blocks
+  and generators out of the Blockly repository and into your own application's
+  code. You should then be able to then update your Blockly version.
+- **You added custom functionality on the Blockly namespace without changing
+  any Blockly code**: For example, you added custom fields or helper methods
+  only used by your own application. To unfork in this situation, move this
+  custom code to your own application outside of the Blockly repository. You
+  should then be able to then update your Blockly version.
+
+## Extensive Unforking Case
+
+### Determine forked functionality
+
+The final reason we see users fork is to patch Blockly to create custom
+functionality that they perceive isn't included upstream at the time. If your
+fork is significantly out of date, we may have already added the functionality
+you need, either as [plugins](/guides/programming/plugin_overview) or in
+core. Knowing what features you added in your fork can provide a roadmap for
+what features you will need to update.
+
+### Understand the architecture
+
+Once you understand the features that use fork-specific APIs, consider:
+
+- For each feature using the fork, is there a way to replicate it using
+  Blockly APIs?
+- If it seems as though you can't replicate the feature using Blockly APIs,
+  please reach out to us through the forum or file an issue on
+  [GitHub](https://github.com/RaspberryPiFoundation/blockly/issues). Our team will
+  then investigate adding APIs to enable your customization.
+
+### Determine your unforking path
+
+The next step is to actually begin the process of implementing the new Blockly
+based architecture for features using the fork. There are two main approaches
+you can take:
+
+- **Upgrade Blockly and see what breaks**: You will immediately see the areas
+  in your code that need to be updated. You can use this combined with what
+  you already know is custom behavior to guide your development.
+- **Refactor your code to separate your features from Blockly**: This requires
+  you to gain a deep understanding of which features are custom to your fork
+  and which came from Blockly. Once your code is fully separated, replace your
+  old version of Blockly with the most recent version, then fix any remaining
+  integration issues.
+
+## Moving Forward
+
+Here are a few rules that you should follow as a Blockly developer in the
+future:
+
+- In general, you shouldn't add new classes to the Blockly namespace. You can
+  register [custom
+  fields](/guides/create-custom-blocks/fields/customizing-fields/creating)
+  or other registrable classes without declaring them inside of the Blockly
+  repository or on the Blockly namespace.
+- You shouldn't rely on Blockly's build tools in order to compile your own
+  application. We don't consider our build tools to be part of the public API,
+  so we may make changes to them which break your application. You are
+  responsible for compiling your application should you wish to do so.
+
+## Reach Out
+
+The Blockly team is available through the [Blockly
+Forum](https://groups.google.com/g/blockly)! If you run into any issues during
+the unforking process feel free to post them there and we can help.

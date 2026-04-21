@@ -1,0 +1,117 @@
+---
+description: How to safely extend Blockly's APIs.
+title: Advanced customization
+image: images/blockly_banner.png
+---
+
+# Advanced customization
+
+Blockly lets you customize certain functionality by replacing the corresponding
+Blockly classes.
+
+## Replaceable classes
+
+The following Blockly classes can be replaced:
+
+| Blockly class                        | Interface                        | Registry type name         |
+| ------------------------------------ | -------------------------------- | -------------------------- |
+| [`Blockly.dragging.Dragger`]         | [`Blockly.IDragger`]             | `blockDragger`             |
+| [`Blockly.ConnectionChecker`]        | [`Blockly.IConnectionChecker`]   | `connectionChecker`        |
+| [`Blockly.InsertionMarkerPreviewer`] | [`Blockly.IConnectionPreviewer`] | `connectionPreviewer`      |
+| [`Blockly.HorizontalFlyout`]         | [`Blockly.IFlyout`]              | `flyoutsHorizontalToolbox` |
+| [`Blockly.VerticalFlyout`]           | [`Blockly.IFlyout`]              | `flyoutsVerticalToolbox`   |
+| [`Blockly.MetricsManager`]           | [`Blockly.IMetricsManager`]      | `metricsManager`           |
+| [`Blockly.Toolbox`]                  | [`Blockly.IToolbox`]             | `toolbox`                  |
+| [`Blockly.VariableMap`]              | [`Blockly.IVariableMap`]         | `variableMap`              |
+| [`Blockly.VariableModel`]            | [`Blockly.IVariableModel`]       | --                         |
+
+For information about how to replace a renderer, see [Create custom
+renderers](/guides/create-custom-blocks/renderers/create-custom-renderers/basic-implementation).
+
+[`Blockly.dragging.Dragger`]: /reference/blockly.dragging.dragger
+[`Blockly.IDragger`]: /reference/blockly.idragger
+[`Blockly.ConnectionChecker`]: /reference/blockly.connectionchecker
+[`Blockly.IConnectionChecker`]: /reference/blockly.iconnectionchecker
+[`Blockly.InsertionMarkerPreviewer`]: /reference/blockly.insertionmarkerpreviewer
+[`Blockly.IConnectionPreviewer`]: /reference/blockly.iconnectionpreviewer
+[`Blockly.HorizontalFlyout`]: /reference/blockly.horizontalflyout
+[`Blockly.VerticalFlyout`]: /reference/blockly.verticalflyout
+[`Blockly.IFlyout`]: /reference/blockly.iflyout
+[`Blockly.MetricsManager`]: /reference/blockly.metricsmanager
+[`Blockly.IMetricsManager`]: /reference/blockly.imetricsmanager
+[`Blockly.Toolbox`]: /reference/blockly.toolbox
+[`Blockly.IToolbox`]: /reference/blockly.itoolbox
+[`Blockly.VariableMap`]: /reference/blockly.variablemap
+[`Blockly.IVariableMap`]: /reference/blockly.ivariablemap
+[`Blockly.VariableModel`]: /reference/blockly.variablemodel
+[`Blockly.IVariableModel`]: /reference/blockly.ivariablemodel
+
+## Create a replacement class
+
+To create a replacement class, implement the functions in the corresponding
+interface. You can implement all of these functions in a new class, or extend
+the Blockly class and only override the functions you want to change. The only
+requirement is that you (or the base class) implement all of the functions in
+the interface and adhere to any requirements described in comments on the
+interface.
+
+To indicate to the type checker that you implement a specific interface,
+annotate your class with the `@implements {InterfaceName}` JSDoc tag (in
+JavaScript) or the `implements` keyword (in TypeScript).
+
+## Tell Blockly about your replacement class
+
+There are two ways to tell Blockly about your replacement class: register it as
+the default class of its type (preferred) or inject it using the `plugins`
+configuration option.
+
+### Register your replacement class as the default
+
+The preferred way to tell Blockly about your replacement class is to register it
+as the default for its type. To do this, call `Blockly.registry.register` using
+the name `Blockly.registry.DEFAULT` and set the `opt_allowOverrides` parameter
+to `true`.
+
+```js
+Blockly.registry.register(
+  Blockly.registry.Type.VARIABLE_MODEL,
+  Blockly.registry.DEFAULT,
+  CustomVariableModel,
+  true,
+);
+```
+
+### Inject your replacement class \{#injecting-subclasses\}
+
+You can also inject replacement classes using the `plugins` [configuration
+option](/guides/configure/web/configuration_struct#the-options-dictionary).
+This is an object that uses [registry type names](#replaceable-classes) as
+property names and replacement classes or registered names as property values.
+
+(In spite of the `plugins` property's name, your class does not need to be
+packaged and distributed through npm like the [plugins used to extend
+Blockly](/guides/programming/plugin_overview).)
+
+Either pass your replacement class to `Blockly.inject`:
+
+```js
+Blockly.inject('blocklyDiv', {
+  plugins: {
+    'metricsManager': CustomMetricsManagerClass
+  }
+}
+```
+
+Or register your class using `Blockly.registry.register` and pass the registered
+name to `Blockly.inject`. This is useful if you store your configuration options
+as pure JSON.
+
+```js
+Blockly.registry.register(Blockly.registry.Type.METRICS_MANAGER, 'YOUR_NAME', CustomMetricsManagerClass);
+
+Blockly.inject('blocklyDiv', {
+  plugins: {
+    'metricsManager': 'YOUR_NAME'
+  }
+}
+```

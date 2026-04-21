@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import * as Blockly from '../../build/src/core/blockly.js';
 import {assert} from '../../node_modules/chai/index.js';
 import {defineEmptyBlock} from './test_helpers/block_definitions.js';
 import {MockIcon, MockSerializableIcon} from './test_helpers/icon_mocks.js';
@@ -11,6 +12,26 @@ import {
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
+import {simulateClick} from './test_helpers/user_input.js';
+
+class TestIcon extends Blockly.icons.Icon {
+  showContextMenu(e) {
+    const menuItems = [
+      {text: 'Test icon menu item', enabled: true, callback: () => {}},
+    ];
+    Blockly.ContextMenu.show(
+      e,
+      menuItems,
+      false,
+      this.getSourceBlock().workspace,
+      this.workspaceLocation,
+    );
+  }
+
+  getType() {
+    new Blockly.icons.IconType('test');
+  }
+}
 
 suite('Icon', function () {
   setup(function () {
@@ -364,6 +385,47 @@ suite('Icon', function () {
         '',
         'Expected deserializing an unregistered icon to throw',
       );
+    });
+  });
+
+  suite('Contextual menus', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv', {});
+      Blockly.icons.registry.register(
+        new Blockly.icons.IconType('test'),
+        TestIcon,
+      );
+
+      this.block = this.workspace.newBlock('empty_block');
+      this.block.initSvg();
+    });
+
+    test('are shown when icons are right clicked', function () {
+      const icon = new TestIcon(this.block);
+      this.block.addIcon(icon);
+      simulateClick(icon.getFocusableElement(), {button: 2});
+
+      const menu = document.querySelector('.blocklyContextMenu');
+      assert.isNotNull(menu);
+      assert.isTrue(menu.innerText.includes('Test icon menu item'));
+    });
+
+    test('default to the contextual menu of the parent block', function () {
+      this.block.setCommentText('hello there');
+      const icon = this.block.getIcon(Blockly.icons.IconType.COMMENT);
+      simulateClick(icon.getFocusableElement(), {button: 2});
+
+      const expectedItems =
+        Blockly.ContextMenuRegistry.registry.getContextMenuOptions({
+          block: this.block,
+        });
+
+      assert.isNotEmpty(expectedItems);
+      const menu = document.querySelector('.blocklyContextMenu');
+      for (const item of expectedItems) {
+        if (!item.text) continue;
+        assert.isTrue(menu.innerText.includes(item.text));
+      }
     });
   });
 });
