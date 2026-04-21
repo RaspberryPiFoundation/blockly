@@ -811,7 +811,7 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
     return text;
   }
 
- /**
+  /**
    * Gets an ARIA-friendly label representation of this field's type.
    *
    * Implementations are responsible for, and encouraged to, return a localized
@@ -824,7 +824,7 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
     return this.ariaTypeName || Msg['ARIA_TYPE_FIELD_INPUT'];
   }
 
- /**
+  /**
    * Gets an ARIA-friendly label representation of this field's value.
    *
    * Implementations are responsible for, and encouraged to, return a localized
