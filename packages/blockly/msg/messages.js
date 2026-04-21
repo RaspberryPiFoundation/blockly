@@ -1690,9 +1690,6 @@ Blockly.Msg.SHORTCUTS_ESCAPE = 'Exit';
 /// shortcut display text for the delete shortcut, which is used in various contexts to delete items.
 Blockly.Msg.SHORTCUTS_DELETE = 'Delete';
 /** @type {string} */
-/// shortcut display text for the delete shortcut, which is used in various contexts to delete items.
-Blockly.Msg.SHORTCUTS_DELETE = 'Delete';
-/** @type {string} */
 /// shortcut display text for the start move shortcut, which enters the keyboard navigation "move mode".
 Blockly.Msg.SHORTCUTS_START_MOVE = 'Start move';
 /** @type {string} */

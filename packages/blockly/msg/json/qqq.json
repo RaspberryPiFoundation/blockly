@@ -426,7 +426,6 @@
 	"SHORTCUTS_CODE_NAVIGATION": "shortcut list section header - Label for keyboard shortcuts related to moving around the workspace.",
 	"SHORTCUTS_ESCAPE": "shortcut display text for the escape shortcut, which is used in various contexts to exit or cancel an action.",
 	"SHORTCUTS_DELETE": "shortcut display text for the delete shortcut, which is used in various contexts to delete items.",
-	"SHORTCUTS_DELETE": "shortcut display text for the delete shortcut, which is used in various contexts to delete items.",
 	"SHORTCUTS_START_MOVE": "shortcut display text for the start move shortcut, which enters the keyboard navigation 'move mode'.",
 	"SHORTCUTS_START_MOVE_STACK": "shortcut display text for the start move stack shortcut, which enters the keyboard navigation 'move mode' for a stack of blocks.",
 	"SHORTCUTS_MOVE_LEFT": "shortcut display text for the move left shortcut, which moves a block left during keyboard navigation.",
