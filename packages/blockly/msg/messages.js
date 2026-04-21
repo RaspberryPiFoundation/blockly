@@ -1882,3 +1882,14 @@ Blockly.Msg.ANNOUNCE_MOVE_CANCELED = 'Canceled movement';
 /** @type {string} */
 ///  Label for an empty field, used by screen readers to identify fields that have no content.
 Blockly.Msg.FIELD_LABEL_EMPTY = 'empty';
+/** @type {string} */
+///  Label for an empty input field, used by screen readers to identify inputs that have no content.  
+Blockly.Msg.FIELD_LABEL_EMPTY_INPUT = 'empty';
+/** @type {string} */
+/// ARIA type name for an input field, used by screen readers to identify the type of field.
+Blockly.Msg.ARIA_TYPE_FIELD_INPUT = 'input field';
+/** @type {string} */
+/// Label for an editable field, used by screen readers to identify fields that can be edited by the user.  Placeholder corresponds to the label of the field's value.
+/// \n\nParameters:\n* %1 - the label of the field's value
+/// \n\nExamples:\n* "Edit 5"\n* "Edit item"
+Blockly.Msg.FIELD_LABEL_EDIT_PREFIX = 'Edit %1';

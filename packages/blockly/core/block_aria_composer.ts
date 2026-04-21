@@ -60,7 +60,7 @@ export function computeAriaLabel(
   return [
     verbosity >= Verbosity.STANDARD && getBeginStackLabel(block),
     getParentInputLabel(block),
-    ...getInputLabels(block),
+    ...getInputLabels(block, verbosity),
     verbosity === Verbosity.LOQUACIOUS && getParentToolboxCategoryLabel(block),
     verbosity >= Verbosity.STANDARD && getDisabledLabel(block),
     verbosity >= Verbosity.STANDARD && getCollapsedLabel(block),
@@ -111,15 +111,17 @@ export function configureAriaRole(block: BlockSvg) {
 export function computeFieldRowLabel(
   input: Input,
   lookback: boolean,
+  verbosity = Verbosity.STANDARD,
 ): string[] {
+  const includeTypeInfo = verbosity >= Verbosity.STANDARD;
   const fieldRowLabel = input.fieldRow
     .filter((field) => field.isVisible())
-    .map((field) => field.computeAriaLabel(true));
+    .map((field) => field.computeAriaLabel(includeTypeInfo));
   if (!fieldRowLabel.length && lookback) {
     const inputs = input.getSourceBlock().inputList;
     const index = inputs.indexOf(input);
     if (index > 0) {
-      return computeFieldRowLabel(inputs[index - 1], lookback);
+      return computeFieldRowLabel(inputs[index - 1], lookback, verbosity);
     }
   }
   return fieldRowLabel;
@@ -186,10 +188,13 @@ function getBeginStackLabel(block: BlockSvg) {
  * @param block The block to retrieve a list of field/input labels for.
  * @returns A list of field/input labels for the given block.
  */
-export function getInputLabels(block: BlockSvg): string[] {
+export function getInputLabels(
+  block: BlockSvg,
+  verbosity = Verbosity.STANDARD,
+): string[] {
   return block.inputList
     .filter((input) => input.isVisible())
-    .map((input) => input.getLabel());
+    .map((input) => input.getLabel(verbosity));
 }
 
 /**
@@ -208,7 +213,11 @@ export function getInputLabels(block: BlockSvg): string[] {
  * @param input The input that defines the end of the subset.
  * @returns A list of field/input labels for the given block.
  */
-export function getInputLabelsSubset(block: BlockSvg, input: Input): string[] {
+export function getInputLabelsSubset(
+  block: BlockSvg,
+  input: Input,
+  verbosity = Verbosity.STANDARD,
+): string[] {
   const inputIndex = block.inputList.indexOf(input);
   if (inputIndex === -1) {
     throw new Error(
@@ -226,7 +235,7 @@ export function getInputLabelsSubset(block: BlockSvg, input: Input): string[] {
     .filter((input) => input.isVisible())
     .map(
       (input) =>
-        input.getLabel() ||
+        input.getLabel(verbosity) ||
         Msg['INPUT_LABEL_INDEX'].replace(
           '%1',
           (input.getIndex() + 1).toString(),

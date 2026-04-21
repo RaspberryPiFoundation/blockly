@@ -22,6 +22,7 @@ import {ConnectionType} from '../connection_type.js';
 import type {Field} from '../field.js';
 import * as fieldRegistry from '../field_registry.js';
 import {RenderedConnection} from '../rendered_connection.js';
+import {Verbosity} from '../utils/aria.js';
 import {Align} from './align.js';
 import {inputTypes} from './input_types.js';
 
@@ -356,15 +357,17 @@ export class Input {
    *
    * @internal
    */
-  getLabel(): string {
+  getLabel(verbosity = Verbosity.STANDARD): string {
     if (!this.isVisible()) return '';
 
-    const labels = computeFieldRowLabel(this, false);
+    const labels = computeFieldRowLabel(this, false, verbosity);
 
     if (this.connection?.type === ConnectionType.INPUT_VALUE) {
       const childBlock = this.connection.targetBlock();
       if (childBlock && !childBlock.isInsertionMarker()) {
-        labels.push(getInputLabels(childBlock as BlockSvg).join(' '));
+        labels.push(
+          getInputLabels(childBlock as BlockSvg, verbosity).join(' '),
+        );
       }
     }
     return labels.join(' ');

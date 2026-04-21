@@ -502,4 +502,50 @@ suite('Number Fields', function () {
       this.assertValue(1.7976931348623157e308);
     });
   });
+  suite('ARIA', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv', {
+        renderer: 'geras',
+      });
+      const block = this.workspace.newBlock('math_number');
+      this.field = block.getField('NUM');
+      block.initSvg();
+      block.render();
+
+      this.focusableElement = this.field.getClickTarget_();
+    });
+    test('Focusable element has role of button', function () {
+      const role = this.focusableElement.getAttribute('role');
+      assert.equal(role, 'button');
+    });
+    test('Hidden when in a flyout', function () {
+      this.field.getSourceBlock().isInFlyout = true;
+      // Force recompute of ARIA label.
+      this.field.setValue(this.field.getValue());
+      const ariaHidden = this.focusableElement.getAttribute('aria-hidden');
+      assert.equal(ariaHidden, 'true');
+    });
+    test('Has an ARIA label by default', function () {
+      const label = this.focusableElement.getAttribute('aria-label');
+      assert.isTrue(label.includes('0'));
+    });
+    test('Has Edit prefix if editable', function () {
+      const label = this.focusableElement.getAttribute('aria-label');
+      assert.isTrue(label.includes('Edit'));
+    });
+    test('Does not have Edit prefix if not editable', function () {
+      this.field.EDITABLE = false;
+      // Force recompute of ARIA label.
+      this.field.setValue(this.field.getValue());
+      const label = this.focusableElement.getAttribute('aria-label');
+      assert.isFalse(label.includes('Edit'));
+    });
+    test('setValue updates ARIA label', function () {
+      const initialLabel = this.focusableElement.getAttribute('aria-label');
+      assert.isTrue(initialLabel.includes('0'));
+      this.field.setValue(1);
+      const updatedLabel = this.focusableElement.getAttribute('aria-label');
+      assert.isTrue(updatedLabel.includes('1'));
+    });
+  });
 });
