@@ -8,6 +8,7 @@
 /** Has CSS already been injected? */
 const injectionSites = new WeakSet<Document | ShadowRoot>();
 const registeredStyleSheets: Array<CSSStyleSheet> = [];
+import * as userAgent from './utils/useragent.js';
 
 /**
  * Add some CSS to the blob that will be injected later.  Allows optional
@@ -658,5 +659,21 @@ input[type=number] {
   outline-offset: 2px;
   outline: var(--blockly-selection-width) solid var(--blockly-active-node-color);
   border-radius: 2px;
+}
+.blocklyDialog {
+  min-width: 300px;
+  border-radius: 16px;
+  box-shadow: 0 8px 8px rgba(0, 0, 0, 0.2);
+  border: 1px solid #999;
+}
+.blocklyDialogForm {
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+}
+.blocklyDialogButtonRow {
+  display: flex;
+  flex-direction: ${userAgent.MOBILE || userAgent.APPLE ? 'row-reverse' : 'row'};
+  column-gap: 8px;
 }
 `;
