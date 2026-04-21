@@ -6,7 +6,7 @@
 
 import {Msg} from './msg.js';
 import {Toast} from './toast.js';
-import {getShortActionShortcut} from './utils/shortcut_formatting.js';
+import {getShortcutKeysShort} from './utils/shortcut_formatting.js';
 import * as userAgent from './utils/useragent.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 
@@ -73,7 +73,7 @@ export function clearMoveHints(workspace: WorkspaceSvg) {
  * @param workspace The workspace.
  */
 export function showHelpHint(workspace: WorkspaceSvg) {
-  const shortcut = getShortActionShortcut('list_shortcuts');
+  const shortcut = getShortcutKeysShort('list_shortcuts');
   if (!shortcut) return;
 
   const message = Msg['HELP_PROMPT'].replace('%1', shortcut);
