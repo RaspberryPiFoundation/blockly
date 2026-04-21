@@ -469,7 +469,6 @@
 	"ANNOUNCE_MOVE_TO": "moving %1 %2 to %3 %4",
 	"ANNOUNCE_MOVE_CANCELED": "Canceled movement",
 	"FIELD_LABEL_EMPTY": "empty",
-	"FIELD_LABEL_EMPTY_INPUT": "empty",
 	"ARIA_TYPE_FIELD_INPUT": "input field",
 	"FIELD_LABEL_EDIT_PREFIX": "Edit %1"
 }

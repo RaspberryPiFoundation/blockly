@@ -833,7 +833,7 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
    * @returns An ARIA representation of the field's text.
    */
   override getAriaValue(): string | null {
-    return this.getText() || Msg['FIELD_LABEL_EMPTY_INPUT'];
+    return this.getText() || Msg['FIELD_LABEL_EMPTY'];
   }
 
   /**
