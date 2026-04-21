@@ -20,6 +20,7 @@ import * as eventUtils from './events/utils.js';
 import {FlyoutItem} from './flyout_item.js';
 import {FlyoutMetricsManager} from './flyout_metrics_manager.js';
 import {FlyoutSeparator, SeparatorAxis} from './flyout_separator.js';
+import {getFocusManager} from './focus_manager.js';
 import {IAutoHideable} from './interfaces/i_autohideable.js';
 import type {IFlyout} from './interfaces/i_flyout.js';
 import type {IFlyoutInflater} from './interfaces/i_flyout_inflater.js';
@@ -583,6 +584,16 @@ export abstract class Flyout
    *     toolbox definition, or a string with the name of the dynamic category.
    */
   show(flyoutDef: toolbox.FlyoutDefinition | string) {
+    // As part of showing, the existing contents of the flyout will be cleared.
+    // If the focused element is a flyout item, i.e. a child of the workspace
+    // and not the workspace itself, move focus to the workspace to prevent
+    // focus from being lost when the currently focused element is destroyed.
+    if (
+      getFocusManager().getFocusedTree() === this.workspace_ &&
+      getFocusManager().getFocusedNode() !== this.workspace_
+    ) {
+      getFocusManager().focusNode(this.workspace_);
+    }
     this.workspace_.setResizesEnabled(false);
     eventUtils.setRecordUndo(false);
     this.hide();

@@ -7,8 +7,12 @@
 // Former goog.module ID: Blockly.Variables
 
 import type {Block} from './block.js';
+import type {BlockSvg} from './block_svg.js';
 import {Blocks} from './blocks.js';
 import * as dialog from './dialog.js';
+import type {BlockCreate} from './events/events.js';
+import * as Events from './events/events.js';
+import {getFocusManager} from './focus_manager.js';
 import {isLegacyProcedureDefBlock} from './interfaces/i_legacy_procedure_blocks.js';
 import {isVariableBackedParameterModel} from './interfaces/i_variable_backed_parameter_model.js';
 import {IVariableModel, IVariableState} from './interfaces/i_variable_model.js';
@@ -403,7 +407,7 @@ export function generateUniqueNameFromOptions(
  *     will default to '', which is a specific type.
  */
 export function createVariableButtonHandler(
-  workspace: Workspace,
+  workspace: WorkspaceSvg,
   opt_callback?: (p1?: string | null) => void,
   opt_type?: string,
 ) {
@@ -420,8 +424,28 @@ export function createVariableButtonHandler(
       const existing = nameUsedWithAnyType(text, workspace);
       if (!existing) {
         // No conflict
-        workspace.getVariableMap().createVariable(text, type);
+        const variable = workspace.getVariableMap().createVariable(text, type);
         if (opt_callback) opt_callback(text);
+        const flyoutWorkspace = workspace.getFlyout()?.getWorkspace();
+        if (!flyoutWorkspace) return;
+        const changeListener = (e: Events.Abstract) => {
+          // Focus the newly created variable_set block.
+          if (e.type === Events.BLOCK_CREATE) {
+            const blockId = (e as BlockCreate).blockId;
+            if (blockId) {
+              const block = flyoutWorkspace.getBlockById(blockId);
+              if (
+                block &&
+                block.type === 'variables_set' &&
+                block.getFieldValue('VAR') === variable.getId()
+              ) {
+                getFocusManager().focusNode(block as BlockSvg);
+                flyoutWorkspace.removeChangeListener(changeListener);
+              }
+            }
+          }
+        };
+        flyoutWorkspace.addChangeListener(changeListener);
         return;
       }
 
