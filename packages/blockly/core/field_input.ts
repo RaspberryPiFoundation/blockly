@@ -851,7 +851,7 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
     aria.setState(focusableElement, aria.State.HIDDEN, false);
     // The button role is intended to indicate to users that the field has an
     // editing mode that can be activated.
-    focusableElement.setAttribute('role', 'button');
+    aria.setRole(focusableElement, aria.Role.BUTTON);
 
     let label = this.computeAriaLabel(false);
 
