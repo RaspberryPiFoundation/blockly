@@ -80,6 +80,7 @@ export function registerEscape() {
       return true;
     },
     keyCodes: [KeyCodes.ESC],
+    displayText: () => Msg['SHORTCUTS_ESCAPE'],
   };
   ShortcutRegistry.registry.register(escapeAction);
 }
@@ -119,6 +120,7 @@ export function registerDelete() {
       return true;
     },
     keyCodes: [KeyCodes.DELETE, KeyCodes.BACKSPACE],
+    displayText: () => Msg['SHORTCUTS_DELETE'],
   };
   ShortcutRegistry.registry.register(deleteShortcut);
 }
@@ -208,6 +210,7 @@ export function registerCopy() {
       return !!clipboard.copy(focused, copyCoords);
     },
     keyCodes: [ctrlC],
+    displayText: () => Msg['COPY_SHORTCUT'],
   };
   ShortcutRegistry.registry.register(copyShortcut);
 }
@@ -252,6 +255,7 @@ export function registerCut() {
       return !!copyData;
     },
     keyCodes: [ctrlX],
+    displayText: () => Msg['CUT_SHORTCUT'],
   };
 
   ShortcutRegistry.registry.register(cutShortcut);
@@ -334,6 +338,7 @@ export function registerPaste() {
       return !!clipboard.paste(copyData, targetWorkspace, centerCoords);
     },
     keyCodes: [ctrlV],
+    displayText: () => Msg['PASTE_SHORTCUT'],
   };
 
   ShortcutRegistry.registry.register(pasteShortcut);
@@ -364,6 +369,7 @@ export function registerUndo() {
       return true;
     },
     keyCodes: [ctrlZ],
+    displayText: () => Msg['UNDO'],
   };
   ShortcutRegistry.registry.register(undoShortcut);
 }
@@ -400,6 +406,7 @@ export function registerRedo() {
       return true;
     },
     keyCodes: [ctrlShiftZ, ctrlY],
+    displayText: () => Msg['REDO'],
   };
   ShortcutRegistry.registry.register(redoShortcut);
 }
@@ -445,6 +452,7 @@ export function registerMovementShortcuts() {
       );
     },
     keyCodes: [KeyCodes.M],
+    displayText: () => Msg['SHORTCUTS_START_MOVE'],
   };
   const shortcuts: ShortcutRegistry.KeyboardShortcut[] = [
     startMoveShortcut,
@@ -452,6 +460,7 @@ export function registerMovementShortcuts() {
       ...startMoveShortcut,
       name: names.START_MOVE_STACK,
       keyCodes: [shiftM],
+      displayText: () => Msg['SHORTCUTS_START_MOVE_STACK'],
     },
     {
       name: names.FINISH_MOVE,
@@ -460,6 +469,7 @@ export function registerMovementShortcuts() {
         KeyboardMover.mover.finishMove(e as KeyboardEvent),
       keyCodes: [KeyCodes.ENTER, KeyCodes.SPACE],
       allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_FINISH_MOVE'],
     },
     {
       name: names.ABORT_MOVE,
@@ -468,6 +478,7 @@ export function registerMovementShortcuts() {
         KeyboardMover.mover.abortMove(e as KeyboardEvent),
       keyCodes: [KeyCodes.ESC],
       allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_ABORT_MOVE'],
     },
     {
       name: names.MOVE_LEFT,
@@ -483,6 +494,7 @@ export function registerMovementShortcuts() {
         ]),
       ],
       allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_MOVE_LEFT'],
     },
     {
       name: names.MOVE_RIGHT,
@@ -498,6 +510,7 @@ export function registerMovementShortcuts() {
         ]),
       ],
       allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_MOVE_RIGHT'],
     },
     {
       name: names.MOVE_UP,
@@ -513,6 +526,7 @@ export function registerMovementShortcuts() {
         ]),
       ],
       allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_MOVE_UP'],
     },
     {
       name: names.MOVE_DOWN,
@@ -528,6 +542,7 @@ export function registerMovementShortcuts() {
         ]),
       ],
       allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_MOVE_DOWN'],
     },
   ];
 
@@ -562,6 +577,7 @@ export function registerShowContextMenu() {
       return false;
     },
     keyCodes: [ctrlEnter],
+    displayText: () => Msg['SHORTCUTS_SHOW_CONTEXT_MENU'],
   };
   ShortcutRegistry.registry.register(contextMenuShortcut);
 }
@@ -592,6 +608,7 @@ export function registerArrowNavigation() {
       },
       keyCodes: [KeyCodes.RIGHT],
       allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_NAVIGATE_RIGHT'],
     },
 
     /** Go to the next location to the left. */
@@ -613,6 +630,7 @@ export function registerArrowNavigation() {
       },
       keyCodes: [KeyCodes.LEFT],
       allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_NAVIGATE_LEFT'],
     },
 
     /** Go down to the next location. */
@@ -635,6 +653,7 @@ export function registerArrowNavigation() {
       },
       keyCodes: [KeyCodes.DOWN],
       allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_NAVIGATE_DOWN'],
     },
     /** Go up to the previous location. */
     up: {
@@ -656,6 +675,7 @@ export function registerArrowNavigation() {
       },
       keyCodes: [KeyCodes.UP],
       allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_NAVIGATE_UP'],
     },
   };
 
@@ -687,6 +707,7 @@ export function registerFocusWorkspace() {
       return true;
     },
     keyCodes: [KeyCodes.W],
+    displayText: () => Msg['SHORTCUTS_FOCUS_WORKSPACE'],
   };
   ShortcutRegistry.registry.register(focusWorkspaceShortcut);
 }
@@ -714,6 +735,7 @@ export function registerFocusToolbox() {
       }
     },
     keyCodes: [KeyCodes.T],
+    displayText: () => Msg['SHORTCUTS_FOCUS_TOOLBOX'],
   };
   ShortcutRegistry.registry.register(focusToolboxShortcut);
 }
@@ -763,6 +785,7 @@ export function registerWorkspaceOverview() {
       return true;
     },
     keyCodes: [KeyCodes.I],
+    displayText: () => Msg['SHORTCUTS_INFORMATION'],
   };
   ShortcutRegistry.registry.register(shortcut);
 }
@@ -790,6 +813,7 @@ export function registerDisconnectBlock() {
       return true;
     },
     keyCodes: [KeyCodes.X, shiftX],
+    displayText: () => Msg['SHORTCUTS_DISCONNECT'],
   };
   ShortcutRegistry.registry.register(disconnectShortcut);
 }
@@ -838,6 +862,7 @@ export function registerStackNavigation() {
       return true;
     },
     keyCodes: [KeyCodes.N],
+    displayText: () => Msg['SHORTCUTS_NEXT_STACK'],
   };
 
   const previousStackShortcut: KeyboardShortcut = {
@@ -863,6 +888,7 @@ export function registerStackNavigation() {
       return true;
     },
     keyCodes: [KeyCodes.B],
+    displayText: () => Msg['SHORTCUTS_PREVIOUS_STACK'],
   };
 
   ShortcutRegistry.registry.register(nextStackShortcut);
@@ -891,6 +917,7 @@ export function registerPerformAction() {
     },
     keyCodes: [KeyCodes.ENTER, KeyCodes.SPACE],
     allowCollision: true,
+    displayText: () => Msg['SHORTCUTS_PERFORM_ACTION'],
   };
   ShortcutRegistry.registry.register(performActionShortcut);
 }
@@ -919,6 +946,7 @@ export function registerDuplicate() {
     },
     keyCodes: [KeyCodes.D],
     allowCollision: true,
+    displayText: () => Msg['SHORTCUTS_DUPLICATE'],
   };
   ShortcutRegistry.registry.register(duplicateShortcut);
 }
@@ -938,6 +966,7 @@ export function registerCleanup() {
     },
     keyCodes: [KeyCodes.C],
     allowCollision: true,
+    displayText: () => Msg['SHORTCUTS_CLEANUP'],
   };
   ShortcutRegistry.registry.register(cleanupShortcut);
 }

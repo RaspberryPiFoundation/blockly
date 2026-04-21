@@ -1684,6 +1684,69 @@ Blockly.Msg.SHORTCUTS_EDITING = 'Editing'
 /// moving around the workspace.
 Blockly.Msg.SHORTCUTS_CODE_NAVIGATION = 'Code navigation';
 /** @type {string} */
+/// shortcut display text for the escape shortcut, which is used in various contexts to exit or cancel an action.
+Blockly.Msg.SHORTCUTS_ESCAPE = 'Exit';
+/** @type {string} */
+/// shortcut display text for the delete shortcut, which is used in various contexts to delete items.
+Blockly.Msg.SHORTCUTS_DELETE = 'Delete';
+/** @type {string} */
+/// shortcut display text for the delete shortcut, which is used in various contexts to delete items.
+Blockly.Msg.SHORTCUTS_DELETE = 'Delete';
+/** @type {string} */
+/// shortcut display text for the start move shortcut, which enters the keyboard navigation "move mode".
+Blockly.Msg.SHORTCUTS_START_MOVE = 'Start move';
+/** @type {string} */
+/// shortcut display text for the start move stack shortcut, which enters the keyboard navigation "move mode" for a stack of blocks.
+Blockly.Msg.SHORTCUTS_START_MOVE_STACK = 'Start move stack';
+/** @type {string} */
+/// shortcut display text for the move left shortcut, which moves a block left during keyboard navigation.
+Blockly.Msg.SHORTCUTS_MOVE_LEFT = 'Move left';
+/** @type {string} */
+/// shortcut display text for the move right shortcut, which moves a block right during keyboard navigation.
+Blockly.Msg.SHORTCUTS_MOVE_RIGHT = 'Move right';
+/** @type {string} */
+/// shortcut display text for the move up shortcut, which moves a block up during keyboard navigation.
+Blockly.Msg.SHORTCUTS_MOVE_UP = 'Move up';
+/** @type {string} */
+/// shortcut display text for the move down shortcut, which moves a block down during keyboard navigation.
+Blockly.Msg.SHORTCUTS_MOVE_DOWN = 'Move down';
+/** @type {string} */
+/// shortcut display text for the finish move shortcut, which exits the keyboard navigation "move mode".
+Blockly.Msg.SHORTCUTS_FINISH_MOVE = 'Finish move';
+/** @type {string} */
+/// shortcut display text for the abort move shortcut, which cancels the keyboard navigation "move mode".
+Blockly.Msg.SHORTCUTS_ABORT_MOVE = 'Abort move';
+/** @type {string} */
+/// shortcut display text for the shortcut that opens the context menu.
+Blockly.Msg.SHORTCUTS_SHOW_CONTEXT_MENU = 'Show menu';
+/** @type {string} */
+/// shortcut display text for the focus workspace shortcut, which moves focus to the workspace.
+Blockly.Msg.SHORTCUTS_FOCUS_WORKSPACE = 'Focus workspace';
+/** @type {string} */
+/// shortcut display text for the focus toolbox shortcut, which moves focus to the toolbox or flyout.
+Blockly.Msg.SHORTCUTS_FOCUS_TOOLBOX = 'Focus toolbox';
+/** @type {string} */
+/// shortcut display text for the information shortcut, which announces information about a focused element.
+Blockly.Msg.SHORTCUTS_INFORMATION = 'Announce information';
+/** @type {string} */
+/// shortcut display text for the disconnect shortcut, which disconnects a block from its neighbor.
+Blockly.Msg.SHORTCUTS_DISCONNECT = 'Disconnect block';
+/** @type {string} */
+/// shortcut display text for the next stack shortcut, which navigates to the next block stack.
+Blockly.Msg.SHORTCUTS_NEXT_STACK = 'Next stack';
+/** @type {string} */
+/// shortcut display text for the previous stack shortcut, which navigates to the previous block stack.
+Blockly.Msg.SHORTCUTS_PREVIOUS_STACK = 'Previous stack';
+/** @type {string} */
+/// shortcut display text for the perform action shortcut, which triggers an action on the focused element.
+Blockly.Msg.SHORTCUTS_PERFORM_ACTION = 'Edit or confirm';
+/** @type {string} */
+/// shortcut display text for the duplicate shortcut, which duplicates the focused block or comment.
+Blockly.Msg.SHORTCUTS_DUPLICATE = 'Duplicate';
+/** @type {string} */
+/// shortcut display text for the cleanup shortcut, which organizes blocks on the workspace.
+Blockly.Msg.SHORTCUTS_CLEANUP = 'Clean up workspace';
+/** @type {string} */
 /// Message shown to inform users how to move blocks to arbitrary locations
 /// with the keyboard.
 Blockly.Msg.KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT = 'Hold %1 and use arrow keys to move freely, then %2 to accept the position';
