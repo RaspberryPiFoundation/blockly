@@ -152,6 +152,19 @@ export function createDom() {
 }
 
 /**
+ * Deals with the root element that contains this and other quasi-modals losing
+ * focus by returning ephemeral focus if we hold it and hiding the DropDownDiv.
+ */
+function handleFocusLoss() {
+  if (returnEphemeralFocus) {
+    returnEphemeralFocus(false);
+    returnEphemeralFocus = null;
+  }
+
+  hide();
+}
+
+/**
  * Set an element to maintain bounds within. Drop-downs will appear
  * within the box of this element if possible.
  *
@@ -370,6 +383,8 @@ export function show<T>(
   manageEphemeralFocus: boolean,
   opt_onHide?: () => void,
 ): boolean {
+  getFocusManager().registerQuasiModalFocusLossHandler(handleFocusLoss);
+
   const parentDiv = common.getParentContainer();
   parentDiv?.appendChild(div);
 
@@ -669,6 +684,7 @@ export function hideIfOwner<T>(
 
 /** Hide the menu, triggering animation. */
 export function hide() {
+  getFocusManager().unregisterQuasiModalFocusLossHandler(handleFocusLoss);
   // Start the animation by setting the translation and fading out.
   // Reset to (initialX, initialY) - i.e., no translation.
   div.style.transform = 'translate(0, 0)';

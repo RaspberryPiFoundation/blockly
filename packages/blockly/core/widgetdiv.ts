@@ -62,6 +62,19 @@ export function testOnly_setDiv(newDiv: HTMLDivElement | null) {
 }
 
 /**
+ * Deals with the root element that contains this and other quasi-modals losing
+ * focus by returning ephemeral focus if we hold it and hiding the WidgetDiv.
+ */
+function handleFocusLoss() {
+  if (returnEphemeralFocus) {
+    returnEphemeralFocus(false);
+    returnEphemeralFocus = null;
+  }
+
+  hide();
+}
+
+/**
  * Create the widget div and inject it onto the page.
  */
 export function createDom() {
@@ -137,6 +150,7 @@ export function show(
   if (manageEphemeralFocus) {
     returnEphemeralFocus = getFocusManager().takeEphemeralFocus(div);
   }
+  getFocusManager().registerQuasiModalFocusLossHandler(handleFocusLoss);
 }
 
 /**
@@ -150,6 +164,7 @@ export function hide() {
 
   const div = containerDiv;
   if (!div) return;
+  getFocusManager().unregisterQuasiModalFocusLossHandler(handleFocusLoss);
   div.style.display = 'none';
   div.style.left = '';
   div.style.top = '';

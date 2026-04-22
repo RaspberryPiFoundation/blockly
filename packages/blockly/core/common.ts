@@ -86,6 +86,11 @@ export function getMainWorkspace(): Workspace {
  */
 export function setMainWorkspace(workspace: Workspace) {
   mainWorkspace = workspace;
+  if (workspace.rendered) {
+    getFocusManager().setQuasiModalFocusRoot(
+      (workspace as WorkspaceSvg).getInjectionDiv(),
+    );
+  }
 }
 
 /**

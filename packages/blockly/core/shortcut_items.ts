@@ -904,7 +904,8 @@ export function registerPerformAction() {
     preconditionFn: (workspace) =>
       !workspace.isDragging() &&
       !dropDownDiv.isVisible() &&
-      !widgetDiv.isVisible(),
+      !widgetDiv.isVisible() &&
+      !getFocusManager().ephemeralFocusTaken(),
     callback: (_workspace, e) => {
       keyboardNavigationController.setIsActive(true);
       const focusedNode = getFocusManager().getFocusedNode();

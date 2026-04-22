@@ -15,7 +15,7 @@ import {FocusableTreeTraverser} from './utils/focusable_tree_traverser.js';
  *
  * See FocusManager.takeEphemeralFocus for more details.
  */
-export type ReturnEphemeralFocus = () => void;
+export type ReturnEphemeralFocus = (restoreFocus?: boolean) => void;
 
 /**
  * Represents an IFocusableTree that has been registered for focus management in
@@ -82,6 +82,33 @@ export class FocusManager {
   private lockFocusStateChanges: boolean = false;
   private recentlyLostAllFocus: boolean = false;
   private isUpdatingFocusedNode: boolean = false;
+
+  /**
+   * Root element in which quasi-modals (WidgetDiv, DropDownDiv) currently live.
+   */
+  private quasiModalFocusRoot?: HTMLElement;
+
+  /**
+   * Set of callbacks to invoke if the quasi-modal focus root loses focus.
+   */
+  private quasiModalFocusLossHandlers: Set<() => void> = new Set();
+
+  /**
+   * Handler for focusout in the quasi-modal focus root that selectively
+   * invokes the quasi-modal focus loss handlers if focus has truly transitioned
+   * outside of the focus root, and not e.g. to a different quasi-modal.
+   */
+  private quasiModalFocusOutHandler = (e: FocusEvent) => {
+    const target = e.relatedTarget;
+    if (
+      target === null ||
+      (target instanceof Node && !this.quasiModalFocusRoot?.contains(target))
+    ) {
+      for (const handler of this.quasiModalFocusLossHandlers) {
+        handler();
+      }
+    }
+  };
 
   constructor(
     addGlobalEventListener: (type: string, listener: EventListener) => void,
@@ -446,7 +473,7 @@ export class FocusManager {
     focusableElement.focus({preventScroll: true});
 
     let hasFinishedEphemeralFocus = false;
-    return () => {
+    return (restoreFocus = true) => {
       if (hasFinishedEphemeralFocus) {
         throw Error(
           `Attempted to finish ephemeral focus twice for element: ` +
@@ -455,8 +482,7 @@ export class FocusManager {
       }
       hasFinishedEphemeralFocus = true;
       this.currentlyHoldsEphemeralFocus = false;
-
-      if (this.focusedNode) {
+      if (this.focusedNode && restoreFocus) {
         this.activelyFocusNode(this.focusedNode, null);
 
         // Even though focus was restored, check if it's lost again. It's
@@ -666,6 +692,50 @@ export class FocusManager {
       FocusManager.focusManager = new FocusManager(document.addEventListener);
     }
     return FocusManager.focusManager;
+  }
+
+  /**
+   * Sets the current quasi-modal focus root. Generally this is active
+   * workspace's injection div or the explicitly specified parent container for
+   * the WidgetDiv, DropDownDiv, etc.
+   *
+   * @internal
+   * @param newRoot The new element that contains all quasi-modals.
+   */
+  setQuasiModalFocusRoot(newRoot: HTMLElement) {
+    this.quasiModalFocusRoot?.removeEventListener(
+      'focusout',
+      this.quasiModalFocusOutHandler,
+    );
+    this.quasiModalFocusRoot = newRoot;
+    this.quasiModalFocusRoot.addEventListener(
+      'focusout',
+      this.quasiModalFocusOutHandler,
+    );
+  }
+
+  /**
+   * Registers a callback to be invoked if the quasi-modal focus root loses
+   * focus. This should only be called by quasi-modals that need to react to
+   * focus changes by e.g. hiding themselves and resigning ephemeral focus.
+   *
+   * @internal
+   * @param handler A callback function.
+   */
+  registerQuasiModalFocusLossHandler(handler: () => void) {
+    this.quasiModalFocusLossHandlers.add(handler);
+  }
+
+  /**
+   * Unregisters a previously-registered quasi-modal focus loss handler. This
+   * should only be invoked by quasi-modals when they no longer need to be
+   * notified of focus loss, typically when they are hidden.
+   *
+   * @internal
+   * @param handler A previously-registered callback function.
+   */
+  unregisterQuasiModalFocusLossHandler(handler: () => void) {
+    this.quasiModalFocusLossHandlers.delete(handler);
   }
 }
 
