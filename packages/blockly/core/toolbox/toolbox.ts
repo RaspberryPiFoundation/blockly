@@ -11,7 +11,6 @@
  */
 // Former goog.module ID: Blockly.Toolbox
 
-import {BlockSvg} from '../block_svg.js';
 import * as browserEvents from '../browser_events.js';
 import * as common from '../common.js';
 import {ComponentManager} from '../component_manager.js';
@@ -26,7 +25,6 @@ import {
   isCollapsibleToolboxItem,
   type ICollapsibleToolboxItem,
 } from '../interfaces/i_collapsible_toolbox_item.js';
-import {isDeletable} from '../interfaces/i_deletable.js';
 import type {IDraggable} from '../interfaces/i_draggable.js';
 import type {IFlyout} from '../interfaces/i_flyout.js';
 import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
@@ -37,6 +35,7 @@ import {isSelectableToolboxItem} from '../interfaces/i_selectable_toolbox_item.j
 import type {IStyleable} from '../interfaces/i_styleable.js';
 import type {IToolbox} from '../interfaces/i_toolbox.js';
 import type {IToolboxItem} from '../interfaces/i_toolbox_item.js';
+import {KeyboardMover} from '../keyboard_nav/keyboard_mover.js';
 import {ToolboxNavigator} from '../keyboard_nav/navigators/toolbox_navigator.js';
 import * as registry from '../registry.js';
 import type {KeyboardShortcut} from '../shortcut_registry.js';
@@ -509,31 +508,13 @@ export class Toolbox
   }
 
   /**
-   * Returns whether the provided block or bubble would be deleted if dropped on
-   * this area.
-   * This method should check if the element is deletable and is always called
-   * before onDragEnter/onDragOver/onDragExit.
-   *
-   * @param element The block or bubble currently being dragged.
-   * @returns Whether the element provided would be deleted if dropped on this
-   *     area.
-   */
-  override wouldDelete(element: IDraggable): boolean {
-    if (element instanceof BlockSvg) {
-      const block = element;
-      this.updateWouldDelete_(!block.getParent() && block.isDeletable());
-    } else {
-      this.updateWouldDelete_(isDeletable(element) && element.isDeletable());
-    }
-    return this.wouldDelete_;
-  }
-
-  /**
    * Handles when a cursor with a block or bubble enters this drag target.
    *
    * @param _dragElement The block or bubble currently being dragged.
    */
   override onDragEnter(_dragElement: IDraggable) {
+    // don't trigger for keyboard moves
+    if (KeyboardMover.mover.isMoving()) return;
     this.updateCursorDeleteStyle_(true);
   }
 
@@ -543,6 +524,8 @@ export class Toolbox
    * @param _dragElement The block or bubble currently being dragged.
    */
   override onDragExit(_dragElement: IDraggable) {
+    // don't trigger for keyboard moves
+    if (KeyboardMover.mover.isMoving()) return;
     this.updateCursorDeleteStyle_(false);
   }
 
@@ -553,6 +536,8 @@ export class Toolbox
    * @param _dragElement The block or bubble currently being dragged.
    */
   override onDrop(_dragElement: IDraggable) {
+    // don't trigger for keyboard moves
+    if (KeyboardMover.mover.isMoving()) return;
     this.updateCursorDeleteStyle_(false);
   }
 

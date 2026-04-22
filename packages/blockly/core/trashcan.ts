@@ -24,6 +24,7 @@ import type {IAutoHideable} from './interfaces/i_autohideable.js';
 import type {IDraggable} from './interfaces/i_draggable.js';
 import type {IFlyout} from './interfaces/i_flyout.js';
 import type {IPositionable} from './interfaces/i_positionable.js';
+import {KeyboardMover} from './keyboard_nav/keyboard_mover.js';
 import type {UiMetrics} from './metrics_manager.js';
 import * as uiPosition from './positionable_helpers.js';
 import * as registry from './registry.js';
@@ -426,6 +427,8 @@ export class Trashcan
    * @param _dragElement The block or bubble currently being dragged.
    */
   override onDragOver(_dragElement: IDraggable) {
+    // don't trigger for keyboard moves
+    if (KeyboardMover.mover.isMoving()) return;
     this.setLidOpen(this.wouldDelete_);
   }
 
@@ -435,6 +438,8 @@ export class Trashcan
    * @param _dragElement The block or bubble currently being dragged.
    */
   override onDragExit(_dragElement: IDraggable) {
+    // don't trigger for keyboard moves
+    if (KeyboardMover.mover.isMoving()) return;
     this.setLidOpen(false);
   }
 
@@ -445,6 +450,8 @@ export class Trashcan
    * @param _dragElement The block or bubble currently being dragged.
    */
   override onDrop(_dragElement: IDraggable) {
+    // don't trigger for keyboard moves
+    if (KeyboardMover.mover.isMoving()) return;
     setTimeout(this.setLidOpen.bind(this, false), 100);
   }
 
