@@ -5,7 +5,10 @@
  */
 
 import {assert} from '../../node_modules/chai/index.js';
-import {defineStackBlock} from './test_helpers/block_definitions.js';
+import {
+  defineBasicBlockWithField,
+  defineStackBlock,
+} from './test_helpers/block_definitions.js';
 import {
   sharedTestSetup,
   sharedTestTeardown,
@@ -810,6 +813,30 @@ suite('Toolbox', function () {
         innerCategory.isVisible(),
         'Not all ancestors are expanded, so category should not be visible',
       );
+    });
+  });
+  suite('delete area', function () {
+    test('Keyboard drag - wouldDelete returns false', function () {
+      // Create a deletable block
+      defineBasicBlockWithField();
+      const block = this.toolbox.getWorkspace().newBlock('test_field_block');
+      block.initSvg();
+      block.render();
+
+      // Stub KeyboardMover.mover.isMoving() to return true
+      const isMovingStub = sinon
+        .stub(Blockly.KeyboardMover.mover, 'isMoving')
+        .returns(true);
+
+      try {
+        const result = this.toolbox.wouldDelete(block);
+        assert.isFalse(
+          result,
+          'wouldDelete should return false during keyboard move',
+        );
+      } finally {
+        isMovingStub.restore();
+      }
     });
   });
 });
