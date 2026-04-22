@@ -79,7 +79,9 @@ export function computeAriaLabel(
  * @param block The block to set ARIA role and roledescription attributes on.
  */
 export function configureAriaRole(block: BlockSvg) {
-  setRole(block.getSvgRoot(), block.isInFlyout ? Role.LISTITEM : Role.FIGURE);
+  setRole(block.getSvgRoot(), Role.PRESENTATION);
+  const focusableElement = block.getFocusableElement();
+  setRole(focusableElement, block.isInFlyout ? Role.LISTITEM : Role.FIGURE);
 
   let roleDescription = Msg['BLOCK_LABEL_STATEMENT'];
   if (block.statementInputCount) {
@@ -88,7 +90,7 @@ export function configureAriaRole(block: BlockSvg) {
     roleDescription = Msg['BLOCK_LABEL_VALUE'];
   }
 
-  setState(block.getSvgRoot(), State.ROLEDESCRIPTION, roleDescription);
+  setState(focusableElement, State.ROLEDESCRIPTION, roleDescription);
 }
 
 /**

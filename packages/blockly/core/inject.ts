@@ -54,6 +54,7 @@ export function inject(
   if (opt_options?.rtl) {
     dom.addClass(subContainer, 'blocklyRTL');
   }
+  aria.setRole(subContainer, aria.Role.APPLICATION);
 
   containerElement!.appendChild(subContainer);
   const svg = createDom(subContainer, options);

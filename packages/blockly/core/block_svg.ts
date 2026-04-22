@@ -1998,7 +1998,11 @@ export class BlockSvg
    * Updates the ARIA label, role and roledescription for this block.
    */
   private recomputeAriaAttributes() {
-    aria.setState(this.getSvgRoot(), aria.State.LABEL, computeAriaLabel(this));
+    aria.setState(
+      this.getFocusableElement(),
+      aria.State.LABEL,
+      computeAriaLabel(this),
+    );
     configureAriaRole(this);
   }
 
