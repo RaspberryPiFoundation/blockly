@@ -292,7 +292,7 @@ suite('ARIA', function () {
     test('Statement blocks have correct role description', function () {
       const block = this.makeBlock('text_print');
       const roleDescription = Blockly.utils.aria.getState(
-        block.getSvgRoot(),
+        block.getFocusableElement(),
         Blockly.utils.aria.State.ROLEDESCRIPTION,
       );
       assert.equal(roleDescription, 'statement');
@@ -301,7 +301,7 @@ suite('ARIA', function () {
     test('Value blocks have correct role description', function () {
       const block = this.makeBlock('logic_boolean');
       const roleDescription = Blockly.utils.aria.getState(
-        block.getSvgRoot(),
+        block.getFocusableElement(),
         Blockly.utils.aria.State.ROLEDESCRIPTION,
       );
       assert.equal(roleDescription, 'value');
@@ -310,7 +310,7 @@ suite('ARIA', function () {
     test('Container blocks have correct role description', function () {
       const block = this.makeBlock('controls_if');
       const roleDescription = Blockly.utils.aria.getState(
-        block.getSvgRoot(),
+        block.getFocusableElement(),
         Blockly.utils.aria.State.ROLEDESCRIPTION,
       );
       assert.equal(roleDescription, 'container');
@@ -318,7 +318,7 @@ suite('ARIA', function () {
 
     test('Workspace blocks have the correct role', function () {
       const block = this.makeBlock('text_print');
-      const role = Blockly.utils.aria.getRole(block.getSvgRoot());
+      const role = Blockly.utils.aria.getRole(block.getFocusableElement());
       assert.equal(role, Blockly.utils.aria.Role.FIGURE);
     });
 
@@ -327,14 +327,14 @@ suite('ARIA', function () {
         this.workspace.getToolbox().getToolboxItems()[0],
       );
       const block = this.workspace.getFlyout().getWorkspace().getTopBlocks()[0];
-      const role = Blockly.utils.aria.getRole(block.getSvgRoot());
+      const role = Blockly.utils.aria.getRole(block.getFocusableElement());
       assert.equal(role, Blockly.utils.aria.Role.LISTITEM);
     });
 
     test('Root workspace blocks indicate that in their labels', function () {
       const block = this.makeBlock('text_print');
       const label = Blockly.utils.aria.getState(
-        block.getSvgRoot(),
+        block.getFocusableElement(),
         Blockly.utils.aria.State.LABEL,
       );
       assert.isTrue(label.startsWith('Begin stack'));
@@ -346,7 +346,7 @@ suite('ARIA', function () {
       );
       const block = this.workspace.getFlyout().getWorkspace().getTopBlocks()[0];
       const label = Blockly.utils.aria.getState(
-        block.getSvgRoot(),
+        block.getFocusableElement(),
         Blockly.utils.aria.State.LABEL,
       );
       assert.notInclude(label, 'Begin stack');
@@ -357,7 +357,7 @@ suite('ARIA', function () {
       const printBlock = this.makeBlock('text_print');
       ifBlock.getInput('IF0').connection.connect(printBlock.previousConnection);
       const label = Blockly.utils.aria.getState(
-        printBlock.getSvgRoot(),
+        printBlock.getFocusableElement(),
         Blockly.utils.aria.State.LABEL,
       );
       assert.isFalse(label.startsWith('Begin do'));
@@ -370,7 +370,7 @@ suite('ARIA', function () {
         .getInput('ELSE')
         .connection.connect(printBlock.previousConnection);
       const label = Blockly.utils.aria.getState(
-        printBlock.getSvgRoot(),
+        printBlock.getFocusableElement(),
         Blockly.utils.aria.State.LABEL,
       );
       assert.isTrue(label.startsWith('Begin else'));
@@ -379,13 +379,13 @@ suite('ARIA', function () {
     test('Disabled blocks indicate that in their label', function () {
       const block = this.makeBlock('text_print');
       let label = Blockly.utils.aria.getState(
-        block.getSvgRoot(),
+        block.getFocusableElement(),
         Blockly.utils.aria.State.LABEL,
       );
       assert.notInclude(label, 'disabled');
       block.setDisabledReason(true, 'testing');
       label = Blockly.utils.aria.getState(
-        block.getSvgRoot(),
+        block.getFocusableElement(),
         Blockly.utils.aria.State.LABEL,
       );
       assert.include(label, 'disabled');
@@ -394,13 +394,13 @@ suite('ARIA', function () {
     test('Collapsed blocks indicate that in their label', function () {
       const block = this.makeBlock('text_print');
       let label = Blockly.utils.aria.getState(
-        block.getSvgRoot(),
+        block.getFocusableElement(),
         Blockly.utils.aria.State.LABEL,
       );
       assert.notInclude(label, 'collapsed');
       block.setCollapsed(true);
       label = Blockly.utils.aria.getState(
-        block.getSvgRoot(),
+        block.getFocusableElement(),
         Blockly.utils.aria.State.LABEL,
       );
       assert.include(label, 'collapsed');
@@ -411,13 +411,13 @@ suite('ARIA', function () {
       const text = this.makeBlock('text');
       text.outputConnection.connect(block.inputList[0].connection);
       let label = Blockly.utils.aria.getState(
-        text.getSvgRoot(),
+        text.getFocusableElement(),
         Blockly.utils.aria.State.LABEL,
       );
       assert.notInclude(label, 'replaceable');
       text.setShadow(true);
       label = Blockly.utils.aria.getState(
-        text.getSvgRoot(),
+        text.getFocusableElement(),
         Blockly.utils.aria.State.LABEL,
       );
       assert.include(label, 'replaceable');
@@ -426,7 +426,7 @@ suite('ARIA', function () {
     test('Blocks without inputs are properly labeled', function () {
       const block = this.makeBlock('math_random_float');
       const label = Blockly.utils.aria.getState(
-        block.getSvgRoot(),
+        block.getFocusableElement(),
         Blockly.utils.aria.State.LABEL,
       );
       assert.notInclude(label, 'input');
@@ -435,7 +435,7 @@ suite('ARIA', function () {
     test('Blocks with one input are properly labeled', function () {
       const block = this.makeBlock('logic_negate');
       const label = Blockly.utils.aria.getState(
-        block.getSvgRoot(),
+        block.getFocusableElement(),
         Blockly.utils.aria.State.LABEL,
       );
       assert.isTrue(label.endsWith('has input'));
@@ -444,7 +444,7 @@ suite('ARIA', function () {
     test('Blocks with multiple inputs are properly labeled', function () {
       const block = this.makeBlock('logic_ternary');
       const label = Blockly.utils.aria.getState(
-        block.getSvgRoot(),
+        block.getFocusableElement(),
         Blockly.utils.aria.State.LABEL,
       );
       assert.isTrue(label.endsWith('has inputs'));
