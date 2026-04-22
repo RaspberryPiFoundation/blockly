@@ -249,9 +249,8 @@ function displayDialog(
 
   form.appendChild(buttonRow);
 
-  const focusedNode = getFocusManager().getFocusedNode();
   let restoreFocus: (() => void) | undefined;
-  if (focusedNode && activeDialogCount === 0) {
+  if (activeDialogCount === 0) {
     restoreFocus = getFocusManager().takeEphemeralFocus(dialog);
   }
 
