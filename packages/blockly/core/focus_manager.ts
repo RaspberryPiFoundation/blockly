@@ -11,7 +11,11 @@ import {FocusableTreeTraverser} from './utils/focusable_tree_traverser.js';
 
 /**
  * Type declaration for returning focus to FocusManager upon completing an
- * ephemeral UI flow (such as a dialog).
+ * ephemeral UI flow (such as a dialog). Normally, the FocusManager will refocus
+ * the previously-focused element. If callers do not wish for the FocusManager
+ * to do so, they may call this method with `restoreFocus` set to false to
+ * prevent automatic refocusing and leave focus where it is.
+ *
  *
  * See FocusManager.takeEphemeralFocus for more details.
  */
