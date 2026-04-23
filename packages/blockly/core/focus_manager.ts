@@ -84,27 +84,27 @@ export class FocusManager {
   private isUpdatingFocusedNode: boolean = false;
 
   /**
-   * Root element in which quasi-modals (WidgetDiv, DropDownDiv) currently live.
+   * Root element in which popovers (WidgetDiv, DropDownDiv) currently live.
    */
-  private quasiModalFocusRoot?: HTMLElement;
+  private popoverFocusRoot?: HTMLElement;
 
   /**
-   * Set of callbacks to invoke if the quasi-modal focus root loses focus.
+   * Set of callbacks to invoke if the popover focus root loses focus.
    */
-  private quasiModalFocusLossHandlers: Set<() => void> = new Set();
+  private popoverFocusLossHandlers: Set<() => void> = new Set();
 
   /**
-   * Handler for focusout in the quasi-modal focus root that selectively
-   * invokes the quasi-modal focus loss handlers if focus has truly transitioned
-   * outside of the focus root, and not e.g. to a different quasi-modal.
+   * Handler for focusout in the popover focus root that selectively
+   * invokes the popover focus loss handlers if focus has truly transitioned
+   * outside of the focus root, and not e.g. to a different popover.
    */
-  private quasiModalFocusOutHandler = (e: FocusEvent) => {
+  private popoverFocusOutHandler = (e: FocusEvent) => {
     const target = e.relatedTarget;
     if (
       target === null ||
-      (target instanceof Node && !this.quasiModalFocusRoot?.contains(target))
+      (target instanceof Node && !this.popoverFocusRoot?.contains(target))
     ) {
-      for (const handler of this.quasiModalFocusLossHandlers) {
+      for (const handler of this.popoverFocusLossHandlers) {
         handler();
       }
     }
@@ -695,47 +695,47 @@ export class FocusManager {
   }
 
   /**
-   * Sets the current quasi-modal focus root. Generally this is active
+   * Sets the current popover focus root. Generally this is active
    * workspace's injection div or the explicitly specified parent container for
    * the WidgetDiv, DropDownDiv, etc.
    *
    * @internal
-   * @param newRoot The new element that contains all quasi-modals.
+   * @param newRoot The new element that contains all popovers.
    */
-  setQuasiModalFocusRoot(newRoot: HTMLElement) {
-    this.quasiModalFocusRoot?.removeEventListener(
+  setPopoverFocusRoot(newRoot: HTMLElement) {
+    this.popoverFocusRoot?.removeEventListener(
       'focusout',
-      this.quasiModalFocusOutHandler,
+      this.popoverFocusOutHandler,
     );
-    this.quasiModalFocusRoot = newRoot;
-    this.quasiModalFocusRoot.addEventListener(
+    this.popoverFocusRoot = newRoot;
+    this.popoverFocusRoot.addEventListener(
       'focusout',
-      this.quasiModalFocusOutHandler,
+      this.popoverFocusOutHandler,
     );
   }
 
   /**
-   * Registers a callback to be invoked if the quasi-modal focus root loses
-   * focus. This should only be called by quasi-modals that need to react to
+   * Registers a callback to be invoked if the popover focus root loses
+   * focus. This should only be called by popovers that need to react to
    * focus changes by e.g. hiding themselves and resigning ephemeral focus.
    *
    * @internal
    * @param handler A callback function.
    */
-  registerQuasiModalFocusLossHandler(handler: () => void) {
-    this.quasiModalFocusLossHandlers.add(handler);
+  registerPopoverFocusLossHandler(handler: () => void) {
+    this.popoverFocusLossHandlers.add(handler);
   }
 
   /**
-   * Unregisters a previously-registered quasi-modal focus loss handler. This
-   * should only be invoked by quasi-modals when they no longer need to be
+   * Unregisters a previously-registered popover focus loss handler. This
+   * should only be invoked by popovers when they no longer need to be
    * notified of focus loss, typically when they are hidden.
    *
    * @internal
    * @param handler A previously-registered callback function.
    */
-  unregisterQuasiModalFocusLossHandler(handler: () => void) {
-    this.quasiModalFocusLossHandlers.delete(handler);
+  unregisterPopoverFocusLossHandler(handler: () => void) {
+    this.popoverFocusLossHandlers.delete(handler);
   }
 }
 

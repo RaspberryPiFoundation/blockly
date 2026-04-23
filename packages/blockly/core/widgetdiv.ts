@@ -62,7 +62,7 @@ export function testOnly_setDiv(newDiv: HTMLDivElement | null) {
 }
 
 /**
- * Deals with the root element that contains this and other quasi-modals losing
+ * Deals with the root element that contains this and other popovers losing
  * focus by returning ephemeral focus if we hold it and hiding the WidgetDiv.
  */
 function handleFocusLoss() {
@@ -150,7 +150,7 @@ export function show(
   if (manageEphemeralFocus) {
     returnEphemeralFocus = getFocusManager().takeEphemeralFocus(div);
   }
-  getFocusManager().registerQuasiModalFocusLossHandler(handleFocusLoss);
+  getFocusManager().registerPopoverFocusLossHandler(handleFocusLoss);
 }
 
 /**
@@ -164,7 +164,7 @@ export function hide() {
 
   const div = containerDiv;
   if (!div) return;
-  getFocusManager().unregisterQuasiModalFocusLossHandler(handleFocusLoss);
+  getFocusManager().unregisterPopoverFocusLossHandler(handleFocusLoss);
   div.style.display = 'none';
   div.style.left = '';
   div.style.top = '';

@@ -87,7 +87,7 @@ export function getMainWorkspace(): Workspace {
 export function setMainWorkspace(workspace: Workspace) {
   mainWorkspace = workspace;
   if (workspace.rendered) {
-    getFocusManager().setQuasiModalFocusRoot(
+    getFocusManager().setPopoverFocusRoot(
       (workspace as WorkspaceSvg).getInjectionDiv(),
     );
   }
