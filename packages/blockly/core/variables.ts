@@ -16,6 +16,7 @@ import {getFocusManager} from './focus_manager.js';
 import {isLegacyProcedureDefBlock} from './interfaces/i_legacy_procedure_blocks.js';
 import {isVariableBackedParameterModel} from './interfaces/i_variable_backed_parameter_model.js';
 import {IVariableModel, IVariableState} from './interfaces/i_variable_model.js';
+import {keyboardNavigationController} from './keyboard_navigation_controller.js';
 import {Msg} from './msg.js';
 import * as deprecation from './utils/deprecation.js';
 import type {BlockInfo, FlyoutItemInfo} from './utils/toolbox.js';
@@ -427,7 +428,9 @@ export function createVariableButtonHandler(
         const variable = workspace.getVariableMap().createVariable(text, type);
         if (opt_callback) opt_callback(text);
         const flyoutWorkspace = workspace.getFlyout()?.getWorkspace();
-        if (!flyoutWorkspace) return;
+        if (!flyoutWorkspace || !keyboardNavigationController.getIsActive()) {
+          return;
+        }
         const changeListener = (e: Events.Abstract) => {
           // Focus the newly created variable_set block.
           if (e.type === Events.BLOCK_CREATE) {
