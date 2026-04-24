@@ -97,6 +97,7 @@ export class PathObject extends BasePathObject {
             'stroke': this.svgPath.getAttribute('stroke') || '',
             'fill': this.svgPath.getAttribute('fill') || '',
             'd': this.svgPath.getAttribute('d') || '',
+            'transform': this.svgPath.getAttribute('transform') || '',
             'role': Role.PRESENTATION,
           },
           this.svgRoot,
