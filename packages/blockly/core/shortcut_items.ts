@@ -934,6 +934,7 @@ export function registerDuplicate() {
       return (
         !workspace.isDragging() &&
         !workspace.isReadOnly() &&
+        !workspace.isFlyout &&
         (focusedNode instanceof BlockSvg ? focusedNode.isDuplicatable() : true)
       );
     },
@@ -959,7 +960,7 @@ export function registerCleanup() {
   const cleanupShortcut: KeyboardShortcut = {
     name: names.CLEANUP,
     preconditionFn: (workspace) =>
-      !workspace.isDragging() && !workspace.isReadOnly(),
+      !workspace.isDragging() && !workspace.isReadOnly() && !workspace.isFlyout,
     callback: (workspace) => {
       keyboardNavigationController.setIsActive(true);
       workspace.cleanUp();
