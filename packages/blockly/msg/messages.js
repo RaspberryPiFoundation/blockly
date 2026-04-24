@@ -1926,9 +1926,23 @@ Blockly.Msg.ANNOUNCE_MOVE_CANCELED = 'Canceled movement';
 Blockly.Msg.FIELD_LABEL_EMPTY = 'empty';
 /** @type {string} */
 /// ARIA type name for an input field, used by screen readers to identify the type of field.
-Blockly.Msg.ARIA_TYPE_FIELD_INPUT = 'input field';
+Blockly.Msg.ARIA_TYPE_FIELD_INPUT = 'input';
+/** @type {string} */
+/// ARIA type name for a text input field, used by screen readers to identify the type of field.
+Blockly.Msg.ARIA_TYPE_FIELD_TEXT_INPUT = 'text';
+/** @type {string} */
+/// ARIA type name for a number field, used by screen readers to identify the type of field.
+Blockly.Msg.ARIA_TYPE_FIELD_NUMBER = 'number';
+/** @type {string} */
+/// ARIA type name for a dropdown field, used by screen readers to identify the type of field.
+Blockly.Msg.ARIA_TYPE_FIELD_DROPDOWN = 'dropdown';
 /** @type {string} */
 /// Label for an editable field, used by screen readers to identify fields that can be edited by the user.  Placeholder corresponds to the label of the field's value.
 /// \n\nParameters:\n* %1 - the label of the field's value
 /// \n\nExamples:\n* "Edit 5"\n* "Edit item"
 Blockly.Msg.FIELD_LABEL_EDIT_PREFIX = 'Edit %1';
+/** @type {string} */
+/// Label for an unlabeled dropdown field option, used by screen readers to identify options in a dropdown field.  Placeholder corresponds to the index of the option in the dropdown, starting at 1.
+/// \n\nParameters:\n* %1 - the index of the option in the dropdown, starting at 1
+/// \n\nExamples:\n* "Option 1"\n* "Option 2"
+Blockly.Msg.FIELD_LABEL_OPTION_INDEX = 'Option %1';

@@ -491,5 +491,9 @@
 	"ANNOUNCE_MOVE_CANCELED": "ARIA live region message announcing a block movement has been canceled.",
 	"FIELD_LABEL_EMPTY": "Label for an empty field, used by screen readers to identify fields that have no content.",
 	"ARIA_TYPE_FIELD_INPUT": "ARIA type name for an input field, used by screen readers to identify the type of field.",
-	"FIELD_LABEL_EDIT_PREFIX": "Label for an editable field, used by screen readers to identify fields that can be edited by the user.  Placeholder corresponds to the label of the field's value. \n\nParameters:\n* %1 - the label of the field's value \n\nExamples:\n* 'Edit 5'\n* 'Edit item'"
+	"ARIA_TYPE_FIELD_TEXT_INPUT": "ARIA type name for a text input field, used by screen readers to identify the type of field.",
+	"ARIA_TYPE_FIELD_NUMBER": "ARIA type name for a number field, used by screen readers to identify the type of field.",
+	"ARIA_TYPE_FIELD_DROPDOWN": "ARIA type name for a dropdown field, used by screen readers to identify the type of field.",
+	"FIELD_LABEL_EDIT_PREFIX": "Label for an editable field, used by screen readers to identify fields that can be edited by the user.  Placeholder corresponds to the label of the field's value. \n\nParameters:\n* %1 - the label of the field's value \n\nExamples:\n* 'Edit 5'\n* 'Edit item'",
+	"FIELD_LABEL_OPTION_INDEX": "Label for an unlabeled dropdown field option, used by screen readers to identify options in a dropdown field.  Placeholder corresponds to the index of the option in the dropdown, starting at 1. \n\nParameters:\n* %1 - the index of the option in the dropdown, starting at 1 \n\nExamples:\n* 'Option 1'\n* 'Option 2'"
 }

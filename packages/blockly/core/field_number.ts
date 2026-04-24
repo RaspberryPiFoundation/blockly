@@ -18,6 +18,7 @@ import {
   FieldInputValidator,
 } from './field_input.js';
 import * as fieldRegistry from './field_registry.js';
+import {Msg} from './msg.js';
 import * as aria from './utils/aria.js';
 import * as dom from './utils/dom.js';
 
@@ -340,6 +341,19 @@ export class FieldNumber extends FieldInput<number> {
       undefined,
       options,
     );
+  }
+
+  /**
+   * Gets an ARIA-friendly label representation of this field's type.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's type.
+   *
+   * @returns An ARIA representation of the field's type or a default if it is
+   *     unspecified.
+   */
+  override getAriaTypeName(): string | null {
+    return this.ariaTypeName || Msg['ARIA_TYPE_FIELD_NUMBER'];
   }
 }
 
