@@ -491,5 +491,9 @@
 	"ANNOUNCE_MOVE_CANCELED": "ARIA live region message announcing a block movement has been canceled.",
 	"FIELD_LABEL_EMPTY": "Label for an empty field, used by screen readers to identify fields that have no content.",
 	"ARIA_TYPE_FIELD_INPUT": "ARIA type name for an input field, used by screen readers to identify the type of field.",
-	"FIELD_LABEL_EDIT_PREFIX": "Label for an editable field, used by screen readers to identify fields that can be edited by the user.  Placeholder corresponds to the label of the field's value. \n\nParameters:\n* %1 - the label of the field's value \n\nExamples:\n* 'Edit 5'\n* 'Edit item'"
+	"FIELD_LABEL_EDIT_PREFIX": "Label for an editable field, used by screen readers to identify fields that can be edited by the user.  Placeholder corresponds to the label of the field's value. \n\nParameters:\n* %1 - the label of the field's value \n\nExamples:\n* 'Edit 5'\n* 'Edit item'",
+	"OPEN_TRASH": "ARIA label for the trashcan.",
+	"ZOOM_IN": "ARIA label for the zoom in button.",
+	"ZOOM_OUT": "ARIA label for the zoom out button.",
+	"RESET_ZOOM": "ARIA label for the reset zoom button."
 }

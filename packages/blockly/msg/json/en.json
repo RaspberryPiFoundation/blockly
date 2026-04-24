@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-04-21 17:30:08.288719",
+		"lastupdated": "2026-04-24 12:57:57.429458",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -484,5 +484,9 @@
 	"ANNOUNCE_MOVE_CANCELED": "Canceled movement",
 	"FIELD_LABEL_EMPTY": "empty",
 	"ARIA_TYPE_FIELD_INPUT": "input field",
-	"FIELD_LABEL_EDIT_PREFIX": "Edit %1"
+	"FIELD_LABEL_EDIT_PREFIX": "Edit %1",
+	"OPEN_TRASH": "Open trash",
+	"ZOOM_IN": "Zoom in",
+	"ZOOM_OUT": "Zoom out",
+	"RESET_ZOOM": "Reset zoom"
 }

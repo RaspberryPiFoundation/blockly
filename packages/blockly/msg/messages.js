@@ -1932,3 +1932,15 @@ Blockly.Msg.ARIA_TYPE_FIELD_INPUT = 'input field';
 /// \n\nParameters:\n* %1 - the label of the field's value
 /// \n\nExamples:\n* "Edit 5"\n* "Edit item"
 Blockly.Msg.FIELD_LABEL_EDIT_PREFIX = 'Edit %1';
+/** @type {string} */
+/// ARIA label for the trashcan.
+Blockly.Msg.OPEN_TRASH = 'Open trash';
+/** @type {string} */
+/// ARIA label for the zoom in button.
+Blockly.Msg.ZOOM_IN = 'Zoom in';
+/** @type {string} */
+/// ARIA label for the zoom out button.
+Blockly.Msg.ZOOM_OUT = 'Zoom out';
+/** @type {string} */
+/// ARIA label for the reset zoom button.
+Blockly.Msg.RESET_ZOOM = 'Reset zoom';

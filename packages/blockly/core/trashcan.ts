@@ -11,26 +11,32 @@
  */
 // Former goog.module ID: Blockly.Trashcan
 
-// Unused import preserved for side-effects. Remove if unneeded.
 import * as browserEvents from './browser_events.js';
 import {ComponentManager} from './component_manager.js';
+import * as Css from './css.js';
 import {DeleteArea} from './delete_area.js';
 import type {Abstract} from './events/events_abstract.js';
 import './events/events_trashcan_open.js';
 import {isBlockDelete} from './events/predicates.js';
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
+import {getFocusManager} from './focus_manager.js';
 import type {IAutoHideable} from './interfaces/i_autohideable.js';
 import type {IDraggable} from './interfaces/i_draggable.js';
 import type {IFlyout} from './interfaces/i_flyout.js';
+import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IPositionable} from './interfaces/i_positionable.js';
 import {KeyboardMover} from './keyboard_nav/keyboard_mover.js';
+import {keyboardNavigationController} from './keyboard_navigation_controller.js';
 import type {UiMetrics} from './metrics_manager.js';
+import {Msg} from './msg.js';
 import * as uiPosition from './positionable_helpers.js';
 import * as registry from './registry.js';
 import type * as blocks from './serialization/blocks.js';
 import {SPRITE} from './sprites.js';
+import * as aria from './utils/aria.js';
 import * as dom from './utils/dom.js';
+import {getNextUniqueId} from './utils/idgenerator.js';
 import {Rect} from './utils/rect.js';
 import {Size} from './utils/size.js';
 import {Svg} from './utils/svg.js';
@@ -43,13 +49,21 @@ import type {WorkspaceSvg} from './workspace_svg.js';
  */
 export class Trashcan
   extends DeleteArea
-  implements IAutoHideable, IPositionable
+  implements IAutoHideable, IPositionable, IFocusableNode
 {
   /**
-   * The unique id for this component that is used to register with the
+   * The id for this component that is used to register with the
    * ComponentManager.
    */
   override id = 'trashcan';
+
+  /**
+   * A globally unique ID for this particular trashcan. Component Manager IDs
+   * (the ID above) are 1:1 with classes, but if there are multiple workspaces
+   * with trashcans on a page, each actual trashcan DOM element needs a unique
+   * ID to support focusable node resolution. This ID is for that purpose.
+   */
+  private uniqueId = getNextUniqueId();
 
   /**
    * A list of JSON (stored as strings) representing blocks in the trashcan.
@@ -66,23 +80,8 @@ export class Trashcan
   /** Current open/close state of the lid. */
   isLidOpen = false;
 
-  /**
-   * The minimum openness of the lid. Used to indicate if the trashcan
-   * contains blocks.
-   */
-  private minOpenness = 0;
-
   /** The SVG group containing the trash can. */
   private svgGroup: SVGElement | null = null;
-
-  /** The SVG image element of the trash can lid. */
-  private svgLid: SVGElement | null = null;
-
-  /** Task ID of opening/closing animation. */
-  private lidTask: ReturnType<typeof setTimeout> | null = null;
-
-  /** Current state of lid opening (0.0 = closed, 1.0 = open). */
-  private lidOpen = 0;
 
   /** Left coordinate of the trash can. */
   private left = 0;
@@ -150,7 +149,15 @@ export class Trashcan
               clip-path="url(#blocklyTrashLidClipPath837493)"></image>
         </g>
         */
-    this.svgGroup = dom.createSvgElement(Svg.G, {'class': 'blocklyTrash'});
+    this.svgGroup = dom.createSvgElement(Svg.G, {
+      'class': 'blocklyTrash',
+      'tabindex': '0',
+      'id': this.uniqueId,
+    });
+
+    aria.setRole(this.svgGroup, aria.Role.BUTTON);
+    aria.setState(this.svgGroup, aria.State.LABEL, Msg['OPEN_TRASH']);
+
     let clip;
     const rnd = String(Math.random()).substring(2);
     clip = dom.createSvgElement(
@@ -190,21 +197,31 @@ export class Trashcan
       {'width': WIDTH, 'height': LID_HEIGHT},
       clip,
     );
-    this.svgLid = dom.createSvgElement(
+
+    const lid = dom.createSvgElement(
+      Svg.G,
+      {'class': 'blocklyTrashLid'},
+      this.svgGroup,
+    );
+
+    const lidGroup = dom.createSvgElement(
+      Svg.SVG,
+      {
+        'viewBox': `0 ${SPRITE_TOP} ${WIDTH} ${LID_HEIGHT}`,
+        'width': WIDTH,
+        'height': LID_HEIGHT,
+      },
+      lid,
+    );
+
+    dom.createSvgElement(
       Svg.IMAGE,
       {
         'width': SPRITE.width,
-        'x': -SPRITE_LEFT,
         'height': SPRITE.height,
-        'y': -SPRITE_TOP,
-        'clip-path': 'url(#blocklyTrashLidClipPath' + rnd + ')',
+        'href': this.workspace.options.pathToMedia + SPRITE.url,
       },
-      this.svgGroup,
-    );
-    this.svgLid.setAttributeNS(
-      dom.XLINK_NS,
-      'xlink:href',
-      this.workspace.options.pathToMedia + SPRITE.url,
+      lidGroup,
     );
 
     // bindEventWithChecks_ quashes events too aggressively. See:
@@ -218,10 +235,6 @@ export class Trashcan
       this.blockMouseDownWhenOpenable,
     );
     browserEvents.bind(this.svgGroup, 'pointerup', this, this.click);
-    // Bind to body instead of this.svgGroup so that we don't get lid jitters
-    browserEvents.bind(body, 'pointerover', this, this.mouseOver);
-    browserEvents.bind(body, 'pointerout', this, this.mouseOut);
-    this.animateLid();
     return this.svgGroup;
   }
 
@@ -255,9 +268,6 @@ export class Trashcan
     this.workspace.getComponentManager().removeComponent('trashcan');
     if (this.svgGroup) {
       dom.removeNode(this.svgGroup);
-    }
-    if (this.lidTask) {
-      clearTimeout(this.lidTask);
     }
   }
 
@@ -294,6 +304,13 @@ export class Trashcan
       this.flyout?.show(contents);
       blocklyStyle.cursor = '';
       this.workspace.scrollbar?.setVisible(false);
+      if (keyboardNavigationController.getIsActive()) {
+        const flyoutWorkspace = this.flyout?.getWorkspace();
+        const firstItem = flyoutWorkspace?.getNavigator().getFirstNode();
+        if (firstItem) {
+          getFocusManager().focusNode(firstItem);
+        }
+      }
     }, 10);
     this.fireUiEvent(true);
   }
@@ -332,7 +349,7 @@ export class Trashcan
       return;
     }
     this.contents.length = 0;
-    this.setMinOpenness(0);
+    this.svgGroup?.classList.remove(TRASH_FULL);
     this.closeFlyout();
   }
 
@@ -465,70 +482,8 @@ export class Trashcan
     if (this.isLidOpen === state) {
       return;
     }
-    if (this.lidTask) {
-      clearTimeout(this.lidTask);
-    }
     this.isLidOpen = state;
-    this.animateLid();
-  }
-
-  /** Rotate the lid open or closed by one step.  Then wait and recurse. */
-  private animateLid() {
-    const frames = ANIMATION_FRAMES;
-
-    const delta = 1 / (frames + 1);
-    this.lidOpen += this.isLidOpen ? delta : -delta;
-    this.lidOpen = Math.min(Math.max(this.lidOpen, this.minOpenness), 1);
-
-    this.setLidAngle(this.lidOpen * MAX_LID_ANGLE);
-
-    // Linear interpolation between min and max.
-    const opacity = OPACITY_MIN + this.lidOpen * (OPACITY_MAX - OPACITY_MIN);
-    if (this.svgGroup) {
-      this.svgGroup.style.opacity = `${opacity}`;
-    }
-
-    if (this.lidOpen > this.minOpenness && this.lidOpen < 1) {
-      this.lidTask = setTimeout(
-        this.animateLid.bind(this),
-        ANIMATION_LENGTH / frames,
-      );
-    }
-  }
-
-  /**
-   * Set the angle of the trashcan's lid.
-   *
-   * @param lidAngle The angle at which to set the lid.
-   */
-  private setLidAngle(lidAngle: number) {
-    const openAtRight =
-      this.workspace.toolboxPosition === toolbox.Position.RIGHT ||
-      (this.workspace.horizontalLayout && this.workspace.RTL);
-    this.svgLid?.setAttribute(
-      'transform',
-      'rotate(' +
-        (openAtRight ? -lidAngle : lidAngle) +
-        ',' +
-        (openAtRight ? 4 : WIDTH - 4) +
-        ',' +
-        (LID_HEIGHT - 2) +
-        ')',
-    );
-  }
-
-  /**
-   * Sets the minimum openness of the trashcan lid. If the lid is currently
-   * closed, this will update lid's position.
-   *
-   * @param newMin The new minimum openness of the lid. Should be between 0
-   *     and 1.
-   */
-  private setMinOpenness(newMin: number) {
-    this.minOpenness = newMin;
-    if (!this.isLidOpen) {
-      this.setLidAngle(newMin * MAX_LID_ANGLE);
-    }
+    this.svgGroup?.classList.toggle(TRASH_OPEN, state);
   }
 
   /**
@@ -573,25 +528,6 @@ export class Trashcan
   }
 
   /**
-   * Indicate that the trashcan can be clicked (by opening it) if it has blocks.
-   */
-  private mouseOver() {
-    if (this.hasContents()) {
-      this.setLidOpen(true);
-    }
-  }
-
-  /**
-   * Close the lid of the trashcan if it was open (Vis. it was indicating it had
-   *    blocks).
-   */
-  private mouseOut() {
-    // No need to do a .hasBlocks check here because if it doesn't the trashcan
-    // won't be open in the first place, and setOpen won't run.
-    this.setLidOpen(false);
-  }
-
-  /**
    * Handle a BLOCK_DELETE event. Adds deleted blocks oldXml to the content
    * array.
    *
@@ -615,7 +551,7 @@ export class Trashcan
       this.contents.pop();
     }
 
-    this.setMinOpenness(HAS_BLOCKS_LID_ANGLE);
+    this.svgGroup?.classList.add(TRASH_FULL);
   }
 
   /**
@@ -686,6 +622,38 @@ export class Trashcan
     };
     return blockInfo;
   }
+
+  getFocusableElement() {
+    if (!this.svgGroup) {
+      throw new Error('Tried to focus uninitialized trashcan');
+    }
+    return this.svgGroup;
+  }
+
+  getFocusableTree() {
+    return this.workspace;
+  }
+
+  onNodeFocus() {}
+  onNodeBlur() {}
+
+  canBeFocused() {
+    return !!this.svgGroup;
+  }
+
+  performAction() {
+    this.click();
+  }
+
+  /**
+   * Retrieves the globally unique ID of this Trashcan instance. Used for focus
+   * management.
+   *
+   * @internal
+   */
+  getGloballyUniqueId() {
+    return this.uniqueId;
+  }
 }
 
 /** Width of both the trash can and lid images. */
@@ -712,26 +680,49 @@ const SPRITE_LEFT = 0;
 /** Location of trashcan in sprite image. */
 const SPRITE_TOP = 32;
 
-/**
- * The openness of the lid when the trashcan contains blocks.
- *    (0.0 = closed, 1.0 = open)
- */
-const HAS_BLOCKS_LID_ANGLE = 0.1;
+const TRASH_FULL = 'blocklyTrashFull';
+const TRASH_OPEN = 'blocklyTrashOpen';
 
-/** The length of the lid open/close animation in milliseconds. */
-const ANIMATION_LENGTH = 80;
+Css.register(`
+  .blocklyTrash {
+    opacity: 0.4;
+    transition: opacity 0.08 ease-out;
+  }
 
-/** The number of frames in the animation. */
-const ANIMATION_FRAMES = 4;
+  .blocklyTrashLid {
+    transition: rotate 0.08s ease-out;
+    transform-origin: 46px 12px;
+    rotate: 0deg;
+    pointer-events: none;
+  }
 
-/** The minimum (resting) opacity of the trashcan and lid. */
-const OPACITY_MIN = 0.4;
+  .blocklyRTL .blocklyTrashLid {
+    transform-origin: 0px 12px;
+  }
 
-/** The maximum (hovered) opacity of the trashcan and lid. */
-const OPACITY_MAX = 0.8;
+  .blocklyTrash.blocklyTrashFull .blocklyTrashLid {
+    rotate: 5deg;
+  }
 
-/**
- * The maximum angle the trashcan lid can opens to. At the end of the open
- * animation the lid will be open to this angle.
- */
-const MAX_LID_ANGLE = 45;
+  .blocklyRTL .blocklyTrash.blocklyTrashFull .blocklyTrashLid {
+    rotate: -5deg;
+  }
+
+  .blocklyTrash.blocklyTrashOpen,
+  .blocklyTrash:hover,
+  .blocklyTrash:focus {
+    opacity: 0.8;
+  }
+
+  .blocklyTrash.blocklyTrashFull.blocklyTrashOpen .blocklyTrashLid,
+  .blocklyTrash.blocklyTrashFull:hover .blocklyTrashLid,
+  .blocklyTrash.blocklyTrashFull:focus .blocklyTrashLid {
+    rotate: 45deg;
+  }
+
+  .blocklyRTL .blocklyTrash.blocklyTrashFull.blocklyTrashOpen .blocklyTrashLid,
+  .blocklyRTL .blocklyTrash.blocklyTrashFull:hover .blocklyTrashLid,
+  .blocklyRTL .blocklyTrash.blocklyTrashFull:focus .blocklyTrashLid {
+    rotate: -45deg;
+  }
+`);
