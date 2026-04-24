@@ -712,7 +712,6 @@ export function hideWithoutAnimation() {
     onHide();
     onHide = null;
   }
-  clearContent();
   owner = null;
 
   (common.getMainWorkspace() as WorkspaceSvg).markFocused();
@@ -721,6 +720,8 @@ export function hideWithoutAnimation() {
     returnEphemeralFocus();
     returnEphemeralFocus = null;
   }
+
+  clearContent();
 }
 
 /**
