@@ -64,7 +64,7 @@ export class Menu {
   private roleName: aria.Role | null = null;
 
   /** The menu's ID. */
-  private id: string | null = null;
+  private id: string = idGenerator.getNextUniqueId();
 
   /** Constructs a new Menu instance. */
   constructor() {}
@@ -490,9 +490,6 @@ export class Menu {
   }
 
   getId(): string {
-    if (!this.id) {
-      this.id = idGenerator.getNextUniqueId();
-    }
     return this.id;
   }
 }

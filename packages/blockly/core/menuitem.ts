@@ -44,7 +44,7 @@ export class MenuItem {
     null;
 
   /** The unique ID for this menu item. */
-  private id: string | null = null;
+  private id: string = idGenerator.getNextUniqueId();
 
   /**
    * @param content Text caption to display as the content of the item, or a
@@ -139,9 +139,6 @@ export class MenuItem {
    * @internal
    */
   getId(): string {
-    if (!this.id) {
-      this.id = idGenerator.getNextUniqueId();
-    }
     return this.id;
   }
 

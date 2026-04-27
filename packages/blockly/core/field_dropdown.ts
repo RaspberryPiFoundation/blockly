@@ -99,6 +99,10 @@ export class FieldDropdown extends Field<string> {
   /** The total vertical padding above and below an image. */
   protected static IMAGE_Y_PADDING = FieldDropdown.IMAGE_Y_OFFSET * 2;
 
+  /**
+   * True once the field’s DOM has been created and it is safe to run ARIA
+   * updates in response to value changes.
+   */
   isInitialized: boolean = false;
 
   /**
@@ -858,6 +862,7 @@ export class FieldDropdown extends Field<string> {
       throw TypeError('Found invalid FieldDropdown options.');
     }
   }
+
   /**
    * Gets an ARIA-friendly label representation of this field's type.
    *
