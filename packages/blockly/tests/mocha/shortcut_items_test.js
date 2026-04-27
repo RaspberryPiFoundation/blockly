@@ -160,7 +160,9 @@ suite('Keyboard Shortcut Items', function () {
       await mutatorIcon.setBubbleVisible(true);
 
       const bubble = mutatorIcon.getBubble();
-      Blockly.getFocusManager().focusTree(bubble.getWorkspace().getFlyout().getWorkspace());
+      Blockly.getFocusManager().focusTree(
+        bubble.getWorkspace().getFlyout().getWorkspace(),
+      );
       const event = new KeyboardEvent('keydown', {
         keyCode: Blockly.utils.KeyCodes.ESC,
         key: 'Escape',
