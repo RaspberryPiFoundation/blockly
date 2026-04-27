@@ -380,6 +380,7 @@ input[type=number] {
 .blocklyContextMenu {
   border-radius: 4px;
   max-height: 100%;
+  box-sizing: content-box;
 }
 
 .blocklyDropdownMenu {
