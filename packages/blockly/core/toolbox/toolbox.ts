@@ -311,6 +311,10 @@ export class Toolbox
       case 'ArrowRight':
         handled = this.toggleSelectedItem(true);
         break;
+      case 'Escape':
+        getFocusManager().focusTree(this.getWorkspace());
+        handled = true;
+        break;
     }
 
     if (handled) {
