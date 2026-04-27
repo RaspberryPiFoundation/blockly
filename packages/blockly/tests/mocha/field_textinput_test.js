@@ -598,15 +598,15 @@ suite('Text Input Fields', function () {
       this.workspace = Blockly.inject('blocklyDiv', {
         renderer: 'geras',
       });
-      const block = this.workspace.newBlock('text');
-      this.field = block.getField('TEXT');
-      block.initSvg();
-      block.render();
+      this.block = this.workspace.newBlock('text');
+      this.field = this.block.getField('TEXT');
+      this.block.initSvg();
+      this.block.render();
 
       this.focusableElement = this.field.getClickTarget_();
     });
     test('Block has field type name in ARIA label', function () {
-      const blockLabel = this.field.getSourceBlock().getAriaLabel();
+      const blockLabel = this.block.getAriaLabel();
       assert.include(blockLabel, 'text:');
     });
     test('Focusable element has role of button', function () {
@@ -614,7 +614,7 @@ suite('Text Input Fields', function () {
       assert.equal(role, 'button');
     });
     test('Hidden when in a flyout', function () {
-      this.field.getSourceBlock().isInFlyout = true;
+      this.block.isInFlyout = true;
       // Force recompute of ARIA label.
       this.field.setValue(this.field.getValue());
       const ariaHidden = this.focusableElement.getAttribute('aria-hidden');

@@ -334,15 +334,15 @@ suite('Dropdown Fields', function () {
     });
     suite('Simple Dropdown', function () {
       setup(function () {
-        const block = this.workspace.newBlock('logic_boolean');
-        this.field = block.getField('BOOL');
-        block.initSvg();
-        block.render();
+        this.block = this.workspace.newBlock('logic_boolean');
+        this.field = this.block.getField('BOOL');
+        this.block.initSvg();
+        this.block.render();
 
         this.focusableElement = this.field.getFocusableElement();
       });
       test('Block has field type name in ARIA label', function () {
-        const blockLabel = this.field.getSourceBlock().getAriaLabel();
+        const blockLabel = this.block.getAriaLabel();
         assert.include(blockLabel, 'dropdown:');
       });
       test('Focusable element has role of button', function () {
@@ -350,7 +350,7 @@ suite('Dropdown Fields', function () {
         assert.equal(role, 'button');
       });
       test('Hidden when in a flyout', function () {
-        this.field.getSourceBlock().isInFlyout = true;
+        this.block.isInFlyout = true;
         // Force recompute of ARIA label.
         this.field.setValue(this.field.getValue());
         const ariaHidden = this.focusableElement.getAttribute('aria-hidden');
@@ -366,7 +366,7 @@ suite('Dropdown Fields', function () {
         const ariaExpanded =
           this.focusableElement.getAttribute('aria-expanded');
         assert.equal(ariaExpanded, 'true');
-        this.field.getSourceBlock().workspace.hideChaff();
+        this.workspace.hideChaff();
       });
       test('Has aria-haspopup of listbox', function () {
         const ariaHasPopup =
@@ -379,7 +379,7 @@ suite('Dropdown Fields', function () {
           this.focusableElement.getAttribute('aria-controls');
         const menuId = this.field.menu_.id;
         assert.equal(ariaControls, menuId);
-        this.field.getSourceBlock().workspace.hideChaff();
+        this.workspace.hideChaff();
       });
       test('Has placeholder ARIA label by default', function () {
         const label = this.focusableElement.getAttribute('aria-label');
@@ -389,7 +389,6 @@ suite('Dropdown Fields', function () {
         const initialLabel = this.focusableElement.getAttribute('aria-label');
         assert.include(initialLabel, 'true');
         this.field.setValue('FALSE');
-        console.log(this.field.getOptions());
         const updatedLabel = this.focusableElement.getAttribute('aria-label');
         assert.include(updatedLabel, 'false');
       });
