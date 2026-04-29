@@ -1040,7 +1040,7 @@ suite('Keyboard-driven movement', function () {
 
         Blockly.getFocusManager().focusNode(valueBlock);
         startMove(this.workspace);
-
+        this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
           ['moving', 'inside', this.getBlockLabel(parent)],
@@ -1057,6 +1057,7 @@ suite('Keyboard-driven movement', function () {
         Blockly.getFocusManager().focusNode(loop);
         startMove(this.workspace);
         moveRight(this.workspace);
+        this.clock.tick(10);
 
         this.moveAndAssert(
           moveRight,
@@ -1081,6 +1082,7 @@ suite('Keyboard-driven movement', function () {
         Blockly.getFocusManager().focusNode(ifBlock);
         startMove(this.workspace); // on workspace
         moveRight(this.workspace); // before block1
+        this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
           [
@@ -1114,7 +1116,7 @@ suite('Keyboard-driven movement', function () {
 
         Blockly.getFocusManager().focusNode(boolean);
         startMove(this.workspace);
-
+        this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
           [
@@ -1151,7 +1153,7 @@ suite('Keyboard-driven movement', function () {
         Blockly.getFocusManager().focusNode(text);
         startMove(this.workspace);
         moveRight(this.workspace); // First labeled input
-
+        this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
           ['moving', 'inside', this.getBlockLabel(textJoin), 'input 2'],

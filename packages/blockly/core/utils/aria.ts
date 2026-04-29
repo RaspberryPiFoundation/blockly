@@ -33,6 +33,9 @@ export enum LiveRegionAssertiveness {
   POLITE = 'polite',
 }
 
+let nextAnnouncementAssertiveness = LiveRegionAssertiveness.OFF;
+const queuedAnnouncements: string[] = [];
+
 /**
  * Customization options that can be passed when using `announceDynamicAriaState`.
  */
@@ -378,6 +381,17 @@ export function announceDynamicAriaState(
     assertiveness = LiveRegionAssertiveness.POLITE,
     role = DEFAULT_LIVE_REGION_ROLE,
   } = options || {};
+  if (
+    assertiveness === LiveRegionAssertiveness.ASSERTIVE ||
+    nextAnnouncementAssertiveness !== LiveRegionAssertiveness.ASSERTIVE
+  ) {
+  }
+
+  queuedAnnouncements.push(text);
+  nextAnnouncementAssertiveness = mostAssertive(
+    assertiveness,
+    nextAnnouncementAssertiveness,
+  );
 
   // We use a short delay so rapid successive calls collapse into a single
   // announcement, and to ensure assistive technologies reliably detect the
@@ -386,14 +400,38 @@ export function announceDynamicAriaState(
   ariaAnnounceTimeout = setTimeout(() => {
     // Clear previous content.
     ariaAnnouncementContainer.replaceChildren();
-    setState(ariaAnnouncementContainer, State.LIVE, assertiveness);
+    setState(
+      ariaAnnouncementContainer,
+      State.LIVE,
+      nextAnnouncementAssertiveness,
+    );
     setRole(ariaAnnouncementContainer, role);
 
     const span = document.createElement('span');
     // The non-breaking space toggle ensures otherwise identical consecutive
     // messages are still announced.
-    span.textContent = text + (addBreakingSpace ? '\u00A0' : '');
+    span.textContent =
+      queuedAnnouncements.join('\n') + (addBreakingSpace ? '\u00A0' : '');
     addBreakingSpace = !addBreakingSpace;
     ariaAnnouncementContainer.appendChild(span);
+    queuedAnnouncements.length = 0;
+    nextAnnouncementAssertiveness = LiveRegionAssertiveness.OFF;
   }, 10);
+}
+
+/** Returns the maximally assertive of the given assertiveness levels. */
+function mostAssertive(a: LiveRegionAssertiveness, b: LiveRegionAssertiveness) {
+  if (
+    a === LiveRegionAssertiveness.ASSERTIVE ||
+    b === LiveRegionAssertiveness.ASSERTIVE
+  ) {
+    return LiveRegionAssertiveness.ASSERTIVE;
+  } else if (
+    a === LiveRegionAssertiveness.POLITE ||
+    b === LiveRegionAssertiveness.POLITE
+  ) {
+    return LiveRegionAssertiveness.POLITE;
+  }
+
+  return LiveRegionAssertiveness.OFF;
 }

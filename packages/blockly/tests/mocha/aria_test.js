@@ -103,14 +103,33 @@ suite('ARIA', function () {
       assert.notEqual(first, second);
     });
 
-    test('last write wins when called rapidly', function () {
+    test('Coalesces messages when called rapidly', function () {
       Blockly.utils.aria.announceDynamicAriaState('First message');
       Blockly.utils.aria.announceDynamicAriaState('Second message');
       Blockly.utils.aria.announceDynamicAriaState('Final message');
 
       this.clock.tick(11);
 
-      assert.include(this.liveRegion.textContent, 'Final message');
+      assert.equal(
+        this.liveRegion.textContent,
+        'First message\nSecond message\nFinal message',
+      );
+    });
+
+    test('Uses maximal assertiveness when coalescing', function () {
+      Blockly.utils.aria.announceDynamicAriaState('First message', {
+        assertiveness: Blockly.utils.aria.LiveRegionAssertiveness.OFF,
+      });
+      Blockly.utils.aria.announceDynamicAriaState('Second message', {
+        assertiveness: Blockly.utils.aria.LiveRegionAssertiveness.ASSERTIVE,
+      });
+      Blockly.utils.aria.announceDynamicAriaState('Final message', {
+        assertiveness: Blockly.utils.aria.LiveRegionAssertiveness.POLITE,
+      });
+
+      this.clock.tick(11);
+
+      assert.equal(this.liveRegion.getAttribute('aria-live'), 'assertive');
     });
 
     test('assertive option sets aria-live assertive', function () {
