@@ -250,10 +250,13 @@ export function registerCut() {
 
       if (focused instanceof BlockSvg) {
         focused.checkAndDelete();
+        e.preventDefault();
       } else if (isIDeletable(focused)) {
         eventUtils.setGroup(true);
         focused.dispose();
         eventUtils.setGroup(false);
+        workspace.getAudioManager().play('delete');
+        e.preventDefault();
       }
       return !!copyData;
     },
