@@ -1880,7 +1880,9 @@ Blockly.Msg.BLOCK_LABEL_HAS_INPUTS = 'has inputs';
 /** @type {string} */
 /// Part of an accessibility label for a block that indicates that it is
 /// a statement block, i.e. that it has a next or previous connection.
-Blockly.Msg.BLOCK_LABEL_STATEMENT = 'statement';
+/// "command" here is used in the sense of a computer command, or a 
+/// command block in Scratch.
+Blockly.Msg.BLOCK_LABEL_STATEMENT = 'command';
 /** @type {string} */
 /// Part of an accessibility label for a block that indicates that it is
 /// a container block, i.e. that it has one or more statement inputs.

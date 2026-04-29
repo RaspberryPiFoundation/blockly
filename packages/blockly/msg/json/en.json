@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-04-29 12:42:30.774691",
+		"lastupdated": "2026-04-29 16:09:43.926632",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -474,7 +474,7 @@
 	"BLOCK_LABEL_REPLACEABLE": "replaceable",
 	"BLOCK_LABEL_HAS_INPUT": "has input",
 	"BLOCK_LABEL_HAS_INPUTS": "has inputs",
-	"BLOCK_LABEL_STATEMENT": "statement",
+	"BLOCK_LABEL_STATEMENT": "command",
 	"BLOCK_LABEL_CONTAINER": "container",
 	"BLOCK_LABEL_VALUE": "value",
 	"BLOCK_LABEL_STACK_BLOCKS": "%1 stack blocks",

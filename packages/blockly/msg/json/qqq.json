@@ -1,5 +1,5 @@
 {
-		"@metadata": {
+	"@metadata": {
 		"authors": [
 			"Ajeje Brazorf",
 			"Amire80",
@@ -482,7 +482,7 @@
 	"BLOCK_LABEL_REPLACEABLE": "Part of an accessibility label for a block that indicates that it is replaceable, i.e. that it is a shadow block.",
 	"BLOCK_LABEL_HAS_INPUT": "Part of an accessibility label for a block that indicates that it has a single input.",
 	"BLOCK_LABEL_HAS_INPUTS": "Part of an accessibility label for a block that indicates that it has more than one input.",
-	"BLOCK_LABEL_STATEMENT": "Part of an accessibility label for a block that indicates that it is a statement block, i.e. that it has a next or previous connection.",
+	"BLOCK_LABEL_STATEMENT": "Part of an accessibility label for a block that indicates that it is a statement block, i.e. that it has a next or previous connection. 'command' here is used in the sense of a computer command, or a command block in Scratch.",
 	"BLOCK_LABEL_CONTAINER": "Part of an accessibility label for a block that indicates that it is a container block, i.e. that it has one or more statement inputs.",
 	"BLOCK_LABEL_VALUE": "Part of an accessibility label for a block that indicates that it is a value block, i.e. that it has an output connection.",
 	"BLOCK_LABEL_STACK_BLOCKS": "Accessibility label for a block that indicates it is a stack of two or more blocks.",

@@ -53,6 +53,7 @@ import {Coordinate} from './utils/coordinate.js';
 import * as deprecation from './utils/deprecation.js';
 import * as idGenerator from './utils/idgenerator.js';
 import * as parsing from './utils/parsing.js';
+import {replaceMessageReferences} from './utils/parsing.js';
 import {Size} from './utils/size.js';
 import type {Workspace} from './workspace.js';
 
@@ -242,6 +243,9 @@ export class Block {
   // Record initial inline state.
   inputsInlineDefault?: boolean;
   workspace: Workspace;
+
+  /** A custom provider for generating the aria role description for this block. */
+  private ariaRoleDescriptionProvider: string | (() => string) | undefined;
 
   /**
    * @param workspace The block's workspace.
@@ -1549,6 +1553,32 @@ export class Block {
   }
 
   /**
+   * Set a custom aria role description provider for this block. If not set,
+   * uses a default provider based on the block's properties (e.g. whether it has
+   * inputs, outputs, etc.).
+   *
+   * @param description The description or function to provide the description.
+   *   If a string, we'll replace message references in the string, e.g.
+   *   `%{BKY_CUSTOM_MESSAGE}` will be replaced with the value of
+   *   `Blockly.Msg['CUSTOM_MESSAGE']`.}'
+   */
+  setAriaRoleDescriptionProvider(description: string | (() => string)) {
+    this.ariaRoleDescriptionProvider = description;
+  }
+
+  /**
+   * @returns The custom string to use as the role description for this block,
+   *   or undefined if no custom description is set.
+   */
+  getAriaRoleDescription(): string | undefined {
+    if (!this.ariaRoleDescriptionProvider) return undefined;
+    if (typeof this.ariaRoleDescriptionProvider === 'function') {
+      return this.ariaRoleDescriptionProvider();
+    }
+    return replaceMessageReferences(this.ariaRoleDescriptionProvider);
+  }
+
+  /**
    * Create a human-readable text representation of this block and any children.
    *
    * @param opt_maxLength Truncate the string to this length.
@@ -1802,6 +1832,11 @@ export class Block {
       const localizedValue = parsing.replaceMessageReferences(rawValue);
       this.setHelpUrl(localizedValue);
     }
+
+    if (json['ariaRoleDescription'] !== undefined) {
+      this.setAriaRoleDescriptionProvider(json['ariaRoleDescription']);
+    }
+
     if (typeof json['extensions'] === 'string') {
       console.warn(
         warningPrefix +
