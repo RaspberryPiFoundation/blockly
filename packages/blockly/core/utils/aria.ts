@@ -381,11 +381,6 @@ export function announceDynamicAriaState(
     assertiveness = LiveRegionAssertiveness.POLITE,
     role = DEFAULT_LIVE_REGION_ROLE,
   } = options || {};
-  if (
-    assertiveness === LiveRegionAssertiveness.ASSERTIVE ||
-    nextAnnouncementAssertiveness !== LiveRegionAssertiveness.ASSERTIVE
-  ) {
-  }
 
   queuedAnnouncements.push(text);
   nextAnnouncementAssertiveness = mostAssertive(
