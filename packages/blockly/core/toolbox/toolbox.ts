@@ -277,22 +277,33 @@ export class Toolbox
    * @param e Click event to handle.
    */
   protected onClick_(e: PointerEvent) {
+    const close = () => {
+      getFocusManager().focusNode(this);
+      this.clearSelection();
+      (common.getMainWorkspace() as WorkspaceSvg).hideChaff(false);
+      e.preventDefault();
+    };
+
     this.mouseDown = true;
     if (browserEvents.isRightButton(e) || e.target === this.HtmlDiv) {
       // Close flyout.
-      (common.getMainWorkspace() as WorkspaceSvg).hideChaff(false);
+      close();
     } else {
       const targetElement = e.target;
       const itemId = (targetElement as Element).getAttribute('id');
       if (itemId) {
         const item = this.getToolboxItemById(itemId);
         if (item?.isSelectable()) {
-          this.setSelectedItem(item);
           (item as ISelectableToolboxItem).onClick(e);
+          if (item === this.getSelectedItem()) {
+            close();
+          } else {
+            this.setSelectedItem(item);
+            // Just close popups.
+            (common.getMainWorkspace() as WorkspaceSvg).hideChaff(true);
+          }
         }
       }
-      // Just close popups.
-      (common.getMainWorkspace() as WorkspaceSvg).hideChaff(true);
     }
     Touch.clearTouchIdentifier();
   }
