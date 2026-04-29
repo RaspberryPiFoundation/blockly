@@ -89,26 +89,89 @@ suite('Keyboard Shortcut Items', function () {
         'hideChaff',
       );
     });
+
     test('Simple', function () {
       this.injectionDiv.dispatchEvent(this.event);
       sinon.assert.calledOnce(this.hideChaffSpy);
     });
+
     runReadOnlyTest(createKeyDownEvent(Blockly.utils.KeyCodes.ESC));
+
     test('Not called when focus is on an HTML input', function () {
       const event = createKeyDownEvent(Blockly.utils.KeyCodes.ESC);
       const input = document.createElement('textarea');
       input.dispatchEvent(event);
       sinon.assert.notCalled(this.hideChaffSpy);
     });
+
     test('Not called on hidden workspaces', function () {
       this.workspace.visible = false;
       this.injectionDiv.dispatchEvent(this.event);
       sinon.assert.notCalled(this.hideChaffSpy);
     });
+
     test('Called when connection is focused', function () {
       setSelectedConnection(this.workspace);
       this.injectionDiv.dispatchEvent(this.event);
       sinon.assert.calledOnce(this.hideChaffSpy);
+    });
+
+    test('In the toolbox focuses the workspace', function () {
+      Blockly.getFocusManager().focusNode(
+        this.workspace.getToolbox().getToolboxItems()[0],
+      );
+      assert.equal(
+        Blockly.getFocusManager().getFocusedTree(),
+        this.workspace.getToolbox(),
+      );
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.ESC,
+        key: 'Escape',
+      });
+      this.workspace.getToolbox().contentsDiv_.dispatchEvent(event);
+      assert.equal(Blockly.getFocusManager().getFocusedTree(), this.workspace);
+    });
+
+    test('In the flyout focues the workspace', function () {
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.T),
+      );
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.RIGHT),
+      );
+      assert.equal(
+        Blockly.getFocusManager().getFocusedTree(),
+        this.workspace.getFlyout().getWorkspace(),
+      );
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.ESC,
+        key: 'Escape',
+      });
+      this.workspace.getFlyout().svgGroup_.dispatchEvent(event);
+      assert.equal(Blockly.getFocusManager().getFocusedTree(), this.workspace);
+    });
+
+    test('In a mutator flyout focuses the mutator workspace', async function () {
+      const block = this.workspace.newBlock('controls_if');
+      block.initSvg();
+      block.render();
+
+      const mutatorIcon = block.getIcon(Blockly.icons.MutatorIcon.TYPE);
+      await mutatorIcon.setBubbleVisible(true);
+
+      const bubble = mutatorIcon.getBubble();
+      Blockly.getFocusManager().focusTree(
+        bubble.getWorkspace().getFlyout().getWorkspace(),
+      );
+      const event = new KeyboardEvent('keydown', {
+        keyCode: Blockly.utils.KeyCodes.ESC,
+        key: 'Escape',
+      });
+      bubble.getWorkspace().getFlyout().svgGroup_.dispatchEvent(event);
+      assert.equal(
+        Blockly.getFocusManager().getFocusedTree(),
+        bubble.getWorkspace(),
+      );
     });
   });
 

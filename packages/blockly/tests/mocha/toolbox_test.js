@@ -234,6 +234,7 @@ suite('Toolbox', function () {
       )[0];
       const evt = {
         'target': categoryXml,
+        'stopPropagation': () => {},
       };
       const item = this.toolbox.contents.get(categoryXml.getAttribute('id'));
       const setSelectedSpy = sinon.spy(this.toolbox, 'setSelectedItem');

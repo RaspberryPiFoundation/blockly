@@ -884,7 +884,7 @@ export class FieldDropdown extends Field<string> {
    *
    * @returns An ARIA representation of the field's text.
    */
-  override getAriaValue(): string | null {
+  override getAriaValue(): string {
     // Note: This fallback is effectively unreachable since computeOptionAriaLabel
     // always returns a non-empty string for non-separator options. It exists as a
     // defensive safeguard.
@@ -920,7 +920,7 @@ export class FieldDropdown extends Field<string> {
   /**
    * Recomputes the ARIA role and label for this field.
    */
-  private recomputeAriaContext(): void {
+  protected recomputeAriaContext(): void {
     const focusableElement = this.getFocusableElement();
     if (!focusableElement) return;
 
@@ -934,7 +934,7 @@ export class FieldDropdown extends Field<string> {
     // editing mode that can be activated.
     aria.setRole(focusableElement, aria.Role.BUTTON);
 
-    const label = this.computeAriaLabel(false);
+    const label = this.computeAriaLabel(true);
 
     aria.setState(focusableElement, aria.State.LABEL, label);
     aria.setState(focusableElement, aria.State.HASPOPUP, 'listbox');

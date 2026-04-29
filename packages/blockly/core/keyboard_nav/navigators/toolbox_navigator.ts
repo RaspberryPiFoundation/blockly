@@ -45,7 +45,10 @@ export class ToolboxNavigator extends Navigator {
       }
     }
 
-    if (isSelectableToolboxItem(node) && !node.getContents().length) {
+    if (
+      !isSelectableToolboxItem(node) ||
+      (isSelectableToolboxItem(node) && !node.getContents().length)
+    ) {
       return null;
     }
 

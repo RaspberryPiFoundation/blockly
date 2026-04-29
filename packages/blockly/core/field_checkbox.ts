@@ -16,6 +16,8 @@ import './events/events_block_change.js';
 
 import {Field, FieldConfig, FieldValidator} from './field.js';
 import * as fieldRegistry from './field_registry.js';
+import {Msg} from './msg.js';
+import {aria} from './utils.js';
 import * as dom from './utils/dom.js';
 
 type BoolString = 'TRUE' | 'FALSE';
@@ -111,6 +113,7 @@ export class FieldCheckbox extends Field<CheckboxBool> {
     const textElement = this.getTextElement();
     dom.addClass(this.fieldGroup_!, 'blocklyCheckboxField');
     textElement.style.display = this.value_ ? 'block' : 'none';
+    this.recomputeAriaContext();
   }
 
   override render_() {
@@ -170,6 +173,7 @@ export class FieldCheckbox extends Field<CheckboxBool> {
     if (this.textElement_) {
       this.textElement_.style.display = this.value_ ? 'block' : 'none';
     }
+    this.recomputeAriaContext();
   }
 
   /**
@@ -214,6 +218,39 @@ export class FieldCheckbox extends Field<CheckboxBool> {
   }
 
   /**
+   * Gets an ARIA-friendly label representation of this field's type.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's type.
+   *
+   * @returns An ARIA representation of the field's type or a default if it is
+   *     unspecified.
+   */
+  override getAriaTypeName(): string {
+    return this.ariaTypeName || Msg['ARIA_TYPE_FIELD_CHECKBOX'];
+  }
+
+  /**
+   * Gets an ARIA-friendly label representation of this field's value.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's value.
+   *
+   * The FieldCheckbox implementation is not used for the actual ARIA label of
+   * the field, since the checked state is already included in the ARIA checked
+   * state, but it is used for the ARIA label of its source block.
+   *
+   * @returns An ARIA representation of the field's text.
+   */
+  override getAriaValue(): string | null {
+    // return null;
+    const checked = this.convertValueToBool(this.value_);
+    return checked
+      ? Msg['FIELD_LABEL_CHECKBOX_CHECKED']
+      : Msg['FIELD_LABEL_CHECKBOX_UNCHECKED'];
+  }
+
+  /**
    * Construct a FieldCheckbox from a JSON arg object.
    *
    * @param options A JSON object with options (checked).
@@ -227,6 +264,31 @@ export class FieldCheckbox extends Field<CheckboxBool> {
     // `this` might be a subclass of FieldCheckbox if that class doesn't
     // 'override' the static fromJson method.
     return new this(options.checked, undefined, options);
+  }
+
+  /**
+   * Recomputes the ARIA role and label for this field.
+   */
+  protected recomputeAriaContext(): void {
+    const focusableElement = this.getClickTarget_();
+    if (!focusableElement) return;
+
+    if (this.getSourceBlock()?.isInFlyout) {
+      aria.setState(focusableElement, aria.State.HIDDEN, true);
+      return;
+    }
+
+    aria.setState(focusableElement, aria.State.HIDDEN, false);
+    aria.setRole(focusableElement, aria.Role.CHECKBOX);
+    const checked = this.convertValueToBool(this.value_);
+    aria.setState(focusableElement, aria.State.CHECKED, checked);
+
+    // Checkbox fields do not use this.computeAriaLabel(), because the
+    // included 'checked' or 'not checked' state in the ARIA label would
+    // be redundant with the ARIA checked state.
+    const label = this.getAriaTypeName();
+
+    aria.setState(focusableElement, aria.State.LABEL, label);
   }
 }
 

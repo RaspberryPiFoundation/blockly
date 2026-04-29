@@ -289,6 +289,17 @@ export abstract class Flyout
       .getThemeManager()
       .subscribe(this.svgBackground_, 'flyoutOpacity', 'fill-opacity');
 
+    this.svgGroup_.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        getFocusManager().focusTree(this.targetWorkspace);
+        if (!this.targetWorkspace.isMutator) {
+          this.autoHide(false);
+        }
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+
     return this.svgGroup_;
   }
 

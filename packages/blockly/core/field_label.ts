@@ -14,6 +14,7 @@
 
 import {Field, FieldConfig} from './field.js';
 import * as fieldRegistry from './field_registry.js';
+import {aria} from './utils.js';
 import * as dom from './utils/dom.js';
 import * as parsing from './utils/parsing.js';
 
@@ -76,6 +77,7 @@ export class FieldLabel extends Field<string> {
     }
     if (this.fieldGroup_) {
       dom.addClass(this.fieldGroup_, 'blocklyLabelField');
+      aria.setState(this.fieldGroup_, aria.State.HIDDEN, true);
     }
   }
 

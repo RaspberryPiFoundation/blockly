@@ -13,6 +13,8 @@
 
 import {Field, FieldConfig} from './field.js';
 import * as fieldRegistry from './field_registry.js';
+import {Msg} from './msg.js';
+import {aria} from './utils.js';
 import * as dom from './utils/dom.js';
 import * as parsing from './utils/parsing.js';
 import {Size} from './utils/size.js';
@@ -157,6 +159,8 @@ export class FieldImage extends Field<string> {
     if (this.clickHandler) {
       this.imageElement.style.cursor = 'pointer';
     }
+
+    this.recomputeAriaContext();
   }
 
   override updateSize_() {}
@@ -186,6 +190,7 @@ export class FieldImage extends Field<string> {
     if (this.imageElement) {
       this.imageElement.setAttributeNS(dom.XLINK_NS, 'xlink:href', this.value_);
     }
+    this.recomputeAriaContext();
   }
 
   /**
@@ -282,6 +287,59 @@ export class FieldImage extends Field<string> {
       undefined,
       options,
     );
+  }
+
+  /**
+   * Gets an ARIA-friendly label representation of this field's type.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's type.
+   *
+   * @returns An ARIA representation of the field's type or a default if it is
+   *     unspecified.
+   */
+  override getAriaTypeName(): string | null {
+    return this.ariaTypeName || Msg['ARIA_TYPE_FIELD_IMAGE'];
+  }
+
+  /**
+   * Gets an ARIA-friendly label representation of this field's value.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's value.
+   *
+   * @returns An ARIA representation of the field's text, or null if no text is
+   *     currently defined or known for the field.
+   */
+  override getAriaValue(): string | null {
+    return this.altText || null;
+  }
+
+  /**
+   * Recomputes the ARIA role and label for this field.
+   */
+  protected recomputeAriaContext(): void {
+    const focusableElement = this.getClickTarget_();
+    if (!focusableElement) return;
+
+    const isInFlyout = this.getSourceBlock()?.isInFlyout;
+    if (isInFlyout) {
+      aria.setState(focusableElement, aria.State.HIDDEN, true);
+      return;
+    }
+
+    aria.setState(focusableElement, aria.State.HIDDEN, false);
+    // The button role is intended to indicate to users that the field has an
+    // editing mode that can be activated. The presentation role is used to
+    // prevent screen readers from  reading the content or its descendants.
+    // Only clickable image fields are navigable.
+    aria.setRole(
+      focusableElement,
+      this.isClickable() ? aria.Role.BUTTON : aria.Role.PRESENTATION,
+    );
+
+    const label = this.computeAriaLabel(true);
+    aria.setState(focusableElement, aria.State.LABEL, label);
   }
 }
 

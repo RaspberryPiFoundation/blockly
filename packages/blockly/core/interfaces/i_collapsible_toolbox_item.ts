@@ -42,6 +42,7 @@ export function isCollapsibleToolboxItem(
   obj: any,
 ): obj is ICollapsibleToolboxItem {
   return (
+    obj &&
     typeof obj.getChildToolboxItems === 'function' &&
     typeof obj.isExpanded === 'function' &&
     typeof obj.toggleExpanded === 'function' &&

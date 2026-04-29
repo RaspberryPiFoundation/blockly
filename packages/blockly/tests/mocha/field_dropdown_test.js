@@ -345,6 +345,10 @@ suite('Dropdown Fields', function () {
         const blockLabel = this.block.getAriaLabel();
         assert.include(blockLabel, 'dropdown:');
       });
+      test('Field has field type name in ARIA label', function () {
+        const fieldLabel = this.focusableElement.getAttribute('aria-label');
+        assert.include(fieldLabel, 'dropdown:');
+      });
       test('Focusable element has role of button', function () {
         const role = this.focusableElement.getAttribute('role');
         assert.equal(role, 'button');
@@ -479,7 +483,7 @@ suite('Dropdown Fields', function () {
         const label = this.field
           .getFocusableElement()
           .getAttribute('aria-label');
-        assert.equal(label, 'A');
+        assert.include(label, 'A');
       });
       test('Image ARIA label is prioritized over alt text', function () {
         this.field.dropdownCreate();
@@ -487,7 +491,7 @@ suite('Dropdown Fields', function () {
         const label = this.field
           .getFocusableElement()
           .getAttribute('aria-label');
-        assert.equal(label, 'Letter B');
+        assert.include(label, 'Letter B');
       });
     });
     suite('Dropdown with HTMLElement options', function () {
@@ -549,35 +553,35 @@ suite('Dropdown Fields', function () {
         const label = this.field
           .getFocusableElement()
           .getAttribute('aria-label');
-        assert.equal(label, 'Explicit A label');
+        assert.include(label, 'Explicit A label');
       });
       test('HTMLElement ariaLabel prioritized over other properties', function () {
         this.field.setValue('B');
         const label = this.field
           .getFocusableElement()
           .getAttribute('aria-label');
-        assert.equal(label, 'Element ARIA');
+        assert.include(label, 'Element ARIA');
       });
       test('HTMLElement title is used when ariaLabel is missing', function () {
         this.field.setValue('C');
         const label = this.field
           .getFocusableElement()
           .getAttribute('aria-label');
-        assert.equal(label, 'Title text');
+        assert.include(label, 'Title text');
       });
       test('HTMLElement innerText is used as final fallback', function () {
         this.field.setValue('D');
         const label = this.field
           .getFocusableElement()
           .getAttribute('aria-label');
-        assert.equal(label, 'Inner text');
+        assert.include(label, 'Inner text');
       });
       test('Empty label falls back to option index', function () {
         this.field.setValue('E');
         const label = this.field
           .getFocusableElement()
           .getAttribute('aria-label');
-        assert.equal(label, 'Option 5');
+        assert.include(label, 'Option 5');
       });
     });
   });
