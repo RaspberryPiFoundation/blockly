@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-04-24 12:57:57.429458",
+		"lastupdated": "2026-04-24 15:03:55.288228",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -451,6 +451,7 @@
 	"SHORTCUTS_PERFORM_ACTION": "Edit or confirm",
 	"SHORTCUTS_DUPLICATE": "Duplicate",
 	"SHORTCUTS_CLEANUP": "Clean up workspace",
+	"SHORTCUTS_SHOW_TOOLTIP": "Show tooltip",
 	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "Hold %1 and use arrow keys to move freely, then %2 to accept the position",
 	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Use the arrow keys to move, then %1 to accept the position",
 	"KEYBOARD_NAV_COPIED_HINT": "Copied. Press %1 to paste.",
@@ -483,7 +484,12 @@
 	"ANNOUNCE_MOVE_TO": "moving %1 %2 to %3 %4",
 	"ANNOUNCE_MOVE_CANCELED": "Canceled movement",
 	"FIELD_LABEL_EMPTY": "empty",
-	"ARIA_TYPE_FIELD_INPUT": "input field",
+	"ARIA_TYPE_FIELD_INPUT": "input",
+	"ARIA_TYPE_FIELD_TEXT_INPUT": "text",
+	"ARIA_TYPE_FIELD_NUMBER": "number",
+	"ARIA_TYPE_FIELD_DROPDOWN": "dropdown",
+	"FIELD_LABEL_EDIT_PREFIX": "Edit %1",
+	"FIELD_LABEL_OPTION_INDEX": "Option %1",
 	"FIELD_LABEL_EDIT_PREFIX": "Edit %1",
 	"OPEN_TRASH": "Open trash",
 	"ZOOM_IN": "Zoom in",

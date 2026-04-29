@@ -25,6 +25,7 @@ import * as fieldRegistry from './field_registry.js';
 import {Menu} from './menu.js';
 import {MenuSeparator} from './menu_separator.js';
 import {MenuItem} from './menuitem.js';
+import {Msg} from './msg.js';
 import * as aria from './utils/aria.js';
 import {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
@@ -97,6 +98,12 @@ export class FieldDropdown extends Field<string> {
 
   /** The total vertical padding above and below an image. */
   protected static IMAGE_Y_PADDING = FieldDropdown.IMAGE_Y_OFFSET * 2;
+
+  /**
+   * True once the field’s DOM has been created and it is safe to run ARIA
+   * updates in response to value changes.
+   */
+  isInitialized: boolean = false;
 
   /**
    * @param menuGenerator A non-empty array of options for a dropdown list, or a
@@ -197,6 +204,8 @@ export class FieldDropdown extends Field<string> {
       dom.addClass(this.fieldGroup_, 'blocklyField');
       dom.addClass(this.fieldGroup_, 'blocklyDropdownField');
     }
+    this.recomputeAriaContext();
+    this.isInitialized = true;
   }
 
   /**
@@ -295,6 +304,7 @@ export class FieldDropdown extends Field<string> {
     }
 
     this.applyColour();
+    aria.setState(this.getFocusableElement(), aria.State.EXPANDED, true);
   }
 
   /** Create the dropdown editor. */
@@ -306,6 +316,11 @@ export class FieldDropdown extends Field<string> {
     const menu = new Menu();
     menu.setRole(aria.Role.LISTBOX);
     this.menu_ = menu;
+    aria.setState(
+      this.getFocusableElement(),
+      aria.State.CONTROLS,
+      this.menu_.getId(),
+    );
 
     const options = this.getOptions(false);
     this.selectedMenuItem = null;
@@ -317,6 +332,7 @@ export class FieldDropdown extends Field<string> {
       }
 
       const [label, value] = option;
+      const ariaLabel = this.computeOptionAriaLabel(option, i);
       const content = (() => {
         if (isImageProperties(label)) {
           // Convert ImageProperties to an HTMLImageElement.
@@ -327,7 +343,7 @@ export class FieldDropdown extends Field<string> {
         }
         return label;
       })();
-      const menuItem = new MenuItem(content, value);
+      const menuItem = new MenuItem(content, value, ariaLabel);
       menuItem.setRole(aria.Role.OPTION);
       menuItem.setRightToLeft(block.RTL);
       menuItem.setCheckable(true);
@@ -350,6 +366,7 @@ export class FieldDropdown extends Field<string> {
     this.menu_ = null;
     this.selectedMenuItem = null;
     this.applyColour();
+    aria.setState(this.getFocusableElement(), aria.State.EXPANDED, false);
   }
 
   /**
@@ -471,6 +488,9 @@ export class FieldDropdown extends Field<string> {
       if (option[1] === this.value_) {
         this.selectedOption = option;
       }
+    }
+    if (this.isInitialized) {
+      this.recomputeAriaContext();
     }
   }
 
@@ -653,7 +673,7 @@ export class FieldDropdown extends Field<string> {
       typeof HTMLElement !== 'undefined' &&
       option instanceof HTMLElement
     ) {
-      return option.title ?? option.ariaLabel ?? option.innerText;
+      return option.title || (option.ariaLabel ?? option.innerText);
     } else if (typeof option === 'string') {
       return option;
     }
@@ -705,9 +725,16 @@ export class FieldDropdown extends Field<string> {
         return option;
       }
 
-      const [label, value] = option;
+      const [label, value, ariaLabel] = option;
       if (typeof label === 'string') {
-        return [parsing.replaceMessageReferences(label), value];
+        const trimmedLabelOption: MenuOption = [
+          parsing.replaceMessageReferences(label),
+          value,
+        ];
+        if (ariaLabel) {
+          trimmedLabelOption.push(ariaLabel);
+        }
+        return trimmedLabelOption;
       }
 
       hasNonTextContent = true;
@@ -716,14 +743,18 @@ export class FieldDropdown extends Field<string> {
       const imageLabel = isImageProperties(label)
         ? {...label, alt: parsing.replaceMessageReferences(label.alt)}
         : label;
-      return [imageLabel, value];
+      const imageOptions: MenuOption = [imageLabel, value];
+      if (ariaLabel) {
+        imageOptions.push(ariaLabel);
+      }
+      return imageOptions;
     });
 
     if (hasNonTextContent || options.length < 2) {
       return {options: trimmedOptions};
     }
 
-    const stringOptions = trimmedOptions as [string, string][];
+    const stringOptions = trimmedOptions as [string, string, string][];
     const stringLabels = stringOptions.map(([label]) => label);
 
     const shortest = utilsString.shortestStringLength(stringLabels);
@@ -762,14 +793,20 @@ export class FieldDropdown extends Field<string> {
    * @returns A new array with all of the option text trimmed.
    */
   private applyTrim(
-    options: [string, string][],
+    options: [string, string, string?][],
     prefixLength: number,
     suffixLength: number,
   ): MenuOption[] {
-    return options.map(([text, value]) => [
-      text.substring(prefixLength, text.length - suffixLength),
-      value,
-    ]);
+    return options.map(([text, value, ariaLabel]) => {
+      const trimmedText = text.substring(
+        prefixLength,
+        text.length - suffixLength,
+      );
+
+      return ariaLabel !== undefined
+        ? [trimmedText, value, ariaLabel]
+        : [trimmedText, value];
+    });
   }
 
   /**
@@ -813,11 +850,139 @@ export class FieldDropdown extends Field<string> {
           `Invalid option[${i}]: Each FieldDropdown option must have a string
           label, image description, or HTML element. Found ${option[0]} in: ${option}`,
         );
+      } else if (option[2] && typeof option[2] !== 'string') {
+        foundError = true;
+        console.error(
+          `Invalid option[${i}]: Each FieldDropdown option ARIA label must be a string.
+          Found ${option[2]} in: ${option}`,
+        );
       }
     }
     if (foundError) {
       throw TypeError('Found invalid FieldDropdown options.');
     }
+  }
+
+  /**
+   * Gets an ARIA-friendly label representation of this field's type.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's type.
+   *
+   * @returns An ARIA representation of the field's type or a default if it is
+   *     unspecified.
+   */
+  override getAriaTypeName(): string | null {
+    return this.ariaTypeName || Msg['ARIA_TYPE_FIELD_DROPDOWN'];
+  }
+
+  /**
+   * Gets an ARIA-friendly label representation of this field's value.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's value.
+   *
+   * @returns An ARIA representation of the field's text.
+   */
+  override getAriaValue(): string | null {
+    // Note: This fallback is effectively unreachable since computeOptionAriaLabel
+    // always returns a non-empty string for non-separator options. It exists as a
+    // defensive safeguard.
+    return (
+      this.getSelectedAriaLabel() || this.getText() || Msg['FIELD_LABEL_EMPTY']
+    );
+  }
+
+  /**
+   * Returns the ARIA label for the currently selected dropdown option.
+   *
+   * @returns The computed ARIA label for the selected option, or `null` if no
+   * option is selected.
+   */
+  private getSelectedAriaLabel(): string | null {
+    if (!this.selectedOption) {
+      return null;
+    }
+
+    const option = this.selectedOption;
+    const ariaLabel = this.computeOptionAriaLabel(
+      option,
+      this.getOptions(false).indexOf(option),
+    );
+
+    if (typeof ariaLabel === 'string') {
+      return ariaLabel;
+    }
+
+    return null;
+  }
+
+  /**
+   * Recomputes the ARIA role and label for this field.
+   */
+  private recomputeAriaContext(): void {
+    const focusableElement = this.getFocusableElement();
+    if (!focusableElement) return;
+
+    if (this.getSourceBlock()?.isInFlyout) {
+      aria.setState(focusableElement, aria.State.HIDDEN, true);
+      return;
+    }
+
+    aria.setState(focusableElement, aria.State.HIDDEN, false);
+    // The button role is intended to indicate to users that the field has an
+    // editing mode that can be activated.
+    aria.setRole(focusableElement, aria.Role.BUTTON);
+
+    const label = this.computeAriaLabel(false);
+
+    aria.setState(focusableElement, aria.State.LABEL, label);
+    aria.setState(focusableElement, aria.State.HASPOPUP, 'listbox');
+    aria.setState(focusableElement, aria.State.EXPANDED, !!this.menu_);
+  }
+
+  /**
+   * Computes an ARIA-friendly label for a dropdown option.
+   *
+   * The label is derived using a prioritized set of sources.
+   *
+   * Returned values are guaranteed to be non-empty strings for all non-separator
+   * options. Whitespace-only values are ignored when determining a usable label.
+   *
+   * @param option The dropdown option for which to compute the ARIA label.
+   * @param index The index of the option within the dropdown (0-based).
+   * @returns A string suitable for use as an ARIA label. Returns an empty string
+   *     only if the option is a separator.
+   */
+  private computeOptionAriaLabel(option: MenuOption, index: number): string {
+    if (option === FieldDropdown.SEPARATOR) return '';
+
+    const [label, , explicitAriaLabel] = option;
+
+    if (typeof explicitAriaLabel === 'string' && explicitAriaLabel.trim()) {
+      return explicitAriaLabel;
+    }
+
+    let text: string | null = null;
+
+    if (isImageProperties(label)) {
+      text = label.ariaLabel ?? label.alt;
+    } else if (
+      typeof HTMLElement !== 'undefined' &&
+      label instanceof HTMLElement
+    ) {
+      // This chain is similar to getText_, but prioritizes ariaLabel over title.
+      text = label.ariaLabel ?? (label.title || label.innerText);
+    } else if (typeof label === 'string') {
+      text = label;
+    }
+
+    if (text && text.trim()) {
+      return text;
+    }
+
+    // If we can't find any text to use for the ARIA label, use the option index.
+    return Msg['FIELD_LABEL_OPTION_INDEX'].replace('%1', String(index + 1));
   }
 }
 
@@ -850,6 +1015,7 @@ export interface ImageProperties {
   alt: string;
   width: number;
   height: number;
+  ariaLabel?: string;
 }
 
 /**
@@ -860,7 +1026,7 @@ export interface ImageProperties {
  * the language-neutral value.
  */
 export type MenuOption =
-  | [string | ImageProperties | HTMLElement, string]
+  | [string | ImageProperties | HTMLElement, string, string?]
   | 'separator';
 
 /**

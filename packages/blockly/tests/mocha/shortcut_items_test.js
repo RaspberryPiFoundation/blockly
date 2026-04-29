@@ -1435,4 +1435,55 @@ suite('Keyboard Shortcut Items', function () {
       assert.deepEqual(oldBounds, newBounds);
     });
   });
+
+  suite('Show tooltip (Ctrl/Cmd+J)', function () {
+    const event = createKeyDownEvent(Blockly.utils.KeyCodes.J, [
+      Blockly.utils.KeyCodes.CTRL_CMD,
+    ]);
+
+    test('Displays tooltip on a block using the keyboard shortcut', function () {
+      const block = this.workspace.newBlock('controls_if');
+      Blockly.getFocusManager().focusNode(block);
+      block.setTooltip('Tooltip Text');
+      this.injectionDiv.dispatchEvent(event);
+
+      assert.isTrue(Blockly.Tooltip.isVisible());
+    });
+
+    test('Displays new tooltip on a block using the keyboard shortcut if tooltip for another block is already displayed', function () {
+      const block1 = this.workspace.newBlock('controls_if');
+      const block2 = this.workspace.newBlock('logic_compare');
+
+      block1.setTooltip('block1');
+      block2.setTooltip('block2');
+
+      // Set focus to block1 and show its tooltip
+      Blockly.getFocusManager().focusNode(block1);
+      this.injectionDiv.dispatchEvent(event);
+
+      // We have block1 focused; we should see block1's tooltip
+      assert.isTrue(Blockly.Tooltip.isVisible());
+      assert.isTrue(Blockly.Tooltip.getDiv().innerText === 'block1');
+
+      // Set focus to block2 and show its tooltip
+      Blockly.getFocusManager().focusNode(block2);
+      this.injectionDiv.dispatchEvent(event);
+
+      // Now we have block2 focused; we should see block2's tooltip
+      assert.isTrue(Blockly.Tooltip.isVisible());
+      assert.isTrue(Blockly.Tooltip.getDiv().innerText === 'block2');
+    });
+
+    test('Do not show tooltip if drag in progress', function () {
+      sinon.stub(this.workspace, 'isDragging').returns(true);
+      this.injectionDiv.dispatchEvent(event);
+
+      const block = this.workspace.newBlock('controls_if');
+      Blockly.getFocusManager().focusNode(block);
+      block.setTooltip('Tooltip Text');
+      this.injectionDiv.dispatchEvent(event);
+
+      assert.isFalse(Blockly.Tooltip.isVisible());
+    });
+  });
 });

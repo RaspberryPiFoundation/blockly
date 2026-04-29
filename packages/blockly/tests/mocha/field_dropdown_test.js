@@ -325,4 +325,260 @@ suite('Dropdown Fields', function () {
       this.assertValue('C', field);
     });
   });
+
+  suite('ARIA', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv', {
+        renderer: 'geras',
+      });
+    });
+    suite('Simple Dropdown', function () {
+      setup(function () {
+        this.block = this.workspace.newBlock('logic_boolean');
+        this.field = this.block.getField('BOOL');
+        this.block.initSvg();
+        this.block.render();
+
+        this.focusableElement = this.field.getFocusableElement();
+      });
+      test('Block has field type name in ARIA label', function () {
+        const blockLabel = this.block.getAriaLabel();
+        assert.include(blockLabel, 'dropdown:');
+      });
+      test('Focusable element has role of button', function () {
+        const role = this.focusableElement.getAttribute('role');
+        assert.equal(role, 'button');
+      });
+      test('Hidden when in a flyout', function () {
+        this.block.isInFlyout = true;
+        // Force recompute of ARIA label.
+        this.field.setValue(this.field.getValue());
+        const ariaHidden = this.focusableElement.getAttribute('aria-hidden');
+        assert.equal(ariaHidden, 'true');
+      });
+      test('Does not have aria-expanded when dropdown is closed', function () {
+        const ariaExpanded =
+          this.focusableElement.getAttribute('aria-expanded');
+        assert.equal(ariaExpanded, 'false');
+      });
+      test('Has aria-expanded when dropdown is open', function () {
+        this.field.showEditor_();
+        const ariaExpanded =
+          this.focusableElement.getAttribute('aria-expanded');
+        assert.equal(ariaExpanded, 'true');
+        this.workspace.hideChaff();
+      });
+      test('Has aria-haspopup of listbox', function () {
+        const ariaHasPopup =
+          this.focusableElement.getAttribute('aria-haspopup');
+        assert.equal(ariaHasPopup, 'listbox');
+      });
+      test('Has aria-controls that matches the ID of the dropdown menu', function () {
+        this.field.showEditor_();
+        const ariaControls =
+          this.focusableElement.getAttribute('aria-controls');
+        const menuId = this.field.menu_.id;
+        assert.equal(ariaControls, menuId);
+        this.workspace.hideChaff();
+      });
+      test('Has placeholder ARIA label by default', function () {
+        const label = this.focusableElement.getAttribute('aria-label');
+        assert.include(label, 'true');
+      });
+      test('setValue updates ARIA label', function () {
+        const initialLabel = this.focusableElement.getAttribute('aria-label');
+        assert.include(initialLabel, 'true');
+        this.field.setValue('FALSE');
+        const updatedLabel = this.focusableElement.getAttribute('aria-label');
+        assert.include(updatedLabel, 'false');
+      });
+    });
+    suite('Dropdown with Option ARIA labels', function () {
+      setup(function () {
+        Blockly.defineBlocksWithJsonArray([
+          {
+            'type': 'math_op',
+            'message0': '%1',
+            'args0': [
+              {
+                'type': 'field_dropdown',
+                'name': 'OP',
+                'options': [
+                  ['%{BKY_MATH_ADDITION_SYMBOL}', 'ADD', 'Plus'],
+                  ['%{BKY_MATH_SUBTRACTION_SYMBOL}', 'MINUS', 'Minus'],
+                  ['%{BKY_MATH_MULTIPLICATION_SYMBOL}', 'MULTIPLY', 'Times'],
+                  ['%{BKY_MATH_DIVISION_SYMBOL}', 'DIVIDE', 'Divided by'],
+                  ['%{BKY_MATH_POWER_SYMBOL}', 'POWER', 'To the power of'],
+                ],
+              },
+            ],
+          },
+        ]);
+        const block = this.workspace.newBlock('math_op');
+        block.initSvg();
+        block.render();
+        this.field = block.getField('OP');
+      });
+      test('Option ARIA labels are included in field ARIA label', function () {
+        const label = this.field
+          .getFocusableElement()
+          .getAttribute('aria-label');
+        assert.include(label, 'Plus');
+      });
+      test('Option ARIA labels are included in field ARIA label when value is changed', function () {
+        this.field.setValue('DIVIDE');
+        const label = this.field
+          .getFocusableElement()
+          .getAttribute('aria-label');
+        assert.include(label, 'Divided by');
+      });
+    });
+    suite('Dropdown with image options', function () {
+      setup(function () {
+        Blockly.defineBlocksWithJsonArray([
+          {
+            'type': 'image_dropdown_test',
+            'message0': '%1',
+            'args0': [
+              {
+                'type': 'field_dropdown',
+                'name': 'IMG',
+                'options': [
+                  [
+                    {
+                      'src':
+                        'https://blockly-demo.appspot.com/static/tests/media/a.png',
+                      'width': 32,
+                      'height': 32,
+                      'alt': 'A',
+                    },
+                    'A',
+                  ],
+                  [
+                    {
+                      'src':
+                        'https://blockly-demo.appspot.com/static/tests/media/b.png',
+                      'width': 32,
+                      'height': 32,
+                      'alt': 'B',
+                      'ariaLabel': 'Letter B',
+                    },
+                    'B',
+                  ],
+                ],
+              },
+            ],
+          },
+        ]);
+        const block = this.workspace.newBlock('image_dropdown_test');
+        block.initSvg();
+        block.render();
+        this.field = block.getField('IMG');
+      });
+      test('Image alt text is included in ARIA label', function () {
+        const label = this.field
+          .getFocusableElement()
+          .getAttribute('aria-label');
+        assert.equal(label, 'A');
+      });
+      test('Image ARIA label is prioritized over alt text', function () {
+        this.field.dropdownCreate();
+        this.field.setValue('B');
+        const label = this.field
+          .getFocusableElement()
+          .getAttribute('aria-label');
+        assert.equal(label, 'Letter B');
+      });
+    });
+    suite('Dropdown with HTMLElement options', function () {
+      setup(function () {
+        function makeElementOption({ariaLabel, title, innerText}) {
+          const element = document.createElement('div');
+          if (ariaLabel) element.ariaLabel = ariaLabel;
+          if (title) element.title = title;
+          if (innerText) element.innerText = innerText;
+          return element;
+        }
+        const options = [
+          [
+            makeElementOption({
+              ariaLabel: 'Ignored',
+              title: 'Ignored',
+              innerText: 'Ignored',
+            }),
+            'A',
+            'Explicit A label',
+          ],
+          [
+            makeElementOption({
+              ariaLabel: 'Element ARIA',
+              title: 'Ignored',
+              innerText: 'Ignored',
+            }),
+            'B',
+          ],
+          [
+            makeElementOption({
+              title: 'Title text',
+              innerText: 'Ignored',
+            }),
+            'C',
+          ],
+          [makeElementOption({innerText: 'Inner text'}), 'D'],
+          [makeElementOption({}), 'E'],
+        ];
+
+        Blockly.Blocks['aria_dropdown_test'] = {
+          init: function () {
+            this.appendDummyInput().appendField(
+              new Blockly.FieldDropdown(options),
+              'OP',
+            );
+
+            this.setOutput(true, null);
+            this.setColour(230);
+          },
+        };
+        const block = this.workspace.newBlock('aria_dropdown_test');
+        block.initSvg();
+        block.render();
+        this.field = block.getField('OP');
+      });
+      test('Explicit ARIA label overrides all other label sources', function () {
+        this.field.setValue('A');
+        const label = this.field
+          .getFocusableElement()
+          .getAttribute('aria-label');
+        assert.equal(label, 'Explicit A label');
+      });
+      test('HTMLElement ariaLabel prioritized over other properties', function () {
+        this.field.setValue('B');
+        const label = this.field
+          .getFocusableElement()
+          .getAttribute('aria-label');
+        assert.equal(label, 'Element ARIA');
+      });
+      test('HTMLElement title is used when ariaLabel is missing', function () {
+        this.field.setValue('C');
+        const label = this.field
+          .getFocusableElement()
+          .getAttribute('aria-label');
+        assert.equal(label, 'Title text');
+      });
+      test('HTMLElement innerText is used as final fallback', function () {
+        this.field.setValue('D');
+        const label = this.field
+          .getFocusableElement()
+          .getAttribute('aria-label');
+        assert.equal(label, 'Inner text');
+      });
+      test('Empty label falls back to option index', function () {
+        this.field.setValue('E');
+        const label = this.field
+          .getFocusableElement()
+          .getAttribute('aria-label');
+        assert.equal(label, 'Option 5');
+      });
+    });
+  });
 });

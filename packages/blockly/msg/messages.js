@@ -1786,6 +1786,9 @@ Blockly.Msg.SHORTCUTS_DUPLICATE = 'Duplicate';
 /// shortcut display text for the cleanup shortcut, which organizes blocks on the workspace.
 Blockly.Msg.SHORTCUTS_CLEANUP = 'Clean up workspace';
 /** @type {string} */
+/// shortcut display text for the show tooltip shortcut, which displays a short help text for the focused element.
+Blockly.Msg.SHORTCUTS_SHOW_TOOLTIP = 'Show tooltip';
+/** @type {string} */
 /// Message shown to inform users how to move blocks to arbitrary locations
 /// with the keyboard.
 Blockly.Msg.KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT = 'Hold %1 and use arrow keys to move freely, then %2 to accept the position';
@@ -1926,7 +1929,16 @@ Blockly.Msg.ANNOUNCE_MOVE_CANCELED = 'Canceled movement';
 Blockly.Msg.FIELD_LABEL_EMPTY = 'empty';
 /** @type {string} */
 /// ARIA type name for an input field, used by screen readers to identify the type of field.
-Blockly.Msg.ARIA_TYPE_FIELD_INPUT = 'input field';
+Blockly.Msg.ARIA_TYPE_FIELD_INPUT = 'input';
+/** @type {string} */
+/// ARIA type name for a text input field, used by screen readers to identify the type of field.
+Blockly.Msg.ARIA_TYPE_FIELD_TEXT_INPUT = 'text';
+/** @type {string} */
+/// ARIA type name for a number field, used by screen readers to identify the type of field.
+Blockly.Msg.ARIA_TYPE_FIELD_NUMBER = 'number';
+/** @type {string} */
+/// ARIA type name for a dropdown field, used by screen readers to identify the type of field.
+Blockly.Msg.ARIA_TYPE_FIELD_DROPDOWN = 'dropdown';
 /** @type {string} */
 /// Label for an editable field, used by screen readers to identify fields that can be edited by the user.  Placeholder corresponds to the label of the field's value.
 /// \n\nParameters:\n* %1 - the label of the field's value
@@ -1944,3 +1956,8 @@ Blockly.Msg.ZOOM_OUT = 'Zoom out';
 /** @type {string} */
 /// ARIA label for the reset zoom button.
 Blockly.Msg.RESET_ZOOM = 'Reset zoom';
+/** @type {string} */
+/// Label for an unlabeled dropdown field option, used by screen readers to identify options in a dropdown field.  Placeholder corresponds to the index of the option in the dropdown, starting at 1.
+/// \n\nParameters:\n* %1 - the index of the option in the dropdown, starting at 1
+/// \n\nExamples:\n* "Option 1"\n* "Option 2"
+Blockly.Msg.FIELD_LABEL_OPTION_INDEX = 'Option %1';

@@ -21,6 +21,7 @@ import {
   FieldInputValidator,
 } from './field_input.js';
 import * as fieldRegistry from './field_registry.js';
+import {Msg} from './msg.js';
 import * as dom from './utils/dom.js';
 import * as parsing from './utils/parsing.js';
 
@@ -88,6 +89,19 @@ export class FieldTextInput extends FieldInput<string> {
     // `this` might be a subclass of FieldTextInput if that class doesn't
     // override the static fromJson method.
     return new this(text, undefined, options);
+  }
+
+  /**
+   * Gets an ARIA-friendly label representation of this field's type.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's type.
+   *
+   * @returns An ARIA representation of the field's type or a default if it is
+   *     unspecified.
+   */
+  override getAriaTypeName(): string | null {
+    return this.ariaTypeName || Msg['ARIA_TYPE_FIELD_TEXT_INPUT'];
   }
 }
 

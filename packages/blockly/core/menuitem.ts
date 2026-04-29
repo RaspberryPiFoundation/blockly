@@ -43,6 +43,9 @@ export class MenuItem {
   private actionHandler: ((obj: this, menuSelectEvent: Event) => void) | null =
     null;
 
+  /** The unique ID for this menu item. */
+  private id: string = idGenerator.getNextUniqueId();
+
   /**
    * @param content Text caption to display as the content of the item, or a
    *     HTML element to display.
@@ -51,6 +54,7 @@ export class MenuItem {
   constructor(
     private readonly content: string | HTMLElement,
     private readonly opt_value?: string,
+    private readonly ariaLabel?: string,
   ) {}
 
   /**
@@ -60,7 +64,7 @@ export class MenuItem {
    */
   createDom(): Element {
     const element = document.createElement('div');
-    element.id = idGenerator.getNextUniqueId();
+    element.id = this.getId();
     this.element = element;
 
     // Set class and style
@@ -72,6 +76,10 @@ export class MenuItem {
       (this.rightToLeft ? 'blocklyMenuItemRtl ' : '');
 
     const content = document.createElement('div');
+    aria.setState(element, aria.State.LABEL, this.getAriaLabel());
+    // The presentation role is used to prevent screen readers from also reading the
+    // content or its descendants.
+    aria.setRole(content, aria.Role.PRESENTATION);
     content.className = 'blocklyMenuItemContent';
 
     let contentDom: Node = this.content as HTMLElement;
@@ -100,6 +108,15 @@ export class MenuItem {
     return element;
   }
 
+  /**
+   * Gets the ARIA label for this menu item.
+   */
+  getAriaLabel(): string {
+    // This fallback should only be hit by Context Menu items as all
+    // FieldDropdown options should have an ARIA label.
+    return this.ariaLabel || String(this.content);
+  }
+
   /** Dispose of this menu item. */
   dispose() {
     this.element = null;
@@ -122,7 +139,7 @@ export class MenuItem {
    * @internal
    */
   getId(): string {
-    return this.element!.id;
+    return this.id;
   }
 
   /**
@@ -276,6 +293,7 @@ export class MenuItem {
       }
 
       const checkbox = document.createElement('div');
+      aria.setState(checkbox, aria.State.HIDDEN, true);
       checkbox.className = 'blocklyMenuItemCheckbox ';
       this.getElement()
         ?.querySelector('.blocklyMenuItemContent')
