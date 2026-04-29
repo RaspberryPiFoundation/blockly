@@ -1600,11 +1600,6 @@ Blockly.Msg.PROCEDURES_IFRETURN_WARNING = 'Warning: This block may be used only 
 Blockly.Msg.WORKSPACE_COMMENT_DEFAULT_TEXT = 'Say something...';
 
 /** @type {string} */
-/// workspace - This text is read out when a user navigates to the workspace while
-/// using a screen reader.
-Blockly.Msg.WORKSPACE_ARIA_LABEL = 'Blockly Workspace';
-
-/** @type {string} */
 /// warning - This appears if the user collapses a block, and blocks inside
 /// that block have warnings attached to them. It should inform the user that the
 /// block they collapsed contains blocks that have warnings.
@@ -1802,6 +1797,25 @@ Blockly.Msg.KEYBOARD_NAV_COPIED_HINT = 'Copied. Press %1 to paste.';
 /// Message shown when an item is cut in keyboard navigation mode.
 Blockly.Msg.KEYBOARD_NAV_CUT_HINT = 'Cut. Press %1 to paste.';
 /** @type {string} */
+/// Aria label for a workspace with one stack of blocks.
+Blockly.Msg.WORKSPACE_LABEL_1_STACK = 'Blocks workspace. 1 stack of blocks';
+/** @type {string} */
+/// Aria label for a workspace with 0 or >1 stacks of blocks.
+/// \n\nParameters:\n* %1 - the number of stacks of blocks. A stack of blocks is a group of connected
+/// blocks that are not connected to any other blocks. 0 stacks means there are no blocks on the workspace.
+Blockly.Msg.WORKSPACE_LABEL_MANY_STACKS = 'Blocks workspace. %1 stacks of blocks';
+/** @type {string} */
+/// Aria label for a mutator workspace, which is a secondary workspace used for editing a block's structure.
+/// This type of workspace appears when a user clicks on the gear icon of a block that has a mutator, and
+/// allows the user to add, remove, or rearrange inputs to that block.
+Blockly.Msg.WORKSPACE_LABEL_MUTATOR_WORKSPACE = 'Block editor workspace';
+/** @type {string} */
+/// Aria label for an always-open flyout's workspace. Since the flyout will have a role of list,
+/// the resulting screenreader output will be something like "Logic blocks list, with 5 items".
+/// Do not include the word "list" in this message.
+/// Parameters: %1 - the category of blocks in the flyout, e.g. "Logic" or "Math". This may be empty for an uncategorized flyout.
+Blockly.Msg.WORKSPACE_LABEL_FLYOUT_WORKSPACE = '%1 blocks';
+/** @type {string} */
 /// ARIA live region message announcing the number of stacks of blocks in the workspace, optionally including comments.
 /// \n\nParameters:\n* %1 - the number of stacks (integer greater than 1)\n* %2 - optional phrase announcing comments, including leading space
 /// \n\nExamples:\n* "5 stacks of blocks in workspace."\n* "5 stacks of blocks and 2 comments in workspace."
@@ -1966,3 +1980,12 @@ Blockly.Msg.FIELD_LABEL_CHECKBOX_UNCHECKED = 'Not checked';
 /// \n\nParameters:\n* %1 - the name of the variable represented by the option
 /// \n\nExamples:\n* 'Variable "item"'\n* 'Variable "x"'
 Blockly.Msg.FIELD_LABEL_VARIABLE = 'Variable "%1"';
+/// Part of an aria label for an element that indicates it is a button, but for technical
+/// reasons cannot be give a role of button. Ideally, this would match
+/// the localized name for what screenreaders announce for <button> elements in your language.
+Blockly.Msg.ARIA_LABEL_BUTTON = 'button';
+/** @type {string} */
+/// Part of an aria label for an element that indicates it is a heading, but for
+/// technial reasons cannot be given a role of heading. Ideally, this would match
+/// the localized name for what screenreaders announce for <h1> elements in your language.
+Blockly.Msg.ARIA_LABEL_HEADING = 'heading';

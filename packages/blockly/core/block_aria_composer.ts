@@ -81,7 +81,11 @@ export function computeAriaLabel(
 export function configureAriaRole(block: BlockSvg) {
   setRole(block.getSvgRoot(), Role.PRESENTATION);
   const focusableElement = block.getFocusableElement();
-  setRole(focusableElement, block.isInFlyout ? Role.LISTITEM : Role.FIGURE);
+  if (!block.isInFlyout) {
+    // blocks in the flyout have their role set by the Flyout's block inflater
+    // don't overwrite it here
+    setRole(focusableElement, Role.FIGURE);
+  }
 
   let roleDescription = Msg['BLOCK_LABEL_STATEMENT'];
   if (block.statementInputCount) {

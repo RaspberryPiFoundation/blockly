@@ -214,6 +214,13 @@ export enum State {
    * Value: a number representing the minimum allowed value for a range widget.
    */
   VALUEMIN = 'valuemin',
+
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-owns
+   *
+   * Value: a space-separated list of element IDs that are owned by the current element.
+   */
+  OWNS = 'owns',
 }
 
 /**

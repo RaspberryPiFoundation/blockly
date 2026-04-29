@@ -58,7 +58,7 @@ export function createSvgElement<T extends SVGElement>(
 ): T {
   const e = document.createElementNS(SVG_NS, `${name}`) as T;
   /**
-   * For svg and group (g) elements, we set the role to generic so that they are ignored by assistive technologies.
+   * For svg and group (g) elements, we set the role to presentation so that they are ignored by assistive technologies.
    */
   if (
     name === Svg.SVG.toString() ||
@@ -66,7 +66,7 @@ export function createSvgElement<T extends SVGElement>(
     e.tagName === Svg.SVG.toString() ||
     e.tagName === Svg.G.toString()
   ) {
-    aria.setRole(e, aria.Role.GENERIC);
+    aria.setRole(e, aria.Role.PRESENTATION);
   }
   for (const key in attrs) {
     e.setAttribute(key, `${attrs[key]}`);

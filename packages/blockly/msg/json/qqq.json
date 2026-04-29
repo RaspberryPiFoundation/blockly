@@ -1,5 +1,5 @@
 {
-	"@metadata": {
+		"@metadata": {
 		"authors": [
 			"Ajeje Brazorf",
 			"Amire80",
@@ -402,7 +402,6 @@
 	"PROCEDURES_IFRETURN_HELPURL": "{{Optional}} url - Information about guard clauses.",
 	"PROCEDURES_IFRETURN_WARNING": "warning - This appears if the user tries to use this block outside of a function definition.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "comment text - This text appears in a new workspace comment, to hint that the user can type here.",
-	"WORKSPACE_ARIA_LABEL": "workspace - This text is read out when a user navigates to the workspace while using a screen reader.",
 	"COLLAPSED_WARNINGS_WARNING": "warning - This appears if the user collapses a block, and blocks inside that block have warnings attached to them. It should inform the user that the block they collapsed contains blocks that have warnings.",
 	"DIALOG_OK": "button label - Pressing this button closes help information.\n{{Identical|OK}}",
 	"DIALOG_CANCEL": "button label - Pressing this button cancels a proposed action.\n{{Identical|Cancel}}",
@@ -464,6 +463,10 @@
 	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Message shown to inform users how to move blocks with the keyboard.",
 	"KEYBOARD_NAV_COPIED_HINT": "Message shown when an item is copied in keyboard navigation mode.",
 	"KEYBOARD_NAV_CUT_HINT": "Message shown when an item is cut in keyboard navigation mode.",
+	"WORKSPACE_LABEL_1_STACK": "Aria label for a workspace with one stack of blocks.",
+	"WORKSPACE_LABEL_MANY_STACKS": "Aria label for a workspace with 0 or >1 stacks of blocks. \n\nParameters:\n* %1 - the number of stacks of blocks. A stack of blocks is a group of connected blocks that are not connected to any other blocks. 0 stacks means there are no blocks on the workspace.",
+	"WORKSPACE_LABEL_MUTATOR_WORKSPACE": "Aria label for a mutator workspace, which is a secondary workspace used for editing a block's structure. This type of workspace appears when a user clicks on the gear icon of a block that has a mutator, and allows the user to add, remove, or rearrange inputs to that block.",
+	"WORKSPACE_LABEL_FLYOUT_WORKSPACE": "Aria label for an always-open flyout's workspace. Since the flyout will have a role of list, the resulting screenreader output will be something like 'Logic blocks list, with 5 items'. Do not include the word 'list' in this message. Parameters: %1 - the category of blocks in the flyout, e.g. 'Logic' or 'Math'. This may be empty for an uncategorized flyout.",
 	"WORKSPACE_CONTENTS_BLOCKS_MANY": "ARIA live region message announcing the number of stacks of blocks in the workspace, optionally including comments. \n\nParameters:\n* %1 - the number of stacks (integer greater than 1)\n* %2 - optional phrase announcing comments, including leading space \n\nExamples:\n* '5 stacks of blocks in workspace.'\n* '5 stacks of blocks and 2 comments in workspace.'",
 	"WORKSPACE_CONTENTS_BLOCKS_ONE": "ARIA live region message announcing there is one stack of blocks in the workspace, optionally including a count of comments. \n\nParameters:\n* %2 - optional phrase announcing comments, including leading space \n\nExamples:\n* 'One stack of blocks in workspace.'\n* 'One stack of blocks and 1 comment in workspace.'",
 	"WORKSPACE_CONTENTS_BLOCKS_ZERO": "ARIA live region message announcing there are no blocks in the workspace, optionally including a count of comments. \n\nParameters:\n* %2 - optional phrase announcing comments, including leading space \n\nExamples:\n* 'No blocks in workspace.'\n* 'No blocks and 3 comments in workspace.'",
@@ -502,5 +505,7 @@
 	"FIELD_LABEL_OPTION_INDEX": "Label for an unlabeled dropdown field option, used by screen readers to identify options in a dropdown field.  Placeholder corresponds to the index of the option in the dropdown, starting at 1. \n\nParameters:\n* %1 - the index of the option in the dropdown, starting at 1 \n\nExamples:\n* 'Option 1'\n* 'Option 2'",
 	"FIELD_LABEL_CHECKBOX_CHECKED": "Label for a checked checkbox field, used by screen readers to identify the state of a checkbox field.",
 	"FIELD_LABEL_CHECKBOX_UNCHECKED": "Label for an unchecked checkbox field, used by screen readers to identify the state of a checkbox field.",
-	"FIELD_LABEL_VARIABLE": "Label for a variable field option, used by screen readers to identify the options in a variable dropdown field. \n\nParameters:\n* %1 - the name of the variable represented by the option \n\nExamples:\n* 'Variable 'item''\n* 'Variable 'x''"
+	"FIELD_LABEL_VARIABLE": "Label for a variable field option, used by screen readers to identify the options in a variable dropdown field. \n\nParameters:\n* %1 - the name of the variable represented by the option \n\nExamples:\n* 'Variable 'item''\n* 'Variable 'x''",
+	"ARIA_LABEL_BUTTON": "Part of an aria label for an element that indicates it is a button, but for technical reasons cannot be give a role of button. Ideally, this would match the localized name for what screenreaders announce for <button> elements in your language.",
+	"ARIA_LABEL_HEADING": "Part of an aria label for an element that indicates it is a heading, but for technial reasons cannot be given a role of heading. Ideally, this would match the localized name for what screenreaders announce for <h1> elements in your language."
 }

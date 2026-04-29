@@ -394,7 +394,6 @@
 	"PROCEDURES_IFRETURN_HELPURL": "https://c2.com/cgi/wiki?GuardClause",
 	"PROCEDURES_IFRETURN_WARNING": "Warning: This block may be used only within a function definition.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Say something...",
-	"WORKSPACE_ARIA_LABEL": "Blockly Workspace",
 	"COLLAPSED_WARNINGS_WARNING": "Collapsed blocks contain warnings.",
 	"DIALOG_OK": "OK",
 	"DIALOG_CANCEL": "Cancel",
@@ -456,6 +455,10 @@
 	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Use the arrow keys to move, then %1 to accept the position",
 	"KEYBOARD_NAV_COPIED_HINT": "Copied. Press %1 to paste.",
 	"KEYBOARD_NAV_CUT_HINT": "Cut. Press %1 to paste.",
+	"WORKSPACE_LABEL_1_STACK": "Blocks workspace. 1 stack of blocks",
+	"WORKSPACE_LABEL_MANY_STACKS": "Blocks workspace. %1 stacks of blocks",
+	"WORKSPACE_LABEL_MUTATOR_WORKSPACE": "Block editor workspace",
+	"WORKSPACE_LABEL_FLYOUT_WORKSPACE": "%1 blocks",
 	"WORKSPACE_CONTENTS_BLOCKS_MANY": "%1 stacks of blocks%2 in workspace.",
 	"WORKSPACE_CONTENTS_BLOCKS_ONE": "One stack of blocks%2 in workspace.",
 	"WORKSPACE_CONTENTS_BLOCKS_ZERO": "No blocks%2 in workspace.",
@@ -494,5 +497,7 @@
 	"FIELD_LABEL_OPTION_INDEX": "Option %1",
 	"FIELD_LABEL_CHECKBOX_CHECKED": "Checked",
 	"FIELD_LABEL_CHECKBOX_UNCHECKED": "Not checked",
-	"FIELD_LABEL_VARIABLE": "Variable '%1'"
+	"FIELD_LABEL_VARIABLE": "Variable '%1'",
+	"ARIA_LABEL_BUTTON": "button",
+	"ARIA_LABEL_HEADING": "heading"
 }
