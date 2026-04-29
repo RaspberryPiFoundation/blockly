@@ -918,6 +918,14 @@ export class BlockSvg
     Tooltip.dispose();
     ContextMenu.hide();
 
+    if (animate) {
+      this.unplug(healStack);
+      blockAnimations.disposeUiEffect(this);
+    }
+
+    super.dispose(!!healStack);
+    dom.removeNode(this.svgGroup);
+
     // If this block (or a descendant) was focused, focus its parent or
     // workspace instead.
     const focusManager = getFocusManager();
@@ -956,14 +964,6 @@ export class BlockSvg
         }
       }
     }
-
-    if (animate) {
-      this.unplug(healStack);
-      blockAnimations.disposeUiEffect(this);
-    }
-
-    super.dispose(!!healStack);
-    dom.removeNode(this.svgGroup);
   }
 
   /**
