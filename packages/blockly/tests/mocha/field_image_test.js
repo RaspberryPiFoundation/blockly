@@ -348,4 +348,55 @@ suite('Image Fields', function () {
       });
     });
   });
+  suite('ARIA', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv', {
+        renderer: 'geras',
+      });
+    });
+    suite('Image without click handler', function () {
+      setup(function () {
+        this.block = this.workspace.newBlock('text');
+        this.field = this.block.inputList[0].fieldRow[0];
+        this.block.initSvg();
+        this.block.render();
+        this.focusableElement = this.field.getFocusableElement();
+      });
+      test('Block has field type name in ARIA label', function () {
+        const blockLabel = this.block.getAriaLabel();
+        assert.include(blockLabel, 'image:');
+      });
+      test('Field has field type name in ARIA label', function () {
+        const fieldLabel = this.focusableElement.getAttribute('aria-label');
+        assert.include(fieldLabel, 'image:');
+      });
+      test('Block has image alt text in ARIA label', function () {
+        const blockLabel = this.block.getAriaLabel();
+        assert.include(blockLabel, this.field.altText);
+      });
+      test('Focusable element has  role of presentation', function () {
+        const role = this.focusableElement.getAttribute('role');
+        assert.equal(role, 'presentation');
+      });
+      test('Hidden when in a flyout', function () {
+        this.block.isInFlyout = true;
+        // Force recompute of ARIA label.
+        this.field.setValue(this.field.getValue());
+        const ariaHidden = this.focusableElement.getAttribute('aria-hidden');
+        assert.equal(ariaHidden, 'true');
+      });
+    });
+    suite('Image with click handler', function () {
+      test('Focusable element has  role of button', function () {
+        const block = this.workspace.newBlock('test_images_clickhandler');
+        const field = block.getField('IMAGE');
+        block.initSvg();
+        block.render();
+
+        const focusableElement = field.getFocusableElement();
+        const role = focusableElement.getAttribute('role');
+        assert.equal(role, 'button');
+      });
+    });
+  });
 });

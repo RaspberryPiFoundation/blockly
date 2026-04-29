@@ -293,4 +293,50 @@ suite('Checkbox Fields', function () {
       this.assertValue(false);
     });
   });
+
+  suite('ARIA', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv', {
+        renderer: 'geras',
+      });
+      this.block = this.workspace.newBlock('test_fields_checkbox');
+      this.field = this.block.getField('CHECKBOX');
+      this.block.initSvg();
+      this.block.render();
+
+      this.focusableElement = this.field.getClickTarget_();
+    });
+    test('Block has field type name in ARIA label', function () {
+      const blockLabel = this.block.getAriaLabel();
+      assert.include(blockLabel, 'checkbox');
+    });
+    test('Field ARIA label is type name', function () {
+      const fieldLabel = this.focusableElement.getAttribute('aria-label');
+      assert.equal(fieldLabel, 'checkbox');
+    });
+    test('Field does not include value in ARIA label', function () {
+      const fieldLabel = this.focusableElement.getAttribute('aria-label');
+      assert.isFalse(fieldLabel.toLowerCase().includes('checked'));
+    });
+    test('Hidden when in a flyout', function () {
+      this.block.isInFlyout = true;
+      // Force recompute of ARIA label.
+      this.field.setValue(this.field.getValue());
+      const ariaHidden = this.focusableElement.getAttribute('aria-hidden');
+      assert.equal(ariaHidden, 'true');
+    });
+    test('Focusable element has role of checkbox', function () {
+      const role = this.focusableElement.getAttribute('role');
+      assert.equal(role, 'checkbox');
+    });
+    test('Focusable element has correct default ARIA checked state', function () {
+      const ariaChecked = this.focusableElement.getAttribute('aria-checked');
+      assert.equal(ariaChecked, 'true');
+    });
+    test('Focusable element updates ARIA checked state on setValue', function () {
+      this.field.setValue(false);
+      const ariaChecked = this.focusableElement.getAttribute('aria-checked');
+      assert.equal(ariaChecked, 'false');
+    });
+  });
 });

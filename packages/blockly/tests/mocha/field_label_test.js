@@ -223,4 +223,20 @@ suite('Label Fields', function () {
       });
     });
   });
+
+  suite('ARIA', function () {
+    test('Is hidden', function () {
+      const workspace = Blockly.inject('blocklyDiv', {
+        renderer: 'geras',
+      });
+      const block = workspace.newBlock('text_print');
+      const field = block.inputList[0].fieldRow[0];
+      block.initSvg();
+      block.render();
+
+      const focusableElement = field.getFocusableElement();
+      const ariaHidden = focusableElement.getAttribute('aria-hidden');
+      assert.equal(ariaHidden, 'true');
+    });
+  });
 });

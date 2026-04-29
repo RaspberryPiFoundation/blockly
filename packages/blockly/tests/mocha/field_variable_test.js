@@ -204,9 +204,17 @@ suite('Variable Fields', function () {
       for (let i = 0, option; (option = expectedVarOptions[i]); i++) {
         assert.deepEqual(dropdownOptions[i], option);
       }
-      assert.include(dropdownOptions[dropdownOptions.length - 2][0], 'Rename');
+      const varName = fieldVariable.getText();
 
-      assert.include(dropdownOptions[dropdownOptions.length - 1][0], 'Delete');
+      const renameLabel = dropdownOptions[dropdownOptions.length - 2][0];
+      const deleteLabel = dropdownOptions[dropdownOptions.length - 1][0];
+
+      // Expect the rename and delete options to include the variable name.
+      assert.include(renameLabel, 'Rename');
+      assert.include(renameLabel, varName);
+
+      assert.include(deleteLabel, 'Delete');
+      assert.include(deleteLabel, varName);
     };
     test('Contains variables created before field', function () {
       this.workspace.getVariableMap().createVariable('name1', '', 'id1');
@@ -639,6 +647,77 @@ suite('Variable Fields', function () {
       assert.equal(variable.name, 'test');
       assert.equal(variable.type, 'string');
       assert.equal(variable.getId(), 'id2');
+    });
+  });
+  suite('ARIA', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv', {
+        renderer: 'geras',
+      });
+      this.block = this.workspace.newBlock('variables_set');
+      this.field = this.block.getField('VAR');
+      this.block.initSvg();
+      this.block.render();
+
+      this.focusableElement = this.field.getFocusableElement();
+    });
+    test('Block has dropdown field type name and "Variable" qualifier in ARIA label', function () {
+      const blockLabel = this.block.getAriaLabel();
+      assert.include(blockLabel, 'dropdown:');
+    });
+    test('Field has dropdown field type name and "Variable" qualifier in ARIA label', function () {
+      const fieldLabel = this.focusableElement.getAttribute('aria-label');
+      assert.include(fieldLabel, 'dropdown:');
+      assert.include(fieldLabel, 'Variable');
+    });
+    test('Focusable element has role of button', function () {
+      const role = this.focusableElement.getAttribute('role');
+      assert.equal(role, 'button');
+    });
+    test('Hidden when in a flyout', function () {
+      this.block.isInFlyout = true;
+      // Force recompute of ARIA label.
+      this.field.setValue(this.field.getValue());
+      const ariaHidden = this.focusableElement.getAttribute('aria-hidden');
+      assert.equal(ariaHidden, 'true');
+    });
+    test('Does not have aria-expanded when dropdown is closed', function () {
+      const ariaExpanded = this.focusableElement.getAttribute('aria-expanded');
+      assert.equal(ariaExpanded, 'false');
+    });
+    test('Has aria-expanded when dropdown is open', function () {
+      this.field.showEditor_();
+      const ariaExpanded = this.focusableElement.getAttribute('aria-expanded');
+      assert.equal(ariaExpanded, 'true');
+      this.workspace.hideChaff();
+    });
+    test('Has aria-haspopup of listbox', function () {
+      const ariaHasPopup = this.focusableElement.getAttribute('aria-haspopup');
+      assert.equal(ariaHasPopup, 'listbox');
+    });
+    test('Has aria-controls that matches the ID of the dropdown menu', function () {
+      this.field.showEditor_();
+      const ariaControls = this.focusableElement.getAttribute('aria-controls');
+      const menuId = this.field.menu_.id;
+      assert.equal(ariaControls, menuId);
+      this.workspace.hideChaff();
+    });
+    test('Has placeholder ARIA label by default', function () {
+      const label = this.focusableElement.getAttribute('aria-label');
+      assert.include(label, 'item');
+    });
+    test('New selected option updates ARIA label', function () {
+      const initialLabel = this.focusableElement.getAttribute('aria-label');
+      assert.include(initialLabel, 'item');
+
+      const newVariable = this.workspace
+        .getVariableMap()
+        .createVariable('newVar');
+      this.field.getOptions(false); // Invalidate cached options.
+      this.field.setValue(newVariable.getId());
+
+      const updatedLabel = this.focusableElement.getAttribute('aria-label');
+      assert.include(updatedLabel, 'newVar');
     });
   });
 });

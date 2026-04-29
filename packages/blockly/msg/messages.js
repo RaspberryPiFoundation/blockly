@@ -139,7 +139,7 @@ Blockly.Msg.REDO = 'Redo';
 Blockly.Msg.CHANGE_VALUE_TITLE = 'Change value:';
 /** @type {string} */
 /// dropdown choice - When the user clicks on a variable block, this is one of the dropdown menu choices.  It is used to rename the current variable.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Variables#dropdown-menu https://github.com/RaspberryPiFoundation/blockly/wiki/Variables#dropdown-menu].
-Blockly.Msg.RENAME_VARIABLE = 'Rename variable...';
+Blockly.Msg.RENAME_VARIABLE = 'Rename the "%1" variable';
 /** @type {string} */
 /// prompt - Prompts the user to enter the new name for the selected variable.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Variables#dropdown-menu https://github.com/RaspberryPiFoundation/blockly/wiki/Variables#dropdown-menu].\n\nParameters:\n* %1 - the name of the variable to be renamed.
 Blockly.Msg.RENAME_VARIABLE_TITLE = 'Rename all "%1" variables to:';
@@ -1940,6 +1940,12 @@ Blockly.Msg.ARIA_TYPE_FIELD_NUMBER = 'number';
 /// ARIA type name for a dropdown field, used by screen readers to identify the type of field.
 Blockly.Msg.ARIA_TYPE_FIELD_DROPDOWN = 'dropdown';
 /** @type {string} */
+/// ARIA type name of an image field, used by screen readers to identify the type of field.
+Blockly.Msg.ARIA_TYPE_FIELD_IMAGE = 'image';
+/** @type {string} */
+/// ARIA type name of an checkbox field, used by screen readers to identify the type of field.
+Blockly.Msg.ARIA_TYPE_FIELD_CHECKBOX = 'checkbox';
+/** @type {string} */
 /// Label for an editable field, used by screen readers to identify fields that can be edited by the user.  Placeholder corresponds to the label of the field's value.
 /// \n\nParameters:\n* %1 - the label of the field's value
 /// \n\nExamples:\n* "Edit 5"\n* "Edit item"
@@ -1949,3 +1955,14 @@ Blockly.Msg.FIELD_LABEL_EDIT_PREFIX = 'Edit %1';
 /// \n\nParameters:\n* %1 - the index of the option in the dropdown, starting at 1
 /// \n\nExamples:\n* "Option 1"\n* "Option 2"
 Blockly.Msg.FIELD_LABEL_OPTION_INDEX = 'Option %1';
+/** @type {string} */
+/// Label for a checked checkbox field, used by screen readers to identify the state of a checkbox field.
+Blockly.Msg.FIELD_LABEL_CHECKBOX_CHECKED = 'Checked';
+/** @type {string} */
+/// Label for an unchecked checkbox field, used by screen readers to identify the state of a checkbox field.
+Blockly.Msg.FIELD_LABEL_CHECKBOX_UNCHECKED = 'Not checked';
+/** @type {string} */
+/// Label for a variable field option, used by screen readers to identify the options in a variable dropdown field.
+/// \n\nParameters:\n* %1 - the name of the variable represented by the option
+/// \n\nExamples:\n* 'Variable "item"'\n* 'Variable "x"'
+Blockly.Msg.FIELD_LABEL_VARIABLE = 'Variable "%1"';

@@ -839,7 +839,7 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
   /**
    * Recomputes the ARIA role and label for this field.
    */
-  private recomputeAriaContext(): void {
+  protected recomputeAriaContext(): void {
     const focusableElement = this.getClickTarget_();
     if (!focusableElement) return;
 
@@ -853,7 +853,7 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
     // editing mode that can be activated.
     aria.setRole(focusableElement, aria.Role.BUTTON);
 
-    let label = this.computeAriaLabel(false);
+    let label = this.computeAriaLabel(true);
 
     if (this.isCurrentlyEditable?.()) {
       label = Msg['FIELD_LABEL_EDIT_PREFIX'].replace('%1', label);

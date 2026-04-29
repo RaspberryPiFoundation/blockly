@@ -19,7 +19,6 @@ import {
 } from './field_input.js';
 import * as fieldRegistry from './field_registry.js';
 import {Msg} from './msg.js';
-import * as aria from './utils/aria.js';
 import * as dom from './utils/dom.js';
 
 /**
@@ -300,11 +299,9 @@ export class FieldNumber extends FieldInput<number> {
     // Set the accessibility state
     if (this.min_ > -Infinity) {
       htmlInput.min = `${this.min_}`;
-      aria.setState(htmlInput, aria.State.VALUEMIN, this.min_);
     }
     if (this.max_ < Infinity) {
       htmlInput.max = `${this.max_}`;
-      aria.setState(htmlInput, aria.State.VALUEMAX, this.max_);
     }
     return htmlInput;
   }

@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-04-24 15:03:55.288228",
+		"lastupdated": "2026-04-29 08:57:47.670420",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -29,7 +29,7 @@
 	"UNDO": "Undo",
 	"REDO": "Redo",
 	"CHANGE_VALUE_TITLE": "Change value:",
-	"RENAME_VARIABLE": "Rename variable...",
+	"RENAME_VARIABLE": "Rename the '%1' variable",
 	"RENAME_VARIABLE_TITLE": "Rename all '%1' variables to:",
 	"NEW_VARIABLE": "Create variable...",
 	"NEW_STRING_VARIABLE": "Create string variable...",
@@ -488,6 +488,11 @@
 	"ARIA_TYPE_FIELD_TEXT_INPUT": "text",
 	"ARIA_TYPE_FIELD_NUMBER": "number",
 	"ARIA_TYPE_FIELD_DROPDOWN": "dropdown",
+	"ARIA_TYPE_FIELD_IMAGE": "image",
+	"ARIA_TYPE_FIELD_CHECKBOX": "checkbox",
 	"FIELD_LABEL_EDIT_PREFIX": "Edit %1",
-	"FIELD_LABEL_OPTION_INDEX": "Option %1"
+	"FIELD_LABEL_OPTION_INDEX": "Option %1",
+	"FIELD_LABEL_CHECKBOX_CHECKED": "Checked",
+	"FIELD_LABEL_CHECKBOX_UNCHECKED": "Not checked",
+	"FIELD_LABEL_VARIABLE": "Variable '%1'"
 }

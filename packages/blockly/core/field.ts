@@ -373,7 +373,7 @@ export abstract class Field<T = any>
    * @param includeTypeInfo Whether to include the field's type information in
    *     the returned label, if available.
    */
-  computeAriaLabel(includeTypeInfo: boolean = false): string {
+  computeAriaLabel(includeTypeInfo: boolean = true): string {
     const ariaTypeName = includeTypeInfo ? this.getAriaTypeName() : null;
     let ariaValue = this.getAriaValue();
     if (ariaValue === null || ariaValue === '') {
