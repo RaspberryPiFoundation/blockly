@@ -591,6 +591,7 @@ export function registerCommentDelete() {
       eventUtils.setGroup(true);
       scope.comment?.dispose();
       eventUtils.setGroup(false);
+      scope.comment?.workspace.getAudioManager().play('delete');
     },
     scopeType: ContextMenuRegistry.ScopeType.COMMENT,
     id: 'commentDelete',
