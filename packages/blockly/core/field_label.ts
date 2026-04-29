@@ -77,8 +77,8 @@ export class FieldLabel extends Field<string> {
     }
     if (this.fieldGroup_) {
       dom.addClass(this.fieldGroup_, 'blocklyLabelField');
+      aria.setState(this.fieldGroup_, aria.State.HIDDEN, true);
     }
-    this.recomputeAriaContext();
   }
 
   /**
@@ -127,16 +127,6 @@ export class FieldLabel extends Field<string> {
     // `this` might be a subclass of FieldLabel if that class doesn't override
     // the static fromJson method.
     return new this(text, undefined, options);
-  }
-
-  /**
-   * Recomputes the ARIA role and label for this field.
-   */
-  protected recomputeAriaContext(): void {
-    const element = this.getFocusableElement();
-    if (!element) return;
-
-    aria.setState(element, aria.State.HIDDEN, true);
   }
 }
 

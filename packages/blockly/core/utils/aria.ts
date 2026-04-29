@@ -202,6 +202,18 @@ export enum State {
    * Value:one of {true, false, undefined}.
    */
   SELECTED = 'selected',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-valuemax.
+   *
+   * Value: a number representing the maximum allowed value for a range widget.
+   */
+  VALUEMAX = 'valuemax',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-valuemin.
+   *
+   * Value: a number representing the minimum allowed value for a range widget.
+   */
+  VALUEMIN = 'valuemin',
 }
 
 /**
@@ -358,7 +370,6 @@ export function announceDynamicAriaState(
   text: string,
   options?: DynamicAnnouncementOptions,
 ) {
-  console.log(text);
   if (!liveRegionElement) {
     throw new Error('ARIA live region not initialized.');
   }
