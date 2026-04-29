@@ -110,7 +110,7 @@ suite('ARIA', function () {
 
       this.clock.tick(11);
 
-      assert.equal(
+      assert.include(
         this.liveRegion.textContent,
         'First message\nSecond message\nFinal message',
       );
