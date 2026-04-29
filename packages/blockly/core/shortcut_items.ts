@@ -118,6 +118,7 @@ export function registerDelete() {
         eventUtils.setGroup(true);
         focused.dispose();
         eventUtils.setGroup(false);
+        workspace.getAudioManager().play('delete');
       }
       return true;
     },

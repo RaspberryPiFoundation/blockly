@@ -102,5 +102,6 @@ export class DeleteCommentBarButton extends CommentBarButton {
     this.getCommentView().dispose();
     e?.stopPropagation();
     getFocusManager().focusNode(this.workspace);
+    this.workspace.getAudioManager().play('delete');
   }
 }
