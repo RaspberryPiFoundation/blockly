@@ -1,0 +1,185 @@
+---
+description: Discusses how Blockly is used in applications.
+title: Introduction to Blockly applications
+image: images/blockly_banner.png
+---
+
+import Image from '@site/src/components/Image';
+
+# Introduction to Blockly applications
+
+A Blockly application is a web application that contains a Blockly editor
+(workspace). This document gives examples of what Blockly applications are used
+for and looks at typical UI features.
+
+If you haven't already done so, be sure to read the [visual
+glossary](/guides/get-started/workspace-anatomy) and [basic application
+steps](/guides/get-started/workspace-creation) before continuing with
+this document.
+
+## What do Blockly applications do?
+
+Blockly applications help users write programs in a variety of fields, from
+video games to robotics to data analysis. Users **write their programs using
+blocks**, which the application uses to **generate text-based code**, such as
+JavaScript or Python. The application then **runs the generated code directly**
+or the user **downloads and runs it on another platform**, such as a robot or
+hand-held video game controller.
+
+Here are some examples of the kinds of programs users write with Blockly
+applications:
+
+- **Puzzle solutions, animation, or music:** The generated code solves a
+  puzzle (like a maze), displays an animation, or plays music. For an example,
+  see [Code.org's Music Lab](https://studio.code.org/projects/music/new).
+
+- **Video games:** The generated code runs a video game. For example, create
+  the first two levels of "Whack the Mole" in [MakeCode
+  Arcade](https://arcade.makecode.com/) and download the game to a controller
+  or play it in the simulator.
+
+- **Robotics:** The generated code directs a robot. For example, program a
+  robot with [Ozoblockly](https://games.ozoblockly.com/shapetracer-freeform)
+  and download it to a real robot or run it in the simulator.
+
+- **Drawing:** The generated code draws a 2D or 3D drawing. For an example,
+  see [BlocksCAD](https://www.blockscad3d.com/editor/).
+
+- **Data analysis:** The generated code analyzes data and creates a graph. For
+  an example, see [this demonstration of the Dialogic
+  Platform](https://dialogiconderzoek.nl/diadashboard/platform/demo1.gif).
+
+- **Application-specific code:** The generated code performs a task specific
+  to a particular application. For example, [Blockly Developer Tools](https://raspberrypifoundation.github.io/blockly-samples/examples/developer-tools/index.html)
+  is a tool for designing new Blockly blocks. It generates block definition
+  code, which users copy and paste into their own Blockly application.
+
+## User interfaces
+
+A good way to understand the typical components of Blockly applications is to
+look at their user interfaces.
+
+### Basic UI components
+
+Almost all Blockly applications share a few basic components: a Blockly editor
+(workspace), an output panel, and a "Run" button. For example, here is the UI of
+the [Maze](https://blockly.games/maze?level=4) in Blockly Games.
+
+<Image
+  alt="The UI of a maze application with an editor, an output panel, and a Run button."
+  src="/images/application-overview/games-maze.png"
+  srcDark="/images/application-overview/games-maze-dark.png"
+  className="blockly"
+  width="75%"
+/>
+
+A few Blockly applications omit the "Run" button and instead update the output
+panel every time the user makes a change. For example, the
+[Graph](https://raspberrypifoundation.github.io/blockly-samples/examples/graph-demo/index.html)
+application in Blockly's samples has two output panels (one for the graph and
+one for the equation) that it updates on every change.
+
+<Image
+  alt="The UI of a graph application with an editor, an output panel for an equation constructed by the user, and an output panel for a graph of that equation."
+  src="/images/application-overview/graph-sample.png"
+  srcDark="/images/application-overview/graph-sample-dark.png"
+  width="75%"
+/>
+
+Some applications don't have an output panel. This is most common in hardware
+applications, such as those for programming robots. While some of these
+applications include a hardware simulator, many of them just let users download
+and run the generated code directly on the target device.
+
+### Additional UI components
+
+Most applications have additional UI components. Some of these meet general
+needs, such as saving the user's work, while others fulfill application-specific
+needs, such as designing a GUI. Here are some examples:
+
+- [Scratch](https://scratch.mit.edu/), an application for creating animations
+  and video games, has graphics and sound editors; panels to create new
+  sprites and backdrops; and file, edit, and settings menus:
+
+  <Image
+    alt="The Scratch user interface."
+    src="/images/application-overview/mit-scratch.png"
+    srcDark="/images/application-overview/mit-scratch-dark.png"
+    width="85%"
+  />
+
+- [MakeCode Arcade](https://www.microsoft.com/en-us/makecode), an application
+  for creating video games, has output controls, code and graphics editors, a
+  settings menu, and download and save buttons. Its output panel simulates a
+  handheld game controller.
+
+  <Image
+    alt="The MakeCode Arcade user interface."
+    src="/images/application-overview/makecode-arcade.png"
+    srcDark="/images/application-overview/makecode-arcade-dark.png"
+    width="85%"
+  />
+
+- [MIT App Inventor](https://appinventor.mit.edu/), an application for
+  creating phone apps, has separate screens for its GUI designer and Blockly
+  editor, as well as file, connection, build, and settings menus. Instead of
+  an output panel, users test generated code on their phone.
+
+  <Image
+    alt="The GUI designer in the App Inventor user interface"
+    src="/images/application-overview/mit-app-inventor-gui.png"
+    srcDark="/images/application-overview/mit-app-inventor-gui-dark.png"
+    width="85%"
+  />
+  <Image
+    alt="The Blockly editor in the App Inventor user interface"
+    src="/images/application-overview/mit-app-inventor-blockly.png"
+    srcDark="/images/application-overview/mit-app-inventor-blockly-dark.png"
+    width="85%"
+  />
+
+Which additional components you should include depends on your application's
+goals and the abilities of your users. Some common components are:
+
+- Administration:
+  - File management (new, open, save, save as, delete)
+  - Account management (create, login, logout)
+  - Settings (language, UI configuration)
+
+- Programming:
+  - Edit commands (undo, redo, copy, cut, paste, duplicate)
+  - GUI designer
+  - Graphics and sound editors
+  - Code editor or read-only code display
+
+- Testing
+  - Output configuration (start/stop, playback speed, volume, screenshot,
+    etc.)
+  - Debugger (breakpoints, run, step, block highlighting)
+  - Set test parameters
+
+- Hardware
+  - Connection (USB, Bluetooth, QR code)
+  - Configuration (choose model, choose accessories, assign component names)
+  - Control (manually control robot, record robot position)
+  - Download code
+
+- Help
+  - Documentation
+  - Interactive tutorials
+  - Context-sensitive help
+
+## Where do I go from here?
+
+If you're still thinking about your application, continue reading about [design
+considerations](/guides/design/applications).
+
+If you want to see what it's like to build a simple application, try the
+[Getting started with Blockly
+codelab](/codelabs/getting-started/codelab-overview).
+
+And if you're ready to write your application:
+
+- [Build your editor](/guides/configure/web/configuration_struct)
+- [Build your blocks](/guides/create-custom-blocks/overview)
+- [Build your application](/guides/app-integration/run-code)

@@ -1,0 +1,123 @@
+---
+description: Recommendations for how to design your blocks.
+title: Block design
+image: images/blockly_banner.png
+---
+
+# Block design
+
+Over the years, the Blockly team has designed many of their own blocks and
+helped others to design theirs. The following are some of the lessons they have
+learned.
+
+## Prefer high-level blocks
+
+Wherever possible a higher-level approach should be taken, even if it reduces
+execution performance or flexibility. Consider this Apps Script expression:
+
+```none
+SpreadsheetApp.getActiveSheet().getDataRange().getValues()
+```
+
+Under a 1:1 mapping which preserves all potential capabilities, the above
+expression would be built using four blocks. But Blockly aims for a higher-level
+and would provide one block that encapsulates the entire expression. The goal is
+to optimize for the 95% case, even if it makes the remaining 5% more difficult.
+Blockly is not intended to be a replacement for text-based languages, it is
+intended to help users get over the initial learning curve so that they can use
+text-based languages.
+
+_Recommendation: Don't blindly convert your entire API into blocks._
+
+## Consider user input choices
+
+![Three repeat blocks showing different ways to input a number: drop-down,
+numeric field, and value input.](/images/language03.png)
+
+There are three ways to obtain a parameter from the user. A dropdown is the most
+restrictive and is good for simple tutorials and exercises. An input field
+allows for more freedom and is good for more creative activities. A value block
+input (usually with a shadow block) offers the opportunity to compute a value
+(e.g. a random generator) instead of just being a static value.
+
+_Recommendation: Choose an input method appropriate to your users._
+
+## Use separate conditional and loop blocks
+
+![Counterexample showing if/then and while blocks in the same
+category.](/images/language01.png)
+
+The most difficult blocks for new users are conditionals and loops. Many
+block-based environments group both of these blocks into the same 'Controls'
+category, with both blocks having the same shape and the same colour. This often
+leads to frustration as new users confuse the two blocks. Blockly recommends
+moving conditionals and loops into separate 'Logic' and 'Loops' categories, each
+with a different colour. This makes it clear that these are distinct ideas that
+behave differently, despite having similar shapes.
+
+_Recommendation: Keep conditionals and loops separate._
+
+## Handle a variable number of inputs
+
+Certain blocks may require a variable number of inputs. Examples are an
+addition block that sums an arbitrary set of numbers, or an if/elseif/else
+block with an arbitrary set of elseif clauses, or a list constructor with
+an arbitrary number of initialized elements. There are several strategies,
+each with its advantages and disadvantages.
+
+a) The simplest approach is to make the user compose the block out of smaller
+blocks. An example would be adding three numbers, by nesting two two-number
+addition blocks. Another example would be only providing if/else blocks,
+and making the user nest them to create elseif conditions.
+
+![Nested addition blocks: 1 + (2 + 3).](/images/mutate-compound.png)
+
+The advantage of this approach is its initial simplicity (both for the user and
+the developer). The disadvantage is that in cases where there are a large
+number of nestings, code becomes very cumbersome and difficult for the user to
+read and maintain.
+
+b) An alternative is to dynamically expand the block so that there is always one
+free input at the end. Likewise, the block deletes the last input if there are
+two free inputs at the end. This is the approach that the first version of
+App Inventor used.
+
+![Block that adds four value inputs, the last one of which is
+empty.](/images/mutate-extra.png)
+
+Blocks that grew automatically were disliked by App Inventor's users for a couple
+of reasons. First, there was always a free input and the program was never
+'complete'. Second, inserting an element in the middle of the stack was
+frustrating since it involved disconnecting all elements below the edit and
+reconnecting them. That said, if order is not important, and users can be
+made comfortable with holes in their program, this is a very convenient option.
+
+c) To solve the hole problem, some developers add +/- buttons to blocks that
+manually add or remove inputs. Open Roberta uses two such buttons to add
+or remove inputs from the bottom. Other developers add two buttons at each
+row so that insertion and deletion from the middle of the stack may be
+accommodated. Others add two up/down buttons at each row so that reordering of
+the stack may be accommodated.
+
+![Block that adds three external value inputs and has plus and minus buttons to
+add or remove inputs.](/images/mutate-add-minus.png)
+
+This strategy is a spectrum of options ranging from just two buttons per block,
+through to four buttons per row. At one end is the danger that users aren't able
+to perform the actions they need, at the other end the UI is so filled with
+buttons that it looks like the bridge of the starship Enterprise.
+
+d) The most flexible approach is to add a mutator bubble to the block. This
+is represented as a single button that opens a configuration dialog for that
+block. Elements may be added, deleted, or rearranged at will.
+
+![Block that adds three value inputs and has a mutator for adding or removing
+value inputs.](/images/mutate-bubble.png)
+
+The disadvantage of this approach is that it mutators are not intuitive for
+novice users. Introducing mutators requires some form of instruction.
+Blockly-based applications targeting younger children should not use mutators.
+Though once learned, they are invaluable for power users.
+
+_Recommendation: Each strategy has pros and cons, choose what's right for
+your users._

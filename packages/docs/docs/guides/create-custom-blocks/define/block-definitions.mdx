@@ -1,0 +1,102 @@
+---
+description: What are block definitions and how do they work?
+title: What's a block definition?
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# What's a block definition?
+
+A **block definition** is an object that defines a custom block. For example, it
+defines the block's look and feel, (text, fields, connections, colour, etc.), as
+well as its behavior (block-level event handler, etc.).
+
+For example, this block:
+
+![A `string_length` block.](/images/text-length.png)
+
+can be defined in JSON or JavaScript as follows:
+
+<Tabs groupId="group-1">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  Blockly.common.defineBlocksWithJsonArray([{
+    "type": "string_length",
+    "message0": 'length of %1',
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "VALUE",
+        "check": "String"
+      }
+    ],
+    "output": "Number",
+    "colour": 160,
+    "tooltip": "Returns number of letters in the provided text.",
+    "helpUrl": "http://www.w3schools.com/jsref/jsref_length_string.asp"
+  }]);
+  ```
+  
+  `defineBlocksWithJsonArray` creates a block definition from a JSON object.
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+  ```js
+  Blockly.Blocks['string_length'] = {
+     init: function() {
+       this.appendValueInput('VALUE')
+           .setCheck('String')
+           .appendField('length of');
+       this.setOutput(true, 'Number');
+       this.setColour(160);
+       this.setTooltip('Returns number of letters in the provided text.');
+       this.setHelpUrl('http://www.w3schools.com/jsref/jsref_length_string.asp');
+     }
+  };
+  ```
+  
+  When you use JavaScript, you create the block definition directly.
+  </TabItem>
+</Tabs>
+## How block definitions work
+
+A block definition is a [mixin](https://en.wikipedia.org/wiki/Mixin) containing
+function-valued properties. When a new block is instantiated, these properties
+are copied to the newly created block object. Blockly calls these functions to
+invoke custom behavior.
+
+Because the definition functions are mixed in to the block object:
+
+- The `this` keyword in definition functions refers to the block object. That
+  is, it can be used to access the public methods and properties in the
+  [`Block`](/reference/blockly.block) (or
+  [`BlockSvg`](/reference/blockly.blocksvg)) class.
+
+Blockly defines a small number of functions you can use to customize blocks. The
+most common of these is `init`, which Blockly calls to initialize a block and
+which is used to define the block's look and feel. For a complete list, see the
+function-valued properties in the
+[`Block`](/reference/blockly.block) and
+[`BlockSvg`](/reference/blockly.blocksvg#properties) classes.
+These properties effectively form an interface for block definitions to
+implement; all of them are optional.
+
+Block definitions can also have custom functions, although Blockly will not call
+these directly. Instead, they can be used to implement other functions. For
+example, a block-level event handler (the `Block.onchange` property) could
+delegate different events to different custom functions.
+
+## How to create block definitions
+
+There are several different ways to create block definitions:
+
+- Use the Blockly Developer Tools to define the look and feel of your block.
+  Copy the generated JSON or JavaScript to your code and add custom code as
+  needed. For more information, see [Blockly Developer
+  Tools](/guides/create-custom-blocks/blockly-developer-tools).
+- Find a similar block, copy its definition, and modify it as needed. For more
+  information, see [Modify existing
+  definitions](/guides/create-custom-blocks/define/modify-definitions).
+- Write a block definition by hand. For more information, see [JSON and
+  JavaScript](/guides/create-custom-blocks/define/json-and-js).

@@ -1299,7 +1299,7 @@ export function testAWorkspace() {
           assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
           assert.isNull(this.variableMap.getVariableById('id2'));
 
-          this.workspace.undo(true);
+          this.workspace.redo();
 
           // Expect that variable 'id2' is recreated
           assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
@@ -1307,9 +1307,10 @@ export function testAWorkspace() {
 
           this.workspace.undo();
           this.workspace.undo();
+
           assert.isNull(this.variableMap.getVariableById('id1'));
           assert.isNull(this.variableMap.getVariableById('id2'));
-          this.workspace.undo(true);
+          this.workspace.redo();
 
           // Expect that variable 'id1' is recreated
           assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
@@ -1377,7 +1378,7 @@ export function testAWorkspace() {
           assert.isNull(this.variableMap.getVariableById('id1'));
           assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
 
-          this.workspace.undo(true);
+          this.workspace.redo();
           this.clock.runAll();
           // Expect that both variables are deleted
           assert.isNull(this.variableMap.getVariableById('id1'));
@@ -1390,7 +1391,7 @@ export function testAWorkspace() {
           assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
           assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
 
-          this.workspace.undo(true);
+          this.workspace.redo();
           this.clock.runAll();
           // Expect that variable 'id2' is recreated
           assert.isNull(this.variableMap.getVariableById('id1'));
@@ -1414,7 +1415,7 @@ export function testAWorkspace() {
           assert.isNull(this.variableMap.getVariableById('id1'));
           assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
 
-          this.workspace.undo(true);
+          this.workspace.redo();
           this.clock.runAll();
           // Expect that both variables are deleted
           assert.equal(this.workspace.getTopBlocks(false).length, 0);
@@ -1430,7 +1431,7 @@ export function testAWorkspace() {
           assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
           assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
 
-          this.workspace.undo(true);
+          this.workspace.redo();
           this.clock.runAll();
           // Expect that variable 'id2' is recreated
           assertBlockVarModelName(this.workspace, 0, 'name2');
@@ -1453,7 +1454,7 @@ export function testAWorkspace() {
           this.clock.runAll();
           assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
 
-          this.workspace.undo(true);
+          this.workspace.redo();
           this.clock.runAll();
           assertVariableValues(this.variableMap, 'name2', 'type1', 'id1');
         });
@@ -1469,7 +1470,7 @@ export function testAWorkspace() {
           assertBlockVarModelName(this.workspace, 0, 'name1');
           assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
 
-          this.workspace.undo(true);
+          this.workspace.redo();
           this.clock.runAll();
           assertBlockVarModelName(this.workspace, 0, 'name2');
           assertVariableValues(this.variableMap, 'name2', 'type1', 'id1');
@@ -1484,7 +1485,7 @@ export function testAWorkspace() {
           this.clock.runAll();
           assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
 
-          this.workspace.undo(true);
+          this.workspace.redo();
           this.clock.runAll();
           assertVariableValues(this.variableMap, 'Name1', 'type1', 'id1');
         });
@@ -1500,7 +1501,7 @@ export function testAWorkspace() {
           assertBlockVarModelName(this.workspace, 0, 'name1');
           assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
 
-          this.workspace.undo(true);
+          this.workspace.redo();
           this.clock.runAll();
           assertBlockVarModelName(this.workspace, 0, 'Name1');
           assertVariableValues(this.variableMap, 'Name1', 'type1', 'id1');
@@ -1518,7 +1519,7 @@ export function testAWorkspace() {
             assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
             assertVariableValues(this.variableMap, 'name2', 'type1', 'id2');
 
-            this.workspace.undo(true);
+            this.workspace.redo();
             this.clock.runAll();
             assertVariableValues(this.variableMap, 'name2', 'type1', 'id2');
             assert.isNull(this.variableMap.getVariableById('id1'));
@@ -1542,7 +1543,7 @@ export function testAWorkspace() {
             assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
             assertVariableValues(this.variableMap, 'name2', 'type1', 'id2');
 
-            this.workspace.undo(true);
+            this.workspace.redo();
             this.clock.runAll();
             assertVariableValues(this.variableMap, 'name2', 'type1', 'id2');
             assert.isNull(this.variableMap.getVariableById('id1'));
@@ -1559,7 +1560,7 @@ export function testAWorkspace() {
             assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
             assertVariableValues(this.variableMap, 'name2', 'type1', 'id2');
 
-            this.workspace.undo(true);
+            this.workspace.redo();
             this.clock.runAll();
             assertVariableValues(this.variableMap, 'Name2', 'type1', 'id2');
             assert.isNull(this.variableMap.getVariable('name1'));
@@ -1579,7 +1580,7 @@ export function testAWorkspace() {
             assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
             assertVariableValues(this.variableMap, 'name2', 'type1', 'id2');
 
-            this.workspace.undo(true);
+            this.workspace.redo();
             this.clock.runAll();
             assertVariableValues(this.variableMap, 'Name2', 'type1', 'id2');
             assert.isNull(this.variableMap.getVariableById('id1'));
@@ -1598,7 +1599,7 @@ export function testAWorkspace() {
             assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
             assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
 
-            this.workspace.undo(true);
+            this.workspace.redo();
             this.clock.runAll();
             assertVariableValues(this.variableMap, 'name2', 'type1', 'id1');
             assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
@@ -1618,7 +1619,7 @@ export function testAWorkspace() {
             assertBlockVarModelName(this.workspace, 0, 'name1');
             assertBlockVarModelName(this.workspace, 1, 'name2');
 
-            this.workspace.undo(true);
+            this.workspace.redo();
             this.clock.runAll();
             assertVariableValues(this.variableMap, 'name2', 'type1', 'id1');
             assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
@@ -1637,7 +1638,7 @@ export function testAWorkspace() {
             assertVariableValues(this.workspace, 'name1', 'type1', 'id1');
             assertVariableValues(this.workspace, 'name2', 'type2', 'id2');
 
-            this.workspace.undo(true);
+            this.workspace.redo();
             this.clock.runAll();
             assertVariableValues(this.variableMap, 'Name2', 'type1', 'id1');
             assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
@@ -1657,7 +1658,7 @@ export function testAWorkspace() {
             assertBlockVarModelName(this.workspace, 0, 'name1');
             assertBlockVarModelName(this.workspace, 1, 'name2');
 
-            this.workspace.undo(true);
+            this.workspace.redo();
             this.clock.runAll();
             assertVariableValues(this.variableMap, 'Name2', 'type1', 'id1');
             assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');

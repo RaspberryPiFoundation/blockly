@@ -1,0 +1,135 @@
+---
+description: How to add a new localization token to Blockly core.
+title: Add a new localization token to Blockly core
+image: images/blockly_banner.png
+---
+
+# Add a new localization token to Blockly core
+
+If you add a feature to Blockly core that requires new user-visible strings, you
+must add those strings to `Blockly.Msg` so that they can be [translated by
+Translatewiki][translatewiki]. (For information about adding localization tokens
+for your own application, see [Localization][localization].)
+
+1.  Add your new string with an appropriate name and description to the
+    `msg/messages.js` file.
+1.  Run `npm run messages` to automatically add your translation to the
+    `msg/json/qqq.json` and `msg/json/en.js` files. This step may also change
+    `msg/json/constants.js` or `msg/json/synonyms.js` in some cases.
+1.  Inspect the automatically-generated files for correctness. Note that the
+    script may remove the `@metadata` section at the beginning of `qqq.json`. If
+    this happens, you should carefully revert that change so that your new
+    string is added but the `@metadata` is not removed.
+1.  In your feature code, reference the new string with
+    `Blockly.Msg['MY_NEW_MESSAGE']`.
+1.  Commit all of the changes to the `msg` files alongside your feature code.
+
+For example, if you add this code to `msg/messages.js`:
+
+```js
+/** @type {string} */
+/// This is a hint to translators about the context for the message.
+Blockly.Msg.MY_NEW_MESSAGE = 'This is a string that users will see!';
+```
+
+Then run `npm run messages`, you should see the following changes in
+`msg/en.json`:
+
+```js
+// ...
+    "MY_NEW_MESSAGE": "This is a message that users will see!",
+// ...
+```
+
+and in `msg/qqq.json`:
+
+```js
+// ...
+    "MY_NEW_MESSAGE": "This is a hint to translators about the context for the message.",
+// ...
+```
+
+Then you can reference this string in code with `Blockly.Msg['MY_NEW_MESSAGE']`.
+
+## Translation hints
+
+The triple-slash comment in `msg/messages.js` is shown to TranslateWiki users as
+supplementary information when translating. Provide context for where the
+message will be shown to users. If the message includes parameters (e.g., `%1`),
+explain what the parameters mean.
+
+Here is an example of a good translation hint that explains the parameters and
+provides a link to more information.
+
+```js
+/** @type {string} */
+/// block text - Repeatedly counts a variable (%1)
+/// starting with a (usually lower) number in a range (%2),
+/// ending with a (usually higher) number in a range (%3), and counting the
+/// iterations by a number of steps (%4).  As in
+/// [https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#count-with
+/// https://github.com/RaspberryPiFoundation/blockly/wiki/Loops#count-with].
+Blockly.Msg.CONTROLS_FOR_TITLE = 'count with %1 from %2 to %3 by %4';
+```
+
+### Context types
+
+Many of the hints use a prefix to explain the context of a message. The common
+prefixes include:
+
+- block text
+- button text
+- context menu
+- dropdown
+- math
+- toast notification
+- tooltip
+
+If your message appears in one of these context, use the appropriate prefix.
+
+## Synonyms
+
+Sometimes a message key needs to be changed, but the translations don't. In that
+case, you can set the old message as a synonym of the new message, like so:
+
+```js
+/** @type {string} */
+Blockly.Msg.CONTROLS_FOR_INPUT_DO = Blockly.Msg.CONTROLS_REPEAT_INPUT_DO;
+```
+
+## Optional messages
+
+Some message strings are unlikely to need translation except in certain
+circumstances, for example, proper nouns or symbols. In Blockly, help URLs are
+often marked optional.
+
+Languages are only committed to the Blockly repository if they are at least 25%
+complete. Thus, marking messages that are unlikely to need translating as
+optional will help those languages meet the threshold without needing to
+complete the optional translations.
+
+```js
+/** @type {string} */
+/// {{Optional}} math - The symbol for the binary operation addition.
+Blockly.Msg.MATH_ADDITION_SYMBOL = '+';
+```
+
+## Notranslate items
+
+The colours used for default block categories are marked `{{notranslate}}`. These colours are not intended to be
+localized, but are in the localization system so that developers can easily
+[change the colours][block-colour] of blocks in the default categories. If you
+add new block categories, use the `{{notranslate}}`
+directive. If you add a different type of message that you think should never be
+translated, consider whether the localization system is the right place for the
+string.
+
+```js
+/** @type {string} */
+/// {{Notranslate}} Hue value for all logic blocks.
+Blockly.Msg.LOGIC_HUE = '210';
+```
+
+[translatewiki]: /guides/contribute/core/translating
+[localization]: /guides/configure/web/translations
+[block-colour]: /guides/configure/web/appearance/block-colour#set-block-colour

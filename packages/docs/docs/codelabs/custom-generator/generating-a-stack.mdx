@@ -1,0 +1,34 @@
+---
+slug: /codelabs/custom-generator/generating-a-stack
+description: How to generate code for the blocks in a stack.
+---
+
+# Build a custom generator
+
+## 9. Generating a stack
+
+### The scrub\_ function
+
+The `scrub_` function is called on every block from `blockToCode`. It takes in three arguments:
+
+- `block` is the current block.
+- `code` is the code generated for this block, which includes code from all attached value blocks.
+- `opt_thisOnly` is an optional `boolean`. If true, code should be generated for this block but no subsequent blocks.
+
+By default, `scrub_` simply returns the passed-in code. A common pattern is to override the function to also generate code for any blocks that follow the current block in a stack. In this case, the code will add commas and newlines between object members:
+
+```js
+jsonGenerator.scrub_ = function (block, code, thisOnly) {
+  const nextBlock = block.nextConnection && block.nextConnection.targetBlock();
+  if (nextBlock && !thisOnly) {
+    return code + ',\n' + jsonGenerator.blockToCode(nextBlock);
+  }
+  return code;
+};
+```
+
+### Testing scrub\_
+
+Create a stack of `member` blocks on the workspace. There should be generated code for all of the blocks, not just the first one.
+
+Next, add an `object` block and drag the `member` blocks into it. This case tests `statementToCode`, and should generate code for all of of the blocks.

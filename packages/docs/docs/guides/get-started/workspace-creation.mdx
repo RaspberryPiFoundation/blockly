@@ -1,0 +1,63 @@
+---
+description: How to create a Blockly workspace.
+title: Create a workspace
+image: images/blockly_banner.png
+---
+
+# Create a workspace
+
+A Blockly workspace is the highest level component of Blockly. It is the UI that
+you use to program with blocks.
+
+For more information about the workspace and its subcomponents, see the [visual
+glossary][visual-glossary].
+
+## Injection div
+
+A Blockly workspace must be _injected_ into a `<div>`, called the "injection
+div".
+
+The injection `div` can be sized [statically][fixed-demo] or
+[dynamically][resizable-demo]. Blockly elements within the `div` update their
+size when the window resizes.
+
+The following code snippet shows the HTML for a statically sized injection
+`div`:
+
+```html
+<div id="blocklyDiv" style="height: 480px; width: 600px;"></div>
+```
+
+## Injection
+
+Injection creates all of the HTML sub-elements that make up the UI of a
+workspace. It also does all of the initialization needed to get the workspace
+ready for use.
+
+The injection function can take in the ID of the injection `div`, or the
+injection `div` itself:
+
+```js
+// Passes the ID.
+const workspace = Blockly.inject('blocklyDiv', {
+  /* config */
+});
+
+// Passes the injection div.
+const workspace = Blockly.inject(document.getElementById('blocklyDiv'), {
+  /* config */
+});
+```
+
+## Configuration
+
+The workspace can be configured with numerous options (such as layout and style)
+during injection.
+
+For more information about configuration options, see
+[Configuration options][config-options].
+
+[visual-glossary]: /guides/get-started/workspace-anatomy
+[config-options]: /guides/configure/web/configuration_struct#the-options-dictionary
+[fixed-demo]: https://raspberrypifoundation.github.io/blockly-samples/examples/fixed-demo/index.html
+[resizable-demo]: https://raspberrypifoundation.github.io/blockly-samples/examples/resizable-demo/index.html

@@ -1,0 +1,85 @@
+---
+description: How to disable, hide, or expand categories in a category toolbox.
+title: Disable, hide, or expand categories
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Disable, hide, or expand categories
+
+You can disable, hide, or expand categories.
+
+## Disable categories
+
+A disabled category will not allow a user to open the category and it will be
+skipped during keyboard navigation.
+
+```js
+var category = toolbox.getToolboxItems()[0];
+category.setDisabled('true');
+```
+
+When a category is disabled, a `'disabled'` property is added to the DOM
+element, which allows you to control the look of a disabled category.
+
+```css
+.blocklyToolboxCategoryContainer[disabled='true'] {
+  opacity: 0.5;
+}
+```
+
+## Hide categories
+
+A hidden category will not be shown as part of the toolbox.
+
+<Tabs groupId="code-format">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "kind": "category",
+    "name": "...",
+    "hidden": "true",
+  }
+  ```
+  </TabItem>
+  <TabItem value="xml" label="XML">
+  ```xml
+  <category name="..." hidden="true"></category>
+  ```
+  </TabItem>
+</Tabs>
+Hidden categories can later be shown via JavaScript.
+
+```js
+var category = toolbox.getToolboxItems()[0];
+category.hide();
+// etc...
+category.show();
+```
+
+## Expand categories
+
+This only applies to categories which contain other [nested
+categories](/guides/configure/web/toolboxes/nested).
+
+An expanded category will show you its sub categories. By default, nested
+categories are collapsed, and need to be clicked to be expanded.
+
+<Tabs groupId="code-format">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "kind": "category",
+    "name": "...",
+    "expanded": "true",
+  }
+  ```
+  </TabItem>
+  <TabItem value="xml" label="XML">
+  ```xml
+  <category name="..." expanded="true"></category>
+  ```
+  </TabItem>
+</Tabs>

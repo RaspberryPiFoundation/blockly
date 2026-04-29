@@ -8,7 +8,31 @@
  * @fileoverview Node.js script to run Mocha tests in Chrome, via webdriver.
  */
 const webdriverio = require('webdriverio');
+const fs = require('fs');
+const path = require('path');
 const {posixPath} = require('../../scripts/helpers');
+
+/**
+ * Ensure browser test imports that use ../../node_modules/* continue to work
+ * when npm hoists dependencies to the repository root node_modules dir
+ */
+function ensureWorkspaceNodeModulesLinks() {
+  const workspaceNodeModules = path.resolve(__dirname, '../../node_modules');
+  const rootNodeModules = path.resolve(__dirname, '../../../../node_modules');
+  const packages = ['mocha', 'sinon', 'chai', '@blockly/dev-tools'];
+
+  for (const pkg of packages) {
+    const workspacePkgPath = path.join(workspaceNodeModules, pkg);
+    const rootPkgPath = path.join(rootNodeModules, pkg);
+
+    if (fs.existsSync(workspacePkgPath) || !fs.existsSync(rootPkgPath)) {
+      continue;
+    }
+
+    fs.mkdirSync(path.dirname(workspacePkgPath), {recursive: true});
+    fs.symlinkSync(rootPkgPath, workspacePkgPath, 'dir');
+  }
+}
 
 
 /**
@@ -21,6 +45,8 @@ const {posixPath} = require('../../scripts/helpers');
  * @return {number} 0 on success, 1 on failure.
  */
 async function runMochaTestsInBrowser(exitOnCompletion = true) {
+  ensureWorkspaceNodeModulesLinks();
+
   const options = {
     capabilities: {
       browserName: 'chrome',

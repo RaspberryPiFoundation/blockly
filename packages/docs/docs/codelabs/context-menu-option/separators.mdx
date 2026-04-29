@@ -1,0 +1,42 @@
+---
+slug: /codelabs/context-menu-option/separators
+description: How to add a separator to a context menu.
+---
+
+# Customizing context menus
+
+## 10. Separators
+
+You can use separators to break your context menu into different sections.
+
+Separators differ from other items in two ways: They cannot have `displayText`, `preconditionFn`, or `callback` properties and they can only be scoped with the `scopeType` property. The latter accepts an enum value of `Blockly.ContextMenuRegistry.ScopeType.WORKSPACE`, `Blockly.ContextMenuRegistry.ScopeType.BLOCK`, or `Blockly.ContextMenuRegistry.ScopeType.COMMENT`.
+
+Use the `weight` property to position the separator. You'll use a weight of `99` to position the separator just above the other options you added, all of which have a weight of `100`.
+
+You need to add a separate item for each separator:
+
+```js
+function registerSeparators() {
+  const workspaceSeparator = {
+    id: 'workspace_separator',
+    scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
+    weight: 99,
+    separator: true,
+  };
+  Blockly.ContextMenuRegistry.registry.register(workspaceSeparator);
+
+  const blockSeparator = {
+    id: 'block_separator',
+    scopeType: Blockly.ContextMenuRegistry.ScopeType.BLOCK,
+    weight: 99,
+    separator: true,
+  };
+  Blockly.ContextMenuRegistry.registry.register(blockSeparator);
+}
+```
+
+As usual, remember to call `registerSeparators()` from your `start` function.
+
+### Test it
+
+Open a context menu on the workspace and a block and check that the separator line is there.

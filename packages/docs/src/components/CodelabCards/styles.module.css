@@ -1,0 +1,117 @@
+/*
+  Styles for the Codelab landing page components.
+*/
+
+:root {
+  --codelab-card-background-color: #ffffff;
+  --codelab-card-title: #3c4043;
+}
+
+[data-theme='dark'] {
+  --codelab-card-background-color: #1c1e21;
+  --codelab-card-title: #ffffff;
+}
+
+.codelabGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.codelabCard {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--codelab-card-background-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 3px;
+  border-bottom: 2px solid #9aa0a6;
+  text-decoration: none;
+  color: #3c4043;
+  overflow: hidden;
+  padding: 1.5rem;
+  min-height: 180px;
+}
+
+.cardHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin: 0;
+  color: var(--codelab-card-title);
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+  line-height: 1.4;
+}
+
+.cardIcon {
+  display: flex;
+  align-items: center;
+  color: #4285f4;
+  font-size: 1.5rem;
+}
+
+.cardContent {
+  padding: 1.5rem;
+  flex-grow: 1;
+}
+
+.cardDescription {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 1rem;
+  gap: 20px;
+}
+
+.cardButton {
+  border: 1px solid #4285f4;
+  background-color: #4285f4;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 0.5rem 1.25rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    background-color 0.2s cubic-bezier(0.55, 0.085, 0.68, 0.53),
+    border-color 0.2s cubic-bezier(0.55, 0.055, 0.675, 0.19),
+    color 0.2s cubic-bezier(0.55, 0.085, 0.68, 0.53),
+    transform 0.3s;
+}
+
+.cardButton:hover {
+  border-color: #1a73e8;
+  background-color: #1a73e8;
+  transform: scale(1.05);
+}
+
+.eyebrow {
+  padding: 0.25rem 0.5rem;
+  background-color: #e8eaed;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 20px;
+}

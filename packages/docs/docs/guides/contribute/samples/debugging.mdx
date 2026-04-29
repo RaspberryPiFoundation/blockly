@@ -1,0 +1,48 @@
+---
+description: How to test changes in blockly-samples that depend on changes in Blockly core.
+title: Debug plugins
+image: images/blockly_banner.png
+---
+
+# Debug plugins
+
+Sometimes when developing a plugin in blockly-samples, you'll need to make
+corresponding changes in Blockly itself. Most plugins are set up to fetch
+Blockly from the npm registry, so you'd only be able to use code that has
+already been released on npm. This would make debugging your Blockly changes
+difficult. When you want to make and test changes in both blockly and blockly-
+samples, you can use `npm link` to test your unreleased changes together.
+
+## npm link
+
+You can tell npm to use a package from your machine instead of fetching the
+package from the npm registry. Using this method, you should have access to
+sourcemaps that make debugging blockly easier. You can use this method with
+changes in core that haven't yet been pushed to GitHub.
+
+1.  In your fork of blockly:
+
+    ```shell
+    $ npm run package
+    $ cd dist
+    $ npm link
+    ```
+
+    These steps build core Blockly, package it, then create a symlink to the
+    packaged files.
+
+1.  In your fork of blockly-samples, at root:
+
+    ```shell
+    $ npm link blockly
+    ```
+
+    This step tells npm to look for the symlink you created earlier instead of
+    fetching the package from npm.
+
+1.  `npm run start` from the plugin's directory to test your plugin.
+
+When you make changes in core, you'll have to rebuild and repackage it.
+
+When you're finished testing, run `npm ci` at the root level of blockly-samples
+to reset the state of your repository.

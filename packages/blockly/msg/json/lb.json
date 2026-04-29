@@ -18,6 +18,7 @@
 	"DELETE_X_BLOCKS": "%1 Bléck läschen",
 	"DELETE_ALL_BLOCKS": "All %1 Bléck läschen?",
 	"CLEAN_UP": "Bléck opraumen",
+	"CLOSE": "Zoumaachen",
 	"COLLAPSE_BLOCK": "Block zesummeklappen",
 	"COLLAPSE_ALL": "Bléck zesummeklappen",
 	"EXPAND_BLOCK": "Block opklappen",
@@ -139,7 +140,7 @@
 	"LISTS_SET_INDEX_TOOLTIP_SET_RANDOM": "Setzt en zoufällegt Element an eng Lëscht.",
 	"LISTS_SET_INDEX_TOOLTIP_INSERT_LAST": "Setzt d'Element um Enn vun enger Lëscht derbäi.",
 	"LISTS_SET_INDEX_TOOLTIP_INSERT_RANDOM": "Setzt d'Element op eng zoufälleg Plaz an d'Lëscht derbäi.",
-	"LISTS_SORT_TITLE": "%1 %2 %3 zortéieren",
+	"LISTS_SORT_TITLE": "%1 %2 %3 sortéieren",
 	"LISTS_SORT_TYPE_NUMERIC": "numeresch",
 	"LISTS_SORT_TYPE_TEXT": "alphabetesch",
 	"LISTS_REVERSE_MESSAGE0": "%1 ëmdréinen",
@@ -152,5 +153,14 @@
 	"PROCEDURES_IFRETURN_WARNING": "Opgepasst: Dëse Block däerf nëmmen bannent enger Funktiounsdefitioun benotzt ginn.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Sot eppes...",
 	"DIALOG_OK": "OK",
-	"DIALOG_CANCEL": "Ofbriechen"
+	"DIALOG_CANCEL": "Ofbriechen",
+	"WINDOWS": "Windows",
+	"MAC_OS": "macOS",
+	"CHROME_OS": "ChromeOS",
+	"LINUX": "Linux",
+	"UNKNOWN": "Onbekannt",
+	"COPY_SHORTCUT": "Kopéieren",
+	"SHORTCUTS_EDITING": "Änneren",
+	"SHORTCUTS_CODE_NAVIGATION": "Code-Navigatioun",
+	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Benotzt d'Feiltaste fir ze réckelen an dann %1 fir d'Positioun ze validéieren"
 }

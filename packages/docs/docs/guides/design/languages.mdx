@@ -1,0 +1,128 @@
+---
+description: The differences between block- and text-based languages.
+title: Block- vs. text-based languages
+image: images/blockly_banner.png
+---
+
+# Block- vs. text-based languages
+
+Block-based languages differ from text-based languages in a number of ways,
+primarily because they are designed for novice users. Here is a list of things
+to consider when designing your own block-based language.
+
+## Use one-based lists
+
+![Block that selects the letter at a certain index in a string and which uses 1
+to mean the first letter.](/images/language02.png)
+
+Novice programmers react badly when they encounter zero-based lists for the
+first time. As a result, Blockly follows the lead of Lua and Lambda Moo by
+making list and string indexing one-based.
+
+For more advanced uses of Blockly, zero-based lists are supported to make
+transitioning to text easier. For younger or more novice audiences one-based
+indexing is still recommended.
+
+_Recommendation: One is the first number._
+
+## Support liberal naming rules
+
+![Blocks with the case-insensitive variable names location_x (lower case x) and
+location_X (upper case X).](/images/mistakes09.png)
+
+Novice programmers do not expect that `location_X` and `location_x` are
+different variables. As a result, Blockly follows the lead of BASIC and HTML by
+making variables and functions case-insensitive. Scratch uses a more subtle
+approach (as seen to the right) and is case-sensitive for variable names but not
+for equality checks.
+
+Also, Blockly does not require that variables and functions conform to the
+typical `[_A-Za-z][_A-Za-z0-9]*` scheme. If one wants to name a variable `List
+of zip codes` or `רשימת מיקודים` that is perfectly alright.
+
+_Recommendation: Ignore case, allow any names._
+
+## Make all variables global
+
+Novice programmers also have difficulties understanding scope. As a result,
+Blockly follows the lead of Scratch by making all variables global. The only
+down-side of global variables is that recursion is trickier (one has to push and
+pop variables onto a list), but that's a programming technique that's beyond the
+scope of Blockly's target users.
+
+_Recommendation: Scope is out of scope, leave it for later._
+
+## Consider how to handle optional return values
+
+Many functions in text-based programming perform an action, then return a value.
+This return value may or may not be used. An example is a stack's `pop()`
+function. Pop might be called to get and remove the last element, or it might be
+called to just remove the last element with the return value being ignored.
+
+```js
+var last = stack.pop(); // Get and remove last element.
+stack.pop(); // Just remove last element.
+```
+
+Block-based languages are generally not good at ignoring a return value. A value
+block has to plug into something that accepts the value. There are several
+strategies to deal with this problem.
+
+a) Steer around the problem. Most block-based languages design the language to
+avoid these cases. For example, Scratch does not have any blocks that have both
+side effects and a return value.
+
+b) Provide two blocks. If space in the toolbox is not an issue, a simple
+solution is to provide two of each of this type of block, one with and one
+without a return value. The downside is that this can lead to a confusing
+toolbox with lot of nearly identical blocks.
+
+![A value block that removes and returns the last item in a list and a statement
+block that just removes the last item in a last.](/images/return1.png)
+
+c) Mutate one block. Use a dropdown, checkbox, or other control allowing the
+user to choose whether there is a return value or not. The block then changes
+shape depending on its options. An example of this can be seen in Blockly's list
+access block.
+
+![Block that changes shape from a value block to a statement block when removing
+the last item in a list, depending on whether it also returns that
+item.](/images/return3.png)
+
+d) Eat the value. The first version of App Inventor created a special pipe block
+that ate any connected value. Users didn't understand the concept, and the
+second version of App Inventor removed the pipe block and instead recommended
+that users simply assign the value to a throwaway variable.
+
+![Blocks showing two different ways to ignore the output of a block. The first
+uses a pipe block to "eat" the value and the second sets the value of a variable
+named "junk".](/images/return2.png)
+
+_Recommendation: Each strategy has pros and cons, choose what's right for your
+users._
+
+## Generate readable code
+
+Advanced Blockly users should be able to look at the generated code (JavaScript,
+Python, PHP, Lua, Dart, etc) and immediately recognize the program they wrote.
+This means extra effort needs to be made to keep this machine-generated code
+readable. Superfluous parentheses, numeric variables, crushed whitespace and
+verbose code templates all get in the way of producing elegant code. Generated
+code should include comments and should conform to [Google's style
+guides](https://github.com/google/styleguide/blob/gh-pages/README.md).
+
+_Recommendation: Be proud of your generated code. Show it to the user._
+
+## Accept differences between languages
+
+A side effect of the desire for clean code is that Blockly's behaviour is
+largely defined in terms of how the cross-compiled language behaves. The most
+common output language is JavaScript, but if Blockly were to cross-compile to a
+different language, no unreasonable attempts should be made to preserve the
+exact behaviour across both languages. For example, in JavaScript an empty
+string is false, whereas in Lua it is true. Defining a single pattern of
+behaviour for Blockly's code to execute regardless of the target language would
+result in unmaintainable code that looks like it came out of the GWT compiler.
+
+_Recommendation: Blockly is not a language, allow the existing language to
+affect behaviour._

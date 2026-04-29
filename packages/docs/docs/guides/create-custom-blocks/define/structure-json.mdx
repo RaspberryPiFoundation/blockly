@@ -1,0 +1,398 @@
+---
+description: How to define block structure in JSON.
+title: Block structure in JSON
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Image from '@site/src/components/Image';
+
+# Block structure in JSON
+
+In this document, we'll discuss how to use JSON to define the inputs, fields
+(including labels), and connections in your block. If you're not familiar with
+these terms, see [Anatomy of a
+block](/guides/create-custom-blocks/define/block-anatomy) before
+proceeding.
+
+You can also define your inputs, fields, and connections [in
+JavaScript](/guides/create-custom-blocks/define/structure-js).
+
+## Overview
+
+In JSON, you describe a block's structure with one or more message strings
+(`message0`, `message1`, ...) and their corresponding argument arrays (`args0`,
+`args1`, ...). Message strings consist of text, which is converted to labels,
+and interpolation tokens (`%1`, `%2`, ...), which mark the locations of
+connections and non-label fields. The argument arrays describe how to handle the
+interpolation tokens.
+
+For example, this block:
+
+![A variable setter block. It has the label "set", a dropdown for choosing the
+variable, the label "to", and a value input.](/images/variables-set.png)
+
+is defined by the following JSON:
+
+<Tabs groupId="json">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "message0": "set %1 to %2",
+    "args0": [
+      {
+        "type": "field_variable",
+        "name": "VAR",
+        "variable": "item",
+        "variableTypes": [""]
+      },
+      {
+        "type": "input_value",
+        "name": "VALUE"
+      }
+    ]
+  }
+  ```
+  </TabItem>
+</Tabs>
+The first interpolation token (`%1`) represents a [variable
+field](/guides/create-custom-blocks/fields/built-in-fields/variable)
+(`type: "field_variable"`). It is described by the first object in the `args0`
+array. The second token (`%2`) represents the input connection at the end of a
+[value input](/guides/create-custom-blocks/define/block-anatomy#value-inputs)
+(`type: "input_value"`). It is described by the second object in the `args0`
+array.
+
+## Messages and inputs
+
+When an interpolation token marks a connection, it is really marking the end of
+the input that contains the connection. This is because the connections in value
+and statement inputs are rendered at the end of the input. The input contains
+all of the fields (including labels) after the previous input and up to the
+current token. The following sections show sample messages and the inputs that
+are created from them.
+
+### Example 1
+
+<Tabs groupId="json">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "message0": "set %1 to %2",
+    "args0": [
+      {"type": "field_variable", ...} // token %1
+      {"type": "input_value", ...}    // token %2
+    ],
+  }
+  ```
+  </TabItem>
+</Tabs>
+This creates a single value input with three fields: a label (`"set"`), a
+variable field, and another label (`"to"`).
+
+<Image
+  alt="Map the message to a value input with three fields."
+  src="/images/structure-json/set-one-to-two.png"
+  srcDark="/images/structure-json/set-one-to-two-dark.png"
+/>
+
+### Example 2
+
+<Tabs groupId="json">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "message0": "%1 + %2",
+    "args0": [
+      {"type": "input_value", ...} // token %1
+      {"type": "input_value", ...} // token %2
+    ],
+  }
+  ```
+  </TabItem>
+</Tabs>
+This creates two value inputs. The first has no fields and the second has one
+field (`"+"`).
+
+<Image
+  alt="Map the message to two value inputs."
+  src="/images/structure-json/one-plus-two.png"
+  srcDark="/images/structure-json/one-plus-two-dark.png"
+/>
+
+### Example 3
+
+<Tabs groupId="json">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "message0": "%1 + %2 %3",
+    "args0": [
+      {"type": "input_value", ...}   // token %1
+      {"type": "input_end_row", ...} // token %2
+      {"type": "input_value", ...}   // token %3
+    ],
+  }
+  ```
+  </TabItem>
+</Tabs>
+This creates:
+
+- A value input with no fields,
+- An [end-of-row input](/guides/create-custom-blocks/define/block-anatomy#end-of-row-inputs)
+  with a label field (`"+"`), which causes the following value input to be
+  rendered on a new row, and
+- A value input with no fields.
+
+<Image
+  alt="Map the message to two value inputs and an end-of-row input."
+  src="/images/structure-json/one-plus-two-three.png"
+  srcDark="/images/structure-json/one-plus-two-three-dark.png"
+/>
+
+## Dummy input at end of message
+
+If your `message` string ends with text or fields, you don't need to add an
+interpolation token for the dummy input that contains them -- Blockly adds it
+for you. For example, instead of defining a `lists_isEmpty` block like this:
+
+<Tabs groupId="json">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "message0": "%1 is empty %2",
+    "args0": [
+      {"type": "input_value", ...} // token %1
+      {"type": "input_dummy", ...} // token %2
+    ],
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+<Image
+  alt="Map the message to a value input and an automatically created dummy input."
+  src="/images/structure-json/is-empty-dummy.png"
+  srcDark="/images/structure-json/is-empty-dummy-dark.png"
+/>
+
+you can let Blockly add the dummy input and define it like this:
+
+<Tabs groupId="json">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "message0": "%1 is empty",
+    "args0": [
+      {"type": "input_value", ...} // token %1
+    ],
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+<Image
+  alt="Map the message to a value input and an automatically created dummy input."
+  src="/images/structure-json/is-empty.png"
+  srcDark="/images/structure-json/is-empty-dark.png"
+/>
+
+The automatic addition of a tailing dummy input allows translators to change
+`message` without needing to modify the arguments that describe the
+interpolation tokens. For more information, see [Interpolation token
+order](#interpolation-token-order).
+
+### implicitAlign
+
+In rare cases the automatically created trailing dummy input needs to be aligned
+to the `"RIGHT"` or `"CENTRE"`. The default if not specified is `"LEFT"`.
+
+In the example below `message0` is `"send email to %1 subject %2 secure %3"`
+and Blockly automatically adds a dummy input for the third row. Setting
+`implicitAlign0` to `"RIGHT"` forces this row to be right aligned.
+
+![A block for sending email. The first row has the label "send email to" and a
+value input. The second row has the label "subject" and a value input. The
+third line has the label "secure" and a checkbox; it is
+right-aligned.](/images/send-email.png)
+
+`implicitAlign`
+applies to all inputs that are not explicitly defined in the JSON
+block definition, including end-of-row inputs that [replace newline characters
+(`'\n'`)](#text-handling). There is also the deprecated property
+`lastDummyAlign0` that has the same behavior as `implicitAlign0`.
+
+When designing blocks for RTL (Arabic and Hebrew), left and right are reversed.
+Thus `"RIGHT"` would align fields to the left.
+
+## Multiple messages
+
+Some blocks are naturally divided into two or more separate parts.
+Consider this repeat block which has two rows:
+
+![A repeat block with two rows. The first row has the label "repeat", a value
+input, and the label "times". The second row has the label "do" and a statement
+input.](/images/repeat.png)
+
+If this block were described with a single message, the `message0` property
+would be `"repeat %1 times %2 do %3"`, where `%2` represents an end-of-row
+input. This string is awkward for a translator because
+it is difficult to explain what the `%2` substitution means. The `%2` end-of-row
+input may also not even be desired in some languages. And there may be multiple
+blocks that wish to share the text of the second row. A better approach
+is to use more than one `message` and `args` properties:
+
+<Tabs groupId="json">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "message0": "repeat %1 times",
+    "args0": [
+      {"type": "input_value", ...} // token %1 in message0
+    ],
+    "message1": "do %1",
+    "args1": [
+      {"type": "input_statement", ...} // token %1 in message1
+    ],
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+<Image
+  alt="Map the message to a value input and an automatically created dummy input and the message to a statement
+input."
+  src="/images/structure-json/controls-repeat-ext.png"
+  srcDark="/images/structure-json/controls-repeat-ext-dark.png"
+/>
+
+Any number of `message`, `args`, and `implicitAlign` properties may be defined
+in the JSON format, starting with 0 and incrementing sequentially. Note that the
+Block Factory is not capable of splitting messages into multiple parts, but
+doing so manually is straightforward.
+
+## Interpolation token order
+
+When localizing blocks, you might need to change the order of the interpolation
+tokens in a message. This is particularly important in languages that have a
+different word order than English. For example, we started with a block defined
+by the message `"set %1 to %2"`:
+
+![A variable setter block with the label "set", a dropdown field for the
+variable, the label "to", and an external value
+input.](/images/variables-set.png)
+
+Now consider a hypothetical language where `"set %1 to %2"` needs to be reversed
+to say `"put %2 in %1"`. Changing the message (including the order of the
+interpolation tokens) and leaving the arguments array unchanged results in the
+following block:
+
+![A variable setter block with the label "put", an inline value input, the label
+"to", and a dropdown field for the variable.](/images/variables-put.png)
+
+Blockly automatically changed the order of the fields, [created a dummy
+input](#dummy-input-at-end-of-message), and switched from external to internal
+inputs.
+
+The ability to change the order of the interpolation tokens in a message makes
+localization easier. For more information, see [JSON message
+interpolation](/guides/configure/web/translations#json-message-interpolation).
+
+## Text handling
+
+Text on either side of an interpolation token is whitespace-trimmed.
+Text using the character `%` (e.g. when referring to a percentage) should use
+`%%` so that it is not interpreted as an interpolation token.
+
+Blockly also automatically replaces any newline character (`\n`) in the message
+string with an end-of-row input.
+
+<Tabs groupId="json">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "message0": "set %1\nto %2",
+    "args0": [
+      {"type": "field_variable", ...}, // token %1
+      {"type": "input_value", ...},    // token %2
+    ]
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+<Image
+  alt="Map the newline character to an end-of-row input."
+  src="/images/structure-json/newline-character.png"
+  srcDark="/images/structure-json/newline-character-dark.png"
+/>
+
+## Arguments arrays
+
+Each message string is paired with an `args` array of the same number. For
+example, `message0` goes with `args0`. The interpolation tokens
+(`%1`, `%2`, ...) refer to the items of the `args` array and must match the
+`args0` array completely: no duplicates, no omissions. **Token numbers refer to
+the order of the items in the arguments array; they are not required to occur
+in order in a message string.**
+
+Every object in the arguments array has a
+`type` string. The rest of the parameters vary depending on the type:
+
+- [**Fields**](/guides/create-custom-blocks/fields/overview):
+  - [`field_input`](/guides/create-custom-blocks/fields/built-in-fields/text-input)
+  - [`field_dropdown`](/guides/create-custom-blocks/fields/built-in-fields/dropdown)
+  - [`field_checkbox`](/guides/create-custom-blocks/fields/built-in-fields/checkbox)
+  - [`field_colour`](https://www.npmjs.com/package/@blockly/field-colour)
+  - [`field_number`](/guides/create-custom-blocks/fields/built-in-fields/number)
+  - [`field_angle`](https://www.npmjs.com/package/@blockly/field-angle)
+  - [`field_variable`](/guides/create-custom-blocks/fields/built-in-fields/variable)
+  - [`field_label`](/guides/create-custom-blocks/fields/built-in-fields/label)
+  - [`field_image`](/guides/create-custom-blocks/fields/built-in-fields/image).
+- [**Inputs**](/guides/create-custom-blocks/define/block-anatomy#inputs):
+  - `input_value`
+  - `input_statement`
+  - `input_dummy`
+  - `input_end_row`
+
+You can also define your own [custom fields][custom-fields] and
+[custom inputs][custom-inputs] and pass them as args.
+
+### alt fields
+
+Every object may also have an `alt` field. In the case that Blockly does not
+recognize the object's `type`, then the `alt` object is used in its place. For
+example, if a new field named `field_time` is added to Blockly, blocks using
+this field could use `alt` to define a `field_input` fallback for older versions
+of Blockly:
+
+<Tabs groupId="json">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "message0": "sound alarm at %1",
+    "args0": [
+      {
+        "type": "field_time",
+        "name": "TEMPO",
+        "hour": 9,
+        "minutes": 0,
+        "alt":
+          {
+            "type": "field_input",
+            "name": "TEMPOTEXT",
+            "text": "9:00"
+          }
+      }
+    ]
+  }
+  ```
+  </TabItem>
+</Tabs>
+An `alt` object may have its own `alt` object, thus allowing for chaining.
+Ultimately, if Blockly cannot create an object in the `args0` array (after
+attempting any `alt` objects) then that object is simply skipped.
+
+[custom-inputs]: /guides/create-custom-blocks/inputs/creating-custom-inputs
+[custom-fields]: /guides/create-custom-blocks/fields/customizing-fields/creating

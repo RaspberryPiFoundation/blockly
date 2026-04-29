@@ -1,0 +1,108 @@
+---
+description: How to save and load custom icons.
+title: Save and load icons
+image: images/blockly_banner.png
+---
+
+# Save and load icons
+
+Some icons have state that needs to be saved, while others are instantiated
+based on existing state. For example, comment icons need to save their text,
+while warning icons don't because they are instantiated based on how blocks are
+connected.
+
+If your icon needs to save its state, you need to implement the
+[`ISerializable`][ISerializable] interface and [register][registering] your
+icon.
+
+The state returned by your icon gets included in the `icons` property of your
+block's state:
+
+```js
+{
+  'blocks': {
+    'languageVersion': 0,
+    'blocks': [
+      {
+        'type': 'my_block',
+        'icons': {
+          // Your state goes here!
+          'my_icon': 'some state',
+        }
+      }
+    ]
+  }
+}
+```
+
+:::info
+saving and loading custom icons does not work with the old XML
+serialization system, only the new JSON system.
+:::
+
+## Save state
+
+To save the state of your icon, you need to implement the
+[`saveState`][saveState] method of the [`ISerializable`][ISerializable]
+interface. This method can return arbitrary json, which gets passed to your
+`loadState` method.
+
+```js
+saveState() {
+  return this.state;  // Some arbirtary JSON-compatible data.
+}
+```
+
+### Full serialization and backing data
+
+`saveState` also receives an optional `doFullSerialization` parameter. This is
+used by icons that reference state serialized by a different
+[serializer][serializer] (like backing data models). The parameter signals that
+the referenced state won't be available when the block is deserialized, so the
+icon should serialize all of the backing state itself. For example, this is true
+when an individual block is serialized, or when a block is copy-pasted.
+
+Two common use cases for this are:
+
+- When an individual block is loaded into a workspace where the backing data
+  model doesn't exist, the icon has enough information in its own state to
+  create a new data model.
+- When a block is copy-pasted, the icon always creates a new backing
+  data model instead of referencing an existing one.
+
+## Load state
+
+To save the state of your icon, you need to implement the
+[`loadState`][loadState] method of the [`ISerializable`][ISerializable]
+interface. This method takes in the JSON returned by your `saveState` method.
+
+```js
+loadState(state) {
+  this.state = state;
+}
+```
+
+## Register icon classes
+
+Finally you need to register your icon so that the serialization system can
+instantiate it. Remember that the [`IconType`][IconType] used to register your
+icon needs to have the same string as the one returned by its
+[`getType`][getType] method.
+
+```js
+class myIcon extends Blockly.icons.Icon {
+  getType() {
+    return new Blockly.icons.IconType('my_icon');
+  }
+}
+
+Blockly.icons.registry.register(new Blockly.icons.IconType('my_icon'), myIcon);
+```
+
+[ISerializable]: /reference/blockly.iserializable
+[registering]: /guides/create-custom-blocks/icons/creating-custom-icons/save-and-load#register-icon-classes
+[saveState]: /reference/blockly.iserializable.savestate
+[loadState]: /reference/blockly.iserializable.loadstate
+[IconType]: /reference/blockly.icons.icontype
+[getType]: /reference/blockly.iicon.gettype
+[serializer]: /guides/configure/web/serialization#serializer-hooks

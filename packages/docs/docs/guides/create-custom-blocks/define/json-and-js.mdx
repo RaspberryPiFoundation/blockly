@@ -1,0 +1,253 @@
+---
+title: JSON and JavaScript
+description: How to use JSON or JavaScript to define custom blocks.
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# JSON and JavaScript
+
+Blockly has two ways of defining blocks: JSON objects, which use key-value
+pairs, and JavaScript functions, which call Blockly's API. The JSON format is
+preferred because it [simplifies
+localization](/guides/configure/web/translations#json-message-interpolation)
+and is easier to read and write. However, it cannot be used to directly define
+advanced features such as mutators or validators. These must be written in
+JavaScript, usually as
+[extensions](/guides/create-custom-blocks/define/extensions).
+
+:::info
+The "JSON" objects are, in fact, plain JavaScript objects. They are
+called JSON objects because their values must be serializable as JSON. The term
+is used because (a) it appears in the Blockly API and (b) it is a convenient way
+to distinguish between the two different methods of defining blocks.
+:::
+
+## Use JSON or JavaScript
+
+This block:
+
+![A `string_length` block.](/images/text-length.png)
+
+can be defined in JSON or JavaScript as follows.
+
+<Tabs groupId="tab">
+
+<TabItem value="json" label="JSON" default>
+
+```json
+{
+  "blocks": [
+    {
+      "type": "string_length",
+      "message0": "length of %1",
+      "args0": [
+        {
+          "type": "input_value",
+          "name": "VALUE",
+          "check": "String"
+        }
+      ],
+      "output": "Number",
+      "colour": 160,
+      "tooltip": "Returns number of letters in the provided text.",
+      "helpUrl": "http://www.w3schools.com/jsref/jsref_length_string.asp"
+    }
+  ]
+}
+```
+
+`defineBlocksWithJsonArray` converts each JSON object into a
+[block definition object](/guides/create-custom-blocks/define/block-definitions)
+with an `init` function. It stores these objects in `Blockly.Blocks`.
+
+</TabItem>
+
+<TabItem value="javascript" label="JavaScript">
+
+```js
+Blockly.Blocks['string_length'] = {
+  init: function () {
+    this.appendValueInput('VALUE').setCheck('String').appendField('length of');
+    this.setOutput(true, 'Number');
+    this.setColour(160);
+    this.setTooltip('Returns number of letters in the provided text.');
+    this.setHelpUrl('http://www.w3schools.com/jsref/jsref_length_string.asp');
+  },
+};
+```
+
+Because
+[block definition objects](/guides/create-custom-blocks/define/block-definitions)
+are mixed in to block objects, the keyword `this` refers to the actual block
+being created.
+
+</TabItem>
+
+</Tabs>
+
+Both methods result in a block definition object being stored in
+`Blockly.Blocks` with a key of the block type name (`string_length`). The block
+definition object has a single method (`init`), which defines the block's shape.
+
+## Mix JSON and JavaScript
+
+The JSON format primarily supports defining the look and feel of a block. It
+cannot directly define some features, such as validators and mutators, which
+require you to define a function. To solve this problem, define as much of your
+block with JSON as possible, and use JavaScript for the rest.
+
+The following example creates a block definition with an `init` function, which
+uses `jsonInit` to load a JSON object and the JavaScript API to define a dynamic
+tooltip.
+
+<Tabs groupId="tab">
+
+<TabItem value="javascript" label="JavaScript" default>
+
+```js
+// Define the block structure in JSON.
+var mathChangeJson = {
+  message0: 'change %1 by %2',
+  args0: [
+    {
+      type: 'field_variable',
+      name: 'VAR',
+      variable: 'item',
+      variableTypes: [''],
+    },
+    {
+      type: 'input_value',
+      name: 'DELTA',
+      check: 'Number',
+    },
+  ],
+  previousStatement: null,
+  nextStatement: null,
+  colour: 230,
+};
+
+Blockly.Blocks['math_change'] = {
+  init: function () {
+    // Use jsonInit to load the JSON block structure.
+    this.jsonInit(mathChangeJson);
+
+    // Use JavaScript to define a tooltip function.
+    var thisBlock = this;
+    this.setTooltip(function () {
+      return 'Add a number to variable "%1".'.replace(
+        '%1',
+        thisBlock.getFieldValue('VAR'),
+      );
+    });
+  },
+};
+```
+
+</TabItem>
+
+</Tabs>
+
+## Block definition API
+
+This section summarizes the objects and functions used to define custom blocks.
+
+### Blockly.Blocks
+
+[`Blockly.Blocks`](/reference/blockly.blocks) is an object
+that stores block definitions. Its keys are block type names and its values are
+block definition objects. Use `Blockly.Blocks` when defining blocks with
+JavaScript:
+
+```js
+Blockly.Blocks['my_block'] = {
+  init: function () {
+    /* ... */
+  },
+  onchange: function () {
+    /* ... */
+  },
+  // ...
+};
+```
+
+A common error is to assume `Blockly.Blocks` stores blocks and try something
+like the following. This fails because `Blockly.Blocks` stores block
+definitions, not blocks.
+
+```js
+// Fails with "Blockly.Blocks.my_block.setColour is not a function".
+Blockly.Blocks['my_block'].setColour(150);
+```
+
+### defineBlocksWithJsonArray
+
+[`defineBlocksWithJsonArray`](/reference/blockly.common.defineblockswithjsonarray)
+accepts an array of JSON objects, creates block definitions from them, and adds
+them to `Blockly.Blocks`.
+
+```js
+Blockly.common.defineBlocksWithJsonArray([
+  {
+    type: 'my_block1',
+    // ...
+  },
+  {
+    type: 'my_block3',
+    // ...
+  },
+  {
+    type: 'my_block2',
+    // ...
+  },
+]);
+```
+
+### createBlockDefinitionsFromJsonArray and defineBlocks
+
+[`createBlockDefinitionsFromJsonArray`](/reference/blockly.common.createblockdefinitionsfromjsonarray)
+accepts an array of JSON objects and returns an object that maps block type
+names to block definitions. This is generally used with `defineBlocks`, which
+adds the block definitions to `Blockly.Blocks`.
+
+```js
+const myBlockDefinitions = Blockly.common.createBlockDefinitionsFromJsonArray([
+  {
+    type: 'my_block1',
+    // ...
+  },
+  {
+    type: 'my_block3',
+    // ...
+  },
+  {
+    type: 'my_block2',
+    // ...
+  },
+]);
+
+Blockly.common.defineBlocks(myBlockDefinitions);
+```
+
+### Block.jsonInit
+
+[`jsonInit`](/reference/blockly.block.jsoninit)
+accepts a JSON object and calls the corresponding methods on `Block`. For
+example, a JSON object with the key-value pair `colour: 150` results in a call
+to `this.setColour(150)`. Use `jsonInit` in an `init` function to load a JSON
+object.
+
+```js
+var myJson = {
+  // ...
+};
+
+Blockly.Blocks['my_block'] = {
+  init: function () {
+    this.jsonInit(myJson);
+    // The rest of the init function.
+  },
+};
+```

@@ -1,0 +1,126 @@
+---
+description: The best way to develop with Blockly.
+title: Use the playground
+image: images/blockly_banner.png
+---
+
+# Use the playground
+
+When hacking in Blockly's core or developing a plugin, the playground is a
+tremendously useful tool. It has a preconfigured instance of Blockly that you
+can use for testing, debugging, or prototyping. At the Raspberry Pi Foundation, virtually all of
+Blockly's development occurs using the playground. As a preview, here is the
+[simple playground on the demo server](https://blockly-demo.appspot.com/static/tests/playground.html).
+
+There are 3 types of playgrounds for core Blockly: simple, advanced, and multi.
+In blockly-samples, typically only the advanced playground is used.
+
+## Prerequisites
+
+Blockly now uses the Closure module system. Because of the way they are loaded,
+uncompiled Closure modules must be fetched from an `http:` or `https:` URL and
+cannot be fetched directly from `file:` URLs. Consequently, to load the
+playground in uncompiled mode, you must load it from a local web server.
+
+We have created a script that starts up a local server and loads all of the code
+required to load the Blockly modules. You will need to have
+[npm installed on your machine](/guides/contribute/get-started/development_tools#npm)
+and run `npm install` from the root of Blockly in order to install all
+dependencies.
+
+### Using Internet Explorer
+
+Blockly now uses advanced features in its codebase that may not be compatible
+with Internet Explorer. In the compressed (compiled) code, these features are
+transpiled to work with IE, but loading the uncompressed code may not work. If
+you load the playground in IE, even via a local http server, the playground will
+therefore automatically load the compressed Blockly code in an effort to ensure
+compatibility. See the "Accessing playgrounds directly" section for more details
+about testing changes in the playground in compressed mode.
+
+## Simple Playground
+
+The simple playground is what the other two playgrounds are based on. It
+displays a toolbox and workspace, and allows you to adjust a limited number of
+settings.
+
+To open the playground, run
+
+```shell
+npm run start
+```
+
+from the root of Blockly. Make sure there is nothing else listening on port 8080. This command will start a server hosting the Blockly modules and
+automatically open your browser to the playground page. When you're ready to
+shut the playground down, end the process (ctrl-c in Mac and Linux
+environments).
+
+The playground features:
+
+- All code is uncompressed for rapid development.
+- All the default blocks (except for some deprecated ones).
+- All the language generators (JavaScript, Python, PHP, Lua, and Dart).
+- Serialize and deserialize workspace state (JSON or XML).
+- Switch between LTR and RTL layout.
+- Switch between toolbox layouts.
+- Stress tests for the renderer.
+- Log all events in the console.
+
+## Advanced playground
+
+The advanced playground contains additional features to make debugging Blockly
+even easier. This is also the default playground used in blockly-samples for all
+plugins.
+
+This playground features all of the simple playground features plus:
+
+- Additional settings can be configured, such as grid size, zoom/move
+  controls, renderer, theme, and more.
+- Settings and blocks used are cached and used automatically next time the
+  playground is loaded.
+- See the output of each generator in the same window.
+
+To start the advanced playground for any plugin in blockly-samples, run `npm run
+start` from the plugin's root directory. Currently, only one plugin can run at a
+time, and it uses port 3000. If you have trouble getting the plugin to start,
+first make sure nothing else is listening on that port.
+
+To start the advanced playground in core, run `npm run start` from Blockly's
+root, and then click the "Advanced" link under the title.
+
+You can also create your own test page that includes the advanced playground by
+using [Blockly's dev-tools package](https://www.npmjs.com/package/@blockly/dev-tools).
+
+## Multi playground
+
+The multi playground contains several playgrounds in different configurations
+for LTR mode and location of the toolbox. This is mainly used to quickly check
+that Blockly hasn't broken anything related to LTR before a release. To open
+this playground, follow the steps for the simple playground, and then change the
+URL to `/tests/multi_playground.html`.
+
+## Testing changes
+
+When running any of the playgrounds from a local server, all you need to do to
+see your changes in Blockly in most cases is refresh the page. If you've added a
+new file or added a new dependency to a file, you may need to first run `npm run
+build` which will update the `test/deps.js` file to ensure dependencies are
+loaded correctly, and then refresh the page.
+
+If you're running a plugin's advanced playground, you don't even need to refresh
+the page. Changes are hotloaded automatically!
+
+## Accessing playgrounds directly
+
+Previously, the simple playground was accessed locally by directly navigating to
+the `test/playground.html` file in your browser. This is still possible with the
+simple and multi playgrounds, but it is no longer recommended. If you do this,
+the playground will detect that you are not running a local server and
+automatically use compressed Blockly files (see the
+[Building Blockly page](/guides/contribute/core/building) for more
+info) and whenever you change something in core Blockly, you will have to
+rebuild core and stage the changes. You can still access these pages if hosted
+on a remote server, such as our example hosted on our demo site. The background
+will be bright blue whenever you are in compressed mode.
+
+The advanced playground is not available via `file:` access.

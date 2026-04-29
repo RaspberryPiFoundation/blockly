@@ -392,7 +392,6 @@ suite('Keyboard Shortcut Items', function () {
     test('Simple', function () {
       this.injectionDiv.dispatchEvent(keyEvent);
       sinon.assert.calledOnce(this.undoSpy);
-      sinon.assert.calledWith(this.undoSpy, false);
       sinon.assert.calledOnce(this.hideChaffSpy);
     });
     // Do not undo if a drag is in progress.
@@ -410,7 +409,7 @@ suite('Keyboard Shortcut Items', function () {
 
   suite('Redo', function () {
     setup(function () {
-      this.redoSpy = sinon.spy(this.workspace, 'undo');
+      this.redoSpy = sinon.spy(this.workspace, 'redo');
       this.hideChaffSpy = sinon.spy(
         Blockly.WorkspaceSvg.prototype,
         'hideChaff',
@@ -420,11 +419,10 @@ suite('Keyboard Shortcut Items', function () {
       Blockly.utils.KeyCodes.CTRL_CMD,
       Blockly.utils.KeyCodes.SHIFT,
     ]);
-    // Undo.
+    // Redo.
     test('Simple', function () {
       this.injectionDiv.dispatchEvent(keyEvent);
       sinon.assert.calledOnce(this.redoSpy);
-      sinon.assert.calledWith(this.redoSpy, true);
       sinon.assert.calledOnce(this.hideChaffSpy);
     });
     // Do not redo if a drag is in progress.

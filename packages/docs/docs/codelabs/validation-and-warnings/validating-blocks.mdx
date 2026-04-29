@@ -1,0 +1,94 @@
+---
+slug: /codelabs/validation-and-warnings/validating-blocks
+description: How to validate the fields in a block.
+---
+
+# Block validation and warnings
+
+## 3. Validating blocks
+
+When you're designing custom blocks, you may find that it doesn't make sense to use the block in certain ways. Depending on the intended purpose of your block, you may want to add constraints on the possible values that can be assigned to its fields, or on where it is used.
+
+### Basic field constraints
+
+Blockly generally allows users to enter negative values and decimal values for number fields, but for this custom block, let's make sure that only positive whole numbers are allowed. Add `'min': 0` and `'precision': 1` to the fields in the custom block definition so that they look like this:
+
+```js
+    'args0': [
+      {
+        'type': 'field_number',
+        'name': 'FIRST',
+        'value': 0,
+        'min': 0,
+        'precision': 1,
+      },
+      {
+        'type': 'field_number',
+        'name': 'LAST',
+        'value': 5,
+        'min': 0,
+        'precision': 1,
+      },
+    ],
+```
+
+Then reload `index.html`, drag the custom block to your workspace, and try entering various values such as negative numbers or decimals. Notice how invalid values are immediately converted to the nearest valid value!
+
+If you want, you can also add a `'max'` constraint to a number field.
+
+### Adding custom validation to a field
+
+The built-in constraints are very convenient, but sometimes you might need to add custom constraints. For example, let's say that our custom block needs the first number of the range to be even, and the last number to be odd. We can easily implement the even constraint by setting the `'precision'` constraint of the `FIRST` field to `2`, but the odd constraint requires a custom validator.
+
+So far, we've been using Blockly's JSON API for defining custom blocks, but Blockly also has a JavaScript API with more advanced features, and one of those features is defining custom validators. Fortunately, we don't have to convert our entire custom block definition to the JavaScript API in order to take advantage of these advanced features, because Blockly has a system for adding JavaScript extensions to blocks that were defined with the JSON API.
+
+Let's give our custom block a new extension called `list_range_validation`. Add `'extensions': ['list_range_validation']` to the end of the custom block definition in `index.js` like so:
+
+```js
+Blockly.common.defineBlocksWithJsonArray([
+  {
+    'type': 'list_range',
+    ...
+    'style': 'list_blocks',
+    'extensions': [
+      'list_range_validation',
+    ],
+  },
+]);
+```
+
+Then copy the following code to `index.js` underneath the custom block definition to register an implementation of that extension:
+
+```js
+Blockly.Extensions.register('list_range_validation', function () {
+  // Validation code to be added here...
+});
+```
+
+The extension's function will be executed every time the custom block is instantiated, and the block instance itself will be implicitly available inside the function using JavaScript's `this` keyword. We can use it to access Blockly's JavaScript API for blocks, including validators. To add a validator on the `LAST` field, put the following code inside the extension function:
+
+```js
+this.getField('LAST').setValidator(function (newValue) {
+  // Validation of newValue for LAST field to be added here...
+});
+```
+
+Blockly validator functions are called whenever the user enters a new value for that field, and the new value is passed to the function as a parameter. The parameter might be an invalid value, but validator function can return a valid value to override the user input. To force the `LAST` field to be an odd number, put the following code inside the validator function:
+
+```js
+return Math.round((newValue - 1) / 2) * 2 + 1;
+```
+
+Afterwards, your extension code should look something like this:
+
+```js
+Blockly.Extensions.register('list_range_validation', function () {
+  // Add custom validation.
+  this.getField('LAST').setValidator(function (newValue) {
+    // Force an odd number.
+    return Math.round((newValue - 1) / 2) * 2 + 1;
+  });
+});
+```
+
+Reload `index.html` now, then drag the custom block to your workspace and try setting the `LAST` field to various values. Notice how it always turns into an odd number!

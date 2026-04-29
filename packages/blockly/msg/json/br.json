@@ -73,7 +73,7 @@
 	"CONTROLS_FLOW_STATEMENTS_OPERATOR_BREAK": "Mont e-maez an adlañsañ",
 	"CONTROLS_FLOW_STATEMENTS_OPERATOR_CONTINUE": "Kenderc'hel gant iteradur nevez ar rodell",
 	"CONTROLS_FLOW_STATEMENTS_TOOLTIP_BREAK": "Mont e-maez ar boukl engronnus.",
-	"CONTROLS_FLOW_STATEMENTS_TOOLTIP_CONTINUE": "Lammat ar rest eus ar rodell, ha kenderc'hel gant an iteradur war-lerc'h.",
+	"CONTROLS_FLOW_STATEMENTS_TOOLTIP_CONTINUE": "Dilezel ar peurrest eus ar boukl-mañ, ha kenderc'hel gant an iteradur da-heul.",
 	"CONTROLS_FLOW_STATEMENTS_WARNING": "Diwallit : ne c'hall ar bloc'h-mañ bezañ implijet nemet e-barzh ur boukl.",
 	"CONTROLS_IF_TOOLTIP_1": "Ma vez gwir un dalvoudenn, seveniñ urzhioù zo neuze.",
 	"CONTROLS_IF_TOOLTIP_2": "Ma vez gwir un dalvoudenn, seveniñ ar c'henañ bloc'had urzhioù neuze. Anez seveniñ an eil bloc'had urzhioù.",

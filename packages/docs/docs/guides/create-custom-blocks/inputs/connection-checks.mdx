@@ -1,0 +1,242 @@
+---
+description: How to further restrict which blocks can connect to each other.
+title: Connection checks
+image: images/blockly_banner.png
+---
+
+# Connection checks
+
+Connection checks restrict which connections (and therefore blocks) can connect
+to each other.
+
+Connection checks are useful for modeling types. For example, the following
+three blocks have no business being connected, because they represent code that
+returns different types:
+
+![An empty list block, connected to a square root block, connected to an
+uppercase block](/images/type-bad.png)
+
+Connection checks can be used to prevent these blocks from connecting. This
+gives users instantaneous feedback and prevents many simple mistakes.
+
+## How they work
+
+Every connection can be associated with a "connection check" which is a nullable
+array of strings.
+
+Two connections can connect if:
+
+1.  They are compatible [types][connection-type] (e.g. an output connecting to
+    an input).
+2.  They have at least one string in their connection check in common.
+
+For example, connections with the following two checks could connect, because
+they share the `'apple'` string:
+
+```none
+['apple', 'ball', 'cat']
+['apple', 'bear', 'caterpillar']
+```
+
+But connections with these two checks couldn't connect, because they don't share
+any strings:
+
+```none
+['apple', 'ball', 'cat']
+['ape', 'bear', 'caterpillar']
+```
+
+There is one other special case. If either array is `null`, then the two
+connections can also connect. This lets you define connections that can connect
+to anything.
+
+```none
+null
+['ape', 'bear', 'caterpillar]
+```
+
+:::info
+The strings used in connection checks have no inherent meaning. For
+example, using the string `'Number'` does not guarantee that a connection
+represents a number. Instead, they are only used to match other strings.
+:::
+
+:::info
+Block types, such as `'math_number'`, and connection checks are
+entirely separate sets of strings. Including a block type in a connection check
+does _not_ make it so blocks of that type can connect.
+:::
+
+## Examples
+
+For a list of examples of how to use connection checks, see the [Connection
+check
+playbook](/guides/create-custom-blocks/inputs/connection-check-playbook).
+
+## Set checks
+
+By default, all connections have a `null` connection-check, meaning they can
+connect to anything. Connection checks need to be assigned manually.
+
+How you assign connection checks to connections is different depending on
+whether you're using JSON block definitions, or JavaScript block definitions.
+
+### JSON
+
+For top-level connections, you assign the check directly to the property that
+defines the connection. The value you assign can be `null`, a string (which
+becomes the only entry in the connection check), or an array of strings.
+
+```js
+{
+  'type': 'custom_value_block',
+
+  'output': 'a connection check entry',
+},
+{
+  'type': 'custom_statement_block',
+
+  'nextStatement': null, // null check
+  'previousStatement': ['four', 'connection', 'check', 'entries']
+}
+```
+
+For inputs, you can assign the check to a `check` property of the input
+definition. If the `check` property doesn't exist, the check is considered
+`null`. The value you assign can be a string, or an array of strings.
+
+```js
+{
+  'type': 'custom_block',
+  'message0': '%1 %2',
+
+  'args0': [
+    {
+      'type': 'input_value',
+      'check': 'a connection check entry' // Accepts custom_value_block
+    },
+    {
+      'type': 'input_statement',
+      'check': ['two', 'entries'] // Accepts custom_statement_block
+    }
+  ]
+}
+```
+
+### JavaScript
+
+For top-level connections, you can pass the check directly to the method that
+defines the connection. If you don't pass a value, the check is considered
+`null`. The value you pass can be a string (which becomes the only entry in the
+connection check), or an array of strings.
+
+```js
+Blockly.Blocks['custom_value_block'] = {
+  init: function () {
+    this.setOutput(true, 'a connection check entry');
+  },
+};
+Blockly.Blocks['custom_statement_block'] = {
+  init: function () {
+    this.setNextStatement(true); // null check
+    this.setPreviousStatement(true, ['four', 'connection', 'check', 'entries']);
+  },
+};
+```
+
+For inputs, you can pass the check to the `setCheck` method, after you have
+defined the input. If the `setCheck` method isn't called, the check is
+considered `null`. The value you pass can be a string, or an array of strings.
+
+```js
+Blockly.Blocks['custom_block'] = {
+  init: function () {
+    this.appendValueInput('NAME').setCheck('a connection check entry'); // Accepts custom_value_block
+    this.appendStatementInput('NAME').setCheck(['two', 'entries']); // Accepts custom_statement_block
+  },
+};
+```
+
+### Built-in check strings
+
+The built-in blocks have connection checks with the values `'Array'`,
+`'Boolean'`, `'Colour'`, `'Number'`, and `'String'`. If you want your blocks to
+interoperate with the built-in blocks, you can use these values to make them
+compatible.
+
+## Limitations
+
+This system is quite robust and can solve many use-cases, but it does have a few
+limitations.
+
+### Restrict the greater context
+
+This system does not, by itself, support restricting the "greater context" in
+which a connection is allowed to connect. For example, you cannot say that a
+`break` block is only allowed to exist inside of a `loop` block. The connection
+checking system only considers the immediate two connections being connected.
+
+You _can_ support this by using the [event system][event-system] to listen to
+[block move][BlockMove] events and check if the block is incorrectly positioned.
+
+```js
+Blockly.Blocks['custom_block'] = {
+  init: function() { }
+
+  onchange: function(e) {
+    if (this.workspace.isDragging()) return;
+    if (e.type !== Blockly.Events.BlockMove) return;
+    if (!this.getSurroundLoop()) this.outputConnection.disconnect();
+  }
+
+  loopTypes: new Set(); // Your valid *block types* (not connection checks).
+
+  getSurroundLoop: function () {
+    let block = this.getSurroundParent();
+    do {
+      if (loopTypes.has(block.type)) return block;
+      block = block.getSurroundParent();
+    } while (block);
+    return null;
+  },
+}
+```
+
+### Generic types
+
+This system does not, by itself, support defining generic types. For example,
+you cannot create an "Identity" block, that "returns" whatever its input is.
+
+You can _somewhat_ support this by actively changing the connection check on the
+block's output to match its input. Which you can do using the event system to
+listen to block move events.
+
+```js
+Blockly.Blocks['custom_block'] = {
+  init: function() { }
+
+  onchange: function(e) {
+    if (e.type !== Blockly.Events.BlockMove) return;
+    this.setOutput(
+        true, this.getInputTargetBlock()?.outputConnection.getCheck());
+  }
+}
+```
+
+But if the connected block is _also_ generic, then this doesn't work correctly.
+There is no good work around for this case.
+
+## Connection checkers
+
+If this system doesn't work for your use case, you can also change how the
+connection checks are compared by creating a
+[custom connection checker][custom-connection-checker].
+
+For example, if you wanted to create a more advanced system that handles some of
+the [limitations](#limitations) of this one, you can create a custom
+connection checker.
+
+[connection-type]: /guides/create-custom-blocks/define/block-anatomy#connections
+[event-system]: /guides/configure/web/events
+[BlockMove]: /reference/blockly.events.blockmove
+[custom-connection-checker]: /guides/create-custom-blocks/inputs/connection_checker

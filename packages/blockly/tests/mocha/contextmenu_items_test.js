@@ -93,7 +93,7 @@ suite('Context Menu Items', function () {
       test('Enabled when something to redo', function () {
         // Create a new block, then undo it, which means there is something to redo.
         this.workspace.newBlock('text');
-        this.workspace.undo(false);
+        this.workspace.undo();
         const precondition = this.redoOption.preconditionFn(this.scope);
         assert.equal(
           precondition,
@@ -105,7 +105,7 @@ suite('Context Menu Items', function () {
       test('Redoes adding new block', function () {
         // Add a new block, then undo it, then redo it.
         this.workspace.newBlock('text');
-        this.workspace.undo(false);
+        this.workspace.undo();
         assert.equal(this.workspace.getTopBlocks(false).length, 0);
         this.redoOption.callback(this.scope);
         assert.equal(

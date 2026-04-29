@@ -1,0 +1,179 @@
+---
+description: How parentheses are inserted during code generation.
+title: Add parentheses
+image: images/blockly_banner.png
+---
+
+import Image from '@site/src/components/Image';
+
+# Add parentheses
+
+Blocks imply parentheses. For example, when you see the following blocks, you
+assume it means `-(5 + 2)` not `-5 + 2` because the `5` and the `2` are part of
+one block, and the `-` is part of another block.
+
+<Image
+  alt="blocks representing -(5 + 2)"
+  src="/images/code-generation/parentheses/negation-and-addition.png"
+  width={200}
+/>
+
+But if you put parentheses around every block, it makes the code much less
+readable. Compare `(((5) * (2)) + (3))` with `5 * 2 + 3`. Both of these
+expressions evaluate to the same thing (`13`) but the second one is much easier
+to read.
+
+Blockly's operator precedence rules help you generate code with the minimum
+number of parentheses, for maximum readability.
+
+## Generate "correct" output
+
+If you don't need your generated code to be human-readable, then there's no need
+to worry about minimizing parentheses. Wrapping every block is a fine approach,
+and it ensures that your generated code is always evaluated correctly.
+
+To ensure correctness, always pass `Order.ATOMIC` to `valueToCode` calls, and
+always return `Order.NONE` from your block-code generator.
+
+## Generate optimal parentheses
+
+Parentheses only need to be inserted if the generated code is incorrect without
+them. This happens when the precedence of an operator in the outer block is
+stronger than the precedence of an operator in the inner block.
+
+:::note
+Precedence is the order operators get evaluated in. For example, in basic
+arithmetic precedence is specified by
+[`PEMDAS`](https://en.wikipedia.org/wiki/Order_of_operations#Mnemonics).
+:::
+
+For example, in the following blocks there is a unary negation operator and an
+addition operator. The unary negation has a stronger precedence than the
+addition operator.
+
+<Image
+  alt="negate-and-addition"
+  src="/images/code-generation/parentheses/negation-and-addition.png"
+  width={200}
+/>
+
+So if you don't add parentheses you get `-5 + 2`, and the `-` is evaluated
+before the `+`, which is doesn't match the blocks.
+
+You can tell the generator when to insert parentheses by telling it how strong
+your different operators are. If it sees that the outer operator is stronger
+than the inner operator, it inserts parentheses to protect the inner operator.
+
+`valueToCode` takes in the precedence of the outer operator, and the return
+tuple specifies the precedence of the inner operator.
+
+Here is an example for a block that includes two operators:
+
+<Image
+  alt="A block with a unary negation operator, and an addition operator, and a child block."
+  src="/images/code-generation/parentheses/negate-plus-two-with-child.png"
+  width={150}
+/>
+
+```js
+import { javascriptGenerator, Order } from 'blockly/javascript';
+
+javascriptGenerator.forBlock['negate_plus_two'] = function (block, generator) {
+  // valueToCode takes in the precedence of the outer operator.
+  const innerCode = generator.valueToCode(block, 'INNER', Order.UNARY_NEGATION);
+  const code = `-${innerCode} + 2`;
+  // The return tuple specifies the precedence of the inner operator.
+  return [code, Order.ADDITION];
+};
+```
+
+### valueToCode precedence
+
+When you call `valueToCode` to generate the code of an inner block, you pass it
+the precedence of the _strongest operator_ acting on the code of the inner
+block. This is the operator the inner block's code needs to be protected from.
+
+For example, in the following blocks both the unary negation operator and the
+addition operator are acting on the code of the inner block. The unary negation
+is stronger, so that is the precedence you should pass to `valueToCode`.
+
+<Image
+  alt="A block with a unary negation operator, and an addition operator, and a child block."
+  src="/images/code-generation/parentheses/negate-plus-two-with-child.png"
+  width={150}
+/>
+
+```js
+// The - is the strongest operator acting on the inner code.
+const innerCode = generator.valueToCode(block, 'INNER', Order.UNARY_NEGATION);
+const code = `-${innerCode} + 2`;
+```
+
+### Return precedence
+
+When you return a precedence from your block-code generator, return the
+precedence of the _weakest operator_ within the code of the block. This is the
+operator that needs protecting.
+
+For example, the following block contains both a unary negation operator and an
+addition operator. The addition is weaker, so that is the precedence you should
+return from the block-code generator.
+
+<Image
+  alt="A block with a unary negation operator, and an addition operator, and no child block"
+  src="/images/code-generation/parentheses/negate-plus-two.png"
+  width={150}
+/>
+
+```js
+const code = `-${innerCode} + 2`;
+// The + is the weakest operator in the block.
+return [code, Order.ADDITION];
+```
+
+## Order enum
+
+Every language generator module defines an `Order` enum which includes all of
+the precedences for that language.
+
+Stronger precedences have lower backing values, and weaker precedences have
+higher backing values. You can think of strong precedences as being "ranked
+higher" in strength, and weaker precedences as being "ranked lower" - as if they
+were competitive fighters.
+
+Here is where you can find the `Order` enums for all of the built-in languages:
+
+- [Dart order][dart-order]
+- [JavaScript order][javascript-order]
+- [Lua order][lua-order]
+- [PHP order][php-order]
+- [Python order][python-order]
+
+### Special precedences
+
+Most of the precedences in the generators' `Order` enums match the precedences
+defined by their respective text-based languages. But there are two special
+precedences, `Order.ATOMIC` and `Order.NONE`.
+
+`Order.ATOMIC` is the strongest precedence. It is used when:
+
+- You want to [ensure code is always parenthesized](#generate-correct-output),
+  so you pass it to `valueToCode`.
+- Your block doesn't include any operators, so you return it from your
+  block-code generator.
+
+`Order.NONE` is the weakest precedence. It is used when:
+
+- You want to [ensure code is always parenthesized](#generate-correct-output),
+  so you return it from your block-code generator.
+- There are no operators acting on an inner block, so you pass it to
+  `valueToCode`.
+
+[negate-and-addition]: /images/code-generation/parentheses/negation-and-addition.png
+[negate-plus-two-with-child]: /images/code-generation/parentheses/negate-plus-two-with-child.png
+[negate-plus-two]: /images/code-generation/parentheses/negate-plus-two.png
+[dart-order]: https://github.com/RaspberryPiFoundation/blockly/blob/dcd2d0e539f2b7aa34b58969d5dc812e7848800c/generators/dart/dart_generator.ts#L27
+[javascript-order]: https://github.com/RaspberryPiFoundation/blockly/blob/dcd2d0e539f2b7aa34b58969d5dc812e7848800c/generators/javascript/javascript_generator.ts#L27
+[lua-order]: https://github.com/RaspberryPiFoundation/blockly/blob/dcd2d0e539f2b7aa34b58969d5dc812e7848800c/generators/lua/lua_generator.ts#L28
+[php-order]: https://github.com/RaspberryPiFoundation/blockly/blob/dcd2d0e539f2b7aa34b58969d5dc812e7848800c/generators/php/php_generator.ts#L26
+[python-order]: https://github.com/RaspberryPiFoundation/blockly/blob/dcd2d0e539f2b7aa34b58969d5dc812e7848800c/generators/python/python_generator.ts#L27

@@ -1,0 +1,79 @@
+# .github/workflows/deploy-docusaurus.yml
+# This workflow deploys the Blockly documentation to GitHub Pages.
+# Run this manually after a release to publish updated documentation.
+
+name: Deploy Docusaurus to GitHub Pages
+
+on:
+  # To run: GitHub -> Actions -> "Deploy Docusaurus to GitHub Pages" -> Run workflow
+  # Optionally set `ref` to the release branch/tag
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch, tag, or commit SHA to deploy (defaults to main)"
+        required: false
+        default: "main"
+        type: string
+
+# Sets the permissions for the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued
+# However, do not cancel in-progress runs as we want to allow these production deployments to complete
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || 'main' }}
+          # Allow Docusaurus to view the full commit history (required for "last edited at <date> by <person>" functionality)
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: "npm"
+          cache-dependency-path: "package-lock.json" # root level, since we're using npm workspaces
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate reference docs
+        working-directory: ./packages/blockly
+        run: |
+          npx gulp typings
+          npm run docs
+
+      - name: Build the Docusaurus site
+        working-directory: ./packages/docs
+        run: npm run build
+        env:
+          # When deploying to a subdirectory of your <org|name>.github.io domain, the BASE_URL
+          # must be set to the name of the repo, go to your repo → Settings → Environments:
+          # Open the github-pages environment, under Environment variables, add: PAGES_BASE_URL
+          BASE_URL: ${{ vars.PAGES_BASE_URL || '/docs/' }}
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload build artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./packages/docs/build
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

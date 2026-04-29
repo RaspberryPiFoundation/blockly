@@ -88,7 +88,7 @@ suite('Comment Deserialization', function () {
       this.block.checkAndDelete();
       assert.equal(this.workspace.getAllBlocks().length, 0);
       // Undo.
-      this.workspace.undo(false);
+      this.workspace.undo();
       assert.equal(this.workspace.getAllBlocks().length, 1);
       // Check comment.
       assertComment(this.workspace, 'test text');
@@ -97,12 +97,12 @@ suite('Comment Deserialization', function () {
       // Create block.
       this.block = createBlock(this.workspace);
       // Undo & undo.
-      this.workspace.undo(false);
-      this.workspace.undo(false);
+      this.workspace.undo();
+      this.workspace.undo();
       assert.equal(this.workspace.getAllBlocks().length, 0);
       // Redo & redo.
-      this.workspace.undo(true);
-      this.workspace.undo(true);
+      this.workspace.redo();
+      this.workspace.redo();
       assert.equal(this.workspace.getAllBlocks().length, 1);
       // Check comment.
       assertComment(this.workspace, 'test text');

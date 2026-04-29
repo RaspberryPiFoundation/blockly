@@ -1,0 +1,48 @@
+---
+description: Configuration options for how the workspace can be moved.
+title: Move option
+image: images/blockly_banner.png
+---
+
+# Move option
+
+Blockly's main workspace can be moved around using three different methods: the
+scrollbars, the mouse, or the mouse wheel.
+
+The move settings are defined by an object that is part of Blockly's
+[configuration
+options](/guides/configure/web/configuration_struct#the-options-dictionary).
+Here is an example:
+
+```js
+var workspace = Blockly.inject('blocklyDiv', {
+  move: {
+    scrollbars: {
+      horizontal: true,
+      vertical: true,
+    },
+    drag: true,
+    wheel: false,
+  },
+});
+```
+
+## scrollbars
+
+Determines if the workspace has vertical or horizontal scrollbars. Takes an
+object where the `horizontal` property determines if horizontal scrolling is
+enabled and the `vertical` property determines if vertical scrolling is enabled.
+If a boolean is passed then it is equivalent to passing an object with both
+`horizontal` and `vertical` properties set as that value. Defaults to `true`
+(both horizontal and vertical scrolling enabled) if the workspace has
+categories.
+
+## drag
+
+Determines if the workspace can be dragged with the mouse. Always `false` if
+`scrollbars` is `false` (at least in options parsing). Defaults to `true` if `scrollbars` is `true`.
+
+## wheel
+
+Determines if the workspace can be scrolled with the mouse wheel. Always `false`
+if `scrollbars` is `false` (at least in options parsing). Defaults to `false`.

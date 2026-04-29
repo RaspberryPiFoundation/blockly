@@ -1,0 +1,33 @@
+---
+slug: /codelabs/context-menu-option/callback
+description: How to add a callback to a context menu item.
+---
+
+# Customizing context menus
+
+## 7. Callback
+
+The callback function determines what happens when you select the context menu option. Like the precondition, it can use the `scope` argument to access the Blockly component on which the context menu was invoked.
+
+It is also passed a `PointerEvent` which is the original event that triggered opening the context menu (not the event that selected the current option). This lets you, for example, figure out where on the workspace the context menu was opened so you can create a new element there.
+
+As an example, update the help item's `callback` to add a block to the workspace when selected:
+
+```js
+    callback: function(scope) {
+      Blockly.serialization.blocks.append({
+        'type': 'text',
+        'fields': {
+          'TEXT': 'Now there is a block'
+        }
+      }, scope.focusedNode);
+    },
+```
+
+### Test it
+
+- Reload the page and open a context menu on the workspace.
+- Select the **Help** option.
+- A text block should appear in the top left of the workspace.
+
+![A text block containing the text "Now there is a block".](../../../static/images/codelabs/context-menu-option/there_is_a_block.png)

@@ -1,0 +1,63 @@
+---
+description: How to apply colours to a block.
+title: Block colours
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Block colours
+
+Most Blockly apps use a variety of block colours to visually group the blocks
+into categories. The blocks shipped with Blockly include several categories,
+with the colours mirrored by the various toolbar categories in the demos:
+
+![A screenshot of a workspace with an example of each block
+colour.](/images/standard-block-colors.png)
+
+Additional colours on the block are derived from the main colour. For example,
+[shadow blocks](/guides/configure/web/toolboxes/preset#shadow-blocks)
+are a desaturated version of the main colour, and border colours are a darker
+version.
+
+:::tip
+If you want more control over shadow block or border colours, learn about
+[defining a theme](/guides/configure/web/appearance/themes).
+:::
+
+## Set block colour
+
+The primary colour of a block can be defined in either JSON or JavaScript. You
+can pass the hue (preferred), RGB value, or color name; for more information,
+see [Colour formats](/guides/configure/web/appearance/colour-formats).
+
+<Tabs groupId="group-1">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    // ...,
+    "colour": 160,
+  }
+  ```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+  ```js
+  init: function() {
+    // ...
+    this.setColour(160);
+  }
+  ```
+  </TabItem>
+</Tabs>
+Note the British spelling. Failure to set the colour results in a black block.
+
+You can also set the block color using the
+[`Block.setColour(..)`](/reference/blockly.block.setcolour)
+function, or by using [themes](/guides/configure/web/appearance/themes)
+and defining a block style.
+
+## Accessibility
+
+For information about how colour affects accessibility, see [Colour and
+accessibility](/guides/configure/web/colour-a11y)

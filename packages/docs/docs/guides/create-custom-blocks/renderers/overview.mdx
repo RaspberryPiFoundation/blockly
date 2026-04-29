@@ -1,0 +1,50 @@
+---
+description: What a renderer is, built-in renderers, and how to create a custom one.
+title: Renderers
+image: images/blockly_banner.png
+---
+
+# Renderers
+
+The shape of a block is determined by a renderer, based on the
+[block's definition][block-definition] (that is, its fields and connections).
+
+## Built-in renderers
+
+Blockly provides three built-in renderers, each of which give a slightly
+different feel to the program.
+
+| Renderer | Description                                                                                                         | Image               |
+| -------- | ------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| Thrasos  | The recommended renderer. It is a more modern take on the geras renderer, with more even spacing and solid borders. | ![thrasos][thrasos] |
+| Geras    | The default renderer. It is the original renderer that Blockly was built with.                                      | ![geras][geras]     |
+| Zelos    | A renderer based on Scratch-3.0 block design.                                                                       | ![zelos][zelos]     |
+
+To use one of these renderers, pass the name into the configuration options:
+
+```js
+Blockly.inject('blocklyDiv', {
+  renderer: 'thrasos',
+});
+```
+
+## Custom renderers
+
+If you want to give your program a different look and feel than any of the
+built-in renderers, you can also create a custom renderer. To get started the
+Blockly team recommends you:
+
+1. Read through the [renderer concept docs][concept] to learn
+   how all of the components of a renderer fit together.
+2. Complete the [custom renderer codelab][custom-renderer-codelab] to
+   get hands-on practice with custom rendering.
+3. Add the [debug renderer][debug-renderer] to your project.
+4. Customize your renderer.
+
+[block-definition]: /guides/create-custom-blocks/define/block-definitions
+[concept]: /guides/create-custom-blocks/renderers/concepts/overview
+[custom-renderer-codelab]: /codelabs/custom-renderer/codelab-overview
+[debug-renderer]: https://www.npmjs.com/package/@blockly/dev-tools#debug-renderer
+[thrasos]: /images/rendering/renderers/thrasos.png
+[geras]: /images/rendering/renderers/geras.png
+[zelos]: /images/rendering/renderers/zelos.png

@@ -1,0 +1,201 @@
+---
+description: How to modify existing block definitions.
+title: Modify block definitions
+image: images/blockly_banner.png
+---
+
+# Modify block definitions
+
+A common question is how to modify the definition of an existing block. For
+example, you might want to add a connection check or change a field to a value
+input.
+
+In general, it is not possible to modify a block definition in place.
+
+## How to modify an existing definition
+
+If you want to modify the definition of an existing block type:
+
+1.  Make a copy of the existing definition, including block-code generators.
+1.  Modify the copy and give your type a new name.
+1.  Add your new definition to `Blockly.Blocks`.
+
+## Why can't I directly modify an existing definition?
+
+If you're curious as to why you can't modify an existing definition, read on.
+We'll consider some possibilities.
+
+### Modify an existing definition directly
+
+There are two ways to directly modify the definition of an existing block:
+monkeypatching and forking the code. Both are strongly discouraged, as you run
+the risk of breaking code that depends on the monkeypatched or forked code. Both
+techniques also make it difficult to integrate updates and bug fixes. For more
+information, see [What about
+monkeypatching?](/guides/programming/using_blockly_apis#what-about-monkeypatching)
+and [Fork Blockly](/guides/programming/forking_blockly).
+
+### Subclass an existing definition
+
+It might occur to you to somehow subclass an existing definition. Unfortunately,
+this isn't possible because block definitions aren't classes -- they're mixins.
+There is, for example, no way to overwrite a colour property because the
+definition does not have a colour property. Instead, it has an `init` function
+that calls `setColour` to set the colour property on the block. Because the call
+is inside `init`, there is no way to replace it without replacing the entire
+`init` function.
+
+### Overwrite a function in an existing definition
+
+It is possible to overwrite a function in an existing definition:
+
+```js
+Blockly.Blocks['existing_block'].init = function () {
+  /*new function*/
+};
+```
+
+This works, but you have to copy and modify the existing function -- you can't
+magically replace just one line. There are several problems with this:
+
+- It isn't much different from copying and modifying the entire definition.
+- You can't use it to modify the `init` function of blocks that are defined in
+  JSON, such as Blockly's built-in blocks. This is because there is no `init`
+  function to copy -- it's generated at run time.
+- It requires you to define your block using JavaScript, which may [cause
+  problems with
+  localization](/guides/configure/web/translations#json-message-interpolation).
+
+### Overwrite the results of init
+
+One way to "replace just one line" of an `init` function is to replace the
+`init` function with a function that calls the original `init` function and then
+overwrites the result of that call. For example, the following code changes the
+color of the `logic_null` block:
+
+```js
+const originalInit = Blockly.Blocks['logic_null'].init;
+Blockly.Blocks['logic_null'].init = function () {
+  originalInit.call(this);
+  this.setColour(300);
+};
+```
+
+Unfortunately, this is less useful that it seems. For example:
+
+- Broadening [connection
+  checks](/guides/create-custom-blocks/inputs/connection-checks) or
+  applying a less-restrictive field validator may invalidate assumptions made
+  by block-code generators and event handlers.
+
+- Replacing a field with a value input will break block-code generators and
+  field validators and may break event handlers. It may also be extremely
+  difficult to do for localized blocks because different locales may result in
+  blocks with [different types and orders of inputs and
+  fields](/guides/configure/web/translations#json-message-interpolation).
+
+### Overwrite a key-value pair in a JSON definition
+
+If the JSON for a block is publicly available, it may be possible to overwrite
+individual JSON values. For example:
+
+```js
+// Block definition.
+blockJson = {...};
+Blockly.Blocks['my_block'] = {
+  init: function() {
+    initJson(blockJson); // Called when the block is created.
+  }
+}
+
+// Third-party code.
+blockJson.colour = 100;
+```
+
+However, this only works if the JSON object is publicly available, the
+definition explicitly defines the `init` function, and the `init` function calls
+`initJson`. It doesn't work if the JSON is passed to `defineBlocksWithJsonArray`
+or `createBlockDefinitionsFromJsonArray` because the JSON is processed before a
+third party has a chance to modify it. (Note that Blockly's built-in blocks use
+`createBlockDefinitionsFromJsonArray`.)
+
+But what if the JSON isn't defined this way? Shouldn't it still be possible to
+overwrite JSON properties? Unfortunately, no. The definition contains an `init`
+function (not JSON) and there is no function to convert an `init` function to
+JSON.
+
+```js
+// Doesn't work. There is no getJson() function.
+const json = Blockly.Blocks['existing_block'].getJson();
+json['message0'] = 'my new message0';
+Blockly.Blocks['existing_block'].init = function () {
+  initJson(json);
+};
+```
+
+## Design for reuse
+
+As you design your own custom blocks, you may be able to design them in ways
+that promote reuse.
+
+### Reuse JSON
+
+If you have two blocks that are substantially similar, you can create a parent
+JSON definition and reuse this in child definitions. For example:
+
+```js
+const parentJson = {
+  // shared properties
+};
+
+Blockly.Blocks['child_block_1'] = {
+  init: function () {
+    initJson({ ...parentJson, colour: 100 });
+  },
+};
+
+Blockly.Blocks['child_block_2'] = {
+  init: function () {
+    initJson({ ...parentJson, colour: 200 });
+  },
+};
+```
+
+Another alternative is to define your JSON in a publicly available object and
+pass that object to `initJson` in your `init` function. This makes it possible
+for others to overwrite individual properties. For more information, see
+[Overwrite a key-value pair in a JSON
+definition](#overwrite-a-key-value-pair-in-a-json-definition).
+
+### Reuse functions
+
+Blocks may define a number of [standard
+functions](/guides/create-custom-blocks/define/block-definitions#how-block-definitions-work),
+such as block-level event handlers, custom tooltips, field validators, and the
+functions used by mutators, as well as functions that provide custom behavior,
+such as a function that sets field values from external data, like the current
+position of a robot's arm.
+
+It may be possible to reuse these functions across blocks.
+
+### Use a dropdown field
+
+If you have a set of blocks that are substantially the same except for an
+operator, you may be able to design a single block that has a dropdown field for
+the operator. For example:
+
+- The built-in `logic_operation` block uses a dropdown with the operators
+  `and` and `or`.
+- The built-in `math_arithmetic` block uses a dropdown with the operators `+`,
+  `-`, `×`, `÷`, and `^`.
+
+Writing code generators for such blocks is usually a bit more complex, but still
+easier than writing and maintaining multiple blocks.
+
+### Use a mutator
+
+If you have a set of blocks that represent different variations of the same
+programming structure, you may be able to create a single block that uses a
+[mutator](/guides/create-custom-blocks/mutators). For example, the
+built-in `controls_if` block can represent multiple variations of `if-then-else`
+statements.

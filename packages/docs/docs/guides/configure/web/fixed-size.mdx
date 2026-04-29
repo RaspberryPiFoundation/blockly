@@ -1,0 +1,78 @@
+---
+description: How to inject a Blockly workspace that is a fixed size.
+title: Fixed-sized workspace
+image: images/blockly_banner.png
+---
+
+# Fixed-sized workspace
+
+The simplest way to put Blockly into a webpage is to inject it into an empty
+'div' tag.
+
+## 1. Get the code
+
+[Get the code](/guides/get-started/get-the-code) in whatever
+way works best for your application.
+
+## 2. Define the area
+
+Add an empty `div` somewhere in the page's body and set its size:
+
+```html
+<div id="blocklyDiv" style="height: 480px; width: 600px;"></div>
+```
+
+## 3. Inject the workspace
+
+[Define the toolbox](/guides/configure/web/toolboxes/toolbox) structure:
+
+```js
+const toolbox = {
+  kind: 'flyoutToolbox',
+  contents: [
+    {
+      kind: 'block',
+      type: 'controls_if',
+    },
+    {
+      kind: 'block',
+      type: 'controls_repeat_ext',
+    },
+    {
+      kind: 'block',
+      type: 'logic_compare',
+    },
+    {
+      kind: 'block',
+      type: 'math_number',
+    },
+    {
+      kind: 'block',
+      type: 'math_arithmetic',
+    },
+    {
+      kind: 'block',
+      type: 'text',
+    },
+    {
+      kind: 'block',
+      type: 'text_print',
+    },
+  ],
+};
+```
+
+And finally, call the following to inject Blockly into your defined `div`.
+
+```js
+const workspace = Blockly.inject('blocklyDiv', { toolbox: toolbox });
+```
+
+The `workspace` variable is not currently used, but it will become
+important later when one wants to save the blocks or generate code.
+If more than one instance of Blockly is injected onto the same page, ensure
+that each returned workspace is stored in a different variable.
+
+Now you can test the page in a browser. You should see Blockly's editor filling
+the `div`, with seven blocks in the toolbox. Here is [a live
+demo](https://raspberrypifoundation.github.io/blockly-samples/examples/fixed-demo/).

@@ -1,0 +1,38 @@
+---
+description: What field are, which kinds are provided by default, and how to customize them.
+title: Fields
+image: images/blockly_banner.png
+---
+
+# Fields
+
+Fields are used to define most UI elements on a block. Examples of fields
+include string labels, images, inputs for literal data such as strings and
+numbers, and rich editors like date pickers and angle pickers. The simplest
+example of a field is the `math_number` block, which uses a `field_number` to
+let the user type a number.
+
+![A block with a number field.](/images/math-number.png)
+
+:::note
+If you need to show meta-information about a block, you probably want an
+icon instead. Read more about [Fields vs Icons][fields-vs-icons].
+:::
+
+Blockly provides several fields by default to handle a variety of user input.
+These can be customized through field-specific configuration or with validators,
+which tell a field how to handle specific content in a standard editor.
+
+→ More info on [Built-in fields](/guides/create-custom-blocks/fields/built-in-fields/overview).
+
+→ More info on [Validators](/guides/create-custom-blocks/fields/validators).
+
+If you need a fully custom field it takes a bit more work and you'll want to
+read most of the fields documentation. Start by learning about the parts
+that make up a field or the overview of creating custom fields.
+
+→ More info on the [anatomy of a field](/guides/create-custom-blocks/fields/anatomy-of-a-field).
+
+→ More info on [creating custom fields](/guides/create-custom-blocks/fields/customizing-fields/overview).
+
+[fields-vs-icons]: /guides/create-custom-blocks/fields/fields-vs-icons

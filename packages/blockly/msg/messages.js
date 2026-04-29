@@ -1600,11 +1600,6 @@ Blockly.Msg.PROCEDURES_IFRETURN_WARNING = 'Warning: This block may be used only 
 Blockly.Msg.WORKSPACE_COMMENT_DEFAULT_TEXT = 'Say something...';
 
 /** @type {string} */
-/// workspace - This text is read out when a user navigates to the workspace while
-/// using a screen reader.
-Blockly.Msg.WORKSPACE_ARIA_LABEL = 'Blockly Workspace';
-
-/** @type {string} */
 /// warning - This appears if the user collapses a block, and blocks inside
 /// that block have warnings attached to them. It should inform the user that the
 /// block they collapsed contains blocks that have warnings.
@@ -1646,61 +1641,61 @@ Blockly.Msg.LINUX = 'Linux';
 /// of keyboard shortcuts.
 Blockly.Msg.UNKNOWN = 'Unknown';
 /** @type {string} */
-/// Representation of the Control key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Control key used in keyboard shortcuts.
 Blockly.Msg.CONTROL_KEY = 'Ctrl';
 /** @type {string} */
-/// Representation of the Mac Command key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Mac Command key used in keyboard shortcuts.
 Blockly.Msg.COMMAND_KEY = '⌘ Command';
 /** @type {string} */
-/// Representation of the Mac Option key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Mac Option key used in keyboard shortcuts.
 Blockly.Msg.OPTION_KEY = '⌥ Option';
 /** @type {string} */
-/// Representation of the Alt key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Alt key used in keyboard shortcuts.
 Blockly.Msg.ALT_KEY = 'Alt';
 /** @type {string} */
-/// Representation of the Enter key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Enter key used in keyboard shortcuts.
 Blockly.Msg.ENTER_KEY = 'Enter';
 /** @type {string} */
-/// Representation of the Backspace key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Backspace key used in keyboard shortcuts.
 Blockly.Msg.BACKSPACE_KEY = 'Backspace';
 /** @type {string} */
-/// Representation of the Delete key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Delete key used in keyboard shortcuts.
 Blockly.Msg.DELETE_KEY = 'Delete';
 /** @type {string} */
-/// Representation of the Escape key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Escape key used in keyboard shortcuts.
 Blockly.Msg.ESCAPE = 'Esc';
 /** @type {string} */
-/// Representation of the Tab key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Tab key used in keyboard shortcuts.
 Blockly.Msg.TAB_KEY = 'Tab';
 /** @type {string} */
-/// Representation of the Shift key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Shift key used in keyboard shortcuts.
 Blockly.Msg.SHIFT_KEY = 'Shift';
 /** @type {string} */
-/// Representation of the Caps Lock key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Caps Lock key used in keyboard shortcuts.
 Blockly.Msg.CAPS_LOCK_KEY = 'Caps Lock';
 /** @type {string} */
-/// Representation of the Space key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Space key used in keyboard shortcuts.
 Blockly.Msg.SPACE_KEY = 'Space';
 /** @type {string} */
-/// Representation of the Page Up key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Page Up key used in keyboard shortcuts.
 Blockly.Msg.PAGE_UP_KEY = 'Page Up';
 /** @type {string} */
-/// Representation of the Page Down key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Page Down key used in keyboard shortcuts.
 Blockly.Msg.PAGE_DOWN_KEY = 'Page Down';
 /** @type {string} */
-/// Representation of the End key used in keyboard shortcuts.
+/// {{Optional}} Representation of the End key used in keyboard shortcuts.
 Blockly.Msg.END_KEY = 'End';
 /** @type {string} */
-/// Representation of the Home key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Home key used in keyboard shortcuts.
 Blockly.Msg.HOME_KEY = 'Home';
 /** @type {string} */
-/// Representation of the Insert key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Insert key used in keyboard shortcuts.
 Blockly.Msg.INSERT_KEY = 'Insert';
 /** @type {string} */
-/// Representation of the Pause key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Pause key used in keyboard shortcuts.
 Blockly.Msg.PAUSE_KEY = 'Pause';
 /** @type {string} */
-/// Representation of the Context Menu key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Context Menu key used in keyboard shortcuts.
 Blockly.Msg.CONTEXT_MENU_KEY = '≣ Menu';
 /** @type {string} */
 /// menu label - Contextual menu item that cuts the focused item.
@@ -1801,6 +1796,25 @@ Blockly.Msg.KEYBOARD_NAV_COPIED_HINT = 'Copied. Press %1 to paste.';
 /** @type {string} */
 /// Message shown when an item is cut in keyboard navigation mode.
 Blockly.Msg.KEYBOARD_NAV_CUT_HINT = 'Cut. Press %1 to paste.';
+/** @type {string} */
+/// Aria label for a workspace with one stack of blocks.
+Blockly.Msg.WORKSPACE_LABEL_1_STACK = 'Blocks workspace. 1 stack of blocks';
+/** @type {string} */
+/// Aria label for a workspace with 0 or >1 stacks of blocks.
+/// \n\nParameters:\n* %1 - the number of stacks of blocks. A stack of blocks is a group of connected
+/// blocks that are not connected to any other blocks. 0 stacks means there are no blocks on the workspace.
+Blockly.Msg.WORKSPACE_LABEL_MANY_STACKS = 'Blocks workspace. %1 stacks of blocks';
+/** @type {string} */
+/// Aria label for a mutator workspace, which is a secondary workspace used for editing a block's structure.
+/// This type of workspace appears when a user clicks on the gear icon of a block that has a mutator, and
+/// allows the user to add, remove, or rearrange inputs to that block.
+Blockly.Msg.WORKSPACE_LABEL_MUTATOR_WORKSPACE = 'Block editor workspace';
+/** @type {string} */
+/// Aria label for an always-open flyout's workspace. Since the flyout will have a role of list,
+/// the resulting screenreader output will be something like "Logic blocks list, with 5 items".
+/// Do not include the word "list" in this message.
+/// Parameters: %1 - the category of blocks in the flyout, e.g. "Logic" or "Math". This may be empty for an uncategorized flyout.
+Blockly.Msg.WORKSPACE_LABEL_FLYOUT_WORKSPACE = '%1 blocks';
 /** @type {string} */
 /// ARIA live region message announcing the number of stacks of blocks in the workspace, optionally including comments.
 /// \n\nParameters:\n* %1 - the number of stacks (integer greater than 1)\n* %2 - optional phrase announcing comments, including leading space
@@ -1978,3 +1992,13 @@ Blockly.Msg.FIELD_LABEL_CHECKBOX_UNCHECKED = 'Not checked';
 /// \n\nParameters:\n* %1 - the name of the variable represented by the option
 /// \n\nExamples:\n* 'Variable "item"'\n* 'Variable "x"'
 Blockly.Msg.FIELD_LABEL_VARIABLE = 'Variable "%1"';
+/** @type {string} */
+/// Part of an aria label for an element that indicates it is a button, but for technical
+/// reasons cannot be give a role of button. Ideally, this would match
+/// the localized name for what screenreaders announce for <button> elements in your language.
+Blockly.Msg.ARIA_LABEL_BUTTON = 'button';
+/** @type {string} */
+/// Part of an aria label for an element that indicates it is a heading, but for
+/// technial reasons cannot be given a role of heading. Ideally, this would match
+/// the localized name for what screenreaders announce for <h1> elements in your language.
+Blockly.Msg.ARIA_LABEL_HEADING = 'heading';

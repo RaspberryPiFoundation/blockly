@@ -1,0 +1,214 @@
+---
+description: How to create custom previews for pending connections.
+title: Connection previewers
+image: images/blockly_banner.png
+---
+
+import Image from '@site/src/components/Image';
+
+# Connection previewers
+
+A connection previewer creates a visual preview of a pending connection. It
+gives you an indication of where the dragging block will be connected when it is
+dropped.
+
+The default connection previewer puts [insertion markers][insertion-marker]
+where blocks will connect. It also highlights connections, and puts a fade
+effect on blocks that will be replaced and disconnected.
+
+![A demonstration of the built-in previewer][built-in-previewer-image]
+
+## Kinds of pending connections
+
+There are two kinds of pending connections. In one case case, the dropped block
+replaces an existing block, and the existing block is disconnected. In the other
+case, the dropped block is inserted without disconnecting other blocks.
+
+### Replacement
+
+Replacement happens when a connection on the dragged block is going to connect
+to a connection that already has a block, and there is nowhere for the existing
+block to be reattached. When the dragged block is dropped, the replaced block
+will be disconnected, and the dragged block will be connected in its place.
+
+By default, we indicate this by putting a fade effect on the block that is being
+replaced.
+
+<Image
+  alt="The built-in replacement preview"
+  src="/images/connections/built-in-replacement-preview.png"
+  width={150}
+/>
+
+### Insertion
+
+Insertion happens in two cases. It happens when a connection on the dragged
+block is going to connect to a connection that is empty. And it happens when a
+connection on the dragged block is going to a connection that already has a
+block, but it can be inserted between the two existing blocks, so the existing
+block doesn't get disconnected.
+
+By default, we indicate this by creating insertion markers, and highlighting the
+connections that will connect.
+
+<Image
+  alt="The built-in insertion preview"
+  src="/images/connections/built-in-insertion-preview.png"
+  width={250}
+/>
+
+## Create a custom previewer
+
+If you want to use a different visual to preview pending connections, you can
+create a custom [`IConnectionPreviewer`][IConnectionPreviewer] implementation.
+
+### Construction and disposal
+
+You need to implement a constructor and a disposal method for your
+`IConnectionPreviewer`.
+
+The constructor is called whenever a block drag begins, and it is passed the
+block that is being dragged. If you need to initialize any state based on the
+block, you can do that in the constructor.
+
+```js
+class MyConnectionPreviewer implements IConnectionPreviewer {
+  constructor(draggedBlock: Blockly.BlockSvg) {
+    // Initialize state here.
+  }
+}
+```
+
+The `dispose` method is called whenever a block drag ends. If you need to
+dereference any state when your `IConnectionPreviewer` instance is disposed, you
+should do that here.
+
+```js
+dispose() {
+  // Dispose of and dereference any state.
+}
+```
+
+### Create the preview
+
+Your `IConnectionPreviewer` needs to implement logic for visually previewing
+connections.
+
+#### Replacement
+
+To preview [replacements](#replacement), implement the `previewReplacement`
+method.
+
+```js
+previewReplacement(draggedConn, staticConn, replacedBlock) {
+  // Visually indicate that the replacedBlock will be disconnected, and the
+  // draggedConn will be connected to the staticConn.
+}
+```
+
+#### Insertion
+
+To preview [insertions](#insertion), implement the `previewConnection` method.
+
+```js
+previewConnection(draggedConn, staticConn) {
+  // Visually indicate the draggedConn will be connected to the staticConn.
+}
+```
+
+If you want to have a different preview depending on if the dragged block is
+being connected to an empty input, or if it is being inserted between blocks,
+you can check if the `staticConn` is currently connected to another connection.
+If the `staticConn` is currently connected, then the `draggedConn` is being
+inserted between blocks.
+
+```js
+previewConnection(draggedConn, staticConn) {
+  if (staticConn.targetConnection) {
+    // The dragged block is being inserted between blocks.
+  } else {
+    // The dragged block is connecting to an empty input.
+  }
+}
+```
+
+#### CSS previews
+
+You can preview connections by applying css to the block. For example, the
+default replacement fade is toggled by adding the `blocklyReplaceable` CSS class
+to the block.
+
+```js
+previewReplacement(draggedConn, staticConn, replacedBlock) {
+  Blockly.utils.dom.addClass(replacedblock.getSvgRoot(), 'my-custom-class');
+}
+```
+
+#### Renderer previews
+
+You can preview connections by implementing a [custom renderer][custom-renderer]
+that has special previewing hooks.
+
+```js
+previewReplacement(draggedConn, staticConn, replacedBlock) {
+  const renderer = replacedBlock.workspace.getRenderer()
+  if (renderer.addReplacementIndicator) {
+    renderer.addReplacementIndicator(replacedBlock);
+  }
+}
+```
+
+### Hide the preview
+
+Your `IConnectionPreviewer` needs to be able to hide previews. This gets called
+when the dragged block moves out of range of all connections, so no preview
+should be shown. It also gets called right before the previewer is disposed.
+
+```js
+hidePreview() {
+  // Remove CSS classes, toggle renderer methods, etc.
+}
+```
+
+### Registration and use
+
+Finally, once you've completed the creation of your `IConnectionPreviewer`, you
+need to register it. This associates the renderer with a string so that you can
+pass it to your configuration options. You can also pass the
+`IConnectionPreviewer` class (i.e. constructor) directly to your configuration
+options.
+
+```js
+Blockly.registry.register(
+  Blockly.registry.Type.CONNECTION_PREVIEWER,
+  'MyConnectionPreviewer',
+  MyConnectionPreviewer,
+);
+
+// You can use the string.
+const myWorkspace = Blockly.inject({
+  // options...
+  plugins: {
+    connectionPreviewer: 'myConnectionPreviewer',
+  },
+};
+
+// Or you can pass the class / constructor directly.
+const myWorkspace = Blockly.inject({
+  // options...
+  plugins: {
+    connectionPreviewer: MyConnectionPreviewer,
+  },
+};
+```
+
+For more information about registration, see
+[Injecting subclasses][inject-subclasses].
+
+[built-in-replacement-preview-image]: /images/connections/built-in-replacement-preview.png
+[built-in-insertion-preview-image]: /images/connections/built-in-insertion-preview.png
+[built-in-previewer-image]: /images/connections/built-in-previewer.gif
+[IConnectionPreviewer]: /reference/blockly.iconnectionpreviewer
+[insertion-marker]: /guides/get-started/workspace-anatomy#insertion-marker
+[custom-renderer]: /guides/create-custom-blocks/renderers/create-custom-renderers/basic-implementation
+[inject-subclasses]: /guides/configure/web/customization#injecting-subclasses

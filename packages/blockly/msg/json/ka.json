@@ -1,11 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Mehman97",
 			"Otogi",
 			"StarrySky",
 			"Გიო ოქრო"
 		]
 	},
+	"VARIABLES_DEFAULT_NAME": "ელემენტი",
 	"TODAY": "დღეს",
 	"DUPLICATE_BLOCK": "დუბლიკატი",
 	"ENABLE_BLOCK": "ბლოკის ჩართვა",

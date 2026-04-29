@@ -1,0 +1,151 @@
+---
+description: The process for creating a plugin.
+title: Add a plugin
+image: images/blockly_banner.png
+---
+
+# Add a plugin
+
+This document discusses how to create a new plugin. While the process it
+describes is for creating first-party plugins, you can use it as a guideline for
+creating third-party plugins.
+
+For an overview of plugins,
+see [Plugins](/guides/programming/plugin_overview).
+
+For a quick introduction to creating a plugin, see our [How to Build a Plugin
+talk
+(2021)](https://www.youtube.com/watch?v=cZlZrTk2aQU&list=PLSIUOFhnxEiCjoIwJ0jAdwpTZET73CK7d&index=7).
+
+## First-party vs third-party
+
+The target user for a plugin is a developer who finds and uses the plugin
+through npm.
+
+First-party plugins are supported by the Blockly team and published under the
+`@blockly` scope on npm. They are designed to be usable in a wide range of
+Blockly applications and are stable and easy to use. They are stored in the
+[blockly-samples](https://github.com/RaspberryPiFoundation/blockly-samples). A field for
+setting motor speed could be used in many robotics projects and is a good
+candidate for a first-party plugin.
+
+Third-party plugins are maintained and published independently. They may be more
+complex, more experimental, or targeted to a narrower range of Blockly
+applications. A field for editing a specific object defined by your database
+schema is better as a third-party plugin.
+
+### First party criteria
+
+First party plugins **must** meet these requirements:
+
+- Work on all major platforms, unless granted an exemption by the Blockly
+  team.
+  - Chrome, Firefox, Safari, Edge
+- Have an author who is willing to handle bugs for the first year.
+- Do not monkeypatch Blockly.
+- Have a clearly defined and documented API.
+- Do not call private or package functions from Blockly core, unless granted
+  an exemption by the Blockly team.
+  - Overriding package functions on a subclass that you define is allowed.
+  - If you want an exemption, ask us in an issue on blockly-samples.
+- Have tests.
+
+## The process
+
+Plugins go through four stages: [suggestion](#suggestion),
+[discussion](#discussion), [implementation](#implementation), and
+[publishing](#publishing).
+
+## Suggestion
+
+A plugin starts as a **suggestion**. You can suggest a plugin by creating a new
+issue with the [Feature
+Request](https://github.com/RaspberryPiFoundation/blockly-samples/issues/new?assignees=&labels=type%3A+feature+request%2C+triage&template=feature_request.yaml)
+template. For more information, read about [how to write a feature
+request](/guides/contribute/get-started/write_a_good_issue#feature-request).
+
+In addition to the basic feature request information, a plugin suggestion should
+include:
+
+- The API the plugin would expose.
+- APIs that need to be added or changed in core Blockly to support the plugin.
+- Screenshots, GIFs, or mock-ups if the plugin includes UI features.
+- An explanation of why it should be a first-party plugin rather than a
+  third-party plugin.
+
+The Blockly team reviews suggestions as they come in and either closes the issue
+or agrees that it would be a good first-party plugin.
+
+## Discussion
+
+Next, a plugin goes into the **discussion** phase. This phase includes:
+
+- Clarification of the desired functionality.
+- Clarification of the plugin's API.
+- Planning for implementation.
+- Planning for tests.
+- Discussion of API changes in core Blockly.
+- Breaking large plugins into implementation steps.
+- Plugin naming, based on our [naming
+  conventions](/guides/contribute/samples/naming).
+- Confirming all [first party criteria](#first-party-criteria) will be met.
+
+This discussion generally happens on the GitHub issue. The smaller the scope of
+the plugin, the faster the discussion phase can be. Larger plugins may attract
+community attention and strong opinions about the Right Solution. If this
+happens on your issue, congratulations! You have found something that people
+care about.
+
+The goal is that at the end of the discussion phase, all major design decisions
+have been made and there is a clear list of implementation steps. Both should be
+documented in comments on the issue.
+
+During discussion we may decide that a plugin should be a third-party plugin,
+and not be published under the `@blockly` scope. In that case we will explain
+why and close the issue.
+
+When discussion is complete a Blockly team member notes that it is ready to be
+implemented.
+
+## Implementation
+
+**Implementation** steps include:
+
+- Running `npx @blockly/create-package` to set up the plugin and its directory
+  from a template. [Learn
+  more...](https://github.com/RaspberryPiFoundation/blockly-samples/tree/main/plugins/dev-create)
+- Implementing core logic for the plugin.
+- Implementing a UI, if needed.
+- Testing the plugin, using Mocha.
+- Documenting the plugin, including the `README`.
+
+If a suggested plugin has been approved for implementation and you would like to
+work on it, comment on the issue and ask if it's still open for contributions.
+
+Implementation may be done by multiple contributors in parallel. You may
+implement a plugin collaboratively on your own fork, or through pull requests
+against this repository. If you want to collaborate on a plugin in this
+repository, ask the Blockly team to create a feature branch for you.
+
+Plugins should be added to the [`gh-pages/_index.html`](https://github.com/RaspberryPiFoundation/blockly-samples/blob/main/gh-pages/_index.html)
+file in the `main` branch of blockly-samples. This will cause them to appear
+on our [Plugins site](https://raspberrypifoundation.github.io/blockly-samples/). First-party
+plugins should point to their test page. Third-party plugins can also be added
+to this page, and can point to a link of their owner's choosing, such as a
+hosted demo or the npm page.
+
+## Publishing
+
+Finally, **publishing**. The Blockly team uses [Lerna](https://lerna.js.org/) to
+manage versioning and publishing for all plugins.
+
+Every Thursday, any plugins that have changed since their last release are
+published. If you need a change to be published sooner, please note it on your
+pull request.
+
+The Plugins site is also updated whenever plugins are published.
+
+Plugins that are not ready for publishing should be marked `private` in their
+`package.json`. This may happen if a plugin relies on a not-yet-published change
+in [core Blockly](https://github.com/RaspberryPiFoundation/blockly). Core Blockly is published
+in the last week of each quarter (once every three months).

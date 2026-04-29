@@ -1,0 +1,92 @@
+---
+description: A non-editable text field whose value is serialized.
+title: Serializable label fields
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Serializable label fields
+
+Serializable labels work exactly the same as [normal labels](/guides/create-custom-blocks/fields/built-in-fields/label)
+except they also serialize to XML. They should only be used if you are editing
+the content of a label programmatically, and wish it to serialize to XML.
+
+#### Serializable label field
+
+![A block with the serializable label "a serializable label". Visually, this is
+no different from a block with a normal
+label.](/images/fields/label-serializable/on_block.png)
+
+#### Serializable label field on a collapsed block
+
+![The same block after being collapsed. It has the label "a serializable label"
+and a jagged right edge to show it is
+collapsed.](/images/fields/label-serializable/collapsed.png)
+
+## Creation
+
+<Tabs groupId="group-1">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "type": "example_serializable_label",
+    "message0": "%1",
+    "args0": [
+      {
+        "type": "field_label_serializable",
+        "name": "FIELDNAME",
+        "text": "a serializable label"
+      }
+    ]
+  }
+  ```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+  ```js
+  Blockly.Blocks['example_serializable_label'] = {
+    init: function() {
+      this.appendDummyInput()
+          .appendField(new Blockly.FieldLabelSerializable("a serializable label"), "FIELDNAME");
+    }
+  };
+  ```
+  </TabItem>
+</Tabs>
+The serializable label field takes in an optional value, and an optional css
+class string. Both default to an empty string.
+
+## Serialization
+
+<Tabs groupId="group-2">
+  <TabItem value="json" label="JSON" default>
+  The JSON for a serializable label field looks like so:
+  
+  ```js
+  {
+    "fields": {
+      "FIELDNAME": text
+    }
+  }
+  ```
+  
+  Where `FIELDNAME` is a string referencing a serializable label field, and
+  the value is the value to apply to the field. The value
+  follows the same rules as the constructor value.
+  </TabItem>
+  <TabItem value="xml" label="XML">
+  The XML for a serializable label field looks like so:
+  
+  ```xml
+  <field name="FIELDNAME">text</field>
+  ```
+  
+  The `field` node's `name` attribute contains a string referencing a serializable
+  label field, and the node's inner text is the value to apply to the field.
+  </TabItem>
+</Tabs>
+## Validators
+
+Serializable label fields do not support validators, because they are not
+editable by a user.

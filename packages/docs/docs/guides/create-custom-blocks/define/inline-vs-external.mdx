@@ -1,0 +1,77 @@
+---
+description: The difference between inline and external inputs.
+title: Inline vs. external inputs
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Inline vs. external inputs
+
+Inputs can be rendered **inline** or **externally**. This controls whether the
+connectors for value inputs are rendered inside the block (inline) or on the
+outside edge (external), as well as whether inputs are rendered in the same or
+different rows.
+
+![Inline and external variations of the "count with x from value to value do
+statement" block. In the inline variation, the block has two rows: the top row
+has "count with x from value to value" and the bottom row has "do statement".
+The value inputs look like puzzle pieces cut out of the inside of the top row.
+In the external variation, the block has four rows: "count with x", "from
+value", "to value", and "do statement". The value inputs are at the ends of the
+second and third rows and look like female puzzle
+connectors.](/images/set-inputs-inline.png)
+
+The block definition can specify an optional boolean controlling whether inputs
+are inline or not.
+
+<Tabs groupId="group-1">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    // ...,
+    "inputsInline": true
+  }
+  ```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+  ```js
+  init: function() {
+    // ...
+    this.setInputsInline(true);
+  }
+  ```
+  </TabItem>
+</Tabs>
+When this boolean is set to `true` (inline inputs):
+
+- The connectors for value inputs are rendered inside the block.
+- Statement inputs are rendered on their own row.
+- Dummy, end-of-row, and value inputs are all rendered in the same row, except
+  that any input following a statement or end-of-row input is rendered on a
+  new row.
+
+When it is set to `false` (external inputs):
+
+- The connectors for value inputs are rendered on the outside edge of the
+  block.
+- All inputs are rendered in their own row, except that an end-of-row input
+  that follows a dummy input is rendered in the same row as the dummy input.
+
+If you're having trouble visualizing this, construct blocks in the [Blockly
+Developer
+Tools](https://raspberrypifoundation.github.io/blockly-samples/examples/developer-tools/index.html)
+and choose different settings for the `inputs` dropdown (`automatic`,
+`external`, `inline`).
+
+If this boolean is not defined then Blockly will use some heuristics to guess
+which mode is
+best. Assuming Blockly makes the right choice, leaving this field undefined
+is preferable since different language translations can automatically have
+different modes. See the example of `"set %1 to %2"` (external inputs) and
+`"put %2 in %1"` (inline inputs) in [Interpolation token
+order](/guides/create-custom-blocks/define/structure-json#interpolation-token-order).
+
+Use inline inputs when a block is likely to have small inputs such as numbers.
+The user can toggle this option through the context menu.

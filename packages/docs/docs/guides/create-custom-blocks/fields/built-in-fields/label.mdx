@@ -1,0 +1,94 @@
+---
+description: A non-editable text field.
+title: Label fields
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Label fields
+
+A label field stores a string as its `value` and a string as its `text`. The
+`value` and `text` of a label field are always the same.
+
+#### Label field
+
+![A block with two rows. The first has the label "a label" and the second has
+the label "and another label".](/images/fields/label/on_block.png)
+
+#### Label field on collapsed block
+
+![The same block after being collapsed. It has a single row, the label "a label
+and another label", and a jagged right edge to show it is
+collapsed.](/images/fields/label/collapsed.png)
+
+## Creation
+
+<Tabs groupId="group-1">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "type": "example_label",
+    "message0": "a label %1 and another label",
+    "args0": [
+      {
+        "type": "input_dummy"
+      }
+    ]
+  }
+  ```
+  
+  Any message text between interpolation arguments becomes label strings.
+  Alternatively, labels may be interpolated explicitly, either as an object or
+  as text. This is generally discouraged as it makes translation more
+  difficult.
+  
+  ```js
+  {
+    "type": "example_label",
+    "message0": "%1 %2 %3",
+    "args0": [
+      {
+        "type": "field_label",
+        "text": "a label"
+      },
+      {
+        "type": "input_dummy"
+      },
+      "and another label"
+    ]
+  }
+  ```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+  ```js
+  Blockly.Blocks['example_label'] = {
+    init: function() {
+      this.appendDummyInput()
+          .appendField(new Blockly.FieldLabel('a label'));
+      this.appendDummyInput()
+          .appendField('and another label');
+    }
+  };
+  ```
+  </TabItem>
+</Tabs>
+The [`appendField`](/reference/blockly.input.appendfield)
+function accepts both `FieldLabel` objects and, more commonly, strings to create
+labels.
+
+The label field takes in an optional value, and an optional css class string.
+Both default to an empty string.
+
+## Serialization
+
+Label fields are not serializable.
+
+If you would like your label to be serialized, because it is being changed
+programmatically, see the [Serializable Label](/guides/create-custom-blocks/fields/built-in-fields/label-serializable)
+field.
+
+## Validators
+
+Label fields do not support validators, because they are not editable.

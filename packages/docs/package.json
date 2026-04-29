@@ -1,0 +1,67 @@
+{
+  "name": "blockly-docs",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Blockly documentation site",
+  "scripts": {
+    "docusaurus": "docusaurus",
+    "start": "docusaurus start",
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy",
+    "clear": "docusaurus clear",
+    "serve": "docusaurus serve",
+    "write-translations": "docusaurus write-translations",
+    "write-heading-ids": "docusaurus write-heading-ids",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint 'docs/**/*.mdx'",
+    "lint:fix": "eslint 'docs/**/*.mdx' --fix"
+  },
+  "dependencies": {
+    "@docusaurus/core": "3.9.2",
+    "@docusaurus/plugin-client-redirects": "^3.9.2",
+    "@docusaurus/preset-classic": "3.9.2",
+    "@mdx-js/react": "^3.0.1",
+    "clsx": "^2.1.1",
+    "js-yaml": "^4.1.0",
+    "prism-react-renderer": "^2.3.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remark-directive": "^4.0.0"
+  },
+  "devDependencies": {
+    "@docsearch/core": "^4.5.2",
+    "@docusaurus/module-type-aliases": "3.9.2",
+    "@docusaurus/types": "3.9.2",
+    "eslint": "9.36.0",
+    "eslint-plugin-mdx": "^3.7.0",
+    "gh-pages": "^6.3.0",
+    "prettier": "3.6.2"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RaspberryPiFoundation/blockly.git"
+  },
+  "author": "Raspberry Pi Foundation",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
+  },
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly#readme"
+}

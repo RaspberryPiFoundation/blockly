@@ -1,0 +1,59 @@
+---
+description: What the element measurable is and what it does.
+title: Elements
+image: images/blockly_banner.png
+---
+
+import Image from '@site/src/components/Image';
+
+# Elements
+
+During [measurement][render-info] the block gets broken up into [rows][row]
+containing non-overlapping elements and element spacers.
+
+## Elements
+
+Elements represent visual things on a block. Examples include elements
+representing:
+
+- Fields
+- Icons
+- Connections
+- Corners
+
+<Image
+  alt="A repeat-for block with the elements outlined"
+  src="/images/rendering/debug-renderer/element.png"
+  width={200}
+/>
+
+Each element is a rectangle defining the bounds of the visual thing, plus some
+extra data specific to each kind of element.
+
+The bounds of the element are usually determined by some external class
+(that is, the thing they represent). For example,
+[field elements][field-element] represent fields, and their size is determined
+by the field's [`getSize`][getSize] method.
+
+## Element spacer
+
+An element spacer is an empty space that goes between elements in a row.
+
+<Image
+  alt="A repeat-for block with the element spacers highlighted in pink"
+  src="/images/rendering/debug-renderer/element-spacer.png"
+  width={200}
+/>
+
+The bounds of spacers are determined by the [render info][render-info] during
+measurement. After measuring all of the elements of the block, the
+[render info][render-info] inserts spaces of its chosen size between
+the elements. The sizes don't have to be consistent; they are often different
+depending on the elements to either side of the spacer.
+
+[render-info]: /guides/create-custom-blocks/renderers/concepts/info
+[row]: /guides/create-custom-blocks/renderers/concepts/rows
+[field-element]: /reference/blockly.blockrendering.field
+[getSize]: /reference/blockly.field.getsize
+[element-image]: /images/rendering/debug-renderer/element.png
+[element-spacer-image]: /images/rendering/debug-renderer/element-spacer.png

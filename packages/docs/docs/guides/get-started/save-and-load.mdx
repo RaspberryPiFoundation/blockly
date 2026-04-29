@@ -1,0 +1,45 @@
+---
+description: Basic information about saving and loading the state of workspaces.
+title: Save and load
+image: images/blockly_banner.png
+---
+
+# Save and load
+
+Serialization is saving the state of your workspace so that it can be loaded
+back into the workspace later. You convert all of the data you need to save into
+a text-based format for easy storage.
+
+We recommend serializing your workspace to JSON.
+
+For more information, see [Serialization][serialization].
+
+## Save
+
+The following code snippet shows how to convert the state of your workspace to
+JSON for saving:
+
+```js
+// Serialize the state.
+const state = Blockly.serialization.workspaces.save(myWorkspace);
+
+// Then you save the state, e.g. to local storage.
+localStorage.setItem('workspace-state', state);
+```
+
+## Load
+
+The following code snippet shows how to load some saved state into a workspace:
+
+```js
+// Get your saved state from somewhere, e.g. local storage.
+const state = localStorage.getItem('workspace-state');
+
+// Deserialize the state.
+Blockly.serialization.workspaces.load(state, myWorkspace);
+```
+
+This creates all of your saved blocks, variables, and other elements in the
+workspace.
+
+[serialization]: /guides/configure/web/serialization

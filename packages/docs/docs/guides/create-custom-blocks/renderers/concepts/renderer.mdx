@@ -1,0 +1,23 @@
+---
+description: What the renderer class is and what it does.
+title: Renderer
+image: images/blockly_banner.png
+---
+
+# Renderer
+
+The [`Renderer`][Renderer] is a factory class that bundles all of the other
+components of a renderer together.
+
+It contains methods for creating the [constant provider][constants],
+[render info][render-info], [path object][path-object], and [drawer][drawer].
+And it contains code for wiring them all together when it renders a block.
+
+If you want to change just one part of an existing renderer (e.g. the constants)
+you can subclass the relevant factory method.
+
+[Renderer]: /reference/blockly.blockrendering.renderer
+[constants]: /guides/create-custom-blocks/renderers/concepts/constants
+[render-info]: /guides/create-custom-blocks/renderers/concepts/info
+[path-object]: /guides/create-custom-blocks/renderers/concepts/path-object
+[drawer]: /guides/create-custom-blocks/renderers/concepts/drawer

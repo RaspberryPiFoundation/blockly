@@ -1,0 +1,36 @@
+---
+description: What the renderer info class is and what it does.
+title: Render info
+image: images/blockly_banner.png
+---
+
+# Render info
+
+The [`RenderInfo`][RenderInfo] determines how a block's visual elements get
+laid out.
+
+A block is always built out of inputs, connections, and fields, but those
+can be laid out in many different ways. For example, the same block definition
+can be rendered with [inline inputs or external inputs][external-vs-inline].
+
+![External vs inline inputs](/images/set-inputs-inline.png)
+
+The render info determines which layout is chosen.
+
+As the first step of rendering, the render info looks at the block's definition,
+and the measurements of its visual pieces. Then it decides how the block should
+be laid out, and organizes the information accordingly. The information gets
+turned into non-overlapping [elements][element] and [spacers][element-spacer],
+which are organized into non-overlapping [rows][row], and
+[row spacers][row-spacer].
+
+Then the [drawer][drawer] uses that organized layout information to create the
+SVG paths representing the block.
+
+[RenderInfo]: /reference/blockly.blockrendering.renderinfo
+[drawer]: /guides/create-custom-blocks/renderers/concepts/drawer
+[row]: /guides/create-custom-blocks/renderers/concepts/rows
+[element]: /guides/create-custom-blocks/renderers/concepts/elements
+[row-spacer]: /guides/create-custom-blocks/renderers/concepts/rows#row-spacer
+[element-spacer]: /guides/create-custom-blocks/renderers/concepts/elements#element-spacer
+[external-vs-inline]: /guides/create-custom-blocks/define/inline-vs-external

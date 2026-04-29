@@ -1,0 +1,166 @@
+---
+description: How to define next, previous, and output connections.
+title: Top-level connections
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Top-level connections
+
+Blocks have three connections whose use is optional.
+
+## Statement Connections
+
+Users can create sequences of blocks using the `nextStatement` and
+`previousStatement` connectors. In Blockly's standard layout, these connections
+are on the top and the bottom, with the blocks stacked vertically.
+
+A block with a previous connector cannot have an [output
+connector](#output-connection). The term _statement block_ refers
+to a block with no output connector. A statement block will usually have both
+a previous connection and a next connection.
+
+`nextStatement` and `previousStatement` connections can be
+[typed](/guides/create-custom-blocks/inputs/connection-checks),
+but this feature is not utilized by standard blocks.
+
+### Next Connection
+
+Creates a point at the bottom of the block, so that other statements can be
+stacked below it. A block with a next connection but no previous connection
+usually represents an event, and can be configured to render with
+[a hat](/guides/design/applications#event-driven-program).
+
+![A block with no fields and a tab on the
+bottom.](/images/set-next-statement.png)
+
+<Tabs groupId="javascript-json">
+  <TabItem value="json" label="JSON" default>
+  Untyped:
+  
+  ```js
+  {
+    ...,
+    "nextStatement": null,
+  }
+  ```
+  
+  Typed (*rare*):
+  
+  ```js
+  {
+    "nextStatement": "Action",
+    ...
+  }
+  ```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+  Untyped:
+  
+  ```js
+  this.setNextStatement(true);  // false implies no next connector, the default
+  ```
+  
+  Typed (rare):
+  
+  ```js
+  this.setNextStatement(true, 'Action');
+  ```
+  </TabItem>
+</Tabs>
+### Previous Connection
+
+Creates a notch at the top of the block, so that it can be connected as a stack
+of statements.
+
+Blocks with a previous connection cannot have an output connection.
+
+![A block with no fields and a notch on the
+top.](/images/set-previous-statement.png)
+
+<Tabs groupId="javascript-json">
+  <TabItem value="json" label="JSON" default>
+  Untyped:
+  
+  ```js
+  {
+    ...,
+    "previousStatement": null,
+  }
+  ```
+  
+  Typed (*rare*):
+  
+  ```js
+  {
+    "previousStatement": "Action",
+    ...
+  }
+  ```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+  Untyped:
+  
+  ```js
+  this.setPreviousStatement(true);  // false implies no previous connector, the default
+  ```
+  
+  Typed (rare):
+  
+  ```js
+  this.setPreviousStatement(true, 'Action');
+  ```
+  </TabItem>
+</Tabs>
+## Output connection
+
+A block may have a single output connection, represented as a male jigsaw
+connector on the leading edge. Outputs connect to value inputs. Blocks with an
+output are usually called _value blocks_.
+
+![A block with no fields and a male puzzle connector on the left
+edge.](/images/set-output.png)
+
+<Tabs groupId="javascript-json">
+  <TabItem value="json" label="JSON" default>
+  Untyped:
+  
+  ```js
+  {
+    // ...,
+    "output": null,
+  }
+  ```
+  
+  Typed:
+  
+  ```js
+  {
+    // ...,
+    "output": "Number",
+  }
+  ```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+  Untyped:
+  
+  ```js
+  init: function() {
+    // ...
+    this.setOutput(true);
+  }
+  ```
+  
+  Typed:
+  
+  ```js
+  init: function() {
+    // ...
+    this.setOutput(true, 'Number');
+  }
+  ```
+  </TabItem>
+</Tabs>
+Blocks with an output connector cannot also have a previous statement notch.

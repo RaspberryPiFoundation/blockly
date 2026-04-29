@@ -728,7 +728,7 @@ export class Workspace {
    *
    * @param redo False if undo, true if redo.
    */
-  undo(redo: boolean) {
+  undo(redo = false) {
     const inputStack = redo ? this.redoStack_ : this.undoStack_;
     const outputStack = redo ? this.undoStack_ : this.redoStack_;
     const inputEvent = inputStack.pop();
@@ -760,6 +760,13 @@ export class Workspace {
     } finally {
       eventUtils.setRecordUndo(true);
     }
+  }
+
+  /**
+   * Redoes the previous action.
+   */
+  redo() {
+    this.undo(true);
   }
 
   /** Clear the undo/redo stacks. */

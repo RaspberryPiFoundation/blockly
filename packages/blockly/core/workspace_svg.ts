@@ -699,6 +699,53 @@ export class WorkspaceSvg
   }
 
   /**
+   * Sets Aria labels, roles, etc. for the workspace depending on the type of workspace it is.
+   */
+  setInitialAriaContext() {
+    if (!this.svgGroup_) {
+      throw new Error(
+        'Must initialize svgGroup_ by calling `createDom` before calling setAriaContext',
+      );
+    }
+    if (this.isFlyout) {
+      // Flyouts have their aria attributes set when the flyout is shown.
+      return;
+    }
+    aria.setRole(this.svgGroup_, aria.Role.REGION);
+    if (this.isMutator) {
+      aria.setState(
+        this.svgGroup_,
+        aria.State.LABEL,
+        Msg['WORKSPACE_LABEL_MUTATOR_WORKSPACE'],
+      );
+    } else {
+      // Main workspaces get labelled with how many stacks of blocks they contain
+      // This will be updated in a change listener, but set it here in case there are blocks in the initial state of the workspace
+      this.updateAriaLabel();
+    }
+  }
+
+  /**
+   * Updates the label on the workspace to reflect the number of top-level stacks in the workspace.
+   */
+  private updateAriaLabel() {
+    const numStacks = this.getTopBlocks(false).length;
+    if (numStacks == 1) {
+      aria.setState(
+        this.svgGroup_,
+        aria.State.LABEL,
+        Msg['WORKSPACE_LABEL_1_STACK'],
+      );
+    } else {
+      aria.setState(
+        this.svgGroup_,
+        aria.State.LABEL,
+        Msg['WORKSPACE_LABEL_MANY_STACKS'].replace('%1', String(numStacks)),
+      );
+    }
+  }
+
+  /**
    * Create the workspace DOM elements.
    *
    * @param opt_backgroundClass Either 'blocklyMainBackground' or
@@ -722,13 +769,6 @@ export class WorkspaceSvg
       'class': 'blocklyWorkspace',
       'id': this.id,
     });
-    if (injectionDiv) {
-      aria.setState(
-        this.svgGroup_,
-        aria.State.LABEL,
-        Msg['WORKSPACE_ARIA_LABEL'],
-      );
-    }
 
     // Note that a <g> alone does not receive mouse events--it must have a
     // valid target inside it.  If no background class is specified, as in the
@@ -755,6 +795,16 @@ export class WorkspaceSvg
     // Assign the canvases for backwards compatibility.
     this.svgBlockCanvas_ = this.layerManager.getBlockLayer();
     this.svgBubbleCanvas_ = this.layerManager.getBubbleLayer();
+
+    this.setInitialAriaContext();
+
+    if (!this.isFlyout && !this.isMutator) {
+      // Set up a change listener to update the aria label on main workspace
+      this.addChangeListener((e) => {
+        if (e.isUiEvent) return;
+        this.updateAriaLabel();
+      });
+    }
 
     if (!this.isFlyout) {
       browserEvents.conditionalBind(

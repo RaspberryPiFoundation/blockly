@@ -118,6 +118,7 @@ export function registerDelete() {
         eventUtils.setGroup(true);
         focused.dispose();
         eventUtils.setGroup(false);
+        workspace.getAudioManager().play('delete');
       }
       return true;
     },
@@ -249,10 +250,13 @@ export function registerCut() {
 
       if (focused instanceof BlockSvg) {
         focused.checkAndDelete();
+        e.preventDefault();
       } else if (isIDeletable(focused)) {
         eventUtils.setGroup(true);
         focused.dispose();
         eventUtils.setGroup(false);
+        workspace.getAudioManager().play('delete');
+        e.preventDefault();
       }
       return !!copyData;
     },
@@ -366,7 +370,7 @@ export function registerUndo() {
     callback(workspace, e) {
       // 'z' for undo 'Z' is for redo.
       (workspace as WorkspaceSvg).hideChaff();
-      workspace.undo(false);
+      workspace.undo();
       e.preventDefault();
       return true;
     },
@@ -403,7 +407,7 @@ export function registerRedo() {
     callback(workspace, e) {
       // 'z' for undo 'Z' is for redo.
       (workspace as WorkspaceSvg).hideChaff();
-      workspace.undo(true);
+      workspace.redo();
       e.preventDefault();
       return true;
     },

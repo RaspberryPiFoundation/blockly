@@ -1,0 +1,98 @@
+---
+description: How to add separators to flyout and category toolboxes.
+title: Separators
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Separators
+
+Adding a separator between any two categories will create a line and extra space
+between the two categories.
+
+![A category menu with a vertical gap between two
+categories.](/images/toolbox-separator.png)
+
+You can change the class for the separator in your JSON or XML toolbox definition.
+
+<Tabs groupId="code-format">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "kind": "sep",
+    "cssConfig": {
+      "container": "yourClassName"
+    }
+  }
+  ```
+  </TabItem>
+  <TabItem value="xml" label="XML">
+  ```xml
+  <sep css-container="yourClassName"></sep>
+  ```
+  </TabItem>
+</Tabs>
+Adding a separator between any two blocks will create a gap between the blocks.
+By default every block is separated from its lower neighbour by 24 pixels.
+This separation may be changed using the 'gap' attribute, which will replace the
+default gap.
+
+This allows you to create logical groups of blocks in the toolbox.
+
+![A flyout toolbox with a vertical gap between a number block and a group of two
+arithmetic blocks.](/images/toolbox-gap.png)
+
+<Tabs groupId="code-format">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "kind": "flyoutToolbox",
+    "contents": [
+      {
+        "kind": "block",
+        "type":"math_number"
+      },
+      {
+        "kind": "sep",
+        "gap": "32"
+      },
+      {
+        "kind": "block",
+        "type"" "math_arithmetic"
+        "fields": {
+          "OP": "ADD"
+        },
+      },
+      {
+        "kind": "sep",
+        "gap": "8"
+      },
+      {
+        "kind": "block",
+        "type"" "math_arithmetic"
+        "fields": {
+          "OP": "MINUS"
+        },
+      }
+    ]
+  }
+  ```
+  </TabItem>
+  <TabItem value="xml" label="XML">
+  ```xml
+  <xml id="toolbox" style="display: none">
+    <block type="math_number"></block>
+    <sep gap="32"></sep>
+    <block type="math_arithmetic">
+      <field name="OP">ADD</field>
+    </block>
+    <sep gap="8"></sep>
+    <block type="math_arithmetic">
+      <field name="OP">MINUS</field>
+    </block>
+  </xml>
+  ```
+  </TabItem>
+</Tabs>

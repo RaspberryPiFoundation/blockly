@@ -1,0 +1,95 @@
+---
+description: Describes Blockly's colour formats and how to reference them.
+title: Colour formats
+image: images/blockly_banner.png
+---
+
+# Colour formats
+
+Colour values can be given in HSV or RGB format or using a colour name.
+
+## Hue-Saturation-Value
+
+The simplest way to define a colour is a number between 0-360, defining
+the hue in the
+[hue-saturation-value](https://en.wikipedia.org/wiki/HSL_and_HSV) (HSV) colour
+model.
+
+![HSV colour spectrum](/images/hsv.png)
+
+Using HSV with saturation and value fixed for all block colours lets you select
+a block colour while ensuring all blocks share a cohesive palette.
+
+The saturation and values can be adapted for each application by calling the
+following functions:
+
+```js
+Blockly.utils.colour.setHsvSaturation(0.45); // 0 (inclusive) to 1 (exclusive), defaulting to 0.45
+Blockly.utils.colour.setHsvValue(0.65); // 0 (inclusive) to 1 (exclusive), defaulting to 0.65
+```
+
+Several colour pickers offer the HSV colour space, such as [HSV
+picker](http://www.rapidtables.com/web/color/color-picker.htm). Enter Blockly's
+saturation and value constants (the defaults are 45% and 65% respectively), then
+slide the hue to a chosen colour. Use this hue number as the `colour` value.
+
+## RGB
+
+Using the HSV colour space is highly recommended, but Blockly does support
+colours specified as `#RRGGBB` hexadecimal strings. While this can facilitate
+coordination with other application colours (e.g., styles in CSS) and design
+applications (e.g., Photoshop), it is a design risk that could lead to
+uncoordinated blocks if not chosen carefully.
+
+![An example of poorly selected colours.](/images/fruit-salad.png)
+
+Unless you have dedicated visual design resources, working within the
+constraints of the HSV colour space is recommended. If attempting to redefine
+all colours in this manner, consider [Google's Material Design resources on
+colour](https://material.io/guidelines/style/color.html).
+
+## Colour names
+
+You can also specify colours using the [colour names defined by the
+W3C](https://www.w3.org/TR/css-color-3/#html4).
+
+## Colour references
+
+Often, multiple blocks share the same colour, and centralizing the colour
+definitions simplifies managing the colours and adding new blocks of the correct
+colour. Block colours and toolbox categories can use [localization
+tokens](/guides/configure/web/translations#use-localization-tokens-in-json)
+to do exactly that.
+
+Blockly includes nine colour constants in the string table, corresponding to the
+toolbox categories, plus a distinct colour for dynamic variables:
+
+```js
+'%{BKY_LOGIC_HUE}';
+'%{BKY_LOOPS_HUE}';
+'%{BKY_MATH_HUE}';
+'%{BKY_TEXTS_HUE}';
+'%{BKY_LISTS_HUE}';
+'%{BKY_COLOUR_HUE}';
+'%{BKY_VARIABLES_HUE}';
+'%{BKY_VARIABLES_DYNAMIC_HUE}';
+'%{BKY_PROCEDURES_HUE}';
+```
+
+These string values can be used in both the JSON definitions and
+[`block.setColour(..)`](/reference/blockly.block.setcolour).
+
+You can add your own colour constants by adding to `Blockly.Msg`:
+
+```js
+// Define the colour
+Blockly.Msg['EVERYTHING_HUE'] = '42';
+// Use in a block or block definition:
+block.setColour('%{BKY_EVERYTHING_HUE}');
+```
+
+Storing the colours in the localization string table may seem unusual, but it
+is convenient given the JSON notation already has support for the references. It
+also allows [colours to be
+localized](https://web.archive.org/web/20220905211610/http://translation-blog.multilizer.com/color-localization-infographics/),
+if needed.

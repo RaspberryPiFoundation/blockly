@@ -8,6 +8,15 @@ export interface IFlyoutInflater {
    * Note that this method's interface is identical to that in ISerializer, to
    * allow for code reuse.
    *
+   * You must ensure that any item created by this method has the appropriate
+   * ARIA markup:
+   * - The role of the element's focusable element should be set to `listitem`.
+   * - The focusable element must have an `id` attribute.
+   * - Any DOM parents of the focusable element should set their role to
+   *   `presentation` to avoid interfering with flyout list navigation.
+   * - If the element is not focusable, it must be hidden from the ARIA tree.
+   *   Only do this if the content should be inaccessible to screenreaders.
+   *
    * @param state A JSON representation of an element to inflate on the flyout.
    * @param flyout The flyout on whose workspace the inflated element
    *    should be created. If the inflated element is an `IRenderedElement` it

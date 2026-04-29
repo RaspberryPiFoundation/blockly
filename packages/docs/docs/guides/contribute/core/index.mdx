@@ -1,0 +1,61 @@
+---
+description: Learn how to contribute changes to Blockly Core.
+title: Contribute to core
+image: images/blockly_banner.png
+slug: /guides/contribute/core/index
+---
+
+# Contribute to core
+
+The [Blockly](https://github.com/RaspberryPiFoundation/blockly) core repository contains the
+code that is needed to run any Blackly-based application. It also contains the documentation, including codelabs.
+
+## Need to Know
+
+Here is a quick overview of facts about Blockly core you need to know in order
+to create a PR.
+
+- The working branch is **main** and all PRs should be made against
+  main.
+- You must fill out the pull request template with the requested information.
+- Code must conform to Google's [TypeScript Style
+  Guide](https://google.github.io/styleguide/tsguide.html).
+- Use [conventional commits](/guides/contribute/get-started/commits)
+  in your commit messages and pull request titles.
+- User-visible strings must be in the `/msg/messages.js` file so they may be
+  translated. Less than 6% of the world speaks English natively.
+- Text on blocks should generally be all lowercase (just like the keywords in
+  most programming languages).
+- Maintain backwards compatibility. There are a _lot_ of Blockly apps out
+  there, don't break everyone else.
+- Any new code files must be prefixed with the Apache License v2.0:
+
+  ```js
+  /**
+   *   @license
+   *   Copyright <Current YYYY> Google LLC
+   *   SPDX-License-Identifier: Apache-2.0
+   */
+  ```
+
+## Make and Verify a Change
+
+1.  Run `npm install` to install dependencies.
+1.  Run `npm run start` to start up a server running the playground. You can use
+    this page to test the existing behavior. See the
+    [playground](/guides/contribute/get-started/playground) page for
+    more information.
+1.  Make any necessary changes to the code.
+1.  If you've left the server running, refresh to see your changes. Otherwise,
+    restart the server and verify the code behaves as expected and there are no
+    errors or warnings in the console.
+1.  Run `npm run build` and ensure there are no build errors.
+1.  Write automated tests. Usually, these will be mocha tests in the
+    `tests/mocha` directory, but we may ask you for other types of tests.
+1.  Run `npm run format` to format the code and automatically fix some lint
+    problems.
+1.  Run `npm test` to run the automated tests. This also runs `eslint`.
+1.  If there are lint errors, run `npm run lint:fix` to fix the problems that
+    are autofixable. Address any remaining lint warnings or errors.
+1.  If all tests pass, you are ready to open a PR against **main** with your
+    changes.

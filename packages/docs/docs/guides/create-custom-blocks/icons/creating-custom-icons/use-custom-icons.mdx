@@ -1,0 +1,56 @@
+---
+description: How to use custom icons.
+title: Use custom icons
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Use custom icons
+
+To use a custom icon, call `addIcon` or `getIcon` on a block.
+
+## Add an icon
+
+To add a custom icon to a block, pass the block to the icon's constructor and
+call `addIcon` on the block. For example, you might want to do this when
+initializing the block or in response to an event.
+
+<Tabs groupId="group-1">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  // Use an extension to add a custom icon during initialization.
+  Blockly.Extensions.register("addMyIcon", function () {
+    this.addIcon(new MyIcon(this));
+  })
+  
+  Blockly.common.defineBlocksWithJsonArray([
+    {
+      type: "my_block",
+      // ...
+      extensions: ["addMyIcon"],
+    },
+  ])
+  ```
+  </TabItem>
+  <TabItem value="javascript" label="JavaScript">
+  ```js
+  // Add a custom icon during initialization.
+  Blockly.Blocks['my_block'] = {
+    init: function() {
+      //...
+      this.addIcon(new MyIcon(this));
+    },
+  }
+  ```
+  </TabItem>
+</Tabs>
+## Get an icon
+
+To get a custom icon from a block, call `getIcon` and pass the [icon's type
+string](/guides/create-custom-blocks/icons/creating-custom-icons/basic-implementation#specify-the-icons-type).
+
+```js
+const myIcon = myBlock.getIcon('my_icon');
+```

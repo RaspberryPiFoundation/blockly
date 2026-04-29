@@ -1,0 +1,95 @@
+---
+description: How to define a category toolbox, which arranges sets of blocks into categories.
+title: Define a category toolbox
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Define a category toolbox
+
+A category toolbox has multiple sets of blocks that are arranged into different
+categories.
+
+![A category toolbox with Control and Logic categories. The Logic category is
+open and the flyout toolbox contains comparison, and-or, and true-false
+blocks.](/images/toolbox-categories.png)
+
+To create a category toolbox, pass JSON or XML describing the toolbox to the
+`toolbox` property of the [configuration
+options](/guides/configure/web/configuration_struct#the-options-dictionary).
+
+<Tabs groupId="group-1" queryString="tab">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  var toolbox = {
+      "kind": "categoryToolbox",
+      "contents": [
+        {
+          "kind": "category",
+          "name": "Control",
+          "contents": [
+            {
+              "kind": "block",
+              "type": "controls_if"
+            },
+          ]
+        },
+        {
+          "kind": "category",
+          "name": "Logic",
+          "contents": [
+            {
+              "kind": "block",
+              "type": "logic_compare"
+            },
+            {
+              "kind": "block",
+              "type": "logic_operation"
+            },
+            {
+              "kind": "block",
+              "type": "logic_boolean"
+            }
+          ]
+        }
+      ]
+    };
+  var workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+  ```
+  </TabItem>
+  <TabItem value="xml" label="XML">
+  ```xml
+  <xml id="toolbox" style="display: none">
+    <category name="Control">
+      <block type="controls_if"></block>
+    </category>
+    <category name="Logic">
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_boolean"></block>
+    </category>
+  </xml>
+  <script>
+    var workspace = Blockly.inject('blocklyDiv',
+        {toolbox: document.getElementById('toolbox')});
+  </script>
+  ```
+  </TabItem>
+  <TabItem value="xml-string" label="XML String">
+  ```js
+  var toolbox = '<xml id="toolbox" style="display: none">' +
+      '<category name="Control">' +
+      '<block type="controls_if"></block>' +
+      '</category>' +
+      '<category name="Logic">' +
+      '<block type="logic_compare"></block>' +
+      '<block type="logic_operation"></block>' +
+      '<block type="logic_boolean"></block>' +
+      '</category>' +
+      '</xml>';
+  var workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+  ```
+  </TabItem>
+</Tabs>

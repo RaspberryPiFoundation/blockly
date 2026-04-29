@@ -1,0 +1,11 @@
+# Markdown/MDX (linted by ESLint + eslint-plugin-mdx instead)
+*.md
+*.mdx
+
+# Build artifacts
+build/
+.docusaurus/
+node_modules/
+
+# Auto-generated
+CHANGELOG.md

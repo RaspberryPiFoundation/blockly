@@ -1,0 +1,151 @@
+---
+description: How to generate and run code for all blocks.
+title: Generate and run code
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Generate and run code
+
+Your application can generate code at any time. For example, it might generate
+code when the end user clicks a button or every time the user makes a change.
+
+For an overview of code generation, see [Code
+generation](/guides/create-custom-blocks/code-generation/overview).
+
+## Import a language code generator
+
+To generate code, you need a language code generator. You can import language
+code generators with any of the following methods.
+
+<Tabs groupId="group-1">
+  <TabItem value="modules" label="Modules" default>
+  ```js
+  import {javascriptGenerator} from 'blockly/javascript';
+  import {pythonGenerator} from 'blockly/python';
+  import {phpGenerator} from 'blockly/php';
+  import {luaGenerator} from 'blockly/lua';
+  import {dartGenerator} from 'blockly/dart';
+  
+  // Generate code for all the blocks in the workspace.
+  const jsCode = javascriptGenerator.workspaceToCode(workspace);
+  const pythonCode = pythonGenerator.workspaceToCode(workspace);
+  const phpCode = phpGenerator.workspaceToCode(workspace);
+  const luaCode = luaGenerator.workspaceToCode(workspace);
+  const dartCode = dartGenerator.workspaceToCode(workspace);
+  ```
+  </TabItem>
+  <TabItem value="unpkg" label="Unpkg">
+  You must include the generator after you include Blockly.
+  
+  ```html
+  <script src="https://unpkg.com/blockly"></script>
+  <script src="https://unpkg.com/blockly/javascript_compressed"></script>
+  <script src="https://unpkg.com/blockly/python_compressed"></script>
+  <script src="https://unpkg.com/blockly/php_compressed"></script>
+  <script src="https://unpkg.com/blockly/lua_compressed"></script>
+  <script src="https://unpkg.com/blockly/dart_compressed"></script>
+  ```
+  
+  ```js
+  // Generate code for all the blocks in the workspace.
+  const jsCode = javascript.javascriptGenerator.workspaceToCode(workspace);
+  const pythonCode = python.pythonGenerator.workspaceToCode(workspace);
+  const phpCode = php.phpGenerator.workspaceToCode(workspace);
+  const luaCode = lua.luaGenerator.workspaceToCode(workspace);
+  const dartCode = dart.dartGenerator.workspaceToCode(workspace);
+  ```
+  </TabItem>
+  <TabItem value="local-scripts" label="Local scripts">
+  You must include the generator after you include Blockly.
+  
+  ```html
+  <script src="blockly_compressed.js"></script>
+  <script src="javascript_compressed.js"></script>
+  <script src="python_compressed.js"></script>
+  <script src="php_compressed.js"></script>
+  <script src="lua_compressed.js"></script>
+  <script src="dart_compressed.js"></script>
+  ```
+  
+  ```js
+  // Generate code for all the blocks in the workspace.
+  const jsCode = javascript.javascriptGenerator.workspaceToCode(workspace);
+  const pythonCode = python.pythonGenerator.workspaceToCode(workspace);
+  const phpCode = php.phpGenerator.workspaceToCode(workspace);
+  const luaCode = lua.luaGenerator.workspaceToCode(workspace);
+  const dartCode = dart.dartGenerator.workspaceToCode(workspace);
+  ```
+  </TabItem>
+</Tabs>
+## Generate code
+
+To generate code, use the generator's `workspaceToCode` function.
+
+```js
+const code = javascriptGenerator.workspaceToCode(workspace);
+```
+
+### Continuous updates
+
+Continuous updates allow you to show or run the code whenever the user makes a
+change. Generating code is a fast operation, so there's little performance
+impact for doing this. This is done using an [event listener][event].
+
+```js
+const supportedEvents = new Set([
+  Blockly.Events.BLOCK_CHANGE,
+  Blockly.Events.BLOCK_CREATE,
+  Blockly.Events.BLOCK_DELETE,
+  Blockly.Events.BLOCK_MOVE,
+]);
+
+function updateCode(event) {
+  if (workspace.isDragging()) return; // Don't update while changes are happening.
+  if (!supportedEvents.has(event.type)) return;
+
+  const code = javascriptGenerator.workspaceToCode(workspace);
+  document.getElementById('textarea').value = code;
+}
+
+workspace.addChangeListener(updateCode);
+```
+
+## Add preamble or postscript code
+
+After you've generated your code you can optionally include code before the
+start or after the end of the generated code.
+
+```js
+let code = javascriptGenerator.workspaceToCode(workspace);
+// Add a preamble and a postscript to the code.
+const preamble = 'import {MyLibrary} from \'/path/to/my/library\';\n'
+const postscript = 'MyLibrary.myKickoffFunction();\n';
+code = preamble + code + postscript;
+```
+
+Preamble code is usually used to include external definitions at the beginning
+of the code. Postscript code is usually used to call functions to kick off
+behavior at the end of the code.
+
+If your generated code is runnable as-is, then there's no need to include a
+preamble or a postscript.
+
+## Execute code
+
+After you've generated the code, you need to figure out how to execute it.
+Deciding how to execute it is very application-specific, and outside the scope
+of Blockly.
+
+If you want to execute JavaScript code, see [Generate and run
+JavaScript](/guides/app-integration/running-javascript). This discusses
+some special features of the JavaScript code generator, as well as
+[JSInterpreter][jsinterpreter], which the Blockly team recommends as a way to
+safely execute JavaScript.
+
+Other languages require other tools.
+
+[event]: /guides/configure/web/events
+[jsinterpreter]: https://github.com/NeilFraser/JS-Interpreter

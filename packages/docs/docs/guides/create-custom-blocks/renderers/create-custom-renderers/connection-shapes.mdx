@@ -1,0 +1,333 @@
+---
+description: How to modify the shapes of connections.
+title: Connection shapes
+image: images/blockly_banner.png
+---
+
+import Image from '@site/src/components/Image';
+
+# Connection shapes
+
+There are several ways you can customize the ways connections look, each with
+increasing difficulty. All of them require creating a
+[custom renderer][basic-implementation].
+
+## Basic dimensions
+
+<Image
+  alt="connections with different dimensions"
+  src="/images/rendering/connection-shapes/overridden-connection-constants.png"
+  width={300}
+/>
+
+You can customize connections by changing their width or height, while
+maintaining the same basic shape. To do this, you need to create a
+custom [constant provider][constants] component, and override some constants.
+
+Different renderers define and use different constants, so check out the
+reference documentation for your super class:
+
+- [base constants][BaseConstants]
+- [Geras constants][GerasConstants]
+- [Zelos constants][ZelosConstants]
+
+:::note
+Thrasos does not define its own constants. If you are using Thrasos,
+check out the base constants.
+:::
+
+For the base renderer, you can override [`NOTCH_WIDTH`][NOTCH_WIDTH] and
+[`NOTCH_HEIGHT`][NOTCH_HEIGHT] for next and previous connections, and
+[`TAB_WIDTH`][TAB_WIDTH] and [`TAB_HEIGHT`][TAB_HEIGHT] for input and output
+connections.
+
+```js
+class CustomConstantProvider extends Blockly.blockRendering.ConstantProvider {
+  constructor() {
+    super();
+    this.NOTCH_WIDTH = 20;
+    this.NOTCH_HEIGHT = 10;
+    this.TAB_HEIGHT = 8;
+  }
+}
+```
+
+## Basic shapes
+
+<Image
+  alt="connections with different shapes"
+  src="/images/rendering/connection-shapes/overridden-connection-shapes.png"
+  width={100}
+/>
+
+You can customize connections by overriding their basic shape. Basic shapes
+have a height, a width, and _two_ paths.
+
+Each path draws the same shape, but from opposite ends!
+
+![a notch drawn from both directions][shape-direction-image]
+
+This is necessary because as the drawer draws the outline of the
+block, it draws each kind of connection in both directions. For example,
+previous connections are drawn from left to right, but next connections are
+drawn from right to left. So you need to provide paths for both of
+those cases.
+
+<Image
+  alt="the direction a block gets drawn in"
+  src="/images/rendering/connection-shapes/drawing-direction.png"
+  width={200}
+/>
+
+:::note
+the [path object][path-object] handles flipping paths in RTL mode, so
+you just need to think about things in LTR!
+:::
+
+You can override the [`makeNotch`][makeNotch] method for next and previous
+connections, and the [`makePuzzleTab`][makePuzzleTab] method for input and
+output connections.
+
+```js
+class CustomConstantProvider extends Blockly.blockRendering.ConstantProvider {
+  makePuzzleTab() {
+    const width = this.TAB_WIDTH;
+    const height = this.TAB_HEIGHT;
+    return {
+      type: this.SHAPES.PUZZLE,
+      width,
+      height,
+      pathUp: Blockly.utils.svgPaths.line([
+        Blockly.utils.svgPaths.point(-width, -height / 2),
+        Blockly.utils.svgPaths.point(width, -height / 2),
+      ]),
+      pathDown: Blockly.utils.svgPaths.line([
+        Blockly.utils.svgPaths.point(-width, height / 2),
+        Blockly.utils.svgPaths.point(width, height / 2),
+      ]),
+    };
+  }
+}
+```
+
+Check out the [MDN SVG path documentation][svg-path] for information about how
+to define path strings. The `Blockly.utils.svgPaths` namespace is provided
+as a thin wrapper around these strings to make them more readable.
+
+## Shapes for connection checks
+
+<Image
+  alt="different connections with different shapes"
+  src="/images/rendering/connection-shapes/connection-check-specific-shapes.png"
+  width={300}
+/>
+
+You can customize connections by changing the shape based on the connection's
+[connection check][connection-check].
+
+This lets you create different shapes to represent different data types.
+For example, strings could be represented by triangular connections, while
+booleans are represented by round connections.
+
+To supply different shapes for different connection checks, you need to override
+the [`shapeFor`][shapeFor] method. The shapes returned should be initialized
+in `init`.
+
+See [basic shapes][basic-shapes] for information about what kinds of
+shapes are supported.
+
+```js
+export class ConstantProvider
+  extends Blockly.blockRendering.BaseConstantProvider
+{
+  shapeFor(connection) {
+    let check = connection.getCheck();
+    // For connections with no check, match any child block.
+    if (!check && connection.targetConnection) {
+      check = connection.targetConnection.getCheck();
+    }
+
+    if (check && check.includes('String')) return this.TRIANGULAR_TAB;
+    if (check && check.includes('Boolean')) return this.ROUND_TAB;
+
+    return super.shapeFor(connection);
+  }
+}
+```
+
+## Custom inputs
+
+You can customize connection shapes by creating an entirely custom input. This
+is only done if you want some connections to look different from others, but
+you don't want it to be based on the [connection check][connection-check].
+
+For example, if you want some value inputs to be indented like statement inputs,
+you can create a custom input to support this.
+
+### Create a custom input class
+
+Follow the steps for [creating a custom input][custom-input].
+
+### Create a measurable
+
+You need to create a [measurable][measurable] to represent your custom input.
+
+Your custom input measurable should inherit from
+[`Blockly.blockRendering.InputConnection`][InputConnection]. It can also include
+whatever extra measurement data you need to draw the input's shape.
+
+```js
+export class CustomInputMeasurable
+  extends Blockly.blockRendering.InputConnection
+{
+  constructor(constants, input) {
+    super(constants, input);
+
+    // Any extra measurement data...
+  }
+}
+```
+
+### Instantiate your measurable
+
+Your [render info][render-info] needs to instantiate your custom
+measurable. To do this, you need to override the [`addInput_`][addInput] method.
+
+```js
+export class RenderInfo extends Blockly.blockRendering.RenderInfo {
+  addInput_(input, activeRow) {
+    if (input instanceof CustomInput) {
+      activeRow.elements.push(
+        new CustomInputMeasurable(this.constants_, input),
+      );
+    }
+    super.addInput_(input, activeRow);
+  }
+}
+```
+
+### Optionally create a row
+
+By default, inputs don't create new [rows][row]. If you want your input
+to trigger the end of a row, you need to override the
+[`shouldStartNewRow_`][shouldStartNewRow] method of your
+[render info][render-info].
+
+```js
+export class RenderInfo extends Blockly.blockRendering.RenderInfo {
+  shouldStartNewRow_(currInput, prevInput) {
+    if (prevInput instanceof CustomInput) return true;
+    return super.shouldStartNewRow_(currInput, prevInput);
+  }
+}
+```
+
+### Optionally create a shape for your input
+
+It is a good idea to store the shape of your input in a constant, just like
+we do for notches and puzzle tabs. This keeps your code organized, and makes
+it easier to modify later.
+
+### Draw the input
+
+Lastly, you need to modify your [drawer][drawer] to draw the shape.
+
+Custom inputs can either:
+
+- Affect the outline of your block, like statement inputs
+
+  <Image
+    alt="image of outline inputs"
+    src="/images/rendering/connection-shapes/outline-inputs.png"
+    width={150}
+  />
+
+- Or affect the internals of your block, like inline value inputs
+
+  <Image
+    alt="image of internal inputs"
+    src="/images/rendering/connection-shapes/internal-inputs.png"
+    width={200}
+  />
+
+If the input affects the outline of your block, override
+[`drawOutline_`][drawOutline], otherwise, override
+[`drawInternals_`][drawInternals].
+
+```js
+export class Drawer extends Blockly.blockRendering.Drawer {
+  drawOutline_() {
+    this.drawTop_();
+    for (let r = 1; r < this.info_.rows.length - 1; r++) {
+      const row = this.info_.rows[r];
+
+      // Insert checks for your input here!
+      if (row.getLastInput() instanceof CustomInputMeasurable) {
+        this.drawCustomInput(row);
+      } else if (row.hasJaggedEdge) {
+        this.drawJaggedEdge_(row);
+      } else if (row.hasStatement) {
+        this.drawStatementInput_(row);
+      } else if (row.hasExternalInput) {
+        this.drawValueInput_(row);
+      } else {
+        this.drawRightSideRow_(row);
+      }
+    }
+    this.drawBottom_();
+    this.drawLeft_();
+  }
+
+  protected drawInternals_() {
+    for (const row of rows) {
+      for (const elem of row) {
+
+        // Insert checks for your input here!
+        if (elem instanceof CustomInputMeasurable) {
+          this.drawCustomInput(elem);
+        }
+
+        if (Types.isInlineInput(elem)) {
+          this.drawInlineInput_(elem as InlineInput);
+        } else if (Types.isIcon(elem) || Types.isField(elem)) {
+          this.layoutField_(elem as Field | Icon);
+        }
+      }
+    }
+  }
+}
+```
+
+[overridden-connection-constants-image]: /images/rendering/connection-shapes/overridden-connection-constants.png
+[connection-check-specific-shapes-image]: /images/rendering/connection-shapes/connection-check-specific-shapes.png
+[overridden-connection-shapes-image]: /images/rendering/connection-shapes/overridden-connection-shapes.png
+[shape-direction-image]: /images/rendering/connection-shapes/shape-direction.png
+[drawing-direction-image]: /images/rendering/connection-shapes/drawing-direction.png
+[outline-inputs-image]: /images/rendering/connection-shapes/outline-inputs.png
+[internal-inputs-image]: /images/rendering/connection-shapes/internal-inputs.png
+[basic-implementation]: /guides/create-custom-blocks/renderers/create-custom-renderers/basic-implementation
+[constants]: /guides/create-custom-blocks/renderers/concepts/constants
+[BaseConstants]: /reference/blockly.blockrendering.constantprovider
+[GerasConstants]: /reference/blockly.geras.constantprovider
+[ZelosConstants]: /reference/blockly.zelos.constantprovider
+[NOTCH_WIDTH]: /reference/blockly.blockrendering.constantprovider.notch_width
+[NOTCH_HEIGHT]: /reference/blockly.blockrendering.constantprovider.notch_height
+[TAB_WIDTH]: /reference/blockly.blockrendering.constantprovider.tab_width
+[TAB_HEIGHT]: /reference/blockly.blockrendering.constantprovider.tab_height
+[path-object]: /guides/create-custom-blocks/renderers/concepts/path-object
+[makeNotch]: /reference/blockly.blockrendering.constantprovider.makenotch
+[makePuzzleTab]: /reference/blockly.blockrendering.constantprovider.makepuzzletab
+[connection-check]: /guides/create-custom-blocks/inputs/connection-checks
+[shapeFor]: /reference/blockly.blockrendering.constantprovider.shapefor
+[basic-shapes]: #basic-shapes
+[custom-input]: /guides/create-custom-blocks/inputs/creating-custom-inputs
+[measurable]: /guides/create-custom-blocks/renderers/concepts/overview#block-measurables
+[InputConnection]: /reference/blockly.blockrendering.inputconnection
+[render-info]: /guides/create-custom-blocks/renderers/concepts/info
+[addInput]: /reference/blockly.blockrendering.renderinfo.addinput_
+[row]: /guides/create-custom-blocks/renderers/concepts/rows
+[shouldStartNewRow]: /reference/blockly.blockrendering.renderinfo.shouldstartnewrow_
+[drawer]: /guides/create-custom-blocks/renderers/concepts/drawer
+[drawOutline]: /reference/blockly.blockrendering.drawer.drawoutline_
+[drawInternals]: /reference/blockly.blockrendering.drawer.drawinternals_
+[svg-path]: https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths

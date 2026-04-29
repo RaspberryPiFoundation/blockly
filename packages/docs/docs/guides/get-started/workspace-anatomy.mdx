@@ -1,0 +1,183 @@
+---
+title: Visual glossary
+description: The different parts of Blockly and what they look like.
+image: images/blockly_banner.png
+---
+
+import Image from '@site/src/components/Image';
+
+[workspace]: /guides/configure/web/configuration_struct
+[category-toolbox]: /guides/configure/web/toolboxes/category
+[flyout-toolbox]: /guides/configure/web/toolboxes/flyout
+[shadow-block]: /guides/configure/web/toolboxes/preset#shadow-blocks
+[toolbox]: /guides/configure/web/toolboxes/toolbox
+[zoom-controls]: /guides/configure/web/zoom
+[context-menu]: /guides/configure/web/context-menus
+[block]: /guides/create-custom-blocks/overview
+[input]: /guides/create-custom-blocks/define/block-anatomy#inputs
+[connection]: /guides/create-custom-blocks/define/block-anatomy#connections
+[field]: /guides/create-custom-blocks/define/block-anatomy#fields
+[icon]: /guides/create-custom-blocks/define/block-anatomy#icons
+
+# Visual glossary
+
+Blockly has a lot of vocabulary for its different visual components. This
+document breaks down some of the most important ones you need to know to get
+started with Blockly.
+
+## Workspace
+
+The [workspace][workspace] is the highest level component in Blockly. It
+contains all of the other components. This is where you do the work of
+programming!
+
+<Image
+  alt="A workspace with a category toolbox, scroll bars, trashcan, and zoom controls."
+  src="/images/glossary/workspace.png"
+  className="blockly"
+  width="70%"
+/>
+
+### Toolbox
+
+The [toolbox][toolbox] contains the blocks that you use to program. The blocks
+can be dragged onto the workspace.
+
+There are two main types of toolboxes, flyout toolboxes and category toolboxes.
+These can both be displayed vertically and horizontally.
+
+#### Flyout toolbox
+
+[Flyout toolboxes][flyout-toolbox] (aka simple toolboxes) have one set of blocks
+which is displayed at all times.
+
+<Image
+  alt="A workspace with a flyout toolbox containing four blocks."
+  src="/images/glossary/flyout-toolbox.png"
+  className="blockly"
+/>
+
+#### Category toolbox
+
+[Category toolboxes][category-toolbox] have multiple sets of blocks.
+
+<Image
+  alt="A workspace with a category toolbox with eight categories (Logic, Loops, Math, etc.). No blocks are visible because no categories have been opened."
+  src="/images/glossary/category-toolbox.png"
+  className="blockly"
+/>
+
+If you click a category item it opens a flyout that displays the blocks in the
+category.
+
+![The same workspace and category toolbox as in the previous image, except that the Logic category is open, showing seven logic blocks (if-do, comparison, and-or, etc.).](/images/glossary/category-with-flyout-toolbox.png)
+
+### Trashcan
+
+The trashcan lets you delete blocks by dragging and dropping them. You can also
+click the trashcan to open a flyout containing the blocks you've deleted so you
+can get them back.
+
+![A workspace with a trashcan in the lower right corner.](/images/glossary/trashcan.png)
+
+### Zoom controls
+
+The [zoom controls][zoom-controls] zoom the workspace in and out when you click
+them.
+
+![A workspace with zoom controls above the trashcan.](/images/glossary/zoom-controls.png)
+
+### Context menu
+
+The [context menu][context-menu] appears when you right-click or long-press on
+certain elements of the workspace (for example, the workspace background, or
+blocks). It displays a list of actions you can perform on that element.
+
+![A context menu is open over an if-do block. The menu has the items, "Duplicate", "Add Comments", "Inline Inputs", "Collapse Block", "Disable Block", "Delete Block", and "Help".](/images/glossary/context-menu.png)
+
+## Blocks
+
+[Blocks][block] are what you use to program. They represent expressions and
+statements in text-based programming languages.
+
+![An if-do block, a number block, and a block for creating a list.](/images/glossary/blocks.png)
+
+### Block stack
+
+A block stack is any collection of connected blocks. They could be connected
+horizontally or vertically.
+
+![An if-do block with two blocks connected to it. A numeric comparison block is connected to the if input and a repeat block is connected to the do input.](/images/glossary/block-stack.png)
+
+### Shadow block
+
+A [shadow block][shadow-block] is an editable but non-movable block connected to
+another block. You can drag non-shadow blocks on top of shadow blocks to
+overwrite them.
+
+<Image
+  alt="A block for rounding numbers connected to a shadow number block, and a print block connected to a shadow text block. The shadow blocks are greyed out to show that they are default blocks and that you can drag other blocks on top of them."
+  src="/images/glossary/shadow-blocks.png"
+  className="screenshotImg"
+/>
+
+### Insertion marker
+
+An insertion marker is a preview of where a stack of blocks will be connected if
+it is dropped. It looks like a grey version of a block.
+
+![An if-do block with a marker showing where another block will be inserted.](/images/glossary/insertion-marker.png)
+
+## Block parts
+
+Blocks have several different parts that you can edit and interact with to
+program.
+
+### Fields
+
+A [field][field] is a visual element that lives on a block. It could be editable
+(like a text input), or only informational (like a label). A field is always
+contained by an [input](#inputs).
+
+![A block with three fields: the label "repeat", a dropdown with the "while" option chosen, and the label "do".](/images/glossary/fields.png)
+
+### Connections
+
+A [connection][connection] is a place on a block other blocks can connect to.
+
+| Connection | Image                                                                                                                                                 |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Output     | <Image alt="an output connection" src="/images/connections/output-connection.png" width={40} />                                                       |
+| Input      | <Image alt="an input connection" src="/images/connections/input-connection.png" srcDark="/images/connections/input-connection-dark.png" width={45} /> |
+| Previous   | <Image alt="a previous connection" src="/images/connections/previous-connection.png" width={50} />                                                    |
+| Next       | <Image alt="a next connection" src="/images/connections/next-connection.png" width={50} />                                                            |
+
+### Inputs
+
+An [input][input] is a container for fields and connections. A block
+is built by rendering its inputs in one or more rows like bricks.
+
+<Image
+  alt="Block built from a value input, an end-of-row input, and a statement input."
+  src="/images/glossary/inputs.png"
+  srcDark="/images/glossary/inputs-dark.png"
+/>
+
+All inputs can contain fields. Only value and statement inputs can contain a
+connection.
+
+| Input type | Connection type | Notes                                 |
+| ---------- | --------------- | ------------------------------------- |
+| Dummy      | None            |                                       |
+| End-of-row | None            | Forces next input to start a new row. |
+| Value      | Input           |                                       |
+| Statement  | Next            |                                       |
+
+### Icons
+
+An [icon][icon] is a visual element that lives on a block. They always live
+in the top-start corner of the block, and they often create bubbles.
+
+![An if-do block with a mutator icon and a comment icons.](/images/glossary/icons.png)
+
+![The same block with the mutator and comment bubbles open. The mutator bubble lets you add else clauses to the block and the comment bubble lets you enter a comment about the block.](/images/bubbles/bubbles.png)

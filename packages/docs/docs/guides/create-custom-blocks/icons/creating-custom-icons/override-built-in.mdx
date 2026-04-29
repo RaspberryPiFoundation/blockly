@@ -1,0 +1,165 @@
+---
+description: How to override built-in comment icons.
+title: Override comment icon
+image: images/blockly_banner.png
+---
+
+import Image from '@site/src/components/Image';
+
+# Override comment icon
+
+You can override the built-in comment icon. For example, you may want the
+comment's [pop-up bubble][use-bubbles] to look different.
+
+<Image
+  alt="A block with the comment icon highlighted"
+  src="/images/block-icons/comment-icon-outline.png"
+  width={200}
+/>
+
+To override the comment icon, extend `CommentIcon`, override selected methods in
+`ICommentIcon`, and register your new icon.
+
+:::note
+Blockly has three kinds of built-in icons: comments, warnings, and
+mutators. Only the comment icon is overridable.
+:::
+
+## Extend CommentIcon
+
+Start by extending `CommentIcon`.
+
+```js
+class MyCommentIcon extends Blockly.icons.CommentIcon {
+  constructor(sourceBlock) {
+    super(sourceBlock);
+  }
+}
+```
+
+## Override methods in ICommentIcon and Icon
+
+To customize your icon, you can override methods in `ICommentIcon` (described in
+the following sections) and
+[`Blockly.icons.Icon`](/reference/blockly.icons.icon)
+(described in [Create custom
+icons](/guides/create-custom-blocks/icons/creating-custom-icons/basic-implementation)).
+Do not override `getType`, which must return `Blockly.icons.IconType.COMMENT`.
+
+### Text
+
+The `ICommentIcon` interface requires that the comment has text.
+The `getText` method must return the text of the comment. The `setText` method
+must set the text of the comment and update any visuals.
+
+```js
+getText() {
+  return this.text;
+}
+
+setText(text) {
+  this.text = text;
+  this.myRenderMethod();
+}
+```
+
+### Bubble
+
+Your custom comment icon must implement the [`IHasBubble`][IHasBubble] interface
+to support serialization. Even if your icon doesn't technically have a bubble,
+you should store the visibility information on your class so that the saved
+state is maintained. Otherwise you'll lose information from the user if you load
+a save that includes whether the comment was open or not.
+
+```js
+bubbleIsVisible() {
+  return this.bubbleVisible;
+}
+
+setBubbleVisible(visible: boolean) {
+  this.bubbleVisible = visible;
+}
+```
+
+For more information about bubbles, see [Use pop-up bubbles][use-bubbles].
+
+The `ICommentIcon` interface requires a `getBubbleSize` method that returns a
+size, and a `setBubbleSize` that sets it. The same reasoning from earlier of
+saving state even if your icon doesn't technically have a bubble applies here as
+well.
+
+```js
+getBubbleSize() {
+  return this.bubbleSize;
+}
+
+setBubbleSize(size) {
+  this.bubbleSize = size;
+  this.myRenderMethod();
+}
+```
+
+`ICommentIcon` also requires `getBubbleLocation` and `setBubbleLocation`
+methods, which get and set the location of the bubble in the workspace.
+
+```js
+setBubbleLocation(location) {
+  this.bubbleLocation = location;
+}
+
+getBubbleLocation() {
+  return this.bubbleLocation;
+}
+```
+
+### Save and load
+
+Your custom comment icon must implement the [`ISerializable`][ISerializable]
+interface. The state should conform to the [`CommentState`][CommentState]
+interface.
+
+```js
+saveState() {
+  return {
+    text: this.text,
+    pinned: this.bubbleVisible,
+    height: this.bubbleSize.height,
+    width: this.bubbleSize.width,
+    x: this.bubbleLocation.x,
+    y: this.bubbleLocation.y,
+  }
+}
+
+loadState(state) {
+  this.setText(state.text);
+  this.setBubbleVisible(state.pinned);
+  this.setBubbleSize(new Blockly.utils.Size(state.width, state.height));
+  this.setBubbleLocation(new Blockly.utils.Coordinate(state.x, state.y));
+}
+```
+
+For more information about icon serialization see
+[Save and load icons][icon-serialization].
+
+## Register your icon
+
+Finally, unregister the existing comment icon and register your comment icon so
+Blockly can instantiate it. Use the string `'comment'` for unregistration and
+`IconTypes.COMMENT` for registration.
+
+```js
+Blockly.icons.registry.unregister('comment');
+Blockly.icons.registry.register(Blockly.icons.IconType.COMMENT, myCommentIcon);
+```
+
+After you register your icon, Blockly will use it in place of the built-in
+comment icon, such as when the user clicks "Add Comment" on the context menu or
+you call `myBlock.setCommentText()`.
+
+[ICommentIcon]: /reference/blockly.icommenticon_interface
+[IHasBubble]: /reference/blockly.ihasbubble
+[use-bubbles]: /guides/create-custom-blocks/icons/creating-custom-icons/use-bubbles
+[ISerializable]: /reference/blockly.iserializable
+[CommentState]: /reference/blockly.icons.commentstate
+[icon-serialization]: /guides/create-custom-blocks/icons/creating-custom-icons/save-and-load
+[comment-icon-image]: /images/block-icons/comment-icon-outline.png

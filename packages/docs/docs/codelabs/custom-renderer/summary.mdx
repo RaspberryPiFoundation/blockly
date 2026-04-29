@@ -1,0 +1,16 @@
+---
+pagination_next: null
+slug: /codelabs/custom-renderer/summary
+description: Summary of the "Build custom renderers" codelab.
+---
+
+# Build custom renderers
+
+## 9. Summary
+
+Custom renderers are a powerful way to change the look and feel of Blockly. In this codelab you learned:
+
+- How to declare and register a custom renderer by extending `Blockly.blockRendering.Renderer`.
+- How to override renderer constants such as `NOTCH_HEIGHT` in `Blockly.blockRendering.ConstantProvider`.
+- How to modify connection shapes by creating custom [SVG paths](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/path), storing them in `init()`, and finally returning them in `shapeFor(connection)`.
+- How to update the mapping from connection to connection shape by adding logic in `shapeFor(connection)`.

@@ -1,0 +1,86 @@
+---
+description: What code generation is, and how to implement it.
+title: Code generation
+image: images/blockly_banner.png
+---
+
+# Code generation
+
+Code generation is the process of turning the blocks on a workspace into a
+string of code that can be executed.
+
+Code generation is extremely important, because it is what allows your blocks to
+actually _do_ things, like evaluate arithmetic expressions, move a character
+through a maze, or configure an online shop!
+
+You can't "run" blocks directly. Instead you generate code strings, and then
+execute those.
+
+## Language code generators
+
+To generate code, you have to pick what text-based language you want to
+generate. This is because each language has its own code generator.
+
+A **language code generator** (commonly called a **code generator**) is a class
+that handles the rules for generating code that are specific to a given
+language, but not specific to an individual block. For example, it handles
+things like formatting comments, indenting statements, and quoting strings.
+
+Blockly provides 5 built-in code generators:
+
+- JavaScript ES5
+- Python 3
+- Lua 5.1
+- Dart 2
+- PHP 7
+
+If this list doesn't include the language you want to generate code for, you can
+create a custom language code generator. For a simple example, see the [Build a
+custom generator][custom-code-generator] codelab, which creates a JSON language
+code generator. For a more complex example, see the [JavaScript code
+generator][js-code-generator]. Note that you also need to write block-code
+generators for any built-in blocks that you want to use.
+
+## Block-code generators
+
+Each block is responsible for generating its own code. When you create a block,
+you need to write a separate block-code generator for each language you want to
+support.
+
+A **block-code generator** is a function that returns the code for that block as
+a string. For example, a block that compares two numbers returns a string of the
+form `'a < b'` and a block that represents an if statement returns a string of
+the form `'if (...) {\n...\n};\n'`.
+
+```js
+import { javascriptGenerator } from 'blockly/javascript';
+import { pythonGenerator } from 'blockly/python';
+
+// Write block-code generators for JavaScript and Python.
+javascriptGenerator.forBlock['my_custom_block'] = function (block, generator) {
+  /* ... */
+};
+pythonGenerator.forBlock['my_custom_block'] = function (block, generator) {
+  /* ... */
+};
+```
+
+Block-code generators are called by language code generators.
+
+For more information, see [Block-code
+generators](/guides/create-custom-blocks/code-generation/block-code).
+
+## Generate and run code
+
+Your application can generate code at any time. For example, it might generate
+code when the end-user clicks a button or every time the user makes a change.
+
+After you've generated the code, you need to figure out how to execute it.
+Deciding how to execute it is very application-specific, and outside the scope
+of Blockly.
+
+For more information, see [Generate and run
+code](/guides/app-integration/run-code).
+
+[custom-code-generator]: /codelabs/custom-generator/codelab-overview
+[js-code-generator]: https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/blockly/generators/javascript/javascript_generator.ts

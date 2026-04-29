@@ -1,0 +1,606 @@
+---
+title: Dropdown fields
+description: A field for selecting values from a limited set.
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Dropdown fields
+
+The dropdown field stores a string as its value and a string as its text. The
+value is a language-neutral key that will be used for accessing the text and
+will not get translated when Blockly is switched between languages. The text is
+a human-readable string that will be displayed to the user.
+
+#### Dropdown field
+
+![A block with the label "drop down:", a dropdown field with "first" selected,
+and the label "item".](/images/fields/dropdown/on_block.png)
+
+#### Dropdown field with editor open
+
+![The same block with the dropdown open. The dropdown contains the items "first"
+and "second".](/images/fields/dropdown/with_editor.png)
+
+#### Dropdown field on collapsed block
+
+![The same block after being collapsed. It has the label "drop down: first item"
+and a jagged right edge to show it is
+collapsed.](/images/fields/dropdown/collapsed.png)
+
+## Creation
+
+The dropdown constructor takes in a menu generator and an optional
+[validator](#creating-a-dropdown-validator). The menu generator is either an
+array of options (where each option contains a human-readable part and a
+language-neutral string) or a function that generates an array of options. The
+human-readable part of each option can be a string, an image, or an HTML element
+and the array can contain a mixture of options of different types.
+
+### Simple text dropdowns
+
+![Open dropdown with two text options](/images/fields/dropdown/with_editor.png)
+
+<Tabs groupId="javascript-json">
+<TabItem value="json" label="JSON" default>
+```js
+{
+  "type": "example_dropdown",
+  "message0": "drop down: %1",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "FIELDNAME",
+      "options": [
+        [ "first item", "ITEM1" ],
+        [ "second item", "ITEM2" ]
+      ]
+    }
+  ]
+}
+```
+</TabItem>
+<TabItem value="javascript" label="JavaScript">
+```js
+Blockly.Blocks['example_dropdown'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField('drop down:')
+        .appendField(new Blockly.FieldDropdown([
+            ['first item', 'ITEM1'],
+            ['second item', 'ITEM2']
+        ]), 'FIELDNAME');
+  }
+};
+```
+</TabItem>
+</Tabs>
+
+Keeping the human-readable information separate from the language-neutral key
+allows the dropdown menu's setting to be preserved between languages. For
+instance an English version of a block may define `[['left', 'LEFT'], ['right',
+'RIGHT]]` while a German version of the same block would define `[['links',
+'LEFT'], ['rechts', 'RIGHT]]`.
+
+### Image dropdowns
+
+Options in a dropdown menu may be images, which are represented as objects with
+`src`, `width`, `height`, and `alt` properties.
+
+![Dropdown field containing images and text](/images/fields/dropdown/with_images.png)
+
+<Tabs groupId="javascript-json">
+<TabItem value="json" label="JSON" default>
+```js
+{
+  "type": "image_dropdown",
+  "message0": "flag %1",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "FLAG",
+      "options": [
+        ["none", "NONE"],
+        [{"src": "canada.png", "width": 50, "height": 25, "alt": "Canada"}, "CANADA"],
+        [{"src": "usa.png", "width": 50, "height": 25, "alt": "USA"}, "USA"],
+        [{"src": "mexico.png", "width": 50, "height": 25, "alt": "Mexico"}, "MEXICO"]
+      ]
+    }
+  ]
+}
+```
+</TabItem>
+<TabItem value="javascript" label="JavaScript">
+```js
+Blockly.Blocks['image_dropdown'] = {
+  init: function() {
+    var input = this.appendDummyInput()
+        .appendField('flag');
+    var options = [
+        ['none', 'NONE'],
+        [{'src': 'canada.png', 'width': 50, 'height': 25, 'alt': 'Canada'}, 'CANADA'],
+        [{'src': 'usa.png', 'width': 50, 'height': 25, 'alt': 'USA'}, 'USA'],
+        [{'src': 'mexico.png', 'width': 50, 'height': 25, 'alt': 'Mexico'}, 'MEXICO']
+    ];
+    input.appendField(new Blockly.FieldDropdown(options), 'FLAG');
+  }
+};
+```
+</TabItem>
+</Tabs>
+
+### HTML dropdowns
+
+An option may be any HTML element, as long as it is not too large and does not
+attempt to handle mouse or keyboard events. (It is your responsibility
+to follow these rules -- Blockly does not enforce them.)
+
+When the dropdown is open, the list displays the HTML element. When it is closed
+and the element is the selected option, the list displays (in descending order
+of preference) the element's `title` attribute, its `aria-label` attribute, or
+its `innerText` property.
+
+![Dropdown field containing text and HTML
+elements](/images/fields/dropdown/with_html.png)
+
+<Tabs groupId="javascript-json">
+<TabItem value="json" label="JSON" default>
+```js
+{
+  "type": "flags_with_text_dropdown",
+  "message0": "flag with text %1",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "FLAG_WITH_TEXT",
+      "options": [
+        ["x", "X"], // Placeholder. An empty array throws an exception.
+      ]
+    }
+  ],
+  // Use an extension to add the HTML element options.
+  "extensions": ["flag_with_text_extension"]
+}
+```
+
+```js
+Blockly.Extensions.register('flag_with_text_extension', function () {
+  function createFlagWithTextDiv(text, src) {
+    const div = document.createElement('div');
+    div.setAttribute('style', 'width: 75px;');
+    div.setAttribute('title', text);
+    const img = document.createElement('img');
+    img.setAttribute('src', src);
+    img.setAttribute('style', 'height: 25px; display: block; margin: auto;');
+    div.appendChild(img);
+    const para = document.createElement('p');
+    para.innerText = text;
+    para.setAttribute('style', 'text-align: center; margin: 5px;');
+    div.appendChild(para);
+    return div;
+  }
+
+  const canadaDiv = createFlagWithTextDiv('Canada', 'canada.png');
+  const usaDiv = createFlagWithTextDiv('USA', 'usa.png');
+  const mexicoDiv = createFlagWithTextDiv('Mexico', 'mexico.png');
+  const options = [
+    ['none', 'NONE'],
+    [canadaDiv, 'CANADA'],
+    [usaDiv, 'USA'],
+    [mexicoDiv, 'MEXICO'],
+  ];
+  this.getField('FLAG_WITH_TEXT').setOptions(options);
+});
+```
+
+This is done using a JSON
+[extension](/guides/create-custom-blocks/define/extensions).
+
+</TabItem>
+<TabItem value="javascript" label="JavaScript">
+```js
+function createFlagWithTextDiv(text, src) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'width: 75px;');
+  div.setAttribute('title', text);
+  const img = document.createElement('img');
+  img.setAttribute('src', src);
+  img.setAttribute('style', 'height: 25px; display: block; margin: auto;');
+  div.appendChild(img);
+  const para = document.createElement('p');
+  para.innerText = text;
+  para.setAttribute('style', 'text-align: center; margin: 5px;');
+  div.appendChild(para);
+  return div;
+}
+
+const canadaDiv = createFlagWithTextDiv('Canada', 'canada.png');
+const usaDiv = createFlagWithTextDiv('USA', 'usa.png');
+const mexicoDiv = createFlagWithTextDiv('Mexico', 'mexico.png');
+
+Blockly.Blocks['flags_with_text_dropdown'] = {
+init: function() {
+const input = this.appendDummyInput()
+.appendField('flag with text');
+const options = [
+['none', 'NONE'],
+[canadaDiv, 'CANADA'],
+[usaDiv, 'USA'],
+[mexicoDiv, 'MEXICO']
+];
+input.appendField(new Blockly.FieldDropdown(options), 'FLAG_WITH_TEXT');
+}
+};
+
+````
+</TabItem>
+</Tabs>
+
+
+### Dynamic dropdowns
+
+![Dropdown field with days of the week](/images/fields/dropdown/dynamic.png)
+
+<Tabs groupId="javascript-json">
+<TabItem value="json" label="JSON" default>
+```js
+{
+  "type": "dynamic_dropdown",
+  "message0": "day %1",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "DAY",
+      "options": [
+        ["x", "X"], // Placeholder. An empty array throws an exception.
+      ]
+     }
+  ],
+  // Use an extension to set the menu function.
+  "extensions": ["dynamic_menu_extension"]
+}
+````
+
+```js
+Blockly.Extensions.register('dynamic_menu_extension', function () {
+  this.getField('DAY').setOptions(function () {
+    var options = [];
+    var now = Date.now();
+    for (var i = 0; i < 7; i++) {
+      var dateString = String(new Date(now)).substring(0, 3);
+      options.push([dateString, dateString.toUpperCase()]);
+      now += 24 * 60 * 60 * 1000;
+    }
+    return options;
+  });
+});
+```
+
+This is done using a JSON
+[extension](/guides/create-custom-blocks/define/extensions).
+
+</TabItem>
+<TabItem value="javascript" label="JavaScript">
+```js
+Blockly.Blocks['dynamic_dropdown'] = {
+  init: function() {
+    var input = this.appendDummyInput()
+      .appendField('day')
+      .appendField(new Blockly.FieldDropdown(
+        this.generateOptions), 'DAY');
+  },
+
+generateOptions: function() {
+var options = [];
+var now = Date.now();
+for(var i = 0; i < 7; i++) {
+var dateString = String(new Date(now)).substring(0, 3);
+options.push([dateString, dateString.toUpperCase()]);
+now += 24 _ 60 _ 60 \* 1000;
+}
+return options;
+}
+};
+
+````
+</TabItem>
+</Tabs>
+
+A dropdown can also be provided with a function instead of a list of static
+options, which allows the options to be dynamic. The function should return an
+array of options in the same `[human-readable-value, language-neutral-key]`
+format as static options. Every time the dropdown is clicked the function is
+run and the options are recalculated.
+
+:::note
+[Prefix/suffix matching](#prefixsuffix-matching) does not occur for
+dynamic dropdowns.
+:::
+
+### Separators
+
+Use the string `'separator'` to add a line between options in a dropdown menu.
+
+![Dropdown field with a line between the second and third
+options](/images/fields/dropdown/with_separator.png)
+
+<Tabs groupId="javascript-json">
+<TabItem value="json" label="JSON">
+```js
+{
+  "type": "separator_dropdown",
+  "message0": "food %1",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "FOOD",
+      "options": [
+        ["water", "WATER"],
+        ["juice", "JUICE"],
+        "separator",
+        ["salad", "SALAD"],
+        ["soup", "SOUP"],
+      ]
+    }
+  ]
+}
+````
+
+</TabItem>
+<TabItem value="javascript" label="JavaScript" default>
+```js
+Blockly.Blocks["separator_dropdown"] = {
+  init: function() {
+    var input = this.appendDummyInput()
+        .appendField("food1");
+    var options = [
+        ["water", "WATER"],
+        ["juice", "JUICE"],
+        "separator",
+        ["salad", "SALAD"],
+        ["soup", "SOUP"],
+    ];
+    input.appendField(new Blockly.FieldDropdown(options), "FOOD");
+  }
+};
+```
+</TabItem>
+</Tabs>
+
+## Serialization
+
+<Tabs groupId="javascript-json">
+<TabItem value="json" label="JSON" default>
+The JSON for a dropdown field looks like so:
+
+```js
+{
+  "fields": {
+    "FIELDNAME": "LANGUAGE-NEUTRAL-KEY"
+  }
+}
+```
+
+Where `FIELDNAME` is a string referencing a dropdown field, and
+the value is the value to apply to the field. The value should be a
+language-neutral option key.
+
+</TabItem>
+<TabItem value="xml" label="XML">
+The XML for a dropdown field looks like so:
+
+```xml
+<field name="FIELDNAME">LANGUAGE-NEUTRAL-KEY</field>
+```
+
+Where the field's `name` attribute contains a string referencing a dropdown
+field, and the inner text is the value to apply to the field. The inner
+text should be a valid language-neutral option key.
+
+</TabItem>
+</Tabs>
+
+## Customization
+
+### Dropdown arrow
+
+The `Blockly.FieldDropdown.ARROW_CHAR` property can be used to change the
+unicode character representing the dropdown arrow.
+
+![Dropdown field with custom arrow](/images/fields/dropdown/customized_arrow.png)
+
+The `ARROW_CHAR` property defaults to `\u25BC` (▼) on Android and `\u25BE` (▾)
+otherwise.
+
+This is a global property, so it will modify all dropdown fields when set.
+
+### Menu height
+
+The `Blockly.FieldDropdown.MAX_MENU_HEIGHT_VH` property can be used to change
+the maximum height of the menu. It is defined as a percentage of the viewport
+height, the viewport being the window.
+
+The `MAX_MENU_HEIGHT_VH` property defaults to 0.45.
+
+This is a global property, so it will modify all dropdown fields when set.
+
+## Prefix/suffix matching
+
+If all the dropdown menu options share common prefix and/or suffix
+words, these words are automatically factored out and inserted as static text.
+For example, here are two ways to create the same block (this first without
+suffix matching, and the second with):
+
+Without suffix matching:
+
+<Tabs groupId="javascript-json">
+<TabItem value="json" label="JSON">
+```js
+{
+  "type": "dropdown_no_matching",
+  "message0": "hello %1",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "MODE",
+      "options": [
+        ["world", "WORLD"],
+        ["computer", "CPU"]
+      ]
+    }
+  ]
+}
+```
+</TabItem>
+<TabItem value="javascript" label="JavaScript" default>
+```js
+Blockly.Blocks['dropdown_no_matching'] = {
+  init: function() {
+    var options = [
+      ['world', 'WORLD'],
+      ['computer', 'CPU']
+    ];
+
+    this.appendDummyInput()
+        .appendField('hello')
+        .appendField(new Blockly.FieldDropdown(options), 'MODE');
+
+}
+};
+
+````
+</TabItem>
+</Tabs>
+
+
+With suffix matching:
+
+<Tabs groupId='tab'>
+<TabItem value="json" label="JSON">
+```js
+{
+  "type": "dropdown_with_matching",
+  "message0": "%1",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "MODE",
+      "options": [
+        ["hello world", "WORLD"],
+        ["hello computer", "CPU"]
+      ]
+    }
+  ]
+}
+````
+
+</TabItem>
+<TabItem value="javascript" label="JavaScript" default>
+```js
+Blockly.Blocks['dropdown_with_matching'] = {
+  init: function() {
+    var options = [
+      ['hello world', 'WORLD'],
+      ['hello computer', 'CPU']
+    ];
+
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldDropdown(options), 'MODE');
+
+}
+};
+
+````
+</TabItem>
+</Tabs>
+
+
+![Dropdown field with "hello" as a label and "world", "computer" as options](/images/fields/dropdown/prefix_matched.png)
+
+One advantage of this approach is that the block is easier to translate into
+other languages. The earlier code has the strings `'hello'`, `'world'`, and
+`'computer'`, whereas the revised code has the strings `'hello world'` and
+`'hello computer'`. Translators have a much easier time translating phrases than
+words in isolation.
+
+Another advantage of this approach is that word order often changes between
+languages. Imagine a language that used `'world hello'` and `'computer hello'`.
+The suffix matching algorithm will detect the common `'hello'` and display it
+after the drop-down.
+
+However, sometimes the prefix/suffix matching fails. There are some cases where
+two words should always go together and the prefix should not be factored out.
+For example `'drive red car'` and `'drive red truck'` should arguably only
+have `'drive'` factored out, not `'drive red'`. The Unicode non-breaking
+space `'\u00A0'` may be used in place of a regular space to suppress the
+prefix/suffix matcher. Thus the above example can be fixed with
+`'drive red\u00A0car'` and `'drive red\u00A0truck'`.
+
+Another place where prefix/suffix matching fails is in languages that do not
+separate individual words with spaces. Chinese is a good example. The string
+`'訪問中國'` means `'visit China'`, note the lack of spaces between words.
+Collectively, the last two characters (`'中國'`) are the word for `'China'`,
+but if split they would mean `'centre'` and `'country'` respectively. To make
+prefix/suffix matching work in languages such as Chinese,
+just insert a space where the break should be. For example `'訪問 中國'` and
+`'訪問 美國'` would result in `"visit [China/USA]"`, whereas `'訪問 中 國'` and
+`'訪問 美 國'` would result in `"visit [centre/beautiful] country"`.
+
+## Creating a dropdown validator
+
+:::note
+For information on validators in general see [Validators](/guides/create-custom-blocks/fields/validators).
+:::
+
+A dropdown field's value is a language-neutral string, so any validators must
+accept a string and return a string _that is an available option_, `null`, or
+`undefined`.
+
+If your validator returns anything else, Blockly's behaviour is undefined and
+your program may crash.
+
+
+For example, you could define a dropdown field with three options and a
+validator like this:
+
+```js
+validate: function(newValue) {
+  this.getSourceBlock().updateConnections(newValue);
+  return newValue;
+},
+
+init: function() {
+  var options = [
+   ['has neither', 'NEITHER'],
+   ['has statement', 'STATEMENT'],
+   ['has value', 'VALUE'],
+  ];
+
+  this.appendDummyInput()
+  // Pass the field constructor the options list, the validator, and the name.
+      .appendField(new Blockly.FieldDropdown(options, this.validate), 'MODE');
+}
+````
+
+`validate` always returns the value it was passed, but it calls the helper
+function `updateConnection` which adds or removes inputs based on the dropdown
+value:
+
+```js
+updateConnections: function(newValue) {
+  this.removeInput('STATEMENT', /* no error */ true);
+  this.removeInput('VALUE', /* no error */ true);
+  if (newValue == 'STATEMENT') {
+    this.appendStatementInput('STATEMENT');
+  } else if (newValue == 'VALUE') {
+    this.appendValueInput('VALUE');
+  }
+}
+```
+
+![An animated GIF showing a dropdown field with three items: "neither",
+"statement", and "value". When "neither" is selected, it has no inputs. When
+"statement" is selected, it has a statement input. When "value" is connected, it
+has a "value" input.](/images/fields/dropdown/validator.gif)

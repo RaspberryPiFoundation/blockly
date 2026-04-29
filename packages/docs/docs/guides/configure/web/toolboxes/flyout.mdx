@@ -1,0 +1,61 @@
+---
+description: How to define a flyout toolbox, which displays a single set of blocks.
+title: Define a flyout toolbox
+image: images/blockly_banner.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Define a flyout toolbox
+
+A flyout toolbox has a single set of blocks that are displayed at all times.
+
+![A workspace with a flyout toolbox containing two
+blocks.](/images/toolbox-minimal.png)
+
+To create a flyout toolbox, pass JSON or XML describing the toolbox to the
+`toolbox` property of the [configuration
+options](/guides/configure/web/configuration_struct#the-options-dictionary).
+
+<Tabs groupId="group-1">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  var toolbox = {
+      "kind": "flyoutToolbox",
+      "contents": [
+        {
+          "kind": "block",
+          "type": "controls_if"
+        },
+        {
+          "kind": "block",
+          "type": "controls_whileUntil"
+        }
+      ]
+    };
+  var workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+  ```
+  </TabItem>
+  <TabItem value="xml" label="XML">
+  ```xml
+  <xml id="toolbox" style="display: none">
+    <block type="controls_if"></block>
+    <block type="controls_whileUntil"></block>
+  </xml>
+  <script>
+    var workspace = Blockly.inject('blocklyDiv',
+        {toolbox: document.getElementById('toolbox')});
+  </script>
+  ```
+  </TabItem>
+  <TabItem value="xml-string" label="XML String">
+  ```js
+  var toolbox = '<xml>' +
+      '<block type="controls_if"></block>' +
+      '<block type="controls_whileUntil"></block>' +
+      '</xml>';
+  var workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+  ```
+  </TabItem>
+</Tabs>

@@ -10,6 +10,7 @@
 			"Georg101",
 			"Ilimanaq29",
 			"Koo6",
+			"Matus cz",
 			"Matěj Grabovský",
 			"Mormegil",
 			"Patriccck",
@@ -33,6 +34,7 @@
 	"DELETE_X_BLOCKS": "Smazat %1 bloků",
 	"DELETE_ALL_BLOCKS": "Smazat všech %1 bloků?",
 	"CLEAN_UP": "Uspořádat bloky",
+	"CLOSE": "Zavřít",
 	"COLLAPSE_BLOCK": "Sbalit blok",
 	"COLLAPSE_ALL": "Sbalit bloky",
 	"EXPAND_BLOCK": "Rozbalit blok",
@@ -340,5 +342,12 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Je-li hodnota pravda, pak vrátí druhou hodnotu.",
 	"PROCEDURES_IFRETURN_WARNING": "Varování: Tento blok může být použit pouze uvnitř definici funkce.",
 	"DIALOG_OK": "OK",
-	"DIALOG_CANCEL": "Zrušit"
+	"DIALOG_CANCEL": "Zrušit",
+	"WINDOWS": "Windows",
+	"MAC_OS": "macOS",
+	"CHROME_OS": "ChromeOS",
+	"LINUX": "Linux",
+	"UNKNOWN": "Neznámý",
+	"CONTROL_KEY": "Ctrl",
+	"COMMAND_KEY": "⌘ Příkaz"
 }

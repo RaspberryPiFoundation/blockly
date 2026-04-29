@@ -1,0 +1,56 @@
+---
+description: Overview of how Blockly conceptualizes procedures.
+title: Procedures
+image: images/blockly_banner.png
+---
+
+# Procedures
+
+In computer science terms, a procedure is a reusable bit of code that performs a
+specific task.
+
+Blockly implements procedures as a set of blocks that generate code for defining
+a procedure, and calling it.
+
+![Procedure caller and definition blocks](/images/procedures.png)
+
+→ More info on [using the blocks](/guides/create-custom-blocks/procedures/using-procedures).
+
+→ More info on [creating custom procedure blocks](/guides/create-custom-blocks/procedures/creating-custom-procedure-blocks).
+
+→ More info on [creating custom procedure models](/guides/create-custom-blocks/procedures/creating-custom-procedure-data-models), which allow you to add new functionality like typed parameters.
+
+## Built-in vs plugin
+
+Blockly provides two implementations of procedure blocks.
+
+One exists in the plugin [@blockly/block-shareable-procedures][shareable-procedures],
+which implements procedure blocks that rely on a backing data model. This allows
+you to do things with your procedure blocks such as having the definition
+block exist in one workspace, and the call block exist in another. The plugin is
+the recommended implementation of procedure blocks.
+
+The other is the legacy implementation, provided in Blockly core. These blocks
+don't have a backing data model, and all information about procedures comes
+from the blocks themselves. The only way a workspace knows which procedures
+are available is by inspecting the procedure definition blocks contained in
+that workspace. These blocks continue to be supported for backwards
+compatibility, but most developers should be able to use the new blocks
+provided by the plugin.
+
+- If you are using XML serialization, you can use the new blocks, but they
+  won't be shareable across workspaces. That feature requires extra serialization
+  that is only provided by the JSON serializer. When using XML, the new blocks
+  will behave identically to the legacy blocks.
+  [Learn more about upgrading to JSON](https://docs.google.com/document/d/1wv5ORrO4icVHeU15FLSn37mdNLyJpQbMTo7mmTqsGl0/edit?usp=sharing).
+
+- If you have defined custom procedure blocks, they need to be
+  [updated](/guides/create-custom-blocks/procedures/creating-custom-procedure-blocks)
+  to work with the new data models.
+
+- If you have defined custom procedure definition blocks, _but are using the
+  built-in procedure call block_, you need to continue using the legacy caller
+  block until you [update](/guides/create-custom-blocks/procedures/creating-custom-procedure-blocks)
+  your definition block.
+
+[shareable-procedures]: https://www.npmjs.com/package/@blockly/block-shareable-procedures

@@ -240,6 +240,11 @@ export function cleanReleaseDir() {
  *
  * Prerequisite: build.
  */
+export const typings = gulp.series(
+    gulp.parallel(build.cleanBuildDir, cleanReleaseDir),
+    build.tsc,
+    packageDTS);
+
 export const pack = gulp.series(
     gulp.parallel(
         build.cleanBuildDir,

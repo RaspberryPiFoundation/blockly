@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Blockly for the Web Codelab</title>
+
+    <link
+      rel="stylesheet"
+      href="https://code.getmdl.io/1.2.1/material.indigo-pink.min.css" />
+    <link rel="stylesheet" href="styles/index.css" />
+  </head>
+
+  <body mode="maker">
+    <header class="mdl-color--cyan-500">
+      <h1 class="mode-maker">Music Maker</h1>
+      <h1 class="mode-edit mode-blockly">Music Maker Configuration</h1>
+    </header>
+
+    <main>
+      <button class="mode-maker mdl-button" id="edit">Edit</button>
+      <button class="mode-edit mdl-button mdl-js-button" id="done">Done</button>
+      <button class="mode-blockly mdl-button mdl-js-button" id="save">
+        Save
+      </button>
+      <p class="hint mode-edit">
+        Tap any button to edit its code. <br />When complete, press Done.
+      </p>
+
+      <div class="maker">
+        <div>
+          <div class="button mdl-color--amber-500">1</div>
+          <div class="button mdl-color--yellow-500">2</div>
+          <div class="button mdl-color--lime-500">3</div>
+        </div>
+        <div>
+          <div class="button mdl-color--pink-500">4</div>
+          <div class="button mdl-color--red-500">5</div>
+          <div class="button mdl-color--light-green-500">6</div>
+        </div>
+        <div>
+          <div class="button mdl-color--cyan-500">7</div>
+          <div class="button mdl-color--teal-500">8</div>
+          <div class="button mdl-color--green-500">9</div>
+        </div>
+      </div>
+
+      <div class="blockly-editor">
+        <div id="blocklyDiv" style="height: 480px; width: 400px"></div>
+      </div>
+    </main>
+
+    <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/msg/en.js"></script>
+    <script src="scripts/sound_blocks.js"></script>
+    <script src="scripts/music_maker.js"></script>
+    <script src="scripts/main.js"></script>
+  </body>
+</html>

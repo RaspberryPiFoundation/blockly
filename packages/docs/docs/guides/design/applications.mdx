@@ -1,0 +1,178 @@
+---
+description: Design considerations for Blockly applications
+title: Application design
+image: images/blockly_banner.png
+---
+
+# Application design
+
+There are several paradigms to choose from when designing an application
+which uses Blockly. Consideration of these choices should be made
+early, since they affect the blocks the user will need.
+
+## Configuration
+
+Many Blockly applications are used to describe configurations, rather than
+executable programs. Configuration applications typically start by initializing
+one root level block on the workspace. A good example is the [Blockly Developer
+Tools](https://raspberrypifoundation.github.io/blockly-samples/examples/developer-tools/index.html):
+
+![A block used to design other blocks. Users can specify the block name, block
+inputs, whether inputs are internal or external, and so
+on.](/images/configuration.png)
+
+```js
+Blockly.Blocks['factory_base'] = {
+  init: function () {
+    this.setDeletable(false);
+    this.setMovable(false);
+    this.setEditable(false);
+    // etc...
+  },
+};
+
+Blockly.serialization.blocks.append({ type: 'factory_base' }, workspace);
+```
+
+This creates an undeletable, unmovable block that that holds all the
+user's configuration. The workspace may be serialized at any time
+to determine the current configuration.
+
+Such applications may wish to automatically disable any block not
+connected to the root block. This can be accomplished on the with one line:
+
+```js
+workspace.addChangeListener(Blockly.Events.disableOrphans);
+```
+
+## Serial program
+
+The majority of Blockly applications are designed to create serial
+programs. Users stack together blocks which are executed in order.
+
+![A stack of blocks with commands to move, turn left, and move
+again.](/images/stack.png)
+
+Every (non-disabled) block on the workspace will form part of the
+program. If there are multiple stacks of blocks, higher ones are
+executed first. (If two stacks are approximately the same height,
+stacks to the left (right in RTL mode) are given priority.)
+
+The workspace may be exported to executable code at any time. This code
+may be executed client side in JavaScript (using `eval` or the JS
+Interpreter), or server side in any language.
+
+```js
+import { javascriptGenerator } from 'blockly/javascript';
+
+var code = javascriptGenerator.workspaceToCode(workspace);
+```
+
+## Parallel program
+
+Some Blockly applications choose to execute all stacks of blocks in
+parallel, rather than serially. An example would be a music application
+where a drum loop runs concurrently with a melody.
+
+One way of implementing parallel execution is to generate the code for each
+block individually:
+
+```js
+import { javascriptGenerator } from 'blockly/javascript';
+
+var json = Blockly.serialization.workspaces.save(workspace);
+
+// Store top blocks separately, and remove them from the JSON.
+var blocks = json['blocks']['blocks'];
+var topBlocks = blocks.slice(); // Create shallow copy.
+blocks.length = 0;
+
+// Load each block into the workspace individually and generate code.
+var allCode = [];
+var headless = new Blockly.Workspace();
+for (var i = 0; block < topBlocks.length; i++) {
+  var block = topBlocks[i];
+  blocks.push(block);
+  Blockly.serialization.workspaces.load(json, headless);
+  allCode.push(javascriptGenerator.workspaceToCode(headless));
+  blocks.length = 0;
+}
+```
+
+If the target language is JavaScript, the `allCode` array may then be
+used to create multiple JS Interpreters for simultaneous execution. If
+the target language is something like Python, then the `allCode` array
+may be assembled into a single program that uses a threading module.
+
+As with any parallel program, careful decisions must be made regarding
+any shared resources such as variables and functions.
+
+## Event driven program
+
+Event handlers are just functions that get called by the system, rather
+than by the program. These blocks can either enclose the stack of
+blocks to be executed, or they may be headers that sit on top of a stack
+of blocks.
+
+![Two "on mouse click" blocks, one with a statement input and one with a next
+connection.](/images/event1.png)
+
+Some developers like to add a 'hat' to the top of event blocks so that they look
+distinct from other blocks. This is not the default look for Blockly, but it may
+be added by either overriding the renderer constant `ADD_START_HATS` to `true`
+([Custom renderers codelab - Override
+constants](/codelabs/custom-renderer/override-constants)).
+or by adding a theme and setting the hat option on the block style. For more
+information for setting hats on blocks as part of themes, see [Block
+style](/guides/configure/web/appearance/themes/#block-style) in the themes
+documentation.
+
+![The same "on mouse click" blocks with hats, which form a hump on top of the
+block.](/images/event2.png)
+
+Within an event-driven model, it might make sense to also make a handler
+for the program start. Under this model, any block on the workspace not
+connected to an event handler would be ignored and would not execute.
+
+When designing a system that uses events, consider whether it is
+possible or desirable to support multiple instances of the same event
+handler.
+
+## Workspace layout
+
+There are two reasonable ways to layout a screen from left to right. One way
+starts with the toolbar on the left, the workspace in the middle, and the output
+visualization on the right. This layout is used by version 1 of Scratch, as well
+as Made with Code.
+
+![An application with the toolbar on the left, the workspace in the middle, and
+a maze (the output visualization) on the
+right.](/images/mistakes08a.png)
+
+The other way starts with the output visualization on the left, the toolbar in
+the middle, and the workspace on the right. This layout is used by version 2 of
+Scratch, as well as most Blockly applications.
+
+![An application with a maze (the output visualization) on the left, the toolbar
+in the middle, and the workspace on the right.](/images/mistakes08b.png)
+
+In either case the workspace should stretch to take up available screen size --
+users need as much room to program as they can get. As can be seen in the
+screenshots above, the first layout performs poorly on wide screens since the
+user's code and the output visualization are separated. Whereas the second
+layout allows for extra space for larger programs while still keeping all three
+sections close together.
+
+It also makes logical sense for users to first consider the problem they are
+attempting to solve, then look at the tools that are provided, and only then
+start programming.
+
+Of course the entire order needs to be flipped for Arabic and Hebrew
+translations.
+
+In some cases, such as when using a small number of simple blocks, it may make
+sense for the toolbox to be above or below the workspace. Blockly supports
+horizontal scrolling in the Toolbox for these cases, but it should be used with
+care.
+
+_Recommendation: Place the program visualization next to the toolbar._

@@ -1,0 +1,184 @@
+/**************/
+/* COMPONENTS */
+/**************/
+
+.blocklySvg {
+  background-color: #ff7518;
+}
+
+.blocklyMutatorBackground {
+  fill: #ff7518;
+}
+
+.blocklyToolbox {
+  background-color: #f9c10e;
+  color: #fff;
+}
+
+.blocklyFlyoutBackground {
+  fill: #252526;
+  fill-opacity: 1;
+}
+
+.blocklyFlyoutLabel > .blocklyFlyoutLabelText {
+  fill: #ccc !important;
+}
+
+.blocklyFlyoutButton > .blocklyText {
+  fill: #ccc !important;
+}
+
+.blocklyScrollbarHandle {
+  fill: #ff0000;
+  fill-opacity: 0.4;
+}
+
+.blocklyInsertionMarker > .blocklyPath {
+  fill: #fff !important;
+  fill-opacity: 0.3 !important;
+  stroke: none;
+}
+
+/**************/
+/* CATEGORIES */
+/**************/
+
+.logic_category {
+  border-left: 8px solid #8b4513;
+}
+
+.logic_category.blocklyToolboxSelected {
+  background-color: #8b4513 !important;
+}
+
+.loop_category {
+  border-left: 8px solid #85e21f;
+}
+
+.loop_category.blocklyToolboxSelected {
+  background-color: #85e21f !important;
+}
+
+.math_category {
+  border-left: 8px solid #5b67a5;
+}
+
+.math_category.blocklyToolboxSelected {
+  background-color: #5b67a5 !important;
+}
+
+.text_category {
+  border-left: 8px solid #fe9b13;
+}
+
+.text_category.blocklyToolboxSelected {
+  background-color: #fe9b13 !important;
+}
+
+.list_category {
+  border-left: 8px solid #4a148c;
+}
+
+.list_category.blocklyToolboxSelected {
+  background-color: #4a148c !important;
+}
+
+.variable_category {
+  border-left: 8px solid #a55b80;
+}
+
+.variable_category.blocklyToolboxSelected {
+  background-color: #a55b80 !important;
+}
+
+.procedure_category {
+  border-left: 8px solid #b88cc0;
+}
+
+.procedure_category.blocklyToolboxSelected {
+  background-color: #b88cc0 !important;
+}
+
+/**********/
+/* BLOCKS */
+/**********/
+
+/* LOGIC BLOCKS */
+
+.logic_blocks:not(.blocklyDisabledPattern) > .blocklyPath {
+  fill: #8b4513;
+  stroke: #c5eaff;
+}
+
+.logic_blocks:not(.blocklyDisabledPattern).blocklyShadow > .blocklyPath {
+  fill: #ff0000;
+  stroke: none;
+}
+
+.logic_blocks > .blocklyDropdownField .blocklyDropdownText tspan {
+  fill: #8b4513 !important;
+}
+
+.logic_blocks.blocklyShadow > .blocklyDropdownField .blocklyDropdownText tspan {
+  fill: #ff0000 !important;
+}
+
+/* LOOP BLOCKS */
+
+.loop_blocks:not(.blocklyDisabledPattern) > .blocklyPath {
+  fill: #85e21f;
+  stroke: #c5eaff;
+}
+
+.loop_blocks:not(.blocklyDisabledPattern).blocklyShadow > .blocklyPath {
+  fill: #ff0000;
+  stroke: none;
+}
+
+.loop_blocks > .blocklyDropdownField .blocklyDropdownText tspan {
+  fill: #85e21f !important;
+}
+
+.loop_blocks.blocklyShadow > .blocklyDropdownField .blocklyDropdownText tspan {
+  fill: #ff0000 !important;
+}
+
+/* TEXT BLOCKS */
+
+.text_blocks:not(.blocklyDisabledPattern) > .blocklyPath {
+  fill: #fe9b13;
+  stroke: #c5eaff;
+}
+
+.text_blocks:not(.blocklyDisabledPattern).blocklyShadow > .blocklyPath {
+  fill: #ff0000;
+  stroke: none;
+}
+
+.text_blocks > .blocklyDropdownField .blocklyDropdownText tspan {
+  fill: #fe9b13 !important;
+}
+
+.text_blocks.blocklyShadow > .blocklyDropdownField .blocklyDropdownText tspan {
+  fill: #ff0000 !important;
+}
+
+/* LIST BLOCKS */
+
+.list_blocks:not(.blocklyDisabledPattern) > .blocklyPath {
+  fill: #4a148c;
+  stroke: #cdb6e9;
+}
+
+.list_blocks:not(.blocklyDisabledPattern).blocklyShadow > .blocklyPath {
+  fill: #ad7be9;
+  stroke: none;
+}
+
+.list_blocks > .blocklyDropdownField .blocklyDropdownText tspan {
+  fill: #4a148c !important;
+}
+
+.list_blocks.blocklyShadow > .blocklyDropdownField .blocklyDropdownText tspan {
+  fill: #ad7be9 !important;
+}

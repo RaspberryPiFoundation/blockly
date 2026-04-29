@@ -24,12 +24,15 @@ import {getFocusManager} from './focus_manager.js';
 import {IAutoHideable} from './interfaces/i_autohideable.js';
 import type {IFlyout} from './interfaces/i_flyout.js';
 import type {IFlyoutInflater} from './interfaces/i_flyout_inflater.js';
+import {isSelectableToolboxItem} from './interfaces/i_selectable_toolbox_item.js';
 import {FlyoutNavigator} from './keyboard_nav/navigators/flyout_navigator.js';
+import {Msg} from './msg.js';
 import type {Options} from './options.js';
 import * as registry from './registry.js';
 import * as renderManagement from './render_management.js';
 import {ScrollbarPair} from './scrollbar_pair.js';
 import {SEPARATOR_TYPE} from './separator_flyout_inflater.js';
+import * as aria from './utils/aria.js';
 import * as dom from './utils/dom.js';
 import * as idGenerator from './utils/idgenerator.js';
 import {Svg} from './utils/svg.js';
@@ -312,6 +315,7 @@ export abstract class Flyout
   init(targetWorkspace: WorkspaceSvg) {
     this.targetWorkspace = targetWorkspace;
     this.workspace_.targetWorkspace = targetWorkspace;
+    this.workspace_.setInitialAriaContext();
 
     this.workspace_.scrollbar = new ScrollbarPair(
       this.workspace_,
@@ -632,6 +636,7 @@ export abstract class Flyout
       this.width_ = 0;
     }
     this.reflow();
+    this.updateAriaContext();
     eventUtils.setRecordUndo(true);
     this.workspace_.setResizesEnabled(true);
 
@@ -648,6 +653,53 @@ export abstract class Flyout
       }
     };
     this.workspace_.addChangeListener(this.reflowWrapper);
+  }
+
+  /**
+   * Updates the aria attributes for the entire flyout dom.
+   * This needs to do two things:
+   * 1. Set aria-owns on the flyout's workspace canvas to include the ids of all
+   *    focusable elements in the flyout.
+   * 2. Update the aria attributes on the flyout's workspace. This can't be done at workspace
+   *    creation because the workspace may not have all required information until the flyout
+   *    is fully shown.
+   */
+  protected updateAriaContext() {
+    // Set aria-owns on the flyout's workspace canvas to include the ids of all focusable elements in the flyout.
+    // This is probably not necessary if the listitems are all direct descendants of the canvas, but
+    // we can't know the dom structure of the flyout contents, so it's best to be explicit.
+    const focusableIds = this.getContents()
+      .map((item) => item.getElement())
+      .filter((item) => item.canBeFocused())
+      .map((item) => item.getFocusableElement().id);
+    aria.setState(
+      this.getWorkspace().getCanvas(),
+      aria.State.OWNS,
+      focusableIds.join(' '),
+    );
+
+    // Update aria attributes on the flyout's workspace.
+    // Only call a flyout's workspace a region if it's not auto-closing and not a mutator
+    if (!this.targetWorkspace.isMutator && !this.autoClose) {
+      aria.setRole(this.getWorkspace().svgGroup_, aria.Role.REGION);
+    } else {
+      aria.setRole(this.getWorkspace().svgGroup_, aria.Role.PRESENTATION);
+    }
+
+    // the label for a flyout includes the category name if it's available
+    const selectedItem = this.targetWorkspace.getToolbox()?.getSelectedItem();
+    const selectedItemName =
+      selectedItem && isSelectableToolboxItem(selectedItem)
+        ? selectedItem.getName()
+        : '';
+    const ariaLabel = Msg['WORKSPACE_LABEL_FLYOUT_WORKSPACE']
+      .replace('%1', selectedItemName)
+      .trim();
+    aria.setState(this.getWorkspace().getCanvas(), aria.State.LABEL, ariaLabel);
+
+    // The block canvas is a list. The list items must be direct descendants of the list,
+    // and the flyout may or may not be a region, so we set the role on the block canvas rather than the svgGroup_.
+    aria.setRole(this.getWorkspace().getCanvas(), aria.Role.LIST);
   }
 
   /**

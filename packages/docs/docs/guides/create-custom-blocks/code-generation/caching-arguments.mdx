@@ -1,0 +1,189 @@
+---
+description: How to cache code from inner value blocks referenced multiple times.
+title: Cache inner value block code
+image: images/blockly_banner.png
+---
+
+# Cache inner value block code
+
+Value blocks correspond to expressions. When you use a value block as an inner
+block, you may need to use the expression it generates more than once in your
+block's code. For example, a block that gets the last element of a list uses the
+expression that creates the list twice.
+
+```js
+// Incorrect block-code generator.
+javascriptGenerator.forBlock['last_element'] = function (block, generator) {
+  // Get the expression that creates the list.
+  const listCode = generator.valueToCode(block, 'LIST', Order.MEMBER);
+
+  // listCode is used twice.
+  const code = `${listCode}[${listCode}.length - 1]`;
+
+  return [code, Order.MEMBER];
+};
+```
+
+This causes problems if the inner block's code generates different values each
+time it is executed, or if the code has side effects. For example, if the inner
+block's code is actually a function call, this particular code can cause an out
+of range condition:
+
+```js
+randomList()[randomList().length - 1];
+```
+
+To avoid this problem, your code should execute an inner block's code exactly
+once. There are two ways to do this:
+
+- [Temporary variables](#temporary-variables): Cache the result of evaluating
+  the inner block's code in a temporary variable and use the temporary
+  variable instead. You can use this method only if your block is a statement
+  block.
+
+- [Utility functions](#utility-functions): Create a function that performs the
+  work you need to do and pass the result of evaluating the inner block's code
+  as an argument to this function. You can use this method for both value and
+  statement blocks.
+
+## Temporary variables
+
+A temporary variable stores the value of an inner block's code string so that
+the code is only _evaluated_ once, and then the value can be referenced multiple
+times.
+
+Temporary variables cannot be used in value blocks because value blocks
+must return a single line of code. Use a [utility function](#utility-functions)
+instead.
+
+```js
+import { javascriptGenerator, Order } from 'blockly/javascript';
+
+// Correct block-code generator for a statement block that prints the last element of a list.
+javascriptGenerator.forBlock['print_last_element'] = function (
+  block,
+  generator,
+) {
+  // Get the expression that creates the list.
+  const listCode = generator.valueToCode(block, 'LIST', Order.MEMBER);
+  // Get the name of a temporary variable.
+  const listVar = generator.nameDB_.getDistinctName(
+    'temp_list',
+    Blockly.names.NameType.VARIABLE,
+  );
+
+  // Evaluate listCode once and assign the result to the temporary variable.
+  const code = `var ${listVar} = ${listCode};\n`;
+  // Print the last element of the list.
+  code += `print(${listVar}[${listVar}.length - 1]);\n`;
+  return code;
+};
+```
+
+For example, if the inner block's code is the function call `randomList()`, the
+generated code is:
+
+```js
+var temp_list = randomList();
+print(temp_list[temp_list.length - 1]);
+```
+
+The `getDistinctName` call takes in the variable name you want, and returns a
+name that doesn't conflict with any user-defined variables.
+
+### Reduce redundant code
+
+The downside of temporary variables is that if the inner block's code is a value
+and not a function or expression, you get code that's redundant:
+
+```js
+// Assigning to temp_list is unnecessary.
+var temp_list = foo;
+print(temp_list[temp_list.length - 1]);
+```
+
+To produce cleaner code you can check if the inner block's code is a value, and
+only include the temporary variable if it's not.
+
+```js
+if (listCode.match(/^\w+$/)) {
+  const code = `print(${listCode}[${listCode}.length - 1]);\n`;
+} else {
+  const listVar = generator.nameDB_.getDistinctName(
+    'temp_list',
+    Blockly.names.NameType.VARIABLE,
+  );
+  const code = `var ${listVar} = ${listCode};\n`;
+  code += `print(${listVar}[${listVar}.length - 1]);\n`;
+}
+```
+
+## Utility functions
+
+A utility function is a developer-defined function included as part of the
+generated code string. You can use them to make sure that inner-block code is
+only _evaluated_ once, and then the value can be referenced multiple times.
+
+Utility functions can be used in value blocks and statement blocks.
+However, statement blocks should generally use [temporary
+variables](#temporary-variables), which are usually more readable.
+
+```js
+import { javascriptGenerator, Order } from 'blockly/javascript';
+
+// Correct block-code generator for a value block that gets the last element of a list.
+javascriptGenerator.forBlock['last_element'] = function (block, generator) {
+  // Get the expression that creates the list.
+  const listCode = generator.valueToCode(block, 'LIST', Order.NONE);
+  // Create a function that accepts a list and returns its last element. The
+  // language generator adds this function to your code.
+  const functionName = generator.provideFunction_('list_lastElement', [
+    `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(list) {`,
+    `  return list[list.length - 1];`,
+    `}`,
+  ]);
+
+  // Create an expression that calls the function with listCode as its argument.
+  // This evaluates listCode once and passes the resulting list to the function.
+  const code = `${functionName}(${listCode})`;
+  return [code, Order.FUNCTION_CALL];
+};
+```
+
+For example, if the inner block's code is the function call `randomList()`, the
+generated code is:
+
+```js
+// This code is added to the overall code returned by the code generator.
+function list_lastElement(list) {
+  return list[list.length - 1];
+}
+
+// This code is returned by your inner block.
+list_lastElement(randomList());
+```
+
+### Provide the function
+
+You can define utility functions inside block-code generators using
+`provideFunction_`. It takes in the name you want for your utility function, and
+an array of code strings that contain the function's definition. It returns the
+resulting name of your utility function, after (possibly) modifying it to not
+conflict with user-defined functions.
+
+`provideFunction_` also dedupes utility function definitions, so that each
+utility function only exists once, even if the block type that defines it exists
+multiple times.
+
+### Update precedences
+
+When you define a utility function, you should also update the precedences
+(which define how [parentheses][parentheses] are inserted) included in the
+block-code generator.
+
+The precedence is always based on the code string returned by the block-code
+generator. It does not care about operators inside utility functions. So in the
+previous example the `valueToCode` call was changed to `Order.NONE` and the
+return tuple was changed to `Order.FUNCTION_CALL`.
+
+[parentheses]: /guides/create-custom-blocks/code-generation/operator-precedence

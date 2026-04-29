@@ -1,0 +1,68 @@
+---
+slug: /codelabs/custom-renderer/understand-connection-shapes
+description: Introduction to connection shapes.
+---
+
+# Build custom renderers
+
+## 6. Understand connection shapes
+
+A common use case of a custom renderer is changing the shape of connections. This requires a more detailed understanding of how a block is drawn and how SVG paths are defined.
+
+### The block outline
+
+The outline of the block is a single [SVG path](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/path). The outline is built out of many sub-paths (e.g. the path for a previous connection; the path for the top of the block; and the path for an input connection).
+
+Each sub-path is a string of [path commands](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#path_commands) that describe the appropriate shape. These commands must use relative (rather than absolute) coordinates.
+
+SVG path commands can be written as strings, but Blockly provides a set of [utility functions](/reference/blockly.utils.svgpaths) to make writing and reading paths easier.
+
+### `init()`
+
+A connection's shape is stored as an object with information about its width, height, and sub-path. These objects are created in the `ConstantProvider`s `init()` function. Here is the start of the default implementation. The complete definition can be found inside [`constants.ts`](https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/blockly/core/renderers/common/constants.ts).
+
+```js
+/**
+ * Initialize shape objects based on the constants set in the constructor.
+ */
+init() {
+  /**
+   * An object containing sizing and path information about collapsed block
+   * indicators.
+   */
+  this.JAGGED_TEETH = this.makeJaggedTeeth();
+
+  /** An object containing sizing and path information about notches. */
+  this.NOTCH = this.makeNotch();
+
+  // Additional code has been removed for brevity.
+}
+```
+
+**Properties that are primitives should be set in the `constructor()`, while objects should be set in `init()`**. This separation allows a subclass to override a constant such as `NOTCH_WIDTH` and see the change reflected in objects that depend on the constant.
+
+### `shapeFor(connection)`
+
+The `shapeFor(connection)` function maps from connection to connection shape. Here is the default implementation, which can be found inside [`constants.ts`](https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/blockly/core/renderers/common/constants.ts). It returns a puzzle tab for input/output connections and a notch for previous/next connections:
+
+```js
+/**
+ * Get an object with connection shape and sizing information based on the
+ * type of the connection.
+ *
+ * @param connection The connection to find a shape object for
+ * @returns The shape object for the connection.
+ */
+shapeFor(connection: RenderedConnection): Shape {
+  switch (connection.type) {
+    case ConnectionType.INPUT_VALUE:
+    case ConnectionType.OUTPUT_VALUE:
+      return this.PUZZLE_TAB;
+    case ConnectionType.PREVIOUS_STATEMENT:
+    case ConnectionType.NEXT_STATEMENT:
+      return this.NOTCH;
+    default:
+      throw Error('Unknown connection type');
+  }
+}
+```

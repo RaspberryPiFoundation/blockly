@@ -1,0 +1,87 @@
+---
+description: How to create a custom bubble.
+title: Create custom bubbles
+image: images/blockly_banner.png
+---
+
+# Create custom bubbles
+
+A bubble is a pop up UI that looks like a speech bubble you would see in a
+comic. They have a "tail" that points at a block, and a "head" that contains
+arbitrary svg elements.
+
+![A bubble with the head and the tail labeled](/images/bubbles/bubble_head_tail.png)
+
+If the [built-in bubbles][built-in-bubbles] don't work for your use case, you
+can create a custom bubble by subclassing the [`Bubble`][bubble] class.
+
+## Create the view
+
+A bubble's view is all of the svg elements that live inside the "head" of the
+bubble. These elements are created inside of the bubble's constructor, and they
+should be children of the `this.contentContainer` element so that they get
+automatically cleaned up when the icon is destroyed.
+
+The [`Blockly.utils.dom`][blockly-utils-dom] module provides a clean interface
+for instantiating svgs.
+
+```js
+class MyBubble extends Blockly.bubbles.Bubble {
+  // See the Blockly.bubbles.Bubble class for information about what these
+  // parameters are.
+  constructor(workspace, anchor, ownerRect) {
+    super(workspace, anchor, ownerRect);
+
+    this.text = Blockly.utils.dom.createSvgElement(
+      Blockly.utils.Svg.TEXT,
+      { class: 'my-bubble-class' },
+      this.contentContainer,
+    );
+    const node = Blockly.utils.dom.createTextNode('some text');
+    this.text.appendChild(node);
+  }
+}
+```
+
+## Set the size
+
+The bubble's size needs to be set using [`setSize`][setSize] so that the outer
+border can properly surround the contents of the bubble. It should be set
+during construction, and whenever the size of the UI elements change.
+
+```js
+constructor(workspace, anchor, ownerRect) {
+  // Create the view elements... (see above)
+
+  const bbox = this.text.getBBox();
+  this.setSize(
+    new Blockly.utils.Size(
+      bbox.width + Blockly.bubbles.Bubble.BORDER_WIDTH * 2,
+      bbox.height + Blockly.bubbles.Bubble.BORDER_WIDTH * 2,
+    ),
+    true
+  );
+}
+```
+
+## Dispose of the bubble
+
+Bubbles should clean up any dom elements or external references when they are
+disposed. By default, anything that is appended to `this.contentContainer` gets
+destroyed, but other references need to be manually cleaned up. This should be
+done within the [`dispose`][dispose] method.
+
+```js
+dispose() {
+  super.dispose();
+
+  // Dispose of other references.
+  this.myArbitraryReference.dispose();
+}
+```
+
+[built-in-bubbles]: /reference/blockly.bubbles
+[blockly-utils-dom]: /reference/blockly.utils.dom
+[bubble]: /reference/blockly.bubbles.bubble
+[setSize]: /reference/blockly.bubbles.bubble.setsize
+[dispose]: /reference/blockly.bubbles.bubble.dispose

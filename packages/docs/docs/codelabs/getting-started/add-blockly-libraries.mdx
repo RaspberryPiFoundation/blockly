@@ -1,0 +1,47 @@
+---
+slug: /codelabs/getting-started/add-blockly-libraries
+description: How to add Blockly libraries to an app.
+---
+
+# Getting started with Blockly
+
+## 4. Add Blockly libraries
+
+Now that you know what you'll be building, you need to add Blockly dependencies to your app.
+
+Blockly releases are [published on npm](https://www.npmjs.com/package/blockly) on a quarterly basis. For this codelab you will import blockly using [unpkg](https://unpkg.com), which lets you import all of the files you need with a single script tag.
+
+### Add the script tag
+
+Open `starter-code/index.html` in a text editor and scroll to the end. You can see two script tags:
+
+```html
+<script src="scripts/music_maker.js"></script>
+<script src="scripts/main.js"></script>
+```
+
+Add Blockly just before these two scripts. The order is important, because you will use Blockly objects later in `main.js`. Your imports should now look like this:
+
+```html
+<script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
+<script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
+<script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
+<script src="https://unpkg.com/blockly/msg/en.js"></script>
+<script src="scripts/music_maker.js"></script>
+<script src="scripts/main.js"></script>
+```
+
+### Default imports
+
+Importing Blockly this way loads four default modules.
+
+- Blockly core: The main Blockly library, which defines the basic Blockly UI and logic.
+- Built-in block definitions: Common blocks such as loops, logic, math, and string manipulation.
+- The JavaScript generator: Converts blocks into JavaScript, and contains block generators for all built-in blocks.
+- English language files: String tables for all messages on built-in blocks and the Blockly UI, in English.
+
+### Alternate imports
+
+There are many ways to import a library in JavaScript, and this tutorial does not cover all of them. For samples that show how to integrate Blockly in your project, look at the `examples` folder in [blockly-samples](https://github.com/RaspberryPiFoundation/blockly-samples).
+
+You can also define your imports more carefully to get [different generators](https://www.npmjs.com/package/blockly#blockly-generators) and [locales](https://www.npmjs.com/package/blockly#blockly-languages).

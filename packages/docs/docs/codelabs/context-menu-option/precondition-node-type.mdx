@@ -1,0 +1,46 @@
+---
+slug: /codelabs/context-menu-option/precondition-node-type
+description: How to include a context menu item based on the node type.
+---
+
+# Customizing context menus
+
+## 4 . Precondition: Node type
+
+Each registry item has a `preconditionFn`. It is called by Blockly to decide whether and how to display an option on a context menu. You'll use it to display the "Hello, World" option on workspace and block context menus, but not on comment context menus.
+
+### The scope argument
+
+The `scope` argument is an object that is passed to `preconditionFn`. You'll use the `scope.focusedNode` property to determine which object the context menu was invoked on. Why a focused node? Because Blockly keeps track of where the user is -- that is, what node (component) the user is focused on -- and opens the context menu on that node.
+
+### Return value
+
+The return value of `preconditionFn` is `'enabled'`, `'disabled'`, or `'hidden'`. An **enabled** option is shown with black text and is selectable. A **disabled** option is shown with grey text and is not selectable. A **hidden** option is not included in the context menu at all.
+
+### Write the function
+
+You can now test `scope.focusedNode` to display the "Hello World" option in workspace and block context menus, but not on any others. Change `preconditionFn` to:
+
+```js
+  const helloWorldItem = {
+    ...
+    preconditionFn: function (scope) {
+      if (
+        scope.focusedNode instanceof Blockly.WorkspaceSvg ||
+        scope.focusedNode instanceof Blockly.BlockSvg
+      ) {
+        return 'enabled';
+      }
+      return 'hidden';
+    },
+    ...
+  };
+```
+
+Notice that the code tests for where context menus are allowed, rather than where they are not allowed. This is because custom code (such as a plugin) can add context menus to any Blockly component that can be focused. Thus, testing for specific types rather than allowing all (or all but certain types) ensures that context menus are not shown on more components than you anticipated.
+
+### Test it
+
+Open a context menu on the workspace, a block, and a comment. You should see a "Hello World" option on the workspace and block context menus, but not on the comment context menu.
+
+![An if block with a context menu with five options. The last option says "Hello World".](../../../static/images/codelabs/context-menu-option/hello_world_block.png)

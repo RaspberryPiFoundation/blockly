@@ -1,0 +1,44 @@
+---
+description: What the renderer constant provider class is and what it does.
+title: Constant provider
+image: images/blockly_banner.png
+---
+
+# Constant provider
+
+The [`ConstantProvider`][ConstantProvider] is a collection of magic numbers,
+shapes and strings used by all of the other renderer components, as well as
+other parts of Blockly like the built-in fields.
+
+All constant values are assumed to be _constant_! Changing values at
+runtime causes rendering bugs.
+
+## Connection shapes
+
+The constant provider contains definitions for the standard shapes of different
+connections. [`Notch`][Notch]es define the shapes of next and previous
+connections. And the [`PuzzleTab`][PuzzleTab]s define the shapes of input
+and output connections. (These names are based on the shapes provided by
+the default renderer.)
+
+### Connection shapes based on checks
+
+The constant provider can also define the shapes of connections dynamically
+based on their [connection check][connection-check]. This is done using the
+[`shapeFor`][shapeFor] method.
+
+## Other various paths
+
+The constant provider also defines paths for other various parts of the
+block, like jagged edges for collapsed blocks.
+
+## Other various values
+
+And finally, the constant provider also defines various values for things like
+the padding between different elements, or the minimum heights of rows.
+
+[ConstantProvider]: /reference/blockly.blockrendering.constantprovider
+[Notch]: /reference/blockly.blockrendering.constantprovider.notch
+[PuzzleTab]: /reference/blockly.blockrendering.constantprovider.puzzle_tab
+[connection-check]: /guides/create-custom-blocks/inputs/connection-checks
+[shapeFor]: /reference/blockly.blockrendering.constantprovider.shapefor

@@ -1,0 +1,55 @@
+---
+description: How to create your own custom inputs.
+title: Create custom inputs
+image: images/blockly_banner.png
+---
+
+# Create custom inputs
+
+To create a custom input, you need to subclass [`Input`][Input], or one of
+its subclasses.
+
+```js
+class MyInput extends Blockly.inputs.Input {
+  // The constructor should always take in a name and a block to be compatible
+  // with JSON block definitions.
+  constructor(name, block) {
+    super(name, block);
+    // etc...
+  }
+}
+```
+
+## Optionally create a connection
+
+If you want your input to have a connection, that should be created in the
+constructor, by calling the [`makeConnection`][makeConnection] method.
+
+```js
+constructor(name, block) {
+  super(name, block);
+
+  this.connection = this.makeConnection(ConnectionType.INPUT_VALUE);
+}
+```
+
+## Register the input
+
+To be able to use your custom input in a [JSON block definition][json-block-def]
+you need to register it and associate it with a string.
+
+```js
+class MyInput extends Blockly.inputs.Input {}
+
+Blockly.registry.register(Blockly.registry.Type.INPUT, 'my_input', MyInput);
+```
+
+:::note
+unlike [custom fields][custom-fields], you can't override
+built-in inputs, and you can't add custom JSON configuration to them.
+:::
+
+[Input]: /reference/blockly.inputs.input
+[makeConnection]: /reference/blockly.inputs.input.makeconnection
+[json-block-def]: /guides/create-custom-blocks/define/json-and-js
+[custom-fields]: /guides/create-custom-blocks/fields/customizing-fields/creating

@@ -1,0 +1,29 @@
+{
+  "name": "renderer-sample-app",
+  "version": "1.0.0",
+  "description": "A sample app using Blockly and custom renderers",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode production",
+    "start": "webpack serve --open --mode development"
+  },
+  "keywords": [
+    "blockly"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "css-loader": "^6.7.1",
+    "html-webpack-plugin": "^5.5.0",
+    "source-map-loader": "^4.0.1",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.93.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
+  },
+  "dependencies": {
+    "blockly": "^12.0.0"
+  }
+}
