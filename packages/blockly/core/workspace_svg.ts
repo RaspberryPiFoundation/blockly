@@ -711,16 +711,14 @@ export class WorkspaceSvg
       // Flyouts have their aria attributes set when the flyout is shown.
       return;
     }
+    aria.setRole(this.svgGroup_, aria.Role.REGION);
     if (this.isMutator) {
-      aria.setRole(this.svgGroup_, aria.Role.REGION);
       aria.setState(
         this.svgGroup_,
         aria.State.LABEL,
         Msg['WORKSPACE_LABEL_MUTATOR_WORKSPACE'],
       );
     } else {
-      // Main workspace is a region.
-      aria.setRole(this.svgGroup_, aria.Role.REGION);
       // Main workspaces get labelled with how many stacks of blocks they contain
       // This will be updated in a change listener, but set it here in case there are blocks in the initial state of the workspace
       this.updateAriaLabel();
