@@ -85,7 +85,7 @@
 	"CONTROLS_IF_MSG_ELSE": "інакш",
 	"CONTROLS_IF_IF_TOOLTIP": "Дадаць, выдаліць ці пераставіць сэкцыі для пераканфігураваньня гэтага блёку «калі».",
 	"CONTROLS_IF_ELSEIF_TOOLTIP": "Дадаць умову да блёку «калі».",
-	"CONTROLS_IF_ELSE_TOOLTIP": "Дадаць заключную ўмову для ўсіх астатніх варыянтаў блёку «калі».",
+	"CONTROLS_IF_ELSE_TOOLTIP": "Дадаць канцавую ўмову для ўсіх астатніх варыянтаў блёку «калі».",
 	"LOGIC_COMPARE_HELPURL": "https://be-tarask.wikipedia.org/wiki/Няроўнасьць",
 	"LOGIC_COMPARE_TOOLTIP_EQ": "Вяртае «ісьціна», калі абодва ўводы роўныя.",
 	"LOGIC_COMPARE_TOOLTIP_NEQ": "Вяртае «ісьціна», калі абодва ўводы ня роўныя.",
