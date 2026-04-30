@@ -115,9 +115,16 @@ complexity.
 
 Focusable fields must designate a focusable DOM element with a unique ID for 
 their on-block display. Blockly places this element in the accessibility tree
-and moves focus to it through keyboard navigation. Most focusable fields have an
-ARIA role of `button` to indicate that they can be clicked or activated with the
-keyboard.
+and moves focus to it through keyboard navigation. When the field is focused its
+focusable DOM element will have the `blocklyActiveFocus` or
+`blocklyPassiveFocus` CSS class added. Blockly's built-in fields show focus
+with a yellow outline.
+
+The focusable element must have the correct ARIA role. Most focusable fields
+have an ARIA role of `button` to indicate that they can be clicked or activated
+with the keyboard. An exception is the checkbox field, which has an ARIA role
+of `checkbox`. Non-focusable fields should be removed from the accessibility
+tree by applying `aria-hidden` to the root of the field.
 
 ## Editor display
 
