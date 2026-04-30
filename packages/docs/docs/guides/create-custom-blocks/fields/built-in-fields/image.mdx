@@ -11,7 +11,8 @@ import TabItem from '@theme/TabItem';
 
 An image field stores a string as its value and a string as its text. Its
 value is the src of the image, while its text is an alt string
-describing/representing the image. The alt text is also displayed when the parent block is collapsed.
+describing/representing the image. The alt text is also displayed when the
+parent block is collapsed.
 
 #### Image field
 
@@ -76,11 +77,14 @@ The image constructor takes in:
 Image fields are not serializable.
 
 ## Accessibility
-An image field's  ARIA label is `image: <alt text>`. The alt text is also displayed when the parent block is collapsed.
+An image field's  ARIA label is `image: <alt text>`. The alt text is also
+displayed when the parent block is collapsed.
 
-Clickable images have an ARIA role of `button`. Image fields that do not have click handlers have an ARIA role of `none`.
+Clickable images have an ARIA role of `button`. Image fields that do not have
+click handlers have an ARIA role of `none`.
 
-Follow [AFB guidelines](https://afb.org/digital-inclusion/accessibility-resources/writing-effective-image-descriptions) for writing good alt text. Return `null` or `undefined` to indicate a purely decorative image.
+Follow [AFB guidelines](https://afb.org/digital-inclusion/accessibility-resources/writing-effective-image-descriptions)
+for writing good alt text. Return `null` or `undefined` to indicate a purely decorative image.
 
 ## Click handler
 

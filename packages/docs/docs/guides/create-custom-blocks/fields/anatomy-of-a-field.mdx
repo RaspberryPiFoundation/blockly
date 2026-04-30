@@ -27,7 +27,8 @@ and may optionally be part of the [on-block display](#on-block-display).
 
 In general, editable fields allow the user to make changes to the code, while
 non-editable fields display information to the user about the block.
-Editable fields may show a rich editor when clicked or activated with the keyboard.
+Editable fields may show a rich editor when clicked or activated with the
+keyboard.
 
 Editable fields include:
 
@@ -45,13 +46,22 @@ Non-editable fields include:
 
 ## Focusable vs non-focusable fields
 
-Focusable fields can be navigated to and acted on with the keyboard. A field is focusable if it is visible and clickable or currently editable. Some non-editable fields are focusable, such as images with click handlers. If a field is focusable it must specify a single focusable element to be visited when traversing blocks. Blockly ensures that the focusable element is in the accessibility tree in an appropriate location. 
+Focusable fields can be navigated to and acted on with the keyboard. A field is
+focusable if it is visible and clickable or currently editable. Some
+non-editable fields are focusable, such as images with click handlers. If a
+field is focusable it must specify a single focusable element to be visited when
+traversing blocks. Blockly ensures that the focusable element is in the
+accessibility tree in an appropriate location. 
 
 Non-focusable fields such as labels cannot be navigated to with the keyboard.
 
 ## ARIA label
 
-All fields have an ARIA label, which is a string containing human-readable information about the field's type and value. Blockly exposes the ARIA label to screen readers by attaching it to the field's focusable element or including it in the parent block's ARIA label. All built-in fields compute their ARIA labels automatically.
+All fields have an ARIA label, which is a string containing human-readable
+information about the field's type and value. Blockly exposes the ARIA label to
+screen readers by attaching it to the field's focusable element or including it
+in the parent block's ARIA label. All built-in fields compute their ARIA labels
+automatically.
 
 ## Serialization
 
@@ -103,7 +113,11 @@ complexity.
 | Angle      | Contains a background rect, text element, and a degree symbol.                                        |
 | Turtle     | Contains a background rect, text element, and many SVG elements used to construct the turtle graphic. |
 
-Focusable fields must designate a focusable DOM element with a unique ID for their on-block display. Blockly places this element in the accessibility tree and moves focus to it through keyboard navigation. Most focusable fields have an ARIA role of `button` to indicate that they can be clicked or activated with the keyboard.
+Focusable fields must designate a focusable DOM element with a unique ID for 
+their on-block display. Blockly places this element in the accessibility tree
+and moves focus to it through keyboard navigation. Most focusable fields have an
+ARIA role of `button` to indicate that they can be clicked or activated with the
+keyboard.
 
 ## Editor display
 
