@@ -94,8 +94,6 @@ suite('Mutator', function () {
     });
 
     teardown(function () {
-      Blockly.Extensions.unregister('xml_mutator');
-      Blockly.Extensions.unregister('jso_mutator');
       sharedTestTeardown.call(this);
     });
 
