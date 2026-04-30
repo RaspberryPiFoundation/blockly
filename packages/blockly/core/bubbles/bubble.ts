@@ -823,7 +823,7 @@ export abstract class Bubble
       if (typeof this.ariaLabelProvider === 'string') {
         return this.ariaLabelProvider;
       } else if (typeof this.ariaLabelProvider === 'function') {
-      return this.ariaLabelProvider(this);
+        return this.ariaLabelProvider(this);
       }
     }
     return null;
