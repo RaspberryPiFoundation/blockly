@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-04-29 16:09:43.926632",
+		"lastupdated": "2026-04-30 15:41:41.211465",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -494,14 +494,15 @@
 	"ARIA_TYPE_FIELD_IMAGE": "image",
 	"ARIA_TYPE_FIELD_CHECKBOX": "checkbox",
 	"FIELD_LABEL_EDIT_PREFIX": "Edit %1",
-	"FIELD_LABEL_OPTION_INDEX": "Option %1",
 	"OPEN_TRASH": "Open trash",
 	"ZOOM_IN": "Zoom in",
 	"ZOOM_OUT": "Zoom out",
 	"RESET_ZOOM": "Reset zoom",
+	"FIELD_LABEL_OPTION_INDEX": "Option %1",
 	"FIELD_LABEL_CHECKBOX_CHECKED": "Checked",
 	"FIELD_LABEL_CHECKBOX_UNCHECKED": "Not checked",
 	"FIELD_LABEL_VARIABLE": "Variable '%1'",
 	"ARIA_LABEL_BUTTON": "button",
-	"ARIA_LABEL_HEADING": "heading"
+	"ARIA_LABEL_HEADING": "heading",
+	"BUBBLE_LABEL_DEFAULT": "Bubble"
 }

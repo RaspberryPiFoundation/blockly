@@ -502,14 +502,15 @@
 	"ARIA_TYPE_FIELD_IMAGE": "ARIA type name of an image field, used by screen readers to identify the type of field.",
 	"ARIA_TYPE_FIELD_CHECKBOX": "ARIA type name of an checkbox field, used by screen readers to identify the type of field.",
 	"FIELD_LABEL_EDIT_PREFIX": "Label for an editable field, used by screen readers to identify fields that can be edited by the user.  Placeholder corresponds to the label of the field's value. \n\nParameters:\n* %1 - the label of the field's value \n\nExamples:\n* 'Edit 5'\n* 'Edit item'",
-	"FIELD_LABEL_OPTION_INDEX": "Label for an unlabeled dropdown field option, used by screen readers to identify options in a dropdown field.  Placeholder corresponds to the index of the option in the dropdown, starting at 1. \n\nParameters:\n* %1 - the index of the option in the dropdown, starting at 1 \n\nExamples:\n* 'Option 1'\n* 'Option 2'",
 	"OPEN_TRASH": "ARIA label for the trashcan.",
 	"ZOOM_IN": "ARIA label for the zoom in button.",
 	"ZOOM_OUT": "ARIA label for the zoom out button.",
 	"RESET_ZOOM": "ARIA label for the reset zoom button.",
+	"FIELD_LABEL_OPTION_INDEX": "Label for an unlabeled dropdown field option, used by screen readers to identify options in a dropdown field.  Placeholder corresponds to the index of the option in the dropdown, starting at 1. \n\nParameters:\n* %1 - the index of the option in the dropdown, starting at 1 \n\nExamples:\n* 'Option 1'\n* 'Option 2'",
 	"FIELD_LABEL_CHECKBOX_CHECKED": "Label for a checked checkbox field, used by screen readers to identify the state of a checkbox field.",
 	"FIELD_LABEL_CHECKBOX_UNCHECKED": "Label for an unchecked checkbox field, used by screen readers to identify the state of a checkbox field.",
 	"FIELD_LABEL_VARIABLE": "Label for a variable field option, used by screen readers to identify the options in a variable dropdown field. \n\nParameters:\n* %1 - the name of the variable represented by the option \n\nExamples:\n* 'Variable 'item''\n* 'Variable 'x''",
 	"ARIA_LABEL_BUTTON": "Part of an aria label for an element that indicates it is a button, but for technical reasons cannot be give a role of button. Ideally, this would match the localized name for what screenreaders announce for <button> elements in your language.",
-	"ARIA_LABEL_HEADING": "Part of an aria label for an element that indicates it is a heading, but for technial reasons cannot be given a role of heading. Ideally, this would match the localized name for what screenreaders announce for <h1> elements in your language."
+	"ARIA_LABEL_HEADING": "Part of an aria label for an element that indicates it is a heading, but for technial reasons cannot be given a role of heading. Ideally, this would match the localized name for what screenreaders announce for <h1> elements in your language.",
+	"BUBBLE_LABEL_DEFAULT": "Default label for bubbles.  This is only used if a bubble is created without a label provider."
 }

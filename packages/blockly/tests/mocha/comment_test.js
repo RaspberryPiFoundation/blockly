@@ -226,8 +226,16 @@ suite('Comments', function () {
     test('Bubble has ARIA role of group', function () {
       assert.equal(this.bubble.focusableElement.getAttribute('role'), 'group');
     });
-    test('Bubble can use AriaLabelProvider', function () {
+    test('Bubble can use AriaLabelProvider function', function () {
       this.bubble.setAriaLabelProvider(() => 'comment aria label');
+      this.bubble.recomputeAriaContext();
+      assert.equal(
+        this.bubble.focusableElement.getAttribute('aria-label'),
+        'comment aria label',
+      );
+    });
+    test('Bubble can use AriaLabelProvider string', function () {
+      this.bubble.setAriaLabelProvider('comment aria label');
       this.bubble.recomputeAriaContext();
       assert.equal(
         this.bubble.focusableElement.getAttribute('aria-label'),

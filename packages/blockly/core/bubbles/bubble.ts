@@ -27,11 +27,11 @@ import {Svg} from '../utils/svg.js';
 import {WorkspaceSvg} from '../workspace_svg.js';
 
 /**
- * Represents a function that, when called, can provide a custom ARIA string to
- * represent a bubble, or null if the default fallback should be used. See
- * setAriaLabelProvider for more context.
+ * Represents a either a string or a function that, when called, can provide a
+ * custom ARIA string to represent a bubble, or null if the default fallback
+ * should be used. See setAriaLabelProvider for more context.
  */
-export type AriaLabelProvider = (bubble: Bubble) => string | null;
+export type AriaLabelProvider = string | ((bubble: Bubble) => string | null);
 
 /**
  * The abstract pop-up bubble class. This creates a UI that looks like a speech
@@ -820,7 +820,11 @@ export abstract class Bubble
    */
   getAriaLabel(): string | null {
     if (this.ariaLabelProvider) {
+      if (typeof this.ariaLabelProvider === 'string') {
+        return this.ariaLabelProvider;
+      } else if (typeof this.ariaLabelProvider === 'function') {
       return this.ariaLabelProvider(this);
+      }
     }
     return null;
   }
