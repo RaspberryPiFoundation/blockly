@@ -295,7 +295,7 @@ suite('ARIA', function () {
         block.getFocusableElement(),
         Blockly.utils.aria.State.ROLEDESCRIPTION,
       );
-      assert.equal(roleDescription, 'statement');
+      assert.equal(roleDescription, 'command');
     });
 
     test('Value blocks have correct role description', function () {
