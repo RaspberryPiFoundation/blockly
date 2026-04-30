@@ -229,7 +229,10 @@ suite('Comments', function () {
     test('Bubble can use AriaLabelProvider', function () {
       this.bubble.setAriaLabelProvider(() => 'comment aria label');
       this.bubble.recomputeAriaContext();
-      assert.equal(this.bubble.focusableElement.getAttribute('aria-label'), 'comment aria label');
+      assert.equal(
+        this.bubble.focusableElement.getAttribute('aria-label'),
+        'comment aria label',
+      );
     });
   });
 });
