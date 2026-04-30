@@ -87,8 +87,7 @@ suite('Mutator', function () {
   suite('ARIA', function () {
     setup(async function () {
       this.workspace = Blockly.inject('blocklyDiv', {});
-      defineMutatorBlocks();
-      const block = createRenderedBlock(this.workspace, 'xml_block');
+      const block = createRenderedBlock(this.workspace, 'controls_if');
       const icon = block.getIcon(Blockly.icons.MutatorIcon.TYPE);
       await icon.setBubbleVisible(true);
       this.bubble = icon.getBubble();
