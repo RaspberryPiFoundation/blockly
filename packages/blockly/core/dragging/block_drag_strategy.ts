@@ -786,6 +786,10 @@ export class BlockDragStrategy implements IDragStrategy {
       this.applyConnections(this.connectionCandidate);
       this.disposeStep();
     } else {
+      // play a sound if the block didn't connect to anything and isn't being deleted
+      if (disposition !== DragDisposition.DELETE) {
+        this.workspace.getAudioManager().play('drop');
+      }
       this.block.queueRender().then(() => this.disposeStep());
     }
 

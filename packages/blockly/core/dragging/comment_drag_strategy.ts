@@ -50,6 +50,7 @@ export class CommentDragStrategy implements IDragStrategy {
     this.workspace
       .getLayerManager()
       ?.moveOffDragLayer(this.comment, layers.BLOCK);
+    this.workspace.getAudioManager().play('drop');
     this.comment.setDragging(false);
 
     this.comment.snapToGrid();

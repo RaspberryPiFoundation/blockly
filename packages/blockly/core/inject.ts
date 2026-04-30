@@ -333,4 +333,5 @@ function loadSounds(pathToMedia: string, workspace: WorkspaceSvg) {
   audioMgr.load([`${pathToMedia}click.mp3`], 'click');
   audioMgr.load([`${pathToMedia}disconnect.mp3`], 'disconnect');
   audioMgr.load([`${pathToMedia}delete.mp3`], 'delete');
+  audioMgr.load([`${pathToMedia}drop.mp3`], 'drop');
 }
