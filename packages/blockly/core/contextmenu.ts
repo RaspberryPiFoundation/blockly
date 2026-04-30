@@ -11,6 +11,7 @@ import type {BlockSvg} from './block_svg.js';
 import * as browserEvents from './browser_events.js';
 import {config} from './config.js';
 import type {
+  ActionContextMenuOption,
   ContextMenuOption,
   LegacyContextMenuOption,
 } from './contextmenu_registry.js';
@@ -25,6 +26,7 @@ import * as aria from './utils/aria.js';
 import {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
 import {Rect} from './utils/rect.js';
+import {getShortcutKeysShort} from './utils/shortcut_formatting.js';
 import * as svgMath from './utils/svg_math.js';
 import * as WidgetDiv from './widgetdiv.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
@@ -134,7 +136,7 @@ function populate_(
       continue;
     }
 
-    const menuItem = new MenuItem(option.text);
+    const menuItem = new MenuItem(makeMenuitem(option));
     menuItem.setRightToLeft(rtl);
     menuItem.setRole(aria.Role.MENUITEM);
     menu.addChild(menuItem);
@@ -301,4 +303,62 @@ export function callbackFactory(
  */
 export function getMenu(): Menu | null {
   return menu_;
+}
+
+/**
+ * Creates a menu item to represent the given context menu option.
+ * For text-based menu options, this wraps the text in a container with its
+ * corresponding keyboard shortcut, if any. HTML-based menu options are displayed
+ * as-is.
+ *
+ * @param option The context menu option to generate a menu item for.
+ * @returns A `MenuItem` representing the given context menu option.
+ */
+function makeMenuitem(
+  option: ActionContextMenuOption | LegacyContextMenuOption,
+) {
+  const text = option.text;
+  if (text && !(text instanceof HTMLElement)) {
+    const container = document.createElement('div');
+    container.className = 'blocklyShortcutContainer';
+    const label = document.createElement('span');
+    label.textContent = text;
+    const shortcut = document.createElement('span');
+    shortcut.className = 'blocklyShortcut';
+    shortcut.textContent = ` ${getKeyboardShortcut(option)}`;
+    container.appendChild(label);
+    container.appendChild(shortcut);
+    return container;
+  }
+
+  return option.text;
+}
+
+/**
+ * Returns a keyboard shortcut for the given context menu item, if any.
+ *
+ * @param option The context menu item to retrieve a keyboard shortcut for.
+ * @returns The keyboard shortcut registered under the same ID as the context
+ *     menu item, if any.
+ */
+function getKeyboardShortcut(
+  option: ContextMenuOption | LegacyContextMenuOption,
+): string {
+  // Map built-in menu item keys to shortcut keys. These should be the same
+  // going forward, but this preserves backwards compatibility for long-standing
+  // menu items/shortcuts.
+  const actionMap = new Map<string, string>([
+    ['undoWorkspace', 'undo'],
+    ['redoWorkspace', 'redo'],
+    ['cleanWorkspace', 'cleanup'],
+    ['blockDuplicate', 'duplicate'],
+    ['commentDuplicate', 'duplicate'],
+    ['blockDelete', 'delete'],
+    ['commentDelete', 'delete'],
+  ]);
+
+  if (!('id' in option)) return '';
+
+  const shortcutName = actionMap.get(option.id) ?? option.id;
+  return getShortcutKeysShort(shortcutName);
 }

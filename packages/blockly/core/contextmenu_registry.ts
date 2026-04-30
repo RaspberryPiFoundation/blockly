@@ -100,6 +100,7 @@ export class ContextMenuRegistry {
         | ContextMenuRegistry.SeparatorContextMenuOption
         | ContextMenuRegistry.ActionContextMenuOption;
       menuOption = {
+        id: item.id,
         scope,
         weight: item.weight,
       };
@@ -208,6 +209,7 @@ export namespace ContextMenuRegistry {
    * Fields common to all context menu items as used by contextmenu.ts.
    */
   export interface CoreContextMenuOption {
+    id: string;
     scope: Scope;
     weight: number;
   }
@@ -276,3 +278,5 @@ export type RegistryItem = ContextMenuRegistry.RegistryItem;
 export type ContextMenuOption = ContextMenuRegistry.ContextMenuOption;
 export type LegacyContextMenuOption =
   ContextMenuRegistry.LegacyContextMenuOption;
+export type ActionContextMenuOption =
+  ContextMenuRegistry.ActionContextMenuOption;
