@@ -212,4 +212,24 @@ suite('Comments', function () {
       assert.equal(block.getCommentText(), 'hey there');
     });
   });
+  suite('ARIA', function () {
+    setup(async function () {
+      const block = this.workspace.newBlock('empty_block');
+      block.setCommentText('test text');
+      const commentIcon = block.getIcon(Blockly.icons.IconType.COMMENT);
+      await commentIcon.setBubbleVisible(true);
+      this.bubble = commentIcon.getBubble();
+    });
+    test('Bubble has ARIA label', function () {
+      assert.isTrue(this.bubble.focusableElement.hasAttribute('aria-label'));
+    });
+    test('Bubble has ARIA role of group', function () {
+      assert.equal(this.bubble.focusableElement.getAttribute('role'), 'group');
+    });
+    test('Bubble can use AriaLabelProvider', function () {
+      this.bubble.setAriaLabelProvider(() => 'comment aria label');
+      this.bubble.recomputeAriaContext();
+      assert.equal(this.bubble.focusableElement.getAttribute('aria-label'), 'comment aria label');
+    });
+  });
 });

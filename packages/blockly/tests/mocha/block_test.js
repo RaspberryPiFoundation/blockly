@@ -1894,6 +1894,30 @@ suite('Blocks', function () {
           'Expected warning icon to be deleted after all warning text is cleared',
         );
       });
+
+      suite('ARIA', function () {
+        setup(async function () {
+          this.block.setWarningText('Warning Text');
+          this.block.initSvg();
+          this.block.render();
+          const icon = this.block.getIcon(Blockly.icons.WarningIcon.TYPE);
+          icon.performAction();
+          await Blockly.renderManagement.finishQueuedRenders();
+
+          this.bubble = icon.getBubble();
+        });
+        test('Bubble has ARIA label', async function () {
+          assert.isTrue(
+            this.bubble.focusableElement.hasAttribute('aria-label'),
+          );
+        });
+        test('Bubble has ARIA role of group', async function () {
+          assert.equal(
+            this.bubble.focusableElement.getAttribute('role'),
+            'group',
+          );
+        });
+      });
     });
 
     suite('Warning icons and collapsing', function () {

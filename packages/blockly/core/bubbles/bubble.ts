@@ -16,6 +16,7 @@ import type {IHasBubble} from '../interfaces/i_has_bubble.js';
 import {ISelectable} from '../interfaces/i_selectable.js';
 import {ContainerRegion} from '../metrics_manager.js';
 import {Scrollbar} from '../scrollbar.js';
+import {aria} from '../utils.js';
 import {Coordinate} from '../utils/coordinate.js';
 import * as dom from '../utils/dom.js';
 import * as idGenerator from '../utils/idgenerator.js';
@@ -24,6 +25,13 @@ import {Rect} from '../utils/rect.js';
 import {Size} from '../utils/size.js';
 import {Svg} from '../utils/svg.js';
 import {WorkspaceSvg} from '../workspace_svg.js';
+
+/**
+ * Represents a function that, when called, can provide a custom ARIA string to
+ * represent a bubble, or null if the default fallback should be used. See
+ * setAriaLabelProvider for more context.
+ */
+export type AriaLabelProvider = (bubble: Bubble) => string | null;
 
 /**
  * The abstract pop-up bubble class. This creates a UI that looks like a speech
@@ -91,9 +99,14 @@ export abstract class Bubble
   /** The position of the left of the bubble realtive to its anchor. */
   private relativeLeft = 0;
 
-  private dragStrategy = new BubbleDragStrategy(this, this.workspace);
+  private dragStrategy: BubbleDragStrategy = new BubbleDragStrategy(
+    this,
+    this.workspace,
+  );
 
   private focusableElement: SVGElement | HTMLElement;
+
+  private ariaLabelProvider: AriaLabelProvider | null = null;
 
   /**
    * @param workspace The workspace this bubble belongs to.
@@ -159,6 +172,7 @@ export abstract class Bubble
       this,
       this.onKeyDown,
     );
+    this.recomputeAriaContext();
   }
 
   /** Dispose of this bubble. */
@@ -758,5 +772,56 @@ export abstract class Bubble
    */
   getOwner(): (IHasBubble & IFocusableNode) | undefined {
     return this.owner;
+  }
+
+  /**
+   * Recomputes the ARIA label and role for this bubble. This is automatically called
+   * during initialization, but implementations may find it useful to call this if
+   * the bubble's label should be changed.
+   *
+   * Bubbles use a default non-specific label unless they're customized otherwise
+   * which is the responsibility of the bubble's owner rather than bubble
+   * implementations. Customization can be done via setAriaLabelProvider.
+   */
+  protected recomputeAriaContext(): void {
+    const element = this.getFocusableElement();
+    if (!element) return;
+
+    aria.setRole(element, aria.Role.GROUP);
+
+    const label = this.getAriaLabel()?.trim();
+
+    aria.setState(element, aria.State.LABEL, label ? label : 'Bubble');
+  }
+
+  /**
+   * Sets a custom ARIA label provider for this bubble, or null if it should be reset
+   * to use the default method.
+   *
+   * Bubbles do not compute ARIA labels specifically to their implementation since
+   * they can be rather general-purpose. Instead, owners of the specific bubble
+   * instance (such as an icon) are responsible for defining custom label providers
+   * for their bubbles.
+   *
+   * Note that calling this isn't sufficient for it to actually be used.
+   * recomputeAriaContext will likely also need to be called to actually apply the
+   * custom label to the bubble's focusable element.
+   */
+  setAriaLabelProvider(provider: AriaLabelProvider | null): void {
+    this.ariaLabelProvider = provider;
+  }
+
+  /**
+   * Returns the ARIA label to use for this bubble based on the provider set via
+   * setAriaLabelProvider. This will return null if the provider is absent or
+   * returns null.
+   *
+   * @returns The ARIA label to use for this bubble, or null if one is not provided.
+   */
+  getAriaLabel(): string | null {
+    if (this.ariaLabelProvider) {
+      return this.ariaLabelProvider(this);
+    }
+    return null;
   }
 }

@@ -84,4 +84,27 @@ suite('Mutator', function () {
       );
     });
   });
+  suite('ARIA', function () {
+    setup(async function () {
+      this.workspace = Blockly.inject('blocklyDiv', {});
+      defineMutatorBlocks();
+      const block = createRenderedBlock(this.workspace, 'xml_block');
+      const icon = block.getIcon(Blockly.icons.MutatorIcon.TYPE);
+      await icon.setBubbleVisible(true);
+      this.bubble = icon.getBubble();
+    });
+
+    teardown(function () {
+      Blockly.Extensions.unregister('xml_mutator');
+      Blockly.Extensions.unregister('jso_mutator');
+      sharedTestTeardown.call(this);
+    });
+
+    test('Bubble has ARIA label', async function () {
+      assert.isTrue(this.bubble.focusableElement.hasAttribute('aria-label'));
+    });
+    test('Bubble has ARIA role of group', async function () {
+      assert.equal(this.bubble.focusableElement.getAttribute('role'), 'group');
+    });
+  });
 });
