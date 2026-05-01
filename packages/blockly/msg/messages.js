@@ -2007,3 +2007,34 @@ Blockly.Msg.ARIA_LABEL_HEADING = 'heading';
 /** @type {string} */
 /// Default label for bubbles.  This is only used if a bubble is created without a label provider.
 Blockly.Msg.BUBBLE_LABEL_DEFAULT = 'Bubble';
+/** @type {string} */
+/// Label for a comment bubble. Placeholder corresponds to the content of the comment.
+/// \n\nParameters:\n* %1 - the content of the comment
+/// \n\nExamples:\n* "Comment: This block does something important."
+Blockly.Msg.BUBBLE_LABEL_COMMENT = 'Comment: %1';
+/** @type {string} */
+/// Label for a warning bubble. Placeholder corresponds to the content of the warning.
+/// \n\nParameters:\n* %1 - the content of the warning
+/// \n\nExamples:\n* "Warning: Something went wrong with this block."
+Blockly.Msg.BUBBLE_LABEL_WARNING = 'Warning: %1';
+/** @type {string} */
+/// Label for an icon, used by screen readers to identify it.
+Blockly.Msg.ICON_LABEL_DEFAULT = 'Icon';
+/** @type {string} */
+/// Label for an icon, used by screen readers to identify a closed comment. Clicking on the icon opens the comment's bubble, which allows the user to read the comment.
+Blockly.Msg.ICON_LABEL_COMMENT_CLOSED = 'Open Comment';
+/** @type {string} */
+/// Label for an icon, used by screen readers to identify an open comment. Clicking on the icon closes the comment's bubble.
+Blockly.Msg.ICON_LABEL_COMMENT_OPEN = 'Close Comment';
+/** @type {string} */
+/// Label for an icon, used by screen readers to identify a closed mutator. Clicking on the icon opens the mutator's bubble, which allows the user to edit the block's structure.
+Blockly.Msg.ICON_LABEL_MUTATOR_CLOSED = 'Edit this block';
+/** @type {string} */
+/// Label for an icon, used by screen readers to identify an open mutator. Clicking on the icon closes the mutator's bubble.
+Blockly.Msg.ICON_LABEL_MUTATOR_OPEN = 'Close block editor';
+/** @type {string} */
+/// Label for an icon, used by screen readers to identify a closed warning. Clicking on the icon opens the warning's bubble, which allows the user read the warning.
+Blockly.Msg.ICON_LABEL_WARNING_CLOSED = 'Open Warning';
+/** @type {string} */
+/// Label for an icon, used by screen readers to identify an open warning. Clicking on the icon closes the warning's bubble.
+Blockly.Msg.ICON_LABEL_WARNING_OPEN = 'Close Warning';

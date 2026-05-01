@@ -809,6 +809,7 @@ export abstract class Bubble
    */
   setAriaLabelProvider(provider: AriaLabelProvider | null): void {
     this.ariaLabelProvider = provider;
+    this.recomputeAriaContext();
   }
 
   /**

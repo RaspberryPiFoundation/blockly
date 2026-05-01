@@ -88,20 +88,51 @@ suite('Mutator', function () {
     setup(async function () {
       this.workspace = Blockly.inject('blocklyDiv', {});
       const block = createRenderedBlock(this.workspace, 'controls_if');
-      const icon = block.getIcon(Blockly.icons.MutatorIcon.TYPE);
-      await icon.setBubbleVisible(true);
-      this.bubble = icon.getBubble();
+      this.icon = block.getIcon(Blockly.icons.MutatorIcon.TYPE);
+      await this.icon.setBubbleVisible(true);
+      this.bubble = this.icon.getBubble();
     });
+
+    function getFocusableAriaLabel(iFocusable) {
+      return iFocusable.getFocusableElement().getAttribute('aria-label');
+    }
 
     teardown(function () {
       sharedTestTeardown.call(this);
     });
 
-    test('Bubble has ARIA label', async function () {
-      assert.isTrue(this.bubble.focusableElement.hasAttribute('aria-label'));
+    test('Bubble has working ARIA label provider', async function () {
+      const label = getFocusableAriaLabel(this.bubble);
+      assert.equal(label, 'Block editor workspace');
     });
     test('Bubble has ARIA role of group', async function () {
-      assert.equal(this.bubble.focusableElement.getAttribute('role'), 'group');
+      assert.equal(
+        this.bubble.getFocusableElement().getAttribute('role'),
+        'group',
+      );
+    });
+    test('Bubble uses function provider ARIA label when provided', function () {
+      this.bubble.setAriaLabelProvider(() => 'Custom mutator label');
+      const label = getFocusableAriaLabel(this.bubble);
+      assert.equal(label, 'Custom mutator label');
+    });
+    test('Bubble uses string provider ARIA label when provided', function () {
+      this.bubble.setAriaLabelProvider('Custom mutator label');
+      const label = getFocusableAriaLabel(this.bubble);
+      assert.equal(label, 'Custom mutator label');
+    });
+    test('Mutator icon label changes when bubble is opened', async function () {
+      const openLabel = getFocusableAriaLabel(this.icon);
+      assert.equal(openLabel, 'Close block editor');
+      await this.icon.setBubbleVisible(false);
+
+      const closedLabel = getFocusableAriaLabel(this.icon);
+      assert.equal(closedLabel, 'Edit this block');
+    });
+    test('Bubble uses default ARIA label when no provider is set', function () {
+      this.bubble.setAriaLabelProvider(null);
+      const label = getFocusableAriaLabel(this.bubble);
+      assert.equal(label, 'Bubble');
     });
   });
 });

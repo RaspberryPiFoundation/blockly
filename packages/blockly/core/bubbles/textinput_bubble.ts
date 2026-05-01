@@ -85,6 +85,9 @@ export class TextInputBubble extends Bubble {
     this.contentContainer.appendChild(this.editor.getDom());
     this.resizeGroup = this.createResizeHandle(this.svgRoot, workspace);
     this.setSize(this.DEFAULT_SIZE, true);
+    this.addTextChangeListener(() => {
+      this.recomputeAriaContext();
+    });
   }
 
   /** @returns the text of this bubble. */

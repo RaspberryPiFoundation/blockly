@@ -216,31 +216,54 @@ suite('Comments', function () {
     setup(async function () {
       const block = this.workspace.newBlock('empty_block');
       block.setCommentText('test text');
-      const commentIcon = block.getIcon(Blockly.icons.IconType.COMMENT);
-      await commentIcon.setBubbleVisible(true);
-      this.bubble = commentIcon.getBubble();
+      this.icon = block.getIcon(Blockly.icons.IconType.COMMENT);
+      await this.icon.setBubbleVisible(true);
+      this.bubble = this.icon.getBubble();
     });
-    test('Bubble has ARIA label', function () {
+    function getFocusableAriaLabel(iFocusable) {
+      return iFocusable.getFocusableElement().getAttribute('aria-label');
+    }
+    test('Bubble has ARIA label', async function () {
       assert.isTrue(this.bubble.focusableElement.hasAttribute('aria-label'));
     });
-    test('Bubble has ARIA role of group', function () {
+    test('Bubble has working ARIA label provider', function () {
+      const label = getFocusableAriaLabel(this.bubble);
+      assert.include(label, 'Comment');
+      assert.include(label, 'test text');
+    });
+    test('Bubble has ARIA role of group', async function () {
       assert.equal(this.bubble.focusableElement.getAttribute('role'), 'group');
     });
     test('Bubble can use AriaLabelProvider function', function () {
       this.bubble.setAriaLabelProvider(() => 'comment aria label');
       this.bubble.recomputeAriaContext();
-      assert.equal(
-        this.bubble.focusableElement.getAttribute('aria-label'),
-        'comment aria label',
-      );
+      assert.equal(getFocusableAriaLabel(this.bubble), 'comment aria label');
     });
     test('Bubble can use AriaLabelProvider string', function () {
       this.bubble.setAriaLabelProvider('comment aria label');
       this.bubble.recomputeAriaContext();
-      assert.equal(
-        this.bubble.focusableElement.getAttribute('aria-label'),
-        'comment aria label',
-      );
+      assert.equal(getFocusableAriaLabel(this.bubble), 'comment aria label');
+    });
+    test('Icon label changes when bubble is opened', async function () {
+      const openLabel = getFocusableAriaLabel(this.icon);
+      assert.equal(openLabel, 'Close Comment');
+      await this.icon.setBubbleVisible(false);
+
+      const closedLabel = getFocusableAriaLabel(this.icon);
+      assert.equal(closedLabel, 'Open Comment');
+    });
+    test('Bubble uses default ARIA label when no provider is set', function () {
+      this.bubble.setAriaLabelProvider(null);
+      const label = getFocusableAriaLabel(this.bubble);
+      assert.equal(label, 'Bubble');
+    });
+    test('Bubble ARIA label updates when comment text changes', function () {
+      const initialLabel = getFocusableAriaLabel(this.bubble);
+      assert.include(initialLabel, 'test text');
+
+      this.bubble.editor.setText('updated text');
+      const updatedLabel = getFocusableAriaLabel(this.bubble);
+      assert.include(updatedLabel, 'updated text');
     });
   });
 });

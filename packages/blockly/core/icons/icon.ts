@@ -12,8 +12,10 @@ import type {IContextMenu} from '../interfaces/i_contextmenu.js';
 import type {IFocusableTree} from '../interfaces/i_focusable_tree.js';
 import {hasBubble} from '../interfaces/i_has_bubble.js';
 import type {IIcon} from '../interfaces/i_icon.js';
+import {Msg} from '../msg.js';
 import * as renderManagement from '../render_management.js';
 import * as tooltip from '../tooltip.js';
+import {aria} from '../utils.js';
 import {Coordinate} from '../utils/coordinate.js';
 import * as dom from '../utils/dom.js';
 import * as idGenerator from '../utils/idgenerator.js';
@@ -75,6 +77,8 @@ export abstract class Icon implements IIcon, IContextMenu {
     );
     (this.svgRoot as any).tooltip = this;
     tooltip.bindMouseEvents(this.svgRoot);
+    console.log(this.svgRoot);
+    this.recomputeAriaContext();
   }
 
   dispose(): void {
@@ -218,5 +222,29 @@ export abstract class Icon implements IIcon, IContextMenu {
 
   showContextMenu(e: PointerEvent) {
     (this.getSourceBlock() as BlockSvg).showContextMenu(e);
+  }
+
+  /**
+   * Recomputes the ARIA label and role for this icon. This is automatically called
+   * during initialization, but implementations may find it useful to call this if
+   * the icon's label should be changed.
+   */
+  protected recomputeAriaContext(): void {
+    const element = this.getFocusableElement();
+    if (!element) return;
+    aria.setRole(element, aria.Role.BUTTON);
+    const label = this.getAriaLabel() ?? Msg['ICON_LABEL_DEFAULT'];
+    aria.setState(element, aria.State.LABEL, label);
+  }
+
+  /**
+   * Returns the ARIA label to use for this icon (defaults to null). Note that this
+   * method will only be called during initialization by default, so dynamic changes
+   * to the icon's ARIA label need to be applied by calling recomputeAriaContext.
+   *
+   * @returns The ARIA label to use for this icon, or null to use a default.
+   */
+  protected getAriaLabel(): string | null {
+    return null;
   }
 }
