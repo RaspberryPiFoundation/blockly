@@ -27,7 +27,7 @@ import * as layers from '../layers.js';
 import {Msg} from '../msg.js';
 import * as registry from '../registry.js';
 import {finishQueuedRenders} from '../render_management.js';
-import {RenderedConnection} from '../rendered_connection.js';
+import type {RenderedConnection} from '../rendered_connection.js';
 import * as blocks from '../serialization/blocks.js';
 import {Coordinate} from '../utils.js';
 import * as aria from '../utils/aria.js';
