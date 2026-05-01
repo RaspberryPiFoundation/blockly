@@ -344,21 +344,6 @@ function makeMenuitem(
 function getKeyboardShortcut(
   option: ContextMenuOption | LegacyContextMenuOption,
 ): string {
-  // Map built-in menu item keys to shortcut keys. These should be the same
-  // going forward, but this preserves backwards compatibility for long-standing
-  // menu items/shortcuts.
-  const actionMap = new Map<string, string>([
-    ['undoWorkspace', 'undo'],
-    ['redoWorkspace', 'redo'],
-    ['cleanWorkspace', 'cleanup'],
-    ['blockDuplicate', 'duplicate'],
-    ['commentDuplicate', 'duplicate'],
-    ['blockDelete', 'delete'],
-    ['commentDelete', 'delete'],
-  ]);
-
   if (!('id' in option)) return '';
-
-  const shortcutName = actionMap.get(option.id) ?? option.id;
-  return getShortcutKeysShort(shortcutName);
+  return getShortcutKeysShort(option.associatedKeyboardShortcut ?? option.id);
 }

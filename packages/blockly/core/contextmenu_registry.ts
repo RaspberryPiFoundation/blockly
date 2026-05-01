@@ -123,6 +123,7 @@ export class ContextMenuRegistry {
           text: displayText,
           callback: item.callback,
           enabled: precondition === 'enabled',
+          associatedKeyboardShortcut: item.associatedKeyboardShortcut,
         };
       }
 
@@ -189,6 +190,7 @@ export namespace ContextMenuRegistry {
     displayText: ((p1: Scope) => string | HTMLElement) | string | HTMLElement;
     separator?: never;
     preconditionFn: (p1: Scope, menuOpenEvent: Event) => string;
+    associatedKeyboardShortcut?: string;
   }
 
   /**
@@ -212,6 +214,7 @@ export namespace ContextMenuRegistry {
     id: string;
     scope: Scope;
     weight: number;
+    associatedKeyboardShortcut?: string;
   }
 
   /**
