@@ -18,10 +18,29 @@ import {
 } from './test_helpers/setup_teardown.js';
 import {createKeyDownEvent} from './test_helpers/user_input.js';
 
-suite('Keyboard-driven movement', function () {
+suite.only('Keyboard-driven movement', function () {
   setup(function () {
     sharedTestSetup.call(this);
-    const toolbox = document.getElementById('toolbox-simple');
+    const toolbox = {
+      // There are two kinds of toolboxes. The simpler one is a flyout toolbox.
+      kind: 'flyoutToolbox',
+      // The contents is the blocks and other items that exist in your toolbox.
+      contents: [
+        {
+          kind: 'block',
+          type: 'text_print',
+        },
+        {
+          kind: 'block',
+          type: 'logic_negate',
+        },
+        {
+          kind: 'block',
+          type: 'math_number',
+        },
+      ],
+    };
+
     this.workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
     Blockly.common.defineBlocks(p5blocks);
     Blockly.KeyboardMover.mover.setMoveDistance(20);
@@ -552,6 +571,124 @@ suite('Keyboard-driven movement', function () {
         sinon.assert.calledOnce(beepSpy);
         beepSpy.restore();
         toastSpy.restore();
+      });
+
+      test('initially moves the block to the previously-focused statement connection', function () {
+        const ifBlock = this.workspace.newBlock('controls_if');
+        ifBlock.initSvg();
+        ifBlock.render();
+
+        const statementConnection = ifBlock.getInput('DO0').connection;
+        Blockly.getFocusManager().focusNode(statementConnection);
+        const t = createKeyDownEvent(Blockly.utils.KeyCodes.T);
+        this.workspace.getInjectionDiv().dispatchEvent(t);
+        const enter = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+        this.workspace.getInjectionDiv().dispatchEvent(enter);
+
+        const movingBlock = Blockly.getFocusManager().getFocusedNode();
+        const candidate = movingBlock.getDragStrategy().connectionCandidate;
+
+        assert.equal(candidate.local, movingBlock.previousConnection);
+        assert.equal(candidate.neighbour, statementConnection);
+
+        const esc = createKeyDownEvent(Blockly.utils.KeyCodes.ESC);
+        this.workspace.getInjectionDiv().dispatchEvent(esc);
+      });
+
+      test("initially moves the block to the previously-focused block's previous connection", function () {
+        const ifBlock = this.workspace.newBlock('controls_if');
+        ifBlock.initSvg();
+        ifBlock.render();
+
+        Blockly.getFocusManager().focusNode(ifBlock);
+        const t = createKeyDownEvent(Blockly.utils.KeyCodes.T);
+        this.workspace.getInjectionDiv().dispatchEvent(t);
+        const enter = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+        this.workspace.getInjectionDiv().dispatchEvent(enter);
+
+        const movingBlock = Blockly.getFocusManager().getFocusedNode();
+        const candidate = movingBlock.getDragStrategy().connectionCandidate;
+
+        assert.equal(candidate.local, movingBlock.nextConnection);
+        assert.equal(candidate.neighbour, ifBlock.previousConnection);
+
+        const esc = createKeyDownEvent(Blockly.utils.KeyCodes.ESC);
+        this.workspace.getInjectionDiv().dispatchEvent(esc);
+      });
+
+      test('initially moves the block to the previously-focused input connection', function () {
+        const ifBlock = this.workspace.newBlock('controls_if');
+        ifBlock.initSvg();
+        ifBlock.render();
+
+        const inputConnection = ifBlock.getInput('IF0').connection;
+        Blockly.getFocusManager().focusNode(inputConnection);
+        const t = createKeyDownEvent(Blockly.utils.KeyCodes.T);
+        this.workspace.getInjectionDiv().dispatchEvent(t);
+        const down = createKeyDownEvent(Blockly.utils.KeyCodes.DOWN);
+        this.workspace.getInjectionDiv().dispatchEvent(down);
+        const enter = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+        this.workspace.getInjectionDiv().dispatchEvent(enter);
+
+        const movingBlock = Blockly.getFocusManager().getFocusedNode();
+        const candidate = movingBlock.getDragStrategy().connectionCandidate;
+
+        assert.equal(candidate.local, movingBlock.outputConnection);
+        assert.equal(candidate.neighbour, inputConnection);
+
+        const esc = createKeyDownEvent(Blockly.utils.KeyCodes.ESC);
+        this.workspace.getInjectionDiv().dispatchEvent(esc);
+      });
+
+      test("initially moves the block to the previously-focused block's input connection", function () {
+        const ifBlock = this.workspace.newBlock('controls_if');
+        ifBlock.initSvg();
+        ifBlock.render();
+
+        Blockly.getFocusManager().focusNode(ifBlock);
+        const t = createKeyDownEvent(Blockly.utils.KeyCodes.T);
+        this.workspace.getInjectionDiv().dispatchEvent(t);
+        const down = createKeyDownEvent(Blockly.utils.KeyCodes.DOWN);
+        this.workspace.getInjectionDiv().dispatchEvent(down);
+        const enter = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+        this.workspace.getInjectionDiv().dispatchEvent(enter);
+
+        const movingBlock = Blockly.getFocusManager().getFocusedNode();
+        const candidate = movingBlock.getDragStrategy().connectionCandidate;
+
+        assert.equal(candidate.local, movingBlock.outputConnection);
+        assert.equal(candidate.neighbour, ifBlock.getInput('IF0').connection);
+
+        const esc = createKeyDownEvent(Blockly.utils.KeyCodes.ESC);
+        this.workspace.getInjectionDiv().dispatchEvent(esc);
+      });
+
+      test("initially moves the block to the previously-focused block's parent input connection", function () {
+        const compare = this.workspace.newBlock('logic_compare');
+        compare.initSvg();
+        compare.render();
+
+        const boolean = this.workspace.newBlock('logic_boolean');
+        boolean.initSvg();
+        boolean.render();
+        boolean.outputConnection.connect(compare.getInput('A').connection);
+
+        Blockly.getFocusManager().focusNode(boolean);
+        const t = createKeyDownEvent(Blockly.utils.KeyCodes.T);
+        this.workspace.getInjectionDiv().dispatchEvent(t);
+        const down = createKeyDownEvent(Blockly.utils.KeyCodes.DOWN);
+        this.workspace.getInjectionDiv().dispatchEvent(down);
+        const enter = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+        this.workspace.getInjectionDiv().dispatchEvent(enter);
+
+        const movingBlock = Blockly.getFocusManager().getFocusedNode();
+        const candidate = movingBlock.getDragStrategy().connectionCandidate;
+
+        assert.equal(candidate.local, movingBlock.outputConnection);
+        assert.equal(candidate.neighbour, compare.getInput('A').connection);
+
+        const esc = createKeyDownEvent(Blockly.utils.KeyCodes.ESC);
+        this.workspace.getInjectionDiv().dispatchEvent(esc);
       });
 
       suite('Statement move tests', function () {

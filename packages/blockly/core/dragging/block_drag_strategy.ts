@@ -15,6 +15,7 @@ import {ConnectionType} from '../connection_type.js';
 import type {BlockMove} from '../events/events_block_move.js';
 import {EventType} from '../events/type.js';
 import * as eventUtils from '../events/utils.js';
+import {FocusManager} from '../focus_manager.js';
 import {showUnconstrainedMoveHint} from '../hints.js';
 import type {IBubble} from '../interfaces/i_bubble.js';
 import type {IConnectionPreviewer} from '../interfaces/i_connection_previewer.js';
@@ -26,7 +27,7 @@ import * as layers from '../layers.js';
 import {Msg} from '../msg.js';
 import * as registry from '../registry.js';
 import {finishQueuedRenders} from '../render_management.js';
-import type {RenderedConnection} from '../rendered_connection.js';
+import {RenderedConnection} from '../rendered_connection.js';
 import * as blocks from '../serialization/blocks.js';
 import {Coordinate} from '../utils.js';
 import * as aria from '../utils/aria.js';
@@ -243,10 +244,6 @@ export class BlockDragStrategy implements IDragStrategy {
     }
 
     this.block.setDragging(true);
-    this.workspace.getLayerManager()?.moveToDragLayer(this.block);
-    this.getVisibleBubbles(this.block).forEach((bubble) => {
-      this.workspace.getLayerManager()?.moveToDragLayer(bubble, false);
-    });
 
     // For keyboard-driven moves, cache a list of valid connection points for
     // use in constrained moved mode.
@@ -254,7 +251,6 @@ export class BlockDragStrategy implements IDragStrategy {
       this.cacheAllConnectionPairs();
 
       // Scooch the block to be offset from the connection preview indicator.
-      this.block.moveDuringDrag(this.startLoc);
       const neighbour = this.updateConnectionPreview(
         this.block,
         new Coordinate(0, 0),
@@ -262,10 +258,11 @@ export class BlockDragStrategy implements IDragStrategy {
       if (neighbour) {
         let offset: Coordinate;
         if (neighbour.type === ConnectionType.PREVIOUS_STATEMENT) {
-          const origin = this.block.getRelativeToSurfaceXY();
           offset = new Coordinate(
-            origin.x + this.BLOCK_CONNECTION_OFFSET,
-            origin.y - this.BLOCK_CONNECTION_OFFSET,
+            neighbour.x,
+            neighbour.y -
+              this.block.getHeightWidth().height -
+              this.BLOCK_CONNECTION_OFFSET,
           );
         } else {
           offset = new Coordinate(
@@ -275,7 +272,14 @@ export class BlockDragStrategy implements IDragStrategy {
         }
         this.block.moveDuringDrag(offset);
       }
+    } else {
+      this.block.moveDuringDrag(this.startLoc);
     }
+
+    this.workspace.getLayerManager()?.moveToDragLayer(this.block);
+    this.getVisibleBubbles(this.block).forEach((bubble) => {
+      this.workspace.getLayerManager()?.moveToDragLayer(bubble, false);
+    });
 
     this.announceMove(true);
     return this.block;
@@ -388,7 +392,7 @@ export class BlockDragStrategy implements IDragStrategy {
    * the initial connection pair is also used as the first connection candidate.
    */
   private storeInitialConnections(healStack: boolean) {
-    // Prioritze the block's parent connection (output or previous) if one exists.
+    // Prioritize the block's parent connection (output or previous) if one exists.
     let localParentConn: RenderedConnection | null = null;
     let parentTargetConn: RenderedConnection | null = null;
 
@@ -536,7 +540,8 @@ export class BlockDragStrategy implements IDragStrategy {
     delta: Coordinate,
   ): RenderedConnection | undefined {
     const currCandidate = this.connectionCandidate;
-    const newCandidate = this.getConnectionCandidate(delta);
+    const newCandidate =
+      this.getInitialCandidate() ?? this.getConnectionCandidate(delta);
 
     if (!newCandidate) {
       // Position above or below the first/last block.
@@ -584,6 +589,8 @@ export class BlockDragStrategy implements IDragStrategy {
         ? currCandidate
         : newCandidate;
     this.connectionCandidate = candidate;
+    console.log('updated');
+    console.log(this.connectionCandidate);
 
     const {local, neighbour} = candidate;
     const localIsOutputOrPrevious =
@@ -1048,5 +1055,75 @@ export class BlockDragStrategy implements IDragStrategy {
     }
 
     return connections as RenderedConnection[];
+  }
+
+  /**
+   * Returns a connection candidate to move the dragged block to at the start of
+   * a drag. If the passively focused node is a connection and the dragged block
+   * can connect to it, the connection will be returned. Otherwise, the first
+   * compatible connection on the passively focused node's block, if any, will
+   * be returned. Returns null if the workspace does not have passive focus.
+   */
+  private getInitialCandidate(): ConnectionCandidate | null {
+    const passiveElement = this.workspace
+      .getSvgGroup()
+      .querySelector(`.${FocusManager.PASSIVE_FOCUS_NODE_CSS_CLASS_NAME}`);
+    if (
+      !passiveElement ||
+      !passiveElement.id ||
+      passiveElement === this.block.getFocusableElement()
+    ) {
+      return null;
+    }
+    const passiveNode = this.workspace.lookUpFocusableNode(passiveElement.id);
+    if (!passiveNode) return null;
+
+    const passiveBlock = this.workspace
+      .getNavigator()
+      .getSourceBlockFromNode(passiveNode);
+    if (!passiveBlock) return null;
+
+    const passiveBlockConnections = passiveBlock.getConnections_(false);
+    let passiveConnection: RenderedConnection | null = null;
+
+    // If the passively focused node is a connection, return it if it is
+    // compatible with the dragged block.
+    if (passiveBlockConnections.includes(passiveNode as any)) {
+      passiveConnection = passiveNode as RenderedConnection;
+      const connectionChecker = this.block.workspace.connectionChecker;
+      const local = this.block.getConnections_(false).find((connection) => {
+        return connectionChecker.canConnect(
+          connection,
+          passiveConnection,
+          true,
+          Infinity,
+        );
+      });
+
+      if (local) {
+        return {local, neighbour: passiveConnection, distance: 0};
+      }
+    }
+
+    // Fall back to returning the first compatible connection on the passively
+    // focused block, if any.
+    const pair = this.allConnectionPairs.find(
+      (pair) => pair.neighbour.getSourceBlock() === passiveBlock,
+    );
+    if (pair) {
+      return this.pairToCandidate(pair);
+    }
+
+    // Fall back further to the parent connection of the passively focused
+    // block, if any.
+    const outputTarget = passiveBlock.outputConnection?.targetConnection;
+    const parentPair = this.allConnectionPairs.find(
+      (pair) => pair.neighbour === outputTarget,
+    );
+    if (parentPair) {
+      return this.pairToCandidate(parentPair);
+    }
+
+    return null;
   }
 }
