@@ -18,7 +18,7 @@ import {
 } from './test_helpers/setup_teardown.js';
 import {createKeyDownEvent} from './test_helpers/user_input.js';
 
-suite.only('Keyboard-driven movement', function () {
+suite('Keyboard-driven movement', function () {
   setup(function () {
     sharedTestSetup.call(this);
     const toolbox = {
