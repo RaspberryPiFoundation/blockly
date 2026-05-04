@@ -116,6 +116,11 @@ export class TextInputBubble extends Bubble {
     this.editor.addTextChangeListener(listener);
   }
 
+  /** Removes the given listener from the list of text change listeners. */
+  removeTextChangeListener(listener: () => void) {
+    this.editor.removeTextChangeListener(listener);
+  }
+
   /** Adds a change listener to be notified when this bubble's size changes. */
   addSizeChangeListener(listener: () => void) {
     this.sizeChangeListeners.push(listener);
@@ -289,6 +294,16 @@ export class TextInputBubble extends Bubble {
    */
   performAction() {
     getFocusManager().focusNode(this.getEditor());
+  }
+
+  /**
+   * Dispose of this bubble.
+   */
+  dispose() {
+    super.dispose();
+    this.removeTextChangeListener(() => {
+      this.recomputeAriaContext();
+    });
   }
 }
 

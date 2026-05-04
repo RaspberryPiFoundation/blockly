@@ -77,7 +77,6 @@ export abstract class Icon implements IIcon, IContextMenu {
     );
     (this.svgRoot as any).tooltip = this;
     tooltip.bindMouseEvents(this.svgRoot);
-    console.log(this.svgRoot);
     this.recomputeAriaContext();
   }
 

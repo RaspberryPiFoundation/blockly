@@ -68,12 +68,6 @@ export class CommentIcon extends Icon implements IHasBubble, ISerializable {
    */
   private bubbleVisiblity = false;
 
-  /**
-   * True once the field’s DOM has been created and it is safe to run ARIA
-   * updates in response to visibility changes.
-   */
-  isInitialized: boolean = false;
-
   constructor(protected readonly sourceBlock: Block) {
     super(sourceBlock);
   }
@@ -119,7 +113,6 @@ export class CommentIcon extends Icon implements IHasBubble, ISerializable {
       this.svgRoot,
     );
     dom.addClass(this.svgRoot!, 'blocklyCommentIcon');
-    this.isInitialized = true;
   }
 
   override dispose() {
@@ -344,7 +337,7 @@ export class CommentIcon extends Icon implements IHasBubble, ISerializable {
         'comment',
       ),
     );
-    if (this.isInitialized) {
+    if (this.svgRoot) {
       this.recomputeAriaContext();
     }
   }

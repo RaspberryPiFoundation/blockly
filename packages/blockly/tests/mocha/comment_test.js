@@ -223,7 +223,7 @@ suite('Comments', function () {
     function getFocusableAriaLabel(iFocusable) {
       return iFocusable.getFocusableElement().getAttribute('aria-label');
     }
-    test('Bubble has ARIA label', async function () {
+    test('Bubble has ARIA label', function () {
       assert.isTrue(this.bubble.focusableElement.hasAttribute('aria-label'));
     });
     test('Bubble has working ARIA label provider', function () {
@@ -231,7 +231,7 @@ suite('Comments', function () {
       assert.include(label, 'Comment');
       assert.include(label, 'test text');
     });
-    test('Bubble has ARIA role of group', async function () {
+    test('Bubble has ARIA role of group', function () {
       assert.equal(this.bubble.focusableElement.getAttribute('role'), 'group');
     });
     test('Bubble can use AriaLabelProvider function', function () {

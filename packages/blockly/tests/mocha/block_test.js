@@ -1914,7 +1914,7 @@ suite('Blocks', function () {
           );
         });
         test('Bubble has working ARIA label provider', function () {
-          const label = this.bubble.focusableElement.getAttribute('aria-label');
+          const label = getFocusableAriaLabel(this.bubble);
           assert.include(label, 'Warning');
           assert.include(label, 'Something went wrong');
         });

@@ -101,11 +101,11 @@ suite('Mutator', function () {
       sharedTestTeardown.call(this);
     });
 
-    test('Bubble has working ARIA label provider', async function () {
+    test('Bubble has working ARIA label provider', function () {
       const label = getFocusableAriaLabel(this.bubble);
       assert.equal(label, 'Block editor workspace');
     });
-    test('Bubble has ARIA role of group', async function () {
+    test('Bubble has ARIA role of group', function () {
       assert.equal(
         this.bubble.getFocusableElement().getAttribute('role'),
         'group',
