@@ -390,6 +390,12 @@
 	"CUT_SHORTCUT": "잘라내기",
 	"COPY_SHORTCUT": "복사",
 	"PASTE_SHORTCUT": "붙여넣기",
+	"HELP_PROMPT": "%1을 눌러 키보드 조작법에 대한 도움말 보기",
 	"SHORTCUTS_GENERAL": "일반",
-	"SHORTCUTS_EDITING": "편집"
+	"SHORTCUTS_EDITING": "편집",
+	"SHORTCUTS_CODE_NAVIGATION": "코드 둘러보기",
+	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "%1 키를 누른 상태에서 화살표 키를 사용하여 자유롭게 이동한 다음, %2 키를 눌러 위치를 확정하세요",
+	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "화살표 키를 사용하여 이동한 다음, %1 키를 눌러 위치를 확정하세요",
+	"KEYBOARD_NAV_COPIED_HINT": "복사되었습니다. %1를 눌러 붙여넣으세요.",
+	"KEYBOARD_NAV_CUT_HINT": "잘라내었습니다. %1를 눌러 붙여넣으세요."
 }
