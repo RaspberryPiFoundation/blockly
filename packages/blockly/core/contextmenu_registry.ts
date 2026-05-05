@@ -190,6 +190,12 @@ export namespace ContextMenuRegistry {
     displayText: ((p1: Scope) => string | HTMLElement) | string | HTMLElement;
     separator?: never;
     preconditionFn: (p1: Scope, menuOpenEvent: Event) => string;
+    /**
+     * Identifier used to associate this context menu item with a keyboard
+     * shortcut  which will be displayed in the menu as a hint. Should
+     * correspond to the name under which a keyboard shortcut that performs the
+     * same action as this menu item is registered.
+     */
     associatedKeyboardShortcut?: string;
   }
 
