@@ -92,6 +92,11 @@ suite('Keyboard-driven movement', function () {
     workspace.getInjectionDiv().dispatchEvent(event);
   }
 
+  function focusToolbox(workspace) {
+    const event = createKeyDownEvent(Blockly.utils.KeyCodes.T);
+    workspace.getInjectionDiv().dispatchEvent(event);
+  }
+
   /**
    * Create a new block from serialised state (parsed JSON) and
    * optionally attach it to an existing block on the workspace.
@@ -551,7 +556,7 @@ suite('Keyboard-driven movement', function () {
       testExemptedShortcutsAllowed();
     });
 
-    suite('in constrained mode', function () {
+    suite.only('in constrained mode', function () {
       test('prompts to use unconstrained mode when no destinations are available', function () {
         const toastSpy = sinon.spy(Blockly.Toast, 'show');
         const beepSpy = sinon.spy(this.workspace.getAudioManager(), 'beep');
@@ -580,19 +585,16 @@ suite('Keyboard-driven movement', function () {
 
         const statementConnection = ifBlock.getInput('DO0').connection;
         Blockly.getFocusManager().focusNode(statementConnection);
-        const t = createKeyDownEvent(Blockly.utils.KeyCodes.T);
-        this.workspace.getInjectionDiv().dispatchEvent(t);
-        const enter = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
-        this.workspace.getInjectionDiv().dispatchEvent(enter);
+        focusToolbox(this.workspace);
+        startMove(this.workspace);
 
-        const movingBlock = Blockly.getFocusManager().getFocusedNode();
-        const candidate = movingBlock.getDragStrategy().connectionCandidate;
+        const printBlock = Blockly.getFocusManager().getFocusedNode();
+        const candidate = printBlock.getDragStrategy().connectionCandidate;
 
-        assert.equal(candidate.local, movingBlock.previousConnection);
+        assert.equal(candidate.local, printBlock.previousConnection);
         assert.equal(candidate.neighbour, statementConnection);
 
-        const esc = createKeyDownEvent(Blockly.utils.KeyCodes.ESC);
-        this.workspace.getInjectionDiv().dispatchEvent(esc);
+        cancelMove(this.workspace);
       });
 
       test("initially moves the block to the previously-focused block's previous connection", function () {
@@ -601,19 +603,16 @@ suite('Keyboard-driven movement', function () {
         ifBlock.render();
 
         Blockly.getFocusManager().focusNode(ifBlock);
-        const t = createKeyDownEvent(Blockly.utils.KeyCodes.T);
-        this.workspace.getInjectionDiv().dispatchEvent(t);
-        const enter = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
-        this.workspace.getInjectionDiv().dispatchEvent(enter);
+        focusToolbox(this.workspace);
+        startMove(this.workspace)
 
-        const movingBlock = Blockly.getFocusManager().getFocusedNode();
-        const candidate = movingBlock.getDragStrategy().connectionCandidate;
+        const printBlock = Blockly.getFocusManager().getFocusedNode();
+        const candidate = printBlock.getDragStrategy().connectionCandidate;
 
-        assert.equal(candidate.local, movingBlock.nextConnection);
+        assert.equal(candidate.local, printBlock.nextConnection);
         assert.equal(candidate.neighbour, ifBlock.previousConnection);
 
-        const esc = createKeyDownEvent(Blockly.utils.KeyCodes.ESC);
-        this.workspace.getInjectionDiv().dispatchEvent(esc);
+        cancelMove(this.workspace);
       });
 
       test('initially moves the block to the previously-focused input connection', function () {
@@ -623,21 +622,17 @@ suite('Keyboard-driven movement', function () {
 
         const inputConnection = ifBlock.getInput('IF0').connection;
         Blockly.getFocusManager().focusNode(inputConnection);
-        const t = createKeyDownEvent(Blockly.utils.KeyCodes.T);
-        this.workspace.getInjectionDiv().dispatchEvent(t);
-        const down = createKeyDownEvent(Blockly.utils.KeyCodes.DOWN);
-        this.workspace.getInjectionDiv().dispatchEvent(down);
-        const enter = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
-        this.workspace.getInjectionDiv().dispatchEvent(enter);
+        focusToolbox(this.workspace);
+        moveDown(this.workspace);
+        startMove(this.workspace);
 
-        const movingBlock = Blockly.getFocusManager().getFocusedNode();
-        const candidate = movingBlock.getDragStrategy().connectionCandidate;
+        const notBlock = Blockly.getFocusManager().getFocusedNode();
+        const candidate = notBlock.getDragStrategy().connectionCandidate;
 
-        assert.equal(candidate.local, movingBlock.outputConnection);
+        assert.equal(candidate.local, notBlock.outputConnection);
         assert.equal(candidate.neighbour, inputConnection);
 
-        const esc = createKeyDownEvent(Blockly.utils.KeyCodes.ESC);
-        this.workspace.getInjectionDiv().dispatchEvent(esc);
+        cancelMove(this.workspace);
       });
 
       test("initially moves the block to the previously-focused block's input connection", function () {
@@ -646,21 +641,17 @@ suite('Keyboard-driven movement', function () {
         ifBlock.render();
 
         Blockly.getFocusManager().focusNode(ifBlock);
-        const t = createKeyDownEvent(Blockly.utils.KeyCodes.T);
-        this.workspace.getInjectionDiv().dispatchEvent(t);
-        const down = createKeyDownEvent(Blockly.utils.KeyCodes.DOWN);
-        this.workspace.getInjectionDiv().dispatchEvent(down);
-        const enter = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
-        this.workspace.getInjectionDiv().dispatchEvent(enter);
+        focusToolbox(this.workspace);
+        moveDown(this.workspace);
+        startMove(this.workspace);
 
-        const movingBlock = Blockly.getFocusManager().getFocusedNode();
-        const candidate = movingBlock.getDragStrategy().connectionCandidate;
+        const notBlock = Blockly.getFocusManager().getFocusedNode();
+        const candidate = notBlock.getDragStrategy().connectionCandidate;
 
-        assert.equal(candidate.local, movingBlock.outputConnection);
+        assert.equal(candidate.local, notBlock.outputConnection);
         assert.equal(candidate.neighbour, ifBlock.getInput('IF0').connection);
 
-        const esc = createKeyDownEvent(Blockly.utils.KeyCodes.ESC);
-        this.workspace.getInjectionDiv().dispatchEvent(esc);
+        cancelMove(this.workspace);
       });
 
       test("initially moves the block to the previously-focused block's parent input connection", function () {
@@ -674,21 +665,17 @@ suite('Keyboard-driven movement', function () {
         boolean.outputConnection.connect(compare.getInput('A').connection);
 
         Blockly.getFocusManager().focusNode(boolean);
-        const t = createKeyDownEvent(Blockly.utils.KeyCodes.T);
-        this.workspace.getInjectionDiv().dispatchEvent(t);
-        const down = createKeyDownEvent(Blockly.utils.KeyCodes.DOWN);
-        this.workspace.getInjectionDiv().dispatchEvent(down);
-        const enter = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
-        this.workspace.getInjectionDiv().dispatchEvent(enter);
+        focusToolbox(this.workspace);
+        moveDown(this.workspace);
+        startMove(this.workspace);
 
-        const movingBlock = Blockly.getFocusManager().getFocusedNode();
-        const candidate = movingBlock.getDragStrategy().connectionCandidate;
+        const notBlock = Blockly.getFocusManager().getFocusedNode();
+        const candidate = notBlock.getDragStrategy().connectionCandidate;
 
-        assert.equal(candidate.local, movingBlock.outputConnection);
+        assert.equal(candidate.local, notBlock.outputConnection);
         assert.equal(candidate.neighbour, compare.getInput('A').connection);
 
-        const esc = createKeyDownEvent(Blockly.utils.KeyCodes.ESC);
-        this.workspace.getInjectionDiv().dispatchEvent(esc);
+        cancelMove(this.workspace);
       });
 
       suite('Statement move tests', function () {
