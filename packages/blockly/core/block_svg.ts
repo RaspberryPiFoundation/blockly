@@ -1893,7 +1893,8 @@ export class BlockSvg
   onNodeFocus(): void {
     this.recomputeAriaAttributes();
     this.select();
-    if (getFocusManager().getFocusedNode() !== this) {
+    const focusedNode = getFocusManager().getFocusedNode();
+    if (focusedNode && focusedNode !== this) {
       renderManagement.finishQueuedRenders().then(() => {
         this.workspace.scrollBoundsIntoView(
           this.getBoundingRectangleWithoutChildren(),
