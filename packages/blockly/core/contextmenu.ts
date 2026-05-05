@@ -335,15 +335,17 @@ function makeMenuitem(
 }
 
 /**
- * Returns a keyboard shortcut for the given context menu item, if any.
+ * Returns a textual representation of the keyboard shortcut for the given
+ * context menu item, if any.
  *
  * @param option The context menu item to retrieve a keyboard shortcut for.
- * @returns The keyboard shortcut registered under the same ID as the context
- *     menu item, if any.
+ * @returns A textual representation of the keyboard shortcut registered under
+ *     the name stored in the menu option's `associatedKeyboardShortcut` field,
+ *     if any.
  */
 function getKeyboardShortcut(
   option: ContextMenuOption | LegacyContextMenuOption,
 ): string {
-  if (!('id' in option)) return '';
-  return getShortcutKeysShort(option.associatedKeyboardShortcut ?? option.id);
+  if (!('id' in option) || !option.associatedKeyboardShortcut) return '';
+  return getShortcutKeysShort(option.associatedKeyboardShortcut);
 }
