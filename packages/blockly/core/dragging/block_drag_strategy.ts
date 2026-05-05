@@ -589,8 +589,6 @@ export class BlockDragStrategy implements IDragStrategy {
         ? currCandidate
         : newCandidate;
     this.connectionCandidate = candidate;
-    console.log('updated');
-    console.log(this.connectionCandidate);
 
     const {local, neighbour} = candidate;
     const localIsOutputOrPrevious =
