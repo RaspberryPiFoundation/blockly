@@ -1915,13 +1915,6 @@ Blockly.Msg.ANNOUNCE_MOVE_BEFORE = 'Moving %1 before %3.';
 /// \n\nExamples:\n* "Moving after repeat 10, times, do."\n* "Moving 2 stack blocks after repeat 10, times, do."
 Blockly.Msg.ANNOUNCE_MOVE_AFTER = 'Moving %1 after %3.';
 /** @type {string} */
-/// ARIA live region message announcing a block is being moved inside another block via horizontal connection, optionally including connection-specific label for disambiguation.
-// \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks
-// \n* %3 - the label of the target (neighbour) block
-// \n* %4 - optional phrase describing the target connection label
-// \n\nExamples:\n* "Moving inside not."\n* "Moving 9 inside square root."
-Blockly.Msg.ANNOUNCE_MOVE_IN = 'Moving %1 in %3 %4.';
-/** @type {string} */
 /// ARIA live region message announcing a block is being moved inside another block via vertical connection, optionally including connection-specific label for disambiguation.
 // \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks
 // \n* %3 - the label of the target (neighbour) block
