@@ -556,7 +556,7 @@ suite('Keyboard-driven movement', function () {
       testExemptedShortcutsAllowed();
     });
 
-    suite.only('in constrained mode', function () {
+    suite('in constrained mode', function () {
       test('prompts to use unconstrained mode when no destinations are available', function () {
         const toastSpy = sinon.spy(Blockly.Toast, 'show');
         const beepSpy = sinon.spy(this.workspace.getAudioManager(), 'beep');
@@ -604,7 +604,7 @@ suite('Keyboard-driven movement', function () {
 
         Blockly.getFocusManager().focusNode(ifBlock);
         focusToolbox(this.workspace);
-        startMove(this.workspace)
+        startMove(this.workspace);
 
         const printBlock = Blockly.getFocusManager().getFocusedNode();
         const candidate = printBlock.getDragStrategy().connectionCandidate;
@@ -635,6 +635,25 @@ suite('Keyboard-driven movement', function () {
         cancelMove(this.workspace);
       });
 
+      test('initially moves the block to the previously-focused not-first statement connection', function () {
+        const ifBlock = this.workspace.newBlock('controls_ifelse');
+        ifBlock.initSvg();
+        ifBlock.render();
+
+        const statementConnection = ifBlock.getInput('ELSE').connection;
+        Blockly.getFocusManager().focusNode(statementConnection);
+        focusToolbox(this.workspace);
+        startMove(this.workspace);
+
+        const printBlock = Blockly.getFocusManager().getFocusedNode();
+        const candidate = printBlock.getDragStrategy().connectionCandidate;
+
+        assert.equal(candidate.local, printBlock.previousConnection);
+        assert.equal(candidate.neighbour, statementConnection);
+
+        cancelMove(this.workspace);
+      });
+
       test("initially moves the block to the previously-focused block's input connection", function () {
         const ifBlock = this.workspace.newBlock('controls_if');
         ifBlock.initSvg();
@@ -650,6 +669,25 @@ suite('Keyboard-driven movement', function () {
 
         assert.equal(candidate.local, notBlock.outputConnection);
         assert.equal(candidate.neighbour, ifBlock.getInput('IF0').connection);
+
+        cancelMove(this.workspace);
+      });
+
+      test('initially moves the block to the previously-focused not-first input connection', function () {
+        const compare = this.workspace.newBlock('logic_compare');
+        compare.initSvg();
+        compare.render();
+
+        Blockly.getFocusManager().focusNode(compare.getInput('B').connection);
+        focusToolbox(this.workspace);
+        moveDown(this.workspace);
+        startMove(this.workspace);
+
+        const notBlock = Blockly.getFocusManager().getFocusedNode();
+        const candidate = notBlock.getDragStrategy().connectionCandidate;
+
+        assert.equal(candidate.local, notBlock.outputConnection);
+        assert.equal(candidate.neighbour, compare.getInput('B').connection);
 
         cancelMove(this.workspace);
       });
@@ -674,6 +712,24 @@ suite('Keyboard-driven movement', function () {
 
         assert.equal(candidate.local, notBlock.outputConnection);
         assert.equal(candidate.neighbour, compare.getInput('A').connection);
+
+        cancelMove(this.workspace);
+      });
+
+      test('initially moves the block to the workspace when the previously-focused block has no compatible connections', function () {
+        const repeat = this.workspace.newBlock('controls_repeat');
+        repeat.initSvg();
+        repeat.render();
+
+        Blockly.getFocusManager().focusNode(repeat);
+        focusToolbox(this.workspace);
+        moveDown(this.workspace);
+        startMove(this.workspace);
+
+        const notBlock = Blockly.getFocusManager().getFocusedNode();
+        const candidate = notBlock.getDragStrategy().connectionCandidate;
+
+        assert.isNull(candidate);
 
         cancelMove(this.workspace);
       });
