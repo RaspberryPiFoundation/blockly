@@ -362,6 +362,21 @@ suite('WidgetDiv', function () {
       assert.strictEqual(Blockly.getFocusManager().getFocusedNode(), block);
       assert.strictEqual(document.activeElement, widgetDivElem);
     });
+
+    test('makes the widget div owned by the workspace', function () {
+      const block = this.setUpBlockWithField();
+      const field = Array.from(block.getFields())[0];
+      Blockly.getFocusManager().focusNode(block);
+
+      Blockly.WidgetDiv.show(field, false, () => {}, null, true);
+      assert.equal(
+        Blockly.utils.aria.getState(
+          Blockly.getMainWorkspace().getFocusableElement(),
+          Blockly.utils.aria.State.OWNS,
+        ),
+        Blockly.WidgetDiv.getDiv().id,
+      );
+    });
   });
 
   suite('hide()', function () {
@@ -423,6 +438,22 @@ suite('WidgetDiv', function () {
       const blockFocusableElem = block.getFocusableElement();
       assert.strictEqual(Blockly.getFocusManager().getFocusedNode(), block);
       assert.strictEqual(document.activeElement, blockFocusableElem);
+    });
+
+    test('clears ownership of the widget div by the workspace', function () {
+      const block = this.setUpBlockWithField();
+      const field = Array.from(block.getFields())[0];
+      Blockly.getFocusManager().focusNode(block);
+      Blockly.WidgetDiv.show(field, false, () => {}, null, true);
+
+      Blockly.WidgetDiv.hide();
+
+      assert.isNull(
+        Blockly.utils.aria.getState(
+          Blockly.getMainWorkspace().getFocusableElement(),
+          Blockly.utils.aria.State.OWNS,
+        ),
+      );
     });
   });
 });
