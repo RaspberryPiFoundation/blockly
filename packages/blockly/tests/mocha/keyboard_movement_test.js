@@ -6,7 +6,7 @@
 
 import {getInputLabelsSubset} from '../../build/src/core/block_aria_composer.js';
 import * as Blockly from '../../build/src/core/blockly.js';
-import { Verbosity } from '../../build/src/core/utils/aria.js';
+import {Verbosity} from '../../build/src/core/utils/aria.js';
 import {assert} from '../../node_modules/chai/index.js';
 import {
   moveStatementTestBlocks,
@@ -1144,7 +1144,11 @@ suite('Keyboard-driven movement', function () {
         this.getBlockLabel = (block) =>
           block.getAriaLabel(Blockly.utils.aria.Verbosity.TERSE);
         this.getInputLabel = (block, input) =>
-          getInputLabelsSubset(block, block.getInput(input), Verbosity.TERSE).join(', ');
+          getInputLabelsSubset(
+            block,
+            block.getInput(input),
+            Verbosity.TERSE,
+          ).join(', ');
         this.block1 = this.workspace.newBlock('draw_emoji');
         this.block1.initSvg();
         this.block1.render();
@@ -1244,10 +1248,7 @@ suite('Keyboard-driven movement', function () {
         this.moveAndAssert(
           moveRight,
           ['Moving', 'around', this.getBlockLabel(this.block1)],
-          [
-            this.getBlockLabel(loop),
-            this.getInputLabel(loop, 'DO'),
-          ],
+          [this.getBlockLabel(loop), this.getInputLabel(loop, 'DO')],
         );
 
         cancelMove(this.workspace);

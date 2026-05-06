@@ -345,6 +345,7 @@ function getParentToolboxCategoryLabel(block: BlockSvg) {
 
 /**
  * Returns the appropriate translated announcement template based on the connection type.
+ *
  * @param preposition The relationship between the local and neighbour connections.
  * @returns A translated string template to use for announcing a block move.
  */
@@ -365,6 +366,7 @@ function getAnnouncementTemplate(preposition: ConnectionPreposition): string {
 
 /**
  * Returns a label for a connection includes either a block label, input label or both.
+ *
  * @param conn The connection to generate a label for.
  * @param baseLabel An optional block label to include in the returned string.
  * @returns A label describing the given connection
