@@ -1978,9 +1978,9 @@ export class BlockSvg
 
   /**
    * Returns an ID for the visual "row" this block is part of. A "row" is
-   * bounded by a previous/next connection or a block stack boundary; all
-   * blocks/inputs nested inside of a block that is a root block or has a next/
-   * previous connection are conceptually part of its same row.
+   * bounded by a previous/next connection, a statement input, or a block stack
+   * boundary; all blocks/inputs nested inside of one of those are conceptually
+   * part of its same row.
    *
    * @internal
    */
