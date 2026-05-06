@@ -157,6 +157,8 @@
       import * as Blockly from '../../build/blockly.loader.mjs';
       import '../../build/blocks.loader.mjs';
       import {javascriptGenerator} from '../../build/javascript.loader.mjs';
+      import {config} from '../../node_modules/chai/index.js';
+      config.showDiff = false;
 
       // Import tests.
       import './aria_test.js';
