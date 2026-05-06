@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-05-05 15:35:14.081817",
+		"lastupdated": "2026-05-06 14:12:59.060731",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -480,11 +480,12 @@
 	"BLOCK_LABEL_STACK_BLOCKS": "%1 stack blocks",
 	"INPUT_LABEL_INDEX": "input %1",
 	"ANNOUNCE_MOVE_WORKSPACE": "Moving %1 on workspace.",
-	"ANNOUNCE_MOVE_BEFORE": "Moving %1 before %3.",
-	"ANNOUNCE_MOVE_AFTER": "Moving %1 after %3.",
-	"ANNOUNCE_MOVE_INSIDE": "Moving %1 inside %3 %4.",
-	"ANNOUNCE_MOVE_AROUND": "Moving %1 %2 around %3.",
-	"ANNOUNCE_MOVE_TO": "Moving %1 %2 to %3 %4.",
+	"ANNOUNCE_MOVE_BEFORE": "Moving %1 before %2.",
+	"ANNOUNCE_MOVE_AFTER": "Moving %1 after %2.",
+	"ANNOUNCE_MOVE_INSIDE": "Moving %1 inside %2.",
+	"ANNOUNCE_MOVE_AROUND": "Moving %1 around %2.",
+	"ANNOUNCE_MOVE_TO": "Moving %1 to %2.",
+	"ANNOUNCE_MOVE_OF": "%1 of %2",
 	"ANNOUNCE_MOVE_CANCELED": "Canceled movement.",
 	"FIELD_LABEL_EMPTY": "empty",
 	"ARIA_TYPE_FIELD_INPUT": "input",

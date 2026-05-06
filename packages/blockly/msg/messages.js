@@ -1902,40 +1902,41 @@ Blockly.Msg.INPUT_LABEL_INDEX = 'input %1';
 /** @type {string} */
 /// ARIA live region message announcing a block is being moved on the workspace, without specifying a target location or specific movement direction.
 // \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks
-// \n\nExamples:\n* "Moving block A on workspace."\n* "Moving 2 stack blocks on workspace."
+// \n\nExamples:\n* "Moving if, do on workspace."\n* "Moving 2 stack blocks on workspace."
 Blockly.Msg.ANNOUNCE_MOVE_WORKSPACE = 'Moving %1 on workspace.';
 /** @type {string} */
 /// ARIA live region message announcing a block is being moved before another block
-/// \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks\n* %3 - the label of the target (neighbour) block
-/// \n\nExamples:\n* "Moving before repeat 10, times, do."\n* "Moving 2 stack blocks before repeat 10, times, do."
-Blockly.Msg.ANNOUNCE_MOVE_BEFORE = 'Moving %1 before %3.';
+/// \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks\n* %2 - the label of the target (neighbour) block
+/// \n\nExamples:\n* "Moving before repeat, 10, times, do."\n* "Moving print before repeat, 10, times, do."
+Blockly.Msg.ANNOUNCE_MOVE_BEFORE = 'Moving %1 before %2.';
 /** @type {string} */
 /// ARIA live region message announcing a block is being moved after another block
-/// \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks\n* %3 - the label of the target (neighbour) block
-/// \n\nExamples:\n* "Moving after repeat 10, times, do."\n* "Moving 2 stack blocks after repeat 10, times, do."
-Blockly.Msg.ANNOUNCE_MOVE_AFTER = 'Moving %1 after %3.';
+/// \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks\n* %2 - the label of the target (neighbour) block
+/// \n\nExamples:\n* "Moving after repeat, 10, times, do."\n* "Moving 2 stack blocks after repeat, 10, times, do."
+Blockly.Msg.ANNOUNCE_MOVE_AFTER = 'Moving %1 after %2.';
 /** @type {string} */
-/// ARIA live region message announcing a block is being moved inside another block via vertical connection, optionally including connection-specific label for disambiguation.
+/// ARIA live region message announcing a block is being moved inside another block's statement connection, optionally including connection-specific label for disambiguation.
 // \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks
-// \n* %3 - the label of the target (neighbour) block
-// \n* %4 - optional phrase describing the target connection label
-// \n\nExamples:\n* "Moving inside if, do."\n* "Moving 2 stack blocks inside if, do else statement."
-Blockly.Msg.ANNOUNCE_MOVE_INSIDE = 'Moving %1 inside %3 %4.';
+// \n* %2 - the label of the target (neighbour) block
+// \n\nExamples:\n* "Moving inside if, do."\n* "Moving 3 stack blocks inside repeat, 10, times, do."
+Blockly.Msg.ANNOUNCE_MOVE_INSIDE = 'Moving %1 inside %2.';
 /** @type {string} */
-/// ARIA live region message announcing a block is being moved around another block, optionally including connection-specific label for disambiguation.
-/// \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks
-/// \n* %2 - optional phrase describing the local connection label
-/// \n* %3 - the label of the target (neighbour) block
-/// \n\nExamples:\n* "Moving around print abc."\n* "Moving if, do else statement around print abc."
-Blockly.Msg.ANNOUNCE_MOVE_AROUND = 'Moving %1 %2 around %3.';
+/// ARIA live region message announcing a block is being moved around another block (using its own statement connection), optionally including connection-specific label for disambiguation.
+/// \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks or a local connection label
+/// \n* %2 - the label of the target (neighbour) block
+/// \n\nExamples:\n* "Moving around print."\n* "Moving else around print."
+Blockly.Msg.ANNOUNCE_MOVE_AROUND = 'Moving %1 around %2.';
 /** @type {string} */
-/// ARIA live region message announcing a block is being moved to a workspace location where the relationship is not specifically known.
-/// \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks
-/// \n* %2 - optional phrase describing the local connection label
-/// \n* %3 - the label of the target (neighbour) block or location
-/// \n* %4 - optional phrase describing the target connection label
-/// \n\nExamples:\n* "Moving to repeat 10, times, do."\n* "Moving 2 stack blocks else statement to repeat 10, times, do previous connection."
-Blockly.Msg.ANNOUNCE_MOVE_TO = 'Moving %1 %2 to %3 %4.';
+/// ARIA live region message announcing a block is being moved to another block's value input connection, optionally including connection-specific label for disambiguation.
+/// \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks or a local connection label
+/// \n* %2 - the label of the target (neighbour) block or location
+/// \n\nExamples:\n* "Moving to repeat, 10, times, do."\n* "Moving 2 stack blocks else statement to previous connection in repeat, 10, times, do."
+Blockly.Msg.ANNOUNCE_MOVE_TO = 'Moving %1 to %2.';
+/** @type {string} */
+/// A label describing a specific connection of a block. Part of an ARIA live region message announcing a block is being moved.
+/// \n\nParameters:\n* %1 - connection label\n* %2 - block label of the block the connection belongs to
+/// \n\nExamples:\n* "else statement of if, do""
+Blockly.Msg.ANNOUNCE_MOVE_OF = '%1 of %2';
 /** @type {string} */
 /// ARIA live region message announcing a block movement has been canceled.
 Blockly.Msg.ANNOUNCE_MOVE_CANCELED = 'Canceled movement.';

@@ -6,6 +6,7 @@
 
 import {getInputLabelsSubset} from '../../build/src/core/block_aria_composer.js';
 import * as Blockly from '../../build/src/core/blockly.js';
+import { Verbosity } from '../../build/src/core/utils/aria.js';
 import {assert} from '../../node_modules/chai/index.js';
 import {
   moveStatementTestBlocks,
@@ -1142,6 +1143,8 @@ suite('Keyboard-driven movement', function () {
         };
         this.getBlockLabel = (block) =>
           block.getAriaLabel(Blockly.utils.aria.Verbosity.TERSE);
+        this.getInputLabel = (block, input) =>
+          getInputLabelsSubset(block, block.getInput(input), Verbosity.TERSE).join(', ');
         this.block1 = this.workspace.newBlock('draw_emoji');
         this.block1.initSvg();
         this.block1.render();
@@ -1208,7 +1211,7 @@ suite('Keyboard-driven movement', function () {
 
         cancelMove(this.workspace);
       });
-      test('announces "inside" for value connections', function () {
+      test('announces "to" for value connections', function () {
         const valueBlock = this.workspace.newBlock('text');
         valueBlock.initSvg();
         valueBlock.render();
@@ -1222,7 +1225,7 @@ suite('Keyboard-driven movement', function () {
         this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
-          ['Moving', 'inside', this.getBlockLabel(parent)],
+          ['Moving', 'to', this.getBlockLabel(parent)],
           [this.getBlockLabel(valueBlock)],
         );
 
@@ -1243,7 +1246,7 @@ suite('Keyboard-driven movement', function () {
           ['Moving', 'around', this.getBlockLabel(this.block1)],
           [
             this.getBlockLabel(loop),
-            getInputLabelsSubset(loop, loop.getInput('DO')).join(', '),
+            this.getInputLabel(loop, 'DO'),
           ],
         );
 
@@ -1266,7 +1269,7 @@ suite('Keyboard-driven movement', function () {
           moveRight,
           [
             'Moving',
-            getInputLabelsSubset(ifBlock, ifBlock.getInput('DO1')).join(', '),
+            this.getInputLabel(ifBlock, 'DO1'),
             'around',
             this.getBlockLabel(this.block1),
           ],
@@ -1276,7 +1279,7 @@ suite('Keyboard-driven movement', function () {
           moveRight,
           [
             'Moving',
-            getInputLabelsSubset(ifBlock, ifBlock.getInput('DO0')).join(', '),
+            this.getInputLabel(ifBlock, 'DO0'),
             'around',
             this.getBlockLabel(this.block1),
           ],
@@ -1296,13 +1299,14 @@ suite('Keyboard-driven movement', function () {
         Blockly.getFocusManager().focusNode(boolean);
         startMove(this.workspace);
         this.clock.tick(10);
+        console.log([this.getBlockLabel(compare), this.getBlockLabel(boolean)]);
         this.moveAndAssert(
           moveRight,
           [
             'Moving',
-            'inside',
+            'to',
             this.getBlockLabel(compare),
-            getInputLabelsSubset(compare, compare.getInput('A')).join(', '),
+            this.getInputLabel(compare, 'A'),
           ],
           [this.getBlockLabel(boolean)],
         );
@@ -1310,9 +1314,9 @@ suite('Keyboard-driven movement', function () {
           moveRight,
           [
             'Moving',
-            'inside',
+            'to',
             this.getBlockLabel(compare),
-            getInputLabelsSubset(compare, compare.getInput('B')).join(', '),
+            this.getInputLabel(compare, 'B'),
           ],
           [this.getBlockLabel(boolean)],
         );
@@ -1335,12 +1339,12 @@ suite('Keyboard-driven movement', function () {
         this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
-          ['Moving', 'inside', this.getBlockLabel(textJoin), 'input 2'],
+          ['Moving', 'to', this.getBlockLabel(textJoin), 'input 2'],
           [this.getBlockLabel(text)],
         );
         this.moveAndAssert(
           moveRight,
-          ['Moving', 'inside', this.getBlockLabel(textJoin), 'input 3'],
+          ['Moving', 'to', this.getBlockLabel(textJoin), 'input 3'],
           [this.getBlockLabel(text)],
         );
 
