@@ -1274,6 +1274,17 @@ const sidebars = {
           ],
         },
         {
+          type: 'category',
+          label: 'Accessibility',
+          items: [
+            {
+              type: 'doc',
+              label: 'Compliance',
+              id: 'guides/app-integration/compliance',
+            },
+          ],
+        },
+        {
           type: 'doc',
           label: 'Attribute Blockly',
           id: 'guides/app-integration/attribution',
