@@ -16,7 +16,10 @@ import type {BlockMove} from '../events/events_block_move.js';
 import {EventType} from '../events/type.js';
 import * as eventUtils from '../events/utils.js';
 import {FocusManager} from '../focus_manager.js';
-import {showUnconstrainedMoveHint} from '../hints.js';
+import {
+  showConstrainedMovementHint,
+  showUnconstrainedMoveHint,
+} from '../hints.js';
 import type {IBubble} from '../interfaces/i_bubble.js';
 import type {IConnectionPreviewer} from '../interfaces/i_connection_previewer.js';
 import type {IDragStrategy} from '../interfaces/i_draggable.js';
@@ -272,6 +275,12 @@ export class BlockDragStrategy implements IDragStrategy {
         }
         this.block.moveDuringDrag(offset);
       }
+
+      if (this.allConnectionPairs.length) {
+        showConstrainedMovementHint(this.workspace);
+      } else {
+        showUnconstrainedMoveHint(this.workspace);
+      }
     } else {
       this.block.moveDuringDrag(this.startLoc);
     }
@@ -519,7 +528,7 @@ export class BlockDragStrategy implements IDragStrategy {
         this.moveMode === MoveMode.CONSTRAINED &&
         !this.allConnectionPairs.length
       ) {
-        showUnconstrainedMoveHint(this.workspace);
+        showUnconstrainedMoveHint(this.workspace, true);
         this.workspace.getAudioManager().playErrorBeep();
       }
     }
