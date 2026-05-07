@@ -59,6 +59,7 @@ export class RenderedWorkspaceComment
     this.workspace = workspace;
 
     this.view = new CommentView(workspace, this.id);
+    this.view.getEditorFocusableNode().setParent(this);
     // Set the size to the default size as defined in the superclass.
     this.view.setSize(this.getSize());
     this.view.setEditable(this.isEditable());

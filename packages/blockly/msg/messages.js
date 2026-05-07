@@ -2038,3 +2038,12 @@ Blockly.Msg.ICON_LABEL_WARNING_CLOSED = 'Open Warning';
 /** @type {string} */
 /// Label for an icon, used by screen readers to identify an open warning. Clicking on the icon closes the warning's bubble.
 Blockly.Msg.ICON_LABEL_WARNING_OPEN = 'Close Warning';
+/** @type {string} */
+/// ARIA label for a comment.
+Blockly.Msg.ARIA_LABEL_COMMENT = 'Comment';
+/** @type {string} */
+/// ARIA label for an expanded comment's collapse button.
+Blockly.Msg.ARIA_LABEL_COMMENT_COLLAPSE = 'Collapse Comment';
+/** @type {string} */
+/// ARIA label for a collapsed comment's expand button.
+Blockly.Msg.ARIA_LABEL_COMMENT_EXPAND = 'Expand Comment';

@@ -5,6 +5,7 @@
  */
 
 import * as browserEvents from '../browser_events.js';
+import {Msg} from '../msg.js';
 import * as touch from '../touch.js';
 import * as dom from '../utils/dom.js';
 import {Svg} from '../utils/svg.js';
@@ -56,6 +57,7 @@ export class CollapseCommentBarButton extends CommentBarButton {
       },
       this.container,
     );
+    this.recomputeAriaContext();
     this.bindId = browserEvents.conditionalBind(
       this.icon,
       'pointerdown',
@@ -95,8 +97,22 @@ export class CollapseCommentBarButton extends CommentBarButton {
     }
 
     this.getCommentView().setCollapsed(!this.getCommentView().isCollapsed());
+    this.recomputeAriaContext();
     this.workspace.hideChaff();
 
     e?.stopPropagation();
+  }
+
+  /**
+   * Returns the ARIA label to use for this button (defaults to null). Note that this
+   * method will only be called and apply when recomputeAriaContext is called.
+   *
+   * @returns The ARIA label to use for this button, or null to use a default.
+   */
+  protected getAriaLabel(): string {
+    const isCollapsed = this.getCommentView().isCollapsed();
+    return isCollapsed
+      ? Msg['ARIA_LABEL_COMMENT_EXPAND']
+      : Msg['ARIA_LABEL_COMMENT_COLLAPSE'];
   }
 }

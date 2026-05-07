@@ -521,5 +521,8 @@
 	"ICON_LABEL_MUTATOR_CLOSED": "Label for an icon, used by screen readers to identify a closed mutator. Clicking on the icon opens the mutator's bubble, which allows the user to edit the block's structure.",
 	"ICON_LABEL_MUTATOR_OPEN": "Label for an icon, used by screen readers to identify an open mutator. Clicking on the icon closes the mutator's bubble.",
 	"ICON_LABEL_WARNING_CLOSED": "Label for an icon, used by screen readers to identify a closed warning. Clicking on the icon opens the warning's bubble, which allows the user read the warning.",
-	"ICON_LABEL_WARNING_OPEN": "Label for an icon, used by screen readers to identify an open warning. Clicking on the icon closes the warning's bubble."
+	"ICON_LABEL_WARNING_OPEN": "Label for an icon, used by screen readers to identify an open warning. Clicking on the icon closes the warning's bubble.",
+	"ARIA_LABEL_COMMENT": "ARIA label for a comment.",
+	"ARIA_LABEL_COMMENT_COLLAPSE": "ARIA label for an expanded comment's collapse button.",
+	"ARIA_LABEL_COMMENT_EXPAND": "ARIA label for a collapsed comment's expand button."
 }

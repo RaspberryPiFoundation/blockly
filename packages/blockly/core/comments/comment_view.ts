@@ -6,10 +6,11 @@
 
 import * as browserEvents from '../browser_events.js';
 import * as css from '../css.js';
-import type {IFocusableNode} from '../interfaces/i_focusable_node';
 import {IRenderedElement} from '../interfaces/i_rendered_element.js';
 import * as layers from '../layers.js';
+import {Msg} from '../msg.js';
 import * as touch from '../touch.js';
+import * as aria from '../utils/aria.js';
 import {Coordinate} from '../utils/coordinate.js';
 import * as dom from '../utils/dom.js';
 import * as drag from '../utils/drag.js';
@@ -107,6 +108,12 @@ export class CommentView implements IRenderedElement {
     this.svgRoot = dom.createSvgElement(Svg.G, {
       'class': 'blocklyComment blocklyEditable blocklyDraggable',
     });
+    aria.setRole(this.svgRoot, aria.Role.BUTTON);
+    aria.setState(
+      this.svgRoot,
+      aria.State.ROLEDESCRIPTION,
+      Msg['ARIA_LABEL_COMMENT'],
+    );
 
     this.highlightRect = this.createHighlightRect(this.svgRoot);
 
@@ -120,6 +127,11 @@ export class CommentView implements IRenderedElement {
     } = this.createTopBar(this.svgRoot));
 
     this.commentEditor = this.createTextArea();
+    aria.setState(
+      this.svgRoot,
+      aria.State.LABELLEDBY,
+      this.commentEditor.getFocusableElement().id,
+    );
 
     this.resizeHandle = this.createResizeHandle(this.svgRoot, workspace);
 
@@ -235,7 +247,7 @@ export class CommentView implements IRenderedElement {
    *
    * @returns The FocusableNode representing the editor portion of this comment.
    */
-  getEditorFocusableNode(): IFocusableNode {
+  getEditorFocusableNode(): CommentEditor {
     return this.commentEditor;
   }
 

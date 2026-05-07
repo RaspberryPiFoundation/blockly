@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-05-01 14:09:40.345417",
+		"lastupdated": "2026-05-07 12:03:23.440539",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -513,5 +513,8 @@
 	"ICON_LABEL_MUTATOR_CLOSED": "Edit this block",
 	"ICON_LABEL_MUTATOR_OPEN": "Close block editor",
 	"ICON_LABEL_WARNING_CLOSED": "Open Warning",
-	"ICON_LABEL_WARNING_OPEN": "Close Warning"
+	"ICON_LABEL_WARNING_OPEN": "Close Warning",
+	"ARIA_LABEL_COMMENT": "Comment",
+	"ARIA_LABEL_COMMENT_COLLAPSE": "Collapse Comment",
+	"ARIA_LABEL_COMMENT_EXPAND": "Expand Comment"
 }

@@ -5,6 +5,8 @@
  */
 
 import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
+import {Msg} from '../msg.js';
+import * as aria from '../utils/aria.js';
 import {Rect} from '../utils/rect.js';
 import type {WorkspaceSvg} from '../workspace_svg.js';
 import type {CommentView} from './comment_view.js';
@@ -101,5 +103,34 @@ export abstract class CommentBarButton implements IFocusableNode {
   /** Returns whether this button can be focused. True if it is visible. */
   canBeFocused() {
     return this.isVisible();
+  }
+
+  /**
+   * Recomputes the ARIA label and role for this button. Note that this is not
+   * automatically called during initialization and must be called once a button's
+   * focusable element (icon) is initialized. Implementations may also find it useful
+   * to call this if the button's label should be changed.
+   */
+  protected recomputeAriaContext(): void {
+    if (!this.icon) return;
+
+    aria.setRole(this.icon, aria.Role.BUTTON);
+
+    const label = this.getAriaLabel();
+    aria.setState(
+      this.icon,
+      aria.State.LABEL,
+      label || Msg['ARIA_LABEL_BUTTON'],
+    );
+  }
+
+  /**
+   * Returns the ARIA label to use for this button (defaults to null). Note that this
+   * method will only be called and apply when recomputeAriaContext is called.
+   *
+   * @returns The ARIA label to use for this button, or null to use a default.
+   */
+  protected getAriaLabel(): string | null {
+    return null;
   }
 }
