@@ -362,19 +362,11 @@ suite('Image Fields', function () {
         this.block.render();
         this.focusableElement = this.field.getFocusableElement();
       });
-      test('Block has field type name in ARIA label', function () {
-        const blockLabel = this.block.getAriaLabel();
-        assert.include(blockLabel, 'image:');
-      });
-      test('Field has field type name in ARIA label', function () {
-        const fieldLabel = this.focusableElement.getAttribute('aria-label');
-        assert.include(fieldLabel, 'image:');
-      });
       test('Block has image alt text in ARIA label', function () {
         const blockLabel = this.block.getAriaLabel();
         assert.include(blockLabel, this.field.altText);
       });
-      test('Focusable element has  role of presentation', function () {
+      test('Focusable element has role of presentation', function () {
         const role = this.focusableElement.getAttribute('role');
         assert.equal(role, 'presentation');
       });
@@ -387,6 +379,16 @@ suite('Image Fields', function () {
       });
     });
     suite('Image with click handler', function () {
+      test('Field has field type name in ARIA label', function () {
+        const block = this.workspace.newBlock('test_images_clickhandler');
+        const field = block.getField('IMAGE');
+        block.initSvg();
+        block.render();
+
+        const focusableElement = field.getFocusableElement();
+        const fieldLabel = focusableElement.getAttribute('aria-label');
+        assert.include(fieldLabel, 'image:');
+      });
       test('Focusable element has  role of button', function () {
         const block = this.workspace.newBlock('test_images_clickhandler');
         const field = block.getField('IMAGE');

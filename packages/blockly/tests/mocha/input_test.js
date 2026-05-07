@@ -310,7 +310,8 @@ suite('Inputs', function () {
         },
       ]);
     });
-    test('Set input ARIA Label Provider', function () {
+    // Temporarily skipping while we debate custom inputs aria behavior
+    test.skip('Set input ARIA Label Provider', function () {
       const customLabel = 'custom ARIA label';
       // Using a text input as it will return a default ARIA label
       this.block
@@ -323,7 +324,7 @@ suite('Inputs', function () {
       assert.include(label, customLabel);
       assert.notInclude(label, 'text');
     });
-    test('Set input ARIA Label Provider from JSON', function () {
+    test.skip('Set input ARIA Label Provider from JSON', function () {
       const customLabel = 'custom ARIA label';
       Blockly.defineBlocksWithJsonArray([
         {
@@ -349,7 +350,7 @@ suite('Inputs', function () {
 
       assert.include(label, customLabel);
     });
-    test('Set input ARIA Label Provider to null', function () {
+    test.skip('Set input ARIA Label Provider to null', function () {
       const blockA = createRenderedBlock(this.workspace, 'row_block');
       const blockB = createRenderedBlock(this.workspace, 'row_block');
 

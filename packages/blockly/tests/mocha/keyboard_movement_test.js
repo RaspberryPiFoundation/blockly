@@ -1352,7 +1352,7 @@ suite('Keyboard-driven movement', function () {
 
   suite('of bubbles', function () {
     setup(async function () {
-      const commentBlock = this.workspace.newBlock('logic_boolean');
+      const commentBlock = this.workspace.newBlock('logic_compare');
       commentBlock.setCommentText('Hello world');
       const icon = commentBlock.getIcon(Blockly.icons.IconType.COMMENT);
       await icon.setBubbleVisible(true);

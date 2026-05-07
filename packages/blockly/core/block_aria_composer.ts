@@ -57,6 +57,13 @@ export function computeAriaLabel(
   block: BlockSvg,
   verbosity = Verbosity.STANDARD,
 ) {
+  if (block.isSimpleReporter()) {
+    // special case for full-block field blocks.
+    const field = block.getFullBlockField();
+    if (field) {
+      return field.computeAriaLabel(verbosity >= Verbosity.STANDARD);
+    }
+  }
   return [
     verbosity >= Verbosity.STANDARD && getBeginStackLabel(block),
     getParentInputLabel(block),
@@ -64,7 +71,7 @@ export function computeAriaLabel(
     verbosity === Verbosity.LOQUACIOUS && getParentToolboxCategoryLabel(block),
     verbosity >= Verbosity.STANDARD && getDisabledLabel(block),
     verbosity >= Verbosity.STANDARD && getCollapsedLabel(block),
-    verbosity >= Verbosity.STANDARD && getShadowBlockLabel(block),
+    verbosity >= Verbosity.LOQUACIOUS && getShadowBlockLabel(block),
     verbosity >= Verbosity.STANDARD && getInputCountLabel(block),
   ]
     .filter((label) => !!label)
@@ -123,7 +130,7 @@ export function computeFieldRowLabel(
   lookback: boolean,
   verbosity = Verbosity.STANDARD,
 ): string[] {
-  const includeTypeInfo = verbosity >= Verbosity.STANDARD;
+  const includeTypeInfo = verbosity >= Verbosity.LOQUACIOUS;
   const fieldRowLabel = input.fieldRow
     .filter((field) => field.isVisible())
     .map((field) => field.computeAriaLabel(includeTypeInfo));
@@ -181,7 +188,10 @@ function getParentInputLabel(block: BlockSvg) {
  *     does not.
  */
 function getBeginStackLabel(block: BlockSvg) {
-  return !block.workspace.isFlyout && block.getRootBlock() === block
+  // Don't include the "begin stack" label for blocks that are moving
+  // or blocks in the flyout
+  if (block.isInFlyout || block.workspace.isDragging()) return undefined;
+  return block.getRootBlock() === block
     ? Msg['BLOCK_LABEL_BEGIN_STACK']
     : undefined;
 }
@@ -204,11 +214,7 @@ export function getInputLabels(
 ): string[] {
   return block.inputList
     .filter((input) => input.isVisible())
-    .map((input) =>
-      input.getAriaLabelText() !== null
-        ? input.getAriaLabelText()!
-        : input.getLabel(verbosity),
-    );
+    .map((input) => input.getLabel(verbosity));
 }
 
 /**

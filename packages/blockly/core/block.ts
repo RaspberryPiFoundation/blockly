@@ -967,7 +967,30 @@ export class Block {
   }
 
   /**
-   * @returns True if this block is a value block with a single editable field.
+   * Determines and returns the full-block field for this block, or null if there isn't one
+   * and this block can't be considered a singleton field block.
+   *
+   * Note that this method is unreliable if a block contains a single field that
+   * hasn't been initialized/rendered yet.
+   *
+   * @returns The full-block field this block contains, or null if it doesn't contain one.
+   * @internal
+   */
+  getFullBlockField(): Field<any> | null {
+    if (!this.isSimpleReporter()) return null;
+    const field = this.inputList[0]?.fieldRow[0];
+    return field?.isFullBlockField() ? field : null;
+  }
+
+  /**
+   * A block is a simple reporter if it has an output connection and exactly one field.
+   * In some renderers, simple reporters are rendered differently from other blocks.
+   * Being a simple reporter block is a prerequisite to the single field rendering itself
+   * as a "full-block field", but it is not sufficient, as not all fields or renderers use
+   * this special rendering. Use `getFullBlockField` to determine if the block is rendered
+   * as a "full-block field block".
+   *
+   * @returns True if this block is a value block with a single field.
    * @internal
    */
   isSimpleReporter(): boolean {

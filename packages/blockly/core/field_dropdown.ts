@@ -918,27 +918,19 @@ export class FieldDropdown extends Field<string> {
   }
 
   /**
-   * Recomputes the ARIA role and label for this field.
+   * Overrides the default label and sets additional aria state.
    */
-  protected recomputeAriaContext(): void {
+  override recomputeAriaContext(): boolean {
+    const shouldCustomize = super.recomputeAriaContext();
+    if (!shouldCustomize) return false;
+
     const focusableElement = this.getFocusableElement();
-    if (!focusableElement) return;
-
-    if (this.getSourceBlock()?.isInFlyout) {
-      aria.setState(focusableElement, aria.State.HIDDEN, true);
-      return;
-    }
-
-    aria.setState(focusableElement, aria.State.HIDDEN, false);
-    // The button role is intended to indicate to users that the field has an
-    // editing mode that can be activated.
-    aria.setRole(focusableElement, aria.Role.BUTTON);
-
     const label = this.computeAriaLabel(true);
 
     aria.setState(focusableElement, aria.State.LABEL, label);
     aria.setState(focusableElement, aria.State.HASPOPUP, 'listbox');
     aria.setState(focusableElement, aria.State.EXPANDED, !!this.menu_);
+    return true;
   }
 
   /**

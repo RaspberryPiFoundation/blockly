@@ -1881,6 +1881,11 @@ export class BlockSvg
 
   /** See IFocusableNode.getFocusableElement. */
   getFocusableElement(): HTMLElement | SVGElement {
+    // For full-block fields, we focus the field itself
+    const fullBlockField = this.getFullBlockField();
+    if (fullBlockField) {
+      return fullBlockField.getFocusableElement();
+    }
     return this.pathObject.svgPath;
   }
 
@@ -1998,6 +2003,7 @@ export class BlockSvg
    * Updates the ARIA label, role and roledescription for this block.
    */
   private recomputeAriaAttributes() {
+    if (this.getFullBlockField()) return;
     aria.setState(
       this.getFocusableElement(),
       aria.State.LABEL,
