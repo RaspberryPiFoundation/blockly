@@ -923,17 +923,16 @@ export class BlockSvg
       blockAnimations.disposeUiEffect(this);
     }
 
+    const focusManager = getFocusManager();
+    const focusedElement =
+      focusManager.getFocusedNode()?.getFocusableElement() ?? null;
+
     super.dispose(!!healStack);
     dom.removeNode(this.svgGroup);
 
     // If this block (or a descendant) was focused, focus its parent or
     // workspace instead.
-    const focusManager = getFocusManager();
-    if (
-      this.getSvgRoot().contains(
-        focusManager.getFocusedNode()?.getFocusableElement() ?? null,
-      )
-    ) {
+    if (this.getSvgRoot().contains(focusedElement)) {
       let parent: BlockSvg | undefined | null = this.getParent();
       if (!parent) {
         // In some cases, blocks are disconnected from their parents before
@@ -950,19 +949,20 @@ export class BlockSvg
           parent = targetConnection?.getSourceBlock();
         }
       }
-      if (parent) {
-        focusManager.focusNode(parent);
-      } else {
-        const nearestNeighbour = this.getNearestNeighbour();
-        if (nearestNeighbour) {
-          focusManager.focusNode(nearestNeighbour);
+      setTimeout(() => {
+        if (!this.workspace.rendered) return;
+        if (parent) {
+          focusManager.focusNode(parent);
         } else {
-          setTimeout(() => {
-            if (!this.workspace.rendered) return;
+          const nearestNeighbour = this.getNearestNeighbour();
+
+          if (nearestNeighbour) {
+            focusManager.focusNode(nearestNeighbour);
+          } else {
             focusManager.focusTree(this.workspace);
-          }, 0);
+          }
         }
-      }
+      }, 0);
     }
   }
 
