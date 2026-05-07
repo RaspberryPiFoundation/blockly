@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@docsearch/core": "^4.5.2",
+    "@docusaurus/faster": "^3.10.1",
     "@docusaurus/module-type-aliases": "^3.10.1",
     "@docusaurus/types": "^3.10.1",
     "eslint": "9.36.0",
