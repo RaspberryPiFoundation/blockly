@@ -117,7 +117,7 @@ export class MenuItem {
     return (
       this.ariaLabel ||
       (typeof this.content === 'string'
-        ? String(this.content)
+        ? this.content
         : this.content.textContent)
     );
   }
