@@ -166,7 +166,15 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
   override initView() {
     const block = this.getSourceBlock();
     if (!block) throw new UnattachedFieldError();
-    super.initView();
+
+    if (!this.isFullBlockField()) {
+      // full-block fields don't get the border-rect element
+      this.createBorderRect_();
+    }
+    this.createTextElement_();
+    if (this.fieldGroup_) {
+      dom.addClass(this.fieldGroup_, 'blocklyField');
+    }
 
     if (this.isFullBlockField()) {
       this.clickTarget_ = (this.sourceBlock_ as BlockSvg).getSvgRoot();
@@ -254,10 +262,9 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
     if (!this.fieldGroup_) return;
 
     if (!this.isFullBlockField() && this.borderRect_) {
-      this.borderRect_!.style.display = 'block';
+      this.borderRect_.style.display = 'block';
       this.borderRect_.setAttribute('stroke', block.getColourTertiary());
     } else {
-      this.borderRect_!.style.display = 'none';
       // In general, do *not* let fields control the color of blocks. Having the
       // field control the color is unexpected, and could have performance
       // impacts.

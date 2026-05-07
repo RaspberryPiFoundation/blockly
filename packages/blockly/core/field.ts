@@ -436,15 +436,19 @@ export abstract class Field<T = any>
   /**
    * Defines whether this field should take up the full block or not.
    *
-   * Be cautious when overriding this function. It may not work as you expect /
-   * intend because the behavior was kind of hacked in. If you are thinking
-   * about overriding this function, post on the forum with your intended
-   * behavior to see if there's another approach.
+   * This is typically only done for certain kinds of fields and in certain
+   * renderers. You should only override this if you're sure your field will
+   * render correctly in zelos and other renderers that support full-block
+   * fields.
    *
-   * @internal
+   * Blocks that contain only a single field that is a full-block-field
+   * have a special appearance in some renderers and their behavior is
+   * unique, because we pretend that the field is a whole block in some cases.
+   * This is hacky and you should use caution when attempting to do anything
+   * with this method.
    */
   isFullBlockField(): boolean {
-    return !this.borderRect_;
+    return false;
   }
 
   /**
@@ -923,7 +927,7 @@ export abstract class Field<T = any>
     const xOffset =
       margin !== undefined
         ? margin
-        : !this.isFullBlockField()
+        : this.borderRect_
           ? this.getConstants()!.FIELD_BORDER_RECT_X_PADDING
           : 0;
     let totalWidth = xOffset * 2;
@@ -934,7 +938,7 @@ export abstract class Field<T = any>
       contentWidth = dom.getTextWidth(this.textElement_);
       totalWidth += contentWidth;
     }
-    if (!this.isFullBlockField()) {
+    if (this.borderRect_) {
       totalHeight = Math.max(totalHeight, constants!.FIELD_BORDER_RECT_HEIGHT);
     }
 
@@ -1031,7 +1035,7 @@ export abstract class Field<T = any>
       throw new UnattachedFieldError();
     }
 
-    if (this.isFullBlockField()) {
+    if (!this.borderRect_) {
       // Browsers are inconsistent in what they return for a bounding box.
       // - Webkit / Blink: fill-box / object bounding box
       // - Gecko: stroke-box
@@ -1049,7 +1053,7 @@ export abstract class Field<T = any>
         xy.y -= 0.5 * scale;
       }
     } else {
-      const bBox = this.borderRect_!.getBoundingClientRect();
+      const bBox = this.borderRect_.getBoundingClientRect();
       xy = style.getPageOffset(this.borderRect_!);
       scaledWidth = bBox.width;
       scaledHeight = bBox.height;
