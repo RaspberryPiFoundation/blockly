@@ -293,7 +293,6 @@ suite('Comments', function () {
         this.workspaceComment.setText('workspace comment');
       });
       test('Has ARIA role button', function () {
-        console.log(this.workspaceComment);
         const view = this.workspaceComment.view;
         assert.equal(view.svgRoot.getAttribute('role'), 'button');
       });
@@ -307,7 +306,6 @@ suite('Comments', function () {
       test('Comment view is labelled by comment editor', function () {
         const view = this.workspaceComment.view;
         const ownerId = view.commentEditor.getFocusableElement().id;
-        console.log(this.workspaceComment);
         assert.equal(view.svgRoot.getAttribute('aria-labelledby'), ownerId);
       });
     });
