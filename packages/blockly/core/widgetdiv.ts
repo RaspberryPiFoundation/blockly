@@ -10,7 +10,9 @@ import * as browserEvents from './browser_events.js';
 import * as common from './common.js';
 import {Field} from './field.js';
 import {ReturnEphemeralFocus, getFocusManager} from './focus_manager.js';
+import * as aria from './utils/aria.js';
 import * as dom from './utils/dom.js';
+import * as idGenerator from './utils/idgenerator.js';
 import type {Rect} from './utils/rect.js';
 import type {Size} from './utils/size.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
@@ -85,6 +87,7 @@ export function createDom() {
     containerDiv = existingContainer as HTMLDivElement;
   } else {
     containerDiv = document.createElement('div');
+    containerDiv.id = idGenerator.getNextUniqueId();
     containerDiv.className = containerClassName;
     containerDiv.tabIndex = -1;
   }
@@ -126,6 +129,17 @@ export function show(
   const div = containerDiv;
   if (!div) return;
 
+  ownerWorkspace = workspace ?? (common.getMainWorkspace() as WorkspaceSvg);
+  const existingOwnership = aria.getState(
+    ownerWorkspace.getFocusableElement(),
+    aria.State.OWNS,
+  );
+  aria.setState(
+    ownerWorkspace.getFocusableElement(),
+    aria.State.OWNS,
+    existingOwnership ? [existingOwnership, div.id] : div.id,
+  );
+
   const parentDiv = common.getParentContainer();
   parentDiv?.appendChild(div);
 
@@ -136,11 +150,8 @@ export function show(
     // workspace to this function, attempt to derive it from the field.
     workspace = (newOwner as Field).getSourceBlock()?.workspace as WorkspaceSvg;
   }
-  ownerWorkspace = workspace ?? null;
-  const rendererWorkspace =
-    workspace ?? (common.getMainWorkspace() as WorkspaceSvg);
-  rendererClassName = rendererWorkspace.getRenderer().getClassName();
-  themeClassName = rendererWorkspace.getTheme().getClassName();
+  rendererClassName = ownerWorkspace.getRenderer().getClassName();
+  themeClassName = ownerWorkspace.getTheme().getClassName();
   if (rendererClassName) {
     dom.addClass(div, rendererClassName);
   }
@@ -182,12 +193,22 @@ export function hide() {
     dom.removeClass(div, themeClassName);
     themeClassName = '';
   }
-  (common.getMainWorkspace() as WorkspaceSvg).markFocused();
+  ownerWorkspace?.markFocused();
 
   if (returnEphemeralFocus) {
     returnEphemeralFocus();
     returnEphemeralFocus = null;
   }
+
+  if (!ownerWorkspace || !containerDiv) return;
+
+  const existingOwnership =
+    aria.getState(ownerWorkspace.getFocusableElement(), aria.State.OWNS) ?? '';
+  aria.setState(
+    ownerWorkspace.getFocusableElement(),
+    aria.State.OWNS,
+    existingOwnership.replace(containerDiv.id, ''),
+  );
 }
 
 /**

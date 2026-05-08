@@ -6,6 +6,7 @@
 
 import {getInputLabelsSubset} from '../../build/src/core/block_aria_composer.js';
 import * as Blockly from '../../build/src/core/blockly.js';
+import {Verbosity} from '../../build/src/core/utils/aria.js';
 import {assert} from '../../node_modules/chai/index.js';
 import {
   moveStatementTestBlocks,
@@ -570,8 +571,8 @@ suite('Keyboard-driven movement', function () {
         assert.equal(
           toastSpy.args[0][1]['message'],
           Blockly.utils.userAgent.MAC
-            ? 'Hold ⌘ Command and use arrow keys to move freely, then Enter to accept the position'
-            : 'Hold Ctrl and use arrow keys to move freely, then Enter to accept the position',
+            ? 'Hold ⌘ Command and use arrow keys to move freely, then Enter to accept the position.'
+            : 'Hold Ctrl and use arrow keys to move freely, then Enter to accept the position.',
         );
         sinon.assert.calledOnce(beepSpy);
         beepSpy.restore();
@@ -1142,6 +1143,12 @@ suite('Keyboard-driven movement', function () {
         };
         this.getBlockLabel = (block) =>
           block.getAriaLabel(Blockly.utils.aria.Verbosity.TERSE);
+        this.getInputLabel = (block, input) =>
+          getInputLabelsSubset(
+            block,
+            block.getInput(input),
+            Verbosity.TERSE,
+          ).join(', ');
         this.block1 = this.workspace.newBlock('draw_emoji');
         this.block1.initSvg();
         this.block1.render();
@@ -1151,7 +1158,7 @@ suite('Keyboard-driven movement', function () {
         Blockly.getFocusManager().focusNode(this.block1);
         this.moveAndAssert(
           startMove,
-          ['moving', this.getBlockLabel(this.block1), 'on workspace'],
+          ['Moving', this.getBlockLabel(this.block1), 'on workspace.'],
           [],
         );
         cancelMove(this.workspace);
@@ -1166,9 +1173,9 @@ suite('Keyboard-driven movement', function () {
 
         Blockly.getFocusManager().focusNode(this.block1);
         this.moveAndAssert(startMoveStack, [
-          'moving',
+          'Moving',
           '2 stack blocks',
-          'on workspace',
+          'on workspace.',
         ]);
         cancelMove(this.workspace);
       });
@@ -1181,10 +1188,9 @@ suite('Keyboard-driven movement', function () {
 
         Blockly.getFocusManager().focusNode(this.block1);
         startMove(this.workspace);
-
         this.moveAndAssert(
           moveRight,
-          ['moving', 'before', this.getBlockLabel(block2)],
+          ['Moving', 'before', this.getBlockLabel(block2)],
           [this.getBlockLabel(this.block1)],
         );
 
@@ -1201,7 +1207,7 @@ suite('Keyboard-driven movement', function () {
         Blockly.getFocusManager().focusNode(block2);
 
         this.moveAndAssert(startMove, [
-          'moving',
+          'Moving',
           this.getBlockLabel(block2),
           'after',
           this.getBlockLabel(this.block1),
@@ -1209,7 +1215,7 @@ suite('Keyboard-driven movement', function () {
 
         cancelMove(this.workspace);
       });
-      test('announces "inside" for value connections', function () {
+      test('announces "to" for value connections', function () {
         const valueBlock = this.workspace.newBlock('text');
         valueBlock.initSvg();
         valueBlock.render();
@@ -1223,7 +1229,7 @@ suite('Keyboard-driven movement', function () {
         this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
-          ['moving', 'inside', this.getBlockLabel(parent)],
+          ['Moving', 'to', this.getBlockLabel(parent)],
           [this.getBlockLabel(valueBlock)],
         );
 
@@ -1241,11 +1247,8 @@ suite('Keyboard-driven movement', function () {
 
         this.moveAndAssert(
           moveRight,
-          ['moving', 'around', this.getBlockLabel(this.block1)],
-          [
-            this.getBlockLabel(loop),
-            getInputLabelsSubset(loop, loop.getInput('DO')).join(', '),
-          ],
+          ['Moving', 'around', this.getBlockLabel(this.block1)],
+          [this.getBlockLabel(loop), this.getInputLabel(loop, 'DO')],
         );
 
         cancelMove(this.workspace);
@@ -1266,8 +1269,8 @@ suite('Keyboard-driven movement', function () {
         this.moveAndAssert(
           moveRight,
           [
-            'moving',
-            getInputLabelsSubset(ifBlock, ifBlock.getInput('DO1')).join(', '),
+            'Moving',
+            this.getInputLabel(ifBlock, 'DO1'),
             'around',
             this.getBlockLabel(this.block1),
           ],
@@ -1276,8 +1279,8 @@ suite('Keyboard-driven movement', function () {
         this.moveAndAssert(
           moveRight,
           [
-            'moving',
-            getInputLabelsSubset(ifBlock, ifBlock.getInput('DO0')).join(', '),
+            'Moving',
+            this.getInputLabel(ifBlock, 'DO0'),
             'around',
             this.getBlockLabel(this.block1),
           ],
@@ -1297,23 +1300,24 @@ suite('Keyboard-driven movement', function () {
         Blockly.getFocusManager().focusNode(boolean);
         startMove(this.workspace);
         this.clock.tick(10);
+        console.log([this.getBlockLabel(compare), this.getBlockLabel(boolean)]);
         this.moveAndAssert(
           moveRight,
           [
-            'moving',
-            'inside',
+            'Moving',
+            'to',
             this.getBlockLabel(compare),
-            getInputLabelsSubset(compare, compare.getInput('A')).join(', '),
+            this.getInputLabel(compare, 'A'),
           ],
           [this.getBlockLabel(boolean)],
         );
         this.moveAndAssert(
           moveRight,
           [
-            'moving',
-            'inside',
+            'Moving',
+            'to',
             this.getBlockLabel(compare),
-            getInputLabelsSubset(compare, compare.getInput('B')).join(', '),
+            this.getInputLabel(compare, 'B'),
           ],
           [this.getBlockLabel(boolean)],
         );
@@ -1336,12 +1340,12 @@ suite('Keyboard-driven movement', function () {
         this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
-          ['moving', 'inside', this.getBlockLabel(textJoin), 'input 2'],
+          ['Moving', 'to', this.getBlockLabel(textJoin), 'input 2'],
           [this.getBlockLabel(text)],
         );
         this.moveAndAssert(
           moveRight,
-          ['moving', 'inside', this.getBlockLabel(textJoin), 'input 3'],
+          ['Moving', 'to', this.getBlockLabel(textJoin), 'input 3'],
           [this.getBlockLabel(text)],
         );
 

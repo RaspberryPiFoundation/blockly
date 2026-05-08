@@ -1,0 +1,137 @@
+---
+description: Blockly's accessibility principles
+title: Accessibility principles
+image: images/blockly_banner.png
+---
+
+# Accessibility principles
+
+## The POUR Framework
+
+Web accessibility means making websites, tools, and content that are usable by
+as many people as possible. Making accessible websites is the right thing to do;
+it is also a legal requirement in many places. To be accessible, a web page must
+be **perceivable**, **operable**, **understandable**, and **robust**. Together these 
+form the [POUR framework](https://www.w3.org/WAI/WCAG22/Understanding/intro#understanding-the-four-principles-of-accessibility).
+
+Assistive technology (AT) is software and hardware that people with disabilities
+use to interact with computers. Some assistive technology is very specialized,
+such as refreshable braille displays. Other assistive technology is built into
+everyday tools, such as pinch-to-zoom on a tablet or captions and transcripts on
+videos. Assistive technology often modifies either the input or the output of a
+computer to make it more **perceivable** or **operable**. 
+
+An example of AT that modifies input is eye tracking software. People with motor
+impairments who cannot use a mouse or keyboard can use a camera to track where
+they are looking and control a mouse on a screen. Much of the AT that modifies
+input emulates a keyboard or a mouse. An example of AT that modifies output is a
+screen reader, which converts screen content into text or audio. Screen readers
+are often used by people with visual impairments.
+
+For a web page to be **robust** it must work with a large range of assistive
+technologies by following standard patterns. Screen readers and keyboard
+controls can be used as proxies for large categories of assistive technology 
+when doing technical design for accessibility.
+
+## Web accessibility
+
+In general the best way to make a web page accessible is to use appropriately
+annotated [semantic HTML](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/HTML).
+For a screen reader to work on a web page the browser must provide information
+about all of the contents of the page. This information, such as name and role,
+is provided in the [accessibility tree](https://developer.mozilla.org/en-US/docs/Glossary/Accessibility_tree).
+When you use semantic HTML the browser is responsible for keeping the
+accessibility tree up to date and keeping track of where the user is on a page.
+The screen reader is responsible for providing that information to the user in
+their preferred format.
+
+:::note
+For more information on how to build accessible web pages, check out the 
+[Mozilla documentation on accessibility](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility)
+and the [WAI Authoring Practices Guide](https://www.w3.org/WAI/ARIA/apg/).
+:::
+
+Most web pages use HTML, CSS, and JavaScript to display interactive content.
+Blockly is built on a technology called Scalable Vector Graphics (SVG) that is
+commonly used to create charts, graphs, and images. Unlike HTML, SVG does not
+have well-defined accessibility features for interactive applications like
+Blockly. Because Blockly cannot rely on semantic HTML, the library is
+responsible for keeping the accessibility tree up to date with the information
+displayed visually and contained in the DOM.
+
+Blockly is responsible for interpreting user input in the workspace and making
+appropriate updates to the blocks and accessibility tree to ensure correct
+output with a wide range of assistive technology. When you build a web page
+that uses Blockly you are responsible for making all of the non-Blockly parts of
+the page accessible. That includes program output, documentation, and examples.
+You are also responsible for the accessibility of any custom fields that you
+create.
+
+## Standards and compliance
+
+A user’s experience is the combination of the web page, the user’s technology
+(e.g. browser, screen reader, and pointing device) and context (e.g. indoor vs
+outdoor). It is impossible to say that a website is “100% accessible” because
+there is no way to test for all possible combinations--and because some
+accessibility needs conflict. Instead we use standards.
+
+The [Web Content Accessibility Guidelines (WCAG)](https://www.w3.org/WAI/standards-guidelines/wcag/)
+are an international accessibility standard. We say that a site is accessible if
+it meets WCAG criteria. As of 2026, the Blockly library aims to meet
+[WCAG 2.2 Level AA](https://www.w3.org/WAI/WCAG22/quickref/?currentsidebar=%23col_customize&levels=aaa).
+The [compliance page](/guides/app-integration/compliance) has more information
+about Blockly's compliance with WCAG, including an Accessibility Conformance
+Report (ACR). 
+
+# Design considerations and guidelines
+
+Blockly’s keyboard navigation is designed to be independently usable by an
+eight-year old child with no vision after an orientation session with a 
+sighted adult. It is not designed for pre-readers and it is not designed to be
+used without onboarding. We suggest that educational applications built on
+Blockly provide onboarding through a keyboard navigation tutorial and tactile
+resources for blind students. Applications designed for adult users should at
+minimum provide easily-accessible documentation on keyboard navigation and other
+accessibility features.
+
+## Curb cuts
+
+The curb cut effect is a key phenomenon in accessibility. A curb cut is the ramp
+in a sidewalk that lets a person with a wheelchair, stroller, or cart change
+level from the sidewalk to the street. In the US, curb cuts are required because
+of the 1990 Americans with Disabilities Act. Technically, curb cuts are an
+accessibility solution for people in wheelchairs. In reality, curb cuts saw
+immediate adoption by many others: parents pushing strollers, people making
+deliveries, people pushing shopping carts or furniture dollies or luggage, and
+much more. The curb cut effect describes a feature designed to solve an issue
+for one group that is adopted and used by a much wider group.
+
+Blockly’s accessibility features are designed and tested with blind and low
+vision children, but they are intended to act as a curb cut for wider usage.
+Keyboard navigation can be useful for students with broken trackpads, users
+with motor impairments, and professionals who want to use shortcuts to quickly
+write code. To support those use cases, Blockly’s keyboard navigation system is
+always on and supports seamless switching between keyboard and mouse
+interactions. We use consistent, learner-appropriate language in screen reader
+output to facilitate conversations between blind and low vision users and their
+sighted peers, teachers, or colleagues.
+
+## Tested design
+
+The design of Blockly’s keyboard navigation system is informed by co-design and
+testing with blind and sighted students and their teachers, feedback from a
+panel of blind and low vision youth, and academic literature on assistive
+technology usage for blind and low vision students. The Blockly team applied
+their knowledge of a wide range of Blockly-based applications, from early
+programming education to industrial and commercial applications. Our goal with
+keyboard controls is full parity: it should be possible to use all of Blockly’s
+features from the keyboard and with a screen reader or other text-based output device. 
+
+We believe that the system appropriately balances the competing needs of young
+novice users and older or more experienced users. Basic programming can be done
+with a limited set of keys and concepts, supporting young learners and their
+teachers. More complex behaviour can be accessed through advanced shortcuts and
+context menus, supporting users who are familiar with computer interface
+conventions. We recommend that applications introduce the basic shortcuts
+explicitly and make it easy for users to find a full list of shortcuts and their
+actions.

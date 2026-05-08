@@ -26,6 +26,7 @@ export enum ConnectionPreposition {
   AFTER,
   AROUND,
   INSIDE,
+  TO,
 }
 
 /**
@@ -343,6 +344,55 @@ function getParentToolboxCategoryLabel(block: BlockSvg) {
 }
 
 /**
+ * Returns the appropriate translated announcement template based on the connection type.
+ *
+ * @param preposition The relationship between the local and neighbour connections.
+ * @returns A translated string template to use for announcing a block move.
+ */
+function getAnnouncementTemplate(preposition: ConnectionPreposition): string {
+  switch (preposition) {
+    case ConnectionPreposition.BEFORE:
+      return Msg['ANNOUNCE_MOVE_BEFORE'];
+    case ConnectionPreposition.AFTER:
+      return Msg['ANNOUNCE_MOVE_AFTER'];
+    case ConnectionPreposition.INSIDE:
+      return Msg['ANNOUNCE_MOVE_INSIDE'];
+    case ConnectionPreposition.AROUND:
+      return Msg['ANNOUNCE_MOVE_AROUND'];
+    default:
+      return Msg['ANNOUNCE_MOVE_TO'];
+  }
+}
+
+/**
+ * Returns a label for a connection includes either a block label, input label or both.
+ *
+ * @param conn The connection to generate a label for.
+ * @param baseLabel An optional block label to include in the returned string.
+ * @returns A label describing the given connection
+ */
+function computeMoveConnectionLabel(
+  conn: RenderedConnection,
+  baseLabel: string,
+): string {
+  const input = conn.getParentInput();
+  if (!input) return baseLabel;
+
+  const labels = getInputLabelsSubset(
+    conn.getSourceBlock(),
+    input,
+    Verbosity.TERSE,
+  );
+  if (!labels.length) return baseLabel;
+
+  const inputLabel = labels.join(', ');
+
+  return baseLabel
+    ? Msg['ANNOUNCE_MOVE_OF'].replace('%1', inputLabel).replace('%2', baseLabel)
+    : inputLabel;
+}
+
+/**
  * Returns a translated string describing an in-progress move of a block to a new
  * connection, suitable for announcement on the ARIA live region. The returned string
  * will be assembled based on the types of the local and neighbour connections and
@@ -364,67 +414,32 @@ export function computeMoveLabel(
   isMoveStart = false,
 ): string {
   const preposition = getConnectionPreposition(local, neighbour);
-  const neighbourBlock = neighbour.getSourceBlock() as BlockSvg;
-  const neighbourBlockLabel = neighbourBlock.getAriaLabel(Verbosity.TERSE);
-  const blockLabel = isMoveStart
+  const template = getAnnouncementTemplate(preposition);
+
+  const needsDisambiguation = ![
+    ConnectionPreposition.BEFORE,
+    ConnectionPreposition.AFTER,
+  ].includes(preposition);
+
+  const includeLocalContext = needsDisambiguation && disambiguationPolicy(true);
+  const includeNeighbourContext =
+    needsDisambiguation && disambiguationPolicy(false);
+
+  let blockLabel = isMoveStart
     ? local.getSourceBlock().getStackBlocksCountLabel()
     : '';
+  let neighbourLabel = (neighbour.getSourceBlock() as BlockSvg).getAriaLabel(
+    Verbosity.TERSE,
+  );
 
-  let announcementTemplate;
-  // Message strings take a format like 'moving %1 %2 to %3 %4' where:
-  // "to" is replaced with a preposition based on the type of the connection candidate
-  // (e.g. "before", "after", "inside", "around", etc), and the placeholders are replaced with:
-  // %1 = optional label for the block being moved
-  // %2 = optional label for the local connection
-  // %3 = label for the neighbour block
-  // %4 = optional label for the neighbour connection
-  switch (preposition) {
-    case ConnectionPreposition.BEFORE:
-      announcementTemplate = Msg['ANNOUNCE_MOVE_BEFORE'];
-      break;
-    case ConnectionPreposition.AFTER:
-      announcementTemplate = Msg['ANNOUNCE_MOVE_AFTER'];
-      break;
-    case ConnectionPreposition.INSIDE:
-      announcementTemplate = Msg['ANNOUNCE_MOVE_INSIDE'];
-      break;
-    case ConnectionPreposition.AROUND:
-      announcementTemplate = Msg['ANNOUNCE_MOVE_AROUND'];
-      break;
-    case ConnectionPreposition.UNKNOWN:
-      announcementTemplate = Msg['ANNOUNCE_MOVE_UNKNOWN'];
+  if (includeLocalContext) {
+    blockLabel = computeMoveConnectionLabel(local, blockLabel);
+  }
+  if (includeNeighbourContext) {
+    neighbourLabel = computeMoveConnectionLabel(neighbour, neighbourLabel);
   }
 
-  // If multiple compatible candidate connections exist for either/both pairs of the
-  // current connection candidate, increase the verbosity of the announcement to help
-  // disambiguate them.
-  const requiresDisambiguation = [
-    ConnectionPreposition.INSIDE,
-    ConnectionPreposition.AROUND,
-  ].includes(preposition);
-  const describeLocal = requiresDisambiguation && disambiguationPolicy(true);
-  const describeNeighbour =
-    requiresDisambiguation && disambiguationPolicy(false);
-
-  const localInput = local.getParentInput();
-  const neighbourInput = neighbour.getParentInput();
-
-  const localConnLabel =
-    (describeLocal &&
-      localInput &&
-      getInputLabelsSubset(local.getSourceBlock(), localInput).join(', ')) ||
-    '';
-  const neighbourConnLabel =
-    (describeNeighbour &&
-      neighbourInput &&
-      getInputLabelsSubset(neighbourBlock, neighbourInput).join(', ')) ||
-    '';
-
-  return announcementTemplate
-    .replace('%1', blockLabel)
-    .replace('%2', localConnLabel)
-    .replace('%3', neighbourBlockLabel)
-    .replace('%4', neighbourConnLabel);
+  return template.replace('%1', blockLabel).replace('%2', neighbourLabel);
 }
 
 /**
@@ -436,10 +451,9 @@ function getConnectionPreposition(
   neighbour: RenderedConnection,
 ): ConnectionPreposition {
   switch (local.type) {
-    case ConnectionType.OUTPUT_VALUE:
-      return ConnectionPreposition.INSIDE;
     case ConnectionType.INPUT_VALUE:
-      return ConnectionPreposition.AROUND;
+    case ConnectionType.OUTPUT_VALUE:
+      return ConnectionPreposition.TO;
     case ConnectionType.NEXT_STATEMENT:
       if (local === local.getSourceBlock().nextConnection) {
         return ConnectionPreposition.BEFORE;
@@ -453,8 +467,8 @@ function getConnectionPreposition(
         return ConnectionPreposition.INSIDE;
       }
   }
-  // Not normally reachable since we should always have a connection candidate
-  // with valid connection types. Satisfies the return type.
+  // Not normally reachable since all valid connection types are covered.
+  // Satisfies the return type.
   return ConnectionPreposition.UNKNOWN;
 }
 

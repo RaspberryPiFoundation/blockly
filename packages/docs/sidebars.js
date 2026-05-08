@@ -527,6 +527,11 @@ const sidebars = {
           label: 'Block appearance',
           id: 'guides/design/appearance',
         },
+        {
+          type: 'doc',
+          label: 'Accessibility',
+          id: 'guides/design/accessibility',
+        },
       ],
     },
     {
