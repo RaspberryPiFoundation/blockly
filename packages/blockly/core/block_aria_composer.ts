@@ -205,11 +205,7 @@ export function getInputLabels(
 ): string[] {
   return block.inputList
     .filter((input) => input.isVisible())
-    .map((input) =>
-      input.getAriaLabelText() !== null
-        ? input.getAriaLabelText()!
-        : input.getLabel(verbosity),
-    );
+    .map((input) => input.getAriaLabelText() ?? input.getLabel(verbosity));
 }
 
 /**
@@ -378,14 +374,20 @@ function computeMoveConnectionLabel(
   const input = conn.getParentInput();
   if (!input) return baseLabel;
 
-  const labels = getInputLabelsSubset(
-    conn.getSourceBlock(),
-    input,
-    Verbosity.TERSE,
-  );
-  if (!labels.length) return baseLabel;
+  let inputLabel = input.getAriaLabelText();
 
-  const inputLabel = labels.join(', ');
+  // If the input doesn't have a custom ARIA label, compute one using the labels from
+  // nearby fields.
+  if (!inputLabel) {
+    const labels = getInputLabelsSubset(
+      conn.getSourceBlock(),
+      input,
+      Verbosity.TERSE,
+    );
+    if (!labels.length) return baseLabel;
+
+    inputLabel = labels.join(', ');
+  }
 
   return baseLabel
     ? Msg['ANNOUNCE_MOVE_OF'].replace('%1', inputLabel).replace('%2', baseLabel)

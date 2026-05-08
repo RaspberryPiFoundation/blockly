@@ -4,9 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {getInputLabelsSubset} from '../../build/src/core/block_aria_composer.js';
 import * as Blockly from '../../build/src/core/blockly.js';
-import {Verbosity} from '../../build/src/core/utils/aria.js';
 import {assert} from '../../node_modules/chai/index.js';
 import {
   moveStatementTestBlocks,
@@ -1143,12 +1141,6 @@ suite('Keyboard-driven movement', function () {
         };
         this.getBlockLabel = (block) =>
           block.getAriaLabel(Blockly.utils.aria.Verbosity.TERSE);
-        this.getInputLabel = (block, input) =>
-          getInputLabelsSubset(
-            block,
-            block.getInput(input),
-            Verbosity.TERSE,
-          ).join(', ');
         this.block1 = this.workspace.newBlock('draw_emoji');
         this.block1.initSvg();
         this.block1.render();
@@ -1158,7 +1150,7 @@ suite('Keyboard-driven movement', function () {
         Blockly.getFocusManager().focusNode(this.block1);
         this.moveAndAssert(
           startMove,
-          ['Moving', this.getBlockLabel(this.block1), 'on workspace.'],
+          ['Moving', 'draw', '❤️', 'on workspace.'],
           [],
         );
         cancelMove(this.workspace);
@@ -1190,7 +1182,7 @@ suite('Keyboard-driven movement', function () {
         startMove(this.workspace);
         this.moveAndAssert(
           moveRight,
-          ['Moving', 'before', this.getBlockLabel(block2)],
+          ['Moving', 'before', 'draw', '✨'],
           [this.getBlockLabel(this.block1)],
         );
 
@@ -1208,9 +1200,11 @@ suite('Keyboard-driven movement', function () {
 
         this.moveAndAssert(startMove, [
           'Moving',
-          this.getBlockLabel(block2),
+          'draw',
+          '✨',
           'after',
-          this.getBlockLabel(this.block1),
+          'draw',
+          '❤️',
         ]);
 
         cancelMove(this.workspace);
@@ -1229,7 +1223,7 @@ suite('Keyboard-driven movement', function () {
         this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
-          ['Moving', 'to', this.getBlockLabel(parent)],
+          ['Moving', 'to', 'print'],
           [this.getBlockLabel(valueBlock)],
         );
 
@@ -1247,8 +1241,8 @@ suite('Keyboard-driven movement', function () {
 
         this.moveAndAssert(
           moveRight,
-          ['Moving', 'around', this.getBlockLabel(this.block1)],
-          [this.getBlockLabel(loop), this.getInputLabel(loop, 'DO')],
+          ['Moving', 'around', 'draw', '❤️'],
+          [this.getBlockLabel(loop)],
         );
 
         cancelMove(this.workspace);
@@ -1268,25 +1262,44 @@ suite('Keyboard-driven movement', function () {
         this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
-          [
-            'Moving',
-            this.getInputLabel(ifBlock, 'DO1'),
-            'around',
-            this.getBlockLabel(this.block1),
-          ],
+          ['Moving', 'else if, do', 'around', 'draw', '❤️'],
           [this.getBlockLabel(ifBlock)],
         );
         this.moveAndAssert(
           moveRight,
-          [
-            'Moving',
-            this.getInputLabel(ifBlock, 'DO0'),
-            'around',
-            this.getBlockLabel(this.block1),
-          ],
+          ['Moving', 'if, do', 'around', 'draw', '❤️'],
           [this.getBlockLabel(ifBlock)],
         );
 
+        cancelMove(this.workspace);
+      });
+      test('disambiguates with custom input labels', function () {
+        const ifBlock = this.workspace.newBlock('controls_if');
+        ifBlock.initSvg();
+        ifBlock.elseifCount_ = 1;
+        ifBlock.elseCount_ = 1;
+        ifBlock.updateShape_();
+        ifBlock.render();
+        ifBlock.getInput('DO1').setAriaLabelProvider('custom else if branch');
+        this.workspace.cleanUp();
+
+        Blockly.getFocusManager().focusNode(ifBlock);
+        startMove(this.workspace); // on workspace
+        moveRight(this.workspace); // before block1
+        this.clock.tick(10);
+        this.moveAndAssert(
+          moveRight,
+          ['Moving', 'custom else if branch', 'around', 'draw', '❤️'],
+          ['else if, do'],
+        );
+        cancelMove(this.workspace);
+        Blockly.getFocusManager().focusNode(this.block1);
+        this.clock.tick(10);
+        this.moveAndAssert(
+          startMove,
+          ['Moving', 'inside', 'custom else if branch'],
+          ['else if, do'],
+        );
         cancelMove(this.workspace);
       });
       test('disambiguates between multiple value inputs', function () {
@@ -1300,25 +1313,14 @@ suite('Keyboard-driven movement', function () {
         Blockly.getFocusManager().focusNode(boolean);
         startMove(this.workspace);
         this.clock.tick(10);
-        console.log([this.getBlockLabel(compare), this.getBlockLabel(boolean)]);
         this.moveAndAssert(
           moveRight,
-          [
-            'Moving',
-            'to',
-            this.getBlockLabel(compare),
-            this.getInputLabel(compare, 'A'),
-          ],
+          ['Moving', 'to', '=', 'input 1'],
           [this.getBlockLabel(boolean)],
         );
         this.moveAndAssert(
           moveRight,
-          [
-            'Moving',
-            'to',
-            this.getBlockLabel(compare),
-            this.getInputLabel(compare, 'B'),
-          ],
+          ['Moving', 'to', '=', '='],
           [this.getBlockLabel(boolean)],
         );
 
@@ -1340,12 +1342,12 @@ suite('Keyboard-driven movement', function () {
         this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
-          ['Moving', 'to', this.getBlockLabel(textJoin), 'input 2'],
+          ['Moving', 'to', 'create text with', 'input 2'],
           [this.getBlockLabel(text)],
         );
         this.moveAndAssert(
           moveRight,
-          ['Moving', 'to', this.getBlockLabel(textJoin), 'input 3'],
+          ['Moving', 'to', 'create text with', 'input 3'],
           [this.getBlockLabel(text)],
         );
 
