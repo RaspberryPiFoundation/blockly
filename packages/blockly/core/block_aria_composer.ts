@@ -52,11 +52,15 @@ export enum ConnectionPreposition {
  * @internal
  * @param block The block for which an ARIA representation should be created.
  * @param verbosity How much detail to include in the description.
+ * @param useCustomInputLabels Whether to use custom labels for inputs, if they
+ *   exist. We don't want to do this when just reading a block's label, but do
+ *   want to in other scenarios such as move mode.
  * @returns The ARIA representation for the specified block.
  */
 export function computeAriaLabel(
   block: BlockSvg,
   verbosity = Verbosity.STANDARD,
+  useCustomInputLabels = true,
 ) {
   if (block.isSimpleReporter()) {
     // special case for full-block field blocks.
@@ -68,7 +72,7 @@ export function computeAriaLabel(
   return [
     verbosity >= Verbosity.STANDARD && getBeginStackLabel(block),
     getParentInputLabel(block),
-    ...getInputLabels(block, verbosity),
+    ...getInputLabels(block, verbosity, useCustomInputLabels),
     verbosity === Verbosity.LOQUACIOUS && getParentToolboxCategoryLabel(block),
     verbosity >= Verbosity.STANDARD && getDisabledLabel(block),
     verbosity >= Verbosity.STANDARD && getCollapsedLabel(block),
@@ -205,17 +209,30 @@ function getBeginStackLabel(block: BlockSvg) {
  * their contents are returned as a single item in the array per top-level
  * input.
  *
+ * Generally, if a custom label for an input is provided, that is preferred.
+ * However, we do not surface the custom labels when simply reading the text of
+ * the block. They are used as supplementary information for situations like
+ * move mode or when an input itself is focused.
+ *
  * @internal
  * @param block The block to retrieve a list of field/input labels for.
+ * @param verbosity
+ * @param useCustomLabels whether to use the custom label for an input, if it's present.
  * @returns A list of field/input labels for the given block.
  */
 export function getInputLabels(
   block: BlockSvg,
   verbosity = Verbosity.STANDARD,
+  useCustomLabels = true,
 ): string[] {
   return block.inputList
     .filter((input) => input.isVisible())
-    .map((input) => input.getLabel(verbosity));
+    .map((input) => {
+      const customLabel = input.getAriaLabelText();
+      return useCustomLabels && customLabel !== null
+        ? customLabel
+        : input.getLabel(verbosity);
+    });
 }
 
 /**

@@ -1273,15 +1273,32 @@ suite('Keyboard-driven movement', function () {
 
         cancelMove(this.workspace);
       });
-      test('disambiguates with custom input labels', function () {
-        const ifBlock = this.workspace.newBlock('controls_if');
-        ifBlock.initSvg();
-        ifBlock.elseifCount_ = 1;
-        ifBlock.elseCount_ = 1;
-        ifBlock.updateShape_();
-        ifBlock.render();
+      test('disambiguates with custom input labels around blocks', function () {
+        const json = {
+          'blocks': {
+            'languageVersion': 0,
+            'blocks': [
+              {
+                'type': 'draw_emoji',
+                'id': 'drawBlock',
+                'x': -37,
+                'y': 0,
+              },
+              {
+                'type': 'controls_if',
+                'id': 'ifBlock',
+                'x': -37,
+                'y': 100,
+                'extraState': {
+                  'elseIfCount': 1,
+                },
+              },
+            ],
+          },
+        };
+        Blockly.serialization.workspaces.load(json, this.workspace);
+        const ifBlock = this.workspace.getBlockById('ifBlock');
         ifBlock.getInput('DO1').setAriaLabelProvider('custom else if branch');
-        this.workspace.cleanUp();
 
         Blockly.getFocusManager().focusNode(ifBlock);
         startMove(this.workspace); // on workspace
@@ -1293,13 +1310,46 @@ suite('Keyboard-driven movement', function () {
           ['else if, do'],
         );
         cancelMove(this.workspace);
-        Blockly.getFocusManager().focusNode(this.block1);
+      });
+      test('disambiguates with custom input labels inside blocks', function () {
+        const json = {
+          'blocks': {
+            'languageVersion': 0,
+            'blocks': [
+              {
+                'type': 'draw_emoji',
+                'id': 'drawBlock',
+                'x': -37,
+                'y': 0,
+              },
+              {
+                'type': 'controls_if',
+                'id': 'ifBlock',
+                'x': -37,
+                'y': 100,
+                'extraState': {
+                  'elseIfCount': 1,
+                },
+              },
+            ],
+          },
+        };
+        Blockly.serialization.workspaces.load(json, this.workspace);
+        const ifBlock = this.workspace.getBlockById('ifBlock');
+        ifBlock.getInput('DO1').setAriaLabelProvider('custom else if branch');
+
+        const drawBlock = this.workspace.getBlockById('drawBlock');
+
+        Blockly.getFocusManager().focusNode(drawBlock);
         this.clock.tick(10);
-        this.moveAndAssert(
-          startMove,
-          ['Moving', 'inside', 'custom else if branch'],
-          ['else if, do'],
-        );
+        startMove(this.workspace);
+        moveRight(this.workspace); // before if block
+        moveRight(this.workspace); // inside first do
+        this.moveAndAssert(moveRight, [
+          'Moving',
+          'inside',
+          'custom else if branch',
+        ]);
         cancelMove(this.workspace);
       });
       test('disambiguates between multiple value inputs', function () {
