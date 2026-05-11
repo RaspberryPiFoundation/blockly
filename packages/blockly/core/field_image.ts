@@ -316,30 +316,24 @@ export class FieldImage extends Field<string> {
   }
 
   /**
-   * Recomputes the ARIA role and label for this field.
+   * Customizes label and sets additional aria state.
    */
-  protected recomputeAriaContext(): void {
-    const focusableElement = this.getClickTarget_();
-    if (!focusableElement) return;
+  override recomputeAriaContext(): boolean {
+    const shouldCustomize = super.recomputeAriaContext();
+    if (!shouldCustomize) return false;
 
-    const isInFlyout = this.getSourceBlock()?.isInFlyout;
-    if (isInFlyout) {
-      aria.setState(focusableElement, aria.State.HIDDEN, true);
-      return;
-    }
+    const focusableElement = this.getFocusableElement();
 
-    aria.setState(focusableElement, aria.State.HIDDEN, false);
     // The button role is intended to indicate to users that the field has an
     // editing mode that can be activated. The presentation role is used to
     // prevent screen readers from  reading the content or its descendants.
     // Only clickable image fields are navigable.
-    aria.setRole(
-      focusableElement,
-      this.isClickable() ? aria.Role.BUTTON : aria.Role.PRESENTATION,
-    );
-
-    const label = this.computeAriaLabel(true);
-    aria.setState(focusableElement, aria.State.LABEL, label);
+    if (!this.isClickable()) {
+      aria.setRole(focusableElement, aria.Role.PRESENTATION);
+      aria.clearState(focusableElement, aria.State.LABEL);
+      return false;
+    }
+    return true;
   }
 }
 

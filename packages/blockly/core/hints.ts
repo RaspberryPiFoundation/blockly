@@ -5,6 +5,7 @@
  */
 
 import {Msg} from './msg.js';
+import {names} from './shortcut_items.js';
 import {Toast} from './toast.js';
 import {getShortcutKeysShort} from './utils/shortcut_formatting.js';
 import * as userAgent from './utils/useragent.js';
@@ -15,6 +16,8 @@ const constrainedMoveHintId = 'constrainedMoveHint';
 const helpHintId = 'helpHint';
 const blockNavigationHintId = 'blockNavigationHint';
 const workspaceNavigationHintId = 'workspaceNavigationHint';
+const copiedHintId = 'copiedHint';
+const cutHintId = 'cutHint';
 
 /**
  * Nudge the user to use unconstrained movement.
@@ -101,4 +104,46 @@ export function showWorkspaceNavigationHint(workspace: WorkspaceSvg) {
   const message = Msg['KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT'];
   const id = workspaceNavigationHintId;
   Toast.show(workspace, {message, id});
+}
+
+/**
+ * Nudge the user to paste after a copy.
+ *
+ * @param workspace Workspace.
+ */
+export function showCopiedHint(workspace: WorkspaceSvg) {
+  Toast.show(workspace, {
+    message: Msg['KEYBOARD_NAV_COPIED_HINT'].replace(
+      '%1',
+      getShortcutKeysShort(names.PASTE),
+    ),
+    duration: 7,
+    id: copiedHintId,
+  });
+}
+
+/**
+ * Nudge the user to paste after a cut.
+ *
+ * @param workspace Workspace.
+ */
+export function showCutHint(workspace: WorkspaceSvg) {
+  Toast.show(workspace, {
+    message: Msg['KEYBOARD_NAV_CUT_HINT'].replace(
+      '%1',
+      getShortcutKeysShort(names.PASTE),
+    ),
+    duration: 7,
+    id: cutHintId,
+  });
+}
+
+/**
+ * Clear active paste-related hints, if any.
+ *
+ * @param workspace The workspace.
+ */
+export function clearPasteHints(workspace: WorkspaceSvg) {
+  Toast.hide(workspace, cutHintId);
+  Toast.hide(workspace, copiedHintId);
 }

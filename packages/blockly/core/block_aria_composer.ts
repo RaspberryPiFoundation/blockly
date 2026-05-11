@@ -26,6 +26,7 @@ export enum ConnectionPreposition {
   AFTER,
   AROUND,
   INSIDE,
+  TO,
 }
 
 /**
@@ -51,20 +52,31 @@ export enum ConnectionPreposition {
  * @internal
  * @param block The block for which an ARIA representation should be created.
  * @param verbosity How much detail to include in the description.
+ * @param useCustomInputLabels Whether to use custom labels for inputs, if they
+ *   exist. We don't want to do this when just reading a block's label, but do
+ *   want to in other scenarios such as move mode.
  * @returns The ARIA representation for the specified block.
  */
 export function computeAriaLabel(
   block: BlockSvg,
   verbosity = Verbosity.STANDARD,
+  useCustomInputLabels = true,
 ) {
+  if (block.isSimpleReporter()) {
+    // special case for full-block field blocks.
+    const field = block.getFullBlockField();
+    if (field) {
+      return field.computeAriaLabel(verbosity >= Verbosity.STANDARD);
+    }
+  }
   return [
     verbosity >= Verbosity.STANDARD && getBeginStackLabel(block),
     getParentInputLabel(block),
-    ...getInputLabels(block, verbosity),
+    ...getInputLabels(block, verbosity, useCustomInputLabels),
     verbosity === Verbosity.LOQUACIOUS && getParentToolboxCategoryLabel(block),
     verbosity >= Verbosity.STANDARD && getDisabledLabel(block),
     verbosity >= Verbosity.STANDARD && getCollapsedLabel(block),
-    verbosity >= Verbosity.STANDARD && getShadowBlockLabel(block),
+    verbosity >= Verbosity.LOQUACIOUS && getShadowBlockLabel(block),
     verbosity >= Verbosity.STANDARD && getInputCountLabel(block),
   ]
     .filter((label) => !!label)
@@ -123,7 +135,7 @@ export function computeFieldRowLabel(
   lookback: boolean,
   verbosity = Verbosity.STANDARD,
 ): string[] {
-  const includeTypeInfo = verbosity >= Verbosity.STANDARD;
+  const includeTypeInfo = verbosity >= Verbosity.LOQUACIOUS;
   const fieldRowLabel = input.fieldRow
     .filter((field) => field.isVisible())
     .map((field) => field.computeAriaLabel(includeTypeInfo));
@@ -181,7 +193,10 @@ function getParentInputLabel(block: BlockSvg) {
  *     does not.
  */
 function getBeginStackLabel(block: BlockSvg) {
-  return !block.workspace.isFlyout && block.getRootBlock() === block
+  // Don't include the "begin stack" label for blocks that are moving
+  // or blocks in the flyout
+  if (block.isInFlyout || block.workspace.isDragging()) return undefined;
+  return block.getRootBlock() === block
     ? Msg['BLOCK_LABEL_BEGIN_STACK']
     : undefined;
 }
@@ -194,21 +209,28 @@ function getBeginStackLabel(block: BlockSvg) {
  * their contents are returned as a single item in the array per top-level
  * input.
  *
+ * Generally, if a custom label for an input is provided, that is preferred.
+ * However, we do not surface the custom labels when simply reading the text of
+ * the block. They are used as supplementary information for situations like
+ * move mode or when an input itself is focused.
+ *
  * @internal
  * @param block The block to retrieve a list of field/input labels for.
+ * @param verbosity
+ * @param useCustomLabels whether to use the custom label for an input, if it's present.
  * @returns A list of field/input labels for the given block.
  */
 export function getInputLabels(
   block: BlockSvg,
   verbosity = Verbosity.STANDARD,
+  useCustomLabels = true,
 ): string[] {
   return block.inputList
     .filter((input) => input.isVisible())
-    .map((input) =>
-      input.getAriaLabelText() !== null
-        ? input.getAriaLabelText()!
-        : input.getLabel(verbosity),
-    );
+    .map((input) => {
+      const customLabel = useCustomLabels ? input.getAriaLabelText() : null;
+      return customLabel ?? input.getLabel(verbosity);
+    });
 }
 
 /**
@@ -343,6 +365,61 @@ function getParentToolboxCategoryLabel(block: BlockSvg) {
 }
 
 /**
+ * Returns the appropriate translated announcement template based on the connection type.
+ *
+ * @param preposition The relationship between the local and neighbour connections.
+ * @returns A translated string template to use for announcing a block move.
+ */
+function getAnnouncementTemplate(preposition: ConnectionPreposition): string {
+  switch (preposition) {
+    case ConnectionPreposition.BEFORE:
+      return Msg['ANNOUNCE_MOVE_BEFORE'];
+    case ConnectionPreposition.AFTER:
+      return Msg['ANNOUNCE_MOVE_AFTER'];
+    case ConnectionPreposition.INSIDE:
+      return Msg['ANNOUNCE_MOVE_INSIDE'];
+    case ConnectionPreposition.AROUND:
+      return Msg['ANNOUNCE_MOVE_AROUND'];
+    default:
+      return Msg['ANNOUNCE_MOVE_TO'];
+  }
+}
+
+/**
+ * Returns a label for a connection includes either a block label, input label or both.
+ *
+ * @param conn The connection to generate a label for.
+ * @param baseLabel An optional block label to include in the returned string.
+ * @returns A label describing the given connection
+ */
+function computeMoveConnectionLabel(
+  conn: RenderedConnection,
+  baseLabel: string,
+): string {
+  const input = conn.getParentInput();
+  if (!input) return baseLabel;
+
+  let inputLabel = input.getAriaLabelText();
+
+  // If the input doesn't have a custom ARIA label, compute one using the labels from
+  // nearby fields.
+  if (!inputLabel) {
+    const labels = getInputLabelsSubset(
+      conn.getSourceBlock(),
+      input,
+      Verbosity.TERSE,
+    );
+    if (!labels.length) return baseLabel;
+
+    inputLabel = labels.join(', ');
+  }
+
+  return baseLabel
+    ? Msg['ANNOUNCE_MOVE_OF'].replace('%1', inputLabel).replace('%2', baseLabel)
+    : inputLabel;
+}
+
+/**
  * Returns a translated string describing an in-progress move of a block to a new
  * connection, suitable for announcement on the ARIA live region. The returned string
  * will be assembled based on the types of the local and neighbour connections and
@@ -364,67 +441,32 @@ export function computeMoveLabel(
   isMoveStart = false,
 ): string {
   const preposition = getConnectionPreposition(local, neighbour);
-  const neighbourBlock = neighbour.getSourceBlock() as BlockSvg;
-  const neighbourBlockLabel = neighbourBlock.getAriaLabel(Verbosity.TERSE);
-  const blockLabel = isMoveStart
+  const template = getAnnouncementTemplate(preposition);
+
+  const needsDisambiguation = ![
+    ConnectionPreposition.BEFORE,
+    ConnectionPreposition.AFTER,
+  ].includes(preposition);
+
+  const includeLocalContext = needsDisambiguation && disambiguationPolicy(true);
+  const includeNeighbourContext =
+    needsDisambiguation && disambiguationPolicy(false);
+
+  let blockLabel = isMoveStart
     ? local.getSourceBlock().getStackBlocksCountLabel()
     : '';
+  let neighbourLabel = (neighbour.getSourceBlock() as BlockSvg).getAriaLabel(
+    Verbosity.TERSE,
+  );
 
-  let announcementTemplate;
-  // Message strings take a format like 'moving %1 %2 to %3 %4' where:
-  // "to" is replaced with a preposition based on the type of the connection candidate
-  // (e.g. "before", "after", "inside", "around", etc), and the placeholders are replaced with:
-  // %1 = optional label for the block being moved
-  // %2 = optional label for the local connection
-  // %3 = label for the neighbour block
-  // %4 = optional label for the neighbour connection
-  switch (preposition) {
-    case ConnectionPreposition.BEFORE:
-      announcementTemplate = Msg['ANNOUNCE_MOVE_BEFORE'];
-      break;
-    case ConnectionPreposition.AFTER:
-      announcementTemplate = Msg['ANNOUNCE_MOVE_AFTER'];
-      break;
-    case ConnectionPreposition.INSIDE:
-      announcementTemplate = Msg['ANNOUNCE_MOVE_INSIDE'];
-      break;
-    case ConnectionPreposition.AROUND:
-      announcementTemplate = Msg['ANNOUNCE_MOVE_AROUND'];
-      break;
-    case ConnectionPreposition.UNKNOWN:
-      announcementTemplate = Msg['ANNOUNCE_MOVE_UNKNOWN'];
+  if (includeLocalContext) {
+    blockLabel = computeMoveConnectionLabel(local, blockLabel);
+  }
+  if (includeNeighbourContext) {
+    neighbourLabel = computeMoveConnectionLabel(neighbour, neighbourLabel);
   }
 
-  // If multiple compatible candidate connections exist for either/both pairs of the
-  // current connection candidate, increase the verbosity of the announcement to help
-  // disambiguate them.
-  const requiresDisambiguation = [
-    ConnectionPreposition.INSIDE,
-    ConnectionPreposition.AROUND,
-  ].includes(preposition);
-  const describeLocal = requiresDisambiguation && disambiguationPolicy(true);
-  const describeNeighbour =
-    requiresDisambiguation && disambiguationPolicy(false);
-
-  const localInput = local.getParentInput();
-  const neighbourInput = neighbour.getParentInput();
-
-  const localConnLabel =
-    (describeLocal &&
-      localInput &&
-      getInputLabelsSubset(local.getSourceBlock(), localInput).join(', ')) ||
-    '';
-  const neighbourConnLabel =
-    (describeNeighbour &&
-      neighbourInput &&
-      getInputLabelsSubset(neighbourBlock, neighbourInput).join(', ')) ||
-    '';
-
-  return announcementTemplate
-    .replace('%1', blockLabel)
-    .replace('%2', localConnLabel)
-    .replace('%3', neighbourBlockLabel)
-    .replace('%4', neighbourConnLabel);
+  return template.replace('%1', blockLabel).replace('%2', neighbourLabel);
 }
 
 /**
@@ -436,10 +478,9 @@ function getConnectionPreposition(
   neighbour: RenderedConnection,
 ): ConnectionPreposition {
   switch (local.type) {
-    case ConnectionType.OUTPUT_VALUE:
-      return ConnectionPreposition.INSIDE;
     case ConnectionType.INPUT_VALUE:
-      return ConnectionPreposition.AROUND;
+    case ConnectionType.OUTPUT_VALUE:
+      return ConnectionPreposition.TO;
     case ConnectionType.NEXT_STATEMENT:
       if (local === local.getSourceBlock().nextConnection) {
         return ConnectionPreposition.BEFORE;
@@ -453,8 +494,8 @@ function getConnectionPreposition(
         return ConnectionPreposition.INSIDE;
       }
   }
-  // Not normally reachable since we should always have a connection candidate
-  // with valid connection types. Satisfies the return type.
+  // Not normally reachable since all valid connection types are covered.
+  // Satisfies the return type.
   return ConnectionPreposition.UNKNOWN;
 }
 

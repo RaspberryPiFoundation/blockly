@@ -173,4 +173,14 @@ suite('Menu items', function () {
     this.menuItem.performAction(new Event('click'));
     assert.isTrue(called);
   });
+
+  test('return accurate ARIA labels for HTML elements', function () {
+    const div = document.createElement('div');
+    const nestedDiv = document.createElement('div');
+    nestedDiv.textContent = 'nested';
+    div.textContent = 'test';
+    div.appendChild(nestedDiv);
+    const testMenuItem = new Blockly.MenuItem(div);
+    assert.equal(testMenuItem.getAriaLabel(), 'testnested');
+  });
 });

@@ -114,7 +114,12 @@ export class MenuItem {
   getAriaLabel(): string {
     // This fallback should only be hit by Context Menu items as all
     // FieldDropdown options should have an ARIA label.
-    return this.ariaLabel || String(this.content);
+    return (
+      this.ariaLabel ||
+      (typeof this.content === 'string'
+        ? this.content
+        : this.content.textContent)
+    );
   }
 
   /** Dispose of this menu item. */

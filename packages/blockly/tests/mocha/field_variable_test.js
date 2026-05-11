@@ -661,9 +661,9 @@ suite('Variable Fields', function () {
 
       this.focusableElement = this.field.getFocusableElement();
     });
-    test('Block has dropdown field type name and "Variable" qualifier in ARIA label', function () {
+    test('Block has "Variable" qualifier in ARIA label', function () {
       const blockLabel = this.block.getAriaLabel();
-      assert.include(blockLabel, 'dropdown:');
+      assert.include(blockLabel, 'Variable');
     });
     test('Field has dropdown field type name and "Variable" qualifier in ARIA label', function () {
       const fieldLabel = this.focusableElement.getAttribute('aria-label');
