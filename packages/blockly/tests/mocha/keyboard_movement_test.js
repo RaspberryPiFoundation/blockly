@@ -1306,7 +1306,7 @@ suite('Keyboard-driven movement', function () {
         this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
-          ['Moving', 'custom branch label', 'around', 'draw', '❤️'],
+          ['Moving', 'custom else if branch', 'around', 'draw', '❤️'],
           ['else if, do'],
         );
         cancelMove(this.workspace);
