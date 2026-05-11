@@ -241,6 +241,7 @@ export class BlockDragStrategy implements IDragStrategy {
     blockAnimation.disconnectUiStop();
 
     const healStack = this.shouldHealStack(e);
+    this.storeInitialConnections(healStack);
 
     if (this.shouldDisconnect(healStack)) {
       this.disconnectBlock(healStack);
@@ -390,7 +391,6 @@ export class BlockDragStrategy implements IDragStrategy {
    * @param healStack Whether or not to heal the stack after disconnecting.
    */
   private disconnectBlock(healStack: boolean) {
-    this.storeInitialConnections(healStack);
     this.block.unplug(healStack);
     blockAnimation.disconnectUiEffect(this.block);
   }
