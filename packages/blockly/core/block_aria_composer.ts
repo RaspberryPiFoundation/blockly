@@ -112,6 +112,10 @@ export function configureAriaRole(block: BlockSvg) {
  * `lookback` attribute is specified, all of the fields on the row immediately
  * above the Input will be used instead.
  *
+ * Empty field labels are excluded because they don't provide useful context.
+ * Fields should generally have a helpful label, but there are exceptions, such
+ * as when empty label fields are used to control the layout of a block.
+ *
  * @internal
  * @param input The Input to compute a description/context label for.
  * @param lookback If true, will use labels for fields on the previous row if
@@ -135,7 +139,7 @@ export function computeFieldRowLabel(
       return computeFieldRowLabel(inputs[index - 1], lookback, verbosity);
     }
   }
-  return fieldRowLabel;
+  return fieldRowLabel.filter((label) => !!label);
 }
 
 /**
