@@ -1367,14 +1367,21 @@ suite('Keyboard Shortcut Items', function () {
 
       sinon.assert.calledWith(toastSpy, this.workspace, {
         id: 'blockNavigationHint',
-        message: Blockly.Msg['KEYBOARD_NAV_BLOCK_NAVIGATION_HINT'].replace('%1', '→'),
+        message: Blockly.Msg['KEYBOARD_NAV_BLOCK_NAVIGATION_HINT'].replace(
+          '%1',
+          '→',
+        ),
       });
       toastSpy.restore();
     });
 
     test('Shows a toast with RTL navigation hints for navigable blocks', function () {
       const toolbox = document.getElementById('toolbox-test');
-      const ws = Blockly.inject('blocklyDiv', {toolbox, renderer: 'zelos', rtl: true});
+      const ws = Blockly.inject('blocklyDiv', {
+        toolbox,
+        renderer: 'zelos',
+        rtl: true,
+      });
       const toastSpy = sinon.spy(Blockly.Toast, 'show');
 
       const block = ws.newBlock('controls_if');
@@ -1387,7 +1394,10 @@ suite('Keyboard Shortcut Items', function () {
 
       sinon.assert.calledWith(toastSpy, ws, {
         id: 'blockNavigationHint',
-        message: Blockly.Msg['KEYBOARD_NAV_BLOCK_NAVIGATION_HINT'].replace('%1', '←'),
+        message: Blockly.Msg['KEYBOARD_NAV_BLOCK_NAVIGATION_HINT'].replace(
+          '%1',
+          '←',
+        ),
       });
       toastSpy.restore();
       ws.dispose();
