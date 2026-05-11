@@ -720,7 +720,7 @@ export class WorkspaceSvg
       );
     } else {
       // Main workspaces get labelled with how many stacks of blocks they contain
-      // This will be updated in a change listener, but set it here in case there are blocks in the initial state of the workspace
+      // This will be updated on focus, but set it here in case there are blocks in the initial state of the workspace
       this.updateAriaLabel();
     }
   }
@@ -797,14 +797,6 @@ export class WorkspaceSvg
     this.svgBubbleCanvas_ = this.layerManager.getBubbleLayer();
 
     this.setInitialAriaContext();
-
-    if (!this.isFlyout && !this.isMutator) {
-      // Set up a change listener to update the aria label on main workspace
-      this.addChangeListener((e) => {
-        if (e.isUiEvent) return;
-        this.updateAriaLabel();
-      });
-    }
 
     if (!this.isFlyout) {
       browserEvents.conditionalBind(
@@ -2696,7 +2688,11 @@ export class WorkspaceSvg
   }
 
   /** See IFocusableNode.onNodeFocus. */
-  onNodeFocus(): void {}
+  onNodeFocus(): void {
+    if (!this.isFlyout && !this.isMutator) {
+      this.updateAriaLabel();
+    }
+  }
 
   /** See IFocusableNode.onNodeBlur. */
   onNodeBlur(): void {}

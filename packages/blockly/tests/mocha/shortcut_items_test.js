@@ -282,6 +282,23 @@ suite('Keyboard Shortcut Items', function () {
       sinon.assert.calledOnce(this.copySpy);
       sinon.assert.calledOnce(this.hideChaffSpy);
     });
+
+    test('Shows a toast when copying a block', function () {
+      const toastSpy = sinon.spy(Blockly.Toast, 'show');
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.called(toastSpy);
+      assert.include(toastSpy.args[0][1]['message'], 'Copied. Press');
+      toastSpy.restore();
+    });
+
+    test('Shows a toast when copying a workspace comment', function () {
+      setSelectedComment(this.workspace);
+      const toastSpy = sinon.spy(Blockly.Toast, 'show');
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.called(toastSpy);
+      assert.include(toastSpy.args[0][1]['message'], 'Copied. Press');
+      toastSpy.restore();
+    });
   });
 
   suite('Cut', function () {
@@ -362,6 +379,23 @@ suite('Keyboard Shortcut Items', function () {
       sinon.assert.calledOnce(this.copySpy);
       sinon.assert.calledOnce(this.disposeSpy);
     });
+
+    test('Shows a toast when cutting a block', function () {
+      const toastSpy = sinon.spy(Blockly.Toast, 'show');
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.called(toastSpy);
+      assert.include(toastSpy.args[0][1]['message'], 'Cut. Press');
+      toastSpy.restore();
+    });
+
+    test('Shows a toast when cutting a workspace comment', function () {
+      setSelectedComment(this.workspace);
+      const toastSpy = sinon.spy(Blockly.Toast, 'show');
+      this.injectionDiv.dispatchEvent(keyEvent);
+      sinon.assert.called(toastSpy);
+      assert.include(toastSpy.args[0][1]['message'], 'Cut. Press');
+      toastSpy.restore();
+    });
   });
 
   suite('Paste', function () {
@@ -374,6 +408,26 @@ suite('Keyboard Shortcut Items', function () {
 
       const isPasteEnabled = pasteShortcut.preconditionFn();
       assert.isFalse(isPasteEnabled);
+    });
+
+    test('Hides cut/copy toasts', function () {
+      setSelectedBlock(this.workspace);
+      const copyEvent = createKeyDownEvent(Blockly.utils.KeyCodes.C, [
+        Blockly.utils.KeyCodes.CTRL_CMD,
+      ]);
+      this.injectionDiv.dispatchEvent(copyEvent);
+      this.clock.runAll();
+
+      const toastSpy = sinon.spy(Blockly.Toast, 'hide');
+
+      const pasteEvent = createKeyDownEvent(Blockly.utils.KeyCodes.V, [
+        Blockly.utils.KeyCodes.CTRL_CMD,
+      ]);
+      this.injectionDiv.dispatchEvent(pasteEvent);
+
+      sinon.assert.calledWith(toastSpy, this.workspace, 'cutHint');
+      sinon.assert.calledWith(toastSpy, this.workspace, 'copiedHint');
+      toastSpy.restore();
     });
   });
 
