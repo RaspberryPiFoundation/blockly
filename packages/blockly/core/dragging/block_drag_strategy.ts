@@ -222,6 +222,8 @@ export class BlockDragStrategy implements IDragStrategy {
       return alternateTarget.startDrag(e);
     }
 
+    this.block.workspace.recordDragTargets();
+
     this.dragging = true;
     this.fireDragStartEvent();
 
