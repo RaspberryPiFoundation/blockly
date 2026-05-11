@@ -107,7 +107,7 @@ export class FieldLabel extends Field<string> {
    * @param includeTypeInfo Whether to include the field's type information in
    *     the returned label, if available.
    */
-  computeAriaLabel(includeTypeInfo: boolean = true): string {
+  override computeAriaLabel(includeTypeInfo: boolean = true): string {
     const ariaTypeName = includeTypeInfo ? this.getAriaTypeName() : null;
     const ariaValue = this.getAriaValue() ?? '';
 
