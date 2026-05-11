@@ -168,7 +168,7 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
     if (!block) throw new UnattachedFieldError();
 
     if (!this.isFullBlockField()) {
-      // full-block fields don't get the border-rect element
+      // Full-block fields don't get the border-rect element.
       this.createBorderRect_();
     }
     this.createTextElement_();
