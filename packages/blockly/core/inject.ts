@@ -176,7 +176,7 @@ function createMainWorkspace(
   if (!wsOptions.hasCategories && wsOptions.languageTree) {
     // Add flyout as an <svg> that is a sibling of the workspace SVG.
     const flyout = mainWorkspace.addFlyout(Svg.SVG);
-    dom.insertAfter(flyout, svg);
+    injectionDiv.insertBefore(flyout, svg);
   }
   if (wsOptions.hasTrashcan) {
     mainWorkspace.addTrashcan();

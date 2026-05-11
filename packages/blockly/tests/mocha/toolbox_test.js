@@ -216,6 +216,24 @@ suite('Toolbox', function () {
       Blockly.getFocusManager().focusNode(this.toolbox.getWorkspace());
       assert.isTrue(this.toolbox.getFlyout().isVisible());
     });
+
+    test('Tab order follows toolbox, flyout, workspace DOM order', function () {
+      const injectionDiv = this.toolbox.getWorkspace().getInjectionDiv();
+      const children = Array.from(injectionDiv.children);
+
+      const toolboxIndex = children.indexOf(this.toolbox.HtmlDiv);
+      const flyoutIndex = children.indexOf(this.toolbox.getFlyout().svgGroup_);
+      const workspaceIndex = children.indexOf(
+        this.toolbox.getWorkspace().getParentSvg(),
+      );
+
+      assert.isAtLeast(toolboxIndex, 0);
+      assert.isAtLeast(flyoutIndex, 0);
+      assert.isAtLeast(workspaceIndex, 0);
+
+      assert.isBelow(toolboxIndex, flyoutIndex);
+      assert.isBelow(flyoutIndex, workspaceIndex);
+    });
   });
 
   suite('onClick_', function () {
