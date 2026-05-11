@@ -74,14 +74,6 @@ export function inject(
     common.setMainWorkspace(workspace);
   });
 
-  containerElement?.getRootNode().addEventListener('keydown', ((
-    e: KeyboardEvent,
-  ) => {
-    if (e.key === 'Tab') {
-      keyboardNavigationController.setIsActive(true);
-    }
-  }) as EventListener);
-
   browserEvents.conditionalBind(
     subContainer,
     'keydown',
@@ -327,6 +319,11 @@ function bindDocumentEvents() {
     // should run regardless of what other touch event handlers have run.
     browserEvents.bind(document, 'touchend', null, Touch.longStop);
     browserEvents.bind(document, 'touchcancel', null, Touch.longStop);
+    browserEvents.bind(document, 'keydown', null, function (e: KeyboardEvent) {
+      if (e.key === 'Tab') {
+        keyboardNavigationController.setIsActive(true);
+      }
+    });
   }
   documentEventsBound = true;
 }
