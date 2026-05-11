@@ -1289,23 +1289,16 @@ suite('Keyboard-driven movement', function () {
         this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
-          [
-            'Moving',
-            'else if, do',
-            'custom branch label',
-            'around',
-            'draw',
-            '❤️',
-          ],
-          [],
+          ['Moving', 'custom branch label', 'around', 'draw', '❤️'],
+          ['else if, do'],
         );
         cancelMove(this.workspace);
         Blockly.getFocusManager().focusNode(this.block1);
         this.clock.tick(10);
         this.moveAndAssert(
           startMove,
-          ['Moving', 'inside', 'else if, do', 'custom branch label'],
-          [],
+          ['Moving', 'inside', 'custom branch label'],
+          ['else if, do'],
         );
         cancelMove(this.workspace);
       });
