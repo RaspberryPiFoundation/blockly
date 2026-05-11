@@ -27,7 +27,10 @@ export class MoveIndicator {
     this.svgRoot = dom.createSvgElement(
       Svg.G,
       {},
-      workspace.getLayerManager()?.getDragLayer(),
+      // Mutator workspaces don't have a drag layer, so fall back to the block
+      // layer.
+      workspace.getLayerManager()?.getDragLayer() ??
+        workspace.getLayerManager()?.getBlockLayer(),
     );
     this.svgRoot.classList.add('blocklyMoveIndicator');
     const rtl = workspace.RTL;
