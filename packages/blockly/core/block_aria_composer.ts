@@ -205,7 +205,7 @@ export function getInputLabels(
 ): string[] {
   return block.inputList
     .filter((input) => input.isVisible())
-    .map((input) => input.getAriaLabelText() ?? input.getLabel(verbosity));
+    .map((input) => input.getLabel(verbosity, input.getAriaLabelText()));
 }
 
 /**
@@ -224,11 +224,7 @@ export function getInputLabels(
  * @param input The input that defines the end of the subset.
  * @returns A list of field/input labels for the given block.
  */
-export function getInputLabelsSubset(
-  block: BlockSvg,
-  input: Input,
-  verbosity = Verbosity.STANDARD,
-): string[] {
+function getInputLabelsSubset(block: BlockSvg, input: Input): string[] {
   const inputIndex = block.inputList.indexOf(input);
   if (inputIndex === -1) {
     throw new Error(
@@ -246,7 +242,7 @@ export function getInputLabelsSubset(
     .filter((input) => input.isVisible())
     .map(
       (input) =>
-        input.getLabel(verbosity) ||
+        input.getLabel(Verbosity.TERSE, input.getAriaLabelText()) ||
         Msg['INPUT_LABEL_INDEX'].replace(
           '%1',
           (input.getIndex() + 1).toString(),
@@ -374,20 +370,10 @@ function computeMoveConnectionLabel(
   const input = conn.getParentInput();
   if (!input) return baseLabel;
 
-  let inputLabel = input.getAriaLabelText();
+  const labels = getInputLabelsSubset(conn.getSourceBlock(), input);
+  if (!labels.length) return baseLabel;
 
-  // If the input doesn't have a custom ARIA label, compute one using the labels from
-  // nearby fields.
-  if (!inputLabel) {
-    const labels = getInputLabelsSubset(
-      conn.getSourceBlock(),
-      input,
-      Verbosity.TERSE,
-    );
-    if (!labels.length) return baseLabel;
-
-    inputLabel = labels.join(', ');
-  }
+  const inputLabel = labels.join(', ');
 
   return baseLabel
     ? Msg['ANNOUNCE_MOVE_OF'].replace('%1', inputLabel).replace('%2', baseLabel)

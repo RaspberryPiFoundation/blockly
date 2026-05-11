@@ -315,13 +315,13 @@ suite('Inputs', function () {
       // Using a text input as it will return a default ARIA label
       this.block
         .appendValueInput('NAME')
-        .appendField(new Blockly.FieldTextInput('text'), 'NAME')
+        .appendField(new Blockly.FieldTextInput('test'), 'NAME')
         .setAriaLabelProvider((input) => customLabel);
 
       const label = this.block.getAriaLabel();
 
-      assert.include(label, customLabel);
-      assert.notInclude(label, 'text');
+      assert.include(label, 'text: test'); // Computed label from fields
+      assert.include(label, customLabel); // Custom ARIA label from provider
     });
     test('Set input ARIA Label Provider from JSON', function () {
       const customLabel = 'custom ARIA label';

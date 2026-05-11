@@ -401,10 +401,21 @@ export class Input {
    *
    * @internal
    */
-  getLabel(verbosity = Verbosity.STANDARD): string {
+  getLabel(
+    verbosity = Verbosity.STANDARD,
+    ariaLabelText: string | null,
+  ): string {
     if (!this.isVisible()) return '';
 
     const labels = computeFieldRowLabel(this, false, verbosity);
+
+    // A block's custom ARIA label for this input is inserted between the field
+    // row label and the connected block labels, since it's meant to describe the
+    // connection itself, which is conceptually between the field row and any
+    // connected blocks.
+    if (ariaLabelText) {
+      labels.push(ariaLabelText);
+    }
 
     if (this.connection?.type === ConnectionType.INPUT_VALUE) {
       const childBlock = this.connection.targetBlock();
@@ -418,12 +429,17 @@ export class Input {
   }
 
   /**
-   * Returns the index of this input on its source block.
+   * Returns the index of this input, excluding inputs without connections, on its
+   * source block.
    *
    * @internal
    */
   getIndex(): number {
-    const inputs = this.getSourceBlock().inputList;
-    return inputs.indexOf(this);
+    const noConnectionInputTypes = [inputTypes.DUMMY, inputTypes.END_ROW];
+    const allInputs = this.getSourceBlock().inputList;
+    const allConnectionInputs = allInputs.filter(
+      (input) => !noConnectionInputTypes.includes(input.type),
+    );
+    return allConnectionInputs.indexOf(this);
   }
 }
