@@ -801,6 +801,23 @@ export class WorkspaceSvg
       }
     }
 
+    this.workspaceSelectionRing = dom.createSvgElement(
+      Svg.RECT,
+      {
+        fill: 'none',
+        class: 'blocklyWorkspaceSelectionRing',
+      },
+      this.svgGroup_,
+    );
+    this.workspaceFocusRing = dom.createSvgElement(
+      Svg.RECT,
+      {
+        fill: 'none',
+        class: 'blocklyWorkspaceFocusRing',
+      },
+      this.svgGroup_,
+    );
+
     this.layerManager = new LayerManager(this);
     // Assign the canvases for backwards compatibility.
     this.svgBlockCanvas_ = this.layerManager.getBlockLayer();
@@ -857,17 +874,6 @@ export class WorkspaceSvg
 
     // Only the top-level and flyout workspaces should be tabbable.
     getFocusManager().registerTree(this, !!this.injectionDiv || this.isFlyout);
-
-    this.workspaceSelectionRing = dom.createSvgElement('rect', {
-      fill: 'none',
-      class: 'blocklyWorkspaceSelectionRing',
-    });
-    this.getSvgGroup().appendChild(this.workspaceSelectionRing);
-    this.workspaceFocusRing = dom.createSvgElement('rect', {
-      fill: 'none',
-      class: 'blocklyWorkspaceFocusRing',
-    });
-    this.getSvgGroup().appendChild(this.workspaceFocusRing);
 
     return this.svgGroup_;
   }
