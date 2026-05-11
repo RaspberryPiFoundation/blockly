@@ -334,6 +334,16 @@ export class WorkspaceSvg
   zoomControls_: ZoomControls | null = null;
 
   /**
+   * Focus ring in the workspace.
+   */
+  private workspaceFocusRing: Element | null = null;
+
+  /**
+   * Selection ring inside the workspace.
+   */
+  private workspaceSelectionRing: Element | null = null;
+
+  /**
    * Navigator that handles moving focus between items in this workspace in
    * response to keyboard navigation commands.
    */
@@ -848,6 +858,17 @@ export class WorkspaceSvg
     // Only the top-level and flyout workspaces should be tabbable.
     getFocusManager().registerTree(this, !!this.injectionDiv || this.isFlyout);
 
+    this.workspaceSelectionRing = dom.createSvgElement('rect', {
+      fill: 'none',
+      class: 'blocklyWorkspaceSelectionRing',
+    });
+    this.getSvgGroup().appendChild(this.workspaceSelectionRing);
+    this.workspaceFocusRing = dom.createSvgElement('rect', {
+      fill: 'none',
+      class: 'blocklyWorkspaceFocusRing',
+    });
+    this.getSvgGroup().appendChild(this.workspaceFocusRing);
+
     return this.svgGroup_;
   }
 
@@ -928,6 +949,9 @@ export class WorkspaceSvg
       document.body.removeEventListener('wheel', this.dummyWheelListener);
       this.dummyWheelListener = null;
     }
+
+    this.workspaceFocusRing?.remove();
+    this.workspaceSelectionRing?.remove();
 
     if (getFocusManager().isRegistered(this)) {
       getFocusManager().unregisterTree(this);
@@ -1108,6 +1132,28 @@ export class WorkspaceSvg
       this.scrollbar.resize();
     }
     this.updateScreenCalculations();
+
+    if (!this.workspaceFocusRing || !this.workspaceSelectionRing) return;
+    this.resizeWorkspaceRing(this.workspaceSelectionRing, 5);
+    this.resizeWorkspaceRing(this.workspaceFocusRing, 0);
+  }
+
+  /**
+   * Sizes the given focus/selection ring inside the bounds of the workspace.
+   *
+   * @param ring The interior workspace ring indicator to resize.
+   * @param inset How many pixels in from the bounds of the workspace the ring
+   *     should be positioned.
+   */
+  private resizeWorkspaceRing(ring: Element, inset: number) {
+    const metrics = this.getMetrics();
+    ring.setAttribute('x', `${metrics.absoluteLeft + inset}`);
+    ring.setAttribute('y', `${metrics.absoluteTop + inset}`);
+    ring.setAttribute('width', `${Math.max(0, metrics.viewWidth - inset * 2)}`);
+    ring.setAttribute(
+      'height',
+      `${Math.max(0, metrics.svgHeight - inset * 2)}`,
+    );
   }
 
   /**

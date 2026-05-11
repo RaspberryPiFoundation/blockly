@@ -13,6 +13,7 @@ import * as common from './common.js';
 import * as Css from './css.js';
 import * as dropDownDiv from './dropdowndiv.js';
 import {Grid} from './grid.js';
+import {keyboardNavigationController} from './keyboard_navigation_controller.js';
 import {Options} from './options.js';
 import {ScrollbarPair} from './scrollbar_pair.js';
 import * as Tooltip from './tooltip.js';
@@ -72,6 +73,14 @@ export function inject(
   subContainer.addEventListener('focusin', function () {
     common.setMainWorkspace(workspace);
   });
+
+  containerElement?.getRootNode().addEventListener('keydown', ((
+    e: KeyboardEvent,
+  ) => {
+    if (e.key === 'Tab') {
+      keyboardNavigationController.setIsActive(true);
+    }
+  }) as EventListener);
 
   browserEvents.conditionalBind(
     subContainer,
