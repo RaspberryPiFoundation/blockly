@@ -17,7 +17,9 @@ import * as browserEvents from './browser_events.js';
 import * as common from './common.js';
 import type {Field} from './field.js';
 import {ReturnEphemeralFocus, getFocusManager} from './focus_manager.js';
+import * as aria from './utils/aria.js';
 import * as dom from './utils/dom.js';
+import * as idGenerator from './utils/idgenerator.js';
 import * as math from './utils/math.js';
 import {Rect} from './utils/rect.js';
 import type {Size} from './utils/size.js';
@@ -127,6 +129,7 @@ export function createDom() {
   div = document.createElement('div');
   div.className = 'blocklyDropDownDiv';
   div.tabIndex = -1;
+  div.id = idGenerator.getNextUniqueId();
   const parentDiv = common.getParentContainer() || document.body;
   parentDiv.appendChild(div);
 
@@ -398,6 +401,16 @@ export function show<T>(
   themeClassName = mainWorkspace.getTheme().getClassName();
   dom.addClass(div, renderedClassName);
   dom.addClass(div, themeClassName);
+
+  const existingOwnership = aria.getState(
+    mainWorkspace.getFocusableElement(),
+    aria.State.OWNS,
+  );
+  aria.setState(
+    mainWorkspace.getFocusableElement(),
+    aria.State.OWNS,
+    existingOwnership ? [existingOwnership, div.id] : div.id,
+  );
 
   // When we change `translate` multiple times in close succession,
   // Chrome may choose to wait and apply them all at once.
@@ -714,7 +727,16 @@ export function hideWithoutAnimation() {
   }
   owner = null;
 
-  (common.getMainWorkspace() as WorkspaceSvg).markFocused();
+  const workspace = common.getMainWorkspace() as WorkspaceSvg;
+  const existingOwnership =
+    aria.getState(workspace.getFocusableElement(), aria.State.OWNS) ?? '';
+  aria.setState(
+    workspace.getFocusableElement(),
+    aria.State.OWNS,
+    existingOwnership.replace(div.id, ''),
+  );
+
+  workspace.markFocused();
 
   if (returnEphemeralFocus) {
     returnEphemeralFocus();

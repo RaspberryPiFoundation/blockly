@@ -13,6 +13,7 @@ import * as contextmenu from './contextmenu.js';
 import * as dropDownDiv from './dropdowndiv.js';
 import * as eventUtils from './events/utils.js';
 import {getFocusManager} from './focus_manager.js';
+import {clearPasteHints, showCopiedHint, showCutHint} from './hints.js';
 import {hasContextMenu} from './interfaces/i_contextmenu.js';
 import {isCopyable as isICopyable} from './interfaces/i_copyable.js';
 import {isDeletable as isIDeletable} from './interfaces/i_deletable.js';
@@ -210,7 +211,11 @@ export function registerCopy() {
         isDraggable(focused) && focused.workspace == targetWorkspace
           ? focused.getRelativeToSurfaceXY()
           : undefined;
-      return !!clipboard.copy(focused, copyCoords);
+      const copied = !!clipboard.copy(focused, copyCoords);
+      if (copied) {
+        showCopiedHint(workspace);
+      }
+      return copied;
     },
     keyCodes: [ctrlC],
     displayText: () => Msg['COPY_SHORTCUT'],
@@ -258,6 +263,9 @@ export function registerCut() {
         workspace.getAudioManager().play('delete');
         e.preventDefault();
       }
+      if (copyData) {
+        showCutHint(workspace);
+      }
       return !!copyData;
     },
     keyCodes: [ctrlX],
@@ -302,6 +310,8 @@ export function registerPaste() {
 
       const copyWorkspace = clipboard.getLastCopiedWorkspace();
       if (!copyWorkspace) return false;
+
+      clearPasteHints(workspace);
 
       const targetWorkspace = copyWorkspace.isFlyout
         ? copyWorkspace.targetWorkspace

@@ -4,18 +4,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {BlockSvg} from '../block_svg.js';
 import * as browserEvents from '../browser_events.js';
 import {getFocusManager} from '../focus_manager.js';
 import {IFocusableNode} from '../interfaces/i_focusable_node.js';
 import {IFocusableTree} from '../interfaces/i_focusable_tree.js';
 import {Msg} from '../msg.js';
 import * as touch from '../touch.js';
+import * as aria from '../utils/aria.js';
 import * as dom from '../utils/dom.js';
 import {Rect} from '../utils/rect.js';
 import {Size} from '../utils/size.js';
 import {Svg} from '../utils/svg.js';
 import * as svgMath from '../utils/svg_math.js';
 import {WorkspaceSvg} from '../workspace_svg.js';
+import {RenderedWorkspaceComment} from './rendered_workspace_comment.js';
 
 /**
  * String added to the ID of a workspace comment to identify
@@ -40,6 +43,9 @@ export class CommentEditor implements IFocusableNode {
   /** The current text of the comment. Updates on text area change. */
   private text: string = '';
 
+  /** The parent object that owns this comment editor. */
+  private parent?: BlockSvg | RenderedWorkspaceComment;
+
   constructor(
     public workspace: WorkspaceSvg,
     commentId: string,
@@ -57,6 +63,7 @@ export class CommentEditor implements IFocusableNode {
     ) as HTMLTextAreaElement;
     this.textArea.setAttribute('tabindex', '-1');
     this.textArea.setAttribute('dir', this.workspace.RTL ? 'RTL' : 'LTR');
+    aria.setRole(this.textArea, aria.Role.TEXTBOX);
     this.textArea.setAttribute(
       'placeholder',
       Msg['WORKSPACE_COMMENT_DEFAULT_TEXT'],
@@ -127,6 +134,23 @@ export class CommentEditor implements IFocusableNode {
   setText(text: string) {
     this.textArea.value = text;
     this.onTextChange();
+  }
+
+  /**
+   * Sets the parent object that owns this comment editor.
+   *
+   * @param newParent The parent of this comment editor.
+   * @internal
+   */
+  setParent(newParent: BlockSvg | RenderedWorkspaceComment): void {
+    this.parent = newParent;
+  }
+
+  /**
+   * Returns the parent object that owns this comment editor, if any.
+   */
+  getParent(): BlockSvg | RenderedWorkspaceComment | undefined {
+    return this.parent;
   }
 
   /**

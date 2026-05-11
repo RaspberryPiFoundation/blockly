@@ -370,6 +370,7 @@ export class CommentIcon extends Icon implements IHasBubble, ISerializable {
       this.getBubbleOwnerRect(),
       this,
     );
+    this.textInputBubble.getEditor().setParent(this.sourceBlock as BlockSvg);
     this.textInputBubble.setText(this.getText());
     this.textInputBubble.setSize(this.bubbleSize, true);
     if (this.bubbleLocation) {

@@ -361,7 +361,10 @@ export class Input {
   }
 
   /**
-   * Returns an ID for the visual "row" this input is part of.
+   * Returns an ID for the logical "row" this input is part of. A "row" is
+   * bounded by a previous/next connection, a statement input, or a block stack
+   * boundary; all blocks/inputs nested inside of one of those are conceptually
+   * part of its same row.
    *
    * @internal
    */
@@ -377,19 +380,17 @@ export class Input {
     const precedingStatementInput =
       inputs[inputIndex - 1].connection?.type === ConnectionType.NEXT_STATEMENT;
 
-    // Each subsequent (a) external input (b) statement input or (c) inline
-    // input following a statement input is on its own row and has its own row
-    // ID.
+    // Each subsequent statement input or value input following a statement
+    // input is on its own row and has its own row ID.
     if (
-      !this.getSourceBlock().getInputsInline() ||
       this.connection?.type === ConnectionType.NEXT_STATEMENT ||
       precedingStatementInput
     ) {
       return `${this.getSourceBlock().id}-input${inputIndex}`;
     }
 
-    // Value inputs on a inline input block have the same row ID as their
-    // preceding input, since they're all on one row.
+    // Value inputs have the same row ID as their preceding input, since
+    // they're all on one row.
     return inputs[inputIndex - 1].getRowId();
   }
 

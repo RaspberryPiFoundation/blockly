@@ -211,6 +211,9 @@ suite('Text Input Fields', function () {
             },
             markFocused: function () {},
             options: {},
+            getFocusableElement: function () {
+              return document.createElement('div');
+            },
           };
           field.sourceBlock_ = {
             workspace: workspace,

@@ -6,6 +6,7 @@
 
 import * as browserEvents from '../browser_events.js';
 import {getFocusManager} from '../focus_manager.js';
+import {Msg} from '../msg.js';
 import * as touch from '../touch.js';
 import * as dom from '../utils/dom.js';
 import {Svg} from '../utils/svg.js';
@@ -56,6 +57,7 @@ export class DeleteCommentBarButton extends CommentBarButton {
       },
       container,
     );
+    this.recomputeAriaContext();
     this.bindId = browserEvents.conditionalBind(
       this.icon,
       'pointerdown',
@@ -103,5 +105,15 @@ export class DeleteCommentBarButton extends CommentBarButton {
     e?.stopPropagation();
     getFocusManager().focusNode(this.workspace);
     this.workspace.getAudioManager().play('delete');
+  }
+
+  /**
+   * Returns the ARIA label to use for this button (defaults to null). Note that this
+   * method will only be called and apply when recomputeAriaContext is called.
+   *
+   * @returns The ARIA label to use for this button, or null to use a default.
+   */
+  protected getAriaLabel(): string {
+    return Msg['REMOVE_COMMENT'];
   }
 }

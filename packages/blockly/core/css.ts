@@ -484,6 +484,19 @@ input[type=number] {
   margin-right: 4px;
 }
 
+.blocklyRTL .blocklyMenuItemContent .blocklyShortcutContainer {
+  flex-direction: row-reverse;
+}
+.blocklyMenuItemContent .blocklyShortcutContainer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+.blocklyMenuItemContent .blocklyShortcutContainer .blocklyShortcut {
+  color: #ccc;
+}
+
 .blocklyBlockDragSurface, .blocklyAnimationLayer {
   position: absolute;
   top: 0;
@@ -553,12 +566,6 @@ input[type=number] {
 
 /* Passive focus cases: */
 /* Blocks with passive focus except when widget/dropdown div in use. */
-.blocklyKeyboardNavigation:not(
-        :has(
-            .blocklyDropDownDiv:focus-within,
-            .blocklyWidgetDiv:focus-within
-          )
-      )
   .blocklyPassiveFocus:is(
     .blocklyPath:not(.blocklyFlyout .blocklyPath),
     .blocklyHighlightedConnectionPath

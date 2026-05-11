@@ -5,7 +5,6 @@
  */
 
 import {BlockSvg} from '../../block_svg.js';
-import {ConnectionType} from '../../connection_type.js';
 import {Field} from '../../field.js';
 import {getFocusManager} from '../../focus_manager.js';
 import {Icon} from '../../icons/icon.js';
@@ -182,24 +181,6 @@ export class Navigator {
    *     "row" as the given node, or null if there is none.
    */
   getOutNode(node = getFocusManager().getFocusedNode()): IFocusableNode | null {
-    // Special case: blocks and input value connections on blocks with external
-    // inputs should always navigate to the parent block, even though they're
-    // not necessarily on the same visual row.
-    const connection =
-      node instanceof BlockSvg
-        ? node.outputConnection?.targetConnection
-        : node instanceof RenderedConnection &&
-            node.type === ConnectionType.INPUT_VALUE
-          ? node
-          : null;
-    if (
-      connection &&
-      !connection.getSourceBlock().getInputsInline() &&
-      connection !== connection.getSourceBlock().inputList[0].connection
-    ) {
-      return connection.getSourceBlock();
-    }
-
     return this.getPreviousNodeImpl(node, node, NavigationDirection.OUT);
   }
 
