@@ -90,7 +90,13 @@ export function showHelpHint(workspace: WorkspaceSvg) {
  * @param workspace The workspace.
  */
 export function showBlockNavigationHint(workspace: WorkspaceSvg) {
-  const message = Msg['KEYBOARD_NAV_BLOCK_NAVIGATION_HINT'];
+  const shortcut = getShortcutKeysShort(
+    workspace.RTL ? names.NAVIGATE_LEFT : names.NAVIGATE_RIGHT,
+  );
+  const message = Msg['KEYBOARD_NAV_BLOCK_NAVIGATION_HINT'].replace(
+    '%1',
+    shortcut,
+  );
   const id = blockNavigationHintId;
   Toast.show(workspace, {message, id});
 }

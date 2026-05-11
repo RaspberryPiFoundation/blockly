@@ -1839,7 +1839,7 @@ Blockly.Msg.WORKSPACE_CONTENTS_COMMENTS_MANY = ' and %1 comments';
 Blockly.Msg.WORKSPACE_CONTENTS_COMMENTS_ONE = ' and one comment';
 /** @type {string} */
 /// Message shown when a user presses Enter with a navigable block focused.
-Blockly.Msg.KEYBOARD_NAV_BLOCK_NAVIGATION_HINT = 'Use the right arrow key to navigate inside of blocks.';
+Blockly.Msg.KEYBOARD_NAV_BLOCK_NAVIGATION_HINT = 'Use %1 to navigate inside of blocks.';
 /** @type {string} */
 /// Message shown when a user presses Enter with the workspace focused.
 Blockly.Msg.KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT = 'Use the arrow keys to navigate.';
@@ -1880,7 +1880,7 @@ Blockly.Msg.BLOCK_LABEL_HAS_INPUTS = 'has inputs';
 /** @type {string} */
 /// Part of an accessibility label for a block that indicates that it is
 /// a statement block, i.e. that it has a next or previous connection.
-/// "command" here is used in the sense of a computer command, or a 
+/// "command" here is used in the sense of a computer command, or a
 /// command block in Scratch.
 Blockly.Msg.BLOCK_LABEL_STATEMENT = 'command';
 /** @type {string} */
