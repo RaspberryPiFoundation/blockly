@@ -349,7 +349,6 @@ function showPositionedByRect(
     workspace = workspace.options.parentWorkspace;
   }
   setBoundsElement(workspace.getParentSvg().parentNode as Element | null);
-  workspace.getFocusableElement().classList.add(SHOWING_DROPDOWNDIV_SELECTOR);
   return show(
     field,
     sourceBlock.RTL,
@@ -418,6 +417,9 @@ export function show<T>(
     aria.State.OWNS,
     existingOwnership ? [existingOwnership, div.id] : div.id,
   );
+  mainWorkspace
+    .getFocusableElement()
+    .classList.add(SHOWING_DROPDOWNDIV_SELECTOR);
 
   // When we change `translate` multiple times in close succession,
   // Chrome may choose to wait and apply them all at once.
