@@ -228,10 +228,8 @@ export function getInputLabels(
   return block.inputList
     .filter((input) => input.isVisible())
     .map((input) => {
-      const customLabel = input.getAriaLabelText();
-      return useCustomLabels && customLabel !== null
-        ? customLabel
-        : input.getLabel(verbosity);
+      const customLabel = useCustomLabels ? input.getAriaLabelText() : null;
+      return customLabel ?? input.getLabel(verbosity);
     });
 }
 
