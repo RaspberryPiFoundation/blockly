@@ -207,6 +207,11 @@ suite('DropDownDiv', function () {
         ),
         Blockly.DropDownDiv.getContentDiv().parentElement.id,
       );
+      assert.isTrue(
+        Blockly.getMainWorkspace()
+          .getFocusableElement()
+          .classList.contains('blocklyShowingDropDownDiv'),
+      );
     });
   });
 
@@ -415,6 +420,11 @@ suite('DropDownDiv', function () {
             Blockly.getMainWorkspace().getFocusableElement(),
             Blockly.utils.aria.State.OWNS,
           ),
+        );
+        assert.isFalse(
+          Blockly.getMainWorkspace()
+            .getFocusableElement()
+            .classList.contains('blocklyShowingDropDownDiv'),
         );
       });
     });

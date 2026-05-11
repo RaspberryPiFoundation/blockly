@@ -376,6 +376,11 @@ suite('WidgetDiv', function () {
         ),
         Blockly.WidgetDiv.getDiv().id,
       );
+      assert.isTrue(
+        Blockly.getMainWorkspace()
+          .getFocusableElement()
+          .classList.contains('blocklyShowingWidgetDiv'),
+      );
     });
   });
 
@@ -453,6 +458,11 @@ suite('WidgetDiv', function () {
           Blockly.getMainWorkspace().getFocusableElement(),
           Blockly.utils.aria.State.OWNS,
         ),
+      );
+      assert.isFalse(
+        Blockly.getMainWorkspace()
+          .getFocusableElement()
+          .classList.contains('blocklyShowingWidgetDiv'),
       );
     });
   });
