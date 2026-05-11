@@ -632,11 +632,11 @@ input[type=number] {
   .blocklyWorkspace.blocklyActiveFocus
   .blocklyWorkspaceFocusRing,
 /* Focus in widget/dropdown div considered to be in workspace. */
-.blocklyKeyboardNavigation:has(
-  .blocklyWidgetDiv:focus-within,
-  .blocklyDropDownDiv:focus-within
-)
-  .blocklyWorkspace
+  .blocklyKeyboardNavigation
+  .blocklyWorkspace.blocklyShowingDropDownDiv
+  .blocklyWorkspaceFocusRing,
+.blocklyKeyboardNavigation
+  .blocklyWorkspace.blocklyShowingWidgetDiv
   .blocklyWorkspaceFocusRing {
   stroke: var(--blockly-active-tree-color);
   stroke-width: calc(var(--blockly-selection-width) * 2);

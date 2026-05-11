@@ -42,6 +42,12 @@ let containerDiv: HTMLDivElement | null;
 let returnEphemeralFocus: ReturnEphemeralFocus | null = null;
 
 /**
+ * Class applied to the element that is displaying the WidgetDiv, used to apply
+ * focus styles.
+ */
+const SHOWING_WIDGETDIV_SELECTOR = 'blocklyShowingWidgetDiv';
+
+/**
  * Returns the HTML container for editor widgets.
  *
  * @returns The editor widget container.
@@ -139,6 +145,9 @@ export function show(
     aria.State.OWNS,
     existingOwnership ? [existingOwnership, div.id] : div.id,
   );
+  ownerWorkspace
+    .getFocusableElement()
+    .classList.add(SHOWING_WIDGETDIV_SELECTOR);
 
   const parentDiv = common.getParentContainer();
   parentDiv?.appendChild(div);
@@ -209,6 +218,9 @@ export function hide() {
     aria.State.OWNS,
     existingOwnership.replace(containerDiv.id, ''),
   );
+  ownerWorkspace
+    .getFocusableElement()
+    .classList.remove(SHOWING_WIDGETDIV_SELECTOR);
 }
 
 /**

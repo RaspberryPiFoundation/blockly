@@ -51,6 +51,12 @@ export const PADDING_Y = 16;
 export const ANIMATION_TIME = 0.25;
 
 /**
+ * Class applied to the element that is displaying the DropDownDiv, used to
+ * apply focus styles.
+ */
+const SHOWING_DROPDOWNDIV_SELECTOR = 'blocklyShowingDropDownDiv';
+
+/**
  * Timer for animation out, to be cleared if we need to immediately hide
  * without disrupting new shows.
  */
@@ -343,6 +349,7 @@ function showPositionedByRect(
     workspace = workspace.options.parentWorkspace;
   }
   setBoundsElement(workspace.getParentSvg().parentNode as Element | null);
+  workspace.getFocusableElement().classList.add(SHOWING_DROPDOWNDIV_SELECTOR);
   return show(
     field,
     sourceBlock.RTL,
@@ -735,6 +742,9 @@ export function hideWithoutAnimation() {
     aria.State.OWNS,
     existingOwnership.replace(div.id, ''),
   );
+  workspace
+    .getFocusableElement()
+    .classList.remove(SHOWING_DROPDOWNDIV_SELECTOR);
 
   workspace.markFocused();
 
