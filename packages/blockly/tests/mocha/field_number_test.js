@@ -514,10 +514,6 @@ suite('Number Fields', function () {
 
       this.focusableElement = this.field.getClickTarget_();
     });
-    test('Block has field type name in ARIA label', function () {
-      const blockLabel = this.block.getAriaLabel();
-      assert.include(blockLabel, 'number:');
-    });
     test('Field has field type name in ARIA label', function () {
       const fieldLabel = this.focusableElement.getAttribute('aria-label');
       assert.include(fieldLabel, 'number:');

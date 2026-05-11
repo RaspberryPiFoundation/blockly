@@ -837,29 +837,19 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
   }
 
   /**
-   * Recomputes the ARIA role and label for this field.
+   * Customizes the label for this field to include "editable" if it applies.
    */
-  protected recomputeAriaContext(): void {
-    const focusableElement = this.getClickTarget_();
-    if (!focusableElement) return;
-
-    if (this.getSourceBlock()?.isInFlyout) {
-      aria.setState(focusableElement, aria.State.HIDDEN, true);
-      return;
-    }
-
-    aria.setState(focusableElement, aria.State.HIDDEN, false);
-    // The button role is intended to indicate to users that the field has an
-    // editing mode that can be activated.
-    aria.setRole(focusableElement, aria.Role.BUTTON);
+  override recomputeAriaContext(): boolean {
+    const shouldCustomize = super.recomputeAriaContext();
+    if (!shouldCustomize) return false;
+    const focusableElement = this.getFocusableElement();
 
     let label = this.computeAriaLabel(true);
-
-    if (this.isCurrentlyEditable?.()) {
+    if (this.isCurrentlyEditable() && !this.getSourceBlock()?.isInFlyout) {
       label = Msg['FIELD_LABEL_EDIT_PREFIX'].replace('%1', label);
     }
-
     aria.setState(focusableElement, aria.State.LABEL, label);
+    return true;
   }
 }
 

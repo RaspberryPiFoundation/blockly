@@ -425,25 +425,8 @@ suite('ARIA', function () {
       assert.include(label, 'collapsed');
     });
 
-    test('Shadow blocks indicate that in their label', function () {
-      const block = this.makeBlock('text_print');
-      const text = this.makeBlock('text');
-      text.outputConnection.connect(block.inputList[0].connection);
-      let label = Blockly.utils.aria.getState(
-        text.getFocusableElement(),
-        Blockly.utils.aria.State.LABEL,
-      );
-      assert.notInclude(label, 'replaceable');
-      text.setShadow(true);
-      label = Blockly.utils.aria.getState(
-        text.getFocusableElement(),
-        Blockly.utils.aria.State.LABEL,
-      );
-      assert.include(label, 'replaceable');
-    });
-
     test('Blocks without inputs are properly labeled', function () {
-      const block = this.makeBlock('math_random_float');
+      const block = this.makeBlock('logic_boolean');
       const label = Blockly.utils.aria.getState(
         block.getFocusableElement(),
         Blockly.utils.aria.State.LABEL,

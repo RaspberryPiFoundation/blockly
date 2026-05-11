@@ -52,20 +52,31 @@ export enum ConnectionPreposition {
  * @internal
  * @param block The block for which an ARIA representation should be created.
  * @param verbosity How much detail to include in the description.
+ * @param useCustomInputLabels Whether to use custom labels for inputs, if they
+ *   exist. We don't want to do this when just reading a block's label, but do
+ *   want to in other scenarios such as move mode.
  * @returns The ARIA representation for the specified block.
  */
 export function computeAriaLabel(
   block: BlockSvg,
   verbosity = Verbosity.STANDARD,
+  useCustomInputLabels = true,
 ) {
+  if (block.isSimpleReporter()) {
+    // special case for full-block field blocks.
+    const field = block.getFullBlockField();
+    if (field) {
+      return field.computeAriaLabel(verbosity >= Verbosity.STANDARD);
+    }
+  }
   return [
     verbosity >= Verbosity.STANDARD && getBeginStackLabel(block),
     getParentInputLabel(block),
-    ...getInputLabels(block, verbosity),
+    ...getInputLabels(block, verbosity, useCustomInputLabels),
     verbosity === Verbosity.LOQUACIOUS && getParentToolboxCategoryLabel(block),
     verbosity >= Verbosity.STANDARD && getDisabledLabel(block),
     verbosity >= Verbosity.STANDARD && getCollapsedLabel(block),
-    verbosity >= Verbosity.STANDARD && getShadowBlockLabel(block),
+    verbosity >= Verbosity.LOQUACIOUS && getShadowBlockLabel(block),
     verbosity >= Verbosity.STANDARD && getInputCountLabel(block),
   ]
     .filter((label) => !!label)
@@ -128,7 +139,7 @@ export function computeFieldRowLabel(
   lookback: boolean,
   verbosity = Verbosity.STANDARD,
 ): string[] {
-  const includeTypeInfo = verbosity >= Verbosity.STANDARD;
+  const includeTypeInfo = verbosity >= Verbosity.LOQUACIOUS;
   const fieldRowLabel = input.fieldRow
     .filter((field) => field.isVisible())
     .map((field) => field.computeAriaLabel(includeTypeInfo));
@@ -186,7 +197,10 @@ function getParentInputLabel(block: BlockSvg) {
  *     does not.
  */
 function getBeginStackLabel(block: BlockSvg) {
-  return !block.workspace.isFlyout && block.getRootBlock() === block
+  // Don't include the "begin stack" label for blocks that are moving
+  // or blocks in the flyout
+  if (block.isInFlyout || block.workspace.isDragging()) return undefined;
+  return block.getRootBlock() === block
     ? Msg['BLOCK_LABEL_BEGIN_STACK']
     : undefined;
 }
@@ -199,17 +213,28 @@ function getBeginStackLabel(block: BlockSvg) {
  * their contents are returned as a single item in the array per top-level
  * input.
  *
+ * Generally, if a custom label for an input is provided, that is preferred.
+ * However, we do not surface the custom labels when simply reading the text of
+ * the block. They are used as supplementary information for situations like
+ * move mode or when an input itself is focused.
+ *
  * @internal
  * @param block The block to retrieve a list of field/input labels for.
+ * @param verbosity
+ * @param useCustomLabels whether to use the custom label for an input, if it's present.
  * @returns A list of field/input labels for the given block.
  */
 export function getInputLabels(
   block: BlockSvg,
   verbosity = Verbosity.STANDARD,
+  useCustomLabels = true,
 ): string[] {
   return block.inputList
     .filter((input) => input.isVisible())
-    .map((input) => input.getAriaLabelText() ?? input.getLabel(verbosity));
+    .map((input) => {
+      const customLabel = useCustomLabels ? input.getAriaLabelText() : null;
+      return customLabel ?? input.getLabel(verbosity);
+    });
 }
 
 /**

@@ -32,6 +32,7 @@ import {Msg} from './msg.js';
 import type {ConstantProvider} from './renderers/common/constants.js';
 import type {KeyboardShortcut} from './shortcut_registry.js';
 import * as Tooltip from './tooltip.js';
+import * as aria from './utils/aria.js';
 import type {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
 import * as idGenerator from './utils/idgenerator.js';
@@ -275,7 +276,6 @@ export abstract class Field<T = any>
           `problems with focus: ${block.id}.`,
       );
     }
-    this.id_ = `${block.id}_field_${idGenerator.getNextUniqueId()}`;
   }
 
   /**
@@ -398,11 +398,7 @@ export abstract class Field<T = any>
       // Field has already been initialized once.
       return;
     }
-    const id = this.id_;
-    if (!id) throw new Error('Expected ID to be defined prior to init.');
-    this.fieldGroup_ = dom.createSvgElement(Svg.G, {
-      'id': id,
-    });
+    this.fieldGroup_ = dom.createSvgElement(Svg.G, {});
     if (!this.isVisible()) {
       this.fieldGroup_.style.display = 'none';
     }
@@ -414,6 +410,15 @@ export abstract class Field<T = any>
     this.bindEvents_();
     this.initModel();
     this.applyColour();
+
+    // Since full-block fields can be focused from the workspace's tree,
+    // they need IDs in the format that the workspace is expecting.
+    if (this.isFullBlockField()) {
+      this.id_ = idGenerator.getNextUniqueId();
+    } else {
+      this.id_ = `${sourceBlockSvg.id}_field_${idGenerator.getNextUniqueId()}`;
+    }
+    this.fieldGroup_.setAttribute('id', this.id_);
   }
 
   /**
@@ -1490,6 +1495,68 @@ export abstract class Field<T = any>
    */
   performAction() {
     this.showEditor();
+  }
+
+  /**
+   * Recomputes the aria state and label for this field. Fields are generally hidden
+   * when in blocks in the flyout (except for top-level full-block fields), and
+   * otherwise set to a role of button (indicating they can be clicked to edit)
+   * and given the label returned from their `computeAriaLabel` method.
+   *
+   * Subclasses can override this in order to change the role or label, but they must
+   * ensure they keep the correct behavior for fields in flyout blocks.
+   *
+   * This method will return a boolean indicating if the element is displayed in the
+   * aria tree or not. This can be used by subclasses to determine whether or not
+   * to continue customizing the role and label (hidden elements should not have labels).
+   *
+   * @returns true if the element is in the accessibility tree, false if the aria state is hidden
+   */
+  protected recomputeAriaContext(): boolean {
+    let focusableElement;
+    try {
+      focusableElement = this.getFocusableElement();
+    } catch {
+      // Just return because the field hasn't been initialized yet.
+      return false;
+    }
+
+    if (!focusableElement) return false;
+
+    if (this.getSourceBlock()?.isInFlyout) {
+      const isTopLevelFullBlockField =
+        this.getSourceBlock()?.getFullBlockField() &&
+        !this.getSourceBlock()?.getParent();
+      if (!isTopLevelFullBlockField) {
+        // Fields in the flyout are not generally focusable, so they should
+        // be hidden. An exception is full-block field blocks that don't have
+        // parents, since the block itself defers to the field's focusable element.
+        aria.setState(focusableElement, aria.State.HIDDEN, true);
+        return false;
+      } else {
+        // Top-level full-block fields in the flyout need to have their
+        // roledescription set. This can't happen in the flyout code because
+        // the field hasn't been initialized yet then.
+        // These blocks should also have the rest of the state in this method set.
+        const roleDescription =
+          this.getSourceBlock()?.getAriaRoleDescription() ||
+          Msg['BLOCK_LABEL_VALUE'];
+        aria.setState(
+          focusableElement,
+          aria.State.ROLEDESCRIPTION,
+          roleDescription,
+        );
+      }
+    }
+
+    aria.clearState(focusableElement, aria.State.HIDDEN);
+    // The button role is intended to indicate to users that the field has an
+    // editing mode that can be activated.
+    aria.setRole(focusableElement, aria.Role.BUTTON);
+
+    const label = this.computeAriaLabel(true);
+    aria.setState(focusableElement, aria.State.LABEL, label);
+    return true;
   }
 
   /**

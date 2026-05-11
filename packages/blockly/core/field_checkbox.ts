@@ -267,16 +267,13 @@ export class FieldCheckbox extends Field<CheckboxBool> {
   }
 
   /**
-   * Recomputes the ARIA role and label for this field.
+   * Customizes the label and sets additional aria state.
    */
-  protected recomputeAriaContext(): void {
-    const focusableElement = this.getClickTarget_();
-    if (!focusableElement) return;
+  override recomputeAriaContext(): boolean {
+    const shouldCustomize = super.recomputeAriaContext();
+    if (!shouldCustomize) return false;
 
-    if (this.getSourceBlock()?.isInFlyout) {
-      aria.setState(focusableElement, aria.State.HIDDEN, true);
-      return;
-    }
+    const focusableElement = this.getFocusableElement();
 
     aria.setState(focusableElement, aria.State.HIDDEN, false);
     aria.setRole(focusableElement, aria.Role.CHECKBOX);
@@ -289,6 +286,7 @@ export class FieldCheckbox extends Field<CheckboxBool> {
     const label = this.getAriaTypeName();
 
     aria.setState(focusableElement, aria.State.LABEL, label);
+    return true;
   }
 }
 

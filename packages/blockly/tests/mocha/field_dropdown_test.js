@@ -341,10 +341,6 @@ suite('Dropdown Fields', function () {
 
         this.focusableElement = this.field.getFocusableElement();
       });
-      test('Block has field type name in ARIA label', function () {
-        const blockLabel = this.block.getAriaLabel();
-        assert.include(blockLabel, 'dropdown:');
-      });
       test('Field has field type name in ARIA label', function () {
         const fieldLabel = this.focusableElement.getAttribute('aria-label');
         assert.include(fieldLabel, 'dropdown:');
