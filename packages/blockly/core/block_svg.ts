@@ -246,7 +246,7 @@ export class BlockSvg
     if (!svg.parentNode) {
       this.workspace.getCanvas().appendChild(svg);
     }
-    this.recomputeAriaAttributes();
+    this.recomputeAriaContext();
     this.initialized = true;
   }
 
@@ -609,7 +609,7 @@ export class BlockSvg
       this.getInput(collapsedInputName) ||
       this.appendDummyInput(collapsedInputName);
     input.appendField(new FieldLabel(text), collapsedFieldName);
-    this.recomputeAriaAttributes();
+    this.recomputeAriaContext();
   }
 
   /**
@@ -846,7 +846,7 @@ export class BlockSvg
   override setShadow(shadow: boolean) {
     super.setShadow(shadow);
     this.applyColour();
-    this.recomputeAriaAttributes();
+    this.recomputeAriaContext();
   }
 
   /**
@@ -1067,7 +1067,7 @@ export class BlockSvg
     for (const child of this.getChildren(false)) {
       child.updateDisabled();
     }
-    this.recomputeAriaAttributes();
+    this.recomputeAriaContext();
   }
 
   /**
@@ -1896,7 +1896,7 @@ export class BlockSvg
 
   /** See IFocusableNode.onNodeFocus. */
   onNodeFocus(): void {
-    this.recomputeAriaAttributes();
+    this.recomputeAriaContext();
     this.select();
     if (getFocusManager().getFocusedNode() !== this) {
       renderManagement.finishQueuedRenders().then(() => {
@@ -2002,7 +2002,7 @@ export class BlockSvg
   /**
    * Updates the ARIA label, role and roledescription for this block.
    */
-  private recomputeAriaAttributes() {
+  private recomputeAriaContext() {
     if (this.getFullBlockField()) return;
     aria.setState(
       this.getFocusableElement(),

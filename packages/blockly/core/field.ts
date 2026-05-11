@@ -1517,7 +1517,7 @@ export abstract class Field<T = any>
     try {
       focusableElement = this.getFocusableElement();
     } catch {
-      // just return because the field hasn't been init yet
+      // Just return because the field hasn't been initialized yet.
       return false;
     }
 
@@ -1534,10 +1534,10 @@ export abstract class Field<T = any>
         aria.setState(focusableElement, aria.State.HIDDEN, true);
         return false;
       } else {
-        // top-level full-block fields in the flyout need to have their
-        // roledescription set. this can't happen in the flyout code because
+        // Top-level full-block fields in the flyout need to have their
+        // roledescription set. This can't happen in the flyout code because
         // the field hasn't been initialized yet then.
-        // these blocks should also have the rest of the state in this method set.
+        // These blocks should also have the rest of the state in this method set.
         const roleDescription =
           this.getSourceBlock()?.getAriaRoleDescription() ||
           Msg['BLOCK_LABEL_VALUE'];
