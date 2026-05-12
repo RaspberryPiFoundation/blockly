@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-05-11 14:15:58.197621",
+		"lastupdated": "2026-05-12 16:03:06.800029",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -479,6 +479,10 @@
 	"BLOCK_LABEL_VALUE": "value",
 	"BLOCK_LABEL_STACK_BLOCKS": "%1 stack blocks",
 	"INPUT_LABEL_INDEX": "input %1",
+	"INPUT_LABEL_VALUE": "value position",
+	"INPUT_LABEL_STATEMENT": "command position",
+	"INPUT_LABEL_END_STATEMENT": "End %1",
+	"INPUT_LABEL_EMPTY": "Empty",
 	"ANNOUNCE_MOVE_WORKSPACE": "Moving %1 on workspace.",
 	"ANNOUNCE_MOVE_BEFORE": "Moving %1 before %2.",
 	"ANNOUNCE_MOVE_AFTER": "Moving %1 after %2.",

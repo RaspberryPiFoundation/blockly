@@ -1900,6 +1900,24 @@ Blockly.Msg.BLOCK_LABEL_STACK_BLOCKS = '%1 stack blocks';
 /// \n\nParameters:\n* %1 - the index of the input, starting at 1
 Blockly.Msg.INPUT_LABEL_INDEX = 'input %1';
 /** @type {string} */
+/// Accessibility label for an empty connection that can hold a value block.
+/// This should use the same language as the BLOCK_LABEL_VALUE string.
+Blockly.Msg.INPUT_LABEL_VALUE = 'value position';
+/** @type {string} */
+/// Accessibility label for an empty next connection that can hold a statement
+/// block. This should use the same language as the BLOCK_LABEL_STATEMENT string.
+Blockly.Msg.INPUT_LABEL_STATEMENT = 'command position';
+/** @type {string} */
+/// Accessibility label describing the last connection point inside a statement
+/// input. e.g. "End if, true, do" where the "if, true, do" is assembled from
+/// the statement input and calculated separately.
+/// \n\nParameters:\n* %1 - the label for the statement input that is ending.
+Blockly.Msg.INPUT_LABEL_END_STATEMENT = 'End %1';
+/** @type {string} */
+/// Accessibility label describing an empty connection point that doesn't
+/// meet any other criteria for getting a more specific connection label.
+Blockly.Msg.INPUT_LABEL_EMPTY = 'Empty';
+/** @type {string} */
 /// ARIA live region message announcing a block is being moved on the workspace, without specifying a target location or specific movement direction.
 // \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks
 // \n\nExamples:\n* "Moving if, do on workspace."\n* "Moving 2 stack blocks on workspace."

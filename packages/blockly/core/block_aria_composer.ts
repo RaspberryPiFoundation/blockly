@@ -253,7 +253,7 @@ export function getInputLabels(
  * @param input The input that defines the end of the subset.
  * @returns A list of field/input labels for the given block.
  */
-function getInputLabelsSubset(block: BlockSvg, input: Input): string[] {
+export function getInputLabelsSubset(block: BlockSvg, input: Input): string[] {
   const inputIndex = block.inputList.indexOf(input);
   if (inputIndex === -1) {
     throw new Error(
