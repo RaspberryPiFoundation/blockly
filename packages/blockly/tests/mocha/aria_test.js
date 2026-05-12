@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {getInputLabelsSubset} from '../../build/src/core/block_aria_composer.js';
 import {assert} from '../../node_modules/chai/index.js';
 import {
   sharedTestSetup,
@@ -450,6 +451,116 @@ suite('ARIA', function () {
         Blockly.utils.aria.State.LABEL,
       );
       assert.isTrue(label.endsWith('has inputs'));
+    });
+  });
+
+  suite('Rendered connection highlight ARIA', function () {
+    function assertHighlightAria(
+      connection,
+      expectedRoleDescription,
+      labelSubstring,
+      ...moreLabelSubstrings
+    ) {
+      const labelSubstrings = [labelSubstring, ...moreLabelSubstrings].flat();
+      connection.highlight();
+      try {
+        const el = connection.getFocusableElement();
+        assert.equal(
+          Blockly.utils.aria.getRole(el),
+          Blockly.utils.aria.Role.FIGURE,
+        );
+        assert.equal(
+          Blockly.utils.aria.getState(
+            el,
+            Blockly.utils.aria.State.ROLEDESCRIPTION,
+          ),
+          expectedRoleDescription,
+        );
+        const label = Blockly.utils.aria.getState(
+          el,
+          Blockly.utils.aria.State.LABEL,
+        );
+        for (const fragment of labelSubstrings) {
+          assert.include(label, fragment);
+        }
+      } finally {
+        connection.unhighlight();
+      }
+    }
+
+    setup(function () {
+      this.renderBlock = (blockType) => {
+        const block = this.workspace.newBlock(blockType);
+        block.initSvg();
+        block.render();
+        return block;
+      };
+    });
+
+    test('value input connection uses value role description and computed label', function () {
+      const negate = this.renderBlock('logic_negate');
+      const boolInput = negate.getInput('BOOL');
+      assertHighlightAria(
+        boolInput.connection,
+        Blockly.Msg.INPUT_LABEL_VALUE,
+        'not',
+      );
+    });
+
+    test('empty statement input connection uses statement role description and end label', function () {
+      const repeat = this.renderBlock('controls_repeat_ext');
+      const doInput = repeat.getInput('DO');
+      assertHighlightAria(
+        doInput.connection,
+        Blockly.Msg.INPUT_LABEL_STATEMENT,
+        ['End', ...getInputLabelsSubset(repeat, doInput)],
+      );
+    });
+
+    test('last next connection in a populated statement stack uses statement role description and end label', function () {
+      const repeat = this.renderBlock('controls_repeat_ext');
+      const printBlock = this.renderBlock('text_print');
+      const doInput = repeat.getInput('DO');
+      doInput.connection.connect(printBlock.previousConnection);
+
+      assertHighlightAria(
+        printBlock.nextConnection,
+        Blockly.Msg.INPUT_LABEL_STATEMENT,
+        ['End', ...getInputLabelsSubset(repeat, doInput)],
+      );
+    });
+
+    test('value input connection with custom input label uses custom label', function () {
+      const negate = this.renderBlock('logic_negate');
+      negate.getInput('BOOL').setAriaLabelProvider('custom value input');
+      assertHighlightAria(
+        negate.getInput('BOOL').connection,
+        Blockly.Msg.INPUT_LABEL_VALUE,
+        'custom value input',
+      );
+    });
+
+    test('empty statement input connection with custom input label uses end-of-statement label', function () {
+      const repeat = this.renderBlock('controls_repeat_ext');
+      repeat.getInput('DO').setAriaLabelProvider('custom repeat body');
+      assertHighlightAria(
+        repeat.getInput('DO').connection,
+        Blockly.Msg.INPUT_LABEL_STATEMENT,
+        ['End', 'custom repeat body'],
+      );
+    });
+
+    test('last next connection in a populated statement stack respects custom statement input label', function () {
+      const repeat = this.renderBlock('controls_repeat_ext');
+      repeat.getInput('DO').setAriaLabelProvider('custom repeat body');
+      const printBlock = this.renderBlock('text_print');
+      repeat.getInput('DO').connection.connect(printBlock.previousConnection);
+
+      assertHighlightAria(
+        printBlock.nextConnection,
+        Blockly.Msg.INPUT_LABEL_STATEMENT,
+        ['End', 'custom repeat body'],
+      );
     });
   });
 });
