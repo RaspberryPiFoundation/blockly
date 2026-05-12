@@ -417,6 +417,13 @@ suite('Navigation', function () {
       this.blocks.buttonInput2 = buttonInput2;
       this.blocks.buttonNext = buttonNext;
 
+      // Blocks have to be rendered for their connections
+      // to be focusable.
+      this.workspace.getAllBlocks().forEach((block) => {
+        block.initSvg();
+        block.render();
+      });
+
       this.workspace.cleanUp();
     });
     suite('Next', function () {
