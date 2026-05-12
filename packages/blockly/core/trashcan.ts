@@ -155,6 +155,21 @@ export class Trashcan
       'id': this.uniqueId,
     });
 
+    dom.createSvgElement(
+      Svg.RECT,
+      {
+        'width': WIDTH + 8,
+        'height': BODY_HEIGHT + LID_HEIGHT + 8,
+        'x': -4,
+        'y': -4,
+        'rx': 2,
+        'ry': 2,
+        'fill': 'none',
+        'class': 'blocklyFocusRing',
+      },
+      this.svgGroup,
+    );
+
     aria.setRole(this.svgGroup, aria.Role.BUTTON);
     aria.setState(this.svgGroup, aria.State.LABEL, Msg['OPEN_TRASH']);
 

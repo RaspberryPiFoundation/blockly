@@ -559,7 +559,10 @@ input[type=number] {
 /* Icons with active focus. */
 .blocklyKeyboardNavigation
   .blocklyActiveFocus.blocklyIconGroup
-  > .blocklyIconShape:first-child {
+  > .blocklyIconShape:first-child,
+.blocklyKeyboardNavigation
+  .blocklyActiveFocus
+  > .blocklyFocusRing {
   stroke: var(--blockly-active-node-color);
   stroke-width: var(--blockly-selection-width);
 }
