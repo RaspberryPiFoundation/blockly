@@ -360,7 +360,7 @@ export class RenderedConnection
       getInputLabelsSubset(
         parentInput.getSourceBlock() as BlockSvg,
         parentInput,
-      ).join(',');
+      ).join(', ');
     if (this.type === ConnectionType.NEXT_STATEMENT) {
       aria.setState(
         highlightSvg,
