@@ -530,7 +530,9 @@ input[type=number] {
   .blocklyComment,
   .blocklyBubble,
   .blocklyIconGroup,
-  .blocklyTextarea
+  .blocklyTextarea,
+  .blocklyZoom,
+  .blocklyTrash,
 ) {
   outline: none;
 }
