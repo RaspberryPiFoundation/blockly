@@ -70,6 +70,7 @@ import * as registry from './registry.js';
 import * as blockRendering from './renderers/common/block_rendering.js';
 import type {Renderer} from './renderers/common/renderer.js';
 import type {ScrollbarPair} from './scrollbar_pair.js';
+import {names as ShortcutNames} from './shortcut_items.js';
 import type {Theme} from './theme.js';
 import {Classic} from './theme/classic.js';
 import {ThemeManager} from './theme_manager.js';
@@ -82,6 +83,7 @@ import * as dom from './utils/dom.js';
 import * as drag from './utils/drag.js';
 import type {Metrics} from './utils/metrics.js';
 import {Rect} from './utils/rect.js';
+import {getShortcutKeysShort} from './utils/shortcut_formatting.js';
 import {Size} from './utils/size.js';
 import {Svg} from './utils/svg.js';
 import * as svgMath from './utils/svg_math.js';
@@ -348,6 +350,12 @@ export class WorkspaceSvg
    * response to keyboard navigation commands.
    */
   private navigator = new Navigator();
+
+  /**
+   * Whether this workspace has ever been focused. Used to announce usage hints
+   * to screenreaders on initial focus only.
+   */
+  private everFocused = false;
 
   /**
    * @param options Dictionary of options.
@@ -2741,6 +2749,15 @@ export class WorkspaceSvg
   onNodeFocus(): void {
     if (!this.isFlyout && !this.isMutator) {
       this.updateAriaLabel();
+    }
+    if (!this.everFocused && !this.options.parentWorkspace) {
+      aria.announceDynamicAriaState(
+        Msg['SCREENREADER_HINT'].replace(
+          '%1',
+          getShortcutKeysShort(ShortcutNames.TOGGLE_SCREENREADER),
+        ),
+      );
+      this.everFocused = true;
     }
   }
 

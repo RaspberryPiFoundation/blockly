@@ -2090,3 +2090,6 @@ Blockly.Msg.PARENT_BLOCKS_ANNOUNCEMENT = 'Parent blocks: %1';
 /** @type {string} */
 /// Screenreader announcement informing users that the currently focused block has no parent blocks.
 Blockly.Msg.NO_PARENT_ANNOUNCEMENT = 'Current block has no parent';
+/** @type {string} */
+/// Message announced when screenreader optimization mode is turned off.
+Blockly.Msg.SCREENREADER_HINT = 'Use the arrow keys to navigate. Press %1 to toggle screenreader accessibility mode.';

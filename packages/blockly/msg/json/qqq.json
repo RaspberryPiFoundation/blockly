@@ -523,5 +523,6 @@
 	"SCREENREADER_MODE_DISABLED": "Message announced when screenreader optimization mode is turned off.",
 	"CURRENT_BLOCK_ANNOUNCEMENT": "Screenreader announcement providing context about the currently focused block.",
 	"PARENT_BLOCKS_ANNOUNCEMENT": "Screenreader announcement providing context about the currently focused block's parents.",
-	"NO_PARENT_ANNOUNCEMENT": "Screenreader announcement informing users that the currently focused block has no parent blocks."
+	"NO_PARENT_ANNOUNCEMENT": "Screenreader announcement informing users that the currently focused block has no parent blocks.",
+	"SCREENREADER_HINT": "Message announced when screenreader optimization mode is turned off."
 }
