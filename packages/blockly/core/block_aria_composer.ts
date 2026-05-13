@@ -154,10 +154,24 @@ export function computeFieldRowLabel(
 }
 
 /**
- * Returns a description of the parent statement input a block is attached to.
- * When a block is connected to a statement input, the input's field row label
- * will be prepended to the block's description to indicate that the block
- * begins a clause in its parent block.
+ * Returns a description of the parent input a block is attached to.
+ * When a block is connected to an input, the input's label will sometimes
+ * be prepended to the block's description.
+ *
+ * If an input has a custom label, the custom label will be prepended
+ * to the first child block connected to that input.
+ *
+ * If an input does not have a custom label, the input's fallback
+ * label determined from the field row will be prepended to the
+ * child block's label only if the following are true:
+ * - the parent block has at least one statement input
+ * - the child block in question is not attached to the first
+ *   statement input of the parent block (in this case, the label
+ *   would be redundant with the parent block's label)
+ *
+ * For statement inputs, the resolved label (whether custom or fallback) is
+ * wrapped in the "Begin %1" prefix so the readout indicates that the child
+ * block starts the body of the statement input.
  *
  * @internal
  * @param block The block to generate a parent input label for.
@@ -168,24 +182,41 @@ function getParentInputLabel(block: BlockSvg) {
   const parentInput = (
     block.outputConnection ?? block.previousConnection
   )?.targetConnection?.getParentInput();
-  const parentBlock = parentInput?.getSourceBlock();
+  if (!parentInput) return undefined;
 
-  if (parentBlock?.isInsertionMarker()) return undefined;
-  if (!parentBlock?.statementInputCount) return undefined;
+  const parentBlock = parentInput.getSourceBlock();
+  if (parentBlock.isInsertionMarker()) return undefined;
 
-  const firstStatementInput = parentBlock.inputList.find(
-    (i) => i.type === inputTypes.STATEMENT,
-  );
-  // The first statement input in a block has no field row label as it would
-  // be duplicative of the block's label.
-  if (!parentInput || parentInput === firstStatementInput) {
-    return undefined;
+  // parentInput is only non-null when this block is directly attached to the
+  // input (i.e. it is the first child block in that input). A custom label
+  // is always prepended for the first child; a fallback label from the field
+  // row is only used in select circumstances.
+  let inputLabel: string | string[];
+  const customLabel = parentInput.getAriaLabelText();
+  if (customLabel) {
+    inputLabel = customLabel;
+  } else {
+    if (!parentBlock.statementInputCount) return undefined;
+
+    const firstStatementInput = parentBlock.inputList.find(
+      (i) => i.type === inputTypes.STATEMENT,
+    );
+    // The first statement input in a block has no field row label as it would
+    // be duplicative of the block's label.
+    if (parentInput === firstStatementInput) {
+      return undefined;
+    }
+
+    inputLabel = computeFieldRowLabel(parentInput, true);
   }
 
-  const parentInputLabel = computeFieldRowLabel(parentInput, true);
-  return parentInput.type === inputTypes.STATEMENT
-    ? Msg['BLOCK_LABEL_BEGIN_PREFIX'].replace('%1', parentInputLabel.join(' '))
-    : parentInputLabel;
+  if (parentInput.type === inputTypes.STATEMENT) {
+    const labelText = Array.isArray(inputLabel)
+      ? inputLabel.join(' ')
+      : inputLabel;
+    return Msg['BLOCK_LABEL_BEGIN_PREFIX'].replace('%1', labelText);
+  }
+  return inputLabel;
 }
 
 /**

@@ -316,6 +316,36 @@ export class FieldImage extends Field<string> {
   }
 
   /**
+   * Computes a descriptive ARIA label to represent this field with configurable
+   * verbosity.
+   *
+   * A 'verbose' label includes type information, if available, whereas a
+   * non-verbose label only contains the field's value.
+   *
+   * Note that this will always return the latest representation of the field's
+   * label which may differ from any previously set ARIA label for the field
+   * itself. Implementations are largely responsible for ensuring that the
+   * field's ARIA label is set correctly at relevant moments in the field's
+   * lifecycle (such as when its value changes).
+   *
+   * Finally, it is never guaranteed that implementations use the label returned
+   * by this method for their actual ARIA label. Some implementations may rely
+   * on other contexts to convey information like the field's value. Example:
+   * checkboxes represent their checked/non-checked status (i.e. value) through
+   * a separate ARIA property.
+   *
+   * Returns an empty string on clickable images (buttons), as we do not want to
+   * include image buttons on the block-level ARIA label. When the button is
+   * focused the label is set in recomputeAriaContext below.
+   *
+   * @param includeTypeInfo Whether to include the field's type information in
+   *     the returned label, if available.
+   */
+  override computeAriaLabel(includeTypeInfo: boolean): string {
+    return this.isClickable() ? '' : super.computeAriaLabel(includeTypeInfo);
+  }
+
+  /**
    * Customizes label and sets additional aria state.
    */
   override recomputeAriaContext(): boolean {
@@ -333,6 +363,11 @@ export class FieldImage extends Field<string> {
       aria.clearState(focusableElement, aria.State.LABEL);
       return false;
     }
+    // For clickable images we need to set the label to the alt text here as
+    // we have overridden the computeAriaLabel to return an empty string. This
+    // will set it at the element level.
+    const label = this.getAriaValue() || '';
+    aria.setState(focusableElement, aria.State.LABEL, label);
     return true;
   }
 }

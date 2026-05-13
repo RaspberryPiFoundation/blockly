@@ -6,6 +6,7 @@
 
 // Former goog.module ID: Blockly.ShortcutItems
 
+import {computeAriaLabel} from './block_aria_composer.js';
 import {BlockSvg} from './block_svg.js';
 import * as clipboard from './clipboard.js';
 import {RenderedWorkspaceComment} from './comments.js';
@@ -63,6 +64,7 @@ export enum names {
   NEXT_STACK = 'next_stack',
   PREVIOUS_STACK = 'previous_stack',
   INFORMATION = 'information',
+  EXTENDED_INFORMATION = 'extended_information',
   PERFORM_ACTION = 'perform_action',
   DUPLICATE = 'duplicate',
   CLEANUP = 'cleanup',
@@ -762,51 +764,136 @@ export function registerFocusToolbox() {
 }
 
 /**
- * Registers keyboard shortcut to get count of block stacks and comments.
+ * Registers keyboard shortcut to announce information about the focused
+ * element.
  */
-export function registerWorkspaceOverview() {
+export function registerReadInformation() {
+  const announceBlockInformation = (block: BlockSvg) => {
+    const description = computeAriaLabel(
+      block,
+      aria.Verbosity.LOQUACIOUS,
+      false,
+    );
+    aria.announceDynamicAriaState(description);
+  };
+
+  const announceWorkspaceInformation = (workspace: WorkspaceSvg) => {
+    const rootWorkspace = resolveWorkspace(workspace);
+    const stackCount = rootWorkspace.getTopBlocks().length;
+    const commentCount = rootWorkspace.getTopComments().length;
+
+    // Build base string with block stack count.
+    let baseMsgKey;
+    if (stackCount === 0) {
+      baseMsgKey = 'WORKSPACE_CONTENTS_BLOCKS_ZERO';
+    } else if (stackCount === 1) {
+      baseMsgKey = 'WORKSPACE_CONTENTS_BLOCKS_ONE';
+    } else {
+      baseMsgKey = 'WORKSPACE_CONTENTS_BLOCKS_MANY';
+    }
+
+    // Build comment suffix.
+    let suffix = '';
+    if (commentCount > 0) {
+      suffix = Msg[
+        commentCount === 1
+          ? 'WORKSPACE_CONTENTS_COMMENTS_ONE'
+          : 'WORKSPACE_CONTENTS_COMMENTS_MANY'
+      ].replace('%1', String(commentCount));
+    }
+
+    // Build final message.
+    const msg = Msg[baseMsgKey]
+      .replace('%1', String(stackCount))
+      .replace('%2', suffix);
+
+    aria.announceDynamicAriaState(msg);
+  };
+
   const shortcut: KeyboardShortcut = {
     name: names.INFORMATION,
-    preconditionFn: (workspace, scope) => {
-      const focused = scope.focusedNode;
-      return focused === workspace;
-    },
-    callback: (_workspace) => {
-      const workspace = resolveWorkspace(_workspace);
-      const stackCount = workspace.getTopBlocks().length;
-      const commentCount = workspace.getTopComments().length;
-
-      // Build base string with block stack count.
-      let baseMsgKey;
-      if (stackCount === 0) {
-        baseMsgKey = 'WORKSPACE_CONTENTS_BLOCKS_ZERO';
-      } else if (stackCount === 1) {
-        baseMsgKey = 'WORKSPACE_CONTENTS_BLOCKS_ONE';
-      } else {
-        baseMsgKey = 'WORKSPACE_CONTENTS_BLOCKS_MANY';
+    preconditionFn: () => true,
+    callback: (workspace) => {
+      const focusedNode = getFocusManager().getFocusedNode();
+      const block = workspace
+        .getNavigator()
+        .getSourceBlockFromNode(focusedNode);
+      if (block) {
+        announceBlockInformation(block);
+        return true;
+      } else if (focusedNode === workspace) {
+        announceWorkspaceInformation(workspace);
+        return true;
       }
-
-      // Build comment suffix.
-      let suffix = '';
-      if (commentCount > 0) {
-        suffix = Msg[
-          commentCount === 1
-            ? 'WORKSPACE_CONTENTS_COMMENTS_ONE'
-            : 'WORKSPACE_CONTENTS_COMMENTS_MANY'
-        ].replace('%1', String(commentCount));
-      }
-
-      // Build final message.
-      const msg = Msg[baseMsgKey]
-        .replace('%1', String(stackCount))
-        .replace('%2', suffix);
-
-      aria.announceDynamicAriaState(msg);
-
-      return true;
+      return false;
     },
     keyCodes: [KeyCodes.I],
     displayText: () => Msg['SHORTCUTS_INFORMATION'],
+  };
+  ShortcutRegistry.registry.register(shortcut);
+}
+
+/**
+ * Registers keyboard shortcut to announce an extended description of the
+ * focused element.
+ */
+export function registerReadExtendedInformation() {
+  const shiftI = ShortcutRegistry.registry.createSerializedKey(KeyCodes.I, [
+    KeyCodes.SHIFT,
+  ]);
+  const shortcut: KeyboardShortcut = {
+    name: names.EXTENDED_INFORMATION,
+    preconditionFn: () => true,
+    callback: (workspace) => {
+      const block = workspace
+        .getNavigator()
+        .getSourceBlockFromNode(getFocusManager().getFocusedNode());
+      if (!block) return false;
+
+      const toAnnounce = [];
+      // First go up the chain of output connections and start finding parents
+      // from there because the outputs of a block are read anyway, so we don't
+      // need to repeat them.
+      let startBlock = block;
+      while (startBlock.outputConnection?.isConnected()) {
+        startBlock = startBlock.getParent()!;
+      }
+
+      if (startBlock !== block) {
+        toAnnounce.push(
+          computeAriaLabel(startBlock, aria.Verbosity.TERSE, false),
+        );
+      }
+
+      let parent = startBlock.getParent();
+      while (parent) {
+        toAnnounce.push(computeAriaLabel(parent, aria.Verbosity.TERSE, false));
+        parent = parent.getParent();
+      }
+
+      if (toAnnounce.length) {
+        toAnnounce.reverse();
+        if (!block.outputConnection?.isConnected()) {
+          // The current block was already read out earlier if it has an output
+          // connection.
+          toAnnounce.push(
+            Msg['CURRENT_BLOCK_ANNOUNCEMENT'].replace(
+              '%1',
+              computeAriaLabel(block, aria.Verbosity.TERSE, false),
+            ),
+          );
+        }
+
+        aria.announceDynamicAriaState(
+          Msg['PARENT_BLOCKS_ANNOUNCEMENT'].replace('%1', toAnnounce.join(',')),
+        );
+      } else {
+        aria.announceDynamicAriaState(Msg['NO_PARENT_ANNOUNCEMENT']);
+      }
+      return true;
+    },
+    keyCodes: [shiftI],
+    displayText: () => Msg['SHORTCUTS_EXTENDED_INFORMATION'],
   };
   ShortcutRegistry.registry.register(shortcut);
 }
@@ -1058,7 +1145,8 @@ export function registerKeyboardNavigationShortcuts() {
  * Registers keyboard shortcuts used to announce screen reader information.
  */
 export function registerScreenReaderShortcuts() {
-  registerWorkspaceOverview();
+  registerReadInformation();
+  registerReadExtendedInformation();
 }
 
 registerDefaultShortcuts();

@@ -366,9 +366,11 @@ export abstract class Field<T = any>
    * checkboxes represent their checked/non-checked status (i.e. value) through
    * a separate ARIA property.
    *
-   * It's not expected that this method, under normal operations, returns an empty
-   * string. If the field's value is empty then it will return a localized
-   * placeholder indicating that its value is empty.
+   * If the field's value is empty then it will return a localized placeholder
+   * indicating that its value is empty. If this method returns an empty string,
+   * the output will be ignored when composing the block-level ARIA label. Make
+   * sure you want your label hidden from screenreaders before returning an
+   * empty string.
    *
    * @param includeTypeInfo Whether to include the field's type information in
    *     the returned label, if available.

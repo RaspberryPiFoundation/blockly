@@ -123,6 +123,20 @@ class ZoomInControl extends ZoomControl {
       zoomControlContainer,
     );
     aria.setState(group, aria.State.LABEL, Msg['ZOOM_IN']);
+    dom.createSvgElement(
+      Svg.RECT,
+      {
+        'width': 40,
+        'height': 40,
+        'x': -4,
+        'y': -4,
+        'rx': 2,
+        'ry': 2,
+        'fill': 'none',
+        'class': 'blocklyFocusRing',
+      },
+      group,
+    );
     const clip = dom.createSvgElement(
       Svg.CLIPPATH,
       {'id': 'blocklyZoominClipPath' + rnd},
@@ -170,6 +184,20 @@ class ZoomOutControl extends ZoomControl {
       zoomControlContainer,
     );
     aria.setState(group, aria.State.LABEL, Msg['ZOOM_OUT']);
+    dom.createSvgElement(
+      Svg.RECT,
+      {
+        'width': 40,
+        'height': 40,
+        'x': -4,
+        'y': -4,
+        'rx': 2,
+        'ry': 2,
+        'fill': 'none',
+        'class': 'blocklyFocusRing',
+      },
+      group,
+    );
     const clip = dom.createSvgElement(
       Svg.CLIPPATH,
       {'id': 'blocklyZoomoutClipPath' + rnd},
@@ -217,6 +245,20 @@ class ZoomResetControl extends ZoomControl {
       zoomControlContainer,
     );
     aria.setState(group, aria.State.LABEL, Msg['RESET_ZOOM']);
+    dom.createSvgElement(
+      Svg.RECT,
+      {
+        'width': 40,
+        'height': 40,
+        'x': -4,
+        'y': -4,
+        'rx': 2,
+        'ry': 2,
+        'fill': 'none',
+        'class': 'blocklyFocusRing',
+      },
+      group,
+    );
     const clip = dom.createSvgElement(
       Svg.CLIPPATH,
       {'id': 'blocklyZoomresetClipPath' + rnd},

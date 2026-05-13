@@ -444,6 +444,7 @@
 	"SHORTCUTS_FOCUS_WORKSPACE": "Focus workspace",
 	"SHORTCUTS_FOCUS_TOOLBOX": "Focus toolbox",
 	"SHORTCUTS_INFORMATION": "Announce information",
+	"SHORTCUTS_EXTENDED_INFORMATION": "Announce detailed information",
 	"SHORTCUTS_DISCONNECT": "Disconnect block",
 	"SHORTCUTS_NEXT_STACK": "Next stack",
 	"SHORTCUTS_PREVIOUS_STACK": "Previous stack",
@@ -521,5 +522,8 @@
 	"ICON_LABEL_WARNING_OPEN": "Close Warning",
 	"ARIA_LABEL_COMMENT": "Comment",
 	"ARIA_LABEL_COMMENT_COLLAPSE": "Collapse Comment",
-	"ARIA_LABEL_COMMENT_EXPAND": "Expand Comment"
+	"ARIA_LABEL_COMMENT_EXPAND": "Expand Comment",
+	"CURRENT_BLOCK_ANNOUNCEMENT": "Current block: %1",
+	"PARENT_BLOCKS_ANNOUNCEMENT": "Parent blocks: %1",
+	"NO_PARENT_ANNOUNCEMENT": "Current block has no parent"
 }

@@ -379,7 +379,7 @@ suite('Image Fields', function () {
       });
     });
     suite('Image with click handler', function () {
-      test('Field has field type name in ARIA label', function () {
+      test('Field has alt text ARIA label', function () {
         const block = this.workspace.newBlock('test_images_clickhandler');
         const field = block.getField('IMAGE');
         block.initSvg();
@@ -387,9 +387,9 @@ suite('Image Fields', function () {
 
         const focusableElement = field.getFocusableElement();
         const fieldLabel = focusableElement.getAttribute('aria-label');
-        assert.include(fieldLabel, 'image:');
+        assert.include(fieldLabel, 'image with click handler');
       });
-      test('Focusable element has  role of button', function () {
+      test('Focusable element has role of button', function () {
         const block = this.workspace.newBlock('test_images_clickhandler');
         const field = block.getField('IMAGE');
         block.initSvg();
@@ -398,6 +398,17 @@ suite('Image Fields', function () {
         const focusableElement = field.getFocusableElement();
         const role = focusableElement.getAttribute('role');
         assert.equal(role, 'button');
+      });
+      test('Block omits image button from ARIA label', function () {
+        const block = this.workspace.newBlock('test_images_clickhandler');
+        const field = block.getField('IMAGE');
+        block.initSvg();
+        block.render();
+
+        const blockFocusableElement = block.getFocusableElement();
+        const blockLabel = blockFocusableElement.getAttribute('aria-label');
+        assert.notInclude(blockLabel, 'Image:');
+        assert.notInclude(blockLabel, 'image with click handler');
       });
     });
   });

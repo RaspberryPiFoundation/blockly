@@ -772,14 +772,14 @@ suite('Keyboard Shortcut Items', function () {
     });
   });
 
-  suite('Workspace Information (I)', function () {
+  suite('Information (I)', function () {
     setup(function () {
       const keyEvent = createKeyDownEvent(Blockly.utils.KeyCodes.I);
       // Helper to trigger the shortcut and assert the live region text.
       this.assertAnnouncement = (expected) => {
         this.injectionDiv.dispatchEvent(keyEvent);
         // Wait for the live region to update after the event.
-        this.clock.tick(11);
+        this.clock.runAll();
         // The announcement may include an additional non-breaking space.
         assert.include(this.liveRegion.textContent, expected);
       };
@@ -838,12 +838,108 @@ suite('Keyboard Shortcut Items', function () {
       );
     });
 
-    suite('Preconditions', function () {
-      test('Not called when focus is not on workspace', function () {
-        this.block = this.workspace.newBlock('stack_block');
-        Blockly.getFocusManager().focusNode(this.block);
-        this.assertAnnouncement('');
-      });
+    test('Block', function () {
+      const block = this.workspace.newBlock('controls_if');
+      block.initSvg();
+      block.render();
+      Blockly.getFocusManager().focusNode(block);
+      this.assertAnnouncement('Begin stack, if, do, has input');
+    });
+
+    test('Icon', function () {
+      const block = this.workspace.newBlock('controls_if');
+      block.initSvg();
+      block.render();
+      Blockly.getFocusManager().focusNode(
+        block.getIcon(Blockly.icons.IconType.MUTATOR),
+      );
+      this.assertAnnouncement('Begin stack, if, do, has input');
+    });
+
+    test('Field', function () {
+      const block = this.workspace.newBlock('logic_boolean');
+      block.initSvg();
+      block.render();
+      Blockly.getFocusManager().focusNode(block.getField('BOOL'));
+      this.assertAnnouncement('Begin stack, dropdown: true');
+    });
+
+    test('Connection', function () {
+      const block = this.workspace.newBlock('controls_if');
+      block.initSvg();
+      block.render();
+      Blockly.getFocusManager().focusNode(block.getInput('DO0').connection);
+      this.assertAnnouncement('Begin stack, if, do, has input');
+    });
+  });
+
+  suite('Extended Information (Shift + I)', function () {
+    setup(function () {
+      const keyEvent = createKeyDownEvent(Blockly.utils.KeyCodes.I, [
+        Blockly.utils.KeyCodes.SHIFT,
+      ]);
+      // Helper to trigger the shortcut and assert the live region text.
+      this.assertAnnouncement = (expected) => {
+        this.injectionDiv.dispatchEvent(keyEvent);
+        // Wait for the live region to update after the event.
+        this.clock.runAll();
+        // The announcement may include an additional non-breaking space.
+        console.log(this.liveRegion.textContent);
+        assert.include(this.liveRegion.textContent, expected);
+      };
+      this.liveRegion = document.getElementById('blocklyAriaAnnounce');
+    });
+
+    test('Top level statement block', function () {
+      const block = this.workspace.newBlock('controls_if');
+      block.initSvg();
+      block.render();
+      Blockly.getFocusManager().focusNode(block);
+      this.assertAnnouncement('Current block has no parent');
+    });
+
+    test('Top level value block', function () {
+      const block = this.workspace.newBlock('logic_negate');
+      block.initSvg();
+      block.render();
+      Blockly.getFocusManager().focusNode(block);
+      this.assertAnnouncement('Current block has no parent');
+    });
+
+    test('Nested statement block', function () {
+      const ifBlock = this.workspace.newBlock('controls_if');
+      const repeatBlock = this.workspace.newBlock('controls_repeat_ext');
+      const printBlock = this.workspace.newBlock('text_print');
+      for (const block of [ifBlock, repeatBlock, printBlock]) {
+        block.initSvg();
+        block.render();
+      }
+      printBlock.previousConnection.connect(
+        repeatBlock.getInput('DO').connection,
+      );
+      repeatBlock.previousConnection.connect(
+        ifBlock.getInput('DO0').connection,
+      );
+
+      Blockly.getFocusManager().focusNode(printBlock);
+      this.assertAnnouncement(
+        'Parent blocks: if, do,repeat, times, do,Current block: print',
+      );
+    });
+
+    test('Nested value block', function () {
+      const andBlock = this.workspace.newBlock('logic_operation');
+      const notBlock = this.workspace.newBlock('logic_negate');
+      const trueBlock = this.workspace.newBlock('logic_boolean');
+      for (const block of [andBlock, notBlock, trueBlock]) {
+        block.initSvg();
+        block.render();
+      }
+      notBlock.outputConnection.connect(andBlock.getInput('B').connection);
+      trueBlock.outputConnection.connect(notBlock.getInput('BOOL').connection);
+
+      Blockly.getFocusManager().focusNode(trueBlock);
+      this.assertAnnouncement('Parent blocks: and, not, true');
     });
   });
 
