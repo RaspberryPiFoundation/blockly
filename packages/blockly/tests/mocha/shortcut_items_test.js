@@ -850,7 +850,9 @@ suite('Keyboard Shortcut Items', function () {
       const block = this.workspace.newBlock('controls_if');
       block.initSvg();
       block.render();
-      Blockly.getFocusManager().focusNode(block.getIcon(Blockly.icons.IconType.MUTATOR));
+      Blockly.getFocusManager().focusNode(
+        block.getIcon(Blockly.icons.IconType.MUTATOR),
+      );
       this.assertAnnouncement('Begin stack, if, do, has input');
     });
 
@@ -873,7 +875,9 @@ suite('Keyboard Shortcut Items', function () {
 
   suite('Extended Information (Shift + I)', function () {
     setup(function () {
-      const keyEvent = createKeyDownEvent(Blockly.utils.KeyCodes.I, [Blockly.utils.KeyCodes.SHIFT]);
+      const keyEvent = createKeyDownEvent(Blockly.utils.KeyCodes.I, [
+        Blockly.utils.KeyCodes.SHIFT,
+      ]);
       // Helper to trigger the shortcut and assert the live region text.
       this.assertAnnouncement = (expected) => {
         this.injectionDiv.dispatchEvent(keyEvent);
@@ -910,11 +914,17 @@ suite('Keyboard Shortcut Items', function () {
         block.initSvg();
         block.render();
       }
-      printBlock.previousConnection.connect(repeatBlock.getInput('DO').connection);
-      repeatBlock.previousConnection.connect(ifBlock.getInput('DO0').connection);
+      printBlock.previousConnection.connect(
+        repeatBlock.getInput('DO').connection,
+      );
+      repeatBlock.previousConnection.connect(
+        ifBlock.getInput('DO0').connection,
+      );
 
       Blockly.getFocusManager().focusNode(printBlock);
-      this.assertAnnouncement('Parent blocks: if, do,repeat, times, do,Current block: print');
+      this.assertAnnouncement(
+        'Parent blocks: if, do,repeat, times, do,Current block: print',
+      );
     });
 
     test('Nested value block', function () {
