@@ -870,13 +870,18 @@ export function registerReadExtendedInformation() {
           // The current block was already read out earlier if it has an output
           // connection.
           toAnnounce.push(
-            `Current block: ${computeAriaLabel(block, aria.Verbosity.TERSE, false)}`,
+            Msg['CURRENT_BLOCK_ANNOUNCEMENT'].replace(
+              '%1',
+              computeAriaLabel(block, aria.Verbosity.TERSE, false),
+            ),
           );
         }
 
-        aria.announceDynamicAriaState(`Parent blocks: ${toAnnounce.join(',')}`);
+        aria.announceDynamicAriaState(
+          Msg['PARENT_BLOCKS_ANNOUNCEMENT'].replace('%1', toAnnounce.join(',')),
+        );
       } else {
-        aria.announceDynamicAriaState('Current block has no parent');
+        aria.announceDynamicAriaState(Msg['NO_PARENT_ANNOUNCEMENT']);
       }
       return true;
     },

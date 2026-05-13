@@ -1763,6 +1763,9 @@ Blockly.Msg.SHORTCUTS_FOCUS_TOOLBOX = 'Focus toolbox';
 /// shortcut display text for the information shortcut, which announces information about a focused element.
 Blockly.Msg.SHORTCUTS_INFORMATION = 'Announce information';
 /** @type {string} */
+/// Description for the Shift-I keyboard shortcut that announces extended context about the currently focused element to screenreaders.
+Blockly.Msg.SHORTCUTS_EXTENDED_INFORMATION = 'Announce detailed information';
+/** @type {string} */
 /// shortcut display text for the disconnect shortcut, which disconnects a block from its neighbor.
 Blockly.Msg.SHORTCUTS_DISCONNECT = 'Disconnect block';
 /** @type {string} */
@@ -2047,3 +2050,12 @@ Blockly.Msg.ARIA_LABEL_COMMENT_COLLAPSE = 'Collapse Comment';
 /** @type {string} */
 /// ARIA label for a collapsed comment's expand button.
 Blockly.Msg.ARIA_LABEL_COMMENT_EXPAND = 'Expand Comment';
+/** @type {string} */
+/// Screenreader announcement providing context about the currently focused block.
+Blockly.Msg.CURRENT_BLOCK_ANNOUNCEMENT = 'Current block: %1';
+/** @type {string} */
+/// Screenreader announcement providing context about the currently focused block's parents.
+Blockly.Msg.PARENT_BLOCKS_ANNOUNCEMENT = 'Parent blocks: %1';
+/** @type {string} */
+/// Screenreader announcement informing users that the currently focused block has no parent blocks.
+Blockly.Msg.NO_PARENT_ANNOUNCEMENT = 'Current block has no parent';

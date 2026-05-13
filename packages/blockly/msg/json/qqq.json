@@ -1,18 +1,4 @@
 {
-	"@metadata": {
-		"authors": [
-			"Ajeje Brazorf",
-			"Amire80",
-			"Espertus",
-			"Liuxinyu970226",
-			"McDutchie",
-			"Metalhead64",
-			"Nike",
-			"Robby",
-			"Shirayuki",
-			"YaronSh"
-		]
-	},
 	"VARIABLES_DEFAULT_NAME": "default name - A simple, general default name for a variable, preferably short. For more context, see [[Translating:Blockly#infrequent_message_types]].\n{{Identical|Item}}",
 	"UNNAMED_KEY": "default name - A simple, default name for an unnamed function or variable. Preferably indicates that the item is unnamed.",
 	"TODAY": "button text - Button that sets a calendar to today's date.\n{{Identical|Today}}",
@@ -452,6 +438,7 @@
 	"SHORTCUTS_FOCUS_WORKSPACE": "shortcut display text for the focus workspace shortcut, which moves focus to the workspace.",
 	"SHORTCUTS_FOCUS_TOOLBOX": "shortcut display text for the focus toolbox shortcut, which moves focus to the toolbox or flyout.",
 	"SHORTCUTS_INFORMATION": "shortcut display text for the information shortcut, which announces information about a focused element.",
+	"SHORTCUTS_EXTENDED_INFORMATION": "Description for the Shift-I keyboard shortcut that announces extended context about the currently focused element to screenreaders.",
 	"SHORTCUTS_DISCONNECT": "shortcut display text for the disconnect shortcut, which disconnects a block from its neighbor.",
 	"SHORTCUTS_NEXT_STACK": "shortcut display text for the next stack shortcut, which navigates to the next block stack.",
 	"SHORTCUTS_PREVIOUS_STACK": "shortcut display text for the previous stack shortcut, which navigates to the previous block stack.",
@@ -525,5 +512,8 @@
 	"ICON_LABEL_WARNING_OPEN": "Label for an icon, used by screen readers to identify an open warning. Clicking on the icon closes the warning's bubble.",
 	"ARIA_LABEL_COMMENT": "ARIA label for a comment.",
 	"ARIA_LABEL_COMMENT_COLLAPSE": "ARIA label for an expanded comment's collapse button.",
-	"ARIA_LABEL_COMMENT_EXPAND": "ARIA label for a collapsed comment's expand button."
+	"ARIA_LABEL_COMMENT_EXPAND": "ARIA label for a collapsed comment's expand button.",
+	"CURRENT_BLOCK_ANNOUNCEMENT": "Screenreader announcement providing context about the currently focused block.",
+	"PARENT_BLOCKS_ANNOUNCEMENT": "Screenreader announcement providing context about the currently focused block's parents.",
+	"NO_PARENT_ANNOUNCEMENT": "Screenreader announcement informing users that the currently focused block has no parent blocks."
 }
