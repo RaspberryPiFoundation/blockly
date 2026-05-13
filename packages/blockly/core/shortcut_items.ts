@@ -780,7 +780,7 @@ export function registerReadInformation() {
         const description = computeAriaLabel(
           block,
           aria.Verbosity.LOQUACIOUS,
-          true,
+          false,
         );
         aria.announceDynamicAriaState(description);
         return true;
@@ -854,13 +854,13 @@ export function registerReadExtendedInformation() {
 
       if (startBlock !== block) {
         toAnnounce.push(
-          computeAriaLabel(startBlock, aria.Verbosity.TERSE, true),
+          computeAriaLabel(startBlock, aria.Verbosity.TERSE, false),
         );
       }
 
       let parent = startBlock.getParent();
       while (parent) {
-        toAnnounce.push(computeAriaLabel(parent, aria.Verbosity.TERSE, true));
+        toAnnounce.push(computeAriaLabel(parent, aria.Verbosity.TERSE, false));
         parent = parent.getParent();
       }
 
@@ -870,7 +870,7 @@ export function registerReadExtendedInformation() {
           // The current block was already read out earlier if it has an output
           // connection.
           toAnnounce.push(
-            `Current block: ${computeAriaLabel(block, aria.Verbosity.TERSE, true)}`,
+            `Current block: ${computeAriaLabel(block, aria.Verbosity.TERSE, false)}`,
           );
         }
 
