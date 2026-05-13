@@ -371,7 +371,7 @@ suite('ARIA', function () {
       assert.notInclude(label, 'Begin stack');
     });
 
-    test('Nested statement blocks in first statement input do not include their parent input in their label', function () {
+    test('Statement blocks in first statement input do not include their parent input in their label', function () {
       const ifBlock = this.makeBlock('controls_ifelse');
       const printBlock = this.makeBlock('text_print');
       ifBlock.getInput('IF0').connection.connect(printBlock.previousConnection);
@@ -382,7 +382,7 @@ suite('ARIA', function () {
       assert.isFalse(label.startsWith('Begin do'));
     });
 
-    test('Nested statement blocks in subsequent statement inputs include their parent input in their label', function () {
+    test('Statement blocks in subsequent statement inputs include their parent input in their label', function () {
       const ifBlock = this.makeBlock('controls_ifelse');
       const printBlock = this.makeBlock('text_print');
       ifBlock
@@ -393,6 +393,75 @@ suite('ARIA', function () {
         Blockly.utils.aria.State.LABEL,
       );
       assert.isTrue(label.startsWith('Begin else'));
+    });
+
+    test('A custom statement input label is wrapped in the "Begin" prefix', function () {
+      const ifBlock = this.makeBlock('controls_ifelse');
+      ifBlock.getInput('ELSE').setAriaLabelProvider('otherwise do');
+      const printBlock = this.makeBlock('text_print');
+      ifBlock
+        .getInput('ELSE')
+        .connection.connect(printBlock.previousConnection);
+      const label = Blockly.utils.aria.getState(
+        printBlock.getFocusableElement(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.include(label, 'Begin otherwise do');
+    });
+
+    test('A custom label on the first statement input is prepended to its child block label', function () {
+      const ifBlock = this.makeBlock('controls_ifelse');
+      ifBlock.getInput('DO0').setAriaLabelProvider('then do');
+      const printBlock = this.makeBlock('text_print');
+      ifBlock.getInput('DO0').connection.connect(printBlock.previousConnection);
+      const label = Blockly.utils.aria.getState(
+        printBlock.getFocusableElement(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.include(label, 'Begin then do');
+    });
+
+    test('A custom input label is only used for the first child block in a statement input stack', function () {
+      const ifBlock = this.makeBlock('controls_ifelse');
+      ifBlock.getInput('ELSE').setAriaLabelProvider('otherwise do');
+      const firstPrintBlock = this.makeBlock('text_print');
+      ifBlock
+        .getInput('ELSE')
+        .connection.connect(firstPrintBlock.previousConnection);
+      const secondPrintBlock = this.makeBlock('text_print');
+      firstPrintBlock.nextConnection.connect(
+        secondPrintBlock.previousConnection,
+      );
+      const subsequentLabel = Blockly.utils.aria.getState(
+        secondPrintBlock.getFocusableElement(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.notInclude(subsequentLabel, 'otherwise do');
+    });
+
+    test('A custom input label is prepended to the child block of a value input', function () {
+      const ifBlock = this.makeBlock('controls_ifelse');
+      ifBlock.getInput('IF0').setAriaLabelProvider('condition');
+      const boolBlock = this.makeBlock('logic_boolean');
+      ifBlock.getInput('IF0').connection.connect(boolBlock.outputConnection);
+      const label = Blockly.utils.aria.getState(
+        boolBlock.getFocusableElement(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.include(label, 'condition');
+    });
+
+    test('A block connected to a value input without a custom label does not include the input label', function () {
+      const negateBlock = this.makeBlock('logic_negate');
+      const boolBlock = this.makeBlock('logic_boolean');
+      negateBlock
+        .getInput('BOOL')
+        .connection.connect(boolBlock.outputConnection);
+      const label = Blockly.utils.aria.getState(
+        boolBlock.getFocusableElement(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.notInclude(label, 'not');
     });
 
     test('Disabled blocks indicate that in their label', function () {
