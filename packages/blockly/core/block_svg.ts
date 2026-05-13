@@ -1881,6 +1881,7 @@ export class BlockSvg
 
   /**
    * Returns the number of blocks that this block is nested inside of.
+   *
    * @internal
    */
   getNestingLevel(): number {
