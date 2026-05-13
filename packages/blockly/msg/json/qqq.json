@@ -438,6 +438,7 @@
 	"SHORTCUTS_FOCUS_WORKSPACE": "shortcut display text for the focus workspace shortcut, which moves focus to the workspace.",
 	"SHORTCUTS_FOCUS_TOOLBOX": "shortcut display text for the focus toolbox shortcut, which moves focus to the toolbox or flyout.",
 	"SHORTCUTS_INFORMATION": "shortcut display text for the information shortcut, which announces information about a focused element.",
+	"SHORTCUTS_EXTENDED_INFORMATION": "Description for the Shift-I keyboard shortcut that announces extended context about the currently focused element to screenreaders.",
 	"SHORTCUTS_DISCONNECT": "shortcut display text for the disconnect shortcut, which disconnects a block from its neighbor.",
 	"SHORTCUTS_NEXT_STACK": "shortcut display text for the next stack shortcut, which navigates to the next block stack.",
 	"SHORTCUTS_PREVIOUS_STACK": "shortcut display text for the previous stack shortcut, which navigates to the previous block stack.",
@@ -474,6 +475,10 @@
 	"BLOCK_LABEL_VALUE": "Part of an accessibility label for a block that indicates that it is a value block, i.e. that it has an output connection.",
 	"BLOCK_LABEL_STACK_BLOCKS": "Accessibility label for a block that indicates it is a stack of two or more blocks.",
 	"INPUT_LABEL_INDEX": "Accessibility label for an unlabeled input that communicates its index on the block. \n\nParameters:\n* %1 - the index of the input, starting at 1",
+	"INPUT_LABEL_VALUE": "Accessibility label for an empty connection that can hold a value block. This should use the same language as the BLOCK_LABEL_VALUE string.",
+	"INPUT_LABEL_STATEMENT": "Accessibility label for an empty next connection that can hold a statement block. This should use the same language as the BLOCK_LABEL_STATEMENT string.",
+	"INPUT_LABEL_END_STATEMENT": "Accessibility label describing the last connection point inside a statement input. e.g. 'End if, true, do' where the 'if, true, do' is assembled from the statement input and calculated separately. \n\nParameters:\n* %1 - the label for the statement input that is ending.",
+	"INPUT_LABEL_EMPTY": "Accessibility label describing an empty connection point that doesn't meet any other criteria for getting a more specific connection label.",
 	"ANNOUNCE_MOVE_WORKSPACE": "ARIA live region message announcing a block is being moved on the workspace, without specifying a target location or specific movement direction.",
 	"ANNOUNCE_MOVE_BEFORE": "ARIA live region message announcing a block is being moved before another block \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks\n* %2 - the label of the target (neighbour) block \n\nExamples:\n* 'Moving before repeat, 10, times, do.'\n* 'Moving print before repeat, 10, times, do.'",
 	"ANNOUNCE_MOVE_AFTER": "ARIA live region message announcing a block is being moved after another block \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks\n* %2 - the label of the target (neighbour) block \n\nExamples:\n* 'Moving after repeat, 10, times, do.'\n* 'Moving 2 stack blocks after repeat, 10, times, do.'",
@@ -514,5 +519,8 @@
 	"ARIA_LABEL_COMMENT_COLLAPSE": "ARIA label for an expanded comment's collapse button.",
 	"ARIA_LABEL_COMMENT_EXPAND": "ARIA label for a collapsed comment's expand button.",
 	"SCREENREADER_MODE_ENABLED": "Message announced when screenreader optimization mode is turned on.",
-	"SCREENREADER_MODE_DISABLED": "Message announced when screenreader optimization mode is turned off."
+	"SCREENREADER_MODE_DISABLED": "Message announced when screenreader optimization mode is turned off.",
+	"CURRENT_BLOCK_ANNOUNCEMENT": "Screenreader announcement providing context about the currently focused block.",
+	"PARENT_BLOCKS_ANNOUNCEMENT": "Screenreader announcement providing context about the currently focused block's parents.",
+	"NO_PARENT_ANNOUNCEMENT": "Screenreader announcement informing users that the currently focused block has no parent blocks."
 }

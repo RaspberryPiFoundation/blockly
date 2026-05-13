@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-05-13 13:57:14.854829",
+		"lastupdated": "2026-05-13 14:58:00.012088",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -444,6 +444,7 @@
 	"SHORTCUTS_FOCUS_WORKSPACE": "Focus workspace",
 	"SHORTCUTS_FOCUS_TOOLBOX": "Focus toolbox",
 	"SHORTCUTS_INFORMATION": "Announce information",
+	"SHORTCUTS_EXTENDED_INFORMATION": "Announce detailed information",
 	"SHORTCUTS_DISCONNECT": "Disconnect block",
 	"SHORTCUTS_NEXT_STACK": "Next stack",
 	"SHORTCUTS_PREVIOUS_STACK": "Previous stack",
@@ -480,6 +481,10 @@
 	"BLOCK_LABEL_VALUE": "value",
 	"BLOCK_LABEL_STACK_BLOCKS": "%1 stack blocks",
 	"INPUT_LABEL_INDEX": "input %1",
+	"INPUT_LABEL_VALUE": "value position",
+	"INPUT_LABEL_STATEMENT": "command position",
+	"INPUT_LABEL_END_STATEMENT": "End %1",
+	"INPUT_LABEL_EMPTY": "Empty",
 	"ANNOUNCE_MOVE_WORKSPACE": "Moving %1 on workspace.",
 	"ANNOUNCE_MOVE_BEFORE": "Moving %1 before %2.",
 	"ANNOUNCE_MOVE_AFTER": "Moving %1 after %2.",
@@ -520,5 +525,8 @@
 	"ARIA_LABEL_COMMENT_COLLAPSE": "Collapse Comment",
 	"ARIA_LABEL_COMMENT_EXPAND": "Expand Comment",
 	"SCREENREADER_MODE_ENABLED": "Screenreader mode is on",
-	"SCREENREADER_MODE_DISABLED": "Screenreader mode is off"
+	"SCREENREADER_MODE_DISABLED": "Screenreader mode is off",
+	"CURRENT_BLOCK_ANNOUNCEMENT": "Current block: %1",
+	"PARENT_BLOCKS_ANNOUNCEMENT": "Parent blocks: %1",
+	"NO_PARENT_ANNOUNCEMENT": "Current block has no parent"
 }

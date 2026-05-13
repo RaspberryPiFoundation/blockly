@@ -1763,6 +1763,9 @@ Blockly.Msg.SHORTCUTS_FOCUS_TOOLBOX = 'Focus toolbox';
 /// shortcut display text for the information shortcut, which announces information about a focused element.
 Blockly.Msg.SHORTCUTS_INFORMATION = 'Announce information';
 /** @type {string} */
+/// Description for the Shift-I keyboard shortcut that announces extended context about the currently focused element to screenreaders.
+Blockly.Msg.SHORTCUTS_EXTENDED_INFORMATION = 'Announce detailed information';
+/** @type {string} */
 /// shortcut display text for the disconnect shortcut, which disconnects a block from its neighbor.
 Blockly.Msg.SHORTCUTS_DISCONNECT = 'Disconnect block';
 /** @type {string} */
@@ -1902,6 +1905,24 @@ Blockly.Msg.BLOCK_LABEL_STACK_BLOCKS = '%1 stack blocks';
 /// Accessibility label for an unlabeled input that communicates its index on the block.
 /// \n\nParameters:\n* %1 - the index of the input, starting at 1
 Blockly.Msg.INPUT_LABEL_INDEX = 'input %1';
+/** @type {string} */
+/// Accessibility label for an empty connection that can hold a value block.
+/// This should use the same language as the BLOCK_LABEL_VALUE string.
+Blockly.Msg.INPUT_LABEL_VALUE = 'value position';
+/** @type {string} */
+/// Accessibility label for an empty next connection that can hold a statement
+/// block. This should use the same language as the BLOCK_LABEL_STATEMENT string.
+Blockly.Msg.INPUT_LABEL_STATEMENT = 'command position';
+/** @type {string} */
+/// Accessibility label describing the last connection point inside a statement
+/// input. e.g. "End if, true, do" where the "if, true, do" is assembled from
+/// the statement input and calculated separately.
+/// \n\nParameters:\n* %1 - the label for the statement input that is ending.
+Blockly.Msg.INPUT_LABEL_END_STATEMENT = 'End %1';
+/** @type {string} */
+/// Accessibility label describing an empty connection point that doesn't
+/// meet any other criteria for getting a more specific connection label.
+Blockly.Msg.INPUT_LABEL_EMPTY = 'Empty';
 /** @type {string} */
 /// ARIA live region message announcing a block is being moved on the workspace, without specifying a target location or specific movement direction.
 // \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks
@@ -2056,3 +2077,12 @@ Blockly.Msg.SCREENREADER_MODE_ENABLED = 'Screenreader mode is on';
 /** @type {string} */
 /// Message announced when screenreader optimization mode is turned off.
 Blockly.Msg.SCREENREADER_MODE_DISABLED = 'Screenreader mode is off';
+/** @type {string} */
+/// Screenreader announcement providing context about the currently focused block.
+Blockly.Msg.CURRENT_BLOCK_ANNOUNCEMENT = 'Current block: %1';
+/** @type {string} */
+/// Screenreader announcement providing context about the currently focused block's parents.
+Blockly.Msg.PARENT_BLOCKS_ANNOUNCEMENT = 'Parent blocks: %1';
+/** @type {string} */
+/// Screenreader announcement informing users that the currently focused block has no parent blocks.
+Blockly.Msg.NO_PARENT_ANNOUNCEMENT = 'Current block has no parent';
