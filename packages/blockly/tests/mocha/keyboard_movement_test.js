@@ -1263,14 +1263,49 @@ suite('Keyboard-driven movement', function () {
         this.moveAndAssert(
           moveRight,
           ['Moving', 'else if, do', 'around', 'draw', '❤️'],
-          [this.getBlockLabel(ifBlock)],
+          ['of'],
         );
         this.moveAndAssert(
           moveRight,
           ['Moving', 'if, do', 'around', 'draw', '❤️'],
-          [this.getBlockLabel(ifBlock)],
+          ['of'],
         );
+        cancelMove(this.workspace);
+      });
+      test("doesn't announce full block labels for multi-statement target blocks", function () {
+        const json = {
+          'blocks': {
+            'languageVersion': 0,
+            'blocks': [
+              {
+                'type': 'draw_emoji',
+                'id': 'drawBlock',
+                'x': 0,
+                'y': 0,
+              },
+              {
+                'type': 'controls_if',
+                'id': 'ifBlock',
+                'x': 0,
+                'y': 100,
+                'extraState': {
+                  'elseIfCount': 2,
+                },
+              },
+            ],
+          },
+        };
+        Blockly.serialization.workspaces.load(json, this.workspace);
+        const drawBlock = this.workspace.getBlockById('drawBlock');
+        const ifBlock = this.workspace.getBlockById('ifBlock');
 
+        Blockly.getFocusManager().focusNode(drawBlock);
+        startMove(this.workspace); // on workspace
+        this.moveAndAssert(
+          moveRight,
+          ['Moving', 'before', ifBlock.getAriaLabel(0)],
+          [ifBlock.getAriaLabel(1), ifBlock.getAriaLabel(2)],
+        );
         cancelMove(this.workspace);
       });
       test('disambiguates with custom input labels around blocks', function () {

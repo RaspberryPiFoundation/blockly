@@ -1881,6 +1881,10 @@ Blockly.Msg.BLOCK_LABEL_HAS_INPUT = 'has input';
 /// than one input.
 Blockly.Msg.BLOCK_LABEL_HAS_INPUTS = 'has inputs';
 /** @type {string} */
+/// Part of an accessibility label for a block that indicates that it has more
+/// than one statement input, such as branches of an if-else block.
+Blockly.Msg.BLOCK_LABEL_HAS_BRANCHES = 'has %1 branches';
+/** @type {string} */
 /// Part of an accessibility label for a block that indicates that it is
 /// a statement block, i.e. that it has a next or previous connection.
 /// "command" here is used in the sense of a computer command, or a
