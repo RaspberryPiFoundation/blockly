@@ -1740,4 +1740,40 @@ suite('Keyboard Shortcut Items', function () {
       assert.isFalse(Blockly.Tooltip.isVisible());
     });
   });
+
+  suite('Toggle screenreader mode (Ctrl+Alt+Z / Cmd+Option+Z)', function () {
+    const event = createKeyDownEvent(Blockly.utils.KeyCodes.Z, [
+      Blockly.utils.KeyCodes.CTRL_CMD,
+      Blockly.utils.KeyCodes.ALT,
+    ]);
+
+    setup(function(){
+      this.liveRegion = document.getElementById('blocklyAriaAnnounce');
+    });
+
+    test('Can be toggled', function () {
+      assert.isTrue(this.workspace.getNavigator().getNavigationLoops());
+      assert.isTrue(this.workspace.getToolbox().getNavigator().getNavigationLoops());
+      assert.isTrue(this.workspace.getFlyout().getWorkspace().getNavigator().getNavigationLoops());
+      assert.isFalse(Blockly.keyboardNavigationController.getLevelChangeBeepsEnabled());
+
+      this.injectionDiv.dispatchEvent(event);
+      this.clock.runAll();
+
+      assert.isFalse(this.workspace.getNavigator().getNavigationLoops());
+      assert.isFalse(this.workspace.getToolbox().getNavigator().getNavigationLoops());
+      assert.isFalse(this.workspace.getFlyout().getWorkspace().getNavigator().getNavigationLoops());
+      assert.isTrue(Blockly.keyboardNavigationController.getLevelChangeBeepsEnabled());
+      assert.include(this.liveRegion.textContent, 'Screenreader mode is on');
+
+      this.injectionDiv.dispatchEvent(event);
+      this.clock.runAll();
+
+      assert.isTrue(this.workspace.getNavigator().getNavigationLoops());
+      assert.isTrue(this.workspace.getToolbox().getNavigator().getNavigationLoops());
+      assert.isTrue(this.workspace.getFlyout().getWorkspace().getNavigator().getNavigationLoops());
+      assert.isFalse(Blockly.keyboardNavigationController.getLevelChangeBeepsEnabled());
+      assert.include(this.liveRegion.textContent, 'Screenreader mode is off');
+    });
+  })
 });

@@ -1784,6 +1784,9 @@ Blockly.Msg.SHORTCUTS_CLEANUP = 'Clean up workspace';
 /// shortcut display text for the show tooltip shortcut, which displays a short help text for the focused element.
 Blockly.Msg.SHORTCUTS_SHOW_TOOLTIP = 'Show tooltip';
 /** @type {string} */
+/// shortcut display text for a shortcut that toggles various behaviors to improve the experience of individuals using screenreaders.
+Blockly.Msg.SHORTCUTS_TOGGLE_SCREENREADER_MODE = 'Toggle screenreader mode';
+/** @type {string} */
 /// Message shown to inform users how to move blocks to arbitrary locations
 /// with the keyboard.
 Blockly.Msg.KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT = 'Hold %1 and use arrow keys to move freely, then %2 to accept the position.';
@@ -2047,3 +2050,9 @@ Blockly.Msg.ARIA_LABEL_COMMENT_COLLAPSE = 'Collapse Comment';
 /** @type {string} */
 /// ARIA label for a collapsed comment's expand button.
 Blockly.Msg.ARIA_LABEL_COMMENT_EXPAND = 'Expand Comment';
+/** @type {string} */
+/// Message announced when screenreader optimization mode is turned on.
+Blockly.Msg.SCREENREADER_MODE_ENABLED = 'Screenreader mode is on';
+/** @type {string} */
+/// Message announced when screenreader optimization mode is turned off.
+Blockly.Msg.SCREENREADER_MODE_DISABLED = 'Screenreader mode is off';
