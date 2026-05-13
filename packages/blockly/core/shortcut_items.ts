@@ -768,57 +768,64 @@ export function registerFocusToolbox() {
  * element.
  */
 export function registerReadInformation() {
+  const announceBlockInformation = (block: BlockSvg) => {
+    const description = computeAriaLabel(
+      block,
+      aria.Verbosity.LOQUACIOUS,
+      false,
+    );
+    aria.announceDynamicAriaState(description);
+  };
+
+  const announceWorkspaceInformation = (workspace: WorkspaceSvg) => {
+    const rootWorkspace = resolveWorkspace(workspace);
+    const stackCount = rootWorkspace.getTopBlocks().length;
+    const commentCount = rootWorkspace.getTopComments().length;
+
+    // Build base string with block stack count.
+    let baseMsgKey;
+    if (stackCount === 0) {
+      baseMsgKey = 'WORKSPACE_CONTENTS_BLOCKS_ZERO';
+    } else if (stackCount === 1) {
+      baseMsgKey = 'WORKSPACE_CONTENTS_BLOCKS_ONE';
+    } else {
+      baseMsgKey = 'WORKSPACE_CONTENTS_BLOCKS_MANY';
+    }
+
+    // Build comment suffix.
+    let suffix = '';
+    if (commentCount > 0) {
+      suffix = Msg[
+        commentCount === 1
+          ? 'WORKSPACE_CONTENTS_COMMENTS_ONE'
+          : 'WORKSPACE_CONTENTS_COMMENTS_MANY'
+      ].replace('%1', String(commentCount));
+    }
+
+    // Build final message.
+    const msg = Msg[baseMsgKey]
+      .replace('%1', String(stackCount))
+      .replace('%2', suffix);
+
+    aria.announceDynamicAriaState(msg);
+  };
+
   const shortcut: KeyboardShortcut = {
     name: names.INFORMATION,
     preconditionFn: () => true,
     callback: (workspace) => {
-      // Read information about the focused block, if any.
+      const focusedNode = getFocusManager().getFocusedNode();
       const block = workspace
         .getNavigator()
-        .getSourceBlockFromNode(getFocusManager().getFocusedNode());
+        .getSourceBlockFromNode(focusedNode);
       if (block) {
-        const description = computeAriaLabel(
-          block,
-          aria.Verbosity.LOQUACIOUS,
-          false,
-        );
-        aria.announceDynamicAriaState(description);
+        announceBlockInformation(block);
+        return true;
+      } else if (focusedNode === workspace) {
+        announceWorkspaceInformation(workspace);
         return true;
       }
-
-      // Fall back to describing the state of the workspace.
-      const rootWorkspace = resolveWorkspace(workspace);
-      const stackCount = rootWorkspace.getTopBlocks().length;
-      const commentCount = rootWorkspace.getTopComments().length;
-
-      // Build base string with block stack count.
-      let baseMsgKey;
-      if (stackCount === 0) {
-        baseMsgKey = 'WORKSPACE_CONTENTS_BLOCKS_ZERO';
-      } else if (stackCount === 1) {
-        baseMsgKey = 'WORKSPACE_CONTENTS_BLOCKS_ONE';
-      } else {
-        baseMsgKey = 'WORKSPACE_CONTENTS_BLOCKS_MANY';
-      }
-
-      // Build comment suffix.
-      let suffix = '';
-      if (commentCount > 0) {
-        suffix = Msg[
-          commentCount === 1
-            ? 'WORKSPACE_CONTENTS_COMMENTS_ONE'
-            : 'WORKSPACE_CONTENTS_COMMENTS_MANY'
-        ].replace('%1', String(commentCount));
-      }
-
-      // Build final message.
-      const msg = Msg[baseMsgKey]
-        .replace('%1', String(stackCount))
-        .replace('%2', suffix);
-
-      aria.announceDynamicAriaState(msg);
-
-      return true;
+      return false;
     },
     keyCodes: [KeyCodes.I],
     displayText: () => Msg['SHORTCUTS_INFORMATION'],
