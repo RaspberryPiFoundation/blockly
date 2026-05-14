@@ -1879,6 +1879,16 @@ export class BlockSvg
     }
   }
 
+  /**
+   * Returns the number of blocks that this block is nested inside of.
+   *
+   * @internal
+   */
+  getNestingLevel(): number {
+    const surroundParent = this.getSurroundParent();
+    return surroundParent ? surroundParent.getNestingLevel() + 1 : 0;
+  }
+
   /** See IFocusableNode.getFocusableElement. */
   getFocusableElement(): HTMLElement | SVGElement {
     // For full-block fields, we focus the field itself

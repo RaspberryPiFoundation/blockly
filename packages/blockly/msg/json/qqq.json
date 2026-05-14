@@ -1,18 +1,4 @@
 {
-	"@metadata": {
-		"authors": [
-			"Ajeje Brazorf",
-			"Amire80",
-			"Espertus",
-			"Liuxinyu970226",
-			"McDutchie",
-			"Metalhead64",
-			"Nike",
-			"Robby",
-			"Shirayuki",
-			"YaronSh"
-		]
-	},
 	"VARIABLES_DEFAULT_NAME": "default name - A simple, general default name for a variable, preferably short. For more context, see [[Translating:Blockly#infrequent_message_types]].\n{{Identical|Item}}",
 	"UNNAMED_KEY": "default name - A simple, default name for an unnamed function or variable. Preferably indicates that the item is unnamed.",
 	"TODAY": "button text - Button that sets a calendar to today's date.\n{{Identical|Today}}",
@@ -462,6 +448,7 @@
 	"SHORTCUTS_DUPLICATE": "shortcut display text for the duplicate shortcut, which duplicates the focused block or comment.",
 	"SHORTCUTS_CLEANUP": "shortcut display text for the cleanup shortcut, which organizes blocks on the workspace.",
 	"SHORTCUTS_SHOW_TOOLTIP": "shortcut display text for the show tooltip shortcut, which displays a short help text for the focused element.",
+	"SHORTCUTS_TOGGLE_SCREENREADER_MODE": "shortcut display text for a shortcut that toggles various behaviors to improve the experience of individuals using screenreaders.",
 	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "Message shown to inform users how to move blocks to arbitrary locations with the keyboard.",
 	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Message shown to inform users how to move blocks with the keyboard.",
 	"KEYBOARD_NAV_COPIED_HINT": "Message shown when an item is copied in keyboard navigation mode.",
@@ -535,6 +522,8 @@
 	"ARIA_LABEL_COMMENT": "ARIA label for a comment.",
 	"ARIA_LABEL_COMMENT_COLLAPSE": "ARIA label for an expanded comment's collapse button.",
 	"ARIA_LABEL_COMMENT_EXPAND": "ARIA label for a collapsed comment's expand button.",
+	"SCREENREADER_MODE_ENABLED": "Message announced when screenreader optimization mode is turned on.",
+	"SCREENREADER_MODE_DISABLED": "Message announced when screenreader optimization mode is turned off.",
 	"CURRENT_BLOCK_ANNOUNCEMENT": "Screenreader announcement providing context about the currently focused block.",
 	"PARENT_BLOCKS_ANNOUNCEMENT": "Screenreader announcement providing context about the currently focused block's parents.",
 	"NO_PARENT_ANNOUNCEMENT": "Screenreader announcement informing users that the currently focused block has no parent blocks."

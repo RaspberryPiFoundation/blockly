@@ -379,9 +379,7 @@ export class WorkspaceSvg
     /**
      * Object in charge of loading, storing, and playing audio for a workspace.
      */
-    this.audioManager = new WorkspaceAudio(
-      options.parentWorkspace as WorkspaceSvg,
-    );
+    this.audioManager = new WorkspaceAudio(options.parentWorkspace ?? this);
 
     /** This workspace's grid object or null. */
     this.grid = this.options.gridPattern

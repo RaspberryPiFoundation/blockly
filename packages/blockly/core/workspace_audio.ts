@@ -12,6 +12,9 @@
  */
 // Former goog.module ID: Blockly.WorkspaceAudio
 
+import {getFocusManager} from './focus_manager.js';
+import type {IFocusableNode} from './interfaces/i_focusable_node.js';
+import {keyboardNavigationController} from './keyboard_navigation_controller.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 
 /**
@@ -38,7 +41,7 @@ export class WorkspaceAudio {
 
   /**
    * @param parentWorkspace The parent of the workspace this audio object
-   *     belongs to, or null.
+   *     belongs to if it has one, or the workspace that owns this instance.
    */
   constructor(private parentWorkspace: WorkspaceSvg) {
     if (window.AudioContext) {
@@ -143,6 +146,33 @@ export class WorkspaceAudio {
    */
   async playErrorBeep() {
     return this.beep(260);
+  }
+
+  /**
+   * If enabled, plays a tone corresponding to the nesting level of the given
+   * node when it differs from the nesting level of the currently focused node.
+   * These tones are generally used for accessibility purposes to indicate a
+   * scope transition to users who use a screenreader. This method must be
+   * called before focus transitions to the given node.
+   *
+   * @internal
+   * @param newNode The soon-to-be-focused node.
+   */
+  maybePlayScopeChangeAudioCue(newNode: IFocusableNode) {
+    if (!keyboardNavigationController.getScopeChangeAudioCuesEnabled()) return;
+    const navigator = this.parentWorkspace.getNavigator();
+    const oldBlock = navigator.getSourceBlockFromNode(
+      getFocusManager().getFocusedNode(),
+    );
+    const newBlock = navigator.getSourceBlockFromNode(newNode);
+    let level = 0;
+    if (
+      oldBlock &&
+      newBlock &&
+      oldBlock.getNestingLevel() !== (level = newBlock.getNestingLevel())
+    ) {
+      this.beep(400 + level * 60);
+    }
   }
 
   /**
