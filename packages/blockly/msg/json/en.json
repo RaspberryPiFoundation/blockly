@@ -469,6 +469,7 @@
 	"WORKSPACE_CONTENTS_COMMENTS_ONE": " and one comment",
 	"KEYBOARD_NAV_BLOCK_NAVIGATION_HINT": "Use %1 to navigate inside of blocks.",
 	"KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT": "Use the arrow keys to navigate.",
+	"KEYBOARD_NAV_FLYOUT_LABEL_HINT": "Use the arrow keys to navigate to a block, or press %1 to go to the next heading.",
 	"BLOCK_LABEL_BEGIN_STACK": "Begin stack",
 	"BLOCK_LABEL_BEGIN_PREFIX": "Begin %1",
 	"BLOCK_LABEL_TOOLBOX_CATEGORY": "%1 category",

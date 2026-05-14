@@ -1853,6 +1853,9 @@ Blockly.Msg.KEYBOARD_NAV_BLOCK_NAVIGATION_HINT = 'Use %1 to navigate inside of b
 /// Message shown when a user presses Enter with the workspace focused.
 Blockly.Msg.KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT = 'Use the arrow keys to navigate.';
 /** @type {string} */
+/// Message shown when a user presses Enter with a flyout label (heading) focused.
+Blockly.Msg.KEYBOARD_NAV_FLYOUT_LABEL_HINT = 'Use the arrow keys to navigate to a block, or press %1 to go to the next heading.';
+/** @type {string} */
 /// Part of an accessibility label for a block that indicates it is the first
 /// block in the stack.
 Blockly.Msg.BLOCK_LABEL_BEGIN_STACK = 'Begin stack';
