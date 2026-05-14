@@ -138,7 +138,7 @@ export class Options {
     if (hasCss === undefined) {
       hasCss = true;
     }
-    let pathToMedia = 'https://blockly-demo.appspot.com/static/media/';
+    let pathToMedia = 'https://static.blockly.com/media/';
     if (options['media']) {
       pathToMedia = options['media'].endsWith('/')
         ? options['media']
