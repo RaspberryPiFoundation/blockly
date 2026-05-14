@@ -125,6 +125,7 @@ function buildTSOverride({files, tsconfig}) {
       // Ensure there is a blank line between the body and any @tags,
       // as required by the tsdoc spec (see #6353).
       'jsdoc/tag-lines': ['error', 'any', {'startLines': 1}],
+      'jsdoc/require-throws-type': ['off'],
     },
   };
 }
@@ -224,6 +225,9 @@ export default [
       'jsdoc/check-tag-names': ['warn', {'definedTags': ['record']}],
       'jsdoc/tag-lines': ['off'],
       'jsdoc/no-defaults': ['off'],
+      'jsdoc/reject-any-type': ['off'],
+      'jsdoc/reject-function-type': ['off'],
+      'jsdoc/require-throws-type': ['off'],
       'mocha/no-exclusive-tests': 'error',
     },
   },
