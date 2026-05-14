@@ -18,9 +18,7 @@ export enum DragDisposition {
  * Represents an object that can be dragged.
  */
 export interface IDraggable
-  extends IDragStrategy,
-    IBoundedElement,
-    ISelectable {
+  extends IDragStrategy, IBoundedElement, ISelectable {
   /**
    * Returns the current location of the draggable in workspace coordinates.
    *

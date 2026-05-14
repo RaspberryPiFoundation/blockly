@@ -33,9 +33,9 @@ import type {Workspace} from './workspace.js';
  * variable types as keys and lists of variables as values.  The list of
  * variables are the type indicated by the key.
  */
-export class VariableMap
-  implements IVariableMap<IVariableModel<IVariableState>>
-{
+export class VariableMap implements IVariableMap<
+  IVariableModel<IVariableState>
+> {
   /**
    * A map from variable type to map of IDs to variables. The maps contain
    * all of the named variables in the workspace, including variables that are
