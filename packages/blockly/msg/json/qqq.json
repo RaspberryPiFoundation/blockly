@@ -456,6 +456,8 @@
 	"SHORTCUTS_DISCONNECT": "shortcut display text for the disconnect shortcut, which disconnects a block from its neighbor.",
 	"SHORTCUTS_NEXT_STACK": "shortcut display text for the next stack shortcut, which navigates to the next block stack.",
 	"SHORTCUTS_PREVIOUS_STACK": "shortcut display text for the previous stack shortcut, which navigates to the previous block stack.",
+	"SHORTCUTS_NEXT_HEADING": "shortcut display text for the next heading shortcut, which moves focus to the next heading (label) in the flyout.",
+	"SHORTCUTS_PREVIOUS_HEADING": "shortcut display text for the previous heading shortcut, which moves focus to the previous heading (label) in the flyout.",
 	"SHORTCUTS_PERFORM_ACTION": "shortcut display text for the perform action shortcut, which triggers an action on the focused element.",
 	"SHORTCUTS_DUPLICATE": "shortcut display text for the duplicate shortcut, which duplicates the focused block or comment.",
 	"SHORTCUTS_CLEANUP": "shortcut display text for the cleanup shortcut, which organizes blocks on the workspace.",

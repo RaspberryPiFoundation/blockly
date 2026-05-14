@@ -1775,6 +1775,12 @@ Blockly.Msg.SHORTCUTS_NEXT_STACK = 'Next stack';
 /// shortcut display text for the previous stack shortcut, which navigates to the previous block stack.
 Blockly.Msg.SHORTCUTS_PREVIOUS_STACK = 'Previous stack';
 /** @type {string} */
+/// shortcut display text for the next heading shortcut, which moves focus to the next heading (label) in the flyout.
+Blockly.Msg.SHORTCUTS_NEXT_HEADING = 'Next heading';
+/** @type {string} */
+/// shortcut display text for the previous heading shortcut, which moves focus to the previous heading (label) in the flyout.
+Blockly.Msg.SHORTCUTS_PREVIOUS_HEADING = 'Previous heading';
+/** @type {string} */
 /// shortcut display text for the perform action shortcut, which triggers an action on the focused element.
 Blockly.Msg.SHORTCUTS_PERFORM_ACTION = 'Edit or confirm';
 /** @type {string} */

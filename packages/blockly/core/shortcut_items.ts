@@ -13,12 +13,14 @@ import {RenderedWorkspaceComment} from './comments.js';
 import * as contextmenu from './contextmenu.js';
 import * as dropDownDiv from './dropdowndiv.js';
 import * as eventUtils from './events/utils.js';
+import {FlyoutButton} from './flyout_button.js';
 import {getFocusManager} from './focus_manager.js';
 import {clearPasteHints, showCopiedHint, showCutHint} from './hints.js';
 import {hasContextMenu} from './interfaces/i_contextmenu.js';
 import {isCopyable as isICopyable} from './interfaces/i_copyable.js';
 import {isDeletable as isIDeletable} from './interfaces/i_deletable.js';
 import {type IDraggable, isDraggable} from './interfaces/i_draggable.js';
+import {type IFlyout} from './interfaces/i_flyout.js';
 import {type IFocusableNode} from './interfaces/i_focusable_node.js';
 import {isSelectable} from './interfaces/i_selectable.js';
 import {Direction, KeyboardMover} from './keyboard_nav/keyboard_mover.js';
@@ -69,6 +71,8 @@ export enum names {
   DUPLICATE = 'duplicate',
   CLEANUP = 'cleanup',
   SHOW_TOOLTIP = 'show_tooltip',
+  NEXT_HEADING = 'next_heading',
+  PREVIOUS_HEADING = 'previous_heading',
 }
 
 /**
@@ -1004,6 +1008,129 @@ export function registerStackNavigation() {
 }
 
 /**
+ * Registers keyboard shortcuts to jump between headings (labels) in a flyout.
+ *
+ * Pressing H moves focus to the next heading; Shift+H moves focus to the
+ * previous heading. The shortcut only activates when focus is already inside
+ * the flyout; otherwise it returns false so other handlers may take over.
+ */
+export function registerHeadingNavigation() {
+  /**
+   * Returns the flyout the user is currently focused in, or null if focus is
+   * not inside any flyout's workspace.
+   */
+  const getActiveFlyout = (): IFlyout | null => {
+    const focusedTree = getFocusManager().getFocusedTree();
+    if (
+      focusedTree instanceof WorkspaceSvg &&
+      focusedTree.isFlyout &&
+      focusedTree.targetWorkspace
+    ) {
+      return focusedTree.targetWorkspace.getFlyout() ?? null;
+    }
+    return null;
+  };
+
+  /**
+   * Walks up from the focused node to find the top-level flyout item it
+   * belongs to (e.g. the block whose field is focused). Returns null if no
+   * flyout item is focused.
+   */
+  const getCurrentFlyoutItem = (flyout: IFlyout): IFocusableNode | null => {
+    const navigator = flyout.getWorkspace().getNavigator();
+    const items: IFocusableNode[] = flyout
+      .getContents()
+      .map((item) => item.getElement());
+    let node: IFocusableNode | null =
+      getFocusManager().getFocusedNode() ?? null;
+    while (node && !items.includes(node)) {
+      node = navigator.getParent(node);
+    }
+    return node;
+  };
+
+  /**
+   * Finds the next or previous heading in the flyout relative to the
+   * currently focused item, or the first/last heading if no flyout item is
+   * focused. Returns null if there is no heading to navigate to.
+   */
+  const findHeading = (
+    flyout: IFlyout,
+    direction: 1 | -1,
+  ): FlyoutButton | null => {
+    const items: IFocusableNode[] = flyout
+      .getContents()
+      .map((item) => item.getElement());
+    const current = getCurrentFlyoutItem(flyout);
+    // When nothing in the flyout is focused, start from before the first item
+    // (for next) or after the last item (for previous) so the loop finds the
+    // first or last heading respectively.
+    const startIndex = current
+      ? items.indexOf(current)
+      : direction === 1
+        ? -1
+        : items.length;
+
+    for (let offset = 1; offset <= items.length; offset++) {
+      const index = startIndex + direction * offset;
+      if (index < 0 || index >= items.length) break;
+      const item = items[index];
+      if (item instanceof FlyoutButton && item.isLabel()) {
+        return item;
+      }
+    }
+    return null;
+  };
+
+  const shiftH = ShortcutRegistry.registry.createSerializedKey(KeyCodes.H, [
+    KeyCodes.SHIFT,
+  ]);
+
+  const nextHeadingShortcut: KeyboardShortcut = {
+    name: names.NEXT_HEADING,
+    preconditionFn: (workspace) =>
+      !workspace.isDragging() &&
+      !dropDownDiv.isVisible() &&
+      !widgetDiv.isVisible() &&
+      !!getActiveFlyout(),
+    callback: () => {
+      const flyout = getActiveFlyout();
+      if (!flyout) return false;
+      const target = findHeading(flyout, 1);
+      if (!target) return false;
+      keyboardNavigationController.setIsActive(true);
+      getFocusManager().focusNode(target);
+      return true;
+    },
+    keyCodes: [KeyCodes.H],
+    displayText: () => Msg['SHORTCUTS_NEXT_HEADING'],
+  };
+
+  const previousHeadingShortcut: KeyboardShortcut = {
+    name: names.PREVIOUS_HEADING,
+    preconditionFn: (workspace) =>
+      !workspace.isDragging() &&
+      !dropDownDiv.isVisible() &&
+      !widgetDiv.isVisible() &&
+      !!getActiveFlyout(),
+    callback: () => {
+      const flyout = getActiveFlyout();
+      if (!flyout) return false;
+      const target = findHeading(flyout, -1);
+      if (!target) return false;
+      keyboardNavigationController.setIsActive(true);
+      getFocusManager().focusNode(target);
+      return true;
+    },
+    keyCodes: [shiftH],
+    displayText: () => Msg['SHORTCUTS_PREVIOUS_HEADING'],
+  };
+
+  ShortcutRegistry.registry.register(nextHeadingShortcut);
+  ShortcutRegistry.registry.register(previousHeadingShortcut);
+}
+
+/**
  * Registers keyboard shortcut to perform an action on the focused element.
  */
 export function registerPerformAction() {
@@ -1135,6 +1262,7 @@ export function registerKeyboardNavigationShortcuts() {
   registerArrowNavigation();
   registerDisconnectBlock();
   registerStackNavigation();
+  registerHeadingNavigation();
   registerPerformAction();
   registerDuplicate();
   registerCleanup();

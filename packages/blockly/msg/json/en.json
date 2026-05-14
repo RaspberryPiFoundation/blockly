@@ -448,6 +448,8 @@
 	"SHORTCUTS_DISCONNECT": "Disconnect block",
 	"SHORTCUTS_NEXT_STACK": "Next stack",
 	"SHORTCUTS_PREVIOUS_STACK": "Previous stack",
+	"SHORTCUTS_NEXT_HEADING": "Next heading",
+	"SHORTCUTS_PREVIOUS_HEADING": "Previous heading",
 	"SHORTCUTS_PERFORM_ACTION": "Edit or confirm",
 	"SHORTCUTS_DUPLICATE": "Duplicate",
 	"SHORTCUTS_CLEANUP": "Clean up workspace",
