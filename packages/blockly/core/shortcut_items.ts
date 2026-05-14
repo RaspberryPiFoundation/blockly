@@ -686,7 +686,7 @@ export function registerArrowNavigation() {
           workspace.getAudioManager().playErrorBeep();
           return false;
         }
-        workspace.getAudioManager().maybePlayLevelChangeBeep(node);
+        workspace.getAudioManager().maybePlayScopeChangeAudioCue(node);
         getFocusManager().focusNode(node);
         return true;
       },
@@ -712,7 +712,7 @@ export function registerArrowNavigation() {
           workspace.getAudioManager().playErrorBeep();
           return false;
         }
-        workspace.getAudioManager().maybePlayLevelChangeBeep(node);
+        workspace.getAudioManager().maybePlayScopeChangeAudioCue(node);
         getFocusManager().focusNode(node);
         return true;
       },
@@ -1144,7 +1144,7 @@ export function registerToggleScreenreaderMode() {
     preconditionFn: () => true,
     callback: (workspace) => {
       enabled = !enabled;
-      keyboardNavigationController.setLevelChangeBeepsEnabled(enabled);
+      keyboardNavigationController.setScopeChangeAudioCuesEnabled(enabled);
       workspace.getNavigator().setNavigationLoops(!enabled);
       workspace.getToolbox()?.getNavigator().setNavigationLoops(!enabled);
       workspace

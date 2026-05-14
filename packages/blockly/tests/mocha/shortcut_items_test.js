@@ -1860,7 +1860,7 @@ suite('Keyboard Shortcut Items', function () {
           .getNavigationLoops(),
       );
       assert.isFalse(
-        Blockly.keyboardNavigationController.getLevelChangeBeepsEnabled(),
+        Blockly.keyboardNavigationController.getScopeChangeAudioCuesEnabled(),
       );
 
       this.injectionDiv.dispatchEvent(event);
@@ -1878,7 +1878,7 @@ suite('Keyboard Shortcut Items', function () {
           .getNavigationLoops(),
       );
       assert.isTrue(
-        Blockly.keyboardNavigationController.getLevelChangeBeepsEnabled(),
+        Blockly.keyboardNavigationController.getScopeChangeAudioCuesEnabled(),
       );
       assert.include(this.liveRegion.textContent, 'Screenreader mode is on');
 
@@ -1897,7 +1897,7 @@ suite('Keyboard Shortcut Items', function () {
           .getNavigationLoops(),
       );
       assert.isFalse(
-        Blockly.keyboardNavigationController.getLevelChangeBeepsEnabled(),
+        Blockly.keyboardNavigationController.getScopeChangeAudioCuesEnabled(),
       );
       assert.include(this.liveRegion.textContent, 'Screenreader mode is off');
     });

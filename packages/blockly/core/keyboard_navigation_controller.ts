@@ -12,7 +12,8 @@
 export class KeyboardNavigationController {
   /** Whether the user is actively using keyboard navigation. */
   private isActive = false;
-  private levelChangeBeepsEnabled = false;
+  /** Whether to play audio cues when navigating between scope levels. */
+  private scopeChangeAudioCuesEnabled = false;
   /** Css class name added to body if keyboard nav is active. */
   private activeClassName = 'blocklyKeyboardNavigation';
 
@@ -54,16 +55,16 @@ export class KeyboardNavigationController {
    * Sets whether or not audio cues should be played when keyboard navigation
    * transitions between blocks of different nesting levels.
    */
-  setLevelChangeBeepsEnabled(enabled: boolean) {
-    this.levelChangeBeepsEnabled = enabled;
+  setScopeChangeAudioCuesEnabled(enabled: boolean) {
+    this.scopeChangeAudioCuesEnabled = enabled;
   }
 
   /**
    * Returns whether or not audio cues should be played when keyboard navigation
    * transitions between blocks of different nesting levels.
    */
-  getLevelChangeBeepsEnabled() {
-    return this.levelChangeBeepsEnabled;
+  getScopeChangeAudioCuesEnabled() {
+    return this.scopeChangeAudioCuesEnabled;
   }
 
   /** Adds or removes the css class that indicates keyboard navigation is active. */

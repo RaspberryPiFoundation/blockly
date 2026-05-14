@@ -158,8 +158,8 @@ export class WorkspaceAudio {
    * @internal
    * @param newNode The soon-to-be-focused node.
    */
-  maybePlayLevelChangeBeep(newNode: IFocusableNode) {
-    if (!keyboardNavigationController.getLevelChangeBeepsEnabled()) return;
+  maybePlayScopeChangeAudioCue(newNode: IFocusableNode) {
+    if (!keyboardNavigationController.getScopeChangeAudioCuesEnabled()) return;
     const navigator = this.parentWorkspace.getNavigator();
     const oldBlock = navigator.getSourceBlockFromNode(
       getFocusManager().getFocusedNode(),
