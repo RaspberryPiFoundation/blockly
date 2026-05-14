@@ -2077,10 +2077,10 @@ Blockly.Msg.ARIA_LABEL_COMMENT_COLLAPSE = 'Collapse Comment';
 Blockly.Msg.ARIA_LABEL_COMMENT_EXPAND = 'Expand Comment';
 /** @type {string} */
 /// Message announced when screenreader optimization mode is turned on.
-Blockly.Msg.SCREENREADER_MODE_ENABLED = 'Screenreader mode is on';
+Blockly.Msg.SCREENREADER_MODE_ENABLED = 'Screenreader mode is on, press %1 to turn it off';
 /** @type {string} */
 /// Message announced when screenreader optimization mode is turned off.
-Blockly.Msg.SCREENREADER_MODE_DISABLED = 'Screenreader mode is off';
+Blockly.Msg.SCREENREADER_MODE_DISABLED = 'Screenreader mode is off, press %1 to turn it on';
 /** @type {string} */
 /// Screenreader announcement providing context about the currently focused block.
 Blockly.Msg.CURRENT_BLOCK_ANNOUNCEMENT = 'Current block: %1';

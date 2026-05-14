@@ -14,7 +14,12 @@ import * as contextmenu from './contextmenu.js';
 import * as dropDownDiv from './dropdowndiv.js';
 import * as eventUtils from './events/utils.js';
 import {getFocusManager} from './focus_manager.js';
-import {clearPasteHints, showCopiedHint, showCutHint} from './hints.js';
+import {
+  clearPasteHints,
+  showCopiedHint,
+  showCutHint,
+  showScreenreaderModeHint,
+} from './hints.js';
 import {hasContextMenu} from './interfaces/i_contextmenu.js';
 import {isCopyable as isICopyable} from './interfaces/i_copyable.js';
 import {isDeletable as isIDeletable} from './interfaces/i_deletable.js';
@@ -1147,11 +1152,7 @@ export function registerToggleScreenreaderMode() {
         ?.getWorkspace()
         .getNavigator()
         .setNavigationLoops(!enabled);
-      aria.announceDynamicAriaState(
-        enabled
-          ? Msg['SCREENREADER_MODE_ENABLED']
-          : Msg['SCREENREADER_MODE_DISABLED'],
-      );
+      showScreenreaderModeHint(workspace, enabled);
       return true;
     },
     keyCodes: [shortcut],

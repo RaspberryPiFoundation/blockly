@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-05-14 08:05:42.601410",
+		"lastupdated": "2026-05-14 08:47:43.920300",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -525,8 +525,8 @@
 	"ARIA_LABEL_COMMENT": "Comment",
 	"ARIA_LABEL_COMMENT_COLLAPSE": "Collapse Comment",
 	"ARIA_LABEL_COMMENT_EXPAND": "Expand Comment",
-	"SCREENREADER_MODE_ENABLED": "Screenreader mode is on",
-	"SCREENREADER_MODE_DISABLED": "Screenreader mode is off",
+	"SCREENREADER_MODE_ENABLED": "Screenreader mode is on, press %1 to turn it off",
+	"SCREENREADER_MODE_DISABLED": "Screenreader mode is off, press %1 to turn it on",
 	"CURRENT_BLOCK_ANNOUNCEMENT": "Current block: %1",
 	"PARENT_BLOCKS_ANNOUNCEMENT": "Parent blocks: %1",
 	"NO_PARENT_ANNOUNCEMENT": "Current block has no parent"

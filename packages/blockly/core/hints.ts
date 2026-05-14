@@ -18,6 +18,7 @@ const blockNavigationHintId = 'blockNavigationHint';
 const workspaceNavigationHintId = 'workspaceNavigationHint';
 const copiedHintId = 'copiedHint';
 const cutHintId = 'cutHint';
+const screenreaderHintId = 'screenreaderHint';
 
 /**
  * Nudge the user to use unconstrained movement.
@@ -152,4 +153,25 @@ export function showCutHint(workspace: WorkspaceSvg) {
 export function clearPasteHints(workspace: WorkspaceSvg) {
   Toast.hide(workspace, cutHintId);
   Toast.hide(workspace, copiedHintId);
+}
+
+/**
+ * Inform the user about screenreader optimization mode being toggled, and how
+ * to undo it.
+ *
+ * @param workspace The workspace where screenreader mode was toggled.
+ * @param enabled True if screenreader mode is now enabled, otherwise false.
+ */
+export function showScreenreaderModeHint(
+  workspace: WorkspaceSvg,
+  enabled: boolean,
+) {
+  Toast.show(workspace, {
+    message: (enabled
+      ? Msg['SCREENREADER_MODE_ENABLED']
+      : Msg['SCREENREADER_MODE_DISABLED']
+    ).replace('%1', getShortcutKeysShort(names.TOGGLE_SCREENREADER)),
+    duration: 7,
+    id: screenreaderHintId,
+  });
 }
