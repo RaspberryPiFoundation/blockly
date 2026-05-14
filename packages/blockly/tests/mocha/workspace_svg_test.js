@@ -5,7 +5,6 @@
  */
 
 import {EventType} from '../../build/src/core/events/type.js';
-import {getFocusManager} from '../../build/src/core/focus_manager.js';
 import {assert} from '../../node_modules/chai/index.js';
 import {defineStackBlock} from './test_helpers/block_definitions.js';
 import {
@@ -128,6 +127,7 @@ suite('WorkspaceSvg', function () {
   });
 
   test('Announces a screenreader hint on first focus', function () {
+    document.getElementById('blocklyAriaAnnounce').textContent = '';
     Blockly.getFocusManager().focusNode(this.workspace);
     this.clock.runAll();
     assert.include(
@@ -137,7 +137,10 @@ suite('WorkspaceSvg', function () {
   });
 
   test('Nested workspaces do not announce screenreader hints', function () {
-    Blockly.getFocusManager().focusNode(this.workspace.getFlyout().getWorkspace());
+    document.getElementById('blocklyAriaAnnounce').textContent = '';
+    Blockly.getFocusManager().focusNode(
+      this.workspace.getFlyout().getWorkspace(),
+    );
     this.clock.runAll();
     assert.notInclude(
       document.getElementById('blocklyAriaAnnounce').textContent,
