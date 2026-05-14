@@ -521,6 +521,34 @@ suite('ARIA', function () {
       );
       assert.isTrue(label.endsWith('has inputs'));
     });
+    test('Blocks with multiple statement inputs are properly labeled', function () {
+      const json = {
+        'blocks': {
+          'languageVersion': 0,
+          'blocks': [
+            {
+              'type': 'controls_if',
+              'id': 'ifBlock',
+              'x': 0,
+              'y': 100,
+              'extraState': {
+                'elseIfCount': 2,
+                'hasElse': true,
+              },
+            },
+          ],
+        },
+      };
+      Blockly.serialization.workspaces.load(json, this.workspace);
+      const block = this.workspace.getBlockById('ifBlock');
+      const label = Blockly.utils.aria.getState(
+        block.getFocusableElement(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.isFalse(label.includes('else if, do'));
+      assert.isFalse(label.includes('else,'));
+      assert.isTrue(label.endsWith('has 4 branches'));
+    });
   });
 
   suite('Rendered connection highlight ARIA', function () {

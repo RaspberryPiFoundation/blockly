@@ -260,12 +260,28 @@ export function getInputLabels(
   verbosity = Verbosity.STANDARD,
   useCustomLabels = true,
 ): string[] {
-  return block.inputList
-    .filter((input) => input.isVisible())
-    .map((input) => {
-      const customLabel = useCustomLabels ? input.getAriaLabelText() : null;
-      return customLabel ?? input.getLabel(verbosity);
-    });
+  const visibleInputs = block.inputList.filter((input) => input.isVisible());
+  let inputsToLabel = visibleInputs;
+
+  // For terse and standard verbosity levels, if there are multiple statement inputs,
+  // only include labels up to the first one.
+  if (verbosity <= Verbosity.STANDARD) {
+    const statementInputs = visibleInputs.filter(
+      (input) => input.type === inputTypes.STATEMENT,
+    );
+
+    if (statementInputs.length > 1) {
+      inputsToLabel = visibleInputs.slice(
+        0,
+        visibleInputs.indexOf(statementInputs[0]) + 1,
+      );
+    }
+  }
+
+  return inputsToLabel.map((input) => {
+    const customLabel = useCustomLabels ? input.getAriaLabelText() : null;
+    return customLabel ?? input.getLabel(verbosity);
+  });
 }
 
 /**
@@ -482,9 +498,7 @@ export function computeMoveLabel(
   let blockLabel = isMoveStart
     ? local.getSourceBlock().getStackBlocksCountLabel()
     : '';
-  let neighbourLabel = (neighbour.getSourceBlock() as BlockSvg).getAriaLabel(
-    Verbosity.TERSE,
-  );
+  let neighbourLabel = neighbour.getSourceBlock().getAriaLabel(Verbosity.TERSE);
 
   if (includeLocalContext) {
     blockLabel = computeMoveConnectionLabel(local, blockLabel);
@@ -571,7 +585,17 @@ function getShadowBlockLabel(block: BlockSvg) {
  *     otherwise undefined.
  */
 function getInputCountLabel(block: BlockSvg) {
-  const inputCount = block.inputList.reduce((totalSum, input) => {
+  const branchCount = block.inputList.filter(
+    (input) => input.type === inputTypes.STATEMENT,
+  ).length;
+
+  if (branchCount > 1) {
+    return Msg['BLOCK_LABEL_HAS_BRANCHES'].replace(
+      '%1',
+      branchCount.toString(),
+    );
+  }
+  const valueInputCount = block.inputList.reduce((totalSum, input) => {
     return (
       input.fieldRow.reduce((fieldCount, field) => {
         return field.EDITABLE && !field.isFullBlockField()
@@ -582,7 +606,7 @@ function getInputCountLabel(block: BlockSvg) {
     );
   }, 0);
 
-  switch (inputCount) {
+  switch (valueInputCount) {
     case 0:
       return undefined;
     case 1:
