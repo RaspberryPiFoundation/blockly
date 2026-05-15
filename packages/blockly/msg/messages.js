@@ -366,20 +366,38 @@ Blockly.Msg.CONTROLS_IF_ELSE_TOOLTIP = 'Add a final, catch-all condition to the 
 /// {{Optional}} url - Information about comparisons.
 Blockly.Msg.LOGIC_COMPARE_HELPURL = 'https://en.wikipedia.org/wiki/Inequality_(mathematics)';
 /** @type {string} */
+/// logic - ARIA label for the equals (=) operator.
+Blockly.Msg.LOGIC_COMPARE_EQ_ARIA = 'equals';
+/** @type {string} */
 /// tooltip - Describes the equals (=) block.
 Blockly.Msg.LOGIC_COMPARE_TOOLTIP_EQ = 'Return true if both inputs equal each other.';
+/** @type {string} */
+/// logic - ARIA label for the not equals (≠) operator.
+Blockly.Msg.LOGIC_COMPARE_NEQ_ARIA = 'not equals';
 /** @type {string} */
 /// tooltip - Describes the not equals (≠) block.
 Blockly.Msg.LOGIC_COMPARE_TOOLTIP_NEQ = 'Return true if both inputs are not equal to each other.';
 /** @type {string} */
+/// logic - ARIA label for the less than (<) operator.
+Blockly.Msg.LOGIC_COMPARE_LT_ARIA = 'less than';
+/** @type {string} */
 /// tooltip - Describes the less than (<) block.
 Blockly.Msg.LOGIC_COMPARE_TOOLTIP_LT = 'Return true if the first input is smaller than the second input.';
+/** @type {string} */
+/// logic - ARIA label for the less than or equals (≤) operator.
+Blockly.Msg.LOGIC_COMPARE_LTE_ARIA = 'less than or equal to';
 /** @type {string} */
 /// tooltip - Describes the less than or equals (≤) block.
 Blockly.Msg.LOGIC_COMPARE_TOOLTIP_LTE = 'Return true if the first input is smaller than or equal to the second input.';
 /** @type {string} */
+/// logic - ARIA label for the greater than (>) operator.
+Blockly.Msg.LOGIC_COMPARE_GT_ARIA = 'greater than';
+/** @type {string} */
 /// tooltip - Describes the greater than (>) block.
 Blockly.Msg.LOGIC_COMPARE_TOOLTIP_GT = 'Return true if the first input is greater than the second input.';
+/** @type {string} */
+/// logic - ARIA label for the greater than or equals (≥) operator.
+Blockly.Msg.LOGIC_COMPARE_GTE_ARIA = 'greater than or equal to';
 /** @type {string} */
 /// tooltip - Describes the greater than or equals (≥) block.
 Blockly.Msg.LOGIC_COMPARE_TOOLTIP_GTE = 'Return true if the first input is greater than or equal to the second input.';
@@ -462,46 +480,98 @@ Blockly.Msg.MATH_NUMBER_TOOLTIP = 'A number.';
 /// {{Optional}} math - The symbol for the binary operation addition.
 Blockly.Msg.MATH_ADDITION_SYMBOL = '+';
 /** @type {string} */
+/// math - ARIA label for the binary operation addition.
+Blockly.Msg.MATH_ADDITION_SYMBOL_ARIA = 'plus';
+/** @type {string} */
 /// {{Optional}} math - The symbol for the binary operation indicating that the right operand should be
 /// subtracted from the left operand.
 Blockly.Msg.MATH_SUBTRACTION_SYMBOL = '-';
+/** @type {string} */
+/// math - ARIA label for the binary operation subtraction.
+Blockly.Msg.MATH_SUBTRACTION_SYMBOL_ARIA = 'minus';
 /** @type {string} */
 /// {{Optional}} math - The binary operation indicating that the left operand should be divided by
 /// the right operand.
 Blockly.Msg.MATH_DIVISION_SYMBOL = '÷';
 /** @type {string} */
+/// math - ARIA label for the binary operation division.
+Blockly.Msg.MATH_DIVISION_SYMBOL_ARIA = 'divided by';
+/** @type {string} */
 /// {{Optional}} math - The symbol for the binary operation multiplication.
 Blockly.Msg.MATH_MULTIPLICATION_SYMBOL = '×';
+/** @type {string} */
+/// math - ARIA label for the binary operation multiplication.
+Blockly.Msg.MATH_MULTIPLICATION_SYMBOL_ARIA = 'times';
 /** @type {string} */
 /// {{Optional}} math - The symbol for the binary operation exponentiation.  Specifically, if the
 /// value of the left operand is L and the value of the right operand (the exponent) is
 /// R, multiply L by itself R times.  (Fractional and negative exponents are also legal.)
 Blockly.Msg.MATH_POWER_SYMBOL = '^';
+/** @type {string} */
+/// math - ARIA label for the binary operation exponentiation.
+Blockly.Msg.MATH_POWER_SYMBOL_ARIA = 'to the power of';
 
 /** @type {string} */
 /// math - The short name of the trigonometric function
 /// [https://en.wikipedia.org/wiki/Trigonometric_functions#Sine.2C_cosine_and_tangent sine].
 Blockly.Msg.MATH_TRIG_SIN = 'sin';
 /** @type {string} */
+/// math - ARIA label for the trigonometric function
+Blockly.Msg.MATH_TRIG_SIN_ARIA = 'sine';
+/** @type {string} */
 /// math - The short name of the trigonometric function
 /// [https://en.wikipedia.org/wiki/Trigonometric_functions#Sine.2C_cosine_and_tangent cosine].
 Blockly.Msg.MATH_TRIG_COS = 'cos';
+/** @type {string} */
+/// math - ARIA label for the trigonometric function
+Blockly.Msg.MATH_TRIG_COS_ARIA = 'cosine';
 /** @type {string} */
 /// math - The short name of the trigonometric function
 /// [https://en.wikipedia.org/wiki/Trigonometric_functions#Sine.2C_cosine_and_tangent tangent].
 Blockly.Msg.MATH_TRIG_TAN = 'tan';
 /** @type {string} */
+/// math - ARIA label for the trigonometric function
+Blockly.Msg.MATH_TRIG_TAN_ARIA = 'tangent';
+/** @type {string} */
 /// math - The short name of the ''inverse of'' the trigonometric function
 /// [https://en.wikipedia.org/wiki/Trigonometric_functions#Sine.2C_cosine_and_tangent sine].
 Blockly.Msg.MATH_TRIG_ASIN = 'asin';
+/** @type {string} */
+/// math - ARIA label for the inverse  trigonometric function
+Blockly.Msg.MATH_TRIG_ASIN_ARIA = 'inverse sine';
 /** @type {string} */
 /// math - The short name of the ''inverse of'' the trigonometric function
 /// [https://en.wikipedia.org/wiki/Trigonometric_functions#Sine.2C_cosine_and_tangent cosine].
 Blockly.Msg.MATH_TRIG_ACOS = 'acos';
 /** @type {string} */
+/// math - ARIA label for the inverse  trigonometric function
+Blockly.Msg.MATH_TRIG_ACOS_ARIA = 'inverse cosine';
+/** @type {string} */
 /// math - The short name of the ''inverse of'' the trigonometric function
 /// [https://en.wikipedia.org/wiki/Trigonometric_functions#Sine.2C_cosine_and_tangent tangent].
 Blockly.Msg.MATH_TRIG_ATAN = 'atan';
+/** @type {string} */
+/// math - ARIA label for the inverse  trigonometric function
+Blockly.Msg.MATH_TRIG_ATAN_ARIA = 'inverse tangent';
+
+/** @type {string} */
+/// math - ARIA label for the constant pi
+Blockly.Msg.MATH_CONSTANT_PI_ARIA = 'pi';
+/** @type {string} */
+/// math - ARIA label for the constant e
+Blockly.Msg.MATH_CONSTANT_E_ARIA = 'e';
+/** @type {string} */
+/// math - ARIA label for the golden ratio constant
+Blockly.Msg.MATH_CONSTANT_GOLDEN_RATIO_ARIA = 'golden ratio';
+/** @type {string} */
+/// math - ARIA label for the constant square root of 2
+Blockly.Msg.MATH_CONSTANT_SQRT2_ARIA = 'square root of 2';
+/** @type {string} */
+/// math - ARIA label for the constant square root of 1/2
+Blockly.Msg.MATH_CONSTANT_SQRT1_2_ARIA = 'square root of 1 over 2';
+/** @type {string} */
+/// math - ARIA label for the constant infinity
+Blockly.Msg.MATH_CONSTANT_INFINITY_ARIA = 'infinity';
 
 /** @type {string} */
 /// {{Optional}} url - Information about addition, subtraction, multiplication, division, and exponentiation.
@@ -532,12 +602,28 @@ Blockly.Msg.MATH_SINGLE_OP_ROOT = 'square root';
 /// tooltip - Please use the same term as in the previous message.
 Blockly.Msg.MATH_SINGLE_TOOLTIP_ROOT = 'Return the square root of a number.';
 /** @type {string} */
-/// dropdown - This leaves positive numeric inputs changed and inverts negative inputs.  For example, the absolute value of 5 is 5; the absolute value of -5 is also 5.  For more information, see [https://en.wikipedia.org/wiki/Absolute_value https://en.wikipedia.org/wiki/Absolute_value].
+/// dropdown - This leaves positive numeric inputs unchanged and inverts negative inputs.  For example, the absolute value of 5 is 5; the absolute value of -5 is also 5.  For more information, see [https://en.wikipedia.org/wiki/Absolute_value https://en.wikipedia.org/wiki/Absolute_value].
 Blockly.Msg.MATH_SINGLE_OP_ABSOLUTE = 'absolute';
+/// dropdown ARIA label - Please use the same term as in the previous message.
+Blockly.Msg.MATH_SINGLE_OP_ABSOLUTE_ARIA = 'absolute value';
 /** @type {string} */
 /// tooltip - Please use the same term as in the previous message.
 Blockly.Msg.MATH_SINGLE_TOOLTIP_ABS = 'Return the absolute value of a number.';
-
+/** @type {string}*/
+/// dropdown ARIA label - This computes the negative of its input.  For example, negative 5 is -5, and negative -5 is 5.
+Blockly.Msg.MATH_SINGLE_OP_NEG_ARIA = 'negative';
+/** @type {string} */
+/// dropdown ARIA label - This computes the natural logarithm of its input.  For example, the natural logarithm of e is 1.
+Blockly.Msg.MATH_SINGLE_OP_LN_ARIA = 'natural logarithm';
+/** @type {string} */
+/// dropdown ARIA label - This computes the base 10 logarithm of its input.  For example, the base 10 logarithm of 100 is 2.
+Blockly.Msg.MATH_SINGLE_OP_LOG10_ARIA = 'base 10 logarithm';
+/** @type {string} */
+/// dropdown ARIA label - This multiplies e by itself n times, where n is the input.  For example, e to the power of 1 is e, and e to the power of 0 is 1.
+Blockly.Msg.MATH_SINGLE_OP_EXP_ARIA = 'e to the power of';
+/** @type {string} */
+/// dropdown ARIA label - This multiplies 10 by itself n times, where n is the input.  For example, 10 to the power of 2 is 100, and 10 to the power of 0 is 1.
+Blockly.Msg.MATH_SINGLE_OP_POW10_ARIA = '10 to the power of';
 /** @type {string} */
 /// tooltip - Calculates '''0-n''', where '''n''' is the single numeric input.
 Blockly.Msg.MATH_SINGLE_TOOLTIP_NEG = 'Return the negation of a number.';
@@ -652,11 +738,17 @@ Blockly.Msg.MATH_ONLIST_TOOLTIP_SUM = 'Return the sum of all the numbers in the 
 /// dropdown - This finds the smallest (minimum) number in a list.  For example, the smallest number in the list [-5, 0, 3] is -5.
 Blockly.Msg.MATH_ONLIST_OPERATOR_MIN = 'min of list';
 /** @type {string} */
+/// ARIA label for the minimum operator
+Blockly.Msg.MATH_ONLIST_OPERATOR_MIN_ARIA = 'minimum';
+/** @type {string} */
 /// tooltip - Please use the same term for "min" or "minimum" as in the previous message.
 Blockly.Msg.MATH_ONLIST_TOOLTIP_MIN = 'Return the smallest number in the list.';
 /** @type {string} */
 /// dropdown - This finds the largest (maximum) number in a list.  For example, the largest number in the list [-5, 0, 3] is 3.
 Blockly.Msg.MATH_ONLIST_OPERATOR_MAX = 'max of list';
+/** @type {string} */
+/// ARIA label for the maximum operator
+Blockly.Msg.MATH_ONLIST_OPERATOR_MAX_ARIA = 'maximum';
 /** @type {string} */
 /// tooltip
 Blockly.Msg.MATH_ONLIST_TOOLTIP_MAX = 'Return the largest number in the list.';
@@ -837,8 +929,19 @@ Blockly.Msg.TEXT_INDEXOF_OPERATOR_FIRST = 'find first occurrence of text';
 /// https://translatewiki.net/wiki/Translating:Blockly#Drop-Down_Menus)].)
 /// [[File:Blockly-find-text.png]].
 Blockly.Msg.TEXT_INDEXOF_OPERATOR_LAST = 'find last occurrence of text';
-/** @type {string} */
 
+/** @type {string} */
+/// ARIA label for the dropdown option indicating that the following number specifies the
+// position (relative to the start position) of a letter (or number, punctuation character,
+// etc.) from a given piece of text.
+Blockly.Msg.TEXT_FROM_START_ARIA = 'letter number';
+/** @type {string} */
+/// ARIA label for the dropdown option indicating that the following number specifies the
+// position (relative to the end position) of a letter (or number, punctuation character,
+// etc.) from a given piece of text.
+Blockly.Msg.TEXT_FROM_END_ARIA = 'letter number from end';
+
+/** @type {string} */
 /// {{Optional}} url - Information about extracting characters (letters, number, symbols, etc.) from text.
 Blockly.Msg.TEXT_CHARAT_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-text';
 /** @type {string} */

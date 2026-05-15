@@ -118,12 +118,12 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'field_dropdown',
         'name': 'OP',
         'options': [
-          ['=', 'EQ'],
-          ['\u2260', 'NEQ'],
-          ['\u200F<', 'LT'],
-          ['\u200F\u2264', 'LTE'],
-          ['\u200F>', 'GT'],
-          ['\u200F\u2265', 'GTE'],
+          ['=', 'EQ', '%{BKY_LOGIC_COMPARE_EQ_ARIA}'],
+          ['\u2260', 'NEQ', '%{BKY_LOGIC_COMPARE_NEQ_ARIA}'],
+          ['\u200F<', 'LT', '%{BKY_LOGIC_COMPARE_LT_ARIA}'],
+          ['\u200F\u2264', 'LTE', '%{BKY_LOGIC_COMPARE_LTE_ARIA}'],
+          ['\u200F>', 'GT', '%{BKY_LOGIC_COMPARE_GT_ARIA}'],
+          ['\u200F\u2265', 'GTE', '%{BKY_LOGIC_COMPARE_GTE_ARIA}'],
         ],
       },
       {

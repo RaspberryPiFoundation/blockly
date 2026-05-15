@@ -172,8 +172,16 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'field_dropdown',
         'name': 'WHERE',
         'options': [
-          ['%{BKY_TEXT_CHARAT_FROM_START}', 'FROM_START'],
-          ['%{BKY_TEXT_CHARAT_FROM_END}', 'FROM_END'],
+          [
+            '%{BKY_TEXT_CHARAT_FROM_START}',
+            'FROM_START',
+            '%{BKY_TEXT_FROM_START_ARIA}',
+          ],
+          [
+            '%{BKY_TEXT_CHARAT_FROM_END}',
+            'FROM_END',
+            '%{BKY_TEXT_FROM_END_ARIA}',
+          ],
           ['%{BKY_TEXT_CHARAT_FIRST}', 'FIRST'],
           ['%{BKY_TEXT_CHARAT_LAST}', 'LAST'],
           ['%{BKY_TEXT_CHARAT_RANDOM}', 'RANDOM'],
@@ -191,8 +199,8 @@ export const blocks = createBlockDefinitionsFromJsonArray([
 /** Type of a 'text_get_substring' block. */
 type GetSubstringBlock = Block & GetSubstringMixin;
 interface GetSubstringMixin extends GetSubstringType {
-  WHERE_OPTIONS_1: Array<[string, string]>;
-  WHERE_OPTIONS_2: Array<[string, string]>;
+  WHERE_OPTIONS_1: Array<[string, string, string?]>;
+  WHERE_OPTIONS_2: Array<[string, string, string?]>;
 }
 type GetSubstringType = typeof GET_SUBSTRING_BLOCK;
 
@@ -202,13 +210,29 @@ const GET_SUBSTRING_BLOCK = {
    */
   init: function (this: GetSubstringBlock) {
     this['WHERE_OPTIONS_1'] = [
-      [Msg['TEXT_GET_SUBSTRING_START_FROM_START'], 'FROM_START'],
-      [Msg['TEXT_GET_SUBSTRING_START_FROM_END'], 'FROM_END'],
+      [
+        Msg['TEXT_GET_SUBSTRING_START_FROM_START'],
+        'FROM_START',
+        Msg['TEXT_FROM_START_ARIA'],
+      ],
+      [
+        Msg['TEXT_GET_SUBSTRING_START_FROM_END'],
+        'FROM_END',
+        Msg['TEXT_FROM_END_ARIA'],
+      ],
       [Msg['TEXT_GET_SUBSTRING_START_FIRST'], 'FIRST'],
     ];
     this['WHERE_OPTIONS_2'] = [
-      [Msg['TEXT_GET_SUBSTRING_END_FROM_START'], 'FROM_START'],
-      [Msg['TEXT_GET_SUBSTRING_END_FROM_END'], 'FROM_END'],
+      [
+        Msg['TEXT_GET_SUBSTRING_END_FROM_START'],
+        'FROM_START',
+        Msg['TEXT_FROM_START_ARIA'],
+      ],
+      [
+        Msg['TEXT_GET_SUBSTRING_END_FROM_END'],
+        'FROM_END',
+        Msg['TEXT_FROM_END_ARIA'],
+      ],
       [Msg['TEXT_GET_SUBSTRING_END_LAST'], 'LAST'],
     ];
     this.setHelpUrl(Msg['TEXT_GET_SUBSTRING_HELPURL']);
