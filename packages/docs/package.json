@@ -35,10 +35,10 @@
     "@docusaurus/faster": "^3.10.1",
     "@docusaurus/module-type-aliases": "^3.10.1",
     "@docusaurus/types": "^3.10.1",
-    "eslint": "9.36.0",
+    "eslint": "10.3.0",
     "eslint-plugin-mdx": "^3.7.0",
     "gh-pages": "^6.3.0",
-    "prettier": "3.6.2"
+    "prettier": "3.8.3"
   },
   "browserslist": {
     "production": [

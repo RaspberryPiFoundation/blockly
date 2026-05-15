@@ -191,6 +191,7 @@ export default [
       'scripts/helpers.js',
       'tests/mocha/.mocharc.js',
       'tests/migration/validate-renamings.mjs',
+      'tests/scripts/magic_symlink.js',
     ],
     languageOptions: {
       globals: {

@@ -41,7 +41,7 @@
     "prepareDemos": "gulp prepareDemos",
     "publish": "npm ci && gulp publish",
     "publish:beta": "npm ci && gulp publishBeta",
-    "start": "npm run build && concurrently -n tsc,server \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"http-server ./ -s -o /tests/playground.html -c-1\"",
+    "start": "node ./tests/scripts/magic_symlink.js && npm run build && concurrently -n tsc,server \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"http-server ./ -s -o /tests/playground.html -c-1\"",
     "tsc": "gulp tsc",
     "test": "gulp test",
     "test:browser": "npx mocha --config tests/browser/.mocharc.js",
