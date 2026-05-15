@@ -104,8 +104,7 @@ export function loadProcedure<
 export class ProcedureSerializer<
   ProcedureModel extends IProcedureModel,
   ParameterModel extends IParameterModel,
-> implements ISerializer
-{
+> implements ISerializer {
   public priority = priorities.PROCEDURES;
 
   /**

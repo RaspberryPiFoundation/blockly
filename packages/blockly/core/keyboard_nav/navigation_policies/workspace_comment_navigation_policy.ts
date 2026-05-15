@@ -11,9 +11,7 @@ import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
 /**
  * Set of rules controlling keyboard navigation from an RenderedWorkspaceComment.
  */
-export class WorkspaceCommentNavigationPolicy
-  implements INavigationPolicy<RenderedWorkspaceComment>
-{
+export class WorkspaceCommentNavigationPolicy implements INavigationPolicy<RenderedWorkspaceComment> {
   /**
    * Returns the first child of the given workspace comment.
    *

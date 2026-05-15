@@ -12,9 +12,7 @@ import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
  * Set of rules controlling keyboard navigation from a flyout separator.
  * This is a no-op placeholder, since flyout separators can't be navigated to.
  */
-export class FlyoutSeparatorNavigationPolicy
-  implements INavigationPolicy<FlyoutSeparator>
-{
+export class FlyoutSeparatorNavigationPolicy implements INavigationPolicy<FlyoutSeparator> {
   getFirstChild(_current: FlyoutSeparator): IFocusableNode | null {
     return null;
   }

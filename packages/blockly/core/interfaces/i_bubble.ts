@@ -16,10 +16,7 @@ import {ISelectable} from './i_selectable.js';
  * A bubble interface.
  */
 export interface IBubble
-  extends IDraggable,
-    IContextMenu,
-    ISelectable,
-    IBoundedElement {
+  extends IDraggable, IContextMenu, ISelectable, IBoundedElement {
   /**
    * Return the coordinates of the top-left corner of this bubble's body
    * relative to the drawing surface's origin (0,0), in workspace units.
