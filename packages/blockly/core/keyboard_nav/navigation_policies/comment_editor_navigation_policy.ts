@@ -13,9 +13,7 @@ import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
  * This is a no-op placeholder (other than isNavigable/isApplicable) since
  * comment editors handle their own navigation when editing ends.
  */
-export class CommentEditorNavigationPolicy
-  implements INavigationPolicy<CommentEditor>
-{
+export class CommentEditorNavigationPolicy implements INavigationPolicy<CommentEditor> {
   getFirstChild(_current: CommentEditor): IFocusableNode | null {
     return null;
   }

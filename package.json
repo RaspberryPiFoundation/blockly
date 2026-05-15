@@ -20,12 +20,12 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@commitlint/cli": "^20.1.0",
-    "@commitlint/config-conventional": "^20.0.0"
+    "@commitlint/cli": "^21.0.1",
+    "@commitlint/config-conventional": "^21.0.1"
   },
   "overrides": {
-    "eslint": "9.36.0",
-    "prettier": "3.6.2"
+    "eslint": "10.3.0",
+    "prettier": "3.8.3"
   },
   "scripts": {
     "test": "npm run test --ws --if-present",

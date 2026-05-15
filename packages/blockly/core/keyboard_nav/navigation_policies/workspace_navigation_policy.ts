@@ -11,9 +11,7 @@ import {WorkspaceSvg} from '../../workspace_svg.js';
 /**
  * Set of rules controlling keyboard navigation from a workspace.
  */
-export class WorkspaceNavigationPolicy
-  implements INavigationPolicy<WorkspaceSvg>
-{
+export class WorkspaceNavigationPolicy implements INavigationPolicy<WorkspaceSvg> {
   /**
    * Returns the first child of the given workspace.
    *

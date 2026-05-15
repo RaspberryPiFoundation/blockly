@@ -11,9 +11,7 @@ import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
 /**
  * Set of rules controlling keyboard navigation from a flyout button.
  */
-export class FlyoutButtonNavigationPolicy
-  implements INavigationPolicy<FlyoutButton>
-{
+export class FlyoutButtonNavigationPolicy implements INavigationPolicy<FlyoutButton> {
   /**
    * Returns null since flyout buttons have no children.
    *
