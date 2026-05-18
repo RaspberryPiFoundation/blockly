@@ -8,8 +8,8 @@ image: images/blockly_banner.png
 
 Blockly maintains a registry of keyboard shortcuts that map keys (or key
 combinations) to actions. The registry is [prepopulated](#default-shortcuts)
-with a number of shortcuts, such as `Ctrl + C` and `Meta + C` for copy. You can
-add shortcuts to and delete shortcuts from the registry.
+with a number of shortcuts, such as `Ctrl + C` and `Command + C` for copy. You 
+can add shortcuts to and delete shortcuts from the registry.
 
 ## How keyboard shortcuts work
 
@@ -158,41 +158,21 @@ This is not common.
 
 If your keyboard shortcut is activated by a combination of keys, such as holding
 `Control` and `C` simultaneously, create a serialized keycode by calling
-`Blockly.ShortcutRegistry.registry.createSerializedKey`:
-
-```js
-const ctrlC = Blockly.ShortcutRegistry.registry.createSerializedKey(
-  Blockly.utils.KeyCodes.C, // Keycode of main key
-  [Blockly.utils.KeyCodes.CTRL], // Array of modifier keys
-);
-
-const copyShortcut = {
-  // ...
-  keyCodes: [ctrlC], // Use the serialized keycode
-  // ...
-};
-```
-
-#### Control and Meta
-
-On Windows, many shortcuts are activated with the `Control` key. On Mac, these
-keyboard shortcuts use the `Command` key instead, which is recognized as the
-`META` keycode. To support both operating systems, register your shortcuts with
-both the `CTRL` keycode and the `META` keycode.
+`Blockly.ShortcutRegistry.registry.createSerializedKey`. On Windows and Linux 
+many shortcuts are activated with the `Control` key. On Apple plaforms these
+keyboard shortcuts use the `Command` key instead. Register your shortcuts with 
+the `CTRL_CMD` keycode whenever you want your shortcut to use the system's 
+primary modifier key. Blockly will map the key combination appropriately.
 
 ```js
 const ctrlC = Blockly.ShortcutRegistry.registry.createSerializedKey(
   Blockly.utils.KeyCodes.C,
-  [Blockly.utils.KeyCodes.CTRL],
-);
-const metaC = Blockly.ShortcutRegistry.registry.createSerializedKey(
-  Blockly.utils.KeyCodes.C,
-  [Blockly.utils.KeyCodes.META],
+  [Blockly.utils.KeyCodes.CTRL_CMD],
 );
 
 const copyShortcut = {
   // ...
-  keyCodes: [ctrlC, metaC],
+  keyCodes: [ctrlC],
   // ...
 };
 ```
