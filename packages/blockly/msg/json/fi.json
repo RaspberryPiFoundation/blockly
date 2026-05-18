@@ -365,6 +365,12 @@
 	"CUT_SHORTCUT": "Leikkaa",
 	"COPY_SHORTCUT": "Kopioi",
 	"PASTE_SHORTCUT": "Liitä",
+	"HELP_PROMPT": "Paina %1 saadaksesi ohjeita näppäinkomentoihin",
 	"SHORTCUTS_GENERAL": "Yleinen",
-	"SHORTCUTS_EDITING": "Muokkaaminen"
+	"SHORTCUTS_EDITING": "Muokkaaminen",
+	"SHORTCUTS_CODE_NAVIGATION": "Koodin navigaatio",
+	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "Pidä %1 pohjassa ja käytä nuolinäppäimiä liikkuaksesi vapaasti, sitten paina %2 hyväksyäksesi sijainnin",
+	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Käytä nuolinäppäimiä liikkuaksesi ja hyväksy sitten sijainti painamalla %1",
+	"KEYBOARD_NAV_COPIED_HINT": "Kopioitu. Liitä painamalla %1.",
+	"KEYBOARD_NAV_CUT_HINT": "Leikattu. Liitä painamalla %1."
 }
