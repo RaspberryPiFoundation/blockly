@@ -1269,7 +1269,7 @@ export function registerToggleScreenreaderMode() {
   const toggleScreenreader: KeyboardShortcut = {
     name: names.TOGGLE_SCREENREADER,
     preconditionFn: () => true,
-    callback: (workspace) => {
+    callback: (workspace, e) => {
       enabled = !enabled;
       keyboardNavigationController.setScopeChangeAudioCuesEnabled(enabled);
       workspace.getNavigator().setNavigationLoops(!enabled);
@@ -1280,6 +1280,7 @@ export function registerToggleScreenreaderMode() {
         .getNavigator()
         .setNavigationLoops(!enabled);
       showScreenreaderModeHint(workspace, enabled);
+      e.preventDefault();
       return true;
     },
     keyCodes: [shortcut],
