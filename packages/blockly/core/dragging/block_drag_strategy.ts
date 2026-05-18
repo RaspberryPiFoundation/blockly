@@ -476,6 +476,7 @@ export class BlockDragStrategy implements IDragStrategy {
 
   /** Moves the block and updates any connection previews. */
   drag(newLoc: Coordinate, e?: PointerEvent | KeyboardEvent): void {
+    console.log(this.allConnectionPairs);
     this.moveMode =
       e instanceof KeyboardEvent && !(e.ctrlKey || e.metaKey)
         ? MoveMode.CONSTRAINED
@@ -989,7 +990,8 @@ export class BlockDragStrategy implements IDragStrategy {
     for (let i = start; i >= 0 && i < topBlocks.length; i += delta) {
       const topBlock = topBlocks[i];
       for (const a of blockConnections) {
-        for (const b of topBlock.getConnections_(false)) {
+        const stackConnections = this.getAllConnections(topBlock);
+        for (const b of stackConnections) {
           if (
             block.workspace.connectionChecker.canConnect(a, b, true, Infinity)
           ) {
