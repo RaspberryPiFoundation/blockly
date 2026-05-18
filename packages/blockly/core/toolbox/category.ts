@@ -359,6 +359,15 @@ export class ToolboxCategory
   }
 
   /**
+   * Returns the colour of this category.
+   *
+   * @internal
+   */
+  getColour() {
+    return this.colour_;
+  }
+
+  /**
    * Sets the colour for the category using the style name and returns the new
    * colour as a hex string.
    *
