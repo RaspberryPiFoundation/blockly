@@ -484,6 +484,9 @@ export class BlockDragStrategy implements IDragStrategy {
     if (this.moveMode === MoveMode.UNCONSTRAINED) {
       this.block.moveDuringDrag(newLoc);
     }
+
+    const wasConnected = !!this.connectionCandidate;
+
     this.updateConnectionPreview(
       this.block,
       Coordinate.difference(newLoc, this.startLoc!),
@@ -526,12 +529,15 @@ export class BlockDragStrategy implements IDragStrategy {
       // No connection was available or adequately close to the dragged block;
       // suggest using unconstrained mode to arbitrarily position the block if
       // we're in keyboard-driven constrained mode.
-      if (
-        this.moveMode === MoveMode.CONSTRAINED &&
-        !this.allConnectionPairs.length
-      ) {
-        showUnconstrainedMoveHint(this.workspace, true);
-        this.workspace.getAudioManager().playErrorBeep();
+      if (this.moveMode === MoveMode.CONSTRAINED) {
+        if (!this.allConnectionPairs.length) {
+          showUnconstrainedMoveHint(this.workspace, true);
+        }
+
+        if (!wasConnected) {
+          this.workspace.getAudioManager().playErrorBeep();
+        }
+        return;
       }
     }
     this.announceMove();
