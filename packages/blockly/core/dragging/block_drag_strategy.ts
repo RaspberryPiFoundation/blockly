@@ -476,7 +476,6 @@ export class BlockDragStrategy implements IDragStrategy {
 
   /** Moves the block and updates any connection previews. */
   drag(newLoc: Coordinate, e?: PointerEvent | KeyboardEvent): void {
-    console.log(this.allConnectionPairs);
     this.moveMode =
       e instanceof KeyboardEvent && !(e.ctrlKey || e.metaKey)
         ? MoveMode.CONSTRAINED
