@@ -562,39 +562,40 @@ export class BlockDragStrategy implements IDragStrategy {
 
     if (!newCandidate) {
       // Position above or below the first/last block.
-      const connectedBlock = currCandidate?.neighbour.getSourceBlock();
-      let root = connectedBlock?.getRootBlock() ?? connectedBlock;
-      if (root === draggingBlock) root = connectedBlock;
-      const direction = this.getDirectionToNewLocation(
-        Coordinate.sum(this.startLoc!, delta),
-      );
-      const bounds = root?.getBoundingRectangle();
-      if (!bounds) return;
+      if (this.moveMode === MoveMode.CONSTRAINED) {
+        const connectedBlock = currCandidate?.neighbour.getSourceBlock();
+        let root = connectedBlock?.getRootBlock() ?? connectedBlock;
+        if (root === draggingBlock) root = connectedBlock;
+        const direction = this.getDirectionToNewLocation(
+          Coordinate.sum(this.startLoc!, delta),
+        );
+        const bounds = root?.getBoundingRectangle();
+        if (!bounds) return;
 
-      let destination: Coordinate;
-      switch (direction) {
-        case Direction.LEFT:
-        case Direction.UP:
-          destination = new Coordinate(
-            bounds.getOrigin().x,
-            bounds.getOrigin().y -
-              this.BLOCK_CONNECTION_OFFSET * 2 -
-              draggingBlock.getHeightWidth().height,
-          );
-          break;
-        case Direction.RIGHT:
-        case Direction.DOWN:
-        default:
-          destination = new Coordinate(
-            bounds.getOrigin().x,
-            bounds.getOrigin().y +
-              bounds.getHeight() +
-              this.BLOCK_CONNECTION_OFFSET * 2,
-          );
-          break;
+        let destination: Coordinate;
+        switch (direction) {
+          case Direction.LEFT:
+          case Direction.UP:
+            destination = new Coordinate(
+              bounds.getOrigin().x,
+              bounds.getOrigin().y -
+                this.BLOCK_CONNECTION_OFFSET * 2 -
+                draggingBlock.getHeightWidth().height,
+            );
+            break;
+          case Direction.RIGHT:
+          case Direction.DOWN:
+          default:
+            destination = new Coordinate(
+              bounds.getOrigin().x,
+              bounds.getOrigin().y +
+                bounds.getHeight() +
+                this.BLOCK_CONNECTION_OFFSET * 2,
+            );
+            break;
+        }
+        draggingBlock.moveDuringDrag(destination);
       }
-
-      draggingBlock.moveDuringDrag(destination);
 
       this.connectionPreviewer?.hidePreview();
       this.connectionCandidate = null;
