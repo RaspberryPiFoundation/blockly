@@ -516,6 +516,7 @@ blocks['procedures_defnoreturn'] = {
     const nameField = fieldRegistry.fromJson({
       type: 'field_input',
       text: initName,
+      ariaTypeName: Msg['ARIA_TYPE_FIELD_TEXT_INPUT_PROCEDURE'],
     }) as FieldTextInput;
     nameField!.setValidator(Procedures.rename);
     nameField.setSpellcheck(false);
@@ -564,6 +565,7 @@ blocks['procedures_defreturn'] = {
     const nameField = fieldRegistry.fromJson({
       type: 'field_input',
       text: initName,
+      ariaTypeName: Msg['ARIA_TYPE_FIELD_TEXT_INPUT_PROCEDURE'],
     }) as FieldTextInput;
     nameField.setValidator(Procedures.rename);
     nameField.setSpellcheck(false);
@@ -682,6 +684,9 @@ const PROCEDURES_MUTATORARGUMENT = {
     const field = new ProcedureArgumentField(
       Procedures.DEFAULT_ARG,
       this.validator_,
+      {
+        ariaTypeName: Msg['ARIA_TYPE_FIELD_TEXT_INPUT_ARGUMENT'],
+      },
     );
 
     this.appendDummyInput()

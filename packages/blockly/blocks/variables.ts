@@ -56,6 +56,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
       {
         'type': 'input_value',
         'name': 'VALUE',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_VARIABLES_SET}',
       },
     ],
     'previousStatement': null,

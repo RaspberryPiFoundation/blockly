@@ -1959,7 +1959,7 @@ Blockly.Msg.KEYBOARD_NAV_BLOCK_NAVIGATION_HINT = 'Use %1 to navigate inside of b
 /// Message shown when a user presses Enter with the workspace focused.
 Blockly.Msg.KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT = 'Use the arrow keys to navigate.';
 /** @type {string} */
-/// Message shown when a user presses Enter with a flyout label (heading) focused.
+/// Message shown when a user presses Enter with a flyout label (heading) focused. Placeholder %1 is the keyboard shortcut for navigating to the next heading.
 Blockly.Msg.KEYBOARD_NAV_FLYOUT_LABEL_HINT = 'Use the arrow keys to navigate to a block, or press %1 to go to the next heading.';
 /** @type {string} */
 /// Part of an accessibility label for a block that indicates it is the first
@@ -2040,6 +2040,115 @@ Blockly.Msg.INPUT_LABEL_END_STATEMENT = 'End %1';
 /// meet any other criteria for getting a more specific connection label.
 Blockly.Msg.INPUT_LABEL_EMPTY = 'Empty';
 /** @type {string} */
+/// Accessibility label for a single boolean input.
+Blockly.Msg.INPUT_LABEL_CONDITION = 'condition';
+/** @type {string} */
+/// Accessibility label for the first of two boolean inputs, separated by a logical operator.
+Blockly.Msg.INPUT_LABEL_CONDITION_A = 'first condition';
+/** @type {string} */
+/// Accessibility label for the second of two boolean inputs, separated by a logical operator.
+Blockly.Msg.INPUT_LABEL_CONDITION_B = 'second condition';
+/** @type {string} */
+/// Accessibility label for a boolean input representing an "until" condition.
+Blockly.Msg.INPUT_LABEL_CONDITION_UNTIL = 'condition to stop repeating';
+/** @type {string} */
+/// Accessibility label for a boolean input representing a "while" condition.
+Blockly.Msg.INPUT_LABEL_CONDITION_WHILE = 'condition to continue repeating';
+/** @type {string} */
+/// Accessibility label for the first of two value inputs, separated by a comparison operator.
+Blockly.Msg.INPUT_LABEL_VALUE_A = 'first value';
+/** @type {string} */
+/// Accessibility label for the second of two value inputs, separated by a comparison operator.
+Blockly.Msg.INPUT_LABEL_VALUE_B = 'second value';
+/** @type {string} */
+/// Accessibility label for a single number input.
+Blockly.Msg.INPUT_LABEL_NUMBER = 'number';
+/** @type {string} */
+/// Accessibility label for the first of two numbers inputs, separated by a mathematical operator.
+Blockly.Msg.INPUT_LABEL_NUMBER_A = 'first number';
+/** @type {string} */
+/// Accessibility label for the second of two numbers inputs, separated by a mathematical operator.
+Blockly.Msg.INPUT_LABEL_NUMBER_B = 'second number';
+/** @type {string} */
+/// Accessibility label for a single number input that will be checked, e.g. for being a prime number.
+Blockly.Msg.INPUT_LABEL_NUMBER_TO_CHECK = 'number to check';
+/** @type {string} */
+/// Accessibility label for a list input that is used in mathematical operations such as sum, average, minimum, and maximum.
+Blockly.Msg.INPUT_LABEL_NUMBER_LIST = 'list of numbers';
+/** @type {string} */
+/// Accessibility label for the first number in a division operation (dividend).
+Blockly.Msg.INPUT_LABEL_MATH_DIVIDEND = 'dividend';
+/** @type {string} */
+/// Accessibility label for the second number in a division operation (divisor).
+Blockly.Msg.INPUT_LABEL_MATH_DIVISOR = 'divisor';
+/** @type {string} */
+/// Accessibility label for the amount to increment or decrement a variable by.
+Blockly.Msg.INPUT_LABEL_MATH_CHANGE_BY = 'amount to change by';
+/** @type {string} */
+/// Accessibility label for a number to be constrained within a range.
+Blockly.Msg.INPUT_LABEL_MATH_CONSTRAIN_VALUE = 'number to constrain';
+/** @type {string} */
+/// Accessibility label for the lower bound of a constrained range.
+Blockly.Msg.INPUT_LABEL_NUMBER_MIN = 'minimum';
+/** @type {string} */
+/// Accessibility label for the upper bound of a constrained range.
+Blockly.Msg.INPUT_LABEL_NUMBER_MAX = 'maximum';
+/** @type {string} */
+/// Accessibility label for the x coordinate input used in a two-dimensional angle calculation.
+Blockly.Msg.INPUT_LABEL_NUMBER_ATAN2_X = 'x coordinate';
+/** @type {string} */
+/// Accessibility label for the y coordinate input used in a two-dimensional angle calculation.
+Blockly.Msg.INPUT_LABEL_NUMBER_ATAN2_Y = 'y coordinate';
+/** @type {string} */
+/// Accessibility label for the number input inside a loop block that indicates how many times the inner commands will be repeated.
+Blockly.Msg.INPUT_LABEL_LOOP_TIMES = 'number of times to repeat';
+/** @type {string} */
+/// Accessibility label for the number input inside a loop block that indicates how many times the inner commands will be repeated.
+Blockly.Msg.INPUT_LABEL_LOOP_FROM = 'starting number';
+/** @type {string} */
+/// Accessibility label for the number input inside a loop block that indicates how many times the inner commands will be repeated.
+Blockly.Msg.INPUT_LABEL_LOOP_TO = 'ending number';
+/** @type {string} */
+/// Accessibility label for the number input inside a loop block that indicates how many times the inner commands will be repeated.
+Blockly.Msg.INPUT_LABEL_LOOP_BY = 'increment';
+/** @type {string} */
+/// Accessibility label for the value input on a loop block that indicates the list that will be iterated over.
+Blockly.Msg.INPUT_LABEL_LOOP_LIST = 'list to iterate over';
+/** @type {string} */
+/// Accessibility label for a value input on a text_join block that will be concatenated together with other values to form a longer string.
+// \n\nParameters:\n* %1 - the index of the input, starting at 1
+// \n\nExample:\n* "value 1" for the first value input, "value 2" for the second value input, etc.
+Blockly.Msg.INPUT_LABEL_TEXT_JOIN_ITEM = 'value %1';
+/** @type {string} */
+/// Accessibility label for a value to append to a variable as text.
+Blockly.Msg.INPUT_LABEL_TEXT_APPEND = 'value to append';
+/** @type {string} */
+/// Accessibility label for text that will be used for text operations such as reversing, trimming, or changing case.
+Blockly.Msg.INPUT_LABEL_TEXT_TO_CHANGE = 'text to change';
+/** @type {string} */
+/// Accessibility label for text that will be used for text operations such as checking length or getting a character at a certain position.
+Blockly.Msg.INPUT_LABEL_TEXT_TO_CHECK = 'text to check';
+/** @type {string} */
+/// Accessibility label for text that will be used for text to search for within another text.
+Blockly.Msg.INPUT_LABEL_TEXT_TO_FIND = 'text to find';
+/// Accessibility label for replacement text that will be used in a replace operation.
+Blockly.Msg.INPUT_LABEL_TEXT_TO_REPLACE = 'text to replace';
+/** @type {string} */
+/// Accessibility label for the position used to select a character from text.
+Blockly.Msg.INPUT_LABEL_TEXT_CHARAT_NUMBER = 'letter position';
+/** @type {string} */
+/// Accessibility label for the start position of a substring extraction.
+Blockly.Msg.INPUT_LABEL_TEXT_SUBSTRING_START = 'start position';
+/** @type {string} */
+/// Accessibility label for the end position of a substring extraction.
+Blockly.Msg.INPUT_LABEL_TEXT_SUBSTRING_END = 'end position';
+/** @type {string} */
+/// Accessibility label for prompt message text shown to the user.
+Blockly.Msg.INPUT_LABEL_TEXT_PROMPT_MESSAGE = 'message';
+/** @type {string} */
+/// Accessibility label for a value to set a variable to.
+Blockly.Msg.INPUT_LABEL_VARIABLES_SET = 'value to set';
+/** @type {string} */
 /// ARIA live region message announcing a block is being moved on the workspace, without specifying a target location or specific movement direction.
 // \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks
 // \n\nExamples:\n* "Moving if, do on workspace."\n* "Moving 2 stack blocks on workspace."
@@ -2092,6 +2201,12 @@ Blockly.Msg.ARIA_TYPE_FIELD_TEXT_INPUT = 'text';
 /** @type {string} */
 /// ARIA type name for a number field, used by screen readers to identify the type of field.
 Blockly.Msg.ARIA_TYPE_FIELD_NUMBER = 'number';
+/** @type {string} */
+/// ARIA type name for a text input field on a procedure definition block, used by screen readers to identify the type of field.
+Blockly.Msg.ARIA_TYPE_FIELD_TEXT_INPUT_PROCEDURE = 'function name';
+/** @type {string} */
+/// ARIA type name for a text input field on an argument block, found inside the procedure definition mutator UI, used by screen readers to identify the type of field. Should match PROCEDURES_MUTATORARG_TITLE.
+Blockly.Msg.ARIA_TYPE_FIELD_TEXT_INPUT_ARGUMENT = 'input name';
 /** @type {string} */
 /// ARIA type name for a dropdown field, used by screen readers to identify the type of field.
 Blockly.Msg.ARIA_TYPE_FIELD_DROPDOWN = 'dropdown';

@@ -42,6 +42,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'input_value',
         'name': 'TIMES',
         'check': 'Number',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_LOOP_TIMES}',
       },
     ],
     'message1': '%{BKY_CONTROLS_REPEAT_INPUT_DO} %1',
@@ -69,6 +70,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'value': 10,
         'min': 0,
         'precision': 1,
+        'ariaLabelText': '%{BKY_INPUT_LABEL_LOOP_TIMES}',
       },
     ],
     'message1': '%{BKY_CONTROLS_REPEAT_INPUT_DO} %1',
@@ -114,7 +116,10 @@ export const blocks = createBlockDefinitionsFromJsonArray([
     'nextStatement': null,
     'style': 'loop_blocks',
     'helpUrl': '%{BKY_CONTROLS_WHILEUNTIL_HELPURL}',
-    'extensions': ['controls_whileUntil_tooltip'],
+    'extensions': [
+      'controls_whileUntil_tooltip',
+      'controls_whileUntil_ariaLabelProvider',
+    ],
   },
   // Block for 'for' loop.
   {
@@ -131,18 +136,21 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'name': 'FROM',
         'check': 'Number',
         'align': 'RIGHT',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_LOOP_FROM}',
       },
       {
         'type': 'input_value',
         'name': 'TO',
         'check': 'Number',
         'align': 'RIGHT',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_LOOP_TO}',
       },
       {
         'type': 'input_value',
         'name': 'BY',
         'check': 'Number',
         'align': 'RIGHT',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_LOOP_BY}',
       },
     ],
     'message1': '%{BKY_CONTROLS_REPEAT_INPUT_DO} %1',
@@ -173,6 +181,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'input_value',
         'name': 'LIST',
         'check': 'Array',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_LOOP_LIST}',
       },
     ],
     'message1': '%{BKY_CONTROLS_REPEAT_INPUT_DO} %1',
@@ -226,6 +235,19 @@ const WHILE_UNTIL_TOOLTIPS = {
 Extensions.register(
   'controls_whileUntil_tooltip',
   Extensions.buildTooltipForDropdown('MODE', WHILE_UNTIL_TOOLTIPS),
+);
+
+Extensions.register(
+  'controls_whileUntil_ariaLabelProvider',
+  function (this: Block) {
+    const input = this.getInput('BOOL');
+    input!.setAriaLabelProvider(() => {
+      const mode = this.getFieldValue('MODE');
+      return mode === 'WHILE'
+        ? Msg['INPUT_LABEL_CONDITION_WHILE']
+        : Msg['INPUT_LABEL_CONDITION_UNTIL'];
+    });
+  },
 );
 
 /**
