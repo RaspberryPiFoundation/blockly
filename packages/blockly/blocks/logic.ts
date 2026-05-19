@@ -100,10 +100,9 @@ export const blocks = createBlockDefinitionsFromJsonArray([
     'previousStatement': null,
     'nextStatement': null,
     'style': 'logic_blocks',
-    'tooltip': '%{BKYCONTROLS_IF_TOOLTIP_2}',
+    'tooltip': '%{BKY_CONTROLS_IF_TOOLTIP_2}',
     'helpUrl': '%{BKY_CONTROLS_IF_HELPURL}',
     'suppressPrefixSuffix': true,
-    'extensions': ['controls_if_tooltip'],
   },
   // Block for comparison operator.
   {
