@@ -1499,6 +1499,43 @@ suite('Keyboard Shortcut Items', function () {
       ws.dispose();
     });
 
+    test('Shows a toast with navigation hints for flyout labels', function () {
+      const ws = Blockly.inject('blocklyDiv', {
+        toolbox: {
+          kind: 'flyoutToolbox',
+          contents: [
+            {kind: 'label', text: 'A heading'},
+            {kind: 'block', type: 'stack_block'},
+          ],
+        },
+      });
+      const toastSpy = sinon.spy(Blockly.Toast, 'show');
+
+      const label = ws
+        .getFlyout()
+        .getContents()
+        .map((item) => item.getElement())
+        .find(
+          (element) =>
+            element instanceof Blockly.FlyoutButton && element.isLabel(),
+        );
+      assert.exists(label, 'Expected a flyout label in the test fixture');
+      Blockly.getFocusManager().focusNode(label);
+
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.ENTER);
+      ws.getInjectionDiv().dispatchEvent(event);
+
+      sinon.assert.calledWith(toastSpy, ws, {
+        id: 'flyoutLabelHint',
+        message: Blockly.Msg['KEYBOARD_NAV_FLYOUT_LABEL_HINT'].replace(
+          '%1',
+          'H',
+        ),
+      });
+      toastSpy.restore();
+      ws.dispose();
+    });
+
     // Reenable this tests once the shortcut listing shortcut has been added.
     test.skip('Shows a toast with instructions to view help for non-navigable blocks', function () {
       const toastSpy = sinon.spy(Blockly.Toast, 'show');

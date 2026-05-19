@@ -9,11 +9,9 @@ import Image from '@site/src/components/Image';
 # Context menus
 
 A context menu contains a list of actions that a user can perform on a component
-such as a workspace, block, or workspace comment. The context menu is shown in
-response to a right-click or a long press on a touch device. If you use the
-[`@blockly/keyboard-navigation` plugin][keyboard-navigation-plugin], it is also
-shown with a keyboard shortcut, which defaults to `Ctrl+Enter` on Windows or
-`Command+Enter` on Mac.
+such as a workspace, block, or workspace comment. There are three ways to
+trigger the context menu: right-click with the mouse, long-press on a touch
+device, or press `Ctrl + Enter` (Windows) or `Command + Enter` (Mac).
 
 <Image
   alt="The default context menu for a block"
@@ -23,8 +21,9 @@ shown with a keyboard shortcut, which defaults to `Ctrl+Enter` on Windows or
 
 Context menus are a good place to add actions that the user performs
 infrequently, such as downloading a screenshot. If you think an action will be
-used more commonly, you might want to create a more discoverable way to invoke
-it.
+used more commonly you might want to create a more discoverable way to invoke
+it. If a context menu action can be triggered by a keyboard shortcut, the
+shortcut is shown on the right side of the context menu item.
 
 Context menus are supported by workspaces, blocks, workspace comments, bubbles,
 and connections. You can also [implement them on your own custom
@@ -209,6 +208,10 @@ const collapseTemplate = {
 };
 ```
 
+Context menu display text uses the same size as non-Blockly text on the page. 
+That is, zooming the Blockly workspace does not change the size of the context 
+menu display text. Zooming the page modifies the context menu text size.
+
 ### Weight
 
 The `weight` determines the order in which context menu items are displayed.
@@ -275,6 +278,23 @@ const collapseTemplate = {
 }
 ```
 
+### Keyboard shortcut
+
+The `associatedKeyboardShortcut` property is a string used to associate this
+context menu item with a keyboard shortcut. It should correspond to the name
+under which the keyboard shortcut is registered. If populated, the associated
+keyboard shortcut will be shown on the right side of the menu item as a hint.
+
+Note that the shortcut is _not_ the key combination that triggers the action.
+Using an ID allows for user- or language-specific remapping of keyboard
+shortcuts.
+
+```js
+const collapseTemplate = {
+  // ...
+  associatedKeyboardShortcut: "collapse",
+};
+```
 ### Separator
 
 The `separator` property draws a line in the context menu.

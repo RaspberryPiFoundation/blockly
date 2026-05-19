@@ -504,6 +504,18 @@ suite('ARIA', function () {
       assert.notInclude(label, 'input');
     });
 
+    test('Blocks with custom input labels are properly labeled', function () {
+      const block = this.makeBlock('logic_negate');
+      const input = block.getInput('BOOL');
+      input.setAriaLabelProvider('condition');
+      const label = Blockly.utils.aria.getState(
+        block.getFocusableElement(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.include(label, 'not');
+      assert.notInclude(label, 'condition');
+    });
+
     test('Blocks with one input are properly labeled', function () {
       const block = this.makeBlock('logic_negate');
       const label = Blockly.utils.aria.getState(

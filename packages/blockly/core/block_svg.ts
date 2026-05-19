@@ -2021,7 +2021,7 @@ export class BlockSvg
     aria.setState(
       this.getFocusableElement(),
       aria.State.LABEL,
-      computeAriaLabel(this),
+      this.getAriaLabel(aria.Verbosity.STANDARD),
     );
     configureAriaRole(this);
   }

@@ -53,7 +53,7 @@ const MINIMUM_WIDTH = 14;
 /**
  * Abstract class for an editable input field.
  *
- * @typeParam T - The value stored on the field.
+ * @template T - The value stored on the field.
  * @internal
  */
 export abstract class FieldInput<T extends InputTypes> extends Field<

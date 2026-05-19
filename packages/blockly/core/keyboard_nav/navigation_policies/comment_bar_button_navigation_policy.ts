@@ -11,9 +11,7 @@ import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
 /**
  * Set of rules controlling keyboard navigation from a CommentBarButton.
  */
-export class CommentBarButtonNavigationPolicy
-  implements INavigationPolicy<CommentBarButton>
-{
+export class CommentBarButtonNavigationPolicy implements INavigationPolicy<CommentBarButton> {
   /**
    * Returns the first child of the given CommentBarButton.
    *

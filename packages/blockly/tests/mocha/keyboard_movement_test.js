@@ -1400,12 +1400,12 @@ suite('Keyboard-driven movement', function () {
         this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
-          ['Moving', 'to', '=', 'input 1'],
+          ['Moving', 'to', 'equals', 'input 1'],
           [this.getBlockLabel(boolean)],
         );
         this.moveAndAssert(
           moveRight,
-          ['Moving', 'to', '=', '='],
+          ['Moving', 'to', 'equals', 'equals'],
           [this.getBlockLabel(boolean)],
         );
 
@@ -1477,7 +1477,7 @@ suite('Keyboard-driven movement', function () {
         this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
-          ['Moving', 'to', 'input 1', '='],
+          ['Moving', 'to', 'input 1', 'equals'],
           [this.getBlockLabel(boolean)],
         );
         cancelMove(this.workspace);

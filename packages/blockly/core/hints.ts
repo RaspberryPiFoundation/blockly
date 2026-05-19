@@ -16,6 +16,7 @@ const constrainedMoveHintId = 'constrainedMoveHint';
 const helpHintId = 'helpHint';
 const blockNavigationHintId = 'blockNavigationHint';
 const workspaceNavigationHintId = 'workspaceNavigationHint';
+const flyoutLabelHintId = 'flyoutLabelHint';
 const copiedHintId = 'copiedHint';
 const cutHintId = 'cutHint';
 const screenreaderHintId = 'screenreaderHint';
@@ -111,6 +112,21 @@ export function showWorkspaceNavigationHint(workspace: WorkspaceSvg) {
   const message = Msg['KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT'];
   const id = workspaceNavigationHintId;
   Toast.show(workspace, {message, id});
+}
+
+/**
+ * Tell the user how to navigate away from a flyout label (heading) when they
+ * try to act on it. Labels are not interactive, so direct them to use the
+ * arrow keys to reach a block or the next-heading shortcut to skip ahead.
+ *
+ * @param workspace The workspace.
+ */
+export function showFlyoutLabelActionHint(workspace: WorkspaceSvg) {
+  const message = Msg['KEYBOARD_NAV_FLYOUT_LABEL_HINT'].replace(
+    '%1',
+    getShortcutKeysShort(names.NEXT_HEADING),
+  );
+  Toast.show(workspace, {message, id: flyoutLabelHintId});
 }
 
 /**

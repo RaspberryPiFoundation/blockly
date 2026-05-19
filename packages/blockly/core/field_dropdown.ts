@@ -747,7 +747,7 @@ export class FieldDropdown extends Field<string> {
           value,
         ];
         if (ariaLabel) {
-          trimmedLabelOption.push(ariaLabel);
+          trimmedLabelOption.push(parsing.replaceMessageReferences(ariaLabel));
         }
         return trimmedLabelOption;
       }
@@ -760,7 +760,7 @@ export class FieldDropdown extends Field<string> {
         : label;
       const imageOptions: MenuOption = [imageLabel, value];
       if (ariaLabel) {
-        imageOptions.push(ariaLabel);
+        imageOptions.push(parsing.replaceMessageReferences(ariaLabel));
       }
       return imageOptions;
     });

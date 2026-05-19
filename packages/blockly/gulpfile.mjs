@@ -8,7 +8,6 @@
  * @fileoverview Gulp script to build Blockly for Node & NPM.
  * Run this script by calling "npm install" in this directory.
  */
-/* eslint-env node */
 
 // Needed to prevent prettier from munging exports order, due to
 // https://github.com/simonhaenisch/prettier-plugin-organize-imports/issues/146

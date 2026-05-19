@@ -13,6 +13,7 @@
 
 import * as browserEvents from './browser_events.js';
 import * as Css from './css.js';
+import * as hints from './hints.js';
 import type {IBoundedElement} from './interfaces/i_bounded_element.js';
 import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
@@ -434,14 +435,18 @@ export class FlyoutButton
 
   /**
    * Handles the user acting on this button via keyboard navigation.
-   * Invokes the click handler callback.
+   * Invokes the click handler callback for buttons. For labels, which are not
+   * interactive, shows a toast directing the user to navigate using the arrow
+   * keys or the next-heading shortcut.
    */
   performAction(): void {
-    if (!this.isFlyoutLabel) {
-      const callback = this.targetWorkspace.getButtonCallback(this.callbackKey);
-      if (callback) {
-        callback(this);
-      }
+    if (this.isFlyoutLabel) {
+      hints.showFlyoutLabelActionHint(this.targetWorkspace);
+      return;
+    }
+    const callback = this.targetWorkspace.getButtonCallback(this.callbackKey);
+    if (callback) {
+      callback(this);
     }
   }
 }

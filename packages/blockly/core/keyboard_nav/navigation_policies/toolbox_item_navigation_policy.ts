@@ -15,9 +15,7 @@ import {
 /**
  * Set of rules controlling keyboard navigation from a toolbox item.
  */
-export class ToolboxItemNavigationPolicy
-  implements INavigationPolicy<IToolboxItem>
-{
+export class ToolboxItemNavigationPolicy implements INavigationPolicy<IToolboxItem> {
   /**
    * Returns the first child of the given toolbox item.
    *

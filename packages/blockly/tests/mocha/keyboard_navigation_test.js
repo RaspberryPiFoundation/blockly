@@ -867,3 +867,208 @@ suite('Toolbox and flyout arrow navigation by layout', function () {
     });
   }
 });
+
+suite('Flyout heading navigation (H / Shift+H)', function () {
+  setup(function () {
+    sharedTestSetup.call(this);
+    Blockly.defineBlocksWithJsonArray([
+      {
+        type: 'basic_block',
+        message0: '%1',
+        args0: [
+          {
+            type: 'field_input',
+            name: 'TEXT',
+            text: 'default',
+          },
+        ],
+      },
+    ]);
+    // Build a flyout toolbox that mixes blocks and headings (labels) so we
+    // can verify that the H shortcut jumps over non-heading items.
+    this.workspace = Blockly.inject('blocklyDiv', {
+      toolbox: {
+        kind: 'flyoutToolbox',
+        contents: [
+          {kind: 'label', text: 'First heading'},
+          {kind: 'block', type: 'basic_block'},
+          {kind: 'block', type: 'basic_block'},
+          {kind: 'label', text: 'Second heading'},
+          {kind: 'block', type: 'basic_block'},
+          {kind: 'label', text: 'Third heading'},
+          {kind: 'block', type: 'basic_block'},
+        ],
+      },
+    });
+  });
+
+  teardown(function () {
+    sharedTestTeardown.call(this);
+  });
+
+  /**
+   * Returns all FlyoutButton labels (headings) currently in the flyout.
+   *
+   * @param {!Blockly.WorkspaceSvg} workspace The main workspace owning the
+   *     flyout.
+   * @returns {!Array<!Blockly.FlyoutButton>} The labels in flyout order.
+   */
+  function getHeadings(workspace) {
+    return workspace
+      .getFlyout()
+      .getContents()
+      .map((item) => item.getElement())
+      .filter(
+        (element) =>
+          element instanceof Blockly.FlyoutButton && element.isLabel(),
+      );
+  }
+
+  test('Shortcut is a no-op when focus is on the main workspace', function () {
+    Blockly.getFocusManager().focusTree(this.workspace);
+    const before = Blockly.getFocusManager().getFocusedNode();
+    pressKey(this.workspace, Blockly.utils.KeyCodes.H);
+    assert.equal(Blockly.getFocusManager().getFocusedNode(), before);
+  });
+
+  test('Shortcut is a no-op when focus is on a workspace block', function () {
+    const block = this.workspace.newBlock('basic_block');
+    block.initSvg();
+    block.render();
+    Blockly.getFocusManager().focusNode(block);
+    pressKey(this.workspace, Blockly.utils.KeyCodes.H);
+    assert.equal(Blockly.getFocusManager().getFocusedNode(), block);
+  });
+
+  test('H from flyout workspace focuses the first heading', function () {
+    Blockly.getFocusManager().focusNode(
+      this.workspace.getFlyout().getWorkspace(),
+    );
+    pressKey(this.workspace, Blockly.utils.KeyCodes.H);
+    const headings = getHeadings(this.workspace);
+    assert.equal(Blockly.getFocusManager().getFocusedNode(), headings[0]);
+  });
+
+  test('H from a block in the flyout focuses the next heading', function () {
+    Blockly.getFocusManager().focusNode(
+      this.workspace.getFlyout().getWorkspace().getTopBlocks()[0],
+    );
+    pressKey(this.workspace, Blockly.utils.KeyCodes.H);
+    const headings = getHeadings(this.workspace);
+    assert.equal(Blockly.getFocusManager().getFocusedNode(), headings[1]);
+  });
+
+  test('H from a heading focuses the next heading', function () {
+    const headings = getHeadings(this.workspace);
+    Blockly.getFocusManager().focusNode(headings[0]);
+    pressKey(this.workspace, Blockly.utils.KeyCodes.H);
+    assert.equal(Blockly.getFocusManager().getFocusedNode(), headings[1]);
+  });
+
+  test('H from the last heading does nothing', function () {
+    const headings = getHeadings(this.workspace);
+    Blockly.getFocusManager().focusNode(headings[headings.length - 1]);
+    pressKey(this.workspace, Blockly.utils.KeyCodes.H);
+    assert.equal(
+      Blockly.getFocusManager().getFocusedNode(),
+      headings[headings.length - 1],
+    );
+  });
+
+  test('Shift+H from flyout workspace focuses the last heading', function () {
+    Blockly.getFocusManager().focusNode(
+      this.workspace.getFlyout().getWorkspace(),
+    );
+    pressKey(this.workspace, Blockly.utils.KeyCodes.H, [
+      Blockly.utils.KeyCodes.SHIFT,
+    ]);
+    const headings = getHeadings(this.workspace);
+    assert.equal(
+      Blockly.getFocusManager().getFocusedNode(),
+      headings[headings.length - 1],
+    );
+  });
+
+  test('Shift+H from a heading focuses the previous heading', function () {
+    const headings = getHeadings(this.workspace);
+    Blockly.getFocusManager().focusNode(headings[2]);
+    pressKey(this.workspace, Blockly.utils.KeyCodes.H, [
+      Blockly.utils.KeyCodes.SHIFT,
+    ]);
+    assert.equal(Blockly.getFocusManager().getFocusedNode(), headings[1]);
+  });
+
+  test('Shift+H from a block focuses the previous heading', function () {
+    Blockly.getFocusManager().focusNode(
+      this.workspace.getFlyout().getWorkspace().getTopBlocks()[2],
+    );
+    pressKey(this.workspace, Blockly.utils.KeyCodes.H, [
+      Blockly.utils.KeyCodes.SHIFT,
+    ]);
+    const headings = getHeadings(this.workspace);
+    assert.equal(Blockly.getFocusManager().getFocusedNode(), headings[1]);
+  });
+
+  test('Shift+H from the first heading does nothing', function () {
+    const headings = getHeadings(this.workspace);
+    Blockly.getFocusManager().focusNode(headings[0]);
+    pressKey(this.workspace, Blockly.utils.KeyCodes.H, [
+      Blockly.utils.KeyCodes.SHIFT,
+    ]);
+    assert.equal(Blockly.getFocusManager().getFocusedNode(), headings[0]);
+  });
+});
+
+suite('Flyout heading navigation with no headings', function () {
+  setup(function () {
+    sharedTestSetup.call(this);
+    Blockly.defineBlocksWithJsonArray([
+      {
+        type: 'basic_block',
+        message0: '%1',
+        args0: [
+          {
+            type: 'field_input',
+            name: 'TEXT',
+            text: 'default',
+          },
+        ],
+      },
+    ]);
+    this.workspace = Blockly.inject('blocklyDiv', {
+      toolbox: {
+        kind: 'flyoutToolbox',
+        contents: [
+          {kind: 'block', type: 'basic_block'},
+          {kind: 'block', type: 'basic_block'},
+        ],
+      },
+    });
+  });
+
+  teardown(function () {
+    sharedTestTeardown.call(this);
+  });
+
+  test('H does nothing when the flyout has no headings', function () {
+    const firstBlock = this.workspace
+      .getFlyout()
+      .getWorkspace()
+      .getTopBlocks()[0];
+    Blockly.getFocusManager().focusNode(firstBlock);
+    pressKey(this.workspace, Blockly.utils.KeyCodes.H);
+    assert.equal(Blockly.getFocusManager().getFocusedNode(), firstBlock);
+  });
+
+  test('Shift+H does nothing when the flyout has no headings', function () {
+    const firstBlock = this.workspace
+      .getFlyout()
+      .getWorkspace()
+      .getTopBlocks()[0];
+    Blockly.getFocusManager().focusNode(firstBlock);
+    pressKey(this.workspace, Blockly.utils.KeyCodes.H, [
+      Blockly.utils.KeyCodes.SHIFT,
+    ]);
+    assert.equal(Blockly.getFocusManager().getFocusedNode(), firstBlock);
+  });
+});

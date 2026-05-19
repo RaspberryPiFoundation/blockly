@@ -6,6 +6,7 @@
 
 import type {BlockSvg} from './block_svg.js';
 import {ConnectionType} from './connection_type.js';
+import {FieldLabel} from './field_label.js';
 import type {Input} from './inputs/input.js';
 import {inputTypes} from './inputs/input_types.js';
 import {
@@ -123,6 +124,10 @@ export function configureAriaRole(block: BlockSvg) {
  * `lookback` attribute is specified, all of the fields on the row immediately
  * above the Input will be used instead.
  *
+ * If the input contains multiple adjacent FieldLabel fields, they will be
+ * combined together into a singular label string so that screenreaders can
+ * know to read them together as one piece of text.
+ *
  * Empty field labels are excluded because they don't provide useful context.
  * Fields should generally have a helpful label, but there are exceptions, such
  * as when empty label fields are used to control the layout of a block.
@@ -140,9 +145,32 @@ export function computeFieldRowLabel(
   verbosity = Verbosity.STANDARD,
 ): string[] {
   const includeTypeInfo = verbosity >= Verbosity.LOQUACIOUS;
+  let adjacentFieldLabels: Array<string> = [];
   const fieldRowLabel = input.fieldRow
     .filter((field) => field.isVisible())
-    .map((field) => field.computeAriaLabel(includeTypeInfo));
+    .flatMap((field, index, visibleFields) => {
+      const isFieldLabel = field instanceof FieldLabel;
+      if (isFieldLabel) {
+        if (
+          index < visibleFields.length - 1 &&
+          visibleFields[index + 1] instanceof FieldLabel
+        ) {
+          // Both this item and the next item are FieldLabels. We want to
+          // combine these, so we add this one to the list for later handling.
+          adjacentFieldLabels.push(field.computeAriaLabel(includeTypeInfo));
+          return [];
+        } else if (adjacentFieldLabels.length >= 1) {
+          // There is at least one adjacent FieldLabel before this one but none
+          // after. Combine the FieldLabels into one string.
+          adjacentFieldLabels.push(field.computeAriaLabel(includeTypeInfo));
+          const label = adjacentFieldLabels.join(' ');
+          adjacentFieldLabels = [];
+          return label;
+        }
+      }
+      return field.computeAriaLabel(includeTypeInfo);
+    });
+
   if (!fieldRowLabel.length && lookback) {
     const inputs = input.getSourceBlock().inputList;
     const index = inputs.indexOf(input);

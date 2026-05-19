@@ -55,7 +55,13 @@ information about the cursor location and **control + enter** (Windows) or
 **command + enter** (Mac) to open the context menu. Cut, copy/paste, and
 undo/redo all follow conventions for keyboard shortcuts.
 
-## Why not tab?
+## Technical details
+
+Blockly keyboard navigation uses the [focus system](/guides/configure/web/focus)
+to manage the location of the cursor. This code will be released in Blockly v13
+(targeted release: June 2026).
+
+### Why not tab?
 
 Blockly does not follow the convention to navigate around a page with **tab**
 and **shift + tab** because block code cannot usefully be compressed into a 
@@ -68,11 +74,13 @@ From a computer science perspective a block program is an abstract syntax tree.
 Arrow keys allow for navigation up/down and left/right within the tree, while
 tab navigation only supports a fixed order.
 
-## Technical details
+### Why single-key shortcuts?
 
-Blockly keyboard navigation uses the [focus system](/guides/configure/web/focus)
-to manage the location of the cursor. This code will be released in Blockly v13
-(targeted release: June 2026).
+Pressing multiple keys at the same time (e.g. `Ctrl + C`) requires manual
+dexterity and awareness of keyboard layout that may not be fully developed
+by the time children start using Blockly in school. It is also difficult to
+create a set of keyboard shortcuts that work across all OS and browser
+combinations. Single-key shortcuts address both issues.
 
 ### Compliance
 

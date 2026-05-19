@@ -14,9 +14,7 @@ import {navigateBlock} from './block_navigation_policy.js';
 /**
  * Set of rules controlling keyboard navigation from a connection.
  */
-export class ConnectionNavigationPolicy
-  implements INavigationPolicy<RenderedConnection>
-{
+export class ConnectionNavigationPolicy implements INavigationPolicy<RenderedConnection> {
   /**
    * Returns the first child of a connection.
    *

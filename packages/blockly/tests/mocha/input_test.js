@@ -369,12 +369,29 @@ suite('Inputs', function () {
       // AriaLabelProvider and without setting the provider (the default label)
       assert.equal(labelA, labelB);
     });
-    test('Field labels are comma separated', function () {
-      this.block.appendDummyInput().appendField('first').appendField('second');
+    test('Labels for fields are comma separated', function () {
+      this.block
+        .appendDummyInput()
+        .appendField('first')
+        .appendField(new Blockly.FieldNumber(0));
 
       const label = this.block.getAriaLabel();
 
-      assert.include(label, 'first, second');
+      assert.include(label, 'first, 0');
+    });
+    test('Adjacent labels for FieldLabels are combined into one field.', function () {
+      this.block
+        .appendDummyInput()
+        .appendField('first')
+        .appendField('second')
+        .appendField(new Blockly.FieldNumber(0))
+        .appendField('third')
+        .appendField('fourth')
+        .appendField('fifth');
+
+      const label = this.block.getAriaLabel();
+
+      assert.include(label, 'first second, 0, third fourth fifth');
     });
   });
 });

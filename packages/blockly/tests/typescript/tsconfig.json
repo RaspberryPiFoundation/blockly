@@ -3,7 +3,7 @@
   "compilerOptions": {
     "allowJs": false,
     "outDir": "dist",
-    "baseUrl": ".",
+    "rootDir": "./src",
     "types": [],
     "paths": {
       "blockly-test/*": ["../../dist/*"]
@@ -14,7 +14,7 @@
     "sourceMap": false,
 
     "module": "ES2015",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "target": "ES2020",
     "strict": true
   }
