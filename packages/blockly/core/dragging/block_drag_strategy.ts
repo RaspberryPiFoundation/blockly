@@ -112,10 +112,9 @@ export class BlockDragStrategy implements IDragStrategy {
   /**
    * Positions a cloned block on its new workspace.
    *
-   * @param oldBlock The flyout block that was cloned.
    * @param newBlock The new block to position.
    */
-  private positionNewBlock(oldBlock: BlockSvg, newBlock: BlockSvg) {
+  private positionNewBlock(newBlock: BlockSvg) {
     const workspace = newBlock.workspace;
     const initialY = 10;
     const initialX = 10;
@@ -215,7 +214,7 @@ export class BlockDragStrategy implements IDragStrategy {
           },
         ) as BlockSvg;
         eventUtils.setRecordUndo(false);
-        this.positionNewBlock(this.block, newBlock);
+        this.positionNewBlock(newBlock);
         eventUtils.setRecordUndo(true);
 
         return newBlock;
