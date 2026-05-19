@@ -35,7 +35,7 @@ import * as blocks from '../serialization/blocks.js';
 import {Coordinate} from '../utils.js';
 import * as aria from '../utils/aria.js';
 import * as dom from '../utils/dom.js';
-import * as svgMath from '../utils/svg_math.js';
+import {Rect} from '../utils/rect.js';
 import type {WorkspaceSvg} from '../workspace_svg.js';
 
 /** Represents a valid pair of connections between the dragging block and a block on the workspace. */
@@ -116,15 +116,80 @@ export class BlockDragStrategy implements IDragStrategy {
    * @param newBlock The new block to position.
    */
   private positionNewBlock(oldBlock: BlockSvg, newBlock: BlockSvg) {
-    const screenCoordinate = svgMath.wsToScreenCoordinates(
-      oldBlock.workspace,
-      oldBlock.getRelativeToSurfaceXY(),
-    );
-    const workspaceCoordinates = svgMath.screenToWsCoordinates(
-      newBlock.workspace,
-      screenCoordinate,
-    );
-    newBlock.moveDuringDrag(workspaceCoordinates);
+    const workspace = newBlock.workspace;
+    const initialY = 10;
+    const initialX = 10;
+    const xSpacing = 80;
+
+    const filteredTopBlocks = workspace
+      .getTopBlocks(true)
+      .filter((block) => block.id !== newBlock.id);
+    const allBlockBounds = filteredTopBlocks.map((block) => {
+      const bounds = block.getBoundingRectangle();
+      // Expand the bounds to avoid the new block being placed within snapping
+      // distance.
+      return new Rect(
+        bounds.top - 30,
+        bounds.bottom + 30,
+        bounds.left - 30,
+        bounds.right + 30,
+      );
+    });
+
+    const toolboxWidth = workspace.getToolbox()?.getWidth();
+    const workspaceWidth =
+      workspace.getParentSvg().clientWidth - (toolboxWidth ?? 0);
+    const workspaceHeight = workspace.getParentSvg().clientHeight;
+    const {height: newBlockHeight, width: newBlockWidth} =
+      newBlock.getHeightWidth();
+
+    const getNextIntersectingBlock = function (
+      newBlockRect: Rect,
+    ): Rect | null {
+      for (const rect of allBlockBounds) {
+        if (newBlockRect.intersects(rect)) {
+          return rect;
+        }
+      }
+      return null;
+    };
+
+    let cursorY = initialY;
+    let cursorX = initialX;
+    const minBlockHeight = workspace
+      .getRenderer()
+      .getConstants().MIN_BLOCK_HEIGHT;
+    // Make the initial movement of shifting the block to its best possible
+    // position.
+    let boundingRect = newBlock.getBoundingRectangle();
+    newBlock.moveBy(cursorX - boundingRect.left, cursorY - boundingRect.top, [
+      'cleanup',
+    ]);
+
+    boundingRect = newBlock.getBoundingRectangle();
+    let conflictingRect = getNextIntersectingBlock(boundingRect);
+    while (conflictingRect != null) {
+      const newCursorX =
+        conflictingRect.left + conflictingRect.getWidth() + xSpacing;
+      const newCursorY =
+        conflictingRect.top + conflictingRect.getHeight() + minBlockHeight;
+      if (newCursorX + newBlockWidth <= workspaceWidth) {
+        cursorX = newCursorX;
+      } else if (newCursorY + newBlockHeight <= workspaceHeight) {
+        cursorY = newCursorY;
+        cursorX = initialX;
+      } else {
+        // Off screen, but new blocks will be selected which will scroll them
+        // into view.
+        cursorY = newCursorY;
+        cursorX = initialX;
+      }
+      newBlock.moveBy(cursorX - boundingRect.left, cursorY - boundingRect.top, [
+        'cleanup',
+      ]);
+      boundingRect = newBlock.getBoundingRectangle();
+      conflictingRect = getNextIntersectingBlock(boundingRect);
+    }
   }
 
   /**
