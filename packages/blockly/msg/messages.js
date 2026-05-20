@@ -2131,23 +2131,66 @@ Blockly.Msg.INPUT_LABEL_TEXT_TO_CHECK = 'text to check';
 /** @type {string} */
 /// Accessibility label for text that will be used for text to search for within another text.
 Blockly.Msg.INPUT_LABEL_TEXT_TO_FIND = 'text to find';
+/** @type {string} */
 /// Accessibility label for replacement text that will be used in a replace operation.
 Blockly.Msg.INPUT_LABEL_TEXT_TO_REPLACE = 'text to replace';
 /** @type {string} */
 /// Accessibility label for the position used to select a character from text.
-Blockly.Msg.INPUT_LABEL_TEXT_CHARAT_NUMBER = 'letter position';
+Blockly.Msg.INPUT_LABEL_TEXT_POSITION = 'letter position';
 /** @type {string} */
 /// Accessibility label for the start position of a substring extraction.
-Blockly.Msg.INPUT_LABEL_TEXT_SUBSTRING_START = 'start position';
+Blockly.Msg.INPUT_LABEL_TEXT_START_POSITION = 'start position';
 /** @type {string} */
 /// Accessibility label for the end position of a substring extraction.
-Blockly.Msg.INPUT_LABEL_TEXT_SUBSTRING_END = 'end position';
+Blockly.Msg.INPUT_LABEL_TEXT_END_POSITION = 'end position';
 /** @type {string} */
 /// Accessibility label for prompt message text shown to the user.
 Blockly.Msg.INPUT_LABEL_TEXT_PROMPT_MESSAGE = 'message';
 /** @type {string} */
 /// Accessibility label for a value to set a variable to.
 Blockly.Msg.INPUT_LABEL_VARIABLES_SET = 'value to set';
+/** @type {string} */
+/// Accessibility label for a value input on a list_create_with block that will be joined together with other values to form a list.
+// \n\nParameters:\n* %1 - the index of the input, starting at 1
+// \n\nExample:\n* "value 1" for the first value input, "value 2" for the second value input, etc.
+Blockly.Msg.INPUT_LABEL_LISTS_CREATE_WITH_ITEM = 'value %1';
+/** @type {string} */
+/// Accessibility label for a value input on a list_repeat block that will be repeated multiple times to form a list.
+Blockly.Msg.INPUT_LABEL_LISTS_REPEAT_ITEM = 'value to repeat';
+/** @type {string} */
+/// Accessibility label for the number input on a list_repeat block that in
+// dicates how many times the value will be repeated to form a list.
+Blockly.Msg.INPUT_LABEL_LISTS_REPEAT_NUM = 'number of times to repeat';
+/** @type {string} */
+/// Accessibility label for a list that will be checked for a condition or value.
+Blockly.Msg.INPUT_LABEL_LISTS_TO_CHECK = 'list to check';
+/** @type {string} */
+/// Accessibility label for a value to search for within a list.
+Blockly.Msg.INPUT_LABEL_LISTS_VALUE_TO_FIND = 'value to find';
+/** @type {string} */
+/// Accessibility label for a value to set within a list.
+Blockly.Msg.INPUT_LABEL_LISTS_VALUE_TO_SET = 'value to set';
+/** @type {string} */
+/// Accessibility label for a position within a list.
+Blockly.Msg.INPUT_LABEL_LISTS_POSITION = 'position within list';
+/** @type {string} */
+/// Accessibility label for the starting position of a sublist extraction.
+Blockly.Msg.INPUT_LABEL_LISTS_START_POSITION = 'start position';
+/** @type {string} */
+/// Accessibility label for the ending position of a sublist extraction.
+Blockly.Msg.INPUT_LABEL_LISTS_END_POSITION = 'end position';
+/** @type {string} */
+/// Accessibility label for text that will be split into a list.
+Blockly.Msg.INPUT_LABEL_LISTS_LIST_FROM_TEXT = 'text to split';
+/** @type {string} */
+/// Accessibility label for a list whose items will be joined into text.
+Blockly.Msg.INPUT_LABEL_LISTS_TEXT_FROM_LIST = 'list to join';
+/** @type {string} */
+/// Accessibility label for text used to separate or join items in a list.
+Blockly.Msg.INPUT_LABEL_LISTS_DELIMITER = 'delimiter';
+/** @type {string} */
+/// Accessibility label for a list whose contents will be modified.
+Blockly.Msg.INPUT_LABEL_LISTS_TO_CHANGE = 'list to change';
 /** @type {string} */
 /// ARIA live region message announcing a block is being moved on the workspace, without specifying a target location or specific movement direction.
 // \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks

@@ -332,8 +332,8 @@ const GET_SUBSTRING_BLOCK = {
         .setCheck('Number')
         .setAriaLabelProvider(
           n === 1
-            ? Msg['INPUT_LABEL_TEXT_SUBSTRING_START']
-            : Msg['INPUT_LABEL_TEXT_SUBSTRING_END'],
+            ? Msg['INPUT_LABEL_TEXT_START_POSITION']
+            : Msg['INPUT_LABEL_TEXT_END_POSITION'],
         );
       if (Msg['ORDINAL_NUMBER_SUFFIX']) {
         this.appendDummyInput('ORDINAL' + n).appendField(
@@ -985,7 +985,7 @@ const CHARAT_MUTATOR_MIXIN = {
     if (isAt) {
       this.appendValueInput('AT')
         .setCheck('Number')
-        .setAriaLabelProvider(Msg['INPUT_LABEL_TEXT_CHARAT_NUMBER']);
+        .setAriaLabelProvider(Msg['INPUT_LABEL_TEXT_POSITION']);
       if (Msg['ORDINAL_NUMBER_SUFFIX']) {
         this.appendDummyInput('ORDINAL').appendField(
           Msg['ORDINAL_NUMBER_SUFFIX'],

@@ -1441,10 +1441,13 @@ suite('Keyboard-driven movement', function () {
 
         cancelMove(this.workspace);
       });
-      test('ignores dummy inputs when disambiguating', function () {
+      test('ignores dummy inputs when disambiguating between unlabeled value inputs', function () {
         const subListBlock = this.workspace.newBlock('lists_getSublist');
         subListBlock.initSvg();
         subListBlock.render();
+        subListBlock.inputList.forEach((input, index) => {
+          input.setAriaLabelProvider(null);
+        });
         const mathBlock = this.workspace.newBlock('math_number');
         mathBlock.initSvg();
         mathBlock.render();
