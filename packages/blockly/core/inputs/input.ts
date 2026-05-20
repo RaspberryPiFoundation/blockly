@@ -297,9 +297,13 @@ export class Input {
    * deterministic and idempotent ARIA representation each time the provider is
    * called for a given input. It's also fine to reuse providers across multiple
    * Input implementations.
+   *
+   * @param provider The string or function to use to set the ARIA label for the input
+   * @returns The input being modified (to allow chaining).
    */
-  setAriaLabelProvider(provider: AriaLabelProvider | null) {
+  setAriaLabelProvider(provider: AriaLabelProvider | null): Input {
     this.ariaLabelProvider = provider;
+    return this;
   }
 
   /**
