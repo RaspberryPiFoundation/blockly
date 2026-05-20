@@ -71,7 +71,9 @@ export function computeAriaLabel(
     }
   }
   return [
-    verbosity >= Verbosity.STANDARD && getBeginStackLabel(block),
+    verbosity >= Verbosity.STANDARD &&
+      !block.isDragging() &&
+      getBeginStackLabel(block),
     getParentInputLabel(block),
     ...getInputLabels(block, verbosity, useCustomInputLabels),
     verbosity === Verbosity.LOQUACIOUS && getParentToolboxCategoryLabel(block),
