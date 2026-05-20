@@ -1280,7 +1280,7 @@ const sidebars = {
             {
               type: 'doc',
               label: 'Compliance',
-              id: 'guides/app-integration/compliance',
+              id: 'guides/app-integration/accessibility/compliance',
             },
           ],
         },
