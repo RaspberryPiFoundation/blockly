@@ -2100,16 +2100,16 @@ Blockly.Msg.INPUT_LABEL_NUMBER_ATAN2_X = 'x coordinate';
 /// Accessibility label for the y coordinate input used in a two-dimensional angle calculation.
 Blockly.Msg.INPUT_LABEL_NUMBER_ATAN2_Y = 'y coordinate';
 /** @type {string} */
-/// Accessibility label for the number input inside a loop block that indicates how many times the inner commands will be repeated.
+/// Accessibility label for the number input inside a loop block that indicates how many times the inner statements will be repeated.
 Blockly.Msg.INPUT_LABEL_LOOP_TIMES = 'number of times to repeat';
 /** @type {string} */
-/// Accessibility label for the number input inside a loop block that indicates how many times the inner commands will be repeated.
+/// Accessibility label for the number input inside a loop block that indicates how many times the inner statements will be repeated.
 Blockly.Msg.INPUT_LABEL_LOOP_FROM = 'starting number';
 /** @type {string} */
-/// Accessibility label for the number input inside a loop block that indicates how many times the inner commands will be repeated.
+/// Accessibility label for the number input inside a loop block that indicates how many times the inner statements will be repeated.
 Blockly.Msg.INPUT_LABEL_LOOP_TO = 'ending number';
 /** @type {string} */
-/// Accessibility label for the number input inside a loop block that indicates how many times the inner commands will be repeated.
+/// Accessibility label for the number input inside a loop block that indicates how many times the inner statements will be repeated.
 Blockly.Msg.INPUT_LABEL_LOOP_BY = 'increment';
 /** @type {string} */
 /// Accessibility label for the value input on a loop block that indicates the list that will be iterated over.
