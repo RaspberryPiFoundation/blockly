@@ -71,9 +71,7 @@ export function computeAriaLabel(
     }
   }
   return [
-    verbosity >= Verbosity.STANDARD &&
-      !block.isDragging() &&
-      getBeginStackLabel(block),
+    verbosity >= Verbosity.STANDARD && getBeginStackLabel(block),
     getParentInputLabel(block),
     ...getInputLabels(block, verbosity, useCustomInputLabels),
     verbosity === Verbosity.LOQUACIOUS && getParentToolboxCategoryLabel(block),
@@ -260,7 +258,7 @@ function getParentInputLabel(block: BlockSvg) {
 function getBeginStackLabel(block: BlockSvg) {
   // Don't include the "begin stack" label for blocks that are moving
   // or blocks in the flyout
-  if (block.isInFlyout || block.workspace.isDragging()) return undefined;
+  if (block.isInFlyout || block.isDragging()) return undefined;
   return block.getRootBlock() === block
     ? Msg['BLOCK_LABEL_BEGIN_STACK']
     : undefined;
