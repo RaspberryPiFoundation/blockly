@@ -36,6 +36,7 @@ import {Coordinate} from '../utils.js';
 import * as aria from '../utils/aria.js';
 import * as dom from '../utils/dom.js';
 import {Rect} from '../utils/rect.js';
+import * as svgMath from '../utils/svg_math.js';
 import type {WorkspaceSvg} from '../workspace_svg.js';
 
 /** Represents a valid pair of connections between the dragging block and a block on the workspace. */
@@ -117,9 +118,21 @@ export class BlockDragStrategy implements IDragStrategy {
   /**
    * Positions a cloned block on its new workspace.
    *
+   * @param oldBlock The flyout block that was cloned.
    * @param newBlock The new block to position.
    */
-  private positionNewBlock(newBlock: BlockSvg) {
+  private positionNewBlock(oldBlock: BlockSvg, newBlock: BlockSvg) {
+    const screenCoordinate = svgMath.wsToScreenCoordinates(
+      oldBlock.workspace,
+      oldBlock.getRelativeToSurfaceXY(),
+    );
+    const workspaceCoordinates = svgMath.screenToWsCoordinates(
+      newBlock.workspace,
+      screenCoordinate,
+    );
+    newBlock.moveDuringDrag(workspaceCoordinates);
+
+    if (this.moveMode !== MoveMode.CONSTRAINED) return;
     const workspace = newBlock.workspace;
     const initialY = this.WORKSPACE_MARGIN;
     const initialX = this.WORKSPACE_MARGIN;
@@ -223,7 +236,7 @@ export class BlockDragStrategy implements IDragStrategy {
           },
         ) as BlockSvg;
         eventUtils.setRecordUndo(false);
-        this.positionNewBlock(newBlock);
+        this.positionNewBlock(this.block, newBlock);
         eventUtils.setRecordUndo(true);
 
         return newBlock;
@@ -290,6 +303,7 @@ export class BlockDragStrategy implements IDragStrategy {
    * from any parent blocks.
    */
   startDrag(e?: PointerEvent | KeyboardEvent) {
+    this.updateMoveMode(e);
     const alternateTarget = this.getTargetBlock();
     if (alternateTarget !== this.block) {
       return alternateTarget.startDrag(e);
@@ -549,11 +563,7 @@ export class BlockDragStrategy implements IDragStrategy {
 
   /** Moves the block and updates any connection previews. */
   drag(newLoc: Coordinate, e?: PointerEvent | KeyboardEvent): void {
-    this.moveMode =
-      e instanceof KeyboardEvent && !(e.ctrlKey || e.metaKey)
-        ? MoveMode.CONSTRAINED
-        : MoveMode.UNCONSTRAINED;
-
+    this.updateMoveMode(e);
     if (this.moveMode === MoveMode.UNCONSTRAINED) {
       this.block.moveDuringDrag(newLoc);
     }
@@ -1215,5 +1225,15 @@ export class BlockDragStrategy implements IDragStrategy {
     }
 
     return null;
+  }
+
+  /**
+   * Updates the current move mode based on the most recent drag-related event.
+   */
+  private updateMoveMode(event: KeyboardEvent | PointerEvent | undefined) {
+    this.moveMode =
+      event instanceof KeyboardEvent && !(event.ctrlKey || event.metaKey)
+        ? MoveMode.CONSTRAINED
+        : MoveMode.UNCONSTRAINED;
   }
 }
