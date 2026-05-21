@@ -405,7 +405,7 @@ export class Input {
    *
    * @internal
    */
-  getLabel(verbosity = Verbosity.STANDARD): string {
+  getLabel(verbosity = Verbosity.STANDARD, useCustomLabels = true): string {
     if (!this.isVisible()) return '';
 
     const labels = computeFieldRowLabel(this, false, verbosity);
@@ -414,7 +414,11 @@ export class Input {
       const childBlock = this.connection.targetBlock();
       if (childBlock && !childBlock.isInsertionMarker()) {
         labels.push(
-          getInputLabels(childBlock as BlockSvg, verbosity).join(' '),
+          getInputLabels(
+            childBlock as BlockSvg,
+            verbosity,
+            useCustomLabels,
+          ).join(' '),
         );
       }
     }

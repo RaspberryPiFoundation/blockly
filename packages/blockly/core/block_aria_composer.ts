@@ -308,7 +308,7 @@ export function getInputLabels(
 
   return inputsToLabel.map((input) => {
     const customLabel = useCustomLabels ? input.getAriaLabelText() : null;
-    return customLabel ?? input.getLabel(verbosity);
+    return customLabel ?? input.getLabel(verbosity, useCustomLabels);
   });
 }
 
