@@ -93,6 +93,11 @@ export class BlockDragStrategy implements IDragStrategy {
 
   protected readonly BLOCK_CONNECTION_OFFSET = 10;
 
+  /**
+   * How far in from the edges of the workspace to position newly placed blocks.
+   */
+  protected readonly WORKSPACE_MARGIN = 10;
+
   constructor(private block: BlockSvg) {
     this.workspace = block.workspace;
   }
@@ -116,9 +121,13 @@ export class BlockDragStrategy implements IDragStrategy {
    */
   private positionNewBlock(newBlock: BlockSvg) {
     const workspace = newBlock.workspace;
-    const initialY = 10;
-    const initialX = 10;
+    const initialY = this.WORKSPACE_MARGIN;
+    const initialX = this.WORKSPACE_MARGIN;
+    // How far apart the new block should be placed horizontally from an
+    // existing one.
     const xSpacing = 80;
+    const blockPadding =
+      Math.max(config.connectingSnapRadius, config.snapRadius) + 2;
 
     const filteredTopBlocks = workspace
       .getTopBlocks(true)
@@ -128,10 +137,10 @@ export class BlockDragStrategy implements IDragStrategy {
       // Expand the bounds to avoid the new block being placed within snapping
       // distance.
       return new Rect(
-        bounds.top - 30,
-        bounds.bottom + 30,
-        bounds.left - 30,
-        bounds.right + 30,
+        bounds.top - blockPadding,
+        bounds.bottom + blockPadding,
+        bounds.left - blockPadding,
+        bounds.right + blockPadding,
       );
     });
 
