@@ -139,6 +139,7 @@ export class KeyboardMover {
             KeyCodes.UP,
             KeyCodes.DOWN,
             KeyCodes.ENTER,
+            KeyCodes.SPACE,
             KeyCodes.ESC,
             KeyCodes.M,
           ].includes(
