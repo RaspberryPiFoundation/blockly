@@ -16,6 +16,7 @@ import sourcemaps from 'gulp-sourcemaps';
 import {execSync} from 'child_process';
 import * as fs from 'fs';
 import * as fsPromises from 'fs/promises';
+import {finished} from 'node:stream/promises';
 import * as path from 'path';
 
 import {globSync} from 'glob';
@@ -85,6 +86,14 @@ const NAMESPACE_VARIABLE = '$';
  * chosen so as to not collide with any exported name.
  */
 const NAMESPACE_PROPERTY = '__namespace__';
+
+/**
+ * Property on the shared namespace object where each chunk's export
+ * object is stored before the UMD wrapper returns it.  A string literal
+ * is used so that Closure Compiler will not rename it when
+ * assume_function_wrapper is enabled (see issue #5795).
+ */
+const CHUNK_EXPORT_PROPERTY = '__chunkExport__';
 
 /**
  * A list of chunks.  Order matters: later chunks can depend on
@@ -176,9 +185,58 @@ function modulePath(chunk) {
   return 'module$' + entryPath.replace(/\.js$/, '').replaceAll('/', '$');
 }
 
+/**
+ * Directory (relative to TSC_OUTPUT_DIR) where generated chunk export
+ * collector files are written.
+ */
+const CHUNK_EXPORTS_DIR = 'chunk_exports';
+
+/**
+ * Return the path to the generated chunk export collector file for
+ * the given chunk, relative to TSC_OUTPUT_DIR.
+ * @param {{name: string}} chunk
+ * @return {string}
+ */
+function chunkExportPath(chunk) {
+  return path.posix.join(CHUNK_EXPORTS_DIR, `${chunk.name}_export.js`);
+}
+
+/**
+ * Write generated chunk export collector files, one per chunk.  Each
+ * file imports the chunk's entrypoint module and saves its exports on
+ * to the shared namespace object using a string-literal property name
+ * so that the UMD wrapper can return them after compilation with
+ * assume_function_wrapper enabled.
+ *
+ * The namespace object is declared by the chunk wrapper (see
+ * chunkWrapper); suppress undefined-variable diagnostics here because
+ * Closure Compiler analyses this file separately from the wrapper.
+ */
+async function writeChunkExportFiles() {
+  const outDir = path.join(TSC_OUTPUT_DIR, CHUNK_EXPORTS_DIR);
+  await fsPromises.mkdir(outDir, {recursive: true});
+
+  await Promise.all(
+    chunks.map(async (chunk) => {
+      const exportFile = chunkExportPath(chunk);
+      const importPath = posixPath(
+        path.posix.relative(path.posix.dirname(exportFile), chunk.entry),
+      );
+      await fsPromises.writeFile(
+        path.join(TSC_OUTPUT_DIR, exportFile),
+        `/** @fileoverview @suppress {undefinedVars} */
+
+import * as exports from '${importPath}';
+${NAMESPACE_VARIABLE}['${CHUNK_EXPORT_PROPERTY}'] = exports;
+`,
+      );
+    }),
+  );
+}
+
 const licenseRegex = `\\/\\*\\*
  \\* @license
- \\* (Copyright \\d+ (Google LLC|Massachusetts Institute of Technology))
+ \\* (Copyright \\d+ (Google LLC|Massachusetts Institute of Technology|Raspberry Pi Foundation))
 ( \\* All rights reserved.
 )? \\* SPDX-License-Identifier: Apache-2.0
  \\*\\/`;
@@ -457,8 +515,8 @@ function chunkWrapper(chunk) {
 }(this, function(${factoryArgs}) {
 var ${NAMESPACE_VARIABLE}=${namespaceExpr};
 %output%
-${modulePath(chunk)}.${NAMESPACE_PROPERTY}=${NAMESPACE_VARIABLE};
-return ${modulePath(chunk)};
+${NAMESPACE_VARIABLE}['${CHUNK_EXPORT_PROPERTY}'].${NAMESPACE_PROPERTY}=${NAMESPACE_VARIABLE};
+return ${NAMESPACE_VARIABLE}['${CHUNK_EXPORT_PROPERTY}'];
 }));
 `;
 }
@@ -505,6 +563,7 @@ function getChunkOptions() {
     const files = globs
       .flatMap((glob) => globSync(glob, {cwd: TSC_OUTPUT_DIR_POSIX}))
       .map((file) => path.posix.join(TSC_OUTPUT_DIR_POSIX, file));
+    files.push(path.posix.join(TSC_OUTPUT_DIR_POSIX, chunkExportPath(chunk)));
     chunkOptions.push(
       `${chunk.name}:${files.length}` +
         (chunk.parent ? `:${chunk.parent.name}` : ''),
@@ -518,11 +577,6 @@ function getChunkOptions() {
 
   return {chunk: chunkOptions, js: allFiles, chunk_wrapper: chunkWrappers};
 }
-
-/**
- * RegExp that globally matches path.sep (i.e., "/" or "\").
- */
-const pathSepRegExp = new RegExp(path.sep.replace(/\\/, '\\\\'), 'g');
 
 /**
  * Helper method for calling the Closure Compiler, establishing
@@ -558,7 +612,8 @@ function compile(options) {
  * This task compiles the core library, blocks and generators, creating
  * blockly_compressed.js, blocks_compressed.js, etc.
  */
-function buildCompiled() {
+async function buildCompiled() {
+  await writeChunkExportFiles();
   // Get chunking.
   const chunkOptions = getChunkOptions();
   // Closure Compiler options.
@@ -574,19 +629,22 @@ function buildCompiled() {
     chunk: chunkOptions.chunk,
     chunk_wrapper: chunkOptions.chunk_wrapper,
     rename_prefix_namespace: NAMESPACE_VARIABLE,
+    assume_function_wrapper: true,
     // Don't supply the list of source files in chunkOptions.js as an
     // option to Closure Compiler; instead feed them as input via gulp.src.
   };
 
   // Fire up compilation pipline.
-  return gulp
-    .src(chunkOptions.js, {base: './'})
-    .pipe(stripApacheLicense())
-    .pipe(sourcemaps.init())
-    .pipe(compile(options))
-    .pipe(rename({suffix: COMPILED_SUFFIX}))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(RELEASE_DIR));
+  await finished(
+    gulp
+      .src(chunkOptions.js, {base: './'})
+      .pipe(stripApacheLicense())
+      .pipe(sourcemaps.init())
+      .pipe(compile(options))
+      .pipe(rename({suffix: COMPILED_SUFFIX}))
+      .pipe(sourcemaps.write('.'))
+      .pipe(gulp.dest(RELEASE_DIR)),
+  );
 }
 
 /**
