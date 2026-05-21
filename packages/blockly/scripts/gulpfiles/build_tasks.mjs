@@ -9,22 +9,28 @@
  */
 
 import * as gulp from 'gulp';
-import replace from 'gulp-replace';
 import rename from 'gulp-rename';
+import replace from 'gulp-replace';
 import sourcemaps from 'gulp-sourcemaps';
 
-import * as path from 'path';
+import {execSync} from 'child_process';
 import * as fs from 'fs';
 import * as fsPromises from 'fs/promises';
-import {exec, execSync} from 'child_process';
+import * as path from 'path';
 
 import {globSync} from 'glob';
 import {gulp as closureCompiler} from 'google-closure-compiler';
+import {rimraf} from 'rimraf';
 import yargs from 'yargs';
 import {hideBin} from 'yargs/helpers';
-import {rimraf} from 'rimraf';
 
-import {BUILD_DIR, LANG_BUILD_DIR, RELEASE_DIR, TSC_OUTPUT_DIR, TYPINGS_BUILD_DIR} from './config.mjs';
+import {
+  BUILD_DIR,
+  LANG_BUILD_DIR,
+  RELEASE_DIR,
+  TSC_OUTPUT_DIR,
+  TYPINGS_BUILD_DIR,
+} from './config.mjs';
 import {getPackageJson} from './helper_tasks.mjs';
 
 import {posixPath, quote} from '../helpers.js';
@@ -214,7 +220,7 @@ const JSCOMP_ERROR = [
   'duplicateMessage',
   'es5Strict',
   'externsValidation',
-  'extraRequire',  // Undocumented but valid.
+  'extraRequire', // Undocumented but valid.
   'functionParams',
   // 'globalThis',  // This types are stripped by tsc.
   'invalidCasts',
@@ -234,7 +240,7 @@ const JSCOMP_ERROR = [
   // 'reportUnknownTypes',  // VERY verbose.
   // 'strictCheckTypes',  // Use --strict to enable.
   // 'strictMissingProperties',  // Part of strictCheckTypes.
-  'strictModuleChecks',  // Undocumented but valid.
+  'strictModuleChecks', // Undocumented but valid.
   'strictModuleDepCheck',
   // 'strictPrimitiveOperators',  // Part of strictCheckTypes.
   'suspiciousCode',
@@ -255,10 +261,7 @@ const JSCOMP_ERROR = [
  * For most (all?) diagnostic groups this is the default level, so
  * it's generally sufficient to remove them from JSCOMP_ERROR.
  */
-const JSCOMP_WARNING = [
-  'deprecated',
-  'deprecatedAnnotations',
-];
+const JSCOMP_WARNING = ['deprecated', 'deprecatedAnnotations'];
 
 /**
  * Closure Compiler diagnostic groups we want to be ignored.  These
@@ -281,8 +284,8 @@ const JSCOMP_OFF = [
    * DiagnosticGroup.
    */
   'checkTypes',
-  'nonStandardJsDocs',  // Due to @internal
-  'unusedLocalVariables',  // Due to code generated for merged namespaces.
+  'nonStandardJsDocs', // Due to @internal
+  'unusedLocalVariables', // Due to code generated for merged namespaces.
 
   /* In order to transition to ES modules, modules will need to import
    * one another by relative paths. This means that the previous
@@ -310,8 +313,9 @@ const JSCOMP_OFF = [
  */
 export function tsc(done) {
   execSync(
-      `tsc -outDir "${TSC_OUTPUT_DIR}" -declarationDir "${TYPINGS_BUILD_DIR}"`,
-      {stdio: 'inherit'});
+    `tsc -outDir "${TSC_OUTPUT_DIR}" -declarationDir "${TYPINGS_BUILD_DIR}"`,
+    {stdio: 'inherit'},
+  );
   execSync(`node scripts/tsick.js "${TSC_OUTPUT_DIR}"`, {stdio: 'inherit'});
   done();
 }
@@ -357,9 +361,10 @@ var languages = null;
 function getLanguages() {
   if (!languages) {
     const skip = /^(keys|synonyms|qqq|constants)\.json$/;
-    languages = fs.readdirSync(path.join('msg', 'json'))
-        .filter(file => file.endsWith('json') && !skip.test(file))
-        .map(file => file.replace(/\.json$/, ''));
+    languages = fs
+      .readdirSync(path.join('msg', 'json'))
+      .filter((file) => file.endsWith('json') && !skip.test(file))
+      .map((file) => file.replace(/\.json$/, ''));
   }
   return languages;
 }
@@ -373,8 +378,9 @@ function buildLangfiles(done) {
   fs.mkdirSync(LANG_BUILD_DIR, {recursive: true});
 
   // Run create_messages.py.
-  const inputFiles = getLanguages().map(
-      lang => path.join('msg', 'json', `${lang}.json`));
+  const inputFiles = getLanguages().map((lang) =>
+    path.join('msg', 'json', `${lang}.json`),
+  );
 
   const createMessagesCmd = `${PYTHON} ./scripts/i18n/create_messages.py \
   --source_lang_file ${path.join('msg', 'json', 'en.json')} \
@@ -409,8 +415,9 @@ function chunkWrapper(chunk) {
   let namespaceExpr = `{}`;
 
   if (chunk.parent) {
-    const parentFilename =
-        JSON.stringify(`./${chunk.parent.name}${COMPILED_SUFFIX}.js`);
+    const parentFilename = JSON.stringify(
+      `./${chunk.parent.name}${COMPILED_SUFFIX}.js`,
+    );
     amdDepsExpr = parentFilename;
     cjsDepsExpr = `require(${parentFilename})`;
     scriptDepsExpr = `root.${chunk.parent.scriptExport}`;
@@ -426,8 +433,9 @@ function chunkWrapper(chunk) {
   ];
   for (var location in chunk.scriptNamedExports) {
     const namedExport = chunk.scriptNamedExports[location];
-    scriptExportStatements.push( 
-      `root.${location} = root.${chunk.scriptExport}.${namedExport};`);
+    scriptExportStatements.push(
+      `root.${location} = root.${chunk.scriptExport}.${namedExport};`,
+    );
   }
 
   // Note that when loading in a browser the base of the exported path
@@ -530,9 +538,7 @@ function compile(options) {
     language_out: 'ECMASCRIPT_2015',
     jscomp_off: [...JSCOMP_OFF],
     rewrite_polyfills: true,
-    hide_warnings_for: [
-      'node_modules',
-    ],
+    hide_warnings_for: ['node_modules'],
     define: ['COMPILED=true'],
   };
   if (argv.debug || argv.strict) {
@@ -556,7 +562,7 @@ function buildCompiled() {
   // Get chunking.
   const chunkOptions = getChunkOptions();
   // Closure Compiler options.
-  const packageJson = getPackageJson();  // For version number.
+  const packageJson = getPackageJson(); // For version number.
   const options = {
     // The documentation for @define claims you can't use it on a
     // non-global, but the Closure Compiler turns everything in to a
@@ -573,13 +579,14 @@ function buildCompiled() {
   };
 
   // Fire up compilation pipline.
-  return gulp.src(chunkOptions.js, {base: './'})
-      .pipe(stripApacheLicense())
-      .pipe(sourcemaps.init())
-      .pipe(compile(options))
-      .pipe(rename({suffix: COMPILED_SUFFIX}))
-      .pipe(sourcemaps.write('.'))
-      .pipe(gulp.dest(RELEASE_DIR));
+  return gulp
+    .src(chunkOptions.js, {base: './'})
+    .pipe(stripApacheLicense())
+    .pipe(sourcemaps.init())
+    .pipe(compile(options))
+    .pipe(rename({suffix: COMPILED_SUFFIX}))
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest(RELEASE_DIR));
 }
 
 /**
@@ -600,47 +607,54 @@ async function buildShims() {
   const TMP_PACKAGE_JSON = path.join(BUILD_DIR, 'package.json');
   await fsPromises.writeFile(TMP_PACKAGE_JSON, '{"type": "module"}');
 
-  await Promise.all(chunks.map(async (chunk) => {
-    // Import chunk entrypoint to get names of exports for chunk.
-    const entryPath = path.posix.join(TSC_OUTPUT_DIR_POSIX, chunk.entry);
-    const exportedNames = Object.keys(await import(`../../${entryPath}`));
+  await Promise.all(
+    chunks.map(async (chunk) => {
+      // Import chunk entrypoint to get names of exports for chunk.
+      const entryPath = path.posix.join(TSC_OUTPUT_DIR_POSIX, chunk.entry);
+      const exportedNames = Object.keys(await import(`../../${entryPath}`));
 
-    // Write an ESM wrapper that imports the CJS module and re-exports
-    // its named exports.
-    const cjsPath = `./${chunk.name}${COMPILED_SUFFIX}.js`;
-    const wrapperPath = path.join(RELEASE_DIR, `${chunk.name}.mjs`);
-    const importName = chunk.scriptExport.replace(/.*\./, '');
+      // Write an ESM wrapper that imports the CJS module and re-exports
+      // its named exports.
+      const cjsPath = `./${chunk.name}${COMPILED_SUFFIX}.js`;
+      const wrapperPath = path.join(RELEASE_DIR, `${chunk.name}.mjs`);
+      const importName = chunk.scriptExport.replace(/.*\./, '');
 
-    await fsPromises.writeFile(wrapperPath,
+      await fsPromises.writeFile(
+        wrapperPath,
         `import ${importName} from '${cjsPath}';
 export const {
 ${exportedNames.map((name) => `  ${name},`).join('\n')}
 } = ${importName};
-`);
+`,
+      );
 
-    // For first chunk, write an additional ESM wrapper for 'blockly'
-    // entrypoint since it has the same exports as 'blockly/core'.
-    if (chunk.name === 'blockly') {
-      await fsPromises.writeFile(path.join(RELEASE_DIR, `index.mjs`),
+      // For first chunk, write an additional ESM wrapper for 'blockly'
+      // entrypoint since it has the same exports as 'blockly/core'.
+      if (chunk.name === 'blockly') {
+        await fsPromises.writeFile(
+          path.join(RELEASE_DIR, `index.mjs`),
           `import Blockly from './index.js';
 export const {
 ${exportedNames.map((name) => `  ${name},`).join('\n')}
 } = Blockly;
-`);
-    }
+`,
+        );
+      }
 
-    // Write a loading shim that uses loadChunk to either import the
-    // chunk's entrypoint (e.g. build/src/core/blockly.js) or load the
-    // compressed chunk (e.g. dist/blockly_compressed.js) as a script.
-    const scriptPath =
-        path.posix.join(RELEASE_DIR, `${chunk.name}${COMPILED_SUFFIX}.js`);
-    const shimPath = path.join(BUILD_DIR, `${chunk.name}.loader.mjs`);
-    const parentImport =
-        chunk.parent ?
-        `import ${quote(`./${chunk.parent.name}.loader.mjs`)};` :
-        '';
+      // Write a loading shim that uses loadChunk to either import the
+      // chunk's entrypoint (e.g. build/src/core/blockly.js) or load the
+      // compressed chunk (e.g. dist/blockly_compressed.js) as a script.
+      const scriptPath = path.posix.join(
+        RELEASE_DIR,
+        `${chunk.name}${COMPILED_SUFFIX}.js`,
+      );
+      const shimPath = path.join(BUILD_DIR, `${chunk.name}.loader.mjs`);
+      const parentImport = chunk.parent
+        ? `import ${quote(`./${chunk.parent.name}.loader.mjs`)};`
+        : '';
 
-    await fsPromises.writeFile(shimPath,
+      await fsPromises.writeFile(
+        shimPath,
         `import {loadChunk} from '../tests/scripts/load.mjs';
 ${parentImport}
 
@@ -651,8 +665,10 @@ ${exportedNames.map((name) => `  ${name},`).join('\n')}
   ${quote(scriptPath)},
   ${quote(chunk.scriptExport)},
 );
-`);
-  }));
+`,
+      );
+    }),
+  );
 
   await fsPromises.rm(TMP_PACKAGE_JSON);
 }
@@ -674,20 +690,24 @@ async function buildLangfileShims() {
   const exportedNames = Object.keys(globalThis.Blockly.Msg);
   delete globalThis.Blockly;
 
-  await Promise.all(getLanguages().map(async (lang) => {
-    // Write an ESM wrapper that imports the CJS module and re-exports
-    // its named exports.
-    const cjsPath = `./${lang}.js`;
-    const wrapperPath = path.join(RELEASE_DIR, 'msg', `${lang}.mjs`);
-    const safeLang = lang.replace(/-/g, '_');
+  await Promise.all(
+    getLanguages().map(async (lang) => {
+      // Write an ESM wrapper that imports the CJS module and re-exports
+      // its named exports.
+      const cjsPath = `./${lang}.js`;
+      const wrapperPath = path.join(RELEASE_DIR, 'msg', `${lang}.mjs`);
+      const safeLang = lang.replace(/-/g, '_');
 
-    await fsPromises.writeFile(wrapperPath,
+      await fsPromises.writeFile(
+        wrapperPath,
         `import ${safeLang} from '${cjsPath}';
 export const {
 ${exportedNames.map((name) => `  ${name},`).join('\n')}
 } = ${safeLang};
-`);
-  }));
+`,
+      );
+    }),
+  );
 }
 
 /**
@@ -720,13 +740,13 @@ function compileAdvancedCompilationTest() {
     entry_point: './tests/compile/main.js',
     js_output_file: 'main_compressed.js',
   };
-  return gulp.src(srcs, {base: './'})
-      .pipe(stripApacheLicense())
-      .pipe(sourcemaps.init())
-      .pipe(compile(options))
-      .pipe(sourcemaps.write(
-          '.', {includeContent: false, sourceRoot: '../../'}))
-      .pipe(gulp.dest('./tests/compile/'));
+  return gulp
+    .src(srcs, {base: './'})
+    .pipe(stripApacheLicense())
+    .pipe(sourcemaps.init())
+    .pipe(compile(options))
+    .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: '../../'}))
+    .pipe(gulp.dest('./tests/compile/'));
 }
 
 /**
@@ -749,5 +769,7 @@ export const build = gulp.parallel(minify, langfiles);
 
 // Manually-invokable targets, with prerequisites where required.
 // function messages, above
-export const buildAdvancedCompilationTest =
-    gulp.series(tsc, compileAdvancedCompilationTest);
+export const buildAdvancedCompilationTest = gulp.series(
+  tsc,
+  compileAdvancedCompilationTest,
+);
