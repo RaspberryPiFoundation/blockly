@@ -1291,7 +1291,7 @@ const sidebars = {
               type: 'doc',
               label: 'Best practices',
               id: 'guides/app-integration/accessibility/best-practices',
-            }
+            },
           ],
         },
         {
