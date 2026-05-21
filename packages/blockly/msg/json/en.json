@@ -1,7 +1,7 @@
 {
   "@metadata": {
     "author": "Ellen Spertus <ellen.spertus@gmail.com>",
-    "lastupdated": "2026-05-21 09:14:57.030592",
+    "lastupdated": "2026-05-21 08:19:50.563628",
     "locale": "en",
     "messagedocumentation": "qqq"
   },
@@ -614,5 +614,5 @@
   "CURRENT_BLOCK_ANNOUNCEMENT": "Current block: %1",
   "PARENT_BLOCKS_ANNOUNCEMENT": "Parent blocks: %1",
   "NO_PARENT_ANNOUNCEMENT": "Current block has no parent",
-  "SCREENREADER_HINT": "Message announced when screenreader optimization mode is turned off."
+  "SCREENREADER_HINT": "Use the arrow keys to navigate. Press %1 to toggle screenreader accessibility mode."
 }
