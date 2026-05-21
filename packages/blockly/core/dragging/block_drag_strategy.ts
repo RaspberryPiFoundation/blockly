@@ -536,8 +536,8 @@ export class BlockDragStrategy implements IDragStrategy {
 
         if (!wasConnected) {
           this.workspace.getAudioManager().playErrorBeep();
+          return;
         }
-        return;
       }
     }
     this.announceMove();

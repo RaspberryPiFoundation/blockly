@@ -5,9 +5,8 @@
  */
 
 // Former goog.module ID: Blockly.Css
-/** Has CSS already been injected? */
 const injectionSites = new WeakSet<Document | ShadowRoot>();
-const registeredStyleSheets: Array<CSSStyleSheet> = [];
+const registeredCss: Array<string> = [];
 import * as userAgent from './utils/useragent.js';
 
 /**
@@ -17,11 +16,7 @@ import * as userAgent from './utils/useragent.js';
  * @param cssContent Multiline CSS string or an array of single lines of CSS.
  */
 export function register(cssContent: string) {
-  if (typeof window === 'undefined' || !window.CSSStyleSheet) return;
-
-  const sheet = new CSSStyleSheet();
-  sheet.replace(cssContent);
-  registeredStyleSheets.push(sheet);
+  registeredCss.push(cssContent);
 }
 
 /**
@@ -41,24 +36,26 @@ export function inject(
   hasCss: boolean,
   pathToMedia: string,
 ) {
-  if (!hasCss || typeof window === 'undefined' || !window.CSSStyleSheet) {
-    return;
-  }
+  if (!hasCss || typeof window === 'undefined') return;
 
   const root = container.getRootNode() as Document | ShadowRoot;
-  // Only inject the CSS once.
   if (injectionSites.has(root)) return;
   injectionSites.add(root);
 
   // Strip off any trailing slash (either Unix or Windows).
   const mediaPath = pathToMedia.replace(/[\\/]$/, '');
-  const cssContent = content.replace(/<<<PATH>>>/g, mediaPath);
+  const cssText = [content, ...registeredCss]
+    .join('\n')
+    .replace(/<<<PATH>>>/g, mediaPath);
 
-  const sheet = new CSSStyleSheet();
-  sheet.replace(cssContent);
-  root.adoptedStyleSheets.push(sheet);
-
-  registeredStyleSheets.forEach((sheet) => root.adoptedStyleSheets.push(sheet));
+  const styleEl = document.createElement('style');
+  styleEl.id = 'blockly-common-style';
+  styleEl.textContent = cssText;
+  // Prepend so Blockly's rules sit at the start of the cascade; any user
+  // stylesheet declared later wins by document order. Style elements appended
+  // to the light DOM don't apply inside shadow roots, so for the shadow DOM
+  // case we prepend the style element to the shadow root itself.
+  (root instanceof ShadowRoot ? root : document.head).prepend(styleEl);
 }
 
 /**

@@ -2002,9 +2002,8 @@ Blockly.Msg.BLOCK_LABEL_HAS_BRANCHES = 'has %1 branches';
 /** @type {string} */
 /// Part of an accessibility label for a block that indicates that it is
 /// a statement block, i.e. that it has a next or previous connection.
-/// "command" here is used in the sense of a computer command, or a
-/// command block in Scratch.
-Blockly.Msg.BLOCK_LABEL_STATEMENT = 'command';
+/// "statement" here is used in the sense of a statement in a line of code.
+Blockly.Msg.BLOCK_LABEL_STATEMENT = 'statement';
 /** @type {string} */
 /// Part of an accessibility label for a block that indicates that it is
 /// a container block, i.e. that it has one or more statement inputs.
@@ -2028,7 +2027,7 @@ Blockly.Msg.INPUT_LABEL_VALUE = 'value position';
 /** @type {string} */
 /// Accessibility label for an empty next connection that can hold a statement
 /// block. This should use the same language as the BLOCK_LABEL_STATEMENT string.
-Blockly.Msg.INPUT_LABEL_STATEMENT = 'command position';
+Blockly.Msg.INPUT_LABEL_STATEMENT = 'statement position';
 /** @type {string} */
 /// Accessibility label describing the last connection point inside a statement
 /// input. e.g. "End if, true, do" where the "if, true, do" is assembled from
