@@ -128,6 +128,7 @@ suite('WorkspaceSvg', function () {
 
   test('Announces a screenreader hint on first focus', function () {
     document.getElementById('blocklyAriaAnnounce').textContent = '';
+    Blockly.WorkspaceSvg.everFocused = false;
     Blockly.getFocusManager().focusNode(this.workspace);
     this.clock.runAll();
     assert.include(
