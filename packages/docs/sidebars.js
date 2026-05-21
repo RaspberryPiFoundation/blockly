@@ -820,6 +820,11 @@ const sidebars = {
             },
             {
               type: 'doc',
+              label: 'Screen reader',
+              id: 'guides/configure/web/screen-reader',
+            },
+            {
+              type: 'doc',
               label: 'Colour and accessibility',
               id: 'guides/configure/web/colour-a11y',
             },
@@ -1282,6 +1287,11 @@ const sidebars = {
               label: 'Compliance',
               id: 'guides/app-integration/accessibility/compliance',
             },
+            {
+              type: 'doc',
+              label: 'Best practices',
+              id: 'guides/app-integration/accessibility/best-practices',
+            }
           ],
         },
         {
