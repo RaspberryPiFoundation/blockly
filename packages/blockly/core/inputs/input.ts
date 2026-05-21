@@ -418,7 +418,7 @@ export class Input {
             childBlock as BlockSvg,
             verbosity,
             useCustomLabels,
-          ).join(' '),
+          ).join(', '),
         );
       }
     }
