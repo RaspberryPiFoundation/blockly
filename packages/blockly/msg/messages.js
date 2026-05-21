@@ -2048,12 +2048,6 @@ Blockly.Msg.INPUT_LABEL_CONDITION_A = 'first condition';
 /// Accessibility label for the second of two boolean inputs, separated by a logical operator.
 Blockly.Msg.INPUT_LABEL_CONDITION_B = 'second condition';
 /** @type {string} */
-/// Accessibility label for a boolean input representing an "until" condition.
-Blockly.Msg.INPUT_LABEL_CONDITION_UNTIL = 'condition to stop repeating';
-/** @type {string} */
-/// Accessibility label for a boolean input representing a "while" condition.
-Blockly.Msg.INPUT_LABEL_CONDITION_WHILE = 'condition to continue repeating';
-/** @type {string} */
 /// Accessibility label for the first of two value inputs, separated by a comparison operator.
 Blockly.Msg.INPUT_LABEL_VALUE_A = 'first value';
 /** @type {string} */
@@ -2163,9 +2157,6 @@ Blockly.Msg.INPUT_LABEL_LISTS_REPEAT_NUM = 'number of times to repeat';
 /** @type {string} */
 /// Accessibility label for a list that will be checked for a condition or value.
 Blockly.Msg.INPUT_LABEL_LISTS_TO_CHECK = 'list to check';
-/** @type {string} */
-/// Accessibility label for a value to search for within a list.
-Blockly.Msg.INPUT_LABEL_LISTS_VALUE_TO_FIND = 'value to find';
 /** @type {string} */
 /// Accessibility label for a value to set within a list.
 Blockly.Msg.INPUT_LABEL_LISTS_VALUE_TO_SET = 'value to set';

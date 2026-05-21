@@ -352,13 +352,11 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'input_value',
         'name': 'LOW',
         'check': 'Number',
-        'ariaLabelText': '%{BKY_INPUT_LABEL_NUMBER_MIN}',
       },
       {
         'type': 'input_value',
         'name': 'HIGH',
         'check': 'Number',
-        'ariaLabelText': '%{BKY_INPUT_LABEL_NUMBER_MAX}',
       },
     ],
     'inputsInline': true,

@@ -103,6 +103,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'input_value',
         'name': 'BOOL',
         'check': 'Boolean',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_CONDITION}',
       },
     ],
     'message1': '%{BKY_CONTROLS_REPEAT_INPUT_DO} %1',
@@ -116,10 +117,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
     'nextStatement': null,
     'style': 'loop_blocks',
     'helpUrl': '%{BKY_CONTROLS_WHILEUNTIL_HELPURL}',
-    'extensions': [
-      'controls_whileUntil_tooltip',
-      'controls_whileUntil_ariaLabelProvider',
-    ],
+    'extensions': ['controls_whileUntil_tooltip'],
   },
   // Block for 'for' loop.
   {
@@ -235,19 +233,6 @@ const WHILE_UNTIL_TOOLTIPS = {
 Extensions.register(
   'controls_whileUntil_tooltip',
   Extensions.buildTooltipForDropdown('MODE', WHILE_UNTIL_TOOLTIPS),
-);
-
-Extensions.register(
-  'controls_whileUntil_ariaLabelProvider',
-  function (this: Block) {
-    const input = this.getInput('BOOL');
-    input!.setAriaLabelProvider(() => {
-      const mode = this.getFieldValue('MODE');
-      return mode === 'WHILE'
-        ? Msg['INPUT_LABEL_CONDITION_WHILE']
-        : Msg['INPUT_LABEL_CONDITION_UNTIL'];
-    });
-  },
 );
 
 /**

@@ -368,9 +368,7 @@ const LISTS_INDEXOF = {
       options: OPERATORS,
     });
     if (!operatorsDropdown) throw new Error('field_dropdown not found');
-    this.appendValueInput('FIND')
-      .appendField(operatorsDropdown, 'END')
-      .setAriaLabelProvider(Msg['INPUT_LABEL_LISTS_VALUE_TO_FIND']);
+    this.appendValueInput('FIND').appendField(operatorsDropdown, 'END');
     this.setInputsInline(true);
     this.setTooltip(() => {
       return Msg['LISTS_INDEX_OF_TOOLTIP'].replace(
