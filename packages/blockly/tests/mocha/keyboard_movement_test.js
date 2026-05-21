@@ -1262,7 +1262,7 @@ suite('Keyboard-driven movement', function () {
         this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
-          ['Moving', 'else if, do', 'around', 'draw', '❤️'],
+          ['Moving', 'else', 'around', 'draw', '❤️'],
           ['of'],
         );
         this.moveAndAssert(
