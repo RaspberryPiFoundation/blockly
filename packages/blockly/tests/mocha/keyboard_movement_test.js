@@ -1400,12 +1400,12 @@ suite('Keyboard-driven movement', function () {
         this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
-          ['Moving', 'to', 'equals', 'input 1'],
+          ['Moving', 'to', 'first value', 'equals'],
           [this.getBlockLabel(boolean)],
         );
         this.moveAndAssert(
           moveRight,
-          ['Moving', 'to', 'equals', 'equals'],
+          ['Moving', 'to', 'second value', 'equals'],
           [this.getBlockLabel(boolean)],
         );
 
@@ -1417,6 +1417,9 @@ suite('Keyboard-driven movement', function () {
         textJoin.updateShape_();
         textJoin.initSvg();
         textJoin.render();
+        textJoin.inputList.forEach((input, index) => {
+          input.setAriaLabelProvider(null);
+        });
         const text = this.workspace.newBlock('text');
         text.initSvg();
         text.render();
@@ -1438,10 +1441,13 @@ suite('Keyboard-driven movement', function () {
 
         cancelMove(this.workspace);
       });
-      test('ignores dummy inputs when disambiguating', function () {
+      test('ignores dummy inputs when disambiguating between unlabeled value inputs', function () {
         const subListBlock = this.workspace.newBlock('lists_getSublist');
         subListBlock.initSvg();
         subListBlock.render();
+        subListBlock.inputList.forEach((input, index) => {
+          input.setAriaLabelProvider(null);
+        });
         const mathBlock = this.workspace.newBlock('math_number');
         mathBlock.initSvg();
         mathBlock.render();
@@ -1477,7 +1483,7 @@ suite('Keyboard-driven movement', function () {
         this.clock.tick(10);
         this.moveAndAssert(
           moveRight,
-          ['Moving', 'to', 'input 1', 'equals'],
+          ['Moving', 'to', 'first value', 'equals'],
           [this.getBlockLabel(boolean)],
         );
         cancelMove(this.workspace);

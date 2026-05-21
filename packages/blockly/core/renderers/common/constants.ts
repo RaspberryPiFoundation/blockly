@@ -1126,17 +1126,15 @@ export class ConstantProvider {
    * @param selector The CSS selector to interpolate into the stylesheet.
    */
   protected injectCSS_(root: Document | ShadowRoot, selector: string) {
-    if (
-      typeof window === 'undefined' ||
-      !window.CSSStyleSheet ||
-      injectionSites.get(selector)?.has(root)
-    ) {
-      return;
-    }
+    if (typeof window === 'undefined') return;
+    if (injectionSites.get(selector)?.has(root)) return;
 
-    const sheet = new CSSStyleSheet();
-    sheet.replace(this.getCSS_(selector).join('\n'));
-    root.adoptedStyleSheets.push(sheet);
+    const styleEl = document.createElement('style');
+    styleEl.className = 'blockly-renderer-style';
+    styleEl.textContent = this.getCSS_(selector).join('\n');
+    // See css.ts inject() for the rationale on prepending and shadow root
+    // handling.
+    (root instanceof ShadowRoot ? root : document.head).prepend(styleEl);
 
     const sitesForSelector =
       injectionSites.get(selector) ?? new WeakSet<Document | ShadowRoot>();

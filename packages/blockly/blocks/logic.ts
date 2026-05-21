@@ -112,6 +112,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
       {
         'type': 'input_value',
         'name': 'A',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_VALUE_A}',
       },
       {
         'type': 'field_dropdown',
@@ -128,6 +129,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
       {
         'type': 'input_value',
         'name': 'B',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_VALUE_B}',
       },
     ],
     'inputsInline': true,
@@ -145,6 +147,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'input_value',
         'name': 'A',
         'check': 'Boolean',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_CONDITION_A}',
       },
       {
         'type': 'field_dropdown',
@@ -158,6 +161,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'input_value',
         'name': 'B',
         'check': 'Boolean',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_CONDITION_B}',
       },
     ],
     'inputsInline': true,

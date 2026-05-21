@@ -93,6 +93,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
       {
         'type': 'input_value',
         'name': 'TEXT',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_TEXT_APPEND}',
       },
     ],
     'previousStatement': null,
@@ -108,6 +109,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'input_value',
         'name': 'VALUE',
         'check': ['String', 'Array'],
+        'ariaLabelText': '%{BKY_INPUT_LABEL_TEXT_TO_CHECK}',
       },
     ],
     'output': 'Number',
@@ -123,6 +125,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'input_value',
         'name': 'VALUE',
         'check': ['String', 'Array'],
+        'ariaLabelText': '%{BKY_INPUT_LABEL_TEXT_TO_CHECK}',
       },
     ],
     'output': 'Boolean',
@@ -138,6 +141,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'input_value',
         'name': 'VALUE',
         'check': 'String',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_TEXT_TO_CHECK}',
       },
       {
         'type': 'field_dropdown',
@@ -151,6 +155,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'input_value',
         'name': 'FIND',
         'check': 'String',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_TEXT_TO_FIND}',
       },
     ],
     'output': 'Number',
@@ -167,6 +172,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'input_value',
         'name': 'VALUE',
         'check': 'String',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_TEXT_TO_CHECK}',
       },
       {
         'type': 'field_dropdown',
@@ -239,7 +245,8 @@ const GET_SUBSTRING_BLOCK = {
     this.setStyle('text_blocks');
     this.appendValueInput('STRING')
       .setCheck('String')
-      .appendField(Msg['TEXT_GET_SUBSTRING_INPUT_IN_TEXT']);
+      .appendField(Msg['TEXT_GET_SUBSTRING_INPUT_IN_TEXT'])
+      .setAriaLabelProvider(Msg['INPUT_LABEL_TEXT_TO_CHECK']);
     const createMenu = (n: 1 | 2): FieldDropdown => {
       const menu = fieldRegistry.fromJson({
         type: 'field_dropdown',
@@ -321,7 +328,13 @@ const GET_SUBSTRING_BLOCK = {
     this.removeInput('ORDINAL' + n, true);
     // Create either a value 'AT' input or a dummy input.
     if (isAt) {
-      this.appendValueInput('AT' + n).setCheck('Number');
+      this.appendValueInput('AT' + n)
+        .setCheck('Number')
+        .setAriaLabelProvider(
+          n === 1
+            ? Msg['INPUT_LABEL_TEXT_START_POSITION']
+            : Msg['INPUT_LABEL_TEXT_END_POSITION'],
+        );
       if (Msg['ORDINAL_NUMBER_SUFFIX']) {
         this.appendDummyInput('ORDINAL' + n).appendField(
           Msg['ORDINAL_NUMBER_SUFFIX'],
@@ -366,7 +379,8 @@ blocks['text_changeCase'] = {
           options: OPERATORS,
         }) as FieldDropdown,
         'CASE',
-      );
+      )
+      .setAriaLabelProvider(Msg['INPUT_LABEL_TEXT_TO_CHANGE']);
     this.setOutput(true, 'String');
     this.setTooltip(Msg['TEXT_CHANGECASE_TOOLTIP']);
   },
@@ -392,7 +406,8 @@ blocks['text_trim'] = {
           options: OPERATORS,
         }) as FieldDropdown,
         'MODE',
-      );
+      )
+      .setAriaLabelProvider(Msg['INPUT_LABEL_TEXT_TO_CHANGE']);
     this.setOutput(true, 'String');
     this.setTooltip(Msg['TEXT_TRIM_TOOLTIP']);
   },
@@ -485,7 +500,9 @@ blocks['text_prompt_ext'] = {
       this.updateType_(newOp);
       return undefined; // FieldValidators can't be void.  Use option as-is.
     });
-    this.appendValueInput('TEXT').appendField(dropdown, 'TYPE');
+    this.appendValueInput('TEXT')
+      .appendField(dropdown, 'TYPE')
+      .setAriaLabelProvider(Msg['INPUT_LABEL_TEXT_PROMPT_MESSAGE']);
     this.setOutput(true, 'String');
     this.setTooltip(() => {
       return this.getFieldValue('TYPE') === 'TEXT'
@@ -552,11 +569,13 @@ blocks['text_count'] = {
           'type': 'input_value',
           'name': 'SUB',
           'check': 'String',
+          'ariaLabelText': '%{BKY_INPUT_LABEL_TEXT_TO_FIND}',
         },
         {
           'type': 'input_value',
           'name': 'TEXT',
           'check': 'String',
+          'ariaLabelText': '%{BKY_INPUT_LABEL_TEXT_TO_CHECK}',
         },
       ],
       'output': 'Number',
@@ -580,16 +599,19 @@ blocks['text_replace'] = {
           'type': 'input_value',
           'name': 'FROM',
           'check': 'String',
+          'ariaLabelText': '%{BKY_INPUT_LABEL_TEXT_TO_FIND}',
         },
         {
           'type': 'input_value',
           'name': 'TO',
           'check': 'String',
+          'ariaLabelText': '%{BKY_INPUT_LABEL_TEXT_TO_REPLACE}',
         },
         {
           'type': 'input_value',
           'name': 'TEXT',
           'check': 'String',
+          'ariaLabelText': '%{BKY_INPUT_LABEL_TEXT_TO_CHECK}',
         },
       ],
       'output': 'String',
@@ -613,6 +635,7 @@ blocks['text_reverse'] = {
           'type': 'input_value',
           'name': 'TEXT',
           'check': 'String',
+          'ariaLabelText': '%{BKY_INPUT_LABEL_TEXT_TO_CHANGE}',
         },
       ],
       'output': 'String',
@@ -863,6 +886,9 @@ const JOIN_MUTATOR_MIXIN = {
     for (let i = 0; i < this.itemCount_; i++) {
       if (!this.getInput('ADD' + i)) {
         const input = this.appendValueInput('ADD' + i).setAlign(Align.RIGHT);
+        input.setAriaLabelProvider(
+          Msg['INPUT_LABEL_TEXT_JOIN_ITEM'].replace('%1', (i + 1).toString()),
+        );
         if (i === 0) {
           input.appendField(Msg['TEXT_JOIN_TITLE_CREATEWITH']);
         }
@@ -957,7 +983,9 @@ const CHARAT_MUTATOR_MIXIN = {
     this.removeInput('ORDINAL', true);
     // Create either a value 'AT' input or a dummy input.
     if (isAt) {
-      this.appendValueInput('AT').setCheck('Number');
+      this.appendValueInput('AT')
+        .setCheck('Number')
+        .setAriaLabelProvider(Msg['INPUT_LABEL_TEXT_POSITION']);
       if (Msg['ORDINAL_NUMBER_SUFFIX']) {
         this.appendDummyInput('ORDINAL').appendField(
           Msg['ORDINAL_NUMBER_SUFFIX'],

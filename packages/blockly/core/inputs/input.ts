@@ -297,9 +297,13 @@ export class Input {
    * deterministic and idempotent ARIA representation each time the provider is
    * called for a given input. It's also fine to reuse providers across multiple
    * Input implementations.
+   *
+   * @param provider The string or function to use to set the ARIA label for the input
+   * @returns The input being modified (to allow chaining).
    */
-  setAriaLabelProvider(provider: AriaLabelProvider | null) {
+  setAriaLabelProvider(provider: AriaLabelProvider | null): Input {
     this.ariaLabelProvider = provider;
+    return this;
   }
 
   /**
@@ -401,7 +405,7 @@ export class Input {
    *
    * @internal
    */
-  getLabel(verbosity = Verbosity.STANDARD): string {
+  getLabel(verbosity = Verbosity.STANDARD, useCustomLabels = true): string {
     if (!this.isVisible()) return '';
 
     const labels = computeFieldRowLabel(this, false, verbosity);
@@ -410,7 +414,11 @@ export class Input {
       const childBlock = this.connection.targetBlock();
       if (childBlock && !childBlock.isInsertionMarker()) {
         labels.push(
-          getInputLabels(childBlock as BlockSvg, verbosity).join(' '),
+          getInputLabels(
+            childBlock as BlockSvg,
+            verbosity,
+            useCustomLabels,
+          ).join(', '),
         );
       }
     }

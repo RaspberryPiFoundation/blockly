@@ -48,11 +48,13 @@ export const blocks = createBlockDefinitionsFromJsonArray([
       {
         'type': 'input_value',
         'name': 'ITEM',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_LISTS_REPEAT_ITEM}',
       },
       {
         'type': 'input_value',
         'name': 'NUM',
         'check': 'Number',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_LISTS_REPEAT_NUM}',
       },
     ],
     'output': 'Array',
@@ -69,6 +71,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'input_value',
         'name': 'LIST',
         'check': 'Array',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_LISTS_TO_CHANGE}',
       },
     ],
     'output': 'Array',
@@ -86,6 +89,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'input_value',
         'name': 'VALUE',
         'check': ['String', 'Array'],
+        'ariaLabelText': '%{BKY_INPUT_LABEL_LISTS_TO_CHECK}',
       },
     ],
     'output': 'Boolean',
@@ -102,6 +106,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'input_value',
         'name': 'VALUE',
         'check': ['String', 'Array'],
+        'ariaLabelText': '%{BKY_INPUT_LABEL_LISTS_TO_CHECK}',
       },
     ],
     'output': 'Number',
@@ -275,6 +280,12 @@ const LISTS_CREATE_WITH = {
     for (let i = 0; i < this.itemCount_; i++) {
       if (!this.getInput('ADD' + i)) {
         const input = this.appendValueInput('ADD' + i).setAlign(Align.RIGHT);
+        input.setAriaLabelProvider(
+          Msg['INPUT_LABEL_LISTS_CREATE_WITH_ITEM'].replace(
+            '%1',
+            String(i + 1),
+          ),
+        );
         if (i === 0) {
           input.appendField(Msg['LISTS_CREATE_WITH_INPUT_WITH']);
         }
@@ -350,7 +361,8 @@ const LISTS_INDEXOF = {
     this.setOutput(true, 'Number');
     this.appendValueInput('VALUE')
       .setCheck('Array')
-      .appendField(Msg['LISTS_INDEX_OF_INPUT_IN_LIST']);
+      .appendField(Msg['LISTS_INDEX_OF_INPUT_IN_LIST'])
+      .setAriaLabelProvider(Msg['INPUT_LABEL_LISTS_TO_CHECK']);
     const operatorsDropdown = fieldRegistry.fromJson({
       type: 'field_dropdown',
       options: OPERATORS,
@@ -408,7 +420,8 @@ const LISTS_GETINDEX = {
     );
     this.appendValueInput('VALUE')
       .setCheck('Array')
-      .appendField(Msg['LISTS_GET_INDEX_INPUT_IN_LIST']);
+      .appendField(Msg['LISTS_GET_INDEX_INPUT_IN_LIST'])
+      .setAriaLabelProvider(Msg['INPUT_LABEL_LISTS_TO_CHECK']);
     this.appendDummyInput()
       .appendField(modeMenu, 'MODE')
       .appendField('', 'SPACE');
@@ -586,7 +599,9 @@ const LISTS_GETINDEX = {
     this.removeInput('ORDINAL', true);
     // Create either a value 'AT' input or a dummy input.
     if (isAt) {
-      this.appendValueInput('AT').setCheck('Number');
+      this.appendValueInput('AT')
+        .setCheck('Number')
+        .setAriaLabelProvider(Msg['INPUT_LABEL_LISTS_POSITION']);
       if (Msg['ORDINAL_NUMBER_SUFFIX']) {
         this.appendDummyInput('ORDINAL').appendField(
           Msg['ORDINAL_NUMBER_SUFFIX'],
@@ -629,7 +644,8 @@ const LISTS_SETINDEX = {
     this.setStyle('list_blocks');
     this.appendValueInput('LIST')
       .setCheck('Array')
-      .appendField(Msg['LISTS_SET_INDEX_INPUT_IN_LIST']);
+      .appendField(Msg['LISTS_SET_INDEX_INPUT_IN_LIST'])
+      .setAriaLabelProvider(Msg['INPUT_LABEL_LISTS_TO_CHECK']);
     const operationDropdown = fieldRegistry.fromJson({
       type: 'field_dropdown',
       options: MODE,
@@ -656,7 +672,9 @@ const LISTS_SETINDEX = {
     );
     this.appendDummyInput().appendField(menu, 'WHERE');
     this.appendDummyInput('AT');
-    this.appendValueInput('TO').appendField(Msg['LISTS_SET_INDEX_INPUT_TO']);
+    this.appendValueInput('TO')
+      .appendField(Msg['LISTS_SET_INDEX_INPUT_TO'])
+      .setAriaLabelProvider(Msg['INPUT_LABEL_LISTS_VALUE_TO_SET']);
     this.setInputsInline(true);
     this.setPreviousStatement(true);
     this.setNextStatement(true);
@@ -758,7 +776,9 @@ const LISTS_SETINDEX = {
     this.removeInput('ORDINAL', true);
     // Create either a value 'AT' input or a dummy input.
     if (isAt) {
-      this.appendValueInput('AT').setCheck('Number');
+      this.appendValueInput('AT')
+        .setCheck('Number')
+        .setAriaLabelProvider(Msg['INPUT_LABEL_LISTS_POSITION']);
       if (Msg['ORDINAL_NUMBER_SUFFIX']) {
         this.appendDummyInput('ORDINAL').appendField(
           Msg['ORDINAL_NUMBER_SUFFIX'],
@@ -802,7 +822,8 @@ const LISTS_GETSUBLIST = {
     this.setStyle('list_blocks');
     this.appendValueInput('LIST')
       .setCheck('Array')
-      .appendField(Msg['LISTS_GET_SUBLIST_INPUT_IN_LIST']);
+      .appendField(Msg['LISTS_GET_SUBLIST_INPUT_IN_LIST'])
+      .setAriaLabelProvider(Msg['INPUT_LABEL_LISTS_TO_CHECK']);
     const createMenu = (n: 1 | 2): FieldDropdown => {
       const menu = fieldRegistry.fromJson({
         type: 'field_dropdown',
@@ -895,7 +916,13 @@ const LISTS_GETSUBLIST = {
     this.removeInput('ORDINAL' + n, true);
     // Create either a value 'AT' input or a dummy input.
     if (isAt) {
-      this.appendValueInput('AT' + n).setCheck('Number');
+      this.appendValueInput('AT' + n)
+        .setCheck('Number')
+        .setAriaLabelProvider(
+          n === 1
+            ? Msg['INPUT_LABEL_LISTS_START_POSITION']
+            : Msg['INPUT_LABEL_LISTS_END_POSITION'],
+        );
       if (Msg['ORDINAL_NUMBER_SUFFIX']) {
         this.appendDummyInput('ORDINAL' + n).appendField(
           Msg['ORDINAL_NUMBER_SUFFIX'],
@@ -948,6 +975,7 @@ blocks['lists_sort'] = {
           'type': 'input_value',
           'name': 'LIST',
           'check': 'Array',
+          'ariaLabelText': Msg['INPUT_LABEL_LISTS_TO_CHANGE'],
         },
       ],
       'output': 'Array',
@@ -972,6 +1000,14 @@ blocks['lists_split'] = {
         [Msg['LISTS_SPLIT_TEXT_FROM_LIST'], 'JOIN'],
       ],
     });
+    const inputAriaLabelProvider = () => {
+      const mode = this.getFieldValue('MODE');
+      if (mode === 'SPLIT') {
+        return Msg['INPUT_LABEL_LISTS_LIST_FROM_TEXT'];
+      } else if (mode === 'JOIN') {
+        return Msg['INPUT_LABEL_LISTS_TEXT_FROM_LIST'];
+      }
+    };
     if (!dropdown) throw new Error('field_dropdown not found');
     dropdown.setValidator((newMode) => {
       this.updateType_(newMode);
@@ -980,10 +1016,12 @@ blocks['lists_split'] = {
     this.setStyle('list_blocks');
     this.appendValueInput('INPUT')
       .setCheck('String')
-      .appendField(dropdown, 'MODE');
+      .appendField(dropdown, 'MODE')
+      .setAriaLabelProvider(inputAriaLabelProvider);
     this.appendValueInput('DELIM')
       .setCheck('String')
-      .appendField(Msg['LISTS_SPLIT_WITH_DELIMITER']);
+      .appendField(Msg['INPUT_LABEL_LISTS_DELIMITER'])
+      .setAriaLabelProvider(Msg['INPUT_LABEL_LISTS_SPLIT_WITH_DELIMITER']);
     this.setInputsInline(true);
     this.setOutput(true, 'Array');
     this.setTooltip(() => {

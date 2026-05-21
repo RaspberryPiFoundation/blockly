@@ -258,7 +258,7 @@ function getParentInputLabel(block: BlockSvg) {
 function getBeginStackLabel(block: BlockSvg) {
   // Don't include the "begin stack" label for blocks that are moving
   // or blocks in the flyout
-  if (block.isInFlyout || block.workspace.isDragging()) return undefined;
+  if (block.isInFlyout || block.isDragging()) return undefined;
   return block.getRootBlock() === block
     ? Msg['BLOCK_LABEL_BEGIN_STACK']
     : undefined;
@@ -308,7 +308,7 @@ export function getInputLabels(
 
   return inputsToLabel.map((input) => {
     const customLabel = useCustomLabels ? input.getAriaLabelText() : null;
-    return customLabel ?? input.getLabel(verbosity);
+    return customLabel ?? input.getLabel(verbosity, useCustomLabels);
   });
 }
 

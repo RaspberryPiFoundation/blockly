@@ -536,8 +536,8 @@ export class BlockDragStrategy implements IDragStrategy {
 
         if (!wasConnected) {
           this.workspace.getAudioManager().playErrorBeep();
+          return;
         }
-        return;
       }
     }
     this.announceMove();
@@ -990,7 +990,8 @@ export class BlockDragStrategy implements IDragStrategy {
     for (let i = start; i >= 0 && i < topBlocks.length; i += delta) {
       const topBlock = topBlocks[i];
       for (const a of blockConnections) {
-        for (const b of topBlock.getConnections_(false)) {
+        const stackConnections = this.getAllConnections(topBlock);
+        for (const b of stackConnections) {
           if (
             block.workspace.connectionChecker.canConnect(a, b, true, Infinity)
           ) {
