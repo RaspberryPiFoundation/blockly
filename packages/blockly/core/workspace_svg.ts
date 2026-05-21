@@ -355,7 +355,7 @@ export class WorkspaceSvg
    * Whether this workspace has ever been focused. Used to announce usage hints
    * to screenreaders on initial focus only.
    */
-  private everFocused = false;
+  private static everFocused = false;
 
   /**
    * @param options Dictionary of options.
@@ -2750,14 +2750,14 @@ export class WorkspaceSvg
     if (!this.isFlyout && !this.isMutator) {
       this.updateAriaLabel();
     }
-    if (!this.everFocused && !this.options.parentWorkspace) {
+    if (!WorkspaceSvg.everFocused && !this.options.parentWorkspace) {
       aria.announceDynamicAriaState(
         Msg['SCREENREADER_HINT'].replace(
           '%1',
           getShortcutKeysShort(ShortcutNames.TOGGLE_SCREENREADER),
         ),
       );
-      this.everFocused = true;
+      WorkspaceSvg.everFocused = true;
     }
   }
 
