@@ -93,7 +93,7 @@ const config = {
               },
               {
                 label: 'Build your editor',
-                to: 'guides/configure/web/configuration_struct',
+                to: 'guides/configure/configuration_struct',
               },
               {
                 label: 'Build your blocks',

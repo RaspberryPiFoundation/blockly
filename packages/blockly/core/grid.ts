@@ -32,7 +32,7 @@ export class Grid {
    * @param pattern The grid's SVG pattern, created during injection.
    * @param options A dictionary of normalized options for the grid.
    *     See grid documentation:
-   *     https://developers.google.com/blockly/guides/configure/web/grid
+   *     https://developers.google.com/blockly/guides/configure/grid
    */
   constructor(
     private pattern: SVGElement,

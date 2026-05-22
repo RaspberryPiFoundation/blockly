@@ -58,10 +58,10 @@
 /guides/modify/web/*   /guides/contribute/core/   301
 
 # Advanced Customization section (under Configure)
-/guides/plugins/interfaces/overview   /guides/configure/web/customization/   301
+/guides/plugins/interfaces/overview   /guides/configure/customization/   301
 /guides/plugins/interfaces/connection_checker   /guides/create-custom-blocks/inputs/connection_checker/   301
-/guides/plugins/interfaces/metrics_manager   /guides/configure/web/metrics_manager/   301
-/guides/plugins/interfaces/*   /guides/configure/web/customization/   301
+/guides/plugins/interfaces/metrics_manager   /guides/configure/metrics_manager/   301
+/guides/plugins/interfaces/*   /guides/configure/customization/   301
 /guides/modify/forking_blockly   /guides/programming/forking_blockly/   301
 /guides/plugins/using_blockly_apis   /guides/programming/using_blockly_apis/   301
 
@@ -81,18 +81,18 @@
 /guides/configure/advanced/using_blockly_apis   /guides/programming/using_blockly_apis/   301
 /guides/configure/advanced/forking_blockly   /guides/programming/forking_blockly/   301
 /guides/configure/advanced/unforking_blockly   /guides/programming/unforking_blockly/   301
-/guides/configure/advanced/interfaces/overview   /guides/configure/web/customization/   301
+/guides/configure/advanced/interfaces/overview   /guides/configure/customization/   301
 /guides/configure/advanced/interfaces/connection_checker   /guides/create-custom-blocks/inputs/connection_checker/   301
-/guides/configure/advanced/interfaces/metrics_manager   /guides/configure/web/metrics_manager/   301
+/guides/configure/advanced/interfaces/metrics_manager   /guides/configure/metrics_manager/   301
 
 # Split up Toolbox
-/guides/configure/web/toolbox   /guides/configure/web/toolboxes/toolbox/   301
+/guides/configure/web/toolbox   /guides/configure/toolboxes/toolbox/   301
 
 # Colours
-/guides/create-custom-blocks/block-colour   /guides/configure/web/appearance/block-colour/   301
+/guides/create-custom-blocks/block-colour   /guides/configure/appearance/block-colour/   301
 
 # Localization
-/guides/create-custom-blocks/localize-blocks   /guides/configure/web/translations/   301
+/guides/create-custom-blocks/localize-blocks   /guides/configure/translations/   301
 
 # Custom blocks
 /guides/configure/web/custom-blocks   /guides/create-custom-blocks/overview/   301
@@ -112,6 +112,9 @@
 # Shape
 /guides/configure/web/appearance/overview   /guides/create-custom-blocks/renderers/overview/   301
 /guides/configure/web/appearance/renderers   /guides/create-custom-blocks/renderers/overview/   301
+
+# Move configure docs from /web/ subdirectory
+/guides/configure/web/*   /guides/configure/:splat/   301
 
 # Plugins
 /guides/contribute/samples/plugin_overview   /guides/programming/plugin_overview/   301

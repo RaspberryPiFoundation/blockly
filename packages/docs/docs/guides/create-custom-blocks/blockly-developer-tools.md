@@ -181,7 +181,7 @@ following these steps:
 [block-code-generator]: /guides/create-custom-blocks/code-generation/overview#block-code-generators
 [inputs]: /guides/get-started/workspace-anatomy#inputs
 [fields]: /guides/get-started/workspace-anatomy#fields
-[toolbox-preset]: /guides/configure/web/toolboxes/preset
+[toolbox-preset]: /guides/configure/toolboxes/preset
 [mutators]: /guides/create-custom-blocks/mutators
 [loading-blockly]: /guides/get-started/get-the-code#get-the-code-1
 [code-generation]: /guides/create-custom-blocks/code-generation/overview#language-code-generators

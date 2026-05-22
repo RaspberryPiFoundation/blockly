@@ -105,7 +105,7 @@ Blockly.fieldRegistry.register('field_generic', GenericField);
 
 You also need to define your `fromJson` function. Your implementation should
 first dereference any [references to localization
-tokens](/guides/configure/web/translations#use-localization-tokens-in-json)
+tokens](/guides/configure/translations#use-localization-tokens-in-json)
 using
 [`replaceMessageReferences`](/reference/blockly.utils.parsing.replacemessagereferences),
 and then pass the values to the constructor.
@@ -731,7 +731,7 @@ Messing with a field's cursor is fragile.
 
 ## Serialization
 
-[Serialization](/guides/configure/web/serialization) is about saving the
+[Serialization](/guides/configure/serialization) is about saving the
 state of your field so that it can be reloaded into the workspace later.
 
 The state of your workspace always includes the field's value, but it could also
@@ -897,5 +897,5 @@ Before version 12.0.0, the `CURSOR` property determined the cursor. Its
 value was a valid CSS cursor string.
 :::
 
-[serializer]: /guides/configure/web/serialization#serializer-hooks
+[serializer]: /guides/configure/serialization#serializer-hooks
 [field-generator]: /guides/create-custom-blocks/code-generation/overview#block-code-generators
