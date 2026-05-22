@@ -31,6 +31,7 @@
     "test": "npm run test --ws --if-present",
     "lint": "npm run lint --ws --if-present",
     "build": "npm run build --ws --if-present",
-    "format:check": "npm run format:check --ws --if-present"
+    "format:check": "npm run format:check --ws --if-present",
+    "postinstall": "patch-package"
   }
 }
