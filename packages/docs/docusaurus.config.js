@@ -13,8 +13,11 @@ const config = {
     v4: true,
   },
 
-  url: 'https://raspberrypifoundation.github.io',
-  baseUrl: process.env.BASE_URL || '/docs/',
+  // CloudFlare Pages requires a trailing slash for index pages to work correctly.
+  trailingSlash: true,
+
+  url: 'https://docs.blockly.com',
+  baseUrl: process.env.BASE_URL || '/',
 
   // GitHub pages deployment config
   organizationName: 'RaspberryPiFoundation',
@@ -102,7 +105,7 @@ const config = {
               },
               {
                 label: 'Contribute to Blockly',
-                to: 'guides/contribute/index',
+                to: 'guides/contribute',
               },
             ],
           },
