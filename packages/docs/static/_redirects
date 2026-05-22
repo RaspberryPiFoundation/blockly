@@ -2,9 +2,14 @@
 # Syntax: source destination [status_code]
 # https://developers.cloudflare.com/pages/configuration/redirects/
 
-# Legacy /reference/js/* paths redirect to canonical /reference/* URLs
-/reference/js/*   /reference/:splat   302
+# Legacy Google reference URLs used /reference/js/ and may end in .md.
+# Canonical URLs are /reference/<doc-id>/ (trailingSlash: true, no /js/, no extension).
+# More specific rules must appear before broader /reference/js/*.
 
-# Strip .md/.mdx extensions if someone lands on the raw filename
-/reference/*.md   /reference/:splat   302
-/reference/*.mdx  /reference/:splat   302
+/reference/js/*.md   /reference/:splat/   302
+/reference/js/*.mdx  /reference/:splat/   302
+/reference/js/*      /reference/:splat/   302
+
+# Strip .md/.mdx extensions on canonical /reference/* paths
+/reference/*.md      /reference/:splat/   302
+/reference/*.mdx     /reference/:splat/   302
