@@ -368,38 +368,39 @@ const buildAlternatePathsMap = function(allFiles) {
 }
 
 /**
- * Parse HTML tables from the blockly.md file to extract classes, interfaces, etc.
- * @param {string} fileContent The content of blockly.md
+ * Parse HTML tables from blockly.mdx to extract classes, interfaces, etc.
+ * Each ## section contains an HTML table with markdown links in the first column.
+ * @param {string} fileContent The content of blockly.mdx
  * @returns {Object} Object with sections as keys and arrays of {name, path} as values
  */
 const parseHtmlTables = function(fileContent) {
   const result = {};
-  
-  // Split by ## headings
+  const linkRegex = /\[([^\]]+)\]\(\/reference\/([^\)]+)\)/g;
+  const tableRegex = /<table[\s>][\s\S]*?<\/table>/gi;
+
+  // Split by ## headings (skip preamble before the first heading)
   const sections = fileContent.split('##');
-  
-  for (let section of sections) {
-    const lines = section.split('\n');
-    const sectionName = lines[0].trim();
-    
+
+  for (let i = 1; i < sections.length; i++) {
+    const section = sections[i];
+    const sectionName = section.split('\n')[0].trim();
+
     if (!sectionName || sectionName === 'blockly package') continue;
-    
-    // Match links in markdown pipe tables: |  [Name](/reference/path) | ...
-    const tableRowRegex = /\|\s*\[([^\]]+)\]\(\/reference\/([^\)]+)\)/g;
+
     const items = [];
-    
-    let match;
-    while ((match = tableRowRegex.exec(section)) !== null) {
-      const name = match[1];
-      const href = match[2];
-      items.push({ name, path: href });
+    let tableMatch;
+    while ((tableMatch = tableRegex.exec(section)) !== null) {
+      let linkMatch;
+      while ((linkMatch = linkRegex.exec(tableMatch[0])) !== null) {
+        items.push({name: linkMatch[1], path: linkMatch[2]});
+      }
     }
-    
+
     if (items.length > 0) {
       result[sectionName] = items;
     }
   }
-  
+
   return result;
 }
 
