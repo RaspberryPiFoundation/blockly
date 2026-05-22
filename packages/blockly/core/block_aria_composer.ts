@@ -627,7 +627,7 @@ function getInputCountLabel(block: BlockSvg) {
     return (
       input.fieldRow.reduce((fieldCount, field) => {
         return field.EDITABLE && !field.isFullBlockField()
-          ? fieldCount++
+          ? ++fieldCount
           : fieldCount;
       }, totalSum) +
       (input.connection?.type === ConnectionType.INPUT_VALUE ? 1 : 0)

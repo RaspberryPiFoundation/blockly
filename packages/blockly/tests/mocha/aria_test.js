@@ -496,7 +496,7 @@ suite('ARIA', function () {
     });
 
     test('Blocks without inputs are properly labeled', function () {
-      const block = this.makeBlock('logic_boolean');
+      const block = this.makeBlock('logic_null');
       const label = Blockly.utils.aria.getState(
         block.getFocusableElement(),
         Blockly.utils.aria.State.LABEL,
