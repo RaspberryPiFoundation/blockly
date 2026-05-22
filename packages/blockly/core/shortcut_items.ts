@@ -108,15 +108,18 @@ export function registerDelete() {
     name: names.DELETE,
     preconditionFn(workspace, scope) {
       const focused = scope.focusedNode;
-      return (
+      const result =
         !workspace.isReadOnly() &&
         focused != null &&
         isIDeletable(focused) &&
         focused.isDeletable() &&
         !workspace.isDragging() &&
         // Don't delete the block if a field editor is open
-        !getFocusManager().ephemeralFocusTaken()
-      );
+        !getFocusManager().ephemeralFocusTaken();
+      if (!result) {
+        workspace.getAudioManager().playErrorBeep();
+      }
+      return result;
     },
     callback(workspace, e, shortcut, scope) {
       // Delete or backspace.
@@ -194,13 +197,16 @@ export function registerCopy() {
       const targetWorkspace = workspace.isFlyout
         ? workspace.targetWorkspace
         : workspace;
-      return (
+      const result =
         !!focused &&
         !!targetWorkspace &&
         !targetWorkspace.isDragging() &&
         !getFocusManager().ephemeralFocusTaken() &&
-        isCopyable(focused)
-      );
+        isCopyable(focused);
+      if (!result) {
+        workspace.getAudioManager().playErrorBeep();
+      }
+      return result;
     },
     callback(workspace, e, shortcut, scope) {
       // Prevent the default copy behavior, which may beep or otherwise indicate
@@ -247,13 +253,16 @@ export function registerCut() {
     name: names.CUT,
     preconditionFn(workspace, scope) {
       const focused = scope.focusedNode;
-      return (
+      const result =
         !!focused &&
         !workspace.isReadOnly() &&
         !workspace.isDragging() &&
         !getFocusManager().ephemeralFocusTaken() &&
-        isCuttable(focused)
-      );
+        isCuttable(focused);
+      if (!result) {
+        workspace.getAudioManager().playErrorBeep();
+      }
+      return result;
     },
     callback(workspace, e, shortcut, scope) {
       const focused = scope.focusedNode;
@@ -308,13 +317,16 @@ export function registerPaste() {
       const targetWorkspace = workspace.isFlyout
         ? workspace.targetWorkspace
         : workspace;
-      return (
+      const result =
         !!clipboard.getLastCopiedData() &&
         !!targetWorkspace &&
         !targetWorkspace.isReadOnly() &&
         !targetWorkspace.isDragging() &&
-        !getFocusManager().ephemeralFocusTaken()
-      );
+        !getFocusManager().ephemeralFocusTaken();
+      if (!result) {
+        workspace.getAudioManager().playErrorBeep();
+      }
+      return result;
     },
     callback(workspace: WorkspaceSvg, e: Event) {
       const copyData = clipboard.getLastCopiedData();
@@ -931,8 +943,17 @@ export function registerDisconnectBlock() {
   ]);
   const disconnectShortcut: ShortcutRegistry.KeyboardShortcut = {
     name: names.DISCONNECT,
-    preconditionFn: (workspace) =>
-      !workspace.isDragging() && !workspace.isReadOnly(),
+    preconditionFn: (workspace, scope) => {
+      const result =
+        !workspace.isDragging() &&
+        !workspace.isReadOnly() &&
+        scope.focusedNode instanceof BlockSvg;
+
+      if (!result) {
+        workspace.getAudioManager().playErrorBeep();
+      }
+      return result;
+    },
     callback: (_workspace, event) => {
       keyboardNavigationController.setIsActive(true);
       const curNode = getFocusManager().getFocusedNode();
@@ -1186,12 +1207,15 @@ export function registerDuplicate() {
     name: names.DUPLICATE,
     preconditionFn: (workspace, scope) => {
       const {focusedNode} = scope;
-      return (
+      const result =
         !workspace.isDragging() &&
         !workspace.isReadOnly() &&
         !workspace.isFlyout &&
-        (focusedNode instanceof BlockSvg ? focusedNode.isDuplicatable() : true)
-      );
+        (focusedNode instanceof BlockSvg ? focusedNode.isDuplicatable() : true);
+      if (!result) {
+        workspace.getAudioManager().playErrorBeep();
+      }
+      return result;
     },
     callback: (workspace, _e, _shortcut, scope) => {
       keyboardNavigationController.setIsActive(true);
