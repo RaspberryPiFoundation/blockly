@@ -150,18 +150,12 @@ following these steps:
 1.  In the legacy Block Factory, click the `Export Block Library` button in the
     toolbar. This will download a file with all of your block definitions.
 
-        ![Screenshot of the legacy Block Factory with the "Export Block Library"
-
-    button
-    highlighted](/images/block-factory/block_factory_legacy_export.png)
+   ![Screenshot of the legacy Block Factory with the "Export Block Library" button highlighted](/images/block-factory/block_factory_legacy_export.png)
 
 1.  In the new Block Factory, click the "Load block" button in the toolbar.
 1.  Select the "Import from Block Factory" option in the menu.
 
-        ![Screenshot of the Block Factory showing the "Load block" and "Import"
-
-    buttons
-    highlighted](/images/block-factory/block_factory_import.png)
+   ![Screenshot of the Block Factory showing the "Load block" and "Import" buttons highlighted](/images/block-factory/block_factory_import.png)
 
 1.  Upload the file you downloaded in Step 1.
 1.  Your block definitions should be automatically converted to the new format
