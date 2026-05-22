@@ -1745,13 +1745,13 @@ Blockly.Msg.LINUX = 'Linux';
 Blockly.Msg.UNKNOWN = 'Unknown';
 /** @type {string} */
 /// {{Optional}} Representation of the Control key used in keyboard shortcuts.
-Blockly.Msg.CONTROL_KEY = 'Ctrl';
+Blockly.Msg.CONTROL_KEY = 'Control';
 /** @type {string} */
 /// {{Optional}} Representation of the Mac Command key used in keyboard shortcuts.
-Blockly.Msg.COMMAND_KEY = '⌘ Command';
+Blockly.Msg.COMMAND_KEY = 'Command';
 /** @type {string} */
 /// {{Optional}} Representation of the Mac Option key used in keyboard shortcuts.
-Blockly.Msg.OPTION_KEY = '⌥ Option';
+Blockly.Msg.OPTION_KEY = 'Option';
 /** @type {string} */
 /// {{Optional}} Representation of the Alt key used in keyboard shortcuts.
 Blockly.Msg.ALT_KEY = 'Alt';
@@ -1766,7 +1766,7 @@ Blockly.Msg.BACKSPACE_KEY = 'Backspace';
 Blockly.Msg.DELETE_KEY = 'Delete';
 /** @type {string} */
 /// {{Optional}} Representation of the Escape key used in keyboard shortcuts.
-Blockly.Msg.ESCAPE = 'Esc';
+Blockly.Msg.ESCAPE = 'Escape';
 /** @type {string} */
 /// {{Optional}} Representation of the Tab key used in keyboard shortcuts.
 Blockly.Msg.TAB_KEY = 'Tab';

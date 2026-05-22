@@ -1,7 +1,7 @@
 {
   "@metadata": {
     "author": "Ellen Spertus <ellen.spertus@gmail.com>",
-    "lastupdated": "2026-05-21 08:19:50.563628",
+    "lastupdated": "2026-05-22 09:11:23.194850",
     "locale": "en",
     "messagedocumentation": "qqq"
   },
@@ -437,14 +437,14 @@
   "CHROME_OS": "ChromeOS",
   "LINUX": "Linux",
   "UNKNOWN": "Unknown",
-  "CONTROL_KEY": "Ctrl",
-  "COMMAND_KEY": "⌘ Command",
-  "OPTION_KEY": "⌥ Option",
+  "CONTROL_KEY": "Control",
+  "COMMAND_KEY": "Command",
+  "OPTION_KEY": "Option",
   "ALT_KEY": "Alt",
   "ENTER_KEY": "Enter",
   "BACKSPACE_KEY": "Backspace",
   "DELETE_KEY": "Delete",
-  "ESCAPE": "Esc",
+  "ESCAPE": "Escape",
   "TAB_KEY": "Tab",
   "SHIFT_KEY": "Shift",
   "CAPS_LOCK_KEY": "Caps Lock",

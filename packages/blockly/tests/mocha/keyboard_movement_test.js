@@ -569,8 +569,8 @@ suite('Keyboard-driven movement', function () {
         assert.equal(
           toastSpy.args[0][1]['message'],
           Blockly.utils.userAgent.MAC
-            ? 'Hold ⌘ Command and use arrow keys to move freely, then Enter to accept the position.'
-            : 'Hold Ctrl and use arrow keys to move freely, then Enter to accept the position.',
+            ? 'Hold Command and use arrow keys to move freely, then Enter to accept the position.'
+            : 'Hold Control and use arrow keys to move freely, then Enter to accept the position.',
         );
         sinon.assert.calledOnce(beepSpy);
         beepSpy.restore();
