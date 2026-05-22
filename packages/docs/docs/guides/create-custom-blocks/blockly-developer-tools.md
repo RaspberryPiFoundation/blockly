@@ -133,9 +133,7 @@ headers are present in the file where you include this code.
 
 This video walks through the steps of defining a block in detail. The UI is out
 date, but the block features it highlights are still more or less accurate.
-
-<iframe width="100%" height="534" src="https://www.youtube.com/embed/s2_xaEvcVI0" title="YouTube video player" frameborder="0"  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-</iframe>
+[Watch the video on YouTube](https://www.youtube.com/watch?v=s2_xaEvcVI0).
 
 ## Block library
 
