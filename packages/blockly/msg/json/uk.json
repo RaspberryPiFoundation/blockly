@@ -351,5 +351,17 @@
 	"WORKSPACE_ARIA_LABEL": "Робоча область Blockly",
 	"COLLAPSED_WARNINGS_WARNING": "Звернуті блоки містять попередження.",
 	"DIALOG_OK": "Гаразд",
-	"DIALOG_CANCEL": "Скасувати"
+	"DIALOG_CANCEL": "Скасувати",
+	"WINDOWS": "Windows",
+	"MAC_OS": "macOS",
+	"CHROME_OS": "ChromeOS",
+	"LINUX": "Linux",
+	"UNKNOWN": "Невідома",
+	"CONTROL_KEY": "Ctrl",
+	"COMMAND_KEY": "⌘ Command",
+	"OPTION_KEY": "⌥ Option",
+	"ALT_KEY": "Alt",
+	"CUT_SHORTCUT": "Вирізати",
+	"COPY_SHORTCUT": "Копіювати",
+	"PASTE_SHORTCUT": "Вставити"
 }
