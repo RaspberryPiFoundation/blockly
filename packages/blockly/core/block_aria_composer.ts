@@ -346,7 +346,7 @@ export function getInputLabelsSubset(block: BlockSvg, input: Input): string[] {
     .filter((input) => input.isVisible())
     .map(
       (input) =>
-        input.getLabel(Verbosity.TERSE) ||
+        input.getLabel(Verbosity.TERSE, false) ||
         Msg['INPUT_LABEL_INDEX'].replace(
           '%1',
           (input.getIndex() + 1).toString(),
