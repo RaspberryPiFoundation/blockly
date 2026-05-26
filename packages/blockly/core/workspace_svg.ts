@@ -394,24 +394,24 @@ export class WorkspaceSvg
       ? new Grid(this.options.gridPattern, options.gridOptions)
       : null;
 
-    if (Variables && Variables.internalFlyoutCategory) {
+    if (Variables && Variables.flyoutCategory) {
       this.registerToolboxCategoryCallback(
         Variables.CATEGORY_NAME,
-        Variables.internalFlyoutCategory,
+        Variables.flyoutCategory,
       );
     }
 
-    if (VariablesDynamic && VariablesDynamic.internalFlyoutCategory) {
+    if (VariablesDynamic && VariablesDynamic.flyoutCategory) {
       this.registerToolboxCategoryCallback(
         VariablesDynamic.CATEGORY_NAME,
-        VariablesDynamic.internalFlyoutCategory,
+        VariablesDynamic.flyoutCategory,
       );
     }
 
-    if (Procedures && Procedures.internalFlyoutCategory) {
+    if (Procedures && Procedures.flyoutCategory) {
       this.registerToolboxCategoryCallback(
         Procedures.CATEGORY_NAME,
-        Procedures.internalFlyoutCategory,
+        Procedures.flyoutCategory,
       );
       this.addChangeListener(Procedures.mutatorOpenListener);
     }

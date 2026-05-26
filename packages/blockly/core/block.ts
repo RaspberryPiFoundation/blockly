@@ -50,7 +50,6 @@ import * as registry from './registry.js';
 import * as Tooltip from './tooltip.js';
 import * as arrayUtils from './utils/array.js';
 import {Coordinate} from './utils/coordinate.js';
-import * as deprecation from './utils/deprecation.js';
 import * as idGenerator from './utils/idgenerator.js';
 import * as parsing from './utils/parsing.js';
 import {replaceMessageReferences} from './utils/parsing.js';
@@ -1162,28 +1161,6 @@ export class Block {
         yield field;
       }
     }
-  }
-
-  /**
-   * Return all variables referenced by this block.
-   *
-   * @deprecated v13: Use Blockly.Block.getVarModels().map(m => m.getId())
-   * @returns List of variable ids.
-   */
-  getVars(): string[] {
-    deprecation.warn(
-      'Blockly.Block.getVars()',
-      'v13',
-      'v14',
-      'Blockly.Block.getVarModels().map(model => model.getId())',
-    );
-    const vars: string[] = [];
-    for (const field of this.getFields()) {
-      if (field.referencesVariables()) {
-        vars.push(field.getValue());
-      }
-    }
-    return vars;
   }
 
   /**
