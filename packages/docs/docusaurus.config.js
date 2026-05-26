@@ -13,8 +13,11 @@ const config = {
     v4: true,
   },
 
-  url: 'https://raspberrypifoundation.github.io',
-  baseUrl: process.env.BASE_URL || '/docs/',
+  // CloudFlare Pages requires a trailing slash for index pages to work correctly.
+  trailingSlash: true,
+
+  url: 'https://docs.blockly.com',
+  baseUrl: process.env.BASE_URL || '/',
 
   // GitHub pages deployment config
   organizationName: 'RaspberryPiFoundation',
@@ -34,21 +37,6 @@ const config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
-
-  plugins: [
-    [
-      '@docusaurus/plugin-client-redirects',
-      {
-        fromExtensions: ['md', 'mdx'],
-        createRedirects(existingPath) {
-          if (existingPath.startsWith('/reference/')) {
-            return [existingPath.replace('/reference/', '/reference/js/')];
-          }
-          return undefined;
-        },
-      },
-    ],
-  ],
 
   presets: [
     [
@@ -105,7 +93,7 @@ const config = {
               },
               {
                 label: 'Build your editor',
-                to: 'guides/configure/web/configuration_struct',
+                to: 'guides/configure/configuration_struct',
               },
               {
                 label: 'Build your blocks',
@@ -117,7 +105,7 @@ const config = {
               },
               {
                 label: 'Contribute to Blockly',
-                to: 'guides/contribute/index',
+                to: 'guides/contribute',
               },
             ],
           },

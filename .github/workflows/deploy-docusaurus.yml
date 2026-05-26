@@ -1,11 +1,19 @@
 # .github/workflows/deploy-docusaurus.yml
-# This workflow deploys the Blockly documentation to GitHub Pages.
+#
+# This workflow deploys the Blockly documentation to Cloudflare Pages.
 # Run this manually after a release to publish updated documentation.
+#
+# Prerequisites (one-off setup):
+#   1. Create the Pages project in Cloudflare (Dashboard -> Workers & Pages -> Create
+#      -> Pages -> Direct Upload, or `npx wrangler pages project create blockly-docs`).
+#   2. Add the following GitHub Actions secrets (Settings -> Secrets and variables -> Actions):
+#        - CLOUDFLARE_API_TOKEN   (token with the "Cloudflare Pages: Edit" permission)
+#        - CLOUDFLARE_ACCOUNT_ID  (the Cloudflare account ID)
 
-name: Deploy Docusaurus to GitHub Pages
+name: Deploy Docusaurus to Cloudflare Pages
 
 on:
-  # To run: GitHub -> Actions -> "Deploy Docusaurus to GitHub Pages" -> Run workflow
+  # To run: GitHub -> Actions -> "Deploy Docusaurus to Cloudflare Pages" -> Run workflow
   # Optionally set `ref` to the release branch/tag
   workflow_dispatch:
     inputs:
@@ -15,23 +23,19 @@ on:
         default: "main"
         type: string
 
-# Sets the permissions for the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
-  pages: write
-  id-token: write
+  deployments: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued
-# However, do not cancel in-progress runs as we want to allow these production deployments to complete
 concurrency:
-  group: "pages"
+  group: "cloudflare-pages"
   cancel-in-progress: false
 
 jobs:
   deploy:
     environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      name: cloudflare-pages
+      url: ${{ steps.deployment.outputs.deployment-url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout your repository
@@ -61,19 +65,15 @@ jobs:
         working-directory: ./packages/docs
         run: npm run build
         env:
-          # When deploying to a subdirectory of your <org|name>.github.io domain, the BASE_URL
-          # must be set to the name of the repo, go to your repo → Settings → Environments:
-          # Open the github-pages environment, under Environment variables, add: PAGES_BASE_URL
-          BASE_URL: ${{ vars.PAGES_BASE_URL || '/docs/' }}
+          # Override by setting the PAGES_BASE_URL repo variable (Settings -> Environments -> cloudflare-pages -> Environment variables) if docs are to be served from a subpath
+          BASE_URL: ${{ vars.PAGES_BASE_URL || '/' }}
 
-      - name: Setup GitHub Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload build artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./packages/docs/build
-
-      - name: Deploy to GitHub Pages
+      - name: Deploy to Cloudflare Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # `--branch=main` ensures this is published as a "Production" deployment in the Pages project regardless of which `ref` was checked out for the build
+          command: pages deploy ./packages/docs/build --project-name=blockly-docs --branch=main
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

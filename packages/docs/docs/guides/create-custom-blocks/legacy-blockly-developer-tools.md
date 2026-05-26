@@ -36,9 +36,7 @@ can easily create, modify, and save custom blocks.
 
 This video walks through the steps of defining a block in detail. The UI is out
 date, but the block features it highlights are still accurate.
-
-<iframe width="950" height="534" src="https://www.youtube.com/embed/s2_xaEvcVI0" title="YouTube video player" frameborder="0"  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-</iframe>
+[Watch the video on YouTube](https://www.youtube.com/watch?v=s2_xaEvcVI0).
 
 ### Managing the library
 
@@ -116,7 +114,7 @@ starting workspace with the "Toolbox" and "Workspace" buttons.
 ### Building a toolbox
 
 This tab helps build the XML for a Toolbox. The material assumes
-familiarity with features of a [Toolbox](/guides/configure/web/toolboxes/toolbox).
+familiarity with features of a [Toolbox](/guides/configure/toolboxes/toolbox).
 If you already have XML for a toolbox that you want to edit here, you can
 load it by clicking "Load to Edit".
 
@@ -167,7 +165,7 @@ to the toolbox. If you have blocks defined in JSON that aren't in your library,
 you can import them using the "Import Custom Blocks" button.
 
 Some blocks should be used together or include defaults. This is done with
-[groups and shadows](/guides/configure/web/toolboxes/preset). Any
+[groups and shadows](/guides/configure/toolboxes/preset). Any
 blocks that are connected in the editor will be added to the toolbox as a group.
 Blocks that are attached to another block can also be changed to shadow blocks
 by selecting the child block and clicking the "Make Shadow" button.
@@ -179,7 +177,7 @@ blocks.
 If you include a variable or function block in their toolbox, include a
 "Variables" or "Functions" category in your toolbox to allow users to fully
 utilize the block. Learn more about ["Variables" or "Functions"
-categories](/guides/configure/web/toolboxes/dynamic#built-in-dynamic-categories).
+categories](/guides/configure/toolboxes/dynamic#built-in-dynamic-categories).
 
 ### Configuring a workspace
 
@@ -189,10 +187,10 @@ tab and select "Workspace".
 #### Choose Workspace Options
 
 Set different values for [configuration
-options](/guides/configure/web/configuration_struct#the-options-dictionary)
+options](/guides/configure/configuration_struct#the-options-dictionary)
 and see the result in the preview area. Enabling
-[grid](/guides/configure/web/grid) or
-[zoom](/guides/configure/web/zoom) reveals more options to configure.
+[grid](/guides/configure/grid) or
+[zoom](/guides/configure/zoom) reveals more options to configure.
 Also, switching to using categories usually requires a more complex
 workspace; a trashcan and scrollbars are added automatically when you add your
 first category.

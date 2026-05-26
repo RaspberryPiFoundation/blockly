@@ -1,0 +1,122 @@
+# Cloudflare Pages Redirects
+# Syntax: source destination [status_code]
+# https://developers.cloudflare.com/pages/configuration/redirects/
+
+# Legacy Google reference URLs used /reference/js/ and may end in .md.
+# Canonical URLs are /reference/<doc-id>/ (trailingSlash: true, no /js/, no extension).
+# More specific rules must appear before broader /reference/js/*.
+
+/reference/js/*.md   /reference/:splat/   302
+/reference/js/*.mdx  /reference/:splat/   302
+/reference/js/*      /reference/:splat/   302
+
+# Strip .md/.mdx extensions on canonical /reference/* paths
+/reference/*.md      /reference/:splat/   302
+/reference/*.mdx     /reference/:splat/   302
+
+# Remove field docs for angle, colour, and multiline
+/guides/create-custom-blocks/fields/built-in-fields/angle   https://www.npmjs.com/package/@blockly/field-angle   301
+/guides/create-custom-blocks/fields/built-in-fields/colour   https://www.npmjs.com/package/@blockly/field-colour   301
+/guides/create-custom-blocks/fields/built-in-fields/multiline-text-input   https://www.npmjs.com/package/@blockly/field-multilineinput   301
+
+# Add Getting started section
+/guides/overview   /guides/get-started/what-is-blockly/   301
+/guides/get-started/web   /guides/get-started/get-the-code/   301
+
+# Reorganize docs on code generation
+/guides/configure/web/code-generators   /guides/create-custom-blocks/code-generation/overview/   301
+/guides/create-custom-blocks/caching-arguments   /guides/create-custom-blocks/code-generation/caching-arguments/   301
+/guides/create-custom-blocks/operator-precedence   /guides/create-custom-blocks/code-generation/operator-precedence/   301
+/guides/create-custom-blocks/generating-code   /guides/create-custom-blocks/code-generation/overview/#block-code-generators   301
+
+# Move connection checking information
+/guides/create-custom-blocks/type-checks   /guides/create-custom-blocks/inputs/connection-checks/   301
+
+# Reorganize "Modify Blockly" and "Plugins" sections (2022)
+/guides/modify/contributing   /guides/contribute/   301
+
+# Contributing Get Started section
+/guides/modify/contribute/commits   /guides/contribute/get-started/commits/   301
+/guides/modify/development_setup   /guides/contribute/get-started/development_tools/   301
+/guides/modify/contribute/issue_labels   /guides/contribute/get-started/issue_labels/   301
+/guides/modify/contribute/pr_review_process   /guides/contribute/get-started/pr_review_process/   301
+/guides/modify/contribute/write_a_good_issue   /guides/contribute/get-started/write_a_good_issue/   301
+/guides/modify/contribute/write_a_good_pr   /guides/contribute/get-started/write_a_good_pr/   301
+/guides/modify/web/playground   /guides/contribute/get-started/playground/   301
+
+# Contributing to Samples section
+/guides/modify/contribute/add_a_plugin   /guides/contribute/samples/add_a_plugin/   301
+/guides/plugins/debugging   /guides/contribute/samples/debugging/   301
+/guides/plugins/naming   /guides/contribute/samples/naming/   301
+/guides/plugins/overview   /guides/programming/plugin_overview/   301
+/guides/modify/contribute/samples_repository_structure   /guides/contribute/samples/repository_structure/   301
+/guides/modify/contribute/write_a_codelab   /guides/contribute/core/write_a_codelab/   301
+
+# Contributing to Core section
+/guides/modify/web/style-guide   /guides/contribute/core/style_guide/   301
+/guides/modify/web/unit-testing   /guides/contribute/core/unit_testing/   301
+/guides/modify/web/*   /guides/contribute/core/   301
+
+# Advanced Customization section (under Configure)
+/guides/plugins/interfaces/overview   /guides/configure/customization/   301
+/guides/plugins/interfaces/connection_checker   /guides/create-custom-blocks/inputs/connection_checker/   301
+/guides/plugins/interfaces/metrics_manager   /guides/configure/metrics_manager/   301
+/guides/plugins/interfaces/*   /guides/configure/customization/   301
+/guides/modify/forking_blockly   /guides/programming/forking_blockly/   301
+/guides/plugins/using_blockly_apis   /guides/programming/using_blockly_apis/   301
+
+# Default pages for directories
+/guides/   /guides/get-started/what-is-blockly/   301
+/reference/   /reference/blockly/   301
+/reference/overview   /reference/blockly/   301
+
+# Begin - Site refactoring - 2025
+
+# Design considerations
+/guides/create-custom-blocks/block-paradigms   /guides/design/applications/   301
+/guides/create-custom-blocks/style-guide   /guides/design/blocks/   301
+/guides/app-integration/best-practices   /guides/design/education/   301
+
+# Move Advanced Customizations to Programming considerations/elsewhere
+/guides/configure/advanced/using_blockly_apis   /guides/programming/using_blockly_apis/   301
+/guides/configure/advanced/forking_blockly   /guides/programming/forking_blockly/   301
+/guides/configure/advanced/unforking_blockly   /guides/programming/unforking_blockly/   301
+/guides/configure/advanced/interfaces/overview   /guides/configure/customization/   301
+/guides/configure/advanced/interfaces/connection_checker   /guides/create-custom-blocks/inputs/connection_checker/   301
+/guides/configure/advanced/interfaces/metrics_manager   /guides/configure/metrics_manager/   301
+
+# Split up Toolbox
+/guides/configure/web/toolbox   /guides/configure/toolboxes/toolbox/   301
+
+# Colours
+/guides/create-custom-blocks/block-colour   /guides/configure/appearance/block-colour/   301
+
+# Localization
+/guides/create-custom-blocks/localize-blocks   /guides/configure/translations/   301
+
+# Custom blocks
+/guides/configure/web/custom-blocks   /guides/create-custom-blocks/overview/   301
+/guides/create-custom-blocks/extensions   /guides/create-custom-blocks/define/extensions/   301
+
+# Code generation
+/guides/create-custom-blocks/code-generation/inner-blocks   /guides/create-custom-blocks/code-generation/block-code/#get-code-from-inner-blocks   301
+/guides/create-custom-blocks/code-generation/statements/basic-implementation   /guides/create-custom-blocks/code-generation/block-code/#inner-statement-blocks   301
+/guides/create-custom-blocks/code-generation/statements/caching-arguments   /guides/create-custom-blocks/code-generation/caching-arguments/   301
+/guides/create-custom-blocks/code-generation/values/basic-implementation   /guides/create-custom-blocks/code-generation/block-code/#inner-value-blocks   301
+/guides/create-custom-blocks/code-generation/values/operator-precedence   /guides/create-custom-blocks/code-generation/operator-precedence/   301
+/guides/create-custom-blocks/code-generation/values/caching-arguments   /guides/create-custom-blocks/code-generation/caching-arguments/   301
+
+# Icons
+/guides/create-custom-blocks/define-blocks   /guides/create-custom-blocks/define/block-definitions/   301
+
+# Shape
+/guides/configure/web/appearance/overview   /guides/create-custom-blocks/renderers/overview/   301
+/guides/configure/web/appearance/renderers   /guides/create-custom-blocks/renderers/overview/   301
+
+# Move configure docs from /web/ subdirectory
+/guides/configure/web/*   /guides/configure/:splat/   301
+
+# Plugins
+/guides/contribute/samples/plugin_overview   /guides/programming/plugin_overview/   301
+
+# End - Site refactoring - 2025

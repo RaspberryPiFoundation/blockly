@@ -255,7 +255,7 @@ export class Options {
   /**
    * Parse the user-specified zoom options, using reasonable defaults where
    * behaviour is unspecified.  See zoom documentation:
-   *   https://developers.google.com/blockly/guides/configure/web/zoom
+   *   https://developers.google.com/blockly/guides/configure/zoom
    *
    * @param options Dictionary of options.
    * @returns Normalized zoom options.
@@ -304,7 +304,7 @@ export class Options {
   /**
    * Parse the user-specified grid options, using reasonable defaults where
    * behaviour is unspecified. See grid documentation:
-   *   https://developers.google.com/blockly/guides/configure/web/grid
+   *   https://developers.google.com/blockly/guides/configure/grid
    *
    * @param options Dictionary of options.
    * @returns Normalized grid options.
@@ -322,7 +322,7 @@ export class Options {
 
   /**
    * Parse the user-specified theme options, using the classic theme as a
-   * default. https://developers.google.com/blockly/guides/configure/web/themes
+   * default. https://developers.google.com/blockly/guides/configure/appearance/themes
    *
    * @param options Dictionary of options.
    * @returns A Blockly Theme.

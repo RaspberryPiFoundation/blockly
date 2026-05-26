@@ -133,9 +133,7 @@ headers are present in the file where you include this code.
 
 This video walks through the steps of defining a block in detail. The UI is out
 date, but the block features it highlights are still more or less accurate.
-
-<iframe width="100%" height="534" src="https://www.youtube.com/embed/s2_xaEvcVI0" title="YouTube video player" frameborder="0"  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-</iframe>
+[Watch the video on YouTube](https://www.youtube.com/watch?v=s2_xaEvcVI0).
 
 ## Block library
 
@@ -152,18 +150,12 @@ following these steps:
 1.  In the legacy Block Factory, click the `Export Block Library` button in the
     toolbar. This will download a file with all of your block definitions.
 
-        ![Screenshot of the legacy Block Factory with the "Export Block Library"
-
-    button
-    highlighted](/images/block-factory/block_factory_legacy_export.png)
+   ![Screenshot of the legacy Block Factory with the "Export Block Library" button highlighted](/images/block-factory/block_factory_legacy_export.png)
 
 1.  In the new Block Factory, click the "Load block" button in the toolbar.
 1.  Select the "Import from Block Factory" option in the menu.
 
-        ![Screenshot of the Block Factory showing the "Load block" and "Import"
-
-    buttons
-    highlighted](/images/block-factory/block_factory_import.png)
+   ![Screenshot of the Block Factory showing the "Load block" and "Import" buttons highlighted](/images/block-factory/block_factory_import.png)
 
 1.  Upload the file you downloaded in Step 1.
 1.  Your block definitions should be automatically converted to the new format
@@ -181,7 +173,7 @@ following these steps:
 [block-code-generator]: /guides/create-custom-blocks/code-generation/overview#block-code-generators
 [inputs]: /guides/get-started/workspace-anatomy#inputs
 [fields]: /guides/get-started/workspace-anatomy#fields
-[toolbox-preset]: /guides/configure/web/toolboxes/preset
+[toolbox-preset]: /guides/configure/toolboxes/preset
 [mutators]: /guides/create-custom-blocks/mutators
 [loading-blockly]: /guides/get-started/get-the-code#get-the-code-1
 [code-generation]: /guides/create-custom-blocks/code-generation/overview#language-code-generators

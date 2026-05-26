@@ -1,0 +1,161 @@
+diff --git a/node_modules/@microsoft/api-documenter/lib-commonjs/documenters/MarkdownDocumenter.js b/node_modules/@microsoft/api-documenter/lib-commonjs/documenters/MarkdownDocumenter.js
+index 026a528..1ebdc8f 100644
+--- a/node_modules/@microsoft/api-documenter/lib-commonjs/documenters/MarkdownDocumenter.js
++++ b/node_modules/@microsoft/api-documenter/lib-commonjs/documenters/MarkdownDocumenter.js
+@@ -914,12 +914,14 @@ class MarkdownDocumenter {
+     }
+     _writeBreadcrumb(output, apiItem) {
+         const configuration = this._tsdocConfiguration;
+-        output.appendNodeInParagraph(new tsdoc_1.DocLinkTag({
+-            configuration,
+-            tagName: '@link',
+-            linkText: 'Home',
+-            urlDestination: this._getLinkFilenameForApiItem(this._apiModel)
+-        }));
++        // Don't print the first breadcrumb, because there's only one package, so we don't need the Home link.
++        // output.appendNodeInParagraph(new tsdoc_1.DocLinkTag({
++        //     configuration,
++        //     tagName: '@link',
++        //     linkText: 'Home',
++        //     urlDestination: this._getLinkFilenameForApiItem(this._apiModel)
++        // }));
++        let first = true;
+         for (const hierarchyItem of apiItem.getHierarchy()) {
+             switch (hierarchyItem.kind) {
+                 case api_extractor_model_1.ApiItemKind.Model:
+@@ -929,18 +931,24 @@ class MarkdownDocumenter {
+                     // this may change in the future.
+                     break;
+                 default:
+-                    output.appendNodesInParagraph([
+-                        new tsdoc_1.DocPlainText({
+-                            configuration,
+-                            text: ' > '
+-                        }),
++                    if (!first) {
++                        // Only print the breadcrumb separator if it's not the first item we're printing.
++                        output.appendNodeInParagraph(
++                            new tsdoc_1.DocPlainText({
++                                configuration,
++                                text: ' > '
++                            })
++                        );
++                    }
++                    first = false;
++                    output.appendNodeInParagraph(
+                         new tsdoc_1.DocLinkTag({
+                             configuration,
+                             tagName: '@link',
+                             linkText: hierarchyItem.displayName,
+                             urlDestination: this._getLinkFilenameForApiItem(hierarchyItem)
+                         })
+-                    ]);
++                    );
+             }
+         }
+     }
+@@ -1014,9 +1022,8 @@ class MarkdownDocumenter {
+             let qualifiedName = Utilities_1.Utilities.getSafeFilenameForName(hierarchyItem.displayName);
+             if (api_extractor_model_1.ApiParameterListMixin.isBaseClassOf(hierarchyItem)) {
+                 if (hierarchyItem.overloadIndex > 1) {
+-                    // Subtract one for compatibility with earlier releases of API Documenter.
+-                    // (This will get revamped when we fix GitHub issue #1308)
+-                    qualifiedName += `_${hierarchyItem.overloadIndex - 1}`;
++                    // https://github.com/microsoft/rushstack/issues/1921
++                    qualifiedName += `_${hierarchyItem.overloadIndex}`;
+                 }
+             }
+             switch (hierarchyItem.kind) {
+@@ -1028,7 +1035,8 @@ class MarkdownDocumenter {
+                     baseName = Utilities_1.Utilities.getSafeFilenameForName(node_core_library_1.PackageName.getUnscopedName(hierarchyItem.displayName));
+                     break;
+                 default:
+-                    baseName += '.' + qualifiedName;
++                    // https://github.com/microsoft/rushstack/issues/1921
++                    baseName += '.' + qualifiedName + '_' + hierarchyItem.kind.toLowerCase();
+             }
+         }
+         return baseName + '.md';
+diff --git a/node_modules/@microsoft/api-documenter/lib-esm/documenters/MarkdownDocumenter.js b/node_modules/@microsoft/api-documenter/lib-esm/documenters/MarkdownDocumenter.js
+index f08d6e8..0d28f73 100644
+--- a/node_modules/@microsoft/api-documenter/lib-esm/documenters/MarkdownDocumenter.js
++++ b/node_modules/@microsoft/api-documenter/lib-esm/documenters/MarkdownDocumenter.js
+@@ -878,33 +878,41 @@ export class MarkdownDocumenter {
+     }
+     _writeBreadcrumb(output, apiItem) {
+         const configuration = this._tsdocConfiguration;
+-        output.appendNodeInParagraph(new DocLinkTag({
+-            configuration,
+-            tagName: '@link',
+-            linkText: 'Home',
+-            urlDestination: this._getLinkFilenameForApiItem(this._apiModel)
+-        }));
++        // Don't print the first breadcrumb, because there's only one package, so we don't need the Home link.
++        // output.appendNodeInParagraph(new tsdoc_1.DocLinkTag({
++        //     configuration,
++        //     tagName: '@link',
++        //     linkText: 'Home',
++        //     urlDestination: this._getLinkFilenameForApiItem(this._apiModel)
++        // }));
++        let first = true;
+         for (const hierarchyItem of apiItem.getHierarchy()) {
+             switch (hierarchyItem.kind) {
+-                case ApiItemKind.Model:
+-                case ApiItemKind.EntryPoint:
++                case api_extractor_model_1.ApiItemKind.Model:
++                case api_extractor_model_1.ApiItemKind.EntryPoint:
+                     // We don't show the model as part of the breadcrumb because it is the root-level container.
+                     // We don't show the entry point because today API Extractor doesn't support multiple entry points;
+                     // this may change in the future.
+                     break;
+                 default:
+-                    output.appendNodesInParagraph([
+-                        new DocPlainText({
+-                            configuration,
+-                            text: ' > '
+-                        }),
+-                        new DocLinkTag({
++                    if (!first) {
++                        // Only print the breadcrumb separator if it's not the first item we're printing.
++                        output.appendNodeInParagraph(
++                            new tsdoc_1.DocPlainText({
++                                configuration,
++                                text: ' > '
++                            })
++                        );
++                    }
++                    first = false;
++                    output.appendNodeInParagraph(
++                        new tsdoc_1.DocLinkTag({
+                             configuration,
+                             tagName: '@link',
+                             linkText: hierarchyItem.displayName,
+                             urlDestination: this._getLinkFilenameForApiItem(hierarchyItem)
+                         })
+-                    ]);
++                    );
+             }
+         }
+     }
+@@ -978,9 +986,8 @@ export class MarkdownDocumenter {
+             let qualifiedName = Utilities.getSafeFilenameForName(hierarchyItem.displayName);
+             if (ApiParameterListMixin.isBaseClassOf(hierarchyItem)) {
+                 if (hierarchyItem.overloadIndex > 1) {
+-                    // Subtract one for compatibility with earlier releases of API Documenter.
+-                    // (This will get revamped when we fix GitHub issue #1308)
+-                    qualifiedName += `_${hierarchyItem.overloadIndex - 1}`;
++                    // https://github.com/microsoft/rushstack/issues/1921
++                    qualifiedName += `_${hierarchyItem.overloadIndex}`;
+                 }
+             }
+             switch (hierarchyItem.kind) {
+@@ -992,7 +999,8 @@ export class MarkdownDocumenter {
+                     baseName = Utilities.getSafeFilenameForName(PackageName.getUnscopedName(hierarchyItem.displayName));
+                     break;
+                 default:
+-                    baseName += '.' + qualifiedName;
++                    // https://github.com/microsoft/rushstack/issues/1921
++                    baseName += '.' + qualifiedName + '_' + hierarchyItem.kind.toLowerCase();
+             }
+         }
+         return baseName + '.md';
