@@ -15,7 +15,7 @@ import * as eventUtils from './events/utils.js';
 import {getFocusManager} from './focus_manager.js';
 import {ISelectable, isSelectable} from './interfaces/i_selectable.js';
 import {ShortcutRegistry} from './shortcut_registry.js';
-import {deprecation} from './utils.js';
+import * as deprecation from './utils/deprecation.js';
 import type {Workspace} from './workspace.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 
