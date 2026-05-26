@@ -15,7 +15,7 @@ import * as eventUtils from './events/utils.js';
 import {getFocusManager} from './focus_manager.js';
 import {ISelectable, isSelectable} from './interfaces/i_selectable.js';
 import {ShortcutRegistry} from './shortcut_registry.js';
-import { deprecation } from './utils.js';
+import {deprecation} from './utils.js';
 import type {Workspace} from './workspace.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 
@@ -66,14 +66,14 @@ export function unregisterWorkspace(workspace: Workspace) {
 /**
  * Unregister a workspace from the workspace db.
  *
- * @deprecated v12: use Blockly.common.unregisterWorkspace
+ * @deprecated v13: use Blockly.common.unregisterWorkspace
  * @param workspace
  */
 export function unregisterWorkpace(workspace: Workspace) {
   deprecation.warn(
     'Blockly.common.unregisterWorkpace',
-    'v12',
     'v13',
+    'v14',
     'Blockly.common.unregisterWorkspace',
   );
 
