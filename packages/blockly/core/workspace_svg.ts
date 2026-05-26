@@ -745,6 +745,17 @@ export class WorkspaceSvg
    * Updates the label on the workspace to reflect the number of top-level stacks in the workspace.
    */
   private updateAriaLabel() {
+    if (userAgent.APPLE) {
+      // VoiceOver is reading this label inappropriately, so don't show the
+      // stack count because it might be inaccurate.
+      // https://github.com/RaspberryPiFoundation/blockly/issues/9885
+      aria.setState(
+        this.svgGroup_,
+        aria.State.LABEL,
+        Msg['WORKSPACE_LABEL_PLAIN'],
+      );
+      return;
+    }
     const numStacks = this.getTopBlocks(false).length;
     if (numStacks == 1) {
       aria.setState(

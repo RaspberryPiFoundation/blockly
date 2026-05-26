@@ -1912,6 +1912,9 @@ Blockly.Msg.KEYBOARD_NAV_COPIED_HINT = 'Copied. Press %1 to paste.';
 /// Message shown when an item is cut in keyboard navigation mode.
 Blockly.Msg.KEYBOARD_NAV_CUT_HINT = 'Cut. Press %1 to paste.';
 /** @type {string} */
+/// Aria label for a workspace. Avoid using the name "Blockly" as this could appear in branded products.
+Blockly.Msg.WORKSPACE_LABEL_PLAIN = 'Blocks workspace.';
+/** @type {string} */
 /// Aria label for a workspace with one stack of blocks.
 Blockly.Msg.WORKSPACE_LABEL_1_STACK = 'Blocks workspace. 1 stack of blocks';
 /** @type {string} */
