@@ -2051,7 +2051,7 @@ export class BlockSvg
       block = block.getNextBlock();
     }
     if (count <= 1) {
-      return computeAriaLabel(this, aria.Verbosity.TERSE);
+      return computeAriaLabel(this, aria.Verbosity.TERSE, false);
     }
 
     const labelTemplate = Msg['BLOCK_LABEL_STACK_BLOCKS'];
