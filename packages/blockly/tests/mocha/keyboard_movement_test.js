@@ -733,6 +733,52 @@ suite('Keyboard-driven movement', function () {
         cancelMove(this.workspace);
       });
 
+      test('Enables disabled blocks during drag and reenables when committed', function () {
+        const ifBlock = this.workspace.newBlock('controls_if');
+        const repeatBlock = this.workspace.newBlock('controls_repeat');
+        ifBlock.initSvg();
+        ifBlock.render();
+        repeatBlock.initSvg();
+        repeatBlock.render();
+        repeatBlock.previousConnection.connect(
+          ifBlock.getInput('DO0').connection,
+        );
+
+        ifBlock.setDisabledReason(true, 'test');
+        assert.isFalse(ifBlock.isEnabled());
+
+        Blockly.getFocusManager().focusNode(ifBlock);
+        startMove(this.workspace);
+
+        assert.isTrue(ifBlock.isEnabled());
+
+        endMove(this.workspace);
+        assert.isFalse(ifBlock.isEnabled());
+      });
+
+      test('Enables disabled blocks during drag and reenables when cancelled', function () {
+        const ifBlock = this.workspace.newBlock('controls_if');
+        const repeatBlock = this.workspace.newBlock('controls_repeat');
+        ifBlock.initSvg();
+        ifBlock.render();
+        repeatBlock.initSvg();
+        repeatBlock.render();
+        repeatBlock.previousConnection.connect(
+          ifBlock.getInput('DO0').connection,
+        );
+
+        ifBlock.setDisabledReason(true, 'test');
+        assert.isFalse(ifBlock.isEnabled());
+
+        Blockly.getFocusManager().focusNode(ifBlock);
+        startMove(this.workspace);
+
+        assert.isTrue(ifBlock.isEnabled());
+
+        cancelMove(this.workspace);
+        assert.isFalse(ifBlock.isEnabled());
+      });
+
       suite('Statement move tests', function () {
         // Clear the workspace and load start blocks.
         setup(function () {
