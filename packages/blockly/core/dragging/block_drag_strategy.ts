@@ -92,6 +92,12 @@ export class BlockDragStrategy implements IDragStrategy {
   /** Used to persist an event group when snapping is done async. */
   private originalEventGroup = '';
 
+  /**
+   * Map from block IDs to reason(s) why it was disabled, used to restore
+   * disabled state post-drag.
+   */
+  private lastBlockDisabledReasons: Map<string, Set<string>> = new Map();
+
   protected readonly BLOCK_CONNECTION_OFFSET = 10;
 
   /**
@@ -337,6 +343,9 @@ export class BlockDragStrategy implements IDragStrategy {
     }
 
     this.block.setDragging(true);
+
+    // Enable all blocks including children.
+    this.enableAllDraggedBlocks(this.block);
 
     // For keyboard-driven moves, cache a list of valid connection points for
     // use in constrained moved mode.
@@ -885,6 +894,9 @@ export class BlockDragStrategy implements IDragStrategy {
       );
 
       this.block.setDragging(false);
+
+      // Re-disable the block for its original reasons.
+      this.redisableAllDraggedBlocks(this.block);
     }
 
     if (this.connectionCandidate) {
@@ -979,6 +991,8 @@ export class BlockDragStrategy implements IDragStrategy {
     this.startParentConn = null;
 
     this.block.setDragging(false);
+    // Re-disable the block for its original reasons.
+    this.redisableAllDraggedBlocks(this.block);
     this.dragging = false;
     aria.announceDynamicAriaState(Msg['ANNOUNCE_MOVE_CANCELED']);
   }
@@ -1235,5 +1249,42 @@ export class BlockDragStrategy implements IDragStrategy {
       event instanceof KeyboardEvent && !(event.ctrlKey || event.metaKey)
         ? MoveMode.CONSTRAINED
         : MoveMode.UNCONSTRAINED;
+  }
+
+  /**
+   * Enables the given block and its children.
+   * Stores the reasons each block was disabled so they can be restored.
+   *
+   * @param block The block to enable.
+   */
+  private enableAllDraggedBlocks(block: BlockSvg) {
+    const oldUndo = eventUtils.getRecordUndo();
+    eventUtils.setRecordUndo(false);
+    this.lastBlockDisabledReasons.clear();
+    // getDescendants includes the block itself.
+    block.getDescendants(false).forEach((descendant) => {
+      const reasons = new Set(descendant.getDisabledReasons());
+      this.lastBlockDisabledReasons.set(descendant.id, reasons);
+      reasons.forEach((reason) => descendant.setDisabledReason(false, reason));
+    });
+    eventUtils.setRecordUndo(oldUndo);
+  }
+
+  /**
+   * Re-disables the given block and its children using their original
+   * disabled reasons.
+   *
+   * @param block The block to re-disable, if applicable.
+   */
+  private redisableAllDraggedBlocks(block: BlockSvg) {
+    console.log('redisable');
+    const oldUndo = eventUtils.getRecordUndo();
+    eventUtils.setRecordUndo(false);
+    block.getDescendants(false).forEach((descendant) => {
+      this.lastBlockDisabledReasons.get(descendant.id)?.forEach((reason) => {
+        descendant.setDisabledReason(true, reason);
+      });
+    });
+    eventUtils.setRecordUndo(oldUndo);
   }
 }
