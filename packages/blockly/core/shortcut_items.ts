@@ -778,11 +778,12 @@ export function registerFocusToolbox() {
   const focusToolboxShortcut: KeyboardShortcut = {
     name: names.FOCUS_TOOLBOX,
     preconditionFn: (workspace) => !workspace.isDragging(),
-    callback: (workspace) => {
+    callback: (workspace, event) => {
       const toolbox = workspace.getToolbox();
       if (toolbox) {
         keyboardNavigationController.setIsActive(true);
         getFocusManager().focusTree(toolbox);
+        event.preventDefault();
         return true;
       } else {
         const flyout = workspace.getFlyout();
@@ -790,6 +791,7 @@ export function registerFocusToolbox() {
 
         keyboardNavigationController.setIsActive(true);
         getFocusManager().focusTree(flyout.getWorkspace());
+        event.preventDefault();
         return true;
       }
     },
