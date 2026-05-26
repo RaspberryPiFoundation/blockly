@@ -626,6 +626,21 @@ suite('ARIA', function () {
       );
     });
 
+    test('statement input connection label does not include the placeholder "input"', function () {
+      const block = this.renderBlock('controls_repeat_ext');
+      const doInput = block.getInput('DO');
+      doInput.connection.highlight();
+      try {
+        const label = Blockly.utils.aria.getState(
+          doInput.connection.getFocusableElement(),
+          Blockly.utils.aria.State.LABEL,
+        );
+        assert.notInclude(label, 'input');
+      } finally {
+        doInput.connection.unhighlight();
+      }
+    });
+
     test('last next connection in a populated statement stack uses statement role description and end label', function () {
       const repeat = this.renderBlock('controls_repeat_ext');
       const printBlock = this.renderBlock('text_print');

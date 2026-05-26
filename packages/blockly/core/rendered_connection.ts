@@ -355,11 +355,14 @@ export class RenderedConnection
 
     // Use the custom label for an input if it exists, otherwise use the
     // "field row" approach to get the default label for the input.
+    // Don't include the "input 1" fallback for default labels, since
+    // the input is already being described as a statement or value input.
     const parentInputLabel =
       parentInput?.getAriaLabelText() ??
       getInputLabelsSubset(
         parentInput.getSourceBlock() as BlockSvg,
         parentInput,
+        false,
       ).join(', ');
     if (this.type === ConnectionType.NEXT_STATEMENT) {
       aria.setState(

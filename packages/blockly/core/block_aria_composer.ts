@@ -328,7 +328,11 @@ export function getInputLabels(
  * @param input The input that defines the end of the subset.
  * @returns A list of field/input labels for the given block.
  */
-export function getInputLabelsSubset(block: BlockSvg, input: Input): string[] {
+export function getInputLabelsSubset(
+  block: BlockSvg,
+  input: Input,
+  includeFallbackLabels = true,
+): string[] {
   const inputIndex = block.inputList.indexOf(input);
   if (inputIndex === -1) {
     throw new Error(
@@ -347,11 +351,14 @@ export function getInputLabelsSubset(block: BlockSvg, input: Input): string[] {
     .map(
       (input) =>
         input.getLabel(Verbosity.TERSE, false) ||
-        Msg['INPUT_LABEL_INDEX'].replace(
-          '%1',
-          (input.getIndex() + 1).toString(),
-        ),
-    );
+        (includeFallbackLabels
+          ? Msg['INPUT_LABEL_INDEX'].replace(
+              '%1',
+              (input.getIndex() + 1).toString(),
+            )
+          : undefined),
+    )
+    .filter((label) => label !== undefined);
 }
 
 /**
