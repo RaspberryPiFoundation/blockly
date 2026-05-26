@@ -279,13 +279,14 @@ const LISTS_CREATE_WITH = {
     // Add new inputs.
     for (let i = 0; i < this.itemCount_; i++) {
       if (!this.getInput('ADD' + i)) {
-        const input = this.appendValueInput('ADD' + i).setAlign(Align.RIGHT);
-        input.setAriaLabelProvider(
-          Msg['INPUT_LABEL_LISTS_CREATE_WITH_ITEM'].replace(
-            '%1',
-            String(i + 1),
-          ),
-        );
+        const input = this.appendValueInput('ADD' + i)
+          .setAlign(Align.RIGHT)
+          .setAriaLabelProvider(
+            Msg['INPUT_LABEL_LISTS_CREATE_WITH_ITEM'].replace(
+              '%1',
+              String(i + 1),
+            ),
+          );
         if (i === 0) {
           input.appendField(Msg['LISTS_CREATE_WITH_INPUT_WITH']);
         }
