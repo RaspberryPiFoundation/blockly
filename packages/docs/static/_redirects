@@ -120,3 +120,11 @@
 /guides/contribute/samples/plugin_overview   /guides/programming/plugin_overview/   301
 
 # End - Site refactoring - 2025
+
+# Legacy developers.google.com/blockly marketing pages
+/summits/summits   https://www.blockly.com/summit/home   301
+/summits/blockly-summit-2024   https://www.blockly.com/summit/home   301
+/accessibility/application   https://www.blockly.com/accessibility-projects   301
+/accessibility-fund-recipients   https://www.blockly.com/accessibility-projects   301
+/accessibility-fund   https://www.blockly.com/accessibility-projects   301
+/accessibility   https://www.blockly.com/accessibility   301
