@@ -2034,7 +2034,7 @@ export class BlockSvg
    * @returns An accessibility description of this block.
    */
   getAriaLabel(verbosity: aria.Verbosity) {
-    return computeAriaLabel(this, verbosity, false);
+    return computeAriaLabel(this, verbosity);
   }
 
   /**
@@ -2051,7 +2051,7 @@ export class BlockSvg
       block = block.getNextBlock();
     }
     if (count <= 1) {
-      return computeAriaLabel(this, aria.Verbosity.TERSE, false);
+      return computeAriaLabel(this, aria.Verbosity.TERSE);
     }
 
     const labelTemplate = Msg['BLOCK_LABEL_STACK_BLOCKS'];

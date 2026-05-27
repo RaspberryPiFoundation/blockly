@@ -399,13 +399,14 @@ export class Input {
   }
 
   /**
-   * Returns an accessibility label describing this input, including the labels
-   * of any fields on the input and the labels of any connected blocks, to help
-   * disambiguate this input from others on the same block.
+   * Returns a derived accessibility label for this input: field row text plus
+   * labels of any connected child blocks. Does not include custom labels from
+   * {@link getAriaLabelText}; those are used in move-mode and parent-input
+   * context only.
    *
    * @internal
    */
-  getLabel(verbosity = Verbosity.STANDARD, useCustomLabels = true): string {
+  getLabel(verbosity = Verbosity.STANDARD): string {
     if (!this.isVisible()) return '';
 
     const labels = computeFieldRowLabel(this, false, verbosity);
@@ -414,11 +415,7 @@ export class Input {
       const childBlock = this.connection.targetBlock();
       if (childBlock && !childBlock.isInsertionMarker()) {
         labels.push(
-          getInputLabels(
-            childBlock as BlockSvg,
-            verbosity,
-            useCustomLabels,
-          ).join(', '),
+          getInputLabels(childBlock as BlockSvg, verbosity).join(', '),
         );
       }
     }

@@ -563,6 +563,62 @@ suite('ARIA', function () {
     });
   });
 
+  suite('getInputLabelsSubset', function () {
+    setup(function () {
+      Blockly.Blocks['aria_subset_test'] = {
+        init: function () {
+          this.appendValueInput('IF').appendField('if');
+          this.appendStatementInput('DO').appendField('do');
+          this.appendDummyInput('DUMMY').appendField("here's a label");
+          this.appendEndRowInput('END_ROW').appendField(
+            new Blockly.FieldImage(
+              'https://www.gstatic.com/codesite/ph/images/star_on.gif',
+              15,
+              15,
+              {alt: '*', flipRtl: false},
+            ),
+          );
+          this.appendStatementInput('BODY');
+          this.setPreviousStatement(true, null);
+          this.setNextStatement(true, null);
+        },
+      };
+      Blockly.Blocks['aria_subset_lone_statement'] = {
+        init: function () {
+          this.appendStatementInput('FIRST').appendField('first');
+          this.appendStatementInput('SECOND');
+          this.setPreviousStatement(true, null);
+          this.setNextStatement(true, null);
+        },
+      };
+      this.renderBlock = (blockType) => {
+        const block = this.workspace.newBlock(blockType);
+        block.initSvg();
+        block.render();
+        return block;
+      };
+    });
+
+    test('unlabeled statement input omits numbered fallback when section has other labels', function () {
+      const block = this.renderBlock('aria_subset_test');
+      const bodyInput = block.getInput('BODY');
+      const labels = getInputLabelsSubset(block, bodyInput);
+      assert.deepEqual(labels, ["here's a label", '*']);
+      for (const label of labels) {
+        assert.notInclude(label, 'input');
+      }
+    });
+
+    test('unlabeled statement input uses numbered fallback when section has no other labels', function () {
+      const block = this.renderBlock('aria_subset_lone_statement');
+      const secondInput = block.getInput('SECOND');
+      const labels = getInputLabelsSubset(block, secondInput);
+      assert.deepEqual(labels, [
+        Blockly.Msg.INPUT_LABEL_INDEX.replace('%1', '2'),
+      ]);
+    });
+  });
+
   suite('Rendered connection highlight ARIA', function () {
     function assertHighlightAria(
       connection,

@@ -50,18 +50,18 @@ export enum ConnectionPreposition {
  * The returned label will be specialized based on whether the block is part of a
  * flyout.
  *
+ * Custom input labels (from {@link Input.setAriaLabelProvider}) are not included
+ * here; they are used only in move-mode disambiguation and parent-input context
+ * via {@link Input.getAriaLabelText}.
+ *
  * @internal
  * @param block The block for which an ARIA representation should be created.
  * @param verbosity How much detail to include in the description.
- * @param useCustomInputLabels Whether to use custom labels for inputs, if they
- *   exist. We don't want to do this when just reading a block's label, but do
- *   want to in other scenarios such as move mode.
  * @returns The ARIA representation for the specified block.
  */
 export function computeAriaLabel(
   block: BlockSvg,
   verbosity = Verbosity.STANDARD,
-  useCustomInputLabels = true,
 ) {
   if (block.isSimpleReporter()) {
     // special case for full-block field blocks.
@@ -73,7 +73,7 @@ export function computeAriaLabel(
   return [
     verbosity >= Verbosity.STANDARD && getBeginStackLabel(block),
     getParentInputLabel(block),
-    ...getInputLabels(block, verbosity, useCustomInputLabels),
+    ...getInputLabels(block, verbosity),
     verbosity === Verbosity.LOQUACIOUS && getParentToolboxCategoryLabel(block),
     verbosity >= Verbosity.STANDARD && getDisabledLabel(block),
     verbosity >= Verbosity.STANDARD && getCollapsedLabel(block),
@@ -272,21 +272,18 @@ function getBeginStackLabel(block: BlockSvg) {
  * their contents are returned as a single item in the array per top-level
  * input.
  *
- * Generally, if a custom label for an input is provided, that is preferred.
- * However, we do not surface the custom labels when simply reading the text of
- * the block. They are used as supplementary information for situations like
- * move mode or when an input itself is focused.
+ * Uses derived labels only (field row text and connected block content via
+ * {@link Input.getLabel}). Custom input labels are not included; see
+ * {@link Input.getAriaLabelText} for move-mode and parent-input usage.
  *
  * @internal
  * @param block The block to retrieve a list of field/input labels for.
- * @param verbosity
- * @param useCustomLabels whether to use the custom label for an input, if it's present.
+ * @param verbosity How much detail to include in each input label.
  * @returns A list of field/input labels for the given block.
  */
 export function getInputLabels(
   block: BlockSvg,
   verbosity = Verbosity.STANDARD,
-  useCustomLabels = true,
 ): string[] {
   const visibleInputs = block.inputList.filter((input) => input.isVisible());
   let inputsToLabel = visibleInputs;
@@ -306,15 +303,13 @@ export function getInputLabels(
     }
   }
 
-  return inputsToLabel.map((input) => {
-    const customLabel = useCustomLabels ? input.getAriaLabelText() : null;
-    return customLabel ?? input.getLabel(verbosity, useCustomLabels);
-  });
+  return inputsToLabel.map((input) => input.getLabel(verbosity));
 }
 
 /**
- * Returns a subset of labels for inputs on the given block, ending at the
- * specified input.
+ * Returns a subset of derived labels for inputs on the given block, ending at
+ * the specified input. Used to disambiguate move targets and connection
+ * highlights when no custom label is set.
  *
  * The subset is determined based on the input type:
  * - For non-statement inputs, only the label for the given input is returned.
@@ -323,41 +318,66 @@ export function getInputLabels(
  *   begins immediately after the previous statement input, or at the start of
  *   the block if none exists.
  *
+ * Label resolution (see also {@link computeMoveConnectionLabel}):
+ * 1. Custom labels ({@link Input.getAriaLabelText}) are handled by callers, not here.
+ * 2. Derived labels from {@link Input.getLabel} (field row + child blocks).
+ * 3. Numbered fallback ({@link Msg.INPUT_LABEL_INDEX}) when tier 2 is empty.
+ *    For the statement target input, the fallback is omitted if any earlier
+ *    input in the subset already produced a label.
+ *
  * @internal
  * @param block The block to retrieve a list of field/input labels for.
  * @param input The input that defines the end of the subset.
  * @returns A list of field/input labels for the given block.
  */
-export function getInputLabelsSubset(
-  block: BlockSvg,
-  input: Input,
-  includeFallbackLabels = true,
-): string[] {
+export function getInputLabelsSubset(block: BlockSvg, input: Input): string[] {
   const inputIndex = block.inputList.indexOf(input);
   if (inputIndex === -1) {
     throw new Error(
       `Input with name "${input.name}" not found on block with id "${block.id}".`,
     );
   }
+  const isStatementTarget = input.type === inputTypes.STATEMENT;
 
-  const startIndex =
-    input.type === inputTypes.STATEMENT
-      ? findStartOfStatementSection(block.inputList, inputIndex)
-      : inputIndex;
+  const startIndex = isStatementTarget
+    ? findStartOfStatementSection(block.inputList, inputIndex)
+    : inputIndex;
 
-  return block.inputList
+  // For statement inputs, we include all visible inputs from the start
+  // of the current statement section up to and including the target input.
+  // For non-statement inputs, this will just be the target input itself.
+  const inputsInSubset = block.inputList
     .slice(startIndex, inputIndex + 1)
-    .filter((input) => input.isVisible())
-    .map(
-      (input) =>
-        input.getLabel(Verbosity.TERSE, false) ||
-        (includeFallbackLabels
-          ? Msg['INPUT_LABEL_INDEX'].replace(
-              '%1',
-              (input.getIndex() + 1).toString(),
-            )
-          : undefined),
-    )
+    .filter((subsetInput) => subsetInput.isVisible());
+
+  // The derived labels are based on the field row and any connected child
+  // blocks.
+  const derivedLabels = inputsInSubset.map((subsetInput) =>
+    subsetInput.getLabel(Verbosity.TERSE),
+  );
+
+  // For statement inputs, we only include the fallback label ("input %1")
+  // for the target input if no preceding input in the subset has a label.
+  // This prevents, e.g., "else" statement inputs from being read as "else, input 2".
+  const precedingLabelsProvideContext =
+    isStatementTarget && derivedLabels.slice(0, -1).some((label) => !!label);
+
+  return derivedLabels
+    .map((label, index) => {
+      if (label) {
+        return label;
+      }
+      const subsetInput = inputsInSubset[index];
+      const isStatementTargetInput =
+        isStatementTarget && index === derivedLabels.length - 1;
+      if (isStatementTargetInput && precedingLabelsProvideContext) {
+        return undefined;
+      }
+      return Msg['INPUT_LABEL_INDEX'].replace(
+        '%1',
+        (subsetInput.getIndex() + 1).toString(),
+      );
+    })
     .filter((label) => label !== undefined);
 }
 
@@ -468,7 +488,13 @@ function getAnnouncementTemplate(preposition: ConnectionPreposition): string {
 }
 
 /**
- * Returns a label for a connection includes either a block label, input label or both.
+ * Returns a label for a connection that includes either a block label, input
+ * label, or both.
+ *
+ * Input label resolution:
+ * 1. Custom label from {@link Input.getAriaLabelText} when set.
+ * 2. Otherwise derived labels from {@link getInputLabelsSubset} (field row,
+ *    child blocks, and numbered fallbacks as needed).
  *
  * @param conn The connection to generate a label for.
  * @param baseLabel An optional block label to include in the returned string.
@@ -483,8 +509,6 @@ function computeMoveConnectionLabel(
 
   let inputLabel = input.getAriaLabelText();
 
-  // If the input doesn't have a custom ARIA label, compute one using the labels from
-  // nearby fields.
   if (!inputLabel) {
     const labels = getInputLabelsSubset(conn.getSourceBlock(), input);
     if (!labels.length) return baseLabel;

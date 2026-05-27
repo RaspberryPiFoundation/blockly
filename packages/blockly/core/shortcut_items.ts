@@ -807,11 +807,7 @@ export function registerFocusToolbox() {
  */
 export function registerReadInformation() {
   const announceBlockInformation = (block: BlockSvg) => {
-    const description = computeAriaLabel(
-      block,
-      aria.Verbosity.LOQUACIOUS,
-      false,
-    );
+    const description = computeAriaLabel(block, aria.Verbosity.LOQUACIOUS);
     aria.announceDynamicAriaState(description);
   };
 
@@ -898,14 +894,12 @@ export function registerReadExtendedInformation() {
       }
 
       if (startBlock !== block) {
-        toAnnounce.push(
-          computeAriaLabel(startBlock, aria.Verbosity.TERSE, false),
-        );
+        toAnnounce.push(computeAriaLabel(startBlock, aria.Verbosity.TERSE));
       }
 
       let parent = startBlock.getParent();
       while (parent) {
-        toAnnounce.push(computeAriaLabel(parent, aria.Verbosity.TERSE, false));
+        toAnnounce.push(computeAriaLabel(parent, aria.Verbosity.TERSE));
         parent = parent.getParent();
       }
 
@@ -917,7 +911,7 @@ export function registerReadExtendedInformation() {
           toAnnounce.push(
             Msg['CURRENT_BLOCK_ANNOUNCEMENT'].replace(
               '%1',
-              computeAriaLabel(block, aria.Verbosity.TERSE, false),
+              computeAriaLabel(block, aria.Verbosity.TERSE),
             ),
           );
         }
