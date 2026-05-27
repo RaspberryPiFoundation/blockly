@@ -1277,7 +1277,6 @@ export class BlockDragStrategy implements IDragStrategy {
    * @param block The block to re-disable, if applicable.
    */
   private redisableAllDraggedBlocks(block: BlockSvg) {
-    console.log('redisable');
     const oldUndo = eventUtils.getRecordUndo();
     eventUtils.setRecordUndo(false);
     block.getDescendants(false).forEach((descendant) => {
