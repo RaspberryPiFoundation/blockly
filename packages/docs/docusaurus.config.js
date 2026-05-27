@@ -72,6 +72,7 @@ const config = {
           alt: 'Blockly Logo',
           src: 'images/logo.svg',
           srcDark: 'images/blockly-dark-theme-logo.png',
+          href: 'https://www.blockly.com/',
         },
         items: [
           {
@@ -116,20 +117,60 @@ const config = {
             position: 'left',
           },
           {
-            type: 'docSidebar',
-            label: 'Codelabs',
-            sidebarId: 'codelabsSidebar',
+            type: 'dropdown',
+            label: 'Tutorial',
+            position: 'left',
+            items: [
+              {
+                label: 'Codelabs',
+                to: '/codelabs/',
+              },
+              {
+                label: 'Samples',
+                href: 'https://raspberrypifoundation.github.io/blockly-samples/',
+              },
+            ],
+          },
+          {
+            type: 'dropdown',
+            label: 'Summits',
+            position: 'left',
+            items: [
+              {
+                label: 'Session Catalog',
+                href: 'https://blockly.com/summit/home',
+              },
+              {
+                label: 'Summit 2026',
+                href: 'https://blockly.com/summit/2026/home',
+              },
+            ],
+          },
+          {
+            label: 'Team',
+            href: 'https://blockly.com/team',
             position: 'left',
           },
           {
-            label: 'Samples',
-            href: 'https://raspberrypifoundation.github.io/blockly-samples/',
-            position: 'right',
+            type: 'dropdown',
+            label: 'Accessibility',
+            position: 'left',
+            items: [
+              {
+                label: 'Accessibility',
+                href: 'https://blockly.com/accessibility',
+              },
+              {
+                label: 'Projects and partnerships',
+                href: 'https://blockly.com/accessibility-projects',
+              },
+            ],
           },
           {
             label: 'GitHub',
             href: 'https://github.com/raspberrypifoundation/blockly',
             position: 'right',
+            className: 'navbar__item--show-external-icon',
           },
         ],
       },
