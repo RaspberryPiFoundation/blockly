@@ -197,6 +197,10 @@ export function computeFieldRowLabel(
  *   statement input of the parent block (in this case, the label
  *   would be redundant with the parent block's label)
  *
+ * For statement inputs without their own field labels, labels from other
+ * inputs in the same statement section are included (via
+ * {@link getInputLabelsSubset}), consistent with move-target disambiguation.
+ *
  * For statement inputs, the resolved label (whether custom or fallback) is
  * wrapped in the "Begin %1" prefix so the readout indicates that the child
  * block starts the body of the statement input.
@@ -235,7 +239,14 @@ function getParentInputLabel(block: BlockSvg) {
       return undefined;
     }
 
-    inputLabel = computeFieldRowLabel(parentInput, true);
+    const sectionLabels = getInputLabelsSubset(
+      parentBlock as BlockSvg,
+      parentInput,
+    );
+    if (!sectionLabels.length) {
+      return undefined;
+    }
+    inputLabel = sectionLabels.join(', ');
   }
 
   if (parentInput.type === inputTypes.STATEMENT) {
@@ -368,9 +379,7 @@ export function getInputLabelsSubset(block: BlockSvg, input: Input): string[] {
         return label;
       }
       const subsetInput = inputsInSubset[index];
-      const isStatementTargetInput =
-        isStatementTarget && index === derivedLabels.length - 1;
-      if (isStatementTargetInput && precedingLabelsProvideContext) {
+      if (precedingLabelsProvideContext) {
         return undefined;
       }
       return Msg['INPUT_LABEL_INDEX'].replace(

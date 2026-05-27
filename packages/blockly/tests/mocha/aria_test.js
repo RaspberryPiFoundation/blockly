@@ -396,6 +396,35 @@ suite('ARIA', function () {
       assert.isTrue(label.startsWith('Begin else'));
     });
 
+    test('Statement child includes labels from other inputs in the same statement section', function () {
+      Blockly.Blocks['aria_parent_label_test'] = {
+        init: function () {
+          this.appendValueInput('IF').appendField('if');
+          this.appendStatementInput('DO').appendField('do');
+          this.appendDummyInput('DUMMY').appendField("here's a label");
+          this.appendEndRowInput('END_ROW').appendField(
+            new Blockly.FieldImage(
+              'https://www.gstatic.com/codesite/ph/images/star_on.gif',
+              15,
+              15,
+              {alt: '*', flipRtl: false},
+            ),
+          );
+          this.appendStatementInput('BODY');
+          this.setPreviousStatement(true, null);
+          this.setNextStatement(true, null);
+        },
+      };
+      const block = this.makeBlock('aria_parent_label_test');
+      const printBlock = this.makeBlock('text_print');
+      block.getInput('BODY').connection.connect(printBlock.previousConnection);
+      const label = Blockly.utils.aria.getState(
+        printBlock.getFocusableElement(),
+        Blockly.utils.aria.State.LABEL,
+      );
+      assert.isTrue(label.startsWith("Begin here's a label, *"));
+    });
+
     test('A custom statement input label is wrapped in the "Begin" prefix', function () {
       const ifBlock = this.makeBlock('controls_ifelse');
       ifBlock.getInput('ELSE').setAriaLabelProvider('otherwise do');
