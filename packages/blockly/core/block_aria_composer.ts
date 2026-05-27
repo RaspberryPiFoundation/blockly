@@ -379,7 +379,17 @@ export function getInputLabelsSubset(block: BlockSvg, input: Input): string[] {
         return label;
       }
       const subsetInput = inputsInSubset[index];
-      if (precedingLabelsProvideContext) {
+      // Dummy and end-row inputs are not connection inputs; getIndex() is -1
+      // and would produce a misleading "input 0" fallback label.
+      if (
+        subsetInput.type === inputTypes.DUMMY ||
+        subsetInput.type === inputTypes.END_ROW
+      ) {
+        return undefined;
+      }
+      const isStatementTargetInput =
+        isStatementTarget && index === derivedLabels.length - 1;
+      if (isStatementTargetInput && precedingLabelsProvideContext) {
         return undefined;
       }
       return Msg['INPUT_LABEL_INDEX'].replace(

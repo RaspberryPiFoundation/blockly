@@ -646,6 +646,35 @@ suite('ARIA', function () {
         Blockly.Msg.INPUT_LABEL_INDEX.replace('%1', '2'),
       ]);
     });
+
+    test('dummy inputs in a statement section do not produce input 0 fallback', function () {
+      Blockly.Blocks['makecode_if_else'] = {
+        init: function () {
+          this.appendValueInput('IF0').appendField('if');
+          this.appendDummyInput('THEN0').appendField('then');
+          this.appendStatementInput('DO0');
+          this.appendDummyInput('ELSETITLE').appendField('else');
+          this.appendDummyInput('ELSEBUTTONS').appendField(
+            new Blockly.FieldImage(
+              'https://www.gstatic.com/codesite/ph/images/star_on.gif',
+              24,
+              24,
+              {alt: '*', flipRtl: false},
+            ),
+          );
+          this.appendStatementInput('ELSE');
+          this.setPreviousStatement(true, null);
+          this.setNextStatement(true, null);
+        },
+      };
+      const block = this.renderBlock('makecode_if_else');
+      const elseInput = block.getInput('ELSE');
+      const labels = getInputLabelsSubset(block, elseInput);
+      assert.deepEqual(labels, ['else']);
+      for (const label of labels) {
+        assert.notInclude(label, 'input 0');
+      }
+    });
   });
 
   suite('Rendered connection highlight ARIA', function () {
