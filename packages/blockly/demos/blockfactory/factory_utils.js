@@ -458,7 +458,7 @@ FactoryUtils.getFieldsJs_ = function(block) {
           }
           break;
         case 'field_image':
-          // Result: new Blockly.FieldImage('http://...', 80, 60, '*')
+          // Result: new Blockly.FieldImage('http://...', 80, 60, {alt: '*', flipRtl: false})
           var src = JSON.stringify(block.getFieldValue('SRC'));
           var width = Number(block.getFieldValue('WIDTH'));
           var height = Number(block.getFieldValue('HEIGHT'));

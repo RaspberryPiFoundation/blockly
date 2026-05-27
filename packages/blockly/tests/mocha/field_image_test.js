@@ -186,6 +186,14 @@ suite('Image Fields', function () {
         });
         assert.equal(field.getText(), 'alt');
       });
+      test('JS Configuration - Block Factory style (config as 4th arg)', function () {
+        const field = new Blockly.FieldImage('src', 10, 10, {
+          alt: 'alt',
+          flipRtl: false,
+        });
+        assert.equal(field.getText(), 'alt');
+        assert.isFalse(field.getFlipRtl());
+      });
       test('JS Configuration - Ignore', function () {
         const field = new Blockly.FieldImage('src', 10, 10, 'alt', null, null, {
           alt: 'configAlt',

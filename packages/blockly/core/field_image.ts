@@ -113,9 +113,18 @@ export class FieldImage extends Field<string> {
 
     if (config) {
       this.configure_(config);
+    } else if (isFieldImageConfig(alt)) {
+      // Block Factory and some hand-written blocks pass a config object as the
+      // fourth argument instead of using the seventh `config` parameter.
+      // This is wrong, and typescript will complain about it, but handle it
+      // for backwards compatibility.
+      this.configure_(alt);
     } else {
       this.flipRtl = !!flipRtl;
-      this.altText = parsing.replaceMessageReferences(alt) || '';
+      this.altText =
+        typeof alt === 'string'
+          ? parsing.replaceMessageReferences(alt) || ''
+          : '';
     }
     this.setValue(parsing.replaceMessageReferences(src));
   }
@@ -370,6 +379,22 @@ export class FieldImage extends Field<string> {
     aria.setState(focusableElement, aria.State.LABEL, label);
     return true;
   }
+}
+
+/**
+ * Returns whether a value is a FieldImage config object passed in place of alt
+ * text (e.g. `{alt: '*', flipRtl: false}`). You shouldn't do this on purpose,
+ * but the block factory generates block definitions in this format.
+ *
+ * @param value The value to test.
+ */
+function isFieldImageConfig(value: unknown): value is FieldImageConfig {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    ('alt' in value || 'flipRtl' in value)
+  );
 }
 
 fieldRegistry.register('field_image', FieldImage);
