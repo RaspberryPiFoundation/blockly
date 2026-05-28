@@ -173,4 +173,25 @@ suite('Menu items', function () {
     this.menuItem.performAction(new Event('click'));
     assert.isTrue(called);
   });
+
+  test('truncates long text and binds tooltip', function () {
+    const longText = 'w'.repeat(300);
+    this.menuItem = new Blockly.MenuItem(longText);
+    this.menuItem.createDom();
+    
+    const element = this.menuItem.getElement();
+    assert.equal(element.textContent.length, this.menuItem.maxDisplayLength);
+    assert.isTrue(element.textContent.endsWith('…'));
+    assert.equal(element.tooltip, longText);
+  });
+
+  test('does not truncate or bind tooltip for short text', function () {
+    const shortText = 'Hello World';
+    this.menuItem = new Blockly.MenuItem(shortText);
+    this.menuItem.createDom();
+    
+    const element = this.menuItem.getElement();
+    assert.equal(element.textContent, shortText);
+    assert.isUndefined(element.tooltip);
+  });
 });

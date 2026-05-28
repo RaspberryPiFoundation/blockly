@@ -13,11 +13,15 @@
 
 import * as aria from './utils/aria.js';
 import * as idGenerator from './utils/idgenerator.js';
+import * as tooltip from './tooltip.js';
 
 /**
  * Class representing an item in a menu.
  */
 export class MenuItem {
+  /** Maximum characters of text to display before adding an ellipsis. */
+  maxDisplayLength = 50;
+
   /** Is the menu item clickable, as opposed to greyed-out. */
   private enabled = true;
 
@@ -76,7 +80,15 @@ export class MenuItem {
 
     let contentDom: Node = this.content as HTMLElement;
     if (typeof this.content === 'string') {
-      contentDom = document.createTextNode(this.content);
+      let displayText = this.content;
+      if (this.content.length > this.maxDisplayLength) {
+        displayText = this.content.substring(0, this.maxDisplayLength - 1) + '…';
+
+        (element as any).tooltip = this.content;
+        tooltip.bindMouseEvents(element);
+      }
+
+      contentDom = document.createTextNode(displayText);
     }
     content.appendChild(contentDom);
     element.appendChild(content);
