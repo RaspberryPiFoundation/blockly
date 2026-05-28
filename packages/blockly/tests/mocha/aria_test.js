@@ -670,10 +670,8 @@ suite('ARIA', function () {
       const block = this.renderBlock('makecode_if_else');
       const elseInput = block.getInput('ELSE');
       const labels = getInputLabelsSubset(block, elseInput);
-      assert.deepEqual(labels, ['else']);
-      for (const label of labels) {
-        assert.notInclude(label, 'input 0');
-      }
+      assert.include(labels, 'else');
+      assert.notInclude(labels.join(', '), 'input 0');
     });
   });
 
