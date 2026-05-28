@@ -19,14 +19,57 @@ import './events/events_var_rename.js';
 import type {Block} from './block.js';
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
+import {FieldVariable} from './field_variable.js';
 import type {IVariableMap} from './interfaces/i_variable_map.js';
 import {IVariableModel, IVariableState} from './interfaces/i_variable_model.js';
 import {Names} from './names.js';
 import * as registry from './registry.js';
+import type {State as BlockState} from './serialization/blocks.js';
 import * as deprecation from './utils/deprecation.js';
 import * as idGenerator from './utils/idgenerator.js';
-import {deleteVariable, getVariableUsesById} from './variables.js';
+import {
+  deleteVariable,
+  getOrCreateVariablePackage,
+  getVariableUsesById,
+} from './variables.js';
 import type {Workspace} from './workspace.js';
+
+/**
+ * One field on a shadow block whose current value points at the variable
+ * being deleted. The cascade replays the parent connection's stored
+ * shadowState through `getOrCreateVariablePackage` for each entry, which
+ * either returns an existing live variable (the template references a
+ * different, still-live variable — "Case 1") or re-creates a same-id
+ * same-name variable (the template references the variable being deleted
+ * — "Case 2") and binds the field to the result.
+ *
+ * The two cases must replay around the variable map removal in opposite
+ * order so the resulting event group can be undone correctly:
+ *  - Case 1 entries fire BlockChange BEFORE VarDelete, so undo runs the
+ *    VarDelete reverse first (restoring the old variable), then the
+ *    BlockChange reverse (which calls field.setValue with the old id —
+ *    field validation requires the variable to exist on the workspace).
+ *  - Case 2 entries fire AFTER the variable map removal, so
+ *    getOrCreateVariablePackage actually re-creates the variable (and
+ *    fires VarCreate) instead of returning the soon-to-be-deleted one.
+ */
+interface ShadowFieldPlan {
+  field: FieldVariable;
+  /** The matching field entry in the parent connection's shadowState. */
+  templateField: AnyDuringMigration;
+  /**
+   * True iff `templateField['id']` equals the id of the variable being
+   * deleted. Determines which side of the variable map removal the
+   * setValue replay runs on (see ShadowFieldPlan jsdoc).
+   */
+  isSelfTemplate: boolean;
+}
+
+/** Plan for a single shadow block use of the variable being deleted. */
+interface ShadowPlan {
+  shadow: Block;
+  entries: ShadowFieldPlan[];
+}
 
 /**
  * Class for a variable map.  This contains a dictionary data structure with
@@ -302,10 +345,60 @@ export class VariableMap
   /**
    * Delete a variable and all of its uses without confirmation.
    *
+   * Shadow uses are kept alive at the same parent input so the user can
+   * still pick a different variable. After the variable map removal, the
+   * cascade replays the parent connection's stored shadowState through
+   * `getOrCreateVariablePackage` for every matching field. The helper
+   * either returns an existing live variable (when the template
+   * references a different, still-live variable) or re-creates the
+   * variable from the template at the same id and same name (when the
+   * template references the variable being deleted) — in the latter
+   * case the cascade fires a `VarCreate` because the variable that gets
+   * created is a real variable the user can interact with.
+   *
+   * Non-shadow uses are disposed normally, but the cascade temporarily
+   * sets `workspace.suppressShadowRespawn` so that the auto-respawn fired
+   * by `Connection.disconnectInternal` does not re-create the deleted
+   * variable through `getOrCreateVariablePackage` triggered by a stale
+   * shadowState template.
+   *
    * @param variable Variable to delete.
    */
   deleteVariable(variable: IVariableModel<IVariableState>) {
-    const uses = getVariableUsesById(this.workspace, variable.getId());
+    // Dedupe by block id (a single block with two FieldVariable fields
+    // pointing at the same variable would otherwise appear twice in the
+    // raw uses list).
+    const seen = new Set<string>();
+    const uniqueUses: Block[] = [];
+    for (const use of getVariableUsesById(this.workspace, variable.getId())) {
+      if (!seen.has(use.id)) {
+        seen.add(use.id);
+        uniqueUses.push(use);
+      }
+    }
+
+    // Split shadow vs non-shadow uses.
+    const nonShadowUses: Block[] = [];
+    const shadowUses: Block[] = [];
+    for (const use of uniqueUses) {
+      if (use.isShadow()) shadowUses.push(use);
+      else nonShadowUses.push(use);
+    }
+
+    // Plan each shadow's reset by snapshotting the parent connection's
+    // stored shadowState. An unclassifiable shadow (no reachable parent,
+    // no stored shadowState, no matching field, no template id) falls
+    // back to the non-shadow dispose path.
+    const shadowPlans: ShadowPlan[] = [];
+    for (const shadow of shadowUses) {
+      const plan = this.classifyShadow(shadow, variable.getId());
+      if (plan) {
+        shadowPlans.push(plan);
+      } else {
+        nonShadowUses.push(shadow);
+      }
+    }
+
     let existingGroup = '';
     if (!this.potentialMap) {
       existingGroup = eventUtils.getGroup();
@@ -314,11 +407,47 @@ export class VariableMap
       }
     }
     try {
-      for (let i = 0; i < uses.length; i++) {
-        if (uses[i].isDeadOrDying()) continue;
-
-        uses[i].dispose(true);
+      // (a) Replay Case 1 entries — those whose template references a
+      //     DIFFERENT, still-live variable. setValue fires a BlockChange
+      //     in the current event group with oldValue=deletedId,
+      //     newValue=tmplId. Doing this BEFORE the variable map removal
+      //     means the undo replays in the order:
+      //         VarDelete.run(false)  // restores the deleted variable
+      //         BlockChange.run(false) // setValue(deletedId), which
+      //                                // now passes field validation
+      //                                // because the variable is back.
+      for (const plan of shadowPlans) {
+        for (const entry of plan.entries) {
+          if (entry.isSelfTemplate) continue;
+          const v = getOrCreateVariablePackage(
+            this.workspace,
+            entry.templateField['id'] as string,
+            entry.templateField['name'] as string | undefined,
+            (entry.templateField['type'] as string) || '',
+          );
+          entry.field.setValue(v.getId());
+        }
       }
+
+      // (b) Dispose non-shadow uses with respawn suppressed so that the
+      //     auto-respawn fired by Connection.disconnectInternal does not
+      //     re-create the deleted variable through a stale shadowState.
+      const previousSuppress = this.workspace.suppressShadowRespawn;
+      this.workspace.suppressShadowRespawn = true;
+      try {
+        for (const use of nonShadowUses) {
+          if (use.isDeadOrDying()) continue;
+          use.dispose(true);
+        }
+      } finally {
+        this.workspace.suppressShadowRespawn = previousSuppress;
+      }
+
+      // (c) Remove the variable from the map and fire VarDelete. Has to
+      //     happen between (a) and (d): (a)'s setValue replay needs the
+      //     variable still in the map to validate the new id is real,
+      //     and (d) needs the variable already removed so that
+      //     getOrCreateVariablePackage actually re-creates it.
       const variables = this.variableMap.get(variable.getType());
       if (!variables || !variables.has(variable.getId())) return;
       variables.delete(variable.getId());
@@ -328,11 +457,71 @@ export class VariableMap
       if (variables.size === 0) {
         this.variableMap.delete(variable.getType());
       }
+
+      // (d) Replay Case 2 entries — those whose template references the
+      //     variable being deleted. getOrCreateVariablePackage now
+      //     re-creates the variable at the same id and same name and
+      //     fires a VarCreate (a real variable the user can interact
+      //     with, so the event is appropriate). setValue rebinds the
+      //     field's `variable` reference to the fresh VariableModel via
+      //     doValueUpdate_; the new id equals the old id so no
+      //     BlockChange is fired.
+      for (const plan of shadowPlans) {
+        for (const entry of plan.entries) {
+          if (!entry.isSelfTemplate) continue;
+          const v = getOrCreateVariablePackage(
+            this.workspace,
+            entry.templateField['id'] as string,
+            entry.templateField['name'] as string | undefined,
+            (entry.templateField['type'] as string) || '',
+          );
+          entry.field.setValue(v.getId());
+        }
+      }
     } finally {
       if (!this.potentialMap) {
         eventUtils.setGroup(existingGroup);
       }
     }
+  }
+
+  /**
+   * Snapshot a shadow use of the variable being deleted into a plan the
+   * cascade can replay against `getOrCreateVariablePackage`.
+   *
+   * Returns null when the shadow cannot be classified — no reachable
+   * parent connection, no stored shadowState, no matching `FieldVariable`
+   * with a name, or no template entry with an id. The caller falls back
+   * to disposing the shadow as if it were a regular non-shadow use.
+   */
+  private classifyShadow(
+    shadow: Block,
+    deletedVariableId: string,
+  ): ShadowPlan | null {
+    const parentConn =
+      shadow.outputConnection?.targetConnection ||
+      shadow.previousConnection?.targetConnection;
+    if (!parentConn) return null;
+
+    const templateState = parentConn.getShadowState() as BlockState | null;
+    if (!templateState || !templateState.fields) return null;
+    const templateFields = templateState.fields as AnyDuringMigration;
+
+    const entries: ShadowFieldPlan[] = [];
+    for (const input of shadow.inputList) {
+      for (const field of input.fieldRow) {
+        if (!(field instanceof FieldVariable)) continue;
+        if (field.getVariable()?.getId() !== deletedVariableId) continue;
+        const fieldName = field.name;
+        if (!fieldName) continue;
+        const tmplField = templateFields[fieldName];
+        if (!tmplField || !tmplField['id']) continue;
+        const isSelfTemplate = tmplField['id'] === deletedVariableId;
+        entries.push({field, templateField: tmplField, isSelfTemplate});
+      }
+    }
+    if (!entries.length) return null;
+    return {shadow, entries};
   }
 
   /**

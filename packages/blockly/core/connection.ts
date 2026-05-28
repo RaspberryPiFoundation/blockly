@@ -345,6 +345,15 @@ export class Connection {
    */
   protected respawnShadow_() {
     // Have to keep respawnShadow_ for backwards compatibility.
+    const ws = this.getSourceBlock()?.workspace;
+    if (ws?.suppressShadowRespawn) {
+      // VariableMap.deleteVariable has set the suppress flag for the
+      // duration of its non-shadow dispose loop. Skipping respawn here
+      // prevents the cascade from re-creating the variable being deleted
+      // through `getOrCreateVariablePackage` triggered by a stale
+      // shadowState template.
+      return;
+    }
     this.createShadowBlock(true);
   }
 

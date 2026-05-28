@@ -9,6 +9,7 @@
  * Chrome, via webdriver.
  */
 const webdriverio = require('webdriverio');
+const {posixPath} = require('../../scripts/helpers');
 
 
 /**
@@ -56,7 +57,7 @@ async function runCompileCheckInBrowser() {
     };
   }
 
-  const url = 'file://' + __dirname + '/index.html';
+  const url = 'file://' + posixPath(__dirname) + '/index.html';
 
   console.log('Starting webdriverio...');
   const browser = await webdriverio.remote(options);
