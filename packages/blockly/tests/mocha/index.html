@@ -161,10 +161,11 @@
          * @param {string} message Error message to report.
          */
         function reportLoadFailure(message) {
-          if (window.__blocklyTestLoadState?.finished) {
+          const state = window.__blocklyTestLoadState;
+          if (state?.finished || state?.testsStarted) {
             return;
           }
-          window.__blocklyTestLoadState.finished = true;
+          state.finished = true;
           failureDiv.setAttribute('tests_failed', '1');
           loadStatus.setAttribute('data-status', 'failed');
           const msg = document.createElement('p');
@@ -175,10 +176,15 @@
         window.__blocklyTestLoadState = {
           finished: false,
           importsComplete: false,
+          testsStarted: false,
           errors: [],
           markImportsComplete() {
             this.importsComplete = true;
             loadStatus.setAttribute('data-status', 'imports-complete');
+          },
+          markTestsStarted() {
+            this.testsStarted = true;
+            loadStatus.setAttribute('data-status', 'running');
           },
           reportFailure(error) {
             const message =
@@ -189,21 +195,27 @@
         };
 
         window.addEventListener('error', (event) => {
+          const state = window.__blocklyTestLoadState;
+          if (state.finished || state.testsStarted) {
+            return;
+          }
           const message = event.message || 'Unknown script error';
           const loc = event.filename
             ? ' at ' + event.filename + ':' + event.lineno
             : '';
-          window.__blocklyTestLoadState.errors.push(message + loc);
-          if (window.__blocklyTestLoadState.finished) {
-            return;
-          }
+          state.errors.push(message + loc);
           if (
             message.includes('initialized before') ||
             message.includes('before initialization') ||
-            message.includes('Cannot access')
+            message.includes('Cannot access') ||
+            message.includes('Maximum call stack size exceeded')
           ) {
-            reportLoadFailure('Blockly module load error: ' + message + loc);
-          } else if (!window.__blocklyTestLoadState.importsComplete) {
+            reportLoadFailure(
+              'Blockly module load error (likely circular dependency): ' +
+                message +
+                loc,
+            );
+          } else if (!state.importsComplete) {
             reportLoadFailure(
               'Error loading Blockly test modules: ' + message + loc,
             );
@@ -211,23 +223,27 @@
         });
 
         window.addEventListener('unhandledrejection', (event) => {
+          const state = window.__blocklyTestLoadState;
+          if (state.finished || state.testsStarted) {
+            return;
+          }
           const reason =
             event.reason instanceof Error
               ? event.reason.message
               : String(event.reason);
-          window.__blocklyTestLoadState.errors.push(
-            'Unhandled rejection: ' + reason,
+          state.errors.push('Unhandled rejection: ' + reason);
+          reportLoadFailure(
+            'Unhandled rejection while loading Blockly tests: ' + reason + hint,
           );
-          if (!window.__blocklyTestLoadState.finished) {
-            reportLoadFailure(
-              'Unhandled rejection while loading Blockly tests: ' + reason,
-            );
-          }
         });
 
-        // Fail fast if the module script never completes startup.
+        // Fail fast if modules never finish loading or mocha never starts.
         setTimeout(() => {
           if (failureDiv.getAttribute('tests_failed') !== 'unset') {
+            return;
+          }
+          const state = window.__blocklyTestLoadState;
+          if (state.testsStarted) {
             return;
           }
           const status = loadStatus.getAttribute('data-status');
@@ -241,11 +257,11 @@
               'errors.';
           } else {
             hint =
-              'Tests started loading (status: ' +
+              'Tests finished loading (status: ' +
               status +
-              ') but never finished.';
+              ') but mocha.run() never started.';
           }
-          const errors = window.__blocklyTestLoadState.errors.join('; ');
+          const errors = state.errors.join('; ');
           reportLoadFailure(hint + (errors ? ' Errors: ' + errors : ''));
         }, 90000);
       })();
@@ -398,9 +414,7 @@
         await loadScript('../playgrounds/screenshot.js');
         await loadScript('../../node_modules/@blockly/dev-tools/dist/index.js');
 
-        document
-          .getElementById('loadStatus')
-          .setAttribute('data-status', 'running');
+        window.__blocklyTestLoadState.markTestsStarted();
 
         let runner = mocha.run(function (failures) {
           var failureDiv = document.getElementById('failureCount');
