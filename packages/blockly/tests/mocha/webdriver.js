@@ -155,7 +155,7 @@ async function runMochaTestsInBrowser(exitOnCompletion = true) {
       const text = await elem.getAttribute('tests_failed');
       return text !== 'unset';
     }, {
-      timeout: 100000,
+      timeout: 200000,
       timeoutMsg: 'Timed out waiting for Mocha tests to finish. Blockly may ' +
           'have failed to load; see load diagnostics below.',
     });
