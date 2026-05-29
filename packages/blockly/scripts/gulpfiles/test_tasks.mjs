@@ -257,26 +257,25 @@ async function metadata() {
  * Run Mocha tests inside a browser.
  * @return {Promise} Asynchronous result.
  */
-async function mocha(exitOnCompletion = true) {
-  // Gulp may pass a done callback as the first argument.
-  if (typeof exitOnCompletion === 'function') {
-    exitOnCompletion = true;
-  }
-  return runTestTask('mocha', async () => {
-    const result = await runMochaTestsInBrowser(exitOnCompletion);
-    if (result) {
-      throw new Error('Mocha tests failed');
-    }
-    console.log('Mocha tests passed');
-  });
+function mocha() {
+  // Run in a subprocess so webdriverio is not loaded inside gulp's asyncDone
+  // domain (which has been observed to exit the process on CI after ~2s).
+  return runTestCommand('mocha', 'node tests/mocha/webdriver.js');
 }
 
 /**
  * Run Mocha tests inside a browser and keep the browser open upon completion.
  * @return {Promise} Asynchronous result.
  */
-export async function interactiveMocha() {
-  return mocha(false);
+export function interactiveMocha() {
+  return runTestTask('interactiveMocha', () => {
+    return runMochaTestsInBrowser(false).then((result) => {
+      if (result) {
+        throw new Error('Mocha tests failed');
+      }
+      console.log('Mocha tests passed');
+    });
+  });
 }
 
 /**
