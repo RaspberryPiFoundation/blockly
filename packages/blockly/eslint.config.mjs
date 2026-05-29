@@ -195,6 +195,7 @@ export default [
       'tests/mocha/.mocharc.js',
       'tests/migration/validate-renamings.mjs',
       'tests/scripts/magic_symlink.js',
+      'tests/scripts/webdriver_helpers.js',
     ],
     languageOptions: {
       globals: {

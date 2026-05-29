@@ -11,6 +11,10 @@ const webdriverio = require('webdriverio');
 const fs = require('fs');
 const path = require('path');
 const {posixPath} = require('../../scripts/helpers');
+const {
+  getWebdriverOptions,
+  runBrowserTestMain,
+} = require('../scripts/webdriver_helpers.js');
 
 /** @const {number} Max time to wait for the browser test page to finish. */
 const PAGE_TIMEOUT_MS = 120000;
@@ -189,35 +193,19 @@ async function runMochaTestsInBrowser(exitOnCompletion = true) {
 async function runMochaTestsInBrowserImpl(exitOnCompletion) {
   ensureWorkspaceNodeModulesLinks();
 
-  const options = {
-    capabilities: {
-      browserName: 'chrome',
-      'goog:chromeOptions': {
-        args: ['--allow-file-access-from-files'],
-      },
-    },
-    logLevel: 'warn',
-  };
-
-  // Run in headless mode on Github Actions.
-  if (process.env.CI) {
-    options.capabilities['goog:chromeOptions'].args.push(
-        '--headless', '--no-sandbox', '--disable-dev-shm-usage',);
-  } else {
-    // --disable-gpu is needed to prevent Chrome from hanging on Linux with
-    // NVIDIA drivers older than v295.20. See
-    // https://github.com/google/blockly/issues/5345 for details.
-    options.capabilities['goog:chromeOptions'].args.push('--disable-gpu');
-  }
+  const options = getWebdriverOptions();
 
   const url = 'file://' + posixPath(__dirname) + '/index.html';
   console.log('Starting webdriverio...');
   let browser;
   let numOfFailure = '1';
+  let pageLoaded = false;
+  let testsCompleted = false;
   try {
     browser = await webdriverio.remote(options);
     console.log('Loading URL: ' + url);
     await browser.url(url);
+    pageLoaded = true;
 
     // Focus emulation via CDP has hung on CI; skip there.
     if (!process.env.CI) {
@@ -225,6 +213,7 @@ async function runMochaTestsInBrowserImpl(exitOnCompletion) {
     }
 
     await waitForTestCompletion(browser);
+    testsCompleted = true;
 
     const elem = await browser.$('#failureCount');
     numOfFailure = await elem.getAttribute('tests_failed');
@@ -250,6 +239,19 @@ async function runMochaTestsInBrowserImpl(exitOnCompletion) {
     }
   }
 
+  if (!pageLoaded) {
+    throw new Error(
+        'Mocha browser tests did not start: Chrome failed to load the test ' +
+        'page. Check chromedriver and Chrome setup.',
+    );
+  }
+  if (!testsCompleted) {
+    throw new Error(
+        'Mocha browser tests did not finish: the test page never reported ' +
+        'results.',
+    );
+  }
+
   console.log('============Blockly Mocha Test Summary=================');
   console.log(numOfFailure + ' tests failed');
   console.log('============Blockly Mocha Test Summary=================');
@@ -260,18 +262,7 @@ async function runMochaTestsInBrowserImpl(exitOnCompletion) {
 }
 
 if (require.main === module) {
-  runMochaTestsInBrowser().catch((e) => {
-    console.error(e);
-    process.exit(1);
-  }).then(function(result) {
-    if (result) {
-      console.log('Mocha tests failed');
-      process.exit(1);
-    } else {
-      console.log('Mocha tests passed');
-      process.exit(0);
-    }
-  });
+  runBrowserTestMain(() => runMochaTestsInBrowser());
 }
 
 module.exports = {runMochaTestsInBrowser};

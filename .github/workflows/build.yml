@@ -43,6 +43,10 @@ jobs:
       - name: Npm Clean Install
         run: npm ci
 
+      - name: Setup Chrome
+        if: runner.os == 'Linux'
+        uses: browser-actions/setup-chrome@v1
+
       - name: Linux Test Setup
         if: runner.os == 'Linux'
         run: source ./tests/scripts/setup_linux_env.sh
