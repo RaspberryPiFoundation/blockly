@@ -258,10 +258,12 @@ async function metadata() {
  * @return {Promise} Asynchronous result.
  */
 async function mocha(exitOnCompletion = true) {
+  // Gulp may pass a done callback as the first argument.
+  if (typeof exitOnCompletion === 'function') {
+    exitOnCompletion = true;
+  }
   return runTestTask('mocha', async () => {
-    const result = await runMochaTestsInBrowser(exitOnCompletion).catch(e => {
-      throw e;
-    });
+    const result = await runMochaTestsInBrowser(exitOnCompletion);
     if (result) {
       throw new Error('Mocha tests failed');
     }

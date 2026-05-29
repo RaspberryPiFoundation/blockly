@@ -12,6 +12,12 @@ const fs = require('fs');
 const path = require('path');
 const {posixPath} = require('../../scripts/helpers');
 
+/** @const {number} Max time to wait for the browser test page to finish. */
+const PAGE_TIMEOUT_MS = 120000;
+
+/** @const {number} Max time to wait for browser.deleteSession(). */
+const DELETE_SESSION_TIMEOUT_MS = 15000;
+
 /**
  * Ensure browser test imports that use ../../node_modules/* continue to work
  * when npm hoists dependencies to the repository root node_modules dir
@@ -35,31 +41,64 @@ function ensureWorkspaceNodeModulesLinks() {
 }
 
 /**
+ * Run a promise with a timeout.
+ * @param {!Promise} promise The promise to run.
+ * @param {number} timeoutMs Timeout in milliseconds.
+ * @param {string} label Description for timeout errors.
+ * @return {!Promise}
+ */
+function withTimeout(promise, timeoutMs, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      setTimeout(() => {
+        reject(new Error(label + ' timed out after ' + timeoutMs + 'ms'));
+      }, timeoutMs);
+    }),
+  ]);
+}
+
+/**
+ * Close the browser session, with a timeout so CI cannot hang forever.
+ * @param {?Object} browser The webdriverio browser instance.
+ */
+async function closeBrowserSession(browser) {
+  if (!browser) {
+    return;
+  }
+  try {
+    await withTimeout(
+        browser.deleteSession(),
+        DELETE_SESSION_TIMEOUT_MS,
+        'browser.deleteSession()',
+    );
+  } catch (e) {
+    console.warn('Failed to close browser session:', e.message);
+  }
+}
+
+/**
  * Enable focus emulation via CDP. Wrapped in a timeout because this call
  * has been observed to hang intermittently on CI.
  * @param {!Object} browser The webdriverio browser instance.
  */
 async function enableFocusEmulation(browser) {
-  const timeoutMs = 30000;
+  const timeoutMs = 10000;
   try {
-    await Promise.race([
-      (async () => {
-        const puppeteer = await browser.getPuppeteer();
-        await browser.call(async () => {
-          const page = (await puppeteer.pages())[0];
-          const session = await page.createCDPSession();
-          await session.send('Emulation.setFocusEmulationEnabled', {
-            enabled: true,
+    await withTimeout(
+        (async () => {
+          const puppeteer = await browser.getPuppeteer();
+          await browser.call(async () => {
+            const page = (await puppeteer.pages())[0];
+            const session = await page.createCDPSession();
+            await session.send('Emulation.setFocusEmulationEnabled', {
+              enabled: true,
+            });
           });
-        });
-      })(),
-      new Promise((_, reject) => {
-        setTimeout(() => {
-          reject(new Error('Focus emulation setup timed out after ' +
-              timeoutMs + 'ms'));
-        }, timeoutMs);
-      }),
-    ]);
+        })(),
+        timeoutMs,
+        'Focus emulation setup',
+    );
   } catch (e) {
     console.warn('Focus emulation setup failed (continuing anyway):',
         e.message);
@@ -75,31 +114,55 @@ async function printBrowserLoadDiagnostics(browser) {
     return;
   }
   try {
-    console.log('============Blockly Mocha Load Diagnostics================');
-    const loadStatus = await browser.$('#loadStatus').getAttribute('data-status');
-    console.log('Load status:', loadStatus ?? 'unknown');
-    const loadErrors = await browser.execute(() => {
-      return window.__blocklyTestLoadState?.errors ?? [];
-    });
-    if (loadErrors.length) {
-      console.log('Captured load errors:');
-      for (const error of loadErrors) {
-        console.log('  ' + error);
+    await withTimeout((async () => {
+      console.log('============Blockly Mocha Load Diagnostics================');
+      const loadStatus = await browser.$('#loadStatus')
+          .getAttribute('data-status');
+      console.log('Load status:', loadStatus ?? 'unknown');
+      const loadErrors = await browser.execute(() => {
+        return window.__blocklyTestLoadState?.errors ?? [];
+      });
+      if (loadErrors.length) {
+        console.log('Captured load errors:');
+        for (const error of loadErrors) {
+          console.log('  ' + error);
+        }
       }
-    }
-    const failureMessagesEls = await browser.$$('#failureMessages p');
-    for (const el of failureMessagesEls) {
-      const messageHtml = await el.getHTML();
-      console.log(messageHtml.replace(/<\/?p>/g, ''));
-    }
-    if (loadStatus === 'pending' || loadStatus === 'imports-complete') {
-      console.log(
-          'Blockly or test modules may not have loaded completely.');
-    }
-    console.log('==========================================================');
+      const failureMessagesEls = await browser.$$('#failureMessages p');
+      for (const el of failureMessagesEls) {
+        const messageHtml = await el.getHTML();
+        console.log(messageHtml.replace(/<\/?p>/g, ''));
+      }
+      if (loadStatus === 'pending' || loadStatus === 'imports-complete') {
+        console.log(
+            'Blockly or test modules may not have loaded completely.');
+      }
+      console.log('==========================================================');
+    })(), 10000, 'Load diagnostics');
   } catch (diagErr) {
     console.warn('Could not collect browser diagnostics:', diagErr.message);
   }
+}
+
+/**
+ * Wait until Mocha reports results or the page reports a load failure.
+ * @param {!Object} browser The webdriverio browser instance.
+ */
+async function waitForTestCompletion(browser) {
+  await browser.waitUntil(async() => {
+    const failureCount = await browser.$('#failureCount')
+        .getAttribute('tests_failed');
+    if (failureCount !== 'unset') {
+      return true;
+    }
+    const loadStatus = await browser.$('#loadStatus')
+        .getAttribute('data-status');
+    return loadStatus === 'failed';
+  }, {
+    timeout: PAGE_TIMEOUT_MS,
+    timeoutMsg: 'Timed out waiting for Mocha tests to finish. Blockly may ' +
+        'have failed to load; see load diagnostics below.',
+  });
 }
 
 /**
@@ -112,6 +175,18 @@ async function printBrowserLoadDiagnostics(browser) {
  * @return {number} 0 on success, 1 on failure.
  */
 async function runMochaTestsInBrowser(exitOnCompletion = true) {
+  // Gulp may pass a done callback as the first argument.
+  if (typeof exitOnCompletion === 'function') {
+    exitOnCompletion = true;
+  }
+  return runMochaTestsInBrowserImpl(exitOnCompletion);
+}
+
+/**
+ * @param {boolean} exitOnCompletion True if the browser should quit after tests.
+ * @return {number} 0 on success, 1 on failure.
+ */
+async function runMochaTestsInBrowserImpl(exitOnCompletion) {
   ensureWorkspaceNodeModulesLinks();
 
   const options = {
@@ -144,21 +219,12 @@ async function runMochaTestsInBrowser(exitOnCompletion = true) {
     console.log('Loading URL: ' + url);
     await browser.url(url);
 
-    // Toggle the devtools setting to emulate focus, so that the window will
-    // always act as if it has focus regardless of the state of the window
-    // manager or operating system. This improves the reliability of
-    // FocusManager-related tests.
-    await enableFocusEmulation(browser);
+    // Focus emulation via CDP has hung on CI; skip there.
+    if (!process.env.CI) {
+      await enableFocusEmulation(browser);
+    }
 
-    await browser.waitUntil(async() => {
-      const elem = await browser.$('#failureCount');
-      const text = await elem.getAttribute('tests_failed');
-      return text !== 'unset';
-    }, {
-      timeout: 200000,
-      timeoutMsg: 'Timed out waiting for Mocha tests to finish. Blockly may ' +
-          'have failed to load; see load diagnostics below.',
-    });
+    await waitForTestCompletion(browser);
 
     const elem = await browser.$('#failureCount');
     numOfFailure = await elem.getAttribute('tests_failed');
@@ -179,12 +245,8 @@ async function runMochaTestsInBrowser(exitOnCompletion = true) {
     await printBrowserLoadDiagnostics(browser);
     throw e;
   } finally {
-    if (exitOnCompletion && browser) {
-      try {
-        await browser.deleteSession();
-      } catch (deleteErr) {
-        console.warn('Failed to close browser session:', deleteErr.message);
-      }
+    if (exitOnCompletion) {
+      await closeBrowserSession(browser);
     }
   }
 
