@@ -106,7 +106,10 @@ export class WorkspaceAudio {
       source.start();
     } else if (this.parentWorkspace) {
       // Maybe a workspace on a lower level knows about this sound.
-      this.parentWorkspace.getAudioManager().play(name, opt_volume);
+      const parentAudio = this.parentWorkspace.getAudioManager();
+      if (parentAudio !== this) {
+        parentAudio.play(name, opt_volume);
+      }
     }
   }
 
