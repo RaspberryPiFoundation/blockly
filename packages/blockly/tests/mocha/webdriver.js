@@ -34,6 +34,73 @@ function ensureWorkspaceNodeModulesLinks() {
   }
 }
 
+/**
+ * Enable focus emulation via CDP. Wrapped in a timeout because this call
+ * has been observed to hang intermittently on CI.
+ * @param {!Object} browser The webdriverio browser instance.
+ */
+async function enableFocusEmulation(browser) {
+  const timeoutMs = 30000;
+  try {
+    await Promise.race([
+      (async () => {
+        const puppeteer = await browser.getPuppeteer();
+        await browser.call(async () => {
+          const page = (await puppeteer.pages())[0];
+          const session = await page.createCDPSession();
+          await session.send('Emulation.setFocusEmulationEnabled', {
+            enabled: true,
+          });
+        });
+      })(),
+      new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error('Focus emulation setup timed out after ' +
+              timeoutMs + 'ms'));
+        }, timeoutMs);
+      }),
+    ]);
+  } catch (e) {
+    console.warn('Focus emulation setup failed (continuing anyway):',
+        e.message);
+  }
+}
+
+/**
+ * Print browser-side load diagnostics when tests fail to start or finish.
+ * @param {!Object} browser The webdriverio browser instance.
+ */
+async function printBrowserLoadDiagnostics(browser) {
+  if (!browser) {
+    return;
+  }
+  try {
+    console.log('============Blockly Mocha Load Diagnostics================');
+    const loadStatus = await browser.$('#loadStatus').getAttribute('data-status');
+    console.log('Load status:', loadStatus ?? 'unknown');
+    const loadErrors = await browser.execute(() => {
+      return window.__blocklyTestLoadState?.errors ?? [];
+    });
+    if (loadErrors.length) {
+      console.log('Captured load errors:');
+      for (const error of loadErrors) {
+        console.log('  ' + error);
+      }
+    }
+    const failureMessagesEls = await browser.$$('#failureMessages p');
+    for (const el of failureMessagesEls) {
+      const messageHtml = await el.getHTML();
+      console.log(messageHtml.replace(/<\/?p>/g, ''));
+    }
+    if (loadStatus === 'pending' || loadStatus === 'imports-complete') {
+      console.log(
+          'Blockly or test modules may not have loaded completely.');
+    }
+    console.log('==========================================================');
+  } catch (diagErr) {
+    console.warn('Could not collect browser diagnostics:', diagErr.message);
+  }
+}
 
 /**
  * Runs the Mocha tests in this directory in Chrome. It uses webdriverio to
@@ -70,41 +137,54 @@ async function runMochaTestsInBrowser(exitOnCompletion = true) {
 
   const url = 'file://' + posixPath(__dirname) + '/index.html';
   console.log('Starting webdriverio...');
-  const browser = await webdriverio.remote(options);
-  console.log('Loading URL: ' + url);
-  await browser.url(url);
+  let browser;
+  let numOfFailure = '1';
+  try {
+    browser = await webdriverio.remote(options);
+    console.log('Loading URL: ' + url);
+    await browser.url(url);
 
-  // Toggle the devtools setting to emulate focus, so that the window will
-  // always act as if it has focus regardless of the state of the window manager
-  // or operating system. This improves the reliability of FocusManager-related
-  // tests.
-  const puppeteer = await browser.getPuppeteer();
-  await browser.call(async () => {
-    const page = (await puppeteer.pages())[0];
-    const session = await page.createCDPSession();
-    await session.send('Emulation.setFocusEmulationEnabled', { enabled: true });
-  });
+    // Toggle the devtools setting to emulate focus, so that the window will
+    // always act as if it has focus regardless of the state of the window
+    // manager or operating system. This improves the reliability of
+    // FocusManager-related tests.
+    await enableFocusEmulation(browser);
 
-  await browser.waitUntil(async() => {
+    await browser.waitUntil(async() => {
+      const elem = await browser.$('#failureCount');
+      const text = await elem.getAttribute('tests_failed');
+      return text !== 'unset';
+    }, {
+      timeout: 100000,
+      timeoutMsg: 'Timed out waiting for Mocha tests to finish. Blockly may ' +
+          'have failed to load; see load diagnostics below.',
+    });
+
     const elem = await browser.$('#failureCount');
-    const text = await elem.getAttribute('tests_failed');
-    return text !== 'unset';
-  }, {
-    timeout: 100000,
-  });
+    numOfFailure = await elem.getAttribute('tests_failed');
 
-  const elem = await browser.$('#failureCount');
-  const numOfFailure = await elem.getAttribute('tests_failed');
-
-  if (numOfFailure > 0) {
-    console.log('============Blockly Mocha Test Failures================');
-    const failureMessagesEls = await browser.$$('#failureMessages p');
-    if (!failureMessagesEls.length) {
-      console.log('There is at least one test failure, but no messages reported. Mocha may be failing because no tests are being run.');
+    if (numOfFailure > 0) {
+      console.log('============Blockly Mocha Test Failures================');
+      const failureMessagesEls = await browser.$$('#failureMessages p');
+      if (!failureMessagesEls.length) {
+        console.log('There is at least one test failure, but no messages ' +
+            'reported. Mocha may be failing because no tests are being run.');
+      }
+      for (const el of failureMessagesEls) {
+        const messageHtml = await el.getHTML();
+        console.log(messageHtml.replace(/<\/?p>/g, ''));
+      }
     }
-    for (const el of failureMessagesEls) {
-      const messageHtml = await el.getHTML();
-      console.log(messageHtml.replace('<p>', '').replace('</p>', ''));
+  } catch (e) {
+    await printBrowserLoadDiagnostics(browser);
+    throw e;
+  } finally {
+    if (exitOnCompletion && browser) {
+      try {
+        await browser.deleteSession();
+      } catch (deleteErr) {
+        console.warn('Failed to close browser session:', deleteErr.message);
+      }
     }
   }
 
@@ -114,7 +194,6 @@ async function runMochaTestsInBrowser(exitOnCompletion = true) {
   if (parseInt(numOfFailure) !== 0) {
     return 1;
   }
-  if (exitOnCompletion) await browser.deleteSession();
   return 0;
 }
 
