@@ -182,7 +182,7 @@
           },
           reportFailure(error) {
             const message =
-                error instanceof Error ? error.message : String(error);
+              error instanceof Error ? error.message : String(error);
             this.errors.push(message);
             reportLoadFailure('Failed to load Blockly or tests: ' + message);
           },
@@ -191,36 +191,37 @@
         window.addEventListener('error', (event) => {
           const message = event.message || 'Unknown script error';
           const loc = event.filename
-              ? ' at ' + event.filename + ':' + event.lineno
-              : '';
+            ? ' at ' + event.filename + ':' + event.lineno
+            : '';
           window.__blocklyTestLoadState.errors.push(message + loc);
           if (window.__blocklyTestLoadState.finished) {
             return;
           }
           if (
-              message.includes('initialized before') ||
-              message.includes('before initialization') ||
-              message.includes('Cannot access')
+            message.includes('initialized before') ||
+            message.includes('before initialization') ||
+            message.includes('Cannot access')
           ) {
-            reportLoadFailure(
-                'Blockly module load error: ' +
-                message + loc);
+            reportLoadFailure('Blockly module load error: ' + message + loc);
           } else if (!window.__blocklyTestLoadState.importsComplete) {
             reportLoadFailure(
-                'Error loading Blockly test modules: ' + message + loc);
+              'Error loading Blockly test modules: ' + message + loc,
+            );
           }
         });
 
         window.addEventListener('unhandledrejection', (event) => {
           const reason =
-              event.reason instanceof Error
-                  ? event.reason.message
-                  : String(event.reason);
+            event.reason instanceof Error
+              ? event.reason.message
+              : String(event.reason);
           window.__blocklyTestLoadState.errors.push(
-              'Unhandled rejection: ' + reason);
+            'Unhandled rejection: ' + reason,
+          );
           if (!window.__blocklyTestLoadState.finished) {
             reportLoadFailure(
-                'Unhandled rejection while loading Blockly tests: ' + reason);
+              'Unhandled rejection while loading Blockly tests: ' + reason,
+            );
           }
         });
 
@@ -233,15 +234,16 @@
           let hint;
           if (status === 'pending') {
             hint =
-                'The test module script did not finish loading. This is often ' +
-                'caused by a circular dependency in imports (e.g. importing ' +
-                'from "./blockly.js" or "./utils.js" instead of a specific ' +
-                'file). Check the browser console for "initialized before" ' +
-                'errors.';
+              'The test module script did not finish loading. This is often ' +
+              'caused by a circular dependency in imports (e.g. importing ' +
+              'from "./blockly.js" or "./utils.js" instead of a specific ' +
+              'file). Check the browser console for "initialized before" ' +
+              'errors.';
           } else {
             hint =
-                'Tests started loading (status: ' + status +
-                ') but never finished.';
+              'Tests started loading (status: ' +
+              status +
+              ') but never finished.';
           }
           const errors = window.__blocklyTestLoadState.errors.join('; ');
           reportLoadFailure(hint + (errors ? ' Errors: ' + errors : ''));
@@ -374,12 +376,13 @@
         const missing = required.filter((name) => !blockly[name]);
         if (missing.length) {
           throw new Error(
-              'Blockly failed to initialize; missing exports: ' +
+            'Blockly failed to initialize; missing exports: ' +
               missing.join(', ') +
               '. This is often caused by a circular dependency (e.g. ' +
               'importing from "./blockly.js" or "./utils.js" instead of a ' +
               'specific module). Check the browser console for ' +
-              '"initialized before" errors.');
+              '"initialized before" errors.',
+          );
         }
       }
 
@@ -395,12 +398,16 @@
         await loadScript('../playgrounds/screenshot.js');
         await loadScript('../../node_modules/@blockly/dev-tools/dist/index.js');
 
-        document.getElementById('loadStatus').setAttribute('data-status', 'running');
+        document
+          .getElementById('loadStatus')
+          .setAttribute('data-status', 'running');
 
         let runner = mocha.run(function (failures) {
           var failureDiv = document.getElementById('failureCount');
           failureDiv.setAttribute('tests_failed', failures);
-          document.getElementById('loadStatus').setAttribute('data-status', 'done');
+          document
+            .getElementById('loadStatus')
+            .setAttribute('data-status', 'done');
         });
         runner.on('fail', function (test, err) {
           const msg = document.createElement('p');

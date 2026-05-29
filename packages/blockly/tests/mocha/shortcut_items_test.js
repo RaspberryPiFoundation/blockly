@@ -883,8 +883,6 @@ suite('Keyboard Shortcut Items', function () {
         this.injectionDiv.dispatchEvent(keyEvent);
         // Wait for the live region to update after the event.
         this.clock.runAll();
-        // The announcement may include an additional non-breaking space.
-        console.log(this.liveRegion.textContent);
         assert.include(this.liveRegion.textContent, expected);
       };
       this.liveRegion = document.getElementById('blocklyAriaAnnounce');
