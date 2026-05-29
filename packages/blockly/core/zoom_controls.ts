@@ -14,12 +14,12 @@
 // Unused import preserved for side-effects. Remove if unneeded.
 import './events/events_click.js';
 
-import {IFocusableNode} from './blockly.js';
 import * as browserEvents from './browser_events.js';
 import {ComponentManager} from './component_manager.js';
 import * as Css from './css.js';
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
+import {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IPositionable} from './interfaces/i_positionable.js';
 import type {UiMetrics} from './metrics_manager.js';
 import {Msg} from './msg.js';
