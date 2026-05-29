@@ -207,8 +207,7 @@
           if (
             message.includes('initialized before') ||
             message.includes('before initialization') ||
-            message.includes('Cannot access') ||
-            message.includes('Maximum call stack size exceeded')
+            message.includes('Cannot access')
           ) {
             reportLoadFailure(
               'Blockly module load error (likely circular dependency): ' +
