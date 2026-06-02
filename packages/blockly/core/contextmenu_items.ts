@@ -545,6 +545,7 @@ export function registerDelete() {
     },
     callback(scope: Scope) {
       if (scope.block) {
+        getFocusManager().focusNode(scope.block);
         scope.block.checkAndDelete();
       }
     },
