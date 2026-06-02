@@ -15,6 +15,7 @@ import type {IFocusableTree} from '../interfaces/i_focusable_tree.js';
 import type {IHasBubble} from '../interfaces/i_has_bubble.js';
 import {ISelectable} from '../interfaces/i_selectable.js';
 import {ContainerRegion} from '../metrics_manager.js';
+import {Msg} from '../msg.js';
 import {Scrollbar} from '../scrollbar.js';
 import {aria} from '../utils.js';
 import {Coordinate} from '../utils/coordinate.js';
@@ -791,7 +792,11 @@ export abstract class Bubble
 
     const label = this.getAriaLabel()?.trim();
 
-    aria.setState(element, aria.State.LABEL, label ? label : 'Bubble');
+    aria.setState(
+      element,
+      aria.State.LABEL,
+      label ? label : Msg['BUBBLE_LABEL_DEFAULT'],
+    );
   }
 
   /**
