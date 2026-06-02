@@ -719,9 +719,10 @@ export class RenderedConnection
   private findHighlightSvg(): SVGPathElement | null {
     // This cast is valid as TypeScript's definition is wrong. See:
     // https://github.com/microsoft/TypeScript/issues/60996.
-    return document.getElementById(this.id) as
-      | unknown
-      | null as SVGPathElement | null;
+    const root = this.getSourceBlock().getSvgRoot().getRootNode() as
+      | ShadowRoot
+      | HTMLDocument;
+    return root.getElementById(this.id) as SVGPathElement | null;
   }
 }
 

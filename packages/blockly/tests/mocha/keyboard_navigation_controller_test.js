@@ -13,6 +13,7 @@ import {
 suite('Keyboard Navigation Controller', function () {
   setup(function () {
     sharedTestSetup.call(this);
+    this.workspace = Blockly.inject('blocklyDiv');
     Blockly.keyboardNavigationController.setIsActive(false);
   });
 
@@ -24,14 +25,18 @@ suite('Keyboard Navigation Controller', function () {
   test('Setting active keyboard navigation adds css class', function () {
     Blockly.keyboardNavigationController.setIsActive(true);
     assert.isTrue(
-      document.body.classList.contains('blocklyKeyboardNavigation'),
+      Blockly.getMainWorkspace()
+        .getInjectionDiv()
+        .parentElement.classList.contains('blocklyKeyboardNavigation'),
     );
   });
 
   test('Disabling active keyboard navigation removes css class', function () {
     Blockly.keyboardNavigationController.setIsActive(false);
     assert.isFalse(
-      document.body.classList.contains('blocklyKeyboardNavigation'),
+      Blockly.getMainWorkspace()
+        .getInjectionDiv()
+        .parentElement.classList.contains('blocklyKeyboardNavigation'),
     );
   });
 });

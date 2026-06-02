@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {getMainWorkspace} from './common.js';
+import type {WorkspaceSvg} from './workspace_svg.js';
+
 /**
  * The KeyboardNavigationController handles coordinating Blockly-wide
  * keyboard navigation behavior, such as enabling/disabling full
@@ -69,10 +72,12 @@ export class KeyboardNavigationController {
 
   /** Adds or removes the css class that indicates keyboard navigation is active. */
   private updateActiveVisualization() {
+    const root = (getMainWorkspace() as WorkspaceSvg).getInjectionDiv()
+      .parentElement;
     if (this.isActive) {
-      document.body.classList.add(this.activeClassName);
+      root?.classList.add(this.activeClassName);
     } else {
-      document.body.classList.remove(this.activeClassName);
+      root?.classList.remove(this.activeClassName);
     }
   }
 }
