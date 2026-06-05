@@ -16,7 +16,6 @@ import sourcemaps from 'gulp-sourcemaps';
 import {execSync} from 'child_process';
 import * as fs from 'fs';
 import * as fsPromises from 'fs/promises';
-import {finished} from 'node:stream/promises';
 import * as path from 'path';
 
 import {globSync} from 'glob';
@@ -212,7 +211,7 @@ function chunkExportPath(chunk) {
  * chunkWrapper); suppress undefined-variable diagnostics here because
  * Closure Compiler analyses this file separately from the wrapper.
  */
-async function writeChunkExportFiles() {
+async function buildChunkExporters() {
   const outDir = path.join(TSC_OUTPUT_DIR, CHUNK_EXPORTS_DIR);
   await fsPromises.mkdir(outDir, {recursive: true});
 
@@ -612,8 +611,7 @@ function compile(options) {
  * This task compiles the core library, blocks and generators, creating
  * blockly_compressed.js, blocks_compressed.js, etc.
  */
-async function buildCompiled() {
-  await writeChunkExportFiles();
+function buildCompiled() {
   // Get chunking.
   const chunkOptions = getChunkOptions();
   // Closure Compiler options.
@@ -635,16 +633,14 @@ async function buildCompiled() {
   };
 
   // Fire up compilation pipline.
-  await finished(
-    gulp
-      .src(chunkOptions.js, {base: './'})
-      .pipe(stripApacheLicense())
-      .pipe(sourcemaps.init())
-      .pipe(compile(options))
-      .pipe(rename({suffix: COMPILED_SUFFIX}))
-      .pipe(sourcemaps.write('.'))
-      .pipe(gulp.dest(RELEASE_DIR)),
-  );
+  return gulp
+    .src(chunkOptions.js, {base: './'})
+    .pipe(stripApacheLicense())
+    .pipe(sourcemaps.init())
+    .pipe(compile(options))
+    .pipe(rename({suffix: COMPILED_SUFFIX}))
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest(RELEASE_DIR));
 }
 
 /**
@@ -821,8 +817,13 @@ export function cleanBuildDir() {
 // Main sequence targets.  Each should invoke any immediate prerequisite(s).
 // function cleanBuildDir, above
 export const langfiles = gulp.parallel(buildLangfiles, buildLangfileShims);
-export const minify = gulp.series(tsc, buildCompiled, buildShims);
 // function tsc, above
+export const minify = gulp.series(
+  tsc,
+  buildChunkExporters,
+  buildCompiled,
+  buildShims,
+);
 export const build = gulp.parallel(minify, langfiles);
 
 // Manually-invokable targets, with prerequisites where required.
