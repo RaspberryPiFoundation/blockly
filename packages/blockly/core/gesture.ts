@@ -418,6 +418,14 @@ export class Gesture {
 
     this.mouseDownXY = new Coordinate(e.clientX, e.clientY);
 
+    // Re-establish the touch identifier for this gesture's starting pointer.
+    // If getGesture() cancelled a stale gesture for this pointer (a missed
+    // pointerup), that cancel() cleared the global touch identifier via
+    // dispose(). Without restoring it here, this gesture's terminating
+    // pointerup is rejected by Touch.shouldHandleEvent and the gesture is
+    // never disposed, permanently locking the workspace.
+    Touch.checkTouchIdentifier(e);
+
     this.bindMouseEvents(e);
 
     if (!this.isEnding_) {
