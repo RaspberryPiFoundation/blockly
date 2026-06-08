@@ -87,6 +87,14 @@ const NAMESPACE_VARIABLE = '$';
 const NAMESPACE_PROPERTY = '__namespace__';
 
 /**
+ * Directory (relative to TSC_OUTPUT_DIR) where generated chunk
+ * exporters are written.
+ *
+ * See buildChunkExporters for additional information.
+ */
+const CHUNK_EXPORTERS_DIR = 'chunk_exports';
+
+/**
  * Prefix for properties that will be used to store each chunk's
  * export object on the namespace object.
  *
@@ -191,109 +199,6 @@ for (let i = 1; i < chunks.length; i++) {
 function modulePath(chunk) {
   const entryPath = path.posix.join(TSC_OUTPUT_DIR_POSIX, chunk.entry);
   return 'module$' + entryPath.replace(/\.js$/, '').replaceAll('/', '$');
-}
-
-/**
- * Directory (relative to TSC_OUTPUT_DIR) where generated chunk
- * exporters are written.
- *
- * See buildChunkExporters for additional information.
- */
-const CHUNK_EXPORTS_DIR = 'chunk_exports';
-
-/**
- * Return the path to the generated chunk exporter for the given
- * chunk, relative to TSC_OUTPUT_DIR.
- *
- * See buildChunkExporters for additional information.
- *
- * @param {{name: string}} chunk
- * @return {string}
- */
-function chunkExporterPath(chunk) {
-  return path.posix.join(CHUNK_EXPORTS_DIR, `${chunk.name}_export.js`);
-}
-
-/**
- * This task generates the chunk exporters, one per chunk, which are
- * source files included in the input to Closure Compiler to help the
- * chunk wrappers locate the chunk's exports (module) object.
- *
- * Normally, when using --compilation_level SIMPLE_OPTIMIZATIONS and
- * --chunk_output_type GLOBAL_NAMESPACE (the defaults), Closure
- * Compiler will give each chunk's top-level exports (module) object a
- * name of the form
- *
- *    module$build$src$...$filename
- *
- * which can be computed by modulePath(chunk), thereby making it easy
- * to locate the object that should be returned by the chunk wrapper's
- * factory function.
- *
- * Unfortunately, if using using --assume_function_wrapper option (or
- * --compilation_level ADVANCED_OPTIMIZATIONS), this variable is
- * renamed in a later stage of the compiler to instead have an
- * arbitrarily-chosen name of minimal length.
- *
- * To work around this, we create an extra source module for each
- * chunk that imports the chunk's entrypoint and saves the resulting
- * exports (module) object to a well-known location: a property on the
- * shared namespace object.
- *
- * In order to prevent the name of that property from itself being
- * renamed, well-known location, it is written using a computed member
- * expression with a string literal property name (i.e., a['b'] rather
- * than a.b).  E.g., the the generated chunck exporter source file
- * might contain
- *
- *     import * as exports from '../core/blockly.js';
- *     $['__chunk_blockly'] = exports;
- *
- * which would get compiled to something like:
- *
- *     $.__chunk_blockly=R;
- *
- * The chunk wrapper's factory function can then retrieve
- * and return $.__chunk_blockly.
- *
- * N.B.: Although Closure Compiler will not rename the literal
- * property name, it will convet the computed member expression into a
- * non-computed one (as shown in the example above) if it is a valid
- * unquoted property name.  In order to ensure that the compiled,
- * wrapped chunk is itself valid input for Closure Compiler, it is
- * necessary that the chunk wrapper use the same form to access it.
- * Specifically, for this example the chunk wrapper factory function
- * should
- *
- *     return $.__chunk_blockly;
- *
- * rather than
- *
- *     return $['__chunk_blockly'];
- */
-async function buildChunkExporters() {
-  const outDir = path.join(TSC_OUTPUT_DIR, CHUNK_EXPORTS_DIR);
-  await fsPromises.mkdir(outDir, {recursive: true});
-
-  await Promise.all(
-    chunks.map(async (chunk) => {
-      const filename = chunkExporterPath(chunk);
-      const importPath = posixPath(
-        path.posix.relative(path.posix.dirname(filename), chunk.entry),
-      );
-      await fsPromises.writeFile(
-        path.join(TSC_OUTPUT_DIR, filename),
-        // Suppress undefined-variable diagnostics, since Closure
-        // Compiler can't see the declaration of NAMESPACE_VARIABLE
-        // while compiling the chunk exporters.
-        `/** @fileoverview @suppress {undefinedVars} */
-
-import * as exports from '${importPath}';
-${NAMESPACE_VARIABLE}['${CHUNK_EXPORTS_PREFIX}${chunk.name}'] = exports;
-`,
-      );
-    }),
-  );
 }
 
 const licenseRegex = `\\/\\*\\*
@@ -512,6 +417,101 @@ function buildLangfiles(done) {
   execSync(createMessagesCmd, {stdio: 'inherit'});
 
   done();
+}
+
+/**
+ * Return the path to the generated chunk exporter for the given
+ * chunk, relative to TSC_OUTPUT_DIR.
+ *
+ * See buildChunkExporters for additional information.
+ *
+ * @param {{name: string}} chunk
+ * @return {string}
+ */
+function chunkExporterPath(chunk) {
+  return path.posix.join(CHUNK_EXPORTERS_DIR, `${chunk.name}_export.js`);
+}
+
+/**
+ * This task generates the chunk exporters, one per chunk, which are
+ * source files included in the input to Closure Compiler to help the
+ * chunk wrappers locate the chunk's exports (module) object.
+ *
+ * Normally, when using --compilation_level SIMPLE_OPTIMIZATIONS and
+ * --chunk_output_type GLOBAL_NAMESPACE (the defaults), Closure
+ * Compiler will give each chunk's top-level exports (module) object a
+ * name of the form
+ *
+ *    module$build$src$...$filename
+ *
+ * which can be computed by modulePath(chunk), thereby making it easy
+ * to locate the object that should be returned by the chunk wrapper's
+ * factory function.
+ *
+ * Unfortunately, if using using --assume_function_wrapper option (or
+ * --compilation_level ADVANCED_OPTIMIZATIONS), this variable is
+ * renamed in a later stage of the compiler to instead have an
+ * arbitrarily-chosen name of minimal length.
+ *
+ * To work around this, we create an extra source module for each
+ * chunk that imports the chunk's entrypoint and saves the resulting
+ * exports (module) object to a well-known location: a property on the
+ * shared namespace object.
+ *
+ * In order to prevent the name of that property from itself being
+ * renamed, well-known location, it is written using a computed member
+ * expression with a string literal property name (i.e., a['b'] rather
+ * than a.b).  E.g., the the generated chunck exporter source file
+ * might contain
+ *
+ *     import * as exports from '../core/blockly.js';
+ *     $['__chunk_blockly'] = exports;
+ *
+ * which would get compiled to something like:
+ *
+ *     $.__chunk_blockly=R;
+ *
+ * The chunk wrapper's factory function can then retrieve
+ * and return $.__chunk_blockly.
+ *
+ * N.B.: Although Closure Compiler will not rename the literal
+ * property name, it will convet the computed member expression into a
+ * non-computed one (as shown in the example above) if it is a valid
+ * unquoted property name.  In order to ensure that the compiled,
+ * wrapped chunk is itself valid input for Closure Compiler, it is
+ * necessary that the chunk wrapper use the same form to access it.
+ * Specifically, for this example the chunk wrapper factory function
+ * should
+ *
+ *     return $.__chunk_blockly;
+ *
+ * rather than
+ *
+ *     return $['__chunk_blockly'];
+ */
+async function buildChunkExporters() {
+  const outDir = path.join(TSC_OUTPUT_DIR, CHUNK_EXPORTERS_DIR);
+  await fsPromises.mkdir(outDir, {recursive: true});
+
+  await Promise.all(
+    chunks.map(async (chunk) => {
+      const filename = chunkExporterPath(chunk);
+      const importPath = posixPath(
+        path.posix.relative(path.posix.dirname(filename), chunk.entry),
+      );
+      await fsPromises.writeFile(
+        path.join(TSC_OUTPUT_DIR, filename),
+        // Suppress undefined-variable diagnostics, since Closure
+        // Compiler can't see the declaration of NAMESPACE_VARIABLE
+        // while compiling the chunk exporters.
+        `/** @fileoverview @suppress {undefinedVars} */
+
+import * as exports from '${importPath}';
+${NAMESPACE_VARIABLE}['${CHUNK_EXPORTS_PREFIX}${chunk.name}'] = exports;
+`,
+      );
+    }),
+  );
 }
 
 /**
