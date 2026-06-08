@@ -87,12 +87,12 @@ const NAMESPACE_VARIABLE = '$';
 const NAMESPACE_PROPERTY = '__namespace__';
 
 /**
- * Property on the shared namespace object where each chunk's export
- * object is stored before the UMD wrapper returns it.  A string literal
- * is used so that Closure Compiler will not rename it when
- * assume_function_wrapper is enabled (see issue #5795).
+ * Prefix for properties that will be used to store each chunk's
+ * export object on the namespace object.
+ *
+ * See buildChunkExporters for additional information.
  */
-const CHUNK_EXPORT_PROPERTY = '__chunkExport__';
+const CHUNK_EXPORTS_PREFIX = '__chunk_';
 
 /**
  * A list of chunks.  Order matters: later chunks can depend on
@@ -226,7 +226,7 @@ async function buildChunkExporters() {
         `/** @fileoverview @suppress {undefinedVars} */
 
 import * as exports from '${importPath}';
-${NAMESPACE_VARIABLE}['${CHUNK_EXPORT_PROPERTY}'] = exports;
+${NAMESPACE_VARIABLE}['${CHUNK_EXPORTS_PREFIX}${chunk.name}'] = exports;
 `,
       );
     }),
@@ -495,6 +495,11 @@ function chunkWrapper(chunk) {
     );
   }
 
+  // Expression evaluating to the location on the namespace object at
+  // which the chunk exporter will have saved the chunk's exports
+  // object.  (See buildChunkExporters.)
+  const exportsObject = `${NAMESPACE_VARIABLE}.${CHUNK_EXPORTS_PREFIX}${chunk.name}`;
+
   // Note that when loading in a browser the base of the exported path
   // (e.g. Blockly.blocks.all - see issue #5932) might not exist
   // before factory has been executed, so calling factory() and
@@ -514,8 +519,8 @@ function chunkWrapper(chunk) {
 }(this, function(${factoryArgs}) {
 var ${NAMESPACE_VARIABLE}=${namespaceExpr};
 %output%
-${NAMESPACE_VARIABLE}['${CHUNK_EXPORT_PROPERTY}'].${NAMESPACE_PROPERTY}=${NAMESPACE_VARIABLE};
-return ${NAMESPACE_VARIABLE}['${CHUNK_EXPORT_PROPERTY}'];
+${exportsObject}.${NAMESPACE_PROPERTY}=${NAMESPACE_VARIABLE};
+return ${exportsObject};
 }));
 `;
 }
