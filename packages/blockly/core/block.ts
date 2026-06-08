@@ -46,6 +46,7 @@ import type {
   IVariableModel,
   IVariableState,
 } from './interfaces/i_variable_model.js';
+import {Msg} from './msg.js';
 import * as registry from './registry.js';
 import * as Tooltip from './tooltip.js';
 import * as arrayUtils from './utils/array.js';
@@ -1567,15 +1568,27 @@ export class Block {
   }
 
   /**
-   * @returns The custom string to use as the role description for this block,
-   *   or undefined if no custom description is set.
+   * @returns The string to use as the role description for this block. If a
+   *    custom provider has been set, use that. Otherwise, return a default
+   *    description based on the block's properties.
    */
-  getAriaRoleDescription(): string | undefined {
-    if (!this.ariaRoleDescriptionProvider) return undefined;
-    if (typeof this.ariaRoleDescriptionProvider === 'function') {
-      return this.ariaRoleDescriptionProvider();
+  getAriaRoleDescription(): string {
+    if (this.ariaRoleDescriptionProvider) {
+      if (typeof this.ariaRoleDescriptionProvider === 'function') {
+        return this.ariaRoleDescriptionProvider();
+      }
+      return replaceMessageReferences(this.ariaRoleDescriptionProvider);
     }
-    return replaceMessageReferences(this.ariaRoleDescriptionProvider);
+
+    let roleDescription: string;
+    if (this.statementInputCount) {
+      roleDescription = Msg['BLOCK_LABEL_CONTAINER'];
+    } else if (this.outputConnection) {
+      roleDescription = Msg['BLOCK_LABEL_VALUE'];
+    } else {
+      roleDescription = Msg['BLOCK_LABEL_STATEMENT'];
+    }
+    return roleDescription;
   }
 
   /**

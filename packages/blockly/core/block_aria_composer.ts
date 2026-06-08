@@ -79,6 +79,7 @@ export function computeAriaLabel(
     verbosity >= Verbosity.STANDARD && getCollapsedLabel(block),
     verbosity >= Verbosity.LOQUACIOUS && getShadowBlockLabel(block),
     verbosity >= Verbosity.STANDARD && getInputCountLabel(block),
+    verbosity >= Verbosity.LOQUACIOUS && block.getAriaRoleDescription(),
   ]
     .filter((label) => !!label)
     .join(', ');
@@ -100,18 +101,11 @@ export function configureAriaRole(block: BlockSvg) {
     setRole(focusableElement, Role.FIGURE);
   }
 
-  let roleDescription;
-  const customDescription = block.getAriaRoleDescription();
-  if (customDescription) {
-    roleDescription = customDescription;
-  } else if (block.statementInputCount) {
-    roleDescription = Msg['BLOCK_LABEL_CONTAINER'];
-  } else if (block.outputConnection) {
-    roleDescription = Msg['BLOCK_LABEL_VALUE'];
-  } else {
-    roleDescription = Msg['BLOCK_LABEL_STATEMENT'];
-  }
-  setState(focusableElement, State.ROLEDESCRIPTION, roleDescription);
+  setState(
+    focusableElement,
+    State.ROLEDESCRIPTION,
+    block.getAriaRoleDescription(),
+  );
 }
 
 /**
