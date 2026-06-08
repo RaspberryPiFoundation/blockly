@@ -92,7 +92,7 @@ const NAMESPACE_PROPERTY = '__namespace__';
  *
  * See buildChunkExporters for additional information.
  */
-const CHUNK_EXPORTERS_DIR = 'chunk_exports';
+const CHUNK_EXPORTERS_DIR = 'chunk_exporters';
 
 /**
  * Prefix for properties that will be used to store each chunk's
@@ -429,7 +429,7 @@ function buildLangfiles(done) {
  * @return {string}
  */
 function chunkExporterPath(chunk) {
-  return path.posix.join(CHUNK_EXPORTERS_DIR, `${chunk.name}_export.js`);
+  return path.posix.join(CHUNK_EXPORTERS_DIR, `${chunk.name}_exporter.js`);
 }
 
 /**
