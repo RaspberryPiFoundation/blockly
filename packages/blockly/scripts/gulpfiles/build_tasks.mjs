@@ -101,7 +101,7 @@ const CHUNK_EXPORTS_PREFIX = '__chunk_';
  *
  * - .name: the name of the chunk.  Used to label it when describing
  *   it to Closure Compiler and forms the prefix of filename the chunk
- *   will be written to.
+ *   will be written to.  Should be a valid identifier.
  * - .files: A glob or array of globs, relative to TSC_OUTPUT_DIR,
  *   matching the files to include in the chunk.
  * - .entry: the source .js file which is the entrypoint for the
@@ -176,23 +176,37 @@ for (let i = 1; i < chunks.length; i++) {
 }
 
 /**
- * Return the name of the module object for the entrypoint of the given chunk,
- * as munged by Closure Compiler.
- */
+ * Return the name of the module object for the entrypoint of the
+ * given chunk, as munged by Closure Compiler.
+ *
+ * Note that if either --assume_function_wrapper or
+ * --compilation_level ADVANCED_OPTIMIZATIONS is used then the name
+ * will be further munged in a later compliation step to replace it
+ * with an arbitrary, very short name.
+ *
+ * Nevertheless, this function can still be used to compute the
+ * location of @defined variables, because --define directives are
+ * processed before the final renaming occurs.
+ */ 
 function modulePath(chunk) {
   const entryPath = path.posix.join(TSC_OUTPUT_DIR_POSIX, chunk.entry);
   return 'module$' + entryPath.replace(/\.js$/, '').replaceAll('/', '$');
 }
 
 /**
- * Directory (relative to TSC_OUTPUT_DIR) where generated chunk export
- * collector files are written.
+ * Directory (relative to TSC_OUTPUT_DIR) where generated chunk
+ * exporters are written.
+ *
+ * See buildChunkExporters for additional information.
  */
 const CHUNK_EXPORTS_DIR = 'chunk_exports';
 
 /**
- * Return the path to the generated chunk export collector file for
- * the given chunk, relative to TSC_OUTPUT_DIR.
+ * Return the path to the generated chunk exporter for the given
+ * chunk, relative to TSC_OUTPUT_DIR.
+ *
+ * See buildChunkExporters for additional information.
+ *
  * @param {{name: string}} chunk
  * @return {string}
  */
@@ -201,15 +215,61 @@ function chunkExporterPath(chunk) {
 }
 
 /**
- * Write generated chunk export collector files, one per chunk.  Each
- * file imports the chunk's entrypoint module and saves its exports on
- * to the shared namespace object using a string-literal property name
- * so that the UMD wrapper can return them after compilation with
- * assume_function_wrapper enabled.
+ * This task generates the chunk exporters, one per chunk, which are
+ * source files included in the input to Closure Compiler to help the
+ * chunk wrappers locate the chunk's exports (module) object.
  *
- * The namespace object is declared by the chunk wrapper (see
- * chunkWrapper); suppress undefined-variable diagnostics here because
- * Closure Compiler analyses this file separately from the wrapper.
+ * Normally, when using --compilation_level SIMPLE_OPTIMIZATIONS and
+ * --chunk_output_type GLOBAL_NAMESPACE (the defaults), Closure
+ * Compiler will give each chunk's top-level exports (module) object a
+ * name of the form
+ *
+ *    module$build$src$...$filename
+ *
+ * which can be computed by modulePath(chunk), thereby making it easy
+ * to locate the object that should be returned by the chunk wrapper's
+ * factory function.
+ *
+ * Unfortunately, if using using --assume_function_wrapper option (or
+ * --compilation_level ADVANCED_OPTIMIZATIONS), this variable is
+ * renamed in a later stage of the compiler to instead have an
+ * arbitrarily-chosen name of minimal length.
+ *
+ * To work around this, we create an extra source module for each
+ * chunk that imports the chunk's entrypoint and saves the resulting
+ * exports (module) object to a well-known location: a property on the
+ * shared namespace object.
+ *
+ * In order to prevent the name of that property from itself being
+ * renamed, well-known location, it is written using a computed member
+ * expression with a string literal property name (i.e., a['b'] rather
+ * than a.b).  E.g., the the generated chunck exporter source file
+ * might contain
+ *
+ *     import * as exports from '../core/blockly.js';
+ *     $['__chunk_blockly'] = exports;
+ *
+ * which would get compiled to something like:
+ *
+ *     $.__chunk_blockly=R;
+ *
+ * The chunk wrapper's factory function can then retrieve
+ * and return $.__chunk_blockly.
+ *
+ * N.B.: Although Closure Compiler will not rename the literal
+ * property name, it will convet the computed member expression into a
+ * non-computed one (as shown in the example above) if it is a valid
+ * unquoted property name.  In order to ensure that the compiled,
+ * wrapped chunk is itself valid input for Closure Compiler, it is
+ * necessary that the chunk wrapper use the same form to access it.
+ * Specifically, for this example the chunk wrapper factory function
+ * should
+ *
+ *     return $.__chunk_blockly;
+ *
+ * rather than
+ *
+ *     return $['__chunk_blockly'];
  */
 async function buildChunkExporters() {
   const outDir = path.join(TSC_OUTPUT_DIR, CHUNK_EXPORTS_DIR);
@@ -223,6 +283,9 @@ async function buildChunkExporters() {
       );
       await fsPromises.writeFile(
         path.join(TSC_OUTPUT_DIR, filename),
+        // Suppress undefined-variable diagnostics, since Closure
+        // Compiler can't see the declaration of NAMESPACE_VARIABLE
+        // while compiling the chunk exporters.
         `/** @fileoverview @suppress {undefinedVars} */
 
 import * as exports from '${importPath}';
@@ -500,11 +563,7 @@ function chunkWrapper(chunk) {
   // object.  (See buildChunkExporters.)
   const exportsObject = `${NAMESPACE_VARIABLE}.${CHUNK_EXPORTS_PREFIX}${chunk.name}`;
 
-  // Note that when loading in a browser the base of the exported path
-  // (e.g. Blockly.blocks.all - see issue #5932) might not exist
-  // before factory has been executed, so calling factory() and
-  // assigning the result are done in separate statements to ensure
-  // they are sequenced correctly.
+  // Generate wrapper.
   return `// Do not edit this file; automatically generated.
 
 /* eslint-disable */
@@ -552,6 +611,13 @@ return ${exportsObject};
  * This is designed to be passed directly as-is as the options object
  * to the Closure Compiler node API, and be compatible with that
  * emitted by closure-calculate-chunks.
+ *
+ * N.B.: items in the .chunk array are of the form:
+ *
+ *     "<chunk name>:<file count>:<parent chunk name>"
+ *
+ * See https://github.com/google/closure-compiler/wiki/Flags-and-Options#code-splitting
+ * for more information.
  *
  * @return {{chunk: !Array<string>,
  *           js: !Array<string>,
@@ -626,15 +692,18 @@ function buildCompiled() {
     // non-global, but the Closure Compiler turns everything in to a
     // global - you just have to know what the new name is!  With
     // declareLegacyNamespace this was very straightforward.  Without
-    // it, we have to rely on implmentation details.  See
+    // it, we have to rely on implmentation details.  (Note that
+    // although --assume_function_wrapper will result in the global
+    // being renamed to something short, that won't have happened
+    // by the time --define is processed.)  See
     // https://github.com/google/closure-compiler/issues/1601#issuecomment-483452226
     define: `VERSION$$${modulePath(chunks[0])}='${packageJson.version}'`,
     chunk: chunkOptions.chunk,
     chunk_wrapper: chunkOptions.chunk_wrapper,
-    rename_prefix_namespace: NAMESPACE_VARIABLE,
-    assume_function_wrapper: true,
     // Don't supply the list of source files in chunkOptions.js as an
     // option to Closure Compiler; instead feed them as input via gulp.src.
+    rename_prefix_namespace: NAMESPACE_VARIABLE,
+    assume_function_wrapper: true,
   };
 
   // Fire up compilation pipline.
@@ -770,12 +839,12 @@ ${exportedNames.map((name) => `  ${name},`).join('\n')}
 }
 
 /**
- * This task uses Closure Compiler's ADVANCED_COMPILATION mode to
+ * This task uses Closure Compiler's ADVANCED_OPTIMIZATIONS mode to
  * compile together Blockly core, blocks and generators with a simple
  * test app; the purpose is to verify that Blockly is compatible with
- * the ADVANCED_COMPILATION mode.
+ * the ADVANCED_OPTIMIZATIONS mode.
  *
- * Prerequisite: buildJavaScript.
+ * Prerequisite: tsc.
  */
 function compileAdvancedCompilationTest() {
   // If main_compressed.js exists (from a previous run) delete it so that
