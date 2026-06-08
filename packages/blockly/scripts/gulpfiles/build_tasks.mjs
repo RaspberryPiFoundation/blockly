@@ -196,7 +196,7 @@ const CHUNK_EXPORTS_DIR = 'chunk_exports';
  * @param {{name: string}} chunk
  * @return {string}
  */
-function chunkExportPath(chunk) {
+function chunkExporterPath(chunk) {
   return path.posix.join(CHUNK_EXPORTS_DIR, `${chunk.name}_export.js`);
 }
 
@@ -217,12 +217,12 @@ async function buildChunkExporters() {
 
   await Promise.all(
     chunks.map(async (chunk) => {
-      const exportFile = chunkExportPath(chunk);
+      const filename = chunkExporterPath(chunk);
       const importPath = posixPath(
-        path.posix.relative(path.posix.dirname(exportFile), chunk.entry),
+        path.posix.relative(path.posix.dirname(filename), chunk.entry),
       );
       await fsPromises.writeFile(
-        path.join(TSC_OUTPUT_DIR, exportFile),
+        path.join(TSC_OUTPUT_DIR, filename),
         `/** @fileoverview @suppress {undefinedVars} */
 
 import * as exports from '${importPath}';
@@ -567,7 +567,7 @@ function getChunkOptions() {
     const files = globs
       .flatMap((glob) => globSync(glob, {cwd: TSC_OUTPUT_DIR_POSIX}))
       .map((file) => path.posix.join(TSC_OUTPUT_DIR_POSIX, file));
-    files.push(path.posix.join(TSC_OUTPUT_DIR_POSIX, chunkExportPath(chunk)));
+    files.push(path.posix.join(TSC_OUTPUT_DIR_POSIX, chunkExporterPath(chunk)));
     chunkOptions.push(
       `${chunk.name}:${files.length}` +
         (chunk.parent ? `:${chunk.parent.name}` : ''),
