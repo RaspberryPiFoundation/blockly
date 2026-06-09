@@ -406,7 +406,7 @@ export class Input {
    *
    * @internal
    */
-  getLabel(verbosity = Verbosity.STANDARD, includeChildren: boolean): string {
+  getLabel(verbosity = Verbosity.STANDARD, includeChildren = true): string {
     if (!this.isVisible()) return '';
 
     const labels = computeFieldRowLabel(this, false, verbosity);

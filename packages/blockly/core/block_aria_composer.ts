@@ -318,7 +318,7 @@ export function getInputLabels(
     }
   }
 
-  return inputsToLabel.map((input) => input.getLabel(verbosity, true));
+  return inputsToLabel.map((input) => input.getLabel(verbosity));
 }
 
 /**
