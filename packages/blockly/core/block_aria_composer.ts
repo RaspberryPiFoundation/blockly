@@ -205,6 +205,9 @@ export function computeFieldRowLabel(
  * wrapped in the "Begin %1" prefix so the readout indicates that the child
  * block starts the body of the statement input.
  *
+ * Labels for child blocks of inputs are excluded because they are included
+ * with {@link getInputLabels} already.
+ *
  * @internal
  * @param block The block to generate a parent input label for.
  * @returns A description of the block's parent statement input, or undefined
@@ -242,6 +245,7 @@ function getParentInputLabel(block: BlockSvg) {
     const sectionLabels = getInputLabelsSubset(
       parentBlock as BlockSvg,
       parentInput,
+      false, // Exclude labels from child blocks.
     );
     if (!sectionLabels.length) {
       return undefined;
@@ -314,7 +318,7 @@ export function getInputLabels(
     }
   }
 
-  return inputsToLabel.map((input) => input.getLabel(verbosity));
+  return inputsToLabel.map((input) => input.getLabel(verbosity, true));
 }
 
 /**
@@ -338,17 +342,23 @@ export function getInputLabels(
  *
  * @internal
  * @param block The block to retrieve a list of field/input labels for.
- * @param input The input that defines the end of the subset.
+ * @param endInput The input that defines the end of the subset.
+ * @param includeEndInputChildren Whether to include labels for child blocks
+ *    connected to the end input.
  * @returns A list of field/input labels for the given block.
  */
-export function getInputLabelsSubset(block: BlockSvg, input: Input): string[] {
-  const inputIndex = block.inputList.indexOf(input);
+export function getInputLabelsSubset(
+  block: BlockSvg,
+  endInput: Input,
+  includeEndInputChildren: boolean,
+): string[] {
+  const inputIndex = block.inputList.indexOf(endInput);
   if (inputIndex === -1) {
     throw new Error(
-      `Input with name "${input.name}" not found on block with id "${block.id}".`,
+      `Input with name "${endInput.name}" not found on block with id "${block.id}".`,
     );
   }
-  const isStatementTarget = input.type === inputTypes.STATEMENT;
+  const isStatementTarget = endInput.type === inputTypes.STATEMENT;
 
   const startIndex = isStatementTarget
     ? findStartOfStatementSection(block.inputList, inputIndex)
@@ -362,9 +372,13 @@ export function getInputLabelsSubset(block: BlockSvg, input: Input): string[] {
     .filter((subsetInput) => subsetInput.isVisible());
 
   // The derived labels are based on the field row and any connected child
-  // blocks.
+  // blocks. Labels for child blocks are potentially skipped if they would be
+  // redundant within the overall block label.
   const derivedLabels = inputsInSubset.map((subsetInput) =>
-    subsetInput.getLabel(Verbosity.TERSE),
+    subsetInput.getLabel(
+      Verbosity.TERSE,
+      subsetInput !== endInput || includeEndInputChildren,
+    ),
   );
 
   // For statement inputs, we only include the fallback label ("input %1")
@@ -529,7 +543,7 @@ function computeMoveConnectionLabel(
   let inputLabel = input.getAriaLabelText();
 
   if (!inputLabel) {
-    const labels = getInputLabelsSubset(conn.getSourceBlock(), input);
+    const labels = getInputLabelsSubset(conn.getSourceBlock(), input, true);
     if (!labels.length) return baseLabel;
 
     inputLabel = labels.join(', ');

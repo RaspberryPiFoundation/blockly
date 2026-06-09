@@ -400,18 +400,21 @@ export class Input {
 
   /**
    * Returns a derived accessibility label for this input: field row text plus
-   * labels of any connected child blocks. Does not include custom labels from
-   * {@link getAriaLabelText}; those are used in move-mode and parent-input
-   * context only.
+   * labels of any connected child blocks (unless excluded). Does not include
+   * custom labels from {@link getAriaLabelText}; those are used in move-mode
+   * and parent-input context only.
    *
    * @internal
    */
-  getLabel(verbosity = Verbosity.STANDARD): string {
+  getLabel(verbosity = Verbosity.STANDARD, includeChildren: boolean): string {
     if (!this.isVisible()) return '';
 
     const labels = computeFieldRowLabel(this, false, verbosity);
 
-    if (this.connection?.type === ConnectionType.INPUT_VALUE) {
+    if (
+      includeChildren &&
+      this.connection?.type === ConnectionType.INPUT_VALUE
+    ) {
       const childBlock = this.connection.targetBlock();
       if (childBlock && !childBlock.isInsertionMarker()) {
         labels.push(
