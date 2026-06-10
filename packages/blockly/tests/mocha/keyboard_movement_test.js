@@ -1282,7 +1282,6 @@ suite('Keyboard-driven movement', function () {
 
         Blockly.getFocusManager().focusNode(loop);
         startMove(this.workspace);
-        moveRight(this.workspace);
         this.clock.tick(10);
 
         this.moveAndAssert(
