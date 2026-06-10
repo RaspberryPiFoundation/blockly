@@ -665,7 +665,7 @@ export class BlockDragStrategy implements IDragStrategy {
         if (!bounds) return;
 
         const blockRects = draggingBlock.workspace
-          .getTopBlocks(true)
+          .getTopBlocks()
           .map((block) => block.getBoundingRectangle());
         const blocksLeft = Math.min(...blockRects.map((rect) => rect.left));
 
