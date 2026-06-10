@@ -1440,6 +1440,7 @@ suite('Keyboard-driven movement', function () {
         const boolean = this.workspace.newBlock('logic_boolean');
         boolean.initSvg();
         boolean.render();
+        this.workspace.cleanUp();
 
         Blockly.getFocusManager().focusNode(boolean);
         startMove(this.workspace);
@@ -1523,6 +1524,7 @@ suite('Keyboard-driven movement', function () {
         const boolean = this.workspace.newBlock('logic_boolean');
         boolean.initSvg();
         boolean.render();
+        this.workspace.cleanUp();
 
         Blockly.getFocusManager().focusNode(boolean);
         startMove(this.workspace);

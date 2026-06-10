@@ -1075,19 +1075,26 @@ export class BlockDragStrategy implements IDragStrategy {
     }
 
     const topBlocks = block.workspace.getTopBlocks(true);
+    const blockRect = block.getBoundingRectangle();
 
-    const index = topBlocks.indexOf(block);
-    const delta = direction === Direction.UP ? -1 : 1;
-    const start = index + delta;
+    // A block is terminal if it is above (moving up) or below (moving down) all other blocks
+    // that have valid connections with it. We need to consider the full shape of the blocks,
+    // not just their top-left origins.
+    const isMovingUp = direction === Direction.UP;
+    const edge = isMovingUp ? 'top' : 'bottom';
+    const directionalCompare = isMovingUp
+      ? (a: number, b: number) => a <= b
+      : (a: number, b: number) => a >= b;
+    const blocksToConsider = topBlocks.filter(
+      (b) =>
+        b.id !== block.id &&
+        directionalCompare(b.getBoundingRectangle()[edge], blockRect[edge]),
+    );
 
-    // Generally terminal blocks will be at the start or end of the sorted list
-    // of top blocks, but it still counts if all of the blocks before/after it
-    // have no valid connection points for the block in question.
     const blockConnections = block.getConnections_(false);
-    for (let i = start; i >= 0 && i < topBlocks.length; i += delta) {
-      const topBlock = topBlocks[i];
+    for (const topBlock of blocksToConsider) {
+      const stackConnections = this.getAllConnections(topBlock);
       for (const a of blockConnections) {
-        const stackConnections = this.getAllConnections(topBlock);
         for (const b of stackConnections) {
           if (
             block.workspace.connectionChecker.canConnect(a, b, true, Infinity)
