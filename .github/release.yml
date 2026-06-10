@@ -20,9 +20,11 @@ changelog:
     - title: Bug fixes 🐛
       labels:
         - 'PR: fix'
-    - title: Cleanup ♻️
+    - title: Documentation updates 📄
       labels:
         - 'PR: docs'
+    - title: Cleanup ♻️
+      labels:
         - 'PR: refactor'
     - title: Reverted changes ⎌
       labels:
