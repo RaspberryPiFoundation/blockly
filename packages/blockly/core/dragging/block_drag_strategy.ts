@@ -1023,12 +1023,14 @@ export class BlockDragStrategy implements IDragStrategy {
     if (forwardTraversal) {
       if (currentPairIndex === -1) {
         const terminal = this.isInTerminalPosition(this.block, Direction.DOWN);
-        if (navigator.getNavigationLoops()) {
-          return this.pairToCandidate(pairs[0]);
-        } else if (!terminal) {
-          return this.getClosestCandidate(this.block, delta);
+        if (terminal) {
+          if (navigator.getNavigationLoops()) {
+            return this.pairToCandidate(pairs[0]);
+          } else {
+            return null;
+          }
         }
-        return null;
+        return this.getClosestCandidate(this.block, delta);
       } else if (currentPairIndex === pairs.length - 1) {
         return null;
       } else {
@@ -1037,12 +1039,14 @@ export class BlockDragStrategy implements IDragStrategy {
     } else {
       if (currentPairIndex === -1) {
         const terminal = this.isInTerminalPosition(this.block, Direction.UP);
-        if (navigator.getNavigationLoops()) {
-          return this.pairToCandidate(pairs[pairs.length - 1]);
-        } else if (!terminal) {
-          return this.getClosestCandidate(this.block, delta);
+        if (terminal) {
+          if (navigator.getNavigationLoops()) {
+            return this.pairToCandidate(pairs[pairs.length - 1]);
+          } else {
+            return null;
+          }
         }
-        return null;
+        return this.getClosestCandidate(this.block, delta);
       } else if (currentPairIndex === 0) {
         return null;
       } else {
