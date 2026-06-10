@@ -22,7 +22,7 @@ git clone https://github.com/RaspberryPiFoundation/blockly.git
 
 If you downloaded the source as a zip, unpacking it should give you a root folder named `blockly-main`.
 
-The relevant files are in `docs/docs/codelabs/validation-and-warnings`. There are two versions of the app:
+The relevant files are in `packages/docs/docs/codelabs/validation-and-warnings`. There are two versions of the app:
 
 - `starter-code/`: The starter code that you'll build upon in this codelab.
 - `complete-code/`: The code after completing the codelab, in case you get lost or want to compare to your version.
@@ -74,8 +74,8 @@ Then, to make this block available from the toolbox, find the toolbox definition
 
 ```js
         {
-          'kind': 'block',
-          'type': 'list_range',
+          kind: 'block',
+          type: 'list_range',
         },
 ```
 
@@ -93,7 +93,7 @@ You can drag this block out from the toolbox into the workspace, but if you try 
 
 ```js
 // Define how to generate JavaScript from the custom block.
-javascript.javascriptGenerator['list_range'] = function (block) {
+javascript.javascriptGenerator.forBlock['list_range'] = function (block) {
   const first = this.getFieldValue('FIRST');
   const last = this.getFieldValue('LAST');
   const numbers = [];

@@ -13,20 +13,20 @@ When you're designing custom blocks, you may find that it doesn't make sense to 
 Blockly generally allows users to enter negative values and decimal values for number fields, but for this custom block, let's make sure that only positive whole numbers are allowed. Add `'min': 0` and `'precision': 1` to the fields in the custom block definition so that they look like this:
 
 ```js
-    'args0': [
+    args0: [
       {
-        'type': 'field_number',
-        'name': 'FIRST',
-        'value': 0,
-        'min': 0,
-        'precision': 1,
+        type: 'field_number',
+        name: 'FIRST',
+        value: 0,
+        min: 0,
+        precision: 1,
       },
       {
-        'type': 'field_number',
-        'name': 'LAST',
-        'value': 5,
-        'min': 0,
-        'precision': 1,
+        type: 'field_number',
+        name: 'LAST',
+        value: 5,
+        min: 0,
+        precision: 1,
       },
     ],
 ```
@@ -46,10 +46,10 @@ Let's give our custom block a new extension called `list_range_validation`. Add 
 ```js
 Blockly.common.defineBlocksWithJsonArray([
   {
-    'type': 'list_range',
+    type: 'list_range',
     ...
-    'style': 'list_blocks',
-    'extensions': [
+    style: 'list_blocks',
+    extensions: [
       'list_range_validation',
     ],
   },
