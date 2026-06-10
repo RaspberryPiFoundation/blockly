@@ -2789,22 +2789,25 @@ export class WorkspaceSvg
   getRestoredFocusableNode(
     previousNode: IFocusableNode | null,
   ): IFocusableNode | null {
-    if (!previousNode) {
-      const flyout = this.targetWorkspace?.getFlyout();
-      if (this.isFlyout && flyout) {
-        // Return the first focusable item of the flyout.
-        return (
-          flyout
-            .getContents()
-            .find((flyoutItem) => {
-              const element = flyoutItem.getElement();
-              return isFocusableNode(element) && element.canBeFocused();
-            })
-            ?.getElement() ?? null
-        );
-      }
-      return this.getTopBlocks(true)[0] ?? null;
-    } else return null;
+    if (previousNode) {
+      return previousNode;
+    }
+    const flyout = this.targetWorkspace?.getFlyout();
+    if (this.isFlyout && flyout) {
+      // Return the first focusable item of the flyout.
+      return (
+        flyout
+          .getContents()
+          .find((flyoutItem) => {
+            const element = flyoutItem.getElement();
+            return isFocusableNode(element) && element.canBeFocused();
+          })
+          ?.getElement() ?? null
+      );
+    }
+    // This workspace has never been focused before, so return null to use
+    // the default focusing behavior (focus the workspace itself).
+    return null;
   }
 
   /** See IFocusableTree.getNestedTrees. */
