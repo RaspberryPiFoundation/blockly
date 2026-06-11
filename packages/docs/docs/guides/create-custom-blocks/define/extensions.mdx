@@ -89,3 +89,25 @@ extension.
  "extensions": ["my_mixin"],
 }
 ```
+### Mutators
+
+Mutators are a type of mixin that allow you to add extra details about the state 
+of a block. If there's an aspect of the state of your block that can't be
+captured by the block's existing properties, you will likely need a mutator. For
+instance, the builtin ```list_create_with``` block uses a mutator so that the
+number of items in the list can be serialized and deserialized as part of the
+block's state. 
+
+**add more **
+
+** add screenshot of list_create_with **
+
+When you create a mutator, you'll need to define the functions ```saveExtraState``` 
+and ```loadExtraState```, which specify how serialize and deserialize the extra
+state of the block.
+
+As with any mixin, you'll need to register the mutator before you can reference 
+it in your block's JSON definition. 
+
+For more information about when and how to use mutators, see the [Mutators](/guides/create-custom-blocks/mutators)
+guide.
