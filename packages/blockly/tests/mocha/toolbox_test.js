@@ -261,6 +261,8 @@ suite('Toolbox', function () {
       sinon.assert.calledOnce(setSelectedSpy);
       sinon.assert.calledOnce(onClickSpy);
     });
+    //add tests here
+    
   });
 
   suite('on key down', function () {

@@ -237,7 +237,44 @@ export class CollapsibleToolboxCategory
   }
 
   override onClick(_e: Event) {
-    this.toggleExpanded();
+    //TODO: figure out what the behavior should be, then properly refactor
+    //Separate the logic for category expansion and the flyout
+    const parentToolbox = this.getParentToolbox();
+    const thisFlyoutVisible = parentToolbox.getSelectedItem() === this && parentToolbox.getFlyout()?.isVisible();
+    const isExpanded = this.isExpanded();
+
+    // if expanded && flyout showing, then close both.
+    if(isExpanded && thisFlyoutVisible) {
+      this.parentToolbox_.getFlyout()?.setVisible(false);
+      this.setExpanded(false);
+      return;
+    }
+
+    // if expanded && flyout not showing, then just open flyout. 
+    if(isExpanded && !thisFlyoutVisible) {
+      this.parentToolbox_.getFlyout()?.setVisible(true);
+      return;
+    }
+
+    // if not expanded && flyout showing, then just expand OR close flyout??? 
+    // as it currently stands the code makes this one imposssible
+    if(!isExpanded && thisFlyoutVisible) {
+     //this.parentToolbox_.getFlyout()?.setVisible(false);
+      this.setExpanded(true);
+      return;
+    }
+
+    // if not expanded && flyout not showing, then open both
+    if(!isExpanded && !thisFlyoutVisible) {
+      this.setExpanded(true);
+      this.parentToolbox_.getFlyout()?.setVisible(true);
+      return;
+    }
+    //this.toggleExpanded();
+  }
+
+  toggleFlyout() {
+    this.parentToolbox_.getFlyout()?.setVisible(false);
   }
 
   /** Toggles whether or not the category is expanded. */
