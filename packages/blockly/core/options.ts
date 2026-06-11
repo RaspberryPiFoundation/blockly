@@ -147,7 +147,7 @@ export class Options {
     const rawOneBasedIndex = options['oneBasedIndex'];
     const oneBasedIndex =
       rawOneBasedIndex === undefined ? true : rawOneBasedIndex;
-    const renderer = options['renderer'] || 'geras';
+    const renderer = options['renderer'] || 'thrasos';
 
     const plugins = options['plugins'] || {};
 
