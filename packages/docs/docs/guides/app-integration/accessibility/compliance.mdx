@@ -27,16 +27,21 @@ blocks and fields) is instantiated on a web page with other contents.
 
 ## Creating an ACR
 
-Blockly provides an accessibility compliance report (ACR) in the VPAT format,
-which you can use to write an ACR for your full application. No part of
-Blockly's ACR provides information about page contents outside of the Blockly
-region. The ACR covers use as both web content and authoring tool.
+Blockly provides two accessibility compliance reports (ACR) in the VPAT format,
+which you can use to write an ACR for your full application:
+- The [core Blockly ACR](https://docs.google.com/document/d/1zaF-XUnn3W_RXhFcJO6ncmTc5UnX6S2UtGSVIfhhbec/edit?usp=sharing)
+applies to the use of the core library, fields, and blocks. This applies to use
+of Blockly as web content.
+- The [extended Blockly ACR](https://docs.google.com/document/d/1ceUjMjHDoSkp417FIWKmkvxH8U5_RYOKUxCiz3ljHRw/edit?usp=sharing)
+applies to the use of Blockly with custom fields and blocks. This applies to use
+of Blockly as an authoring tool.
 
-If a Blockly integration exists as a standalone portion of a larger web page
-we recommend creating one ACR for only the Blockly portions of the page, then
-integrating that into a larger ACR assessing the full page. For instance, a
-page with a Blockly-based editor and a simulated output window should assess the
-accessibility of the two regions separately.
+No part of Blockly's ACR provides information about page contents outside of the
+Blockly region. If a Blockly integration exists as a standalone portion of a
+larger web page we recommend creating one ACR for only the Blockly portions of
+the page, then integrating that into a larger ACR assessing the full page. For
+instance, a page with a Blockly-based editor and a simulated output window
+should assess the accessibility of the two regions separately.
 
 Developers building with Blockly can assess the accessibility of their Blockly
 integration by checking customizations against the criteria marked “Developer
