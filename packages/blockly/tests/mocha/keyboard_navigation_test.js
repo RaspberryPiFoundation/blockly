@@ -153,7 +153,8 @@ suite('Keyboard navigation on Blocks', function () {
   });
 
   test('Selected block', function () {
-    Blockly.getFocusManager().focusTree(this.workspace);
+    // first block in workspace
+    focusBlock(this.workspace, 'p5_setup_1');
     pressKeyN(this.workspace, Blockly.utils.KeyCodes.DOWN, 13);
     assert.equal(getFocusedBlockId(), 'controls_repeat_ext_1');
   });

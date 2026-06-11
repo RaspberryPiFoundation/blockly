@@ -149,6 +149,36 @@ suite('WorkspaceSvg', function () {
     );
   });
 
+  suite('getRestoredFocusableNode', function () {
+    test('restores focus to the workspace itself for a non-mutator non-flyout workspace', function () {
+      Blockly.getFocusManager().focusTree(this.workspace);
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.workspace,
+      );
+    });
+
+    test('restores focus to the first block for a mutator workspace', async function () {
+      const block = this.workspace.newBlock('controls_if');
+      block.initSvg();
+      block.render();
+      const icon = block.getIcon(Blockly.icons.MutatorIcon.TYPE);
+      await icon.setBubbleVisible(true);
+      const mutatorWorkspace = icon.getWorkspace();
+      const firstBlock = mutatorWorkspace.getTopBlocks(true)[0];
+
+      assert.strictEqual(
+        mutatorWorkspace.getRestoredFocusableNode(null),
+        firstBlock,
+      );
+      Blockly.getFocusManager().focusTree(mutatorWorkspace);
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        firstBlock,
+      );
+    });
+  });
+
   suite('updateToolbox', function () {
     test('Passes in null when toolbox exists', function () {
       assert.throws(

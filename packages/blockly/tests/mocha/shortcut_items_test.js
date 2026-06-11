@@ -1855,6 +1855,10 @@ suite('Keyboard Shortcut Items', function () {
     test('Displays new tooltip on a block using the keyboard shortcut if tooltip for another block is already displayed', function () {
       const block1 = this.workspace.newBlock('controls_if');
       const block2 = this.workspace.newBlock('logic_compare');
+      for (const block of [block1, block2]) {
+        block.initSvg();
+        block.render();
+      }
 
       block1.setTooltip('block1');
       block2.setTooltip('block2');

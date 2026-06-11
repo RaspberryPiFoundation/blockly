@@ -2753,7 +2753,7 @@ export class WorkspaceSvg
 
   /** See IFocusableNode.getFocusableTree. */
   getFocusableTree(): IFocusableTree {
-    return (this.isMutator && this.options.parentWorkspace) || this;
+    return this;
   }
 
   /** See IFocusableNode.onNodeFocus. */
@@ -2804,6 +2804,10 @@ export class WorkspaceSvg
           })
           ?.getElement() ?? null
       );
+    }
+    if (this.isMutator) {
+      // Return the first block in the mutator workspace, if it exists.
+      return this.getTopBlocks(true)[0] ?? null;
     }
     // This workspace has never been focused before, so return null to use
     // the default focusing behavior (focus the workspace itself).
