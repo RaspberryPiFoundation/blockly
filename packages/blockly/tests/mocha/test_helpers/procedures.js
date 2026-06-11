@@ -49,7 +49,10 @@ function assertCallBlockArgsStructure(callBlock, args) {
       'Call block consts did not match expected.',
     );
   }
-  assert.sameOrderedMembers(callBlock.getVars(), args);
+  assert.sameOrderedMembers(
+    callBlock.getVarModels().map((model) => model.getName()),
+    args,
+  );
 }
 
 /**
@@ -106,7 +109,10 @@ export function assertDefBlockStructure(
     );
   }
 
-  assert.sameOrderedMembers(defBlock.getVars(), args);
+  assert.sameOrderedMembers(
+    defBlock.getVarModels().map((model) => model.getName()),
+    args,
+  );
   assertBlockVarModels(defBlock, varIds);
 }
 

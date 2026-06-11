@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # Checkbox fields
 
-A checkbox field stores a string as its value, and a string as its text. Its
+A checkbox field stores a string as its value and a string as its text. Its
 value is either `'TRUE'` or `'FALSE'`, and its text is either `'true'` or
 `'false'`.
 
@@ -99,6 +99,13 @@ The checkbox constructor takes in an optional value and an optional
   when diffing workspaces.
   </TabItem>
 </Tabs>
+
+## Accessibility
+
+A checkbox field's on-block display has the ARIA role `checkbox`. There is 
+no editor: the on-block display simply toggles when clicked. Its ARIA value 
+is either `'checked'` or `'unchecked'`. The ARIA label is `checkbox: <ARIA value>`.
+
 ## Customization
 
 ### Checkmark character

@@ -13,10 +13,12 @@ import * as common from './common.js';
 import * as Css from './css.js';
 import * as dropDownDiv from './dropdowndiv.js';
 import {Grid} from './grid.js';
+import {keyboardNavigationController} from './keyboard_navigation_controller.js';
 import {Options} from './options.js';
 import {ScrollbarPair} from './scrollbar_pair.js';
 import * as Tooltip from './tooltip.js';
 import * as Touch from './touch.js';
+import * as aria from './utils/aria.js';
 import * as dom from './utils/dom.js';
 import {Svg} from './utils/svg.js';
 import * as WidgetDiv from './widgetdiv.js';
@@ -53,6 +55,7 @@ export function inject(
   if (opt_options?.rtl) {
     dom.addClass(subContainer, 'blocklyRTL');
   }
+  aria.setRole(subContainer, aria.Role.APPLICATION);
 
   containerElement!.appendChild(subContainer);
   const svg = createDom(subContainer, options);
@@ -78,6 +81,8 @@ export function inject(
     common.globalShortcutHandler,
   );
 
+  aria.initializeGlobalAriaLiveRegion(subContainer);
+
   return workspace;
 }
 
@@ -95,7 +100,7 @@ function createDom(container: HTMLElement, options: Options): SVGElement {
   container.setAttribute('dir', 'LTR');
 
   // Load CSS.
-  Css.inject(options.hasCss, options.pathToMedia);
+  Css.inject(container, options.hasCss, options.pathToMedia);
 
   // Build the SVG DOM.
   /*
@@ -172,7 +177,7 @@ function createMainWorkspace(
   if (!wsOptions.hasCategories && wsOptions.languageTree) {
     // Add flyout as an <svg> that is a sibling of the workspace SVG.
     const flyout = mainWorkspace.addFlyout(Svg.SVG);
-    dom.insertAfter(flyout, svg);
+    injectionDiv.insertBefore(flyout, svg);
   }
   if (wsOptions.hasTrashcan) {
     mainWorkspace.addTrashcan();
@@ -314,6 +319,11 @@ function bindDocumentEvents() {
     // should run regardless of what other touch event handlers have run.
     browserEvents.bind(document, 'touchend', null, Touch.longStop);
     browserEvents.bind(document, 'touchcancel', null, Touch.longStop);
+    browserEvents.bind(document, 'keydown', null, function (e: KeyboardEvent) {
+      if (e.key === 'Tab') {
+        keyboardNavigationController.setIsActive(true);
+      }
+    });
   }
   documentEventsBound = true;
 }
@@ -329,4 +339,5 @@ function loadSounds(pathToMedia: string, workspace: WorkspaceSvg) {
   audioMgr.load([`${pathToMedia}click.mp3`], 'click');
   audioMgr.load([`${pathToMedia}disconnect.mp3`], 'disconnect');
   audioMgr.load([`${pathToMedia}delete.mp3`], 'delete');
+  audioMgr.load([`${pathToMedia}drop.mp3`], 'drop');
 }

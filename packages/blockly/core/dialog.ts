@@ -6,15 +6,24 @@
 
 // Former goog.module ID: Blockly.dialog
 
+import {getFocusManager} from './focus_manager.js';
+import {Msg} from './msg.js';
 import type {ToastOptions} from './toast.js';
 import {Toast} from './toast.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 
+/** Supported types of dialogs. */
+enum DialogType {
+  ALERT = 1,
+  CONFIRM,
+  PROMPT,
+}
+
+/** Tally of the number of dialogs currently on screen. */
+let activeDialogCount = 0;
+
 const defaultAlert = function (message: string, opt_callback?: () => void) {
-  window.alert(message);
-  if (opt_callback) {
-    opt_callback();
-  }
+  displayDialog(DialogType.ALERT, message, opt_callback, undefined);
 };
 
 let alertImplementation = defaultAlert;
@@ -23,7 +32,7 @@ const defaultConfirm = function (
   message: string,
   callback: (result: boolean) => void,
 ) {
-  callback(window.confirm(message));
+  displayDialog(DialogType.CONFIRM, message, callback, undefined);
 };
 
 let confirmImplementation = defaultConfirm;
@@ -33,9 +42,7 @@ const defaultPrompt = function (
   defaultValue: string,
   callback: (result: string | null) => void,
 ) {
-  // NOTE TO DEVELOPER: Ephemeral focus doesn't need to be taken for the native
-  // window prompt since it prevents focus from changing while open.
-  callback(window.prompt(message, defaultValue));
+  displayDialog(DialogType.PROMPT, message, callback, defaultValue);
 };
 
 let promptImplementation = defaultPrompt;
@@ -164,4 +171,109 @@ export function setToast(
   ) => void = defaultToast,
 ) {
   toastImplementation = toastFunction;
+}
+
+/**
+ * Displays a dialog, potentially prompting for user input, and invokes the
+ * provided callback with the response.
+ */
+function displayDialog(
+  ...[type, message, callback, defaultValue]:
+    | [
+        type: DialogType.PROMPT,
+        message: string,
+        callback: (result: string | null) => void,
+        defaultValue: string | undefined,
+      ]
+    | [
+        type: DialogType.CONFIRM,
+        message: string,
+        callback: (result: boolean) => void,
+        defaultValue: undefined,
+      ]
+    | [
+        type: DialogType.ALERT,
+        message: string,
+        callback: (() => void) | undefined,
+        defaultValue: undefined,
+      ]
+): void {
+  const OK = 'ok';
+  const CANCEL = 'cancel';
+
+  const dialog = document.createElement('dialog');
+  const form = document.createElement('form');
+  const label = document.createElement('label');
+  const input = document.createElement('input');
+  const buttonRow = document.createElement('div');
+  const ok = document.createElement('button');
+
+  dialog.className = 'blocklyDialog';
+  form.className = 'blocklyDialogForm';
+  label.className = 'blocklyDialogPrompt';
+  buttonRow.className = 'blocklyDialogButtonRow';
+  ok.className = 'blocklyDialogConfirmButton';
+
+  form.setAttribute('method', 'dialog');
+
+  label.textContent = message;
+  label.setAttribute('for', 'blockly-form-input');
+
+  ok.textContent = Msg['DIALOG_OK'];
+  ok.value = OK;
+
+  dialog.appendChild(form);
+  form.appendChild(label);
+
+  if (type === DialogType.PROMPT) {
+    input.id = 'blockly-form-input';
+    input.className = 'blocklyDialogInput';
+    input.type = 'text';
+    input.name = 'input';
+    input.autofocus = true;
+    if (defaultValue) {
+      input.value = defaultValue;
+    }
+    form.appendChild(input);
+  }
+
+  buttonRow.appendChild(ok);
+
+  if (type === DialogType.CONFIRM || type === DialogType.PROMPT) {
+    const cancel = document.createElement('button');
+    cancel.className = 'blocklyDialogCancelButton';
+    cancel.textContent = Msg['DIALOG_CANCEL'];
+    cancel.value = CANCEL;
+    buttonRow.appendChild(cancel);
+  }
+
+  form.appendChild(buttonRow);
+
+  let restoreFocus: (() => void) | undefined;
+  if (activeDialogCount === 0) {
+    restoreFocus = getFocusManager().takeEphemeralFocus(dialog);
+  }
+
+  activeDialogCount++;
+
+  dialog.addEventListener('close', () => {
+    activeDialogCount--;
+    if (!activeDialogCount) {
+      restoreFocus?.();
+    }
+    dialog.remove();
+    switch (type) {
+      case DialogType.CONFIRM:
+        callback(dialog.returnValue === OK);
+        break;
+      case DialogType.PROMPT:
+        callback(dialog.returnValue === OK ? input.value : null);
+        break;
+      case DialogType.ALERT:
+        callback?.();
+    }
+  });
+  document.body.appendChild(dialog);
+
+  dialog.showModal();
 }

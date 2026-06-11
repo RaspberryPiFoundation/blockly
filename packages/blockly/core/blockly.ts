@@ -118,6 +118,8 @@ import * as icons from './icons.js';
 import {inject} from './inject.js';
 import * as inputs from './inputs.js';
 import {IFlyoutInflater} from './interfaces/i_flyout_inflater.js';
+import {Direction, KeyboardMover} from './keyboard_nav/keyboard_mover.js';
+import {MoveIndicator} from './keyboard_nav/move_indicator.js';
 import {LabelFlyoutInflater} from './label_flyout_inflater.js';
 import {SeparatorFlyoutInflater} from './separator_flyout_inflater.js';
 import {FocusableTreeTraverser} from './utils/focusable_tree_traverser.js';
@@ -125,7 +127,10 @@ import {FocusableTreeTraverser} from './utils/focusable_tree_traverser.js';
 import {Input} from './inputs/input.js';
 import {InsertionMarkerPreviewer} from './insertion_marker_previewer.js';
 import {IAutoHideable} from './interfaces/i_autohideable.js';
-import {IBoundedElement} from './interfaces/i_bounded_element.js';
+import {
+  IBoundedElement,
+  isBoundedElement,
+} from './interfaces/i_bounded_element.js';
 import {IBubble} from './interfaces/i_bubble.js';
 import {ICollapsibleToolboxItem} from './interfaces/i_collapsible_toolbox_item.js';
 import {IComponent} from './interfaces/i_component.js';
@@ -137,6 +142,7 @@ import {IDeletable, isDeletable} from './interfaces/i_deletable.js';
 import {IDeleteArea} from './interfaces/i_delete_area.js';
 import {IDragTarget} from './interfaces/i_drag_target.js';
 import {
+  DragDisposition,
   IDragStrategy,
   IDraggable,
   isDraggable,
@@ -171,15 +177,13 @@ import {
 import {IVariableMap} from './interfaces/i_variable_map.js';
 import {IVariableModel, IVariableState} from './interfaces/i_variable_model.js';
 import * as internalConstants from './internal_constants.js';
-import {LineCursor} from './keyboard_nav/line_cursor.js';
-import {Marker} from './keyboard_nav/marker.js';
+import {ToolboxNavigator} from './keyboard_nav/navigators/toolbox_navigator.js';
 import {
   KeyboardNavigationController,
   keyboardNavigationController,
 } from './keyboard_navigation_controller.js';
 import type {LayerManager} from './layer_manager.js';
 import * as layers from './layers.js';
-import {MarkerManager} from './marker_manager.js';
 import {Menu} from './menu.js';
 import {MenuItem} from './menuitem.js';
 import {MetricsManager} from './metrics_manager.js';
@@ -230,8 +234,6 @@ import {ZoomControls} from './zoom_controls.js';
  * This constant is overridden by the build script (npm run build) to the value
  * of the version in package.json. This is done by the Closure Compiler in the
  * buildCompressed gulp task.
- * For local builds, you can pass --define='Blockly.VERSION=X.Y.Z' to the
- * compiler to override this constant.
  *
  * @define {string}
  */
@@ -433,16 +435,21 @@ Names.prototype.populateProcedures = function (
 };
 // clang-format on
 
-export * from './flyout_navigator.js';
 export * from './interfaces/i_navigation_policy.js';
-export * from './keyboard_nav/block_navigation_policy.js';
-export * from './keyboard_nav/connection_navigation_policy.js';
-export * from './keyboard_nav/field_navigation_policy.js';
-export * from './keyboard_nav/flyout_button_navigation_policy.js';
-export * from './keyboard_nav/flyout_navigation_policy.js';
-export * from './keyboard_nav/flyout_separator_navigation_policy.js';
-export * from './keyboard_nav/workspace_navigation_policy.js';
-export * from './navigator.js';
+export * from './keyboard_nav/navigation_policies/block_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/bubble_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/comment_bar_button_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/comment_editor_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/connection_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/field_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/flyout_button_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/flyout_separator_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/icon_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/toolbox_item_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/workspace_comment_navigation_policy.js';
+export * from './keyboard_nav/navigation_policies/workspace_navigation_policy.js';
+export * from './keyboard_nav/navigators/flyout_navigator.js';
+export * from './keyboard_nav/navigators/navigator.js';
 export * from './toast.js';
 
 // Re-export submodules that no longer declareLegacyNamespace.
@@ -465,7 +472,6 @@ export {
   DragTarget,
   Events,
   Extensions,
-  LineCursor,
   Procedures,
   ShortcutItems,
   Themes,
@@ -500,6 +506,8 @@ export {
   BlockFlyoutInflater,
   ButtonFlyoutInflater,
   CodeGenerator,
+  Direction,
+  DragDisposition,
   Field,
   FieldCheckbox,
   FieldCheckboxConfig,
@@ -584,17 +592,17 @@ export {
   ImageProperties,
   Input,
   InsertionMarkerPreviewer,
+  KeyboardMover,
   KeyboardNavigationController,
   LabelFlyoutInflater,
   LayerManager,
-  Marker,
-  MarkerManager,
   Menu,
   MenuGenerator,
   MenuGeneratorFunction,
   MenuItem,
   MenuOption,
   MetricsManager,
+  MoveIndicator,
   Msg,
   Names,
   Options,
@@ -609,6 +617,7 @@ export {
   Toolbox,
   ToolboxCategory,
   ToolboxItem,
+  ToolboxNavigator,
   ToolboxSeparator,
   Trashcan,
   UnattachedFieldError,
@@ -626,6 +635,7 @@ export {
   icons,
   inject,
   inputs,
+  isBoundedElement,
   isCopyable,
   isDeletable,
   isDraggable,

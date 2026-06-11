@@ -26,8 +26,7 @@ export function procedures_defreturn(block: Block, generator: PythonGenerator) {
   const usedVariables = Variables.allUsedVarModels(workspace) || [];
   for (const variable of usedVariables) {
     const varName = variable.getName();
-    // getVars returns parameter names, not ids, for procedure blocks
-    if (!block.getVars().includes(varName)) {
+    if (!block.getVarModels().includes(variable)) {
       globals.push(generator.getVariableName(varName));
     }
   }
@@ -82,9 +81,9 @@ export function procedures_defreturn(block: Block, generator: PythonGenerator) {
     branch = generator.PASS;
   }
   const args = [];
-  const variables = block.getVars();
+  const variables = block.getVarModels();
   for (let i = 0; i < variables.length; i++) {
-    args[i] = generator.getVariableName(variables[i]);
+    args[i] = generator.getVariableName(variables[i].getId());
   }
   let code =
     'def ' +
@@ -117,7 +116,7 @@ export function procedures_callreturn(
   // Call a procedure with a return value.
   const funcName = generator.getProcedureName(block.getFieldValue('NAME'));
   const args = [];
-  const variables = block.getVars();
+  const variables = block.getVarModels();
   for (let i = 0; i < variables.length; i++) {
     args[i] = generator.valueToCode(block, 'ARG' + i, Order.NONE) || 'None';
   }

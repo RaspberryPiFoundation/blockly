@@ -818,4 +818,181 @@ suite('Abstract Fields', function () {
       });
     });
   });
+
+  suite('Aria', function () {
+    class TestField extends Blockly.Field {
+      constructor(value, config = undefined) {
+        super(value, null, config);
+      }
+    }
+
+    suite('getAriaTypeName', function () {
+      test('Default returns null', function () {
+        const field = new TestField();
+        assert.isNull(field.getAriaTypeName());
+      });
+
+      test('Returns configured ariaTypeName (JS)', function () {
+        const field = new TestField('value', {ariaTypeName: 'number'});
+        assert.equal(field.getAriaTypeName(), 'number');
+      });
+
+      test('Returns configured ariaTypeName (JSON)', function () {
+        class CustomField extends Blockly.Field {
+          constructor(opt_config) {
+            super('value', null, opt_config);
+          }
+
+          static fromJson(options) {
+            return new CustomField(options);
+          }
+        }
+
+        const field = CustomField.fromJson({ariaTypeName: 'text input'});
+        assert.equal(field.getAriaTypeName(), 'text input');
+      });
+    });
+
+    suite('getAriaValue', function () {
+      test('Returns string value', function () {
+        const field = new TestField('hello');
+        assert.equal(field.getAriaValue(), 'hello');
+      });
+
+      test('Returns stringified number', function () {
+        const field = new TestField(123);
+        assert.equal(field.getAriaValue(), '123');
+      });
+
+      test('Returns null for null value', function () {
+        const field = new TestField(null);
+        assert.isNull(field.getAriaValue());
+      });
+
+      test('Returns null for undefined value', function () {
+        const field = new TestField(undefined);
+        assert.isNull(field.getAriaValue());
+      });
+
+      test('Returns empty string for empty text value', function () {
+        const field = new TestField('');
+        assert.equal(field.getAriaValue(), '');
+      });
+    });
+
+    suite('computeAriaLabel', function () {
+      test('Value only (default)', function () {
+        const field = new TestField('hello');
+        assert.equal(field.computeAriaLabel(), 'hello');
+      });
+
+      test('Value only when includeTypeInfo=false', function () {
+        const field = new TestField('hello', {ariaTypeName: 'text'});
+        assert.equal(field.computeAriaLabel(false), 'hello');
+      });
+
+      test('Type and value when includeTypeInfo=true', function () {
+        const field = new TestField('hello', {ariaTypeName: 'text'});
+        assert.equal(field.computeAriaLabel(true), 'text: hello');
+      });
+
+      test('Type and placeholder when value is null', function () {
+        const field = new TestField(null, {ariaTypeName: 'text'});
+        assert.equal(
+          field.computeAriaLabel(true),
+          `text: ${Blockly.Msg['FIELD_LABEL_EMPTY']}`,
+        );
+      });
+
+      test('Placeholder when when value is null and no type', function () {
+        const field = new TestField(null);
+        assert.equal(
+          field.computeAriaLabel(true),
+          Blockly.Msg['FIELD_LABEL_EMPTY'],
+        );
+      });
+
+      test('Placeholder when value is empty string', function () {
+        const field = new TestField('');
+        assert.equal(
+          field.computeAriaLabel(true),
+          Blockly.Msg['FIELD_LABEL_EMPTY'],
+        );
+      });
+
+      test('Type and placeholder when value is empty string', function () {
+        const field = new TestField('', {ariaTypeName: 'text'});
+        assert.equal(
+          field.computeAriaLabel(true),
+          `text: ${Blockly.Msg['FIELD_LABEL_EMPTY']}`,
+        );
+      });
+
+      test('Handles missing type with includeTypeInfo=true', function () {
+        const field = new TestField('hello');
+        assert.equal(field.computeAriaLabel(true), 'hello');
+      });
+    });
+
+    suite('Subclass overrides', function () {
+      test('Override returning empty string still results in placeholder', function () {
+        class EmptyOverrideField extends TestField {
+          getAriaValue() {
+            return '';
+          }
+        }
+
+        const field = new EmptyOverrideField();
+        assert.equal(
+          field.computeAriaLabel(),
+          Blockly.Msg['FIELD_LABEL_EMPTY'],
+        );
+      });
+
+      class CustomValueField extends TestField {
+        getAriaValue() {
+          return 'custom value';
+        }
+      }
+
+      class CustomTypeField extends TestField {
+        getAriaTypeName() {
+          return 'custom type';
+        }
+      }
+
+      class FullCustomField extends TestField {
+        getAriaValue() {
+          return 'custom value';
+        }
+        getAriaTypeName() {
+          return 'custom type';
+        }
+      }
+
+      test('Uses overridden getAriaValue', function () {
+        const field = new CustomValueField('ignored');
+        assert.equal(field.computeAriaLabel(), 'custom value');
+      });
+
+      test('Uses overridden getAriaTypeName', function () {
+        const field = new CustomTypeField('value');
+        assert.equal(field.computeAriaLabel(true), 'custom type: value');
+      });
+
+      test('Uses both overrides', function () {
+        const field = new FullCustomField();
+        assert.equal(field.computeAriaLabel(true), 'custom type: custom value');
+      });
+    });
+
+    suite('Field text elements are hidden', function () {
+      test('Field text element has aria-hidden=true', function () {
+        const field = new TestField();
+        field.constants_ = {FIELD_BORDER_RECT_RADIUS: 5};
+        field.initView();
+        assert(field.getTextElement().ariaHidden === 'true');
+      });
+    });
+  });
 });

@@ -118,4 +118,9 @@ export interface IToolbox extends IRegistrable, IFocusableTree {
 
   /** Disposes of this toolbox. */
   dispose(): void;
+
+  /**
+   * Returns a list of items in this toolbox.
+   */
+  getToolboxItems(): IToolboxItem[];
 }

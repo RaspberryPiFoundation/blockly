@@ -1,0 +1,141 @@
+---
+description: Best practices for making a Blockly-based application accessible.
+title: Accessibility best practices
+image: images/blockly_banner.png
+---
+
+# Accessibility best practices
+
+Since Blockly is a library that is used in a wide variety of applications it 
+cannot fix all accessibility problems through its default configuration. 
+Similarly, Blockly is not responsible for content on the rest of the page. 
+This page lists our suggestions for accessibility best practices when using
+Blockly.
+
+## Keyboard shortcuts
+
+### Shortcut mapping
+
+Use Blockly's default keyboard shortcuts unless they conflict with
+preexisting shortcuts in your application. The Blockly team has worked with
+partners and the community to create a standard set of shortcuts that should 
+work across a wide range of Blockly applications, and to encourage adoption.
+Using standard keyboard shortcuts allows your users to transfer their knowledge
+to and from other Blockly-based programming environments instead of learning a
+new set of shortcuts for each tool. 
+
+### Multi-key shortcuts
+
+Blockly uses single-key shortcuts to support young users without strong
+keyboarding skills, older users with dexterity impairments, and usage across a
+wide range of browser/OS combinations. 
+
+Advanced operations and standard actions such as copy and paste require users to
+press multiple keys at once. If a user cannot press multiple keys at the same
+time they should use the 
+[sticky keys](https://en.wikipedia.org/wiki/Sticky_keys) setting in their
+operating system.
+
+### Teaching shortcuts
+
+Provide an interactive tutorial to introduce users to
+[basic keyboard navigation](/guides/configure/web/keyboard-nav#basic-operation).
+Start users off with only basic operations to reduce cognitive load. At the end
+of the tutorial, tell users where to look for additional help.
+
+Blockly's keyboard shortcuts are intended to be useful for all users, not only
+those with disabilities. Provide information about basic shortcuts in your
+documentation and instructions for all users. If you provide professional
+development resources, explicitly train teachers on keyboard shortcuts.
+
+### Shortcut help
+
+Make it easy for users to look up shortcuts on their own. To support a wide
+variety of computers and users, the list of keyboard shortcuts should be
+available within the Blockly workspace, as a separate web page, and as a
+printable resource.
+
+(June 2026): The Blockly team plans to release a plugin that displays the  
+default keyboard shortcuts. If you have additional keyboard shortcuts in Blockly 
+or on your page, you must update your shortcut list accordingly.
+
+## Vocabulary
+
+When working with users with visual impairments we recommend that you use
+tangible resources to introduce vocabulary. The
+[micro:bit documentation](https://microbit.org/accessibility/visual-impairment/#start-with-cut-out-cards)
+provides good examples.
+
+## Zoom
+
+Enable [resizing up to 200%](https://www.w3.org/WAI/WCAG22/Understanding/resize-text)
+through Blockly's [zoom controls](/guides/configure/web/zoom).
+
+## Colours
+
+Check your colours against [WCAG contrast standards](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum).
+If you cannot meet the standards with your default colours and cannot change
+colours due to published resources, use [themes](/guides/configure/web/appearance/themes)
+to provide colorblind-friendly modes and high-contrast mode. 
+
+It may also be appropriate to provide a dark mode for your application. You can
+use themes to change Blockly's colours, but those changes should be synced with
+settings for the rest of your application.
+
+If you have an account system, save this information in user preferences.
+
+## Search
+
+Provide workspace search and toolbox search to help users jump to blocks.
+Linear traversal of a workspace or toolbox can be slow and tiring.
+
+(June 2026): The Blockly team will update the published toolbox search and 
+workspace search plugins to work with v13. You may need custom implementations 
+to fit your application.
+
+## Skip links
+
+Provide a [link that jumps directly to the Blockly workspace](https://www.w3.org/WAI/WCAG22/Techniques/general/G1)
+on each page.
+
+Provide an "area menu" that allows users to quickly jump between regions of the
+page (e.g. the block editor and the runtime area). See the "navigating between
+areas" section of the [Microsoft MakeCode accessibility page](https://makecode.com/accessibility)
+for an example implementation.
+
+## Clean up and reflow
+
+You may choose to force blocks into a single vertical stack, if appropriate for
+your application. You can do this by automatically reflowing the blocks after
+each drag by calling `workspace.cleanUp()`.
+
+Blockly does not need to meet the
+[WCAG Reflow criterion](https://www.w3.org/WAI/WCAG21/Understanding/reflow)
+because there is an exception for "content requiring two-dimensional layout".
+
+Consider carefully when making this choice. The intent of the criterion is to
+"let users enlarge text and other related content without having to scroll in
+two dimensions to read". However, in some Blockly applications users explicitly
+use the two-dimensional layout to structure their code. One example is 
+[this Scratch project](https://scratch.mit.edu/projects/907456472/editor/)
+where the scripts are positioned to be visible at the same time. In this context
+a forced vertical layout would make it harder to read the code and require the
+user to hold more state in their mind when reading or editing. It would also
+increase the drag distance for most edits.
+
+An intermediate approach is to prompt users to use the
+[cleanup shortcut](/guides/configure/web/keyboard-nav#cleanup).
+
+## Screenreader optimizations
+
+Suggest that users turn on [screen reader optimizations](/guides/configure/web/screen-reader#screen-reader-optimizations)
+when they first navigate to the workspace using the keyboard. If you have an
+account system, save this information so users don't have to set it on every
+visit.
+
+## Documentation
+
+Publish an accessibility page on your product website. Include a statement on
+the compliance level of your product and links to all of your
+accessibility-related resources. You can use Blockly's Accessibility
+Conformance Report (ACR) as a portion of your compliance reporting.

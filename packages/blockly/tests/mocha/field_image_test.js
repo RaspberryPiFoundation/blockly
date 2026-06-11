@@ -186,6 +186,14 @@ suite('Image Fields', function () {
         });
         assert.equal(field.getText(), 'alt');
       });
+      test('JS Configuration - Block Factory style (config as 4th arg)', function () {
+        const field = new Blockly.FieldImage('src', 10, 10, {
+          alt: 'alt',
+          flipRtl: false,
+        });
+        assert.equal(field.getText(), 'alt');
+        assert.isFalse(field.getFlipRtl());
+      });
       test('JS Configuration - Ignore', function () {
         const field = new Blockly.FieldImage('src', 10, 10, 'alt', null, null, {
           alt: 'configAlt',
@@ -345,6 +353,70 @@ suite('Image Fields', function () {
         const isClickable = field.isClickable();
 
         assert.isFalse(isClickable);
+      });
+    });
+  });
+  suite('ARIA', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv', {
+        renderer: 'geras',
+      });
+    });
+    suite('Image without click handler', function () {
+      setup(function () {
+        this.block = this.workspace.newBlock('text');
+        this.field = this.block.inputList[0].fieldRow[0];
+        this.block.initSvg();
+        this.block.render();
+        this.focusableElement = this.field.getFocusableElement();
+      });
+      test('Block has image alt text in ARIA label', function () {
+        const blockLabel = this.block.getAriaLabel();
+        assert.include(blockLabel, this.field.altText);
+      });
+      test('Focusable element has role of presentation', function () {
+        const role = this.focusableElement.getAttribute('role');
+        assert.equal(role, 'presentation');
+      });
+      test('Hidden when in a flyout', function () {
+        this.block.isInFlyout = true;
+        // Force recompute of ARIA label.
+        this.field.setValue(this.field.getValue());
+        const ariaHidden = this.focusableElement.getAttribute('aria-hidden');
+        assert.equal(ariaHidden, 'true');
+      });
+    });
+    suite('Image with click handler', function () {
+      test('Field has alt text ARIA label', function () {
+        const block = this.workspace.newBlock('test_images_clickhandler');
+        const field = block.getField('IMAGE');
+        block.initSvg();
+        block.render();
+
+        const focusableElement = field.getFocusableElement();
+        const fieldLabel = focusableElement.getAttribute('aria-label');
+        assert.include(fieldLabel, 'image with click handler');
+      });
+      test('Focusable element has role of button', function () {
+        const block = this.workspace.newBlock('test_images_clickhandler');
+        const field = block.getField('IMAGE');
+        block.initSvg();
+        block.render();
+
+        const focusableElement = field.getFocusableElement();
+        const role = focusableElement.getAttribute('role');
+        assert.equal(role, 'button');
+      });
+      test('Block omits image button from ARIA label', function () {
+        const block = this.workspace.newBlock('test_images_clickhandler');
+        const field = block.getField('IMAGE');
+        block.initSvg();
+        block.render();
+
+        const blockFocusableElement = block.getFocusableElement();
+        const blockLabel = blockFocusableElement.getAttribute('aria-label');
+        assert.notInclude(blockLabel, 'Image:');
+        assert.notInclude(blockLabel, 'image with click handler');
       });
     });
   });

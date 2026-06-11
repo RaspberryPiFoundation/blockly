@@ -30,7 +30,7 @@ suite('Zoom Controls', function () {
       });
     }
     test('Zoom in', function () {
-      simulateClick(this.zoomControls.zoomInGroup);
+      simulateClick(document.querySelector('.blocklyZoomIn'));
 
       assertEventFired(
         this.eventsFireStub,
@@ -46,7 +46,7 @@ suite('Zoom Controls', function () {
       assert.closeTo(this.workspace.getScale(), 1.2, 0.05);
     });
     test('Zoom out', function () {
-      simulateClick(this.zoomControls.zoomOutGroup);
+      simulateClick(document.querySelector('.blocklyZoomOut'));
 
       assertEventFired(
         this.eventsFireStub,
@@ -62,7 +62,7 @@ suite('Zoom Controls', function () {
       assert.closeTo(this.workspace.getScale(), 0.8, 0.05);
     });
     test('Reset zoom', function () {
-      simulateClick(this.zoomControls.zoomResetGroup);
+      simulateClick(document.querySelector('.blocklyZoomReset'));
 
       assertEventFired(
         this.eventsFireStub,

@@ -100,10 +100,9 @@ export const blocks = createBlockDefinitionsFromJsonArray([
     'previousStatement': null,
     'nextStatement': null,
     'style': 'logic_blocks',
-    'tooltip': '%{BKYCONTROLS_IF_TOOLTIP_2}',
+    'tooltip': '%{BKY_CONTROLS_IF_TOOLTIP_2}',
     'helpUrl': '%{BKY_CONTROLS_IF_HELPURL}',
     'suppressPrefixSuffix': true,
-    'extensions': ['controls_if_tooltip'],
   },
   // Block for comparison operator.
   {
@@ -113,22 +112,24 @@ export const blocks = createBlockDefinitionsFromJsonArray([
       {
         'type': 'input_value',
         'name': 'A',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_VALUE_A}',
       },
       {
         'type': 'field_dropdown',
         'name': 'OP',
         'options': [
-          ['=', 'EQ'],
-          ['\u2260', 'NEQ'],
-          ['\u200F<', 'LT'],
-          ['\u200F\u2264', 'LTE'],
-          ['\u200F>', 'GT'],
-          ['\u200F\u2265', 'GTE'],
+          ['=', 'EQ', '%{BKY_LOGIC_COMPARE_EQ_ARIA}'],
+          ['\u2260', 'NEQ', '%{BKY_LOGIC_COMPARE_NEQ_ARIA}'],
+          ['\u200F<', 'LT', '%{BKY_LOGIC_COMPARE_LT_ARIA}'],
+          ['\u200F\u2264', 'LTE', '%{BKY_LOGIC_COMPARE_LTE_ARIA}'],
+          ['\u200F>', 'GT', '%{BKY_LOGIC_COMPARE_GT_ARIA}'],
+          ['\u200F\u2265', 'GTE', '%{BKY_LOGIC_COMPARE_GTE_ARIA}'],
         ],
       },
       {
         'type': 'input_value',
         'name': 'B',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_VALUE_B}',
       },
     ],
     'inputsInline': true,
@@ -146,6 +147,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'input_value',
         'name': 'A',
         'check': 'Boolean',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_CONDITION_A}',
       },
       {
         'type': 'field_dropdown',
@@ -159,6 +161,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
         'type': 'input_value',
         'name': 'B',
         'check': 'Boolean',
+        'ariaLabelText': '%{BKY_INPUT_LABEL_CONDITION_B}',
       },
     ],
     'inputsInline': true,

@@ -14,14 +14,12 @@ import * as gulp from 'gulp';
 import gzip from 'gulp-gzip';
 import * as fs from 'fs';
 import * as path from 'path';
-import {execSync} from 'child_process';
+import {spawnSync} from 'child_process';
 import {rimraf} from 'rimraf';
 
 import {RELEASE_DIR, TEST_TSC_OUTPUT_DIR} from './config.mjs';
 
 import {runMochaTestsInBrowser} from '../../tests/mocha/webdriver.js';
-import {runGeneratorsInBrowser} from '../../tests/generators/webdriver.js';
-import {runCompileCheckInBrowser} from '../../tests/compile/webdriver.js';
 
 const OUTPUT_DIR = 'build/generators';
 const GOLDEN_DIR = 'tests/generators/golden';
@@ -121,8 +119,20 @@ function reportTestResult() {
  * @return {Promise} Asynchronous result.
  */
 async function runTestCommand(id, command) {
-  return runTestTask(id, async() => {
-    return execSync(command, {stdio: 'inherit'});
+  return runTestTask(id, async () => {
+    const result = spawnSync(command, {
+      shell: true,
+      stdio: 'inherit',
+      env: process.env,
+    });
+    if (result.error) {
+      throw result.error;
+    }
+    if (result.status !== 0) {
+      throw new Error(
+          `Command failed with exit code ${result.status}: ${command}`,
+      );
+    }
   });
 }
 
@@ -257,24 +267,25 @@ async function metadata() {
  * Run Mocha tests inside a browser.
  * @return {Promise} Asynchronous result.
  */
-async function mocha(exitOnCompletion = true) {
-  return runTestTask('mocha', async () => {
-    const result = await runMochaTestsInBrowser(exitOnCompletion).catch(e => {
-      throw e;
-    });
-    if (result) {
-      throw new Error('Mocha tests failed');
-    }
-    console.log('Mocha tests passed');
-  });
+function mocha() {
+  // Run in a subprocess so webdriverio is not loaded inside gulp's asyncDone
+  // domain (which has been observed to exit the process on CI after ~2s).
+  return runTestCommand('mocha', 'node tests/mocha/webdriver.js');
 }
 
 /**
  * Run Mocha tests inside a browser and keep the browser open upon completion.
  * @return {Promise} Asynchronous result.
  */
-export async function interactiveMocha() {
-  return mocha(false);
+export function interactiveMocha() {
+  return runTestTask('interactiveMocha', () => {
+    return runMochaTestsInBrowser(false).then((result) => {
+      if (result) {
+        throw new Error('Mocha tests failed');
+      }
+      console.log('Mocha tests passed');
+    });
+  });
 }
 
 /**
@@ -335,7 +346,16 @@ export async function generators() {
     rimraf.sync(OUTPUT_DIR);
     fs.mkdirSync(OUTPUT_DIR);
 
-    await runGeneratorsInBrowser(OUTPUT_DIR);
+    const result = spawnSync('node', ['tests/generators/webdriver.js', OUTPUT_DIR], {
+      stdio: 'inherit',
+      env: process.env,
+    });
+    if (result.error) {
+      throw result.error;
+    }
+    if (result.status !== 0) {
+      throw new Error('Generator browser tests failed.');
+    }
 
     const generatorSuffixes = ['js', 'py', 'dart', 'lua', 'php'];
     let failed = 0;
@@ -375,7 +395,10 @@ function advancedCompile() {
  * @return {Promise} Asynchronous result.
  */
 function advancedCompileInBrowser() {
-  return runTestTask('advanced_compile_in_browser', runCompileCheckInBrowser);
+  return runTestCommand(
+      'advanced_compile_in_browser',
+      'node tests/compile/webdriver.js',
+  );
 }
 
 /**
@@ -394,7 +417,6 @@ const tasks = [
   // Build must run before the remaining tasks
   build,
   renamings,
-  metadata,
   mocha,
   generators,
   node,

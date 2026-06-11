@@ -370,4 +370,14 @@ implement
 [`IPositionable`](/reference/blockly.ipositionable).
 Examples are the trashcan and the backpack in the [backpack
 plugin](https://www.npmjs.com/package/@blockly/workspace-backpack).
-Positionables are not yet integrated into the focus system.
+Built-in positionables are integrated with the focus system, but if you create
+your own you should ensure that they work well with it. The built-in ones follow
+this pattern:
+
+* Implement `IFocusableNode`
+* Ensure that the focusable DOM element (the one returned from
+  `getFocusableElement()`) has `tabindex="0"`
+
+Depending on the purpose of your positionable, you should also consider
+registering a keyboard shortcut to perform its action (e.g. zoom in) or to
+directly focus it (e.g. a workspace search field).

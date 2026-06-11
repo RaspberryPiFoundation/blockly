@@ -15,6 +15,7 @@ import * as eventUtils from './events/utils.js';
 import {getFocusManager} from './focus_manager.js';
 import {ISelectable, isSelectable} from './interfaces/i_selectable.js';
 import {ShortcutRegistry} from './shortcut_registry.js';
+import * as deprecation from './utils/deprecation.js';
 import type {Workspace} from './workspace.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 
@@ -58,8 +59,25 @@ export function registerWorkspace(workspace: Workspace) {
  *
  * @param workspace
  */
-export function unregisterWorkpace(workspace: Workspace) {
+export function unregisterWorkspace(workspace: Workspace) {
   delete WorkspaceDB_[workspace.id];
+}
+
+/**
+ * Unregister a workspace from the workspace db.
+ *
+ * @deprecated v13: use Blockly.common.unregisterWorkspace
+ * @param workspace
+ */
+export function unregisterWorkpace(workspace: Workspace) {
+  deprecation.warn(
+    'Blockly.common.unregisterWorkpace',
+    'v13',
+    'v14',
+    'Blockly.common.unregisterWorkspace',
+  );
+
+  unregisterWorkspace(workspace);
 }
 
 /**
@@ -86,6 +104,11 @@ export function getMainWorkspace(): Workspace {
  */
 export function setMainWorkspace(workspace: Workspace) {
   mainWorkspace = workspace;
+  if (workspace.rendered) {
+    getFocusManager().setPopoverFocusRoot(
+      (workspace as WorkspaceSvg).getInjectionDiv(),
+    );
+  }
 }
 
 /**
@@ -141,8 +164,15 @@ let parentContainer: Element | null;
  *
  * @returns The parent container.
  */
-export function getParentContainer(): Element | null {
-  return parentContainer;
+export function getParentContainer(
+  workspace = getMainWorkspace(),
+): Element | null {
+  if (parentContainer) return parentContainer;
+  if (workspace && workspace.rendered) {
+    return (workspace as WorkspaceSvg).getInjectionDiv();
+  }
+
+  return null;
 }
 
 /**

@@ -13,6 +13,7 @@
 			"Pmikolas44",
 			"TomášPolonec",
 			"Username1233219128",
+			"Wizzard",
 			"Yardom78"
 		]
 	},
@@ -337,5 +338,27 @@
 	"WORKSPACE_ARIA_LABEL": "Pracovisko Bloskly",
 	"COLLAPSED_WARNINGS_WARNING": "Zrútené bloky obsahujú varovanie.",
 	"DIALOG_OK": "OK",
-	"DIALOG_CANCEL": "Zrušiť"
+	"DIALOG_CANCEL": "Zrušiť",
+	"EDIT_BLOCK_CONTENTS": "Upraviť obsah bloku",
+	"MOVE_BLOCK": "Presunúť blok",
+	"WINDOWS": "Windows",
+	"MAC_OS": "macOS",
+	"CHROME_OS": "ChromeOS",
+	"LINUX": "Linux",
+	"UNKNOWN": "Neznámy",
+	"CONTROL_KEY": "Ctrl",
+	"COMMAND_KEY": "⌘ Command",
+	"OPTION_KEY": "⌥ Option",
+	"ALT_KEY": "Alt",
+	"CUT_SHORTCUT": "Vystrihnúť",
+	"COPY_SHORTCUT": "Kopírovať",
+	"PASTE_SHORTCUT": "Prilepiť",
+	"HELP_PROMPT": "Stlačením %1 zobrazíte pomoc ku klávesovým ovládacím prvkom",
+	"SHORTCUTS_GENERAL": "Všeobecné",
+	"SHORTCUTS_EDITING": "Úpravy",
+	"SHORTCUTS_CODE_NAVIGATION": "Navigácia v kóde",
+	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "Podržte %1 a šípkami sa pohybujte voľne, potom %2 na potvrdenie pozície",
+	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Šípkami sa pohybujte, potom %1 na potvrdenie pozície",
+	"KEYBOARD_NAV_COPIED_HINT": "Skopírované. Stlačte %1 na prilepenie.",
+	"KEYBOARD_NAV_CUT_HINT": "Vystrihnuté. Stlačte %1 na prilepenie."
 }

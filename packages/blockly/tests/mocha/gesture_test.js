@@ -102,9 +102,10 @@ suite('Gesture', function () {
 
   test('Clicking on shadow block does not select it', function () {
     const flyout = this.workspace.getFlyout(true);
-    flyout.createBlock(
+    const blockData = Blockly.serialization.blocks.save(
       flyout.getWorkspace().getBlocksByType('logic_compare')[0],
     );
+    Blockly.serialization.blocks.append(blockData, this.workspace);
     const block = this.workspace.getBlocksByType('logic_compare')[0];
     const shadowBlock = block.getInput('A').connection.targetBlock();
 

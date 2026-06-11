@@ -215,8 +215,6 @@ export namespace Theme {
     cursorColour?: string;
     selectedGlowColour?: string;
     selectedGlowOpacity?: number;
-    replacementGlowColour?: string;
-    replacementGlowOpacity?: number;
   }
 
   export interface FontStyle {

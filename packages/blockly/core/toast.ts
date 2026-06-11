@@ -45,7 +45,7 @@ export interface ToastOptions {
    * How prominently/interrupting the readout of the toast should be for
    * screenreaders. Corresponds to aria-live and defaults to polite.
    */
-  assertiveness?: Toast.Assertiveness;
+  assertiveness?: aria.LiveRegionAssertiveness;
 }
 
 /**
@@ -89,15 +89,13 @@ export class Toast {
     const {
       message,
       duration = 5,
-      assertiveness = Toast.Assertiveness.POLITE,
+      assertiveness = aria.LiveRegionAssertiveness.POLITE,
     } = options;
 
     const toast = document.createElement('div');
     workspace.getInjectionDiv().appendChild(toast);
     toast.dataset.toastId = options.id;
     toast.className = CLASS_NAME;
-    aria.setRole(toast, aria.Role.STATUS);
-    aria.setState(toast, aria.State.LIVE, assertiveness);
 
     const messageElement = toast.appendChild(document.createElement('div'));
     messageElement.className = MESSAGE_CLASS_NAME;
@@ -157,6 +155,11 @@ export class Toast {
     toast.addEventListener('mouseleave', setToastTimeout);
     setToastTimeout();
 
+    aria.announceDynamicAriaState(message, {
+      assertiveness,
+      role: aria.Role.STATUS,
+    });
+
     return toast;
   }
 
@@ -171,17 +174,6 @@ export class Toast {
     if (toast instanceof HTMLElement && (!id || id === toast.dataset.toastId)) {
       toast.remove();
     }
-  }
-}
-
-/**
- * Options for how aggressively toasts should be read out by screenreaders.
- * Values correspond to those for aria-live.
- */
-export namespace Toast {
-  export enum Assertiveness {
-    ASSERTIVE = 'assertive',
-    POLITE = 'polite',
   }
 }
 

@@ -4,10 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {IBubble, WorkspaceSvg} from '../blockly.js';
-import {IDragStrategy} from '../interfaces/i_draggable.js';
+import type {IBubble} from '../interfaces/i_bubble.js';
+import type {IDragStrategy} from '../interfaces/i_draggable.js';
 import * as layers from '../layers.js';
-import {Coordinate} from '../utils.js';
+import type {Coordinate} from '../utils.js';
+import type {WorkspaceSvg} from '../workspace_svg.js';
 
 export class BubbleDragStrategy implements IDragStrategy {
   private startLoc: Coordinate | null = null;
@@ -21,13 +22,15 @@ export class BubbleDragStrategy implements IDragStrategy {
     return true;
   }
 
-  startDrag(): void {
+  startDrag() {
     this.startLoc = this.bubble.getRelativeToSurfaceXY();
     this.workspace.setResizesEnabled(false);
     this.workspace.getLayerManager()?.moveToDragLayer(this.bubble);
     if (this.bubble.setDragging) {
       this.bubble.setDragging(true);
     }
+
+    return this.bubble;
   }
 
   drag(newLoc: Coordinate): void {

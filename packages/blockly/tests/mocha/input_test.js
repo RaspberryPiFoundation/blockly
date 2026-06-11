@@ -5,6 +5,7 @@
  */
 
 import {assert} from '../../node_modules/chai/index.js';
+import {createRenderedBlock} from './test_helpers/block_definitions.js';
 import {
   sharedTestSetup,
   sharedTestTeardown,
@@ -291,6 +292,106 @@ suite('Inputs', function () {
       this.dummy.appendField(this.c, 'C');
 
       assert.deepEqual(this.dummy.fieldRow, [this.b, this.c]);
+    });
+  });
+  suite('ARIA', function () {
+    setup(function () {
+      Blockly.defineBlocksWithJsonArray([
+        {
+          'type': 'row_block',
+          'message0': '%1',
+          'args0': [
+            {
+              'type': 'input_value',
+              'name': 'INPUT',
+            },
+          ],
+          'output': null,
+        },
+      ]);
+    });
+    // Temporarily skipping while we debate custom inputs aria behavior
+    test.skip('Set input ARIA Label Provider', function () {
+      const customLabel = 'custom ARIA label';
+      // Using a text input as it will return a default ARIA label
+      this.block
+        .appendValueInput('NAME')
+        .appendField(new Blockly.FieldTextInput('text'), 'NAME')
+        .setAriaLabelProvider((input) => customLabel);
+
+      const label = this.block.getAriaLabel();
+
+      assert.include(label, customLabel);
+      assert.notInclude(label, 'text');
+    });
+    test.skip('Set input ARIA Label Provider from JSON', function () {
+      const customLabel = 'custom ARIA label';
+      Blockly.defineBlocksWithJsonArray([
+        {
+          'type': 'input_aria_block',
+          'message0': '%1 %2',
+          'args0': [
+            {
+              'type': 'field_input',
+              'name': 'NAME',
+              'text': 'text',
+            },
+            {
+              'type': 'input_value',
+              'name': 'NAME',
+              'ariaLabelText': customLabel,
+            },
+          ],
+        },
+      ]);
+
+      this.block = this.workspace.newBlock('input_aria_block');
+      const label = this.block.getAriaLabel();
+
+      assert.include(label, customLabel);
+    });
+    test.skip('Set input ARIA Label Provider to null', function () {
+      const blockA = createRenderedBlock(this.workspace, 'row_block');
+      const blockB = createRenderedBlock(this.workspace, 'row_block');
+
+      blockA
+        .appendValueInput('NAME')
+        .appendField(new Blockly.FieldTextInput('text'), 'NAME')
+        .setAriaLabelProvider(null);
+      blockB
+        .appendValueInput('NAME')
+        .appendField(new Blockly.FieldTextInput('text'), 'NAME');
+
+      const labelA = blockA.getAriaLabel();
+      const labelB = blockB.getAriaLabel();
+
+      // The label should be the same between a block created with a null
+      // AriaLabelProvider and without setting the provider (the default label)
+      assert.equal(labelA, labelB);
+    });
+    test('Labels for fields are comma separated', function () {
+      this.block
+        .appendDummyInput()
+        .appendField('first')
+        .appendField(new Blockly.FieldNumber(0));
+
+      const label = this.block.getAriaLabel();
+
+      assert.include(label, 'first, 0');
+    });
+    test('Adjacent labels for FieldLabels are combined into one field.', function () {
+      this.block
+        .appendDummyInput()
+        .appendField('first')
+        .appendField('second')
+        .appendField(new Blockly.FieldNumber(0))
+        .appendField('third')
+        .appendField('fourth')
+        .appendField('fifth');
+
+      const label = this.block.getAriaLabel();
+
+      assert.include(label, 'first second, 0, third fourth fifth');
     });
   });
 });

@@ -15,6 +15,7 @@ import {
 suite('DropDownDiv', function () {
   setup(function () {
     sharedTestSetup.call(this);
+    Blockly.common.setParentContainer(document.firstElementChild);
     this.workspace = Blockly.inject('blocklyDiv');
     this.setUpBlockWithField = function () {
       const blockJson = {
@@ -192,6 +193,25 @@ suite('DropDownDiv', function () {
       assert.strictEqual(dropDownDivElem.style.opacity, '1');
       assert.strictEqual(dropDownDivElem.style.left, '45px');
       assert.strictEqual(dropDownDivElem.style.top, '60px');
+    });
+
+    test('sets the dropdowndiv as owned by the workspace', function () {
+      const block = this.setUpBlockWithField();
+      const field = Array.from(block.getFields())[0];
+
+      Blockly.DropDownDiv.show(field, false, 50, 60, 70, 80, false);
+      assert.equal(
+        Blockly.utils.aria.getState(
+          Blockly.getMainWorkspace().getFocusableElement(),
+          Blockly.utils.aria.State.OWNS,
+        ),
+        Blockly.DropDownDiv.getContentDiv().parentElement.id,
+      );
+      assert.isTrue(
+        Blockly.getMainWorkspace()
+          .getFocusableElement()
+          .classList.contains('blocklyShowingDropDownDiv'),
+      );
     });
   });
 
@@ -387,6 +407,26 @@ suite('DropDownDiv', function () {
         assert.strictEqual(Blockly.getFocusManager().getFocusedNode(), block);
         assert.strictEqual(document.activeElement, blockFocusableElem);
       });
+
+      test('clears ownership of the dropdowndiv by the workspace', function () {
+        const block = this.setUpBlockWithField();
+        const field = Array.from(block.getFields())[0];
+        Blockly.getFocusManager().focusNode(block);
+        Blockly.DropDownDiv.showPositionedByField(field, null, null, true);
+        Blockly.DropDownDiv.hideWithoutAnimation();
+
+        assert.isNull(
+          Blockly.utils.aria.getState(
+            Blockly.getMainWorkspace().getFocusableElement(),
+            Blockly.utils.aria.State.OWNS,
+          ),
+        );
+        assert.isFalse(
+          Blockly.getMainWorkspace()
+            .getFocusableElement()
+            .classList.contains('blocklyShowingDropDownDiv'),
+        );
+      });
     });
 
     suite('for div positioned by block', function () {
@@ -452,6 +492,28 @@ suite('DropDownDiv', function () {
         const blockFocusableElem = block.getFocusableElement();
         assert.strictEqual(Blockly.getFocusManager().getFocusedNode(), block);
         assert.strictEqual(document.activeElement, blockFocusableElem);
+      });
+
+      test('clears ownership of the dropdowndiv by the workspace', function () {
+        const block = this.setUpBlockWithField();
+        const field = Array.from(block.getFields())[0];
+        Blockly.getFocusManager().focusNode(block);
+        Blockly.DropDownDiv.showPositionedByBlock(
+          field,
+          block,
+          null,
+          null,
+          true,
+        );
+
+        Blockly.DropDownDiv.hideWithoutAnimation();
+
+        assert.isNull(
+          Blockly.utils.aria.getState(
+            Blockly.getMainWorkspace().getFocusableElement(),
+            Blockly.utils.aria.State.OWNS,
+          ),
+        );
       });
     });
   });

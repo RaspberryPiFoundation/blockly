@@ -139,7 +139,7 @@ Blockly.Msg.REDO = 'Redo';
 Blockly.Msg.CHANGE_VALUE_TITLE = 'Change value:';
 /** @type {string} */
 /// dropdown choice - When the user clicks on a variable block, this is one of the dropdown menu choices.  It is used to rename the current variable.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Variables#dropdown-menu https://github.com/RaspberryPiFoundation/blockly/wiki/Variables#dropdown-menu].
-Blockly.Msg.RENAME_VARIABLE = 'Rename variable...';
+Blockly.Msg.RENAME_VARIABLE = 'Rename the "%1" variable';
 /** @type {string} */
 /// prompt - Prompts the user to enter the new name for the selected variable.  See [https://github.com/RaspberryPiFoundation/blockly/wiki/Variables#dropdown-menu https://github.com/RaspberryPiFoundation/blockly/wiki/Variables#dropdown-menu].\n\nParameters:\n* %1 - the name of the variable to be renamed.
 Blockly.Msg.RENAME_VARIABLE_TITLE = 'Rename all "%1" variables to:';
@@ -366,20 +366,38 @@ Blockly.Msg.CONTROLS_IF_ELSE_TOOLTIP = 'Add a final, catch-all condition to the 
 /// {{Optional}} url - Information about comparisons.
 Blockly.Msg.LOGIC_COMPARE_HELPURL = 'https://en.wikipedia.org/wiki/Inequality_(mathematics)';
 /** @type {string} */
+/// logic - ARIA label for the equals (=) operator.
+Blockly.Msg.LOGIC_COMPARE_EQ_ARIA = 'equals';
+/** @type {string} */
 /// tooltip - Describes the equals (=) block.
 Blockly.Msg.LOGIC_COMPARE_TOOLTIP_EQ = 'Return true if both inputs equal each other.';
+/** @type {string} */
+/// logic - ARIA label for the not equals (≠) operator.
+Blockly.Msg.LOGIC_COMPARE_NEQ_ARIA = 'not equals';
 /** @type {string} */
 /// tooltip - Describes the not equals (≠) block.
 Blockly.Msg.LOGIC_COMPARE_TOOLTIP_NEQ = 'Return true if both inputs are not equal to each other.';
 /** @type {string} */
+/// logic - ARIA label for the less than (<) operator.
+Blockly.Msg.LOGIC_COMPARE_LT_ARIA = 'less than';
+/** @type {string} */
 /// tooltip - Describes the less than (<) block.
 Blockly.Msg.LOGIC_COMPARE_TOOLTIP_LT = 'Return true if the first input is smaller than the second input.';
+/** @type {string} */
+/// logic - ARIA label for the less than or equals (≤) operator.
+Blockly.Msg.LOGIC_COMPARE_LTE_ARIA = 'less than or equal to';
 /** @type {string} */
 /// tooltip - Describes the less than or equals (≤) block.
 Blockly.Msg.LOGIC_COMPARE_TOOLTIP_LTE = 'Return true if the first input is smaller than or equal to the second input.';
 /** @type {string} */
+/// logic - ARIA label for the greater than (>) operator.
+Blockly.Msg.LOGIC_COMPARE_GT_ARIA = 'greater than';
+/** @type {string} */
 /// tooltip - Describes the greater than (>) block.
 Blockly.Msg.LOGIC_COMPARE_TOOLTIP_GT = 'Return true if the first input is greater than the second input.';
+/** @type {string} */
+/// logic - ARIA label for the greater than or equals (≥) operator.
+Blockly.Msg.LOGIC_COMPARE_GTE_ARIA = 'greater than or equal to';
 /** @type {string} */
 /// tooltip - Describes the greater than or equals (≥) block.
 Blockly.Msg.LOGIC_COMPARE_TOOLTIP_GTE = 'Return true if the first input is greater than or equal to the second input.';
@@ -462,46 +480,98 @@ Blockly.Msg.MATH_NUMBER_TOOLTIP = 'A number.';
 /// {{Optional}} math - The symbol for the binary operation addition.
 Blockly.Msg.MATH_ADDITION_SYMBOL = '+';
 /** @type {string} */
+/// math - ARIA label for the binary operation addition.
+Blockly.Msg.MATH_ADDITION_SYMBOL_ARIA = 'plus';
+/** @type {string} */
 /// {{Optional}} math - The symbol for the binary operation indicating that the right operand should be
 /// subtracted from the left operand.
 Blockly.Msg.MATH_SUBTRACTION_SYMBOL = '-';
+/** @type {string} */
+/// math - ARIA label for the binary operation subtraction.
+Blockly.Msg.MATH_SUBTRACTION_SYMBOL_ARIA = 'minus';
 /** @type {string} */
 /// {{Optional}} math - The binary operation indicating that the left operand should be divided by
 /// the right operand.
 Blockly.Msg.MATH_DIVISION_SYMBOL = '÷';
 /** @type {string} */
+/// math - ARIA label for the binary operation division.
+Blockly.Msg.MATH_DIVISION_SYMBOL_ARIA = 'divided by';
+/** @type {string} */
 /// {{Optional}} math - The symbol for the binary operation multiplication.
 Blockly.Msg.MATH_MULTIPLICATION_SYMBOL = '×';
+/** @type {string} */
+/// math - ARIA label for the binary operation multiplication.
+Blockly.Msg.MATH_MULTIPLICATION_SYMBOL_ARIA = 'times';
 /** @type {string} */
 /// {{Optional}} math - The symbol for the binary operation exponentiation.  Specifically, if the
 /// value of the left operand is L and the value of the right operand (the exponent) is
 /// R, multiply L by itself R times.  (Fractional and negative exponents are also legal.)
 Blockly.Msg.MATH_POWER_SYMBOL = '^';
+/** @type {string} */
+/// math - ARIA label for the binary operation exponentiation.
+Blockly.Msg.MATH_POWER_SYMBOL_ARIA = 'to the power of';
 
 /** @type {string} */
 /// math - The short name of the trigonometric function
 /// [https://en.wikipedia.org/wiki/Trigonometric_functions#Sine.2C_cosine_and_tangent sine].
 Blockly.Msg.MATH_TRIG_SIN = 'sin';
 /** @type {string} */
+/// math - ARIA label for the trigonometric function
+Blockly.Msg.MATH_TRIG_SIN_ARIA = 'sine';
+/** @type {string} */
 /// math - The short name of the trigonometric function
 /// [https://en.wikipedia.org/wiki/Trigonometric_functions#Sine.2C_cosine_and_tangent cosine].
 Blockly.Msg.MATH_TRIG_COS = 'cos';
+/** @type {string} */
+/// math - ARIA label for the trigonometric function
+Blockly.Msg.MATH_TRIG_COS_ARIA = 'cosine';
 /** @type {string} */
 /// math - The short name of the trigonometric function
 /// [https://en.wikipedia.org/wiki/Trigonometric_functions#Sine.2C_cosine_and_tangent tangent].
 Blockly.Msg.MATH_TRIG_TAN = 'tan';
 /** @type {string} */
+/// math - ARIA label for the trigonometric function
+Blockly.Msg.MATH_TRIG_TAN_ARIA = 'tangent';
+/** @type {string} */
 /// math - The short name of the ''inverse of'' the trigonometric function
 /// [https://en.wikipedia.org/wiki/Trigonometric_functions#Sine.2C_cosine_and_tangent sine].
 Blockly.Msg.MATH_TRIG_ASIN = 'asin';
+/** @type {string} */
+/// math - ARIA label for the inverse  trigonometric function
+Blockly.Msg.MATH_TRIG_ASIN_ARIA = 'inverse sine';
 /** @type {string} */
 /// math - The short name of the ''inverse of'' the trigonometric function
 /// [https://en.wikipedia.org/wiki/Trigonometric_functions#Sine.2C_cosine_and_tangent cosine].
 Blockly.Msg.MATH_TRIG_ACOS = 'acos';
 /** @type {string} */
+/// math - ARIA label for the inverse  trigonometric function
+Blockly.Msg.MATH_TRIG_ACOS_ARIA = 'inverse cosine';
+/** @type {string} */
 /// math - The short name of the ''inverse of'' the trigonometric function
 /// [https://en.wikipedia.org/wiki/Trigonometric_functions#Sine.2C_cosine_and_tangent tangent].
 Blockly.Msg.MATH_TRIG_ATAN = 'atan';
+/** @type {string} */
+/// math - ARIA label for the inverse  trigonometric function
+Blockly.Msg.MATH_TRIG_ATAN_ARIA = 'inverse tangent';
+
+/** @type {string} */
+/// math - ARIA label for the constant pi
+Blockly.Msg.MATH_CONSTANT_PI_ARIA = 'pi';
+/** @type {string} */
+/// math - ARIA label for the constant e
+Blockly.Msg.MATH_CONSTANT_E_ARIA = 'e';
+/** @type {string} */
+/// math - ARIA label for the golden ratio constant
+Blockly.Msg.MATH_CONSTANT_GOLDEN_RATIO_ARIA = 'golden ratio';
+/** @type {string} */
+/// math - ARIA label for the constant square root of 2
+Blockly.Msg.MATH_CONSTANT_SQRT2_ARIA = 'square root of 2';
+/** @type {string} */
+/// math - ARIA label for the constant square root of 1/2
+Blockly.Msg.MATH_CONSTANT_SQRT1_2_ARIA = 'square root of 1 over 2';
+/** @type {string} */
+/// math - ARIA label for the constant infinity
+Blockly.Msg.MATH_CONSTANT_INFINITY_ARIA = 'infinity';
 
 /** @type {string} */
 /// {{Optional}} url - Information about addition, subtraction, multiplication, division, and exponentiation.
@@ -532,12 +602,28 @@ Blockly.Msg.MATH_SINGLE_OP_ROOT = 'square root';
 /// tooltip - Please use the same term as in the previous message.
 Blockly.Msg.MATH_SINGLE_TOOLTIP_ROOT = 'Return the square root of a number.';
 /** @type {string} */
-/// dropdown - This leaves positive numeric inputs changed and inverts negative inputs.  For example, the absolute value of 5 is 5; the absolute value of -5 is also 5.  For more information, see [https://en.wikipedia.org/wiki/Absolute_value https://en.wikipedia.org/wiki/Absolute_value].
+/// dropdown - This leaves positive numeric inputs unchanged and inverts negative inputs.  For example, the absolute value of 5 is 5; the absolute value of -5 is also 5.  For more information, see [https://en.wikipedia.org/wiki/Absolute_value https://en.wikipedia.org/wiki/Absolute_value].
 Blockly.Msg.MATH_SINGLE_OP_ABSOLUTE = 'absolute';
+/// dropdown ARIA label - Please use the same term as in the previous message.
+Blockly.Msg.MATH_SINGLE_OP_ABSOLUTE_ARIA = 'absolute value';
 /** @type {string} */
 /// tooltip - Please use the same term as in the previous message.
 Blockly.Msg.MATH_SINGLE_TOOLTIP_ABS = 'Return the absolute value of a number.';
-
+/** @type {string}*/
+/// dropdown ARIA label - This computes the negative of its input.  For example, negative 5 is -5, and negative -5 is 5.
+Blockly.Msg.MATH_SINGLE_OP_NEG_ARIA = 'negative';
+/** @type {string} */
+/// dropdown ARIA label - This computes the natural logarithm of its input.  For example, the natural logarithm of e is 1.
+Blockly.Msg.MATH_SINGLE_OP_LN_ARIA = 'natural logarithm';
+/** @type {string} */
+/// dropdown ARIA label - This computes the base 10 logarithm of its input.  For example, the base 10 logarithm of 100 is 2.
+Blockly.Msg.MATH_SINGLE_OP_LOG10_ARIA = 'base 10 logarithm';
+/** @type {string} */
+/// dropdown ARIA label - This multiplies e by itself n times, where n is the input.  For example, e to the power of 1 is e, and e to the power of 0 is 1.
+Blockly.Msg.MATH_SINGLE_OP_EXP_ARIA = 'e to the power of';
+/** @type {string} */
+/// dropdown ARIA label - This multiplies 10 by itself n times, where n is the input.  For example, 10 to the power of 2 is 100, and 10 to the power of 0 is 1.
+Blockly.Msg.MATH_SINGLE_OP_POW10_ARIA = '10 to the power of';
 /** @type {string} */
 /// tooltip - Calculates '''0-n''', where '''n''' is the single numeric input.
 Blockly.Msg.MATH_SINGLE_TOOLTIP_NEG = 'Return the negation of a number.';
@@ -652,11 +738,17 @@ Blockly.Msg.MATH_ONLIST_TOOLTIP_SUM = 'Return the sum of all the numbers in the 
 /// dropdown - This finds the smallest (minimum) number in a list.  For example, the smallest number in the list [-5, 0, 3] is -5.
 Blockly.Msg.MATH_ONLIST_OPERATOR_MIN = 'min of list';
 /** @type {string} */
+/// ARIA label for the minimum operator
+Blockly.Msg.MATH_ONLIST_OPERATOR_MIN_ARIA = 'minimum';
+/** @type {string} */
 /// tooltip - Please use the same term for "min" or "minimum" as in the previous message.
 Blockly.Msg.MATH_ONLIST_TOOLTIP_MIN = 'Return the smallest number in the list.';
 /** @type {string} */
 /// dropdown - This finds the largest (maximum) number in a list.  For example, the largest number in the list [-5, 0, 3] is 3.
 Blockly.Msg.MATH_ONLIST_OPERATOR_MAX = 'max of list';
+/** @type {string} */
+/// ARIA label for the maximum operator
+Blockly.Msg.MATH_ONLIST_OPERATOR_MAX_ARIA = 'maximum';
 /** @type {string} */
 /// tooltip
 Blockly.Msg.MATH_ONLIST_TOOLTIP_MAX = 'Return the largest number in the list.';
@@ -837,8 +929,19 @@ Blockly.Msg.TEXT_INDEXOF_OPERATOR_FIRST = 'find first occurrence of text';
 /// https://translatewiki.net/wiki/Translating:Blockly#Drop-Down_Menus)].)
 /// [[File:Blockly-find-text.png]].
 Blockly.Msg.TEXT_INDEXOF_OPERATOR_LAST = 'find last occurrence of text';
-/** @type {string} */
 
+/** @type {string} */
+/// ARIA label for the dropdown option indicating that the following number specifies the
+// position (relative to the start position) of a letter (or number, punctuation character,
+// etc.) from a given piece of text.
+Blockly.Msg.TEXT_FROM_START_ARIA = 'letter number';
+/** @type {string} */
+/// ARIA label for the dropdown option indicating that the following number specifies the
+// position (relative to the end position) of a letter (or number, punctuation character,
+// etc.) from a given piece of text.
+Blockly.Msg.TEXT_FROM_END_ARIA = 'letter number from end';
+
+/** @type {string} */
 /// {{Optional}} url - Information about extracting characters (letters, number, symbols, etc.) from text.
 Blockly.Msg.TEXT_CHARAT_HELPURL = 'https://github.com/RaspberryPiFoundation/blockly/wiki/Text#extracting-text';
 /** @type {string} */
@@ -1600,11 +1703,6 @@ Blockly.Msg.PROCEDURES_IFRETURN_WARNING = 'Warning: This block may be used only 
 Blockly.Msg.WORKSPACE_COMMENT_DEFAULT_TEXT = 'Say something...';
 
 /** @type {string} */
-/// workspace - This text is read out when a user navigates to the workspace while
-/// using a screen reader.
-Blockly.Msg.WORKSPACE_ARIA_LABEL = 'Blockly Workspace';
-
-/** @type {string} */
 /// warning - This appears if the user collapses a block, and blocks inside
 /// that block have warnings attached to them. It should inform the user that the
 /// block they collapsed contains blocks that have warnings.
@@ -1626,7 +1724,7 @@ Blockly.Msg.EDIT_BLOCK_CONTENTS = 'Edit Block contents';
 /// menu label - Contextual menu item that starts a keyboard-driven block move.
 Blockly.Msg.MOVE_BLOCK = 'Move Block';
 /** @type {string} */
-/// Name of the Microsoft Windows operating system displayed in a list of 
+/// Name of the Microsoft Windows operating system displayed in a list of
 /// keyboard shortcuts.
 Blockly.Msg.WINDOWS = 'Windows';
 /** @type {string} */
@@ -1646,17 +1744,62 @@ Blockly.Msg.LINUX = 'Linux';
 /// of keyboard shortcuts.
 Blockly.Msg.UNKNOWN = 'Unknown';
 /** @type {string} */
-/// Representation of the Control key used in keyboard shortcuts.
-Blockly.Msg.CONTROL_KEY = 'Ctrl';
+/// {{Optional}} Representation of the Control key used in keyboard shortcuts.
+Blockly.Msg.CONTROL_KEY = 'Control';
 /** @type {string} */
-/// Representation of the Mac Command key used in keyboard shortcuts.
-Blockly.Msg.COMMAND_KEY = '⌘ Command';
+/// {{Optional}} Representation of the Mac Command key used in keyboard shortcuts.
+Blockly.Msg.COMMAND_KEY = 'Command';
 /** @type {string} */
-/// Representation of the Mac Option key used in keyboard shortcuts.
-Blockly.Msg.OPTION_KEY = '⌥ Option';
+/// {{Optional}} Representation of the Mac Option key used in keyboard shortcuts.
+Blockly.Msg.OPTION_KEY = 'Option';
 /** @type {string} */
-/// Representation of the Alt key used in keyboard shortcuts.
+/// {{Optional}} Representation of the Alt key used in keyboard shortcuts.
 Blockly.Msg.ALT_KEY = 'Alt';
+/** @type {string} */
+/// {{Optional}} Representation of the Enter key used in keyboard shortcuts.
+Blockly.Msg.ENTER_KEY = 'Enter';
+/** @type {string} */
+/// {{Optional}} Representation of the Backspace key used in keyboard shortcuts.
+Blockly.Msg.BACKSPACE_KEY = 'Backspace';
+/** @type {string} */
+/// {{Optional}} Representation of the Delete key used in keyboard shortcuts.
+Blockly.Msg.DELETE_KEY = 'Delete';
+/** @type {string} */
+/// {{Optional}} Representation of the Escape key used in keyboard shortcuts.
+Blockly.Msg.ESCAPE = 'Escape';
+/** @type {string} */
+/// {{Optional}} Representation of the Tab key used in keyboard shortcuts.
+Blockly.Msg.TAB_KEY = 'Tab';
+/** @type {string} */
+/// {{Optional}} Representation of the Shift key used in keyboard shortcuts.
+Blockly.Msg.SHIFT_KEY = 'Shift';
+/** @type {string} */
+/// {{Optional}} Representation of the Caps Lock key used in keyboard shortcuts.
+Blockly.Msg.CAPS_LOCK_KEY = 'Caps Lock';
+/** @type {string} */
+/// {{Optional}} Representation of the Space key used in keyboard shortcuts.
+Blockly.Msg.SPACE_KEY = 'Space';
+/** @type {string} */
+/// {{Optional}} Representation of the Page Up key used in keyboard shortcuts.
+Blockly.Msg.PAGE_UP_KEY = 'Page Up';
+/** @type {string} */
+/// {{Optional}} Representation of the Page Down key used in keyboard shortcuts.
+Blockly.Msg.PAGE_DOWN_KEY = 'Page Down';
+/** @type {string} */
+/// {{Optional}} Representation of the End key used in keyboard shortcuts.
+Blockly.Msg.END_KEY = 'End';
+/** @type {string} */
+/// {{Optional}} Representation of the Home key used in keyboard shortcuts.
+Blockly.Msg.HOME_KEY = 'Home';
+/** @type {string} */
+/// {{Optional}} Representation of the Insert key used in keyboard shortcuts.
+Blockly.Msg.INSERT_KEY = 'Insert';
+/** @type {string} */
+/// {{Optional}} Representation of the Pause key used in keyboard shortcuts.
+Blockly.Msg.PAUSE_KEY = 'Pause';
+/** @type {string} */
+/// {{Optional}} Representation of the Context Menu key used in keyboard shortcuts.
+Blockly.Msg.CONTEXT_MENU_KEY = '≣ Menu';
 /** @type {string} */
 /// menu label - Contextual menu item that cuts the focused item.
 Blockly.Msg.CUT_SHORTCUT = 'Cut';
@@ -1668,7 +1811,7 @@ Blockly.Msg.COPY_SHORTCUT = 'Copy';
 Blockly.Msg.PASTE_SHORTCUT = 'Paste';
 /** @type {string} */
 /// Alert message shown to prompt users to review available keyboard shortcuts.
-Blockly.Msg.HELP_PROMPT = 'Press %1 for help on keyboard controls';
+Blockly.Msg.HELP_PROMPT = 'Press %1 for help on keyboard controls.';
 /** @type {string} */
 /// shortcut list section header - Label for general purpose keyboard shortcuts.
 Blockly.Msg.SHORTCUTS_GENERAL = 'General';
@@ -1681,15 +1824,535 @@ Blockly.Msg.SHORTCUTS_EDITING = 'Editing'
 /// moving around the workspace.
 Blockly.Msg.SHORTCUTS_CODE_NAVIGATION = 'Code navigation';
 /** @type {string} */
+/// shortcut display text for the escape shortcut, which is used in various contexts to exit or cancel an action.
+Blockly.Msg.SHORTCUTS_ESCAPE = 'Exit';
+/** @type {string} */
+/// shortcut display text for the delete shortcut, which is used in various contexts to delete items.
+Blockly.Msg.SHORTCUTS_DELETE = 'Delete';
+/** @type {string} */
+/// shortcut display text for the start move shortcut, which enters the keyboard navigation "move mode".
+Blockly.Msg.SHORTCUTS_START_MOVE = 'Start move';
+/** @type {string} */
+/// shortcut display text for the start move stack shortcut, which enters the keyboard navigation "move mode" for a stack of blocks.
+Blockly.Msg.SHORTCUTS_START_MOVE_STACK = 'Start move stack';
+/** @type {string} */
+/// shortcut display text for the move left shortcut, which moves a block left during keyboard navigation.
+Blockly.Msg.SHORTCUTS_MOVE_LEFT = 'Move left';
+/** @type {string} */
+/// shortcut display text for the move right shortcut, which moves a block right during keyboard navigation.
+Blockly.Msg.SHORTCUTS_MOVE_RIGHT = 'Move right';
+/** @type {string} */
+/// shortcut display text for the move up shortcut, which moves a block up during keyboard navigation.
+Blockly.Msg.SHORTCUTS_MOVE_UP = 'Move up';
+/** @type {string} */
+/// shortcut display text for the move down shortcut, which moves a block down during keyboard navigation.
+Blockly.Msg.SHORTCUTS_MOVE_DOWN = 'Move down';
+/** @type {string} */
+/// shortcut display text for the finish move shortcut, which exits the keyboard navigation "move mode".
+Blockly.Msg.SHORTCUTS_FINISH_MOVE = 'Finish move';
+/** @type {string} */
+/// shortcut display text for the abort move shortcut, which cancels the keyboard navigation "move mode".
+Blockly.Msg.SHORTCUTS_ABORT_MOVE = 'Abort move';
+/** @type {string} */
+/// shortcut display text for the shortcut that opens the context menu.
+Blockly.Msg.SHORTCUTS_SHOW_CONTEXT_MENU = 'Show menu';
+/** @type {string} */
+/// shortcut display text for the focus workspace shortcut, which moves focus to the workspace.
+Blockly.Msg.SHORTCUTS_FOCUS_WORKSPACE = 'Focus workspace';
+/** @type {string} */
+/// shortcut display text for the focus toolbox shortcut, which moves focus to the toolbox or flyout.
+Blockly.Msg.SHORTCUTS_FOCUS_TOOLBOX = 'Focus toolbox';
+/** @type {string} */
+/// shortcut display text for the information shortcut, which announces information about a focused element.
+Blockly.Msg.SHORTCUTS_INFORMATION = 'Announce information';
+/** @type {string} */
+/// Description for the Shift-I keyboard shortcut that announces extended context about the currently focused element to screenreaders.
+Blockly.Msg.SHORTCUTS_EXTENDED_INFORMATION = 'Announce detailed information';
+/** @type {string} */
+/// shortcut display text for the disconnect shortcut, which disconnects a block from its neighbor.
+Blockly.Msg.SHORTCUTS_DISCONNECT = 'Disconnect block';
+/** @type {string} */
+/// shortcut display text for the next stack shortcut, which navigates to the next block stack.
+Blockly.Msg.SHORTCUTS_NEXT_STACK = 'Next stack';
+/** @type {string} */
+/// shortcut display text for the previous stack shortcut, which navigates to the previous block stack.
+Blockly.Msg.SHORTCUTS_PREVIOUS_STACK = 'Previous stack';
+/** @type {string} */
+/// shortcut display text for the next heading shortcut, which moves focus to the next heading (label) in the flyout.
+Blockly.Msg.SHORTCUTS_NEXT_HEADING = 'Next heading';
+/** @type {string} */
+/// shortcut display text for the previous heading shortcut, which moves focus to the previous heading (label) in the flyout.
+Blockly.Msg.SHORTCUTS_PREVIOUS_HEADING = 'Previous heading';
+/** @type {string} */
+/// shortcut display text for the perform action shortcut, which triggers an action on the focused element.
+Blockly.Msg.SHORTCUTS_PERFORM_ACTION = 'Edit or confirm';
+/** @type {string} */
+/// shortcut display text for the duplicate shortcut, which duplicates the focused block or comment.
+Blockly.Msg.SHORTCUTS_DUPLICATE = 'Duplicate';
+/** @type {string} */
+/// shortcut display text for the cleanup shortcut, which organizes blocks on the workspace.
+Blockly.Msg.SHORTCUTS_CLEANUP = 'Clean up workspace';
+/** @type {string} */
+/// shortcut display text for the show tooltip shortcut, which displays a short help text for the focused element.
+Blockly.Msg.SHORTCUTS_SHOW_TOOLTIP = 'Show tooltip';
+/** @type {string} */
+/// shortcut display text for a shortcut that toggles various behaviors to improve the experience of individuals using screenreaders.
+Blockly.Msg.SHORTCUTS_TOGGLE_SCREENREADER_MODE = 'Toggle screenreader mode';
+/** @type {string} */
 /// Message shown to inform users how to move blocks to arbitrary locations
 /// with the keyboard.
-Blockly.Msg.KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT = 'Hold %1 and use arrow keys to move freely, then %2 to accept the position';
+Blockly.Msg.KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT = 'Hold %1 and use arrow keys to move freely, then %2 to accept the position.';
 /** @type {string} */
 /// Message shown to inform users how to move blocks with the keyboard.
-Blockly.Msg.KEYBOARD_NAV_CONSTRAINED_MOVE_HINT = 'Use the arrow keys to move, then %1 to accept the position';
+Blockly.Msg.KEYBOARD_NAV_CONSTRAINED_MOVE_HINT = 'Use the arrow keys to move, then %1 to accept the position.';
 /** @type {string} */
 /// Message shown when an item is copied in keyboard navigation mode.
 Blockly.Msg.KEYBOARD_NAV_COPIED_HINT = 'Copied. Press %1 to paste.';
 /** @type {string} */
 /// Message shown when an item is cut in keyboard navigation mode.
 Blockly.Msg.KEYBOARD_NAV_CUT_HINT = 'Cut. Press %1 to paste.';
+/** @type {string} */
+/// Aria label for a workspace. Avoid using the name "Blockly" as this could appear in branded products.
+Blockly.Msg.WORKSPACE_LABEL_PLAIN = 'Blocks workspace.';
+/** @type {string} */
+/// Aria label for a workspace with one stack of blocks.
+Blockly.Msg.WORKSPACE_LABEL_1_STACK = 'Blocks workspace. 1 stack of blocks';
+/** @type {string} */
+/// Aria label for a workspace with 0 or >1 stacks of blocks.
+/// \n\nParameters:\n* %1 - the number of stacks of blocks. A stack of blocks is a group of connected
+/// blocks that are not connected to any other blocks. 0 stacks means there are no blocks on the workspace.
+Blockly.Msg.WORKSPACE_LABEL_MANY_STACKS = 'Blocks workspace. %1 stacks of blocks';
+/** @type {string} */
+/// Aria label for a mutator workspace, which is a secondary workspace used for editing a block's structure.
+/// This type of workspace appears when a user clicks on the gear icon of a block that has a mutator, and
+/// allows the user to add, remove, or rearrange inputs to that block.
+Blockly.Msg.WORKSPACE_LABEL_MUTATOR_WORKSPACE = 'Block editor workspace';
+/** @type {string} */
+/// Aria label for an always-open flyout's workspace. Since the flyout will have a role of list,
+/// the resulting screenreader output will be something like "Logic blocks list, with 5 items".
+/// Do not include the word "list" in this message.
+/// Parameters: %1 - the category of blocks in the flyout, e.g. "Logic" or "Math". This may be empty for an uncategorized flyout.
+Blockly.Msg.WORKSPACE_LABEL_FLYOUT_WORKSPACE = '%1 blocks';
+/** @type {string} */
+/// ARIA live region message announcing the number of stacks of blocks in the workspace, optionally including comments.
+/// \n\nParameters:\n* %1 - the number of stacks (integer greater than 1)\n* %2 - optional phrase announcing comments, including leading space
+/// \n\nExamples:\n* "5 stacks of blocks in workspace."\n* "5 stacks of blocks and 2 comments in workspace."
+Blockly.Msg.WORKSPACE_CONTENTS_BLOCKS_MANY = '%1 stacks of blocks%2 in workspace.';
+/** @type {string} */
+/// ARIA live region message announcing there is one stack of blocks in the workspace, optionally including a count of comments.
+/// \n\nParameters:\n* %2 - optional phrase announcing comments, including leading space
+/// \n\nExamples:\n* "One stack of blocks in workspace."\n* "One stack of blocks and 1 comment in workspace."
+Blockly.Msg.WORKSPACE_CONTENTS_BLOCKS_ONE = 'One stack of blocks%2 in workspace.';
+/** @type {string} */
+/// ARIA live region message announcing there are no blocks in the workspace, optionally including a count of comments.
+/// \n\nParameters:\n* %2 - optional phrase announcing comments, including leading space
+/// \n\nExamples:\n* "No blocks in workspace."\n* "No blocks and 3 comments in workspace."
+Blockly.Msg.WORKSPACE_CONTENTS_BLOCKS_ZERO = 'No blocks%2 in workspace.';
+/** @type {string} */
+/// ARIA live region phrase appended when there are multiple workspace comments.
+/// \n\nParameters:\n* %1 - the number of comments (integer greater than 1)
+Blockly.Msg.WORKSPACE_CONTENTS_COMMENTS_MANY = ' and %1 comments';
+/** @type {string} */
+/// ARIA live region phrase appended when there is exactly one workspace comment.
+Blockly.Msg.WORKSPACE_CONTENTS_COMMENTS_ONE = ' and one comment';
+/** @type {string} */
+/// Message shown when a user presses Enter with a navigable block focused.
+Blockly.Msg.KEYBOARD_NAV_BLOCK_NAVIGATION_HINT = 'Use %1 to navigate inside of blocks.';
+/** @type {string} */
+/// Message shown when a user presses Enter with the workspace focused.
+Blockly.Msg.KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT = 'Use the arrow keys to navigate.';
+/** @type {string} */
+/// Message shown when a user presses Enter with a flyout label (heading) focused. Placeholder %1 is the keyboard shortcut for navigating to the next heading.
+Blockly.Msg.KEYBOARD_NAV_FLYOUT_LABEL_HINT = 'Use the arrow keys to navigate to a block, or press %1 to go to the next heading.';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates it is the first
+/// block in the stack.
+Blockly.Msg.BLOCK_LABEL_BEGIN_STACK = 'Begin stack';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates it is the first
+/// block inside of a statement input. Placeholder corresponds to the parent
+/// statement input's accessibility label.
+Blockly.Msg.BLOCK_LABEL_BEGIN_PREFIX = 'Begin %1';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates its parent toolbox
+/// category. Placeholder corresponds to a category name, e.g. "Logic" or
+/// "Math".
+Blockly.Msg.BLOCK_LABEL_TOOLBOX_CATEGORY = '%1 category';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates that it is
+/// disabled.
+Blockly.Msg.BLOCK_LABEL_DISABLED = 'disabled';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates that it is
+/// collapsed.
+Blockly.Msg.BLOCK_LABEL_COLLAPSED = 'collapsed';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates that it is
+/// replaceable, i.e. that it is a shadow block.
+Blockly.Msg.BLOCK_LABEL_REPLACEABLE = 'replaceable';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates that it has a
+/// single input.
+Blockly.Msg.BLOCK_LABEL_HAS_INPUT = 'has input';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates that it has more
+/// than one input.
+Blockly.Msg.BLOCK_LABEL_HAS_INPUTS = 'has inputs';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates that it has more
+/// than one statement input, such as branches of an if-else block.
+Blockly.Msg.BLOCK_LABEL_HAS_BRANCHES = 'has %1 branches';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates that it is
+/// a statement block, i.e. that it has a next or previous connection.
+/// "statement" here is used in the sense of a statement in a line of code.
+Blockly.Msg.BLOCK_LABEL_STATEMENT = 'statement';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates that it is
+/// a container block, i.e. that it has one or more statement inputs.
+Blockly.Msg.BLOCK_LABEL_CONTAINER = 'container';
+/** @type {string} */
+/// Part of an accessibility label for a block that indicates that it is
+/// a value block, i.e. that it has an output connection.
+Blockly.Msg.BLOCK_LABEL_VALUE = 'value';
+/** @type {string} */
+/// Accessibility label for a block that indicates it is a stack of two or
+/// more blocks.
+Blockly.Msg.BLOCK_LABEL_STACK_BLOCKS = '%1 stack blocks';
+/** @type {string} */
+/// Accessibility label for an unlabeled input that communicates its index on the block.
+/// \n\nParameters:\n* %1 - the index of the input, starting at 1
+Blockly.Msg.INPUT_LABEL_INDEX = 'input %1';
+/** @type {string} */
+/// Accessibility label for an empty connection that can hold a value block.
+/// This should use the same language as the BLOCK_LABEL_VALUE string.
+Blockly.Msg.INPUT_LABEL_VALUE = 'value position';
+/** @type {string} */
+/// Accessibility label for an empty next connection that can hold a statement
+/// block. This should use the same language as the BLOCK_LABEL_STATEMENT string.
+Blockly.Msg.INPUT_LABEL_STATEMENT = 'statement position';
+/** @type {string} */
+/// Accessibility label describing the last connection point inside a statement
+/// input. e.g. "End if, true, do" where the "if, true, do" is assembled from
+/// the statement input and calculated separately.
+/// \n\nParameters:\n* %1 - the label for the statement input that is ending.
+Blockly.Msg.INPUT_LABEL_END_STATEMENT = 'End %1';
+/** @type {string} */
+/// Accessibility label describing an empty connection point that doesn't
+/// meet any other criteria for getting a more specific connection label.
+Blockly.Msg.INPUT_LABEL_EMPTY = 'Empty';
+/** @type {string} */
+/// Accessibility label for a single boolean input.
+Blockly.Msg.INPUT_LABEL_CONDITION = 'condition';
+/** @type {string} */
+/// Accessibility label for the first of two boolean inputs, separated by a logical operator.
+Blockly.Msg.INPUT_LABEL_CONDITION_A = 'first condition';
+/** @type {string} */
+/// Accessibility label for the second of two boolean inputs, separated by a logical operator.
+Blockly.Msg.INPUT_LABEL_CONDITION_B = 'second condition';
+/** @type {string} */
+/// Accessibility label for the first of two value inputs, separated by a comparison operator.
+Blockly.Msg.INPUT_LABEL_VALUE_A = 'first value';
+/** @type {string} */
+/// Accessibility label for the second of two value inputs, separated by a comparison operator.
+Blockly.Msg.INPUT_LABEL_VALUE_B = 'second value';
+/** @type {string} */
+/// Accessibility label for a single number input.
+Blockly.Msg.INPUT_LABEL_NUMBER = 'number';
+/** @type {string} */
+/// Accessibility label for the first of two numbers inputs, separated by a mathematical operator.
+Blockly.Msg.INPUT_LABEL_NUMBER_A = 'first number';
+/** @type {string} */
+/// Accessibility label for the second of two numbers inputs, separated by a mathematical operator.
+Blockly.Msg.INPUT_LABEL_NUMBER_B = 'second number';
+/** @type {string} */
+/// Accessibility label for a single number input that will be checked, e.g. for being a prime number.
+Blockly.Msg.INPUT_LABEL_NUMBER_TO_CHECK = 'number to check';
+/** @type {string} */
+/// Accessibility label for a list input that is used in mathematical operations such as sum, average, minimum, and maximum.
+Blockly.Msg.INPUT_LABEL_NUMBER_LIST = 'list of numbers';
+/** @type {string} */
+/// Accessibility label for the first number in a division operation (dividend).
+Blockly.Msg.INPUT_LABEL_MATH_DIVIDEND = 'dividend';
+/** @type {string} */
+/// Accessibility label for the second number in a division operation (divisor).
+Blockly.Msg.INPUT_LABEL_MATH_DIVISOR = 'divisor';
+/** @type {string} */
+/// Accessibility label for the amount to increment or decrement a variable by.
+Blockly.Msg.INPUT_LABEL_MATH_CHANGE_BY = 'amount to change by';
+/** @type {string} */
+/// Accessibility label for a number to be constrained within a range.
+Blockly.Msg.INPUT_LABEL_MATH_CONSTRAIN_VALUE = 'number to constrain';
+/** @type {string} */
+/// Accessibility label for the lower bound of a constrained range.
+Blockly.Msg.INPUT_LABEL_NUMBER_MIN = 'minimum';
+/** @type {string} */
+/// Accessibility label for the upper bound of a constrained range.
+Blockly.Msg.INPUT_LABEL_NUMBER_MAX = 'maximum';
+/** @type {string} */
+/// Accessibility label for the x coordinate input used in a two-dimensional angle calculation.
+Blockly.Msg.INPUT_LABEL_NUMBER_ATAN2_X = 'x coordinate';
+/** @type {string} */
+/// Accessibility label for the y coordinate input used in a two-dimensional angle calculation.
+Blockly.Msg.INPUT_LABEL_NUMBER_ATAN2_Y = 'y coordinate';
+/** @type {string} */
+/// Accessibility label for the number input inside a loop block that indicates how many times the inner statements will be repeated.
+Blockly.Msg.INPUT_LABEL_LOOP_TIMES = 'number of times to repeat';
+/** @type {string} */
+/// Accessibility label for the number input inside a loop block that indicates how many times the inner statements will be repeated.
+Blockly.Msg.INPUT_LABEL_LOOP_FROM = 'starting number';
+/** @type {string} */
+/// Accessibility label for the number input inside a loop block that indicates how many times the inner statements will be repeated.
+Blockly.Msg.INPUT_LABEL_LOOP_TO = 'ending number';
+/** @type {string} */
+/// Accessibility label for the number input inside a loop block that indicates how many times the inner statements will be repeated.
+Blockly.Msg.INPUT_LABEL_LOOP_BY = 'increment';
+/** @type {string} */
+/// Accessibility label for the value input on a loop block that indicates the list that will be iterated over.
+Blockly.Msg.INPUT_LABEL_LOOP_LIST = 'list to iterate over';
+/** @type {string} */
+/// Accessibility label for a value input on a text_join block that will be concatenated together with other values to form a longer string.
+// \n\nParameters:\n* %1 - the index of the input, starting at 1
+// \n\nExample:\n* "value 1" for the first value input, "value 2" for the second value input, etc.
+Blockly.Msg.INPUT_LABEL_TEXT_JOIN_ITEM = 'value %1';
+/** @type {string} */
+/// Accessibility label for a value to append to a variable as text.
+Blockly.Msg.INPUT_LABEL_TEXT_APPEND = 'value to append';
+/** @type {string} */
+/// Accessibility label for text that will be used for text operations such as reversing, trimming, or changing case.
+Blockly.Msg.INPUT_LABEL_TEXT_TO_CHANGE = 'text to change';
+/** @type {string} */
+/// Accessibility label for text that will be used for text operations such as checking length or getting a character at a certain position.
+Blockly.Msg.INPUT_LABEL_TEXT_TO_CHECK = 'text to check';
+/** @type {string} */
+/// Accessibility label for text that will be used for text to search for within another text.
+Blockly.Msg.INPUT_LABEL_TEXT_TO_FIND = 'text to find';
+/** @type {string} */
+/// Accessibility label for replacement text that will be used in a replace operation.
+Blockly.Msg.INPUT_LABEL_TEXT_TO_REPLACE = 'text to replace';
+/** @type {string} */
+/// Accessibility label for the position used to select a character from text.
+Blockly.Msg.INPUT_LABEL_TEXT_POSITION = 'letter position';
+/** @type {string} */
+/// Accessibility label for the start position of a substring extraction.
+Blockly.Msg.INPUT_LABEL_TEXT_START_POSITION = 'start position';
+/** @type {string} */
+/// Accessibility label for the end position of a substring extraction.
+Blockly.Msg.INPUT_LABEL_TEXT_END_POSITION = 'end position';
+/** @type {string} */
+/// Accessibility label for prompt message text shown to the user.
+Blockly.Msg.INPUT_LABEL_TEXT_PROMPT_MESSAGE = 'message';
+/** @type {string} */
+/// Accessibility label for a value to set a variable to.
+Blockly.Msg.INPUT_LABEL_VARIABLES_SET = 'value to set';
+/** @type {string} */
+/// Accessibility label for a value input on a list_create_with block that will be joined together with other values to form a list.
+// \n\nParameters:\n* %1 - the index of the input, starting at 1
+// \n\nExample:\n* "value 1" for the first value input, "value 2" for the second value input, etc.
+Blockly.Msg.INPUT_LABEL_LISTS_CREATE_WITH_ITEM = 'value %1';
+/** @type {string} */
+/// Accessibility label for a value input on a list_repeat block that will be repeated multiple times to form a list.
+Blockly.Msg.INPUT_LABEL_LISTS_REPEAT_ITEM = 'value to repeat';
+/** @type {string} */
+/// Accessibility label for the number input on a list_repeat block that in
+// dicates how many times the value will be repeated to form a list.
+Blockly.Msg.INPUT_LABEL_LISTS_REPEAT_NUM = 'number of times to repeat';
+/** @type {string} */
+/// Accessibility label for a list that will be checked for a condition or value.
+Blockly.Msg.INPUT_LABEL_LISTS_TO_CHECK = 'list to check';
+/** @type {string} */
+/// Accessibility label for a value to set within a list.
+Blockly.Msg.INPUT_LABEL_LISTS_VALUE_TO_SET = 'value to set';
+/** @type {string} */
+/// Accessibility label for a position within a list.
+Blockly.Msg.INPUT_LABEL_LISTS_POSITION = 'position within list';
+/** @type {string} */
+/// Accessibility label for the starting position of a sublist extraction.
+Blockly.Msg.INPUT_LABEL_LISTS_START_POSITION = 'start position';
+/** @type {string} */
+/// Accessibility label for the ending position of a sublist extraction.
+Blockly.Msg.INPUT_LABEL_LISTS_END_POSITION = 'end position';
+/** @type {string} */
+/// Accessibility label for text that will be split into a list.
+Blockly.Msg.INPUT_LABEL_LISTS_LIST_FROM_TEXT = 'text to split';
+/** @type {string} */
+/// Accessibility label for a list whose items will be joined into text.
+Blockly.Msg.INPUT_LABEL_LISTS_TEXT_FROM_LIST = 'list to join';
+/** @type {string} */
+/// Accessibility label for text used to separate or join items in a list.
+Blockly.Msg.INPUT_LABEL_LISTS_DELIMITER = 'delimiter';
+/** @type {string} */
+/// Accessibility label for a list whose contents will be modified.
+Blockly.Msg.INPUT_LABEL_LISTS_TO_CHANGE = 'list to change';
+/** @type {string} */
+/// ARIA live region message announcing a block is being moved on the workspace, without specifying a target location or specific movement direction.
+// \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks
+// \n\nExamples:\n* "Moving if, do on workspace."\n* "Moving 2 stack blocks on workspace."
+Blockly.Msg.ANNOUNCE_MOVE_WORKSPACE = 'Moving %1 on workspace.';
+/** @type {string} */
+/// ARIA live region message announcing a block is being moved before another block
+/// \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks\n* %2 - the label of the target (neighbour) block
+/// \n\nExamples:\n* "Moving before repeat, 10, times, do."\n* "Moving print before repeat, 10, times, do."
+Blockly.Msg.ANNOUNCE_MOVE_BEFORE = 'Moving %1 before %2.';
+/** @type {string} */
+/// ARIA live region message announcing a block is being moved after another block
+/// \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks\n* %2 - the label of the target (neighbour) block
+/// \n\nExamples:\n* "Moving after repeat, 10, times, do."\n* "Moving 2 stack blocks after repeat, 10, times, do."
+Blockly.Msg.ANNOUNCE_MOVE_AFTER = 'Moving %1 after %2.';
+/** @type {string} */
+/// ARIA live region message announcing a block is being moved inside another block's statement connection, optionally including connection-specific label for disambiguation.
+// \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks
+// \n* %2 - the label of the target (neighbour) block
+// \n\nExamples:\n* "Moving inside if, do."\n* "Moving 3 stack blocks inside repeat, 10, times, do."
+Blockly.Msg.ANNOUNCE_MOVE_INSIDE = 'Moving %1 inside %2.';
+/** @type {string} */
+/// ARIA live region message announcing a block is being moved around another block (using its own statement connection), optionally including connection-specific label for disambiguation.
+/// \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks or a local connection label
+/// \n* %2 - the label of the target (neighbour) block
+/// \n\nExamples:\n* "Moving around print."\n* "Moving else around print."
+Blockly.Msg.ANNOUNCE_MOVE_AROUND = 'Moving %1 around %2.';
+/** @type {string} */
+/// ARIA live region message announcing a block is being moved to another block's value input connection, optionally including connection-specific label for disambiguation.
+/// \n\nParameters:\n* %1 - optional phrase describing the moving stack of blocks or a local connection label
+/// \n* %2 - the label of the target (neighbour) block or location
+/// \n\nExamples:\n* "Moving to repeat, 10, times, do."\n* "Moving 2 stack blocks else statement to previous connection in repeat, 10, times, do."
+Blockly.Msg.ANNOUNCE_MOVE_TO = 'Moving %1 to %2.';
+/** @type {string} */
+/// A label describing a specific connection of a block. Part of an ARIA live region message announcing a block is being moved.
+/// \n\nParameters:\n* %1 - connection label\n* %2 - block label of the block the connection belongs to
+/// \n\nExamples:\n* "else statement of if, do""
+Blockly.Msg.ANNOUNCE_MOVE_OF = '%1 of %2';
+/** @type {string} */
+/// ARIA live region message announcing a block movement has been canceled.
+Blockly.Msg.ANNOUNCE_MOVE_CANCELED = 'Canceled movement.';
+/** @type {string} */
+///  Label for an empty field, used by screen readers to identify fields that have no content.
+Blockly.Msg.FIELD_LABEL_EMPTY = 'empty';
+/** @type {string} */
+/// ARIA type name for an input field, used by screen readers to identify the type of field.
+Blockly.Msg.ARIA_TYPE_FIELD_INPUT = 'input';
+/** @type {string} */
+/// ARIA type name for a text input field, used by screen readers to identify the type of field.
+Blockly.Msg.ARIA_TYPE_FIELD_TEXT_INPUT = 'text';
+/** @type {string} */
+/// ARIA type name for a number field, used by screen readers to identify the type of field.
+Blockly.Msg.ARIA_TYPE_FIELD_NUMBER = 'number';
+/** @type {string} */
+/// ARIA type name for a text input field on a procedure definition block, used by screen readers to identify the type of field.
+Blockly.Msg.ARIA_TYPE_FIELD_TEXT_INPUT_PROCEDURE = 'function name';
+/** @type {string} */
+/// ARIA type name for a text input field on an argument block, found inside the procedure definition mutator UI, used by screen readers to identify the type of field. Should match PROCEDURES_MUTATORARG_TITLE.
+Blockly.Msg.ARIA_TYPE_FIELD_TEXT_INPUT_ARGUMENT = 'input name';
+/** @type {string} */
+/// ARIA type name for a dropdown field, used by screen readers to identify the type of field.
+Blockly.Msg.ARIA_TYPE_FIELD_DROPDOWN = 'dropdown';
+/** @type {string} */
+/// ARIA type name of an image field, used by screen readers to identify the type of field.
+Blockly.Msg.ARIA_TYPE_FIELD_IMAGE = 'image';
+/** @type {string} */
+/// ARIA type name of an checkbox field, used by screen readers to identify the type of field.
+Blockly.Msg.ARIA_TYPE_FIELD_CHECKBOX = 'checkbox';
+/** @type {string} */
+/// Label for an editable field, used by screen readers to identify fields that can be edited by the user.  Placeholder corresponds to the label of the field's value.
+/// \n\nParameters:\n* %1 - the label of the field's value
+/// \n\nExamples:\n* "Edit 5"\n* "Edit item"
+Blockly.Msg.FIELD_LABEL_EDIT_PREFIX = 'Edit %1';
+/** @type {string} */
+/// ARIA label for the trashcan.
+Blockly.Msg.OPEN_TRASH = 'Open trash';
+/** @type {string} */
+/// ARIA label for the zoom in button.
+Blockly.Msg.ZOOM_IN = 'Zoom in';
+/** @type {string} */
+/// ARIA label for the zoom out button.
+Blockly.Msg.ZOOM_OUT = 'Zoom out';
+/** @type {string} */
+/// ARIA label for the reset zoom button.
+Blockly.Msg.RESET_ZOOM = 'Reset zoom';
+/** @type {string} */
+/// Label for an unlabeled dropdown field option, used by screen readers to identify options in a dropdown field.  Placeholder corresponds to the index of the option in the dropdown, starting at 1.
+/// \n\nParameters:\n* %1 - the index of the option in the dropdown, starting at 1
+/// \n\nExamples:\n* "Option 1"\n* "Option 2"
+Blockly.Msg.FIELD_LABEL_OPTION_INDEX = 'Option %1';
+/** @type {string} */
+/// Label for a checked checkbox field, used by screen readers to identify the state of a checkbox field.
+Blockly.Msg.FIELD_LABEL_CHECKBOX_CHECKED = 'Checked';
+/** @type {string} */
+/// Label for an unchecked checkbox field, used by screen readers to identify the state of a checkbox field.
+Blockly.Msg.FIELD_LABEL_CHECKBOX_UNCHECKED = 'Not checked';
+/** @type {string} */
+/// Label for a variable field option, used by screen readers to identify the options in a variable dropdown field.
+/// \n\nParameters:\n* %1 - the name of the variable represented by the option
+/// \n\nExamples:\n* 'Variable "item"'\n* 'Variable "x"'
+Blockly.Msg.FIELD_LABEL_VARIABLE = 'Variable "%1"';
+/** @type {string} */
+/// Part of an aria label for an element that indicates it is a button, but for technical
+/// reasons cannot be give a role of button. Ideally, this would match
+/// the localized name for what screenreaders announce for <button> elements in your language.
+Blockly.Msg.ARIA_LABEL_BUTTON = 'button';
+/** @type {string} */
+/// Part of an aria label for an element that indicates it is a heading, but for
+/// technial reasons cannot be given a role of heading. Ideally, this would match
+/// the localized name for what screenreaders announce for <h1> elements in your language.
+Blockly.Msg.ARIA_LABEL_HEADING = 'heading';
+/** @type {string} */
+/// Default label for bubbles.  This is only used if a bubble is created without a label provider.
+Blockly.Msg.BUBBLE_LABEL_DEFAULT = 'Bubble';
+/** @type {string} */
+/// Label for a comment bubble. Placeholder corresponds to the content of the comment.
+/// \n\nParameters:\n* %1 - the content of the comment
+/// \n\nExamples:\n* "Comment: This block does something important."
+Blockly.Msg.BUBBLE_LABEL_COMMENT = 'Comment: %1';
+/** @type {string} */
+/// Label for a warning bubble. Placeholder corresponds to the content of the warning.
+/// \n\nParameters:\n* %1 - the content of the warning
+/// \n\nExamples:\n* "Warning: Something went wrong with this block."
+Blockly.Msg.BUBBLE_LABEL_WARNING = 'Warning: %1';
+/** @type {string} */
+/// Label for an icon, used by screen readers to identify it.
+Blockly.Msg.ICON_LABEL_DEFAULT = 'Icon';
+/** @type {string} */
+/// Label for an icon, used by screen readers to identify a closed comment. Clicking on the icon opens the comment's bubble, which allows the user to read the comment.
+Blockly.Msg.ICON_LABEL_COMMENT_CLOSED = 'Open Comment';
+/** @type {string} */
+/// Label for an icon, used by screen readers to identify an open comment. Clicking on the icon closes the comment's bubble.
+Blockly.Msg.ICON_LABEL_COMMENT_OPEN = 'Close Comment';
+/** @type {string} */
+/// Label for an icon, used by screen readers to identify a closed mutator. Clicking on the icon opens the mutator's bubble, which allows the user to edit the block's structure.
+Blockly.Msg.ICON_LABEL_MUTATOR_CLOSED = 'Edit this block';
+/** @type {string} */
+/// Label for an icon, used by screen readers to identify an open mutator. Clicking on the icon closes the mutator's bubble.
+Blockly.Msg.ICON_LABEL_MUTATOR_OPEN = 'Close block editor';
+/** @type {string} */
+/// Label for an icon, used by screen readers to identify a closed warning. Clicking on the icon opens the warning's bubble, which allows the user read the warning.
+Blockly.Msg.ICON_LABEL_WARNING_CLOSED = 'Open Warning';
+/** @type {string} */
+/// Label for an icon, used by screen readers to identify an open warning. Clicking on the icon closes the warning's bubble.
+Blockly.Msg.ICON_LABEL_WARNING_OPEN = 'Close Warning';
+/** @type {string} */
+/// ARIA label for a comment.
+Blockly.Msg.ARIA_LABEL_COMMENT = 'Comment';
+/** @type {string} */
+/// ARIA label for an expanded comment's collapse button.
+Blockly.Msg.ARIA_LABEL_COMMENT_COLLAPSE = 'Collapse Comment';
+/** @type {string} */
+/// ARIA label for a collapsed comment's expand button.
+Blockly.Msg.ARIA_LABEL_COMMENT_EXPAND = 'Expand Comment';
+/** @type {string} */
+/// Message announced when screenreader optimization mode is turned on.
+Blockly.Msg.SCREENREADER_MODE_ENABLED = 'Screenreader mode is on, press %1 to turn it off';
+/** @type {string} */
+/// Message announced when screenreader optimization mode is turned off.
+Blockly.Msg.SCREENREADER_MODE_DISABLED = 'Screenreader mode is off, press %1 to turn it on';
+/** @type {string} */
+/// Screenreader announcement providing context about the currently focused block.
+Blockly.Msg.CURRENT_BLOCK_ANNOUNCEMENT = 'Current block: %1';
+/** @type {string} */
+/// Screenreader announcement providing context about the currently focused block's parents.
+Blockly.Msg.PARENT_BLOCKS_ANNOUNCEMENT = 'Parent blocks: %1';
+/** @type {string} */
+/// Screenreader announcement informing users that the currently focused block has no parent blocks.
+Blockly.Msg.NO_PARENT_ANNOUNCEMENT = 'Current block has no parent';
+/** @type {string} */
+/// Message announced when screenreader optimization mode is turned off.
+Blockly.Msg.SCREENREADER_HINT = 'Use the arrow keys to navigate. Press %1 to toggle screenreader accessibility mode.';

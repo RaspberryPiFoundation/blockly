@@ -84,3 +84,5 @@ export const IPHONE: boolean = isIPhone;
 export const MAC: boolean = isMac;
 
 export const MOBILE: boolean = isMobile;
+
+export const APPLE: boolean = MAC || IPAD || IPHONE;

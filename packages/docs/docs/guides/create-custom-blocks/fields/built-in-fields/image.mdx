@@ -9,9 +9,10 @@ import TabItem from '@theme/TabItem';
 
 # Image fields
 
-An image field stores a string as its value, and a string as its text. Its
+An image field stores a string as its value and a string as its text. Its
 value is the src of the image, while its text is an alt string
-describing/representing the image.
+describing/representing the image. The alt text is also displayed when the
+parent block is collapsed.
 
 #### Image field
 
@@ -67,13 +68,23 @@ The image constructor takes in:
 | `src`         | A string that points to a [raster image](https://developer.mozilla.org/en-US/docs/Glossary/raster_image) file.                                                                                  |
 | `width`       | Must cast to a non-zero number.                                                                                                                                                                 |
 | `height`      | Must cast to a non-zero number.                                                                                                                                                                 |
-| `opt_alt`     | (Optional) A string that accurately describes/represents the image. This is used instead of the image when the block is collapsed. If it is `null` or `undefined` an empty string will be used. |
+| `opt_alt`     | (Optional) A string that accurately describes/represents the image. If it is `null` or `undefined` an empty string will be used. |
 | `opt_onClick` | (Optional) A function to call when the field is clicked.                                                                                                                                        |
 | `opt_flipRtl` | (Optional) A boolean. If `true`, the image is flipped across the vertical axis when in right-to-left mode. Defaults to `false`. Useful for "turn left" and "turn right" icons.                  |
 
 ## Serialization
 
 Image fields are not serializable.
+
+## Accessibility
+An image field's  ARIA label is `image: <alt text>`. The alt text is also
+displayed when the parent block is collapsed.
+
+Clickable images have an ARIA role of `button`. Image fields that do not have
+click handlers have an ARIA role of `none`.
+
+Follow [AFB guidelines](https://afb.org/digital-inclusion/accessibility-resources/writing-effective-image-descriptions)
+for writing good alt text. Return `null` or `undefined` to indicate a purely decorative image.
 
 ## Click handler
 

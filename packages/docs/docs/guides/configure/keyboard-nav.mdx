@@ -4,30 +4,123 @@ title: Keyboard navigation
 image: images/blockly_banner.png
 ---
 
-# Keyboard navigation
+# Using Blockly with the keyboard
 
-Blockly provides keyboard navigation through the `@blockly/keyboard-navigation`
-plugin. This code uses the [focus system](/guides/configure/focus)
-and will eventually be integrated into Blockly core.
+Blockly’s keyboard navigation and screen reader support are implemented around
+the concept of a **cursor** representing the user’s location on the workspace.
+The user can move the cursor with either the keyboard or with the mouse, just
+like in a text editor. Keyboard shortcuts act on the item under the cursor.
+The screen reader reads information about the item under the cursor.
 
-You can [download the plugin from
-npm](https://www.npmjs.com/package/@blockly/keyboard-navigation) or get the code
-from the [`blockly-keyboard-experimentation`
-repository](https://github.com/RaspberryPiFoundation/blockly-keyboard-experimentation/) on
-GitHub.
+## Basic operation
 
-If you want to play with the plugin, visit the [accessibility plugin
-playground](https://raspberrypifoundation.github.io/blockly-keyboard-experimentation/).
+A user has to be able to easily complete five basic operations when using
+Blockly. Let’s walk through those operations, and how to accomplish them with
+the keyboard.
 
-- To get started, click the workspace or press `tab` until you reach the
-  workspace.
-- Use the arrow keys to move around.
-- Press `T` to open the toolbox.
-- Press `Enter` or `Space` to edit or confirm.
-- Press `/` for a complete list of keyboard commands.
+- Read an existing program by using the arrow keys to move around the workspace.
+  - **Up** and **down** let you move line-by-line, while **left** and **right** 
+move within a line of code. 
+  - Blockly creates an appropriate text description of each cursor location that
+  can be read out by a screen reader.
+- Edit values on blocks by moving the cursor to a modifiable value and pressing 
+**enter** to open the field editor.
+- Move blocks in the workspace to create or modify a program by pressing **M**
+to pick up a block, moving it with the **arrow keys**, and pressing **enter** to
+drop the block in a new location. 
+  - By default the arrow keys move a block between legal locations on the
+workspace. 
+  - Holding a modifier key moves the block as though it were being dragged with
+a mouse.
+- Insert blocks from the toolbox to create or modify a program by pressing **T**
+to open the toolbox and using the **arrow keys** to select a block to insert. 
+  - Pressing **enter** moves the block to the workspace in move mode.
+- Delete blocks to modify a program by moving the cursor to a block and 
+pressing **delete** or **backspace**. 
 
-For more information about our accessibility projects, visit [our accessibility
-page](https://developers.google.com/blockly/accessibility#projects).
+### Try it!
+
+Try it yourself on the [Blockly playground](https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/playground.html):
+- Click on the workspace or press **tab** to move focus through the page to the workspace.
+- Press **T** to open the toolbox and use the **arrow keys** to select a block.
+- Press **enter** to insert the block.
+- Repeat to build a program.
+- Use the **arrow keys** to navigate to a field and press **enter** to edit the
+field value.
+
+## Advanced operation
+
+Blockly provides many other keyboard shortcuts. Cut, copy/paste, and
+undo/redo all follow conventions for keyboard shortcuts.
+
+### Toolboxes and flyouts
+
+Pressing **t** moves focus to the toolbox or flyout. Category toolboxes can be
+navigated with the **arrow keys** like a standard tree. Pressing **enter** opens
+the flyout and moves focus to the first block, label, or button.
+
+The **up and down arrow keys** can be used to navigate within the flyout. 
+**Enter** selects a block and places it on the workspace in move mode.
+
+### Comments and mutators
+
+In core Blockly, comments and mutators are bubbles attached to icons on a block.
+Use the **arrow keys** to navigate to the icon and press **enter** to open the
+bubble. Focus will move to the bubble. Press **enter** again to edit it, or
+**m** to move the bubble. Press **escape** to leave the bubble context.
+Interacting with blocks in a mutator bubble is the same as in the main
+workspace.
+
+### Context menu
+
+Press **control + enter** (Windows) or **command + enter** (Mac) to open the
+context menu. Use the arrow keys to navigate within the context menu. Keyboard
+shortcuts are displayed in the context menu.
+
+### Cleanup
+
+Press **C** to clean up the workspace by moving all block stacks into a single
+column with no overlaps, preserving their order on the page. 
+
+## Technical details
+
+Blockly keyboard navigation uses the [focus system](/guides/configure/web/focus)
+to manage the location of the cursor. This code will be released in Blockly v13
+(targeted release: June 2026).
+
+### Why not tab?
+
+Blockly does not follow the convention to navigate around a page with **tab**
+and **shift + tab** because block code cannot usefully be compressed into a 
+linear navigation order. Blocks can contain other blocks, both horizontally and
+vertically, and require at least two dimensions to navigate. Tests with learners
+showed that arrow key navigation supported their understanding of programming
+concepts. 
+
+From a computer science perspective a block program is an abstract syntax tree.
+Arrow keys allow for navigation up/down and left/right within the tree, while
+tab navigation only supports a fixed order.
+
+### Why single-key shortcuts?
+
+Pressing multiple keys at the same time (e.g. `Ctrl + C`) requires manual
+dexterity and awareness of keyboard layout that may not be fully developed
+by the time children start using Blockly in school. It is also difficult to
+create a set of keyboard shortcuts that work across all OS and browser
+combinations. Single-key shortcuts address both issues.
+
+### Compliance
+
+Blockly's keyboard navigation system meets the following WCAG criteria:
+- [1.3.2 Meaningful Sequence (Level A)](https://www.w3.org/WAI/WCAG22/Understanding/meaningful-sequence)
+- [2.1.1 Keyboard (Level A)](https://www.w3.org/WAI/WCAG22/Understanding/keyboard)
+- [2.1.2 No Keyboard Trap (Level A)](https://www.w3.org/WAI/WCAG22/Understanding/no-keyboard-trap)
+- [2.1.4 Character Key Shortcuts (Level A)](https://www.w3.org/WAI/WCAG22/Understanding/keyboard-no-exception)
+  - Character key shortcuts are active only on workspace focus.
+- [2.4.3 Focus Order (Level A)](https://www.w3.org/WAI/WCAG22/Understanding/focus-order)
+- [2.4.7 Focus Visible (Level AA)](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible)
+- [3.2.4 Consistent Identification (Level AA)](https://www.w3.org/WAI/WCAG22/Understanding/consistent-identification)
+- [4.1.2 Name, Role, Value (Level A)](https://www.w3.org/WAI/WCAG22/Understanding/name-role-value)
 
 :::note
 The 0.6 version of the keyboard navigation plugin that existed prior to

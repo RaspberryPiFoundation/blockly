@@ -11,11 +11,15 @@ import {FocusableTreeTraverser} from './utils/focusable_tree_traverser.js';
 
 /**
  * Type declaration for returning focus to FocusManager upon completing an
- * ephemeral UI flow (such as a dialog).
+ * ephemeral UI flow (such as a dialog). Normally, the FocusManager will refocus
+ * the previously-focused element. If callers do not wish for the FocusManager
+ * to do so, they may call this method with `restoreFocus` set to false to
+ * prevent automatic refocusing and leave focus where it is.
+ *
  *
  * See FocusManager.takeEphemeralFocus for more details.
  */
-export type ReturnEphemeralFocus = () => void;
+export type ReturnEphemeralFocus = (restoreFocus?: boolean) => void;
 
 /**
  * Represents an IFocusableTree that has been registered for focus management in
@@ -82,6 +86,33 @@ export class FocusManager {
   private lockFocusStateChanges: boolean = false;
   private recentlyLostAllFocus: boolean = false;
   private isUpdatingFocusedNode: boolean = false;
+
+  /**
+   * Root element in which popovers (WidgetDiv, DropDownDiv) currently live.
+   */
+  private popoverFocusRoot?: HTMLElement;
+
+  /**
+   * Set of callbacks to invoke if the popover focus root loses focus.
+   */
+  private popoverFocusLossHandlers: Set<() => void> = new Set();
+
+  /**
+   * Handler for focusout in the popover focus root that selectively
+   * invokes the popover focus loss handlers if focus has truly transitioned
+   * outside of the focus root, and not e.g. to a different popover.
+   */
+  private popoverFocusOutHandler = (e: FocusEvent) => {
+    const target = e.relatedTarget;
+    if (
+      target === null ||
+      (target instanceof Node && !this.popoverFocusRoot?.contains(target))
+    ) {
+      for (const handler of this.popoverFocusLossHandlers) {
+        handler();
+      }
+    }
+  };
 
   constructor(
     addGlobalEventListener: (type: string, listener: EventListener) => void,
@@ -446,7 +477,7 @@ export class FocusManager {
     focusableElement.focus({preventScroll: true});
 
     let hasFinishedEphemeralFocus = false;
-    return () => {
+    return (restoreFocus = true) => {
       if (hasFinishedEphemeralFocus) {
         throw Error(
           `Attempted to finish ephemeral focus twice for element: ` +
@@ -455,8 +486,7 @@ export class FocusManager {
       }
       hasFinishedEphemeralFocus = true;
       this.currentlyHoldsEphemeralFocus = false;
-
-      if (this.focusedNode) {
+      if (this.focusedNode && restoreFocus) {
         this.activelyFocusNode(this.focusedNode, null);
 
         // Even though focus was restored, check if it's lost again. It's
@@ -666,6 +696,50 @@ export class FocusManager {
       FocusManager.focusManager = new FocusManager(document.addEventListener);
     }
     return FocusManager.focusManager;
+  }
+
+  /**
+   * Sets the current popover focus root. Generally this is active
+   * workspace's injection div or the explicitly specified parent container for
+   * the WidgetDiv, DropDownDiv, etc.
+   *
+   * @internal
+   * @param newRoot The new element that contains all popovers.
+   */
+  setPopoverFocusRoot(newRoot: HTMLElement) {
+    this.popoverFocusRoot?.removeEventListener(
+      'focusout',
+      this.popoverFocusOutHandler,
+    );
+    this.popoverFocusRoot = newRoot;
+    this.popoverFocusRoot.addEventListener(
+      'focusout',
+      this.popoverFocusOutHandler,
+    );
+  }
+
+  /**
+   * Registers a callback to be invoked if the popover focus root loses
+   * focus. This should only be called by popovers that need to react to
+   * focus changes by e.g. hiding themselves and resigning ephemeral focus.
+   *
+   * @internal
+   * @param handler A callback function.
+   */
+  registerPopoverFocusLossHandler(handler: () => void) {
+    this.popoverFocusLossHandlers.add(handler);
+  }
+
+  /**
+   * Unregisters a previously-registered popover focus loss handler. This
+   * should only be invoked by popovers when they no longer need to be
+   * notified of focus loss, typically when they are hidden.
+   *
+   * @internal
+   * @param handler A previously-registered callback function.
+   */
+  unregisterPopoverFocusLossHandler(handler: () => void) {
+    this.popoverFocusLossHandlers.delete(handler);
   }
 }
 

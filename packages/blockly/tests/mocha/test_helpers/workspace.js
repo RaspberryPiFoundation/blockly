@@ -100,48 +100,60 @@ export function testAWorkspace() {
 
     test('deleteVariableById(id2) one usage', function () {
       // Deleting variable one usage should not trigger confirm dialog.
-      const stub = sinon.stub(window, 'confirm').returns(true);
+      let callCount = 0;
+      Blockly.dialog.setConfirm((_message, callback) => {
+        callCount++;
+        callback(true);
+      });
       const id2 = this.variableMap.getVariableById('id2');
       Blockly.Variables.deleteVariable(this.workspace, id2);
 
-      sinon.assert.notCalled(stub);
+      assert.equal(callCount, 0);
       const variable = this.variableMap.getVariableById('id2');
       assert.isNull(variable);
       assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
       assertBlockVarModelName(this.workspace, 0, 'name1');
 
-      stub.restore();
+      Blockly.dialog.setConfirm();
     });
 
     test('deleteVariableById(id1) multiple usages confirm', function () {
       // Deleting variable with multiple usages triggers confirm dialog.
-      const stub = sinon.stub(window, 'confirm').returns(true);
+      let callCount = 0;
+      Blockly.dialog.setConfirm((_message, callback) => {
+        callCount++;
+        callback(true);
+      });
       const id1 = this.variableMap.getVariableById('id1');
       Blockly.Variables.deleteVariable(this.workspace, id1);
 
-      sinon.assert.calledOnce(stub);
+      assert.equal(callCount, 1);
       const variable = this.variableMap.getVariableById('id1');
       assert.isNull(variable);
       assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
       assertBlockVarModelName(this.workspace, 0, 'name2');
 
-      stub.restore();
+      Blockly.dialog.setConfirm();
     });
 
     test('deleteVariableById(id1) multiple usages cancel', function () {
       // Deleting variable with multiple usages triggers confirm dialog.
-      const stub = sinon.stub(window, 'confirm').returns(false);
+      let callCount = 0;
+      Blockly.dialog.setConfirm((_message, callback) => {
+        callCount++;
+        callback(false);
+      });
       const id1 = this.variableMap.getVariableById('id1');
       Blockly.Variables.deleteVariable(this.workspace, id1);
 
-      sinon.assert.calledOnce(stub);
+      assert.equal(callCount, 1);
       assertVariableValues(this.variableMap, 'name1', 'type1', 'id1');
       assertVariableValues(this.variableMap, 'name2', 'type2', 'id2');
       assertBlockVarModelName(this.workspace, 0, 'name1');
       assertBlockVarModelName(this.workspace, 1, 'name1');
       assertBlockVarModelName(this.workspace, 2, 'name2');
 
-      stub.restore();
+      Blockly.dialog.setConfirm();
     });
   });
 

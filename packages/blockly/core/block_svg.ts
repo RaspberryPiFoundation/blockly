@@ -16,6 +16,7 @@ import './events/events_selected.js';
 
 import {Block} from './block.js';
 import * as blockAnimations from './block_animations.js';
+import {computeAriaLabel, configureAriaRole} from './block_aria_composer.js';
 import * as browserEvents from './browser_events.js';
 import {BlockCopyData, BlockPaster} from './clipboard/block_paster.js';
 import * as common from './common.js';
@@ -35,6 +36,7 @@ import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
 import {FieldLabel} from './field_label.js';
 import {getFocusManager} from './focus_manager.js';
+import * as hints from './hints.js';
 import {IconType} from './icons/icon_types.js';
 import {MutatorIcon} from './icons/mutator_icon.js';
 import {WarningIcon} from './icons/warning_icon.js';
@@ -43,11 +45,16 @@ import type {IBoundedElement} from './interfaces/i_bounded_element.js';
 import {IContextMenu} from './interfaces/i_contextmenu.js';
 import type {ICopyable} from './interfaces/i_copyable.js';
 import {IDeletable} from './interfaces/i_deletable.js';
-import type {IDragStrategy, IDraggable} from './interfaces/i_draggable.js';
+import type {
+  DragDisposition,
+  IDragStrategy,
+  IDraggable,
+} from './interfaces/i_draggable.js';
 import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
 import {IIcon} from './interfaces/i_icon.js';
 import * as internalConstants from './internal_constants.js';
+import {KeyboardMover} from './keyboard_nav/keyboard_mover.js';
 import {Msg} from './msg.js';
 import * as renderManagement from './render_management.js';
 import {RenderedConnection} from './rendered_connection.js';
@@ -56,6 +63,7 @@ import * as blocks from './serialization/blocks.js';
 import type {BlockStyle} from './theme.js';
 import * as Tooltip from './tooltip.js';
 import {idGenerator} from './utils.js';
+import * as aria from './utils/aria.js';
 import {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
 import {Rect} from './utils/rect.js';
@@ -156,12 +164,9 @@ export class BlockSvg
   private visuallyDisabled = false;
 
   override workspace: WorkspaceSvg;
-  // TODO(b/109816955): remove '!', see go/strict-prop-init-fix.
-  override outputConnection!: RenderedConnection;
-  // TODO(b/109816955): remove '!', see go/strict-prop-init-fix.
-  override nextConnection!: RenderedConnection;
-  // TODO(b/109816955): remove '!', see go/strict-prop-init-fix.
-  override previousConnection!: RenderedConnection;
+  override outputConnection: RenderedConnection | null = null;
+  override nextConnection: RenderedConnection | null = null;
+  override previousConnection: RenderedConnection | null = null;
 
   private translation = '';
 
@@ -241,6 +246,7 @@ export class BlockSvg
     if (!svg.parentNode) {
       this.workspace.getCanvas().appendChild(svg);
     }
+    this.recomputeAriaContext();
     this.initialized = true;
   }
 
@@ -603,6 +609,7 @@ export class BlockSvg
       this.getInput(collapsedInputName) ||
       this.appendDummyInput(collapsedInputName);
     input.appendField(new FieldLabel(text), collapsedFieldName);
+    this.recomputeAriaContext();
   }
 
   /**
@@ -792,6 +799,13 @@ export class BlockSvg
   }
 
   /**
+   * Returns whether or not this block is currently being dragged.
+   */
+  isDragging() {
+    return this.dragging;
+  }
+
+  /**
    * Set whether this block is movable or not.
    *
    * @param movable True if movable.
@@ -832,6 +846,7 @@ export class BlockSvg
   override setShadow(shadow: boolean) {
     super.setShadow(shadow);
     this.applyColour();
+    this.recomputeAriaContext();
   }
 
   /**
@@ -903,14 +918,21 @@ export class BlockSvg
     Tooltip.dispose();
     ContextMenu.hide();
 
+    if (animate) {
+      this.unplug(healStack);
+      blockAnimations.disposeUiEffect(this);
+    }
+
+    const focusManager = getFocusManager();
+    const focusedElement =
+      focusManager.getFocusedNode()?.getFocusableElement() ?? null;
+
+    super.dispose(!!healStack);
+    dom.removeNode(this.svgGroup);
+
     // If this block (or a descendant) was focused, focus its parent or
     // workspace instead.
-    const focusManager = getFocusManager();
-    if (
-      this.getSvgRoot().contains(
-        focusManager.getFocusedNode()?.getFocusableElement() ?? null,
-      )
-    ) {
+    if (this.getSvgRoot().contains(focusedElement)) {
       let parent: BlockSvg | undefined | null = this.getParent();
       if (!parent) {
         // In some cases, blocks are disconnected from their parents before
@@ -927,28 +949,21 @@ export class BlockSvg
           parent = targetConnection?.getSourceBlock();
         }
       }
-      if (parent) {
-        focusManager.focusNode(parent);
-      } else {
-        const nearestNeighbour = this.getNearestNeighbour();
-        if (nearestNeighbour) {
-          focusManager.focusNode(nearestNeighbour);
+      setTimeout(() => {
+        if (!this.workspace.rendered) return;
+        if (parent) {
+          focusManager.focusNode(parent);
         } else {
-          setTimeout(() => {
-            if (!this.workspace.rendered) return;
+          const nearestNeighbour = this.getNearestNeighbour();
+
+          if (nearestNeighbour) {
+            focusManager.focusNode(nearestNeighbour);
+          } else {
             focusManager.focusTree(this.workspace);
-          }, 0);
+          }
         }
-      }
+      }, 0);
     }
-
-    if (animate) {
-      this.unplug(healStack);
-      blockAnimations.disposeUiEffect(this);
-    }
-
-    super.dispose(!!healStack);
-    dom.removeNode(this.svgGroup);
   }
 
   /**
@@ -1052,6 +1067,7 @@ export class BlockSvg
     for (const child of this.getChildren(false)) {
       child.updateDisabled();
     }
+    this.recomputeAriaContext();
   }
 
   /**
@@ -1599,6 +1615,7 @@ export class BlockSvg
     if (
       this.isDeadOrDying() ||
       this.workspace.isDragging() ||
+      this.isDragging() ||
       root.isInFlyout
     ) {
       return;
@@ -1620,7 +1637,7 @@ export class BlockSvg
 
         if (conn.isSuperior()) {
           neighbour.bumpAwayFrom(conn, /* initiatedByThis = */ false);
-        } else {
+        } else if (!neighbour.getSourceBlock().isDragging()) {
           conn.bumpAwayFrom(neighbour, /* initiatedByThis = */ true);
         }
       }
@@ -1774,24 +1791,7 @@ export class BlockSvg
    * @internal
    */
   fadeForReplacement(add: boolean) {
-    // TODO (7204): Remove these internal methods.
-    (this.pathObject as AnyDuringMigration).updateReplacementFade(add);
-  }
-
-  /**
-   * Visual effect to show that if the dragging block is dropped it will connect
-   * to this input.
-   *
-   * @param conn The connection on the input to highlight.
-   * @param add True if highlighting should be added.
-   * @internal
-   */
-  highlightShapeForInput(conn: RenderedConnection, add: boolean) {
-    // TODO (7204): Remove these internal methods.
-    (this.pathObject as AnyDuringMigration).updateShapeForInputHighlight(
-      conn,
-      add,
-    );
+    this.pathObject.updateReplacing?.(add);
   }
 
   /**
@@ -1820,18 +1820,21 @@ export class BlockSvg
   }
 
   /** Starts a drag on the block. */
-  startDrag(e?: PointerEvent): void {
-    this.dragStrategy.startDrag(e);
+  startDrag(e?: PointerEvent | KeyboardEvent) {
+    return this.dragStrategy.startDrag(e);
   }
 
   /** Drags the block to the given location. */
-  drag(newLoc: Coordinate, e?: PointerEvent): void {
+  drag(newLoc: Coordinate, e?: PointerEvent | KeyboardEvent): void {
     this.dragStrategy.drag(newLoc, e);
   }
 
   /** Ends the drag on the block. */
-  endDrag(e?: PointerEvent): void {
-    this.dragStrategy.endDrag(e);
+  endDrag(
+    e: PointerEvent | KeyboardEvent | undefined,
+    disposition: DragDisposition,
+  ): void {
+    this.dragStrategy.endDrag(e, disposition);
   }
 
   /** Moves the block back to where it was at the start of a drag. */
@@ -1877,8 +1880,23 @@ export class BlockSvg
     }
   }
 
+  /**
+   * Returns the number of blocks that this block is nested inside of.
+   *
+   * @internal
+   */
+  getNestingLevel(): number {
+    const surroundParent = this.getSurroundParent();
+    return surroundParent ? surroundParent.getNestingLevel() + 1 : 0;
+  }
+
   /** See IFocusableNode.getFocusableElement. */
   getFocusableElement(): HTMLElement | SVGElement {
+    // For full-block fields, we focus the field itself
+    const fullBlockField = this.getFullBlockField();
+    if (fullBlockField) {
+      return fullBlockField.getFocusableElement();
+    }
     return this.pathObject.svgPath;
   }
 
@@ -1889,10 +1907,16 @@ export class BlockSvg
 
   /** See IFocusableNode.onNodeFocus. */
   onNodeFocus(): void {
+    this.recomputeAriaContext();
     this.select();
-    this.workspace.scrollBoundsIntoView(
-      this.getBoundingRectangleWithoutChildren(),
-    );
+    const focusedNode = getFocusManager().getFocusedNode();
+    if (focusedNode && focusedNode !== this) {
+      renderManagement.finishQueuedRenders().then(() => {
+        this.workspace.scrollBoundsIntoView(
+          this.getBoundingRectangleWithoutChildren(),
+        );
+      });
+    }
   }
 
   /** See IFocusableNode.onNodeBlur. */
@@ -1903,5 +1927,135 @@ export class BlockSvg
   /** See IFocusableNode.canBeFocused. */
   canBeFocused(): boolean {
     return true;
+  }
+
+  /**
+   * Handles the user acting on this block via keyboard navigation.
+   * If this block is in the flyout, a new copy is spawned in move mode on the
+   * main workspace. If this block has a single full-block field, that field
+   * will be focused. Otherwise, this is a no-op.
+   */
+  performAction(e?: KeyboardEvent) {
+    if (this.workspace.isFlyout) {
+      KeyboardMover.mover.startMove(this, e);
+      return;
+    } else if (this.isSimpleReporter()) {
+      for (const input of this.inputList) {
+        for (const field of input.fieldRow) {
+          if (field.isClickable() && field.isFullBlockField()) {
+            field.showEditor();
+            return;
+          }
+        }
+      }
+    }
+
+    if (this.workspace.getNavigator().getInNode(this)) {
+      hints.showBlockNavigationHint(this.workspace);
+    } else {
+      hints.showHelpHint(this.workspace);
+    }
+  }
+
+  /**
+   * Returns a set of all of the parent blocks of the given block.
+   *
+   * @internal
+   * @returns A set of the parents of the given block.
+   */
+  getParents(): Set<BlockSvg> {
+    const parents = new Set<BlockSvg>();
+    let parent = this.getParent();
+    while (parent) {
+      parents.add(parent);
+      parent = parent.getParent();
+    }
+
+    return parents;
+  }
+
+  /**
+   * Returns a set of all of the parent blocks connected to an output of the
+   * given block or one of its parents. Also includes the given block.
+   *
+   * @internal
+   * @returns A set of the output-connected parents of the given block.
+   */
+  getOutputParents(): Set<BlockSvg> {
+    const parents = new Set<BlockSvg>();
+    parents.add(this);
+    let parent = this.outputConnection?.targetBlock();
+    while (parent) {
+      parents.add(parent);
+      parent = parent.outputConnection?.targetBlock();
+    }
+
+    return parents;
+  }
+
+  /**
+   * Returns an ID for the logical "row" this block is part of. A "row" is
+   * bounded by a previous/next connection, a statement input, or a block stack
+   * boundary; all blocks/inputs nested inside of one of those are conceptually
+   * part of its same row.
+   *
+   * @internal
+   */
+  getRowId(): string {
+    const connectedInput =
+      this.outputConnection?.targetConnection?.getParentInput();
+    // Blocks with an output value have the same ID as the input they're
+    // connected to.
+    if (connectedInput) {
+      return connectedInput.getRowId();
+    }
+
+    // All other blocks are their own row.
+    return this.id;
+  }
+
+  /**
+   * Updates the ARIA label, role and roledescription for this block.
+   */
+  private recomputeAriaContext() {
+    if (this.getFullBlockField()) return;
+    aria.setState(
+      this.getFocusableElement(),
+      aria.State.LABEL,
+      this.getAriaLabel(aria.Verbosity.STANDARD),
+    );
+    configureAriaRole(this);
+  }
+
+  /**
+   * Returns a description of this block suitable for screenreaders or use in
+   * ARIA attributes.
+   *
+   * @param verbosity How much detail to include in the description.
+   * @returns An accessibility description of this block.
+   */
+  getAriaLabel(verbosity: aria.Verbosity) {
+    return computeAriaLabel(this, verbosity);
+  }
+
+  /**
+   * Count the number of blocks in this stack (connected by next connections)
+   * and return a label to describe it. Uses the standard label if there is only one block.
+   *
+   * @internal
+   */
+  getStackBlocksCountLabel(): string {
+    let count = 1;
+    let block = this.getNextBlock();
+    while (block) {
+      count++;
+      block = block.getNextBlock();
+    }
+    if (count <= 1) {
+      return computeAriaLabel(this, aria.Verbosity.TERSE);
+    }
+
+    const labelTemplate = Msg['BLOCK_LABEL_STACK_BLOCKS'];
+    return labelTemplate.replace('%1', count.toString());
   }
 }

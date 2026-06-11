@@ -212,4 +212,146 @@ suite('Comments', function () {
       assert.equal(block.getCommentText(), 'hey there');
     });
   });
+  suite('ARIA', function () {
+    setup(async function () {
+      const block = this.workspace.newBlock('empty_block');
+      block.setCommentText('test text');
+      this.icon = block.getIcon(Blockly.icons.IconType.COMMENT);
+      await this.icon.setBubbleVisible(true);
+      this.bubble = this.icon.getBubble();
+    });
+    function getFocusableAriaLabel(iFocusable) {
+      return iFocusable.getFocusableElement().getAttribute('aria-label');
+    }
+    function getFocusableAriaRole(iFocusable) {
+      return iFocusable.getFocusableElement().getAttribute('role');
+    }
+    function getFocusableAriaDescription(iFocusable) {
+      return iFocusable
+        .getFocusableElement()
+        .getAttribute('aria-roledescription');
+    }
+    test('Bubble has ARIA label', function () {
+      assert.isTrue(this.bubble.focusableElement.hasAttribute('aria-label'));
+    });
+    test('Bubble has working ARIA label provider', function () {
+      const label = getFocusableAriaLabel(this.bubble);
+      assert.include(label, 'Comment');
+      assert.include(label, 'test text');
+    });
+    test('Bubble has ARIA role of group', function () {
+      assert.equal(this.bubble.focusableElement.getAttribute('role'), 'group');
+    });
+    test('Bubble can use AriaLabelProvider function', function () {
+      this.bubble.setAriaLabelProvider(() => 'comment aria label');
+      this.bubble.recomputeAriaContext();
+      assert.equal(getFocusableAriaLabel(this.bubble), 'comment aria label');
+    });
+    test('Bubble can use AriaLabelProvider string', function () {
+      this.bubble.setAriaLabelProvider('comment aria label');
+      this.bubble.recomputeAriaContext();
+      assert.equal(getFocusableAriaLabel(this.bubble), 'comment aria label');
+    });
+    test('Icon label changes when bubble is opened', async function () {
+      const openLabel = getFocusableAriaLabel(this.icon);
+      assert.equal(openLabel, 'Close Comment');
+      await this.icon.setBubbleVisible(false);
+
+      const closedLabel = getFocusableAriaLabel(this.icon);
+      assert.equal(closedLabel, 'Open Comment');
+    });
+    test('Bubble uses default ARIA label when no provider is set', function () {
+      this.bubble.setAriaLabelProvider(null);
+      const label = getFocusableAriaLabel(this.bubble);
+      assert.equal(label, 'Bubble');
+    });
+    test('Bubble ARIA label updates when comment text changes', function () {
+      const initialLabel = getFocusableAriaLabel(this.bubble);
+      assert.include(initialLabel, 'test text');
+
+      this.bubble.editor.setText('updated text');
+      const updatedLabel = getFocusableAriaLabel(this.bubble);
+      assert.include(updatedLabel, 'updated text');
+    });
+    suite('Comment Editor', function () {
+      test('Has ARIA role textbox', function () {
+        const editor = this.bubble.editor;
+        assert.equal(
+          editor.getFocusableElement().getAttribute('role'),
+          'textbox',
+        );
+      });
+      test('Parent is initialized', function () {
+        const editor = this.bubble.getEditor();
+        assert.exists(editor.getParent());
+      });
+    });
+    suite('Comment View', function () {
+      setup(function () {
+        // Create workspace comment to test comment view ARIA attributes, since block comments use bubbles.
+        this.workspaceComment = this.workspace.newComment();
+        this.workspaceComment.setText('workspace comment');
+      });
+      test('Has ARIA role button', function () {
+        const view = this.workspaceComment.view;
+        assert.equal(view.svgRoot.getAttribute('role'), 'button');
+      });
+      test('Has ARIA roledescription of comment', function () {
+        const view = this.workspaceComment.view;
+        assert.equal(
+          view.svgRoot.getAttribute('aria-roledescription'),
+          'Comment',
+        );
+      });
+      test('Comment view is labelled by comment editor', function () {
+        const view = this.workspaceComment.view;
+        const ownerId = view.commentEditor.getFocusableElement().id;
+        assert.equal(view.svgRoot.getAttribute('aria-labelledby'), ownerId);
+      });
+    });
+    suite('Comment Bar Buttons', function () {
+      setup(function () {
+        this.comment = this.workspace.newComment();
+        this.comment.setText('test comment');
+
+        this.view = this.comment.view;
+      });
+      function getButtonLabel(button) {
+        return button.getFocusableElement().getAttribute('aria-label');
+      }
+      test('Buttons have ARIA role button', function () {
+        for (const button of this.view.getCommentBarButtons()) {
+          assert.equal(
+            button.getFocusableElement().getAttribute('role'),
+            'button',
+          );
+        }
+      });
+      test('Delete button has correct ARIA label', function () {
+        assert.equal(getButtonLabel(this.view.deleteButton), 'Remove Comment');
+      });
+      test('Collapse button has initial ARIA label', function () {
+        assert.include(
+          getButtonLabel(this.view.foldoutButton),
+          'Collapse Comment',
+        );
+      });
+      test('Collapse button updates ARIA label when toggled', function () {
+        const initial = getButtonLabel(this.view.foldoutButton);
+        assert.include(initial, 'Collapse Comment');
+
+        this.view.foldoutButton.performAction();
+
+        const updated = getButtonLabel(this.view.foldoutButton);
+        assert.include(updated, 'Expand Comment');
+      });
+      test('Buttons recompute ARIA context after creation', function () {
+        for (const button of this.view.getCommentBarButtons()) {
+          assert.isNotNull(
+            button.getFocusableElement().getAttribute('aria-label'),
+          );
+        }
+      });
+    });
+  });
 });

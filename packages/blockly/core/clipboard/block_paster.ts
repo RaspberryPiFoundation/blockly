@@ -5,12 +5,12 @@
  */
 
 import {BlockSvg} from '../block_svg.js';
-import {IFocusableNode} from '../blockly.js';
 import {config} from '../config.js';
 import {EventType} from '../events/type.js';
 import * as eventUtils from '../events/utils.js';
 import {getFocusManager} from '../focus_manager.js';
 import {ICopyData} from '../interfaces/i_copyable.js';
+import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
 import {IPaster} from '../interfaces/i_paster.js';
 import * as renderManagement from '../render_management.js';
 import {State, append} from '../serialization/blocks.js';

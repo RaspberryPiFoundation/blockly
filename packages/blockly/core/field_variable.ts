@@ -605,7 +605,7 @@ export class FieldVariable extends FieldDropdown {
       ];
     }
     options.push([
-      Msg['RENAME_VARIABLE'],
+      Msg['RENAME_VARIABLE'].replace('%1', name),
       internalConstants.RENAME_VARIABLE_ID,
     ]);
     if (Msg['DELETE_VARIABLE']) {
@@ -616,6 +616,18 @@ export class FieldVariable extends FieldDropdown {
     }
 
     return options;
+  }
+  /**
+   * Gets an ARIA-friendly label representation of this field's value.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's value.
+   *
+   * @returns An ARIA representation of the field's text.
+   */
+  override getAriaValue(): string {
+    // Example: 'Variable "i"'
+    return Msg['FIELD_LABEL_VARIABLE'].replace('%1', super.getAriaValue());
   }
 }
 

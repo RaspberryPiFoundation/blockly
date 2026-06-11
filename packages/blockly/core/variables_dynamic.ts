@@ -9,7 +9,6 @@
 import {Blocks} from './blocks.js';
 import type {FlyoutButton} from './flyout_button.js';
 import {Msg} from './msg.js';
-import * as deprecation from './utils/deprecation.js';
 import type {FlyoutItemInfo} from './utils/toolbox.js';
 import * as xml from './utils/xml.js';
 import * as Variables from './variables.js';
@@ -71,50 +70,16 @@ function colourButtonClickHandler(button: FlyoutButton) {
 export const onCreateVariableButtonClick_Colour = colourButtonClickHandler;
 
 /**
- * Internal wrapper that returns the contents of the dynamic variables category.
- *
- * @internal
- * @param workspace The workspace to populate variable blocks for.
- */
-export function internalFlyoutCategory(
-  workspace: WorkspaceSvg,
-): FlyoutItemInfo[] {
-  return flyoutCategory(workspace, false);
-}
-
-export function flyoutCategory(
-  workspace: WorkspaceSvg,
-  useXml: true,
-): Element[];
-export function flyoutCategory(
-  workspace: WorkspaceSvg,
-  useXml: false,
-): FlyoutItemInfo[];
-/**
  * Construct the elements (blocks and button) required by the flyout for the
  * dynamic variables category.
  *
- * @param useXml True to return the contents as XML, false to use JSON.
- * @returns List of flyout contents as either XML or JSON.
+ * @returns List of flyout contents as JSON.
  */
-export function flyoutCategory(
-  workspace: WorkspaceSvg,
-  useXml = true,
-): Element[] | FlyoutItemInfo[] {
+export function flyoutCategory(workspace: WorkspaceSvg): FlyoutItemInfo[] {
   if (!Blocks['variables_set_dynamic'] && !Blocks['variables_get_dynamic']) {
     console.warn(
       'There are no dynamic variable blocks, but there is a dynamic variable category.',
     );
-  }
-
-  if (useXml) {
-    deprecation.warn(
-      'The XML return value of Blockly.VariablesDynamic.flyoutCategory()',
-      'v12',
-      'v13',
-      'the same method, but handle a return type of FlyoutItemInfo[] (JSON) instead.',
-    );
-    return xmlFlyoutCategory(workspace);
   }
 
   workspace.registerButtonCallback(
@@ -154,46 +119,6 @@ export function flyoutCategory(
       'variables_set_dynamic',
     ),
   ];
-}
-
-/**
- * Construct the elements (blocks and button) required by the flyout for the
- * variable category.
- *
- * @param workspace The workspace containing variables.
- * @returns Array of XML elements.
- */
-function xmlFlyoutCategory(workspace: WorkspaceSvg): Element[] {
-  let xmlList = new Array<Element>();
-  let button = document.createElement('button');
-  button.setAttribute('text', Msg['NEW_STRING_VARIABLE']);
-  button.setAttribute('callbackKey', 'CREATE_VARIABLE_STRING');
-  xmlList.push(button);
-  button = document.createElement('button');
-  button.setAttribute('text', Msg['NEW_NUMBER_VARIABLE']);
-  button.setAttribute('callbackKey', 'CREATE_VARIABLE_NUMBER');
-  xmlList.push(button);
-  button = document.createElement('button');
-  button.setAttribute('text', Msg['NEW_COLOUR_VARIABLE']);
-  button.setAttribute('callbackKey', 'CREATE_VARIABLE_COLOUR');
-  xmlList.push(button);
-
-  workspace.registerButtonCallback(
-    'CREATE_VARIABLE_STRING',
-    stringButtonClickHandler,
-  );
-  workspace.registerButtonCallback(
-    'CREATE_VARIABLE_NUMBER',
-    numberButtonClickHandler,
-  );
-  workspace.registerButtonCallback(
-    'CREATE_VARIABLE_COLOUR',
-    colourButtonClickHandler,
-  );
-
-  const blockList = flyoutCategoryBlocks(workspace);
-  xmlList = xmlList.concat(blockList);
-  return xmlList;
 }
 
 /**

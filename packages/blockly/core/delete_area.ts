@@ -17,6 +17,7 @@ import {DragTarget} from './drag_target.js';
 import {isDeletable} from './interfaces/i_deletable.js';
 import type {IDeleteArea} from './interfaces/i_delete_area.js';
 import type {IDraggable} from './interfaces/i_draggable.js';
+import {KeyboardMover} from './keyboard_nav/keyboard_mover.js';
 
 /**
  * Abstract class for a component that can delete a block or bubble that is
@@ -56,7 +57,10 @@ export class DeleteArea extends DragTarget implements IDeleteArea {
    *     area.
    */
   wouldDelete(element: IDraggable): boolean {
-    if (element instanceof BlockSvg) {
+    // don't delete things if we're doing a keyboard move
+    if (KeyboardMover.mover.isMoving()) {
+      this.updateWouldDelete_(false);
+    } else if (element instanceof BlockSvg) {
       const block = element;
       const couldDeleteBlock = !block.getParent() && block.isDeletable();
       this.updateWouldDelete_(couldDeleteBlock);

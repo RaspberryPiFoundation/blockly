@@ -42,6 +42,7 @@ export interface JsonBlockDefinition {
   inputsInline?: boolean;
   tooltip?: string;
   helpUrl?: string;
+  ariaRoleDescription?: string;
   extensions?: string[];
   mutator?: string;
   enableContextMenu?: boolean;

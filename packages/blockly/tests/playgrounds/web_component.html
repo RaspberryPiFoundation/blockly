@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Blockly Web Component/Shadow DOM Playground</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+        background: #f5f5f5;
+      }
+
+      #page-header {
+        background: #1a73e8;
+        color: white;
+        padding: 12px 16px;
+      }
+
+      #page-header h1 {
+        margin: 0 0 4px 0;
+        font-size: 18px;
+      }
+
+      #workspaces {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 12px 16px;
+        height: calc(100% - 120px);
+      }
+
+      .workspace-card {
+        background: white;
+        border-radius: 6px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .workspace-card-header {
+        padding: 8px 12px;
+        font-size: 13px;
+        font-weight: bold;
+        border-bottom: 1px solid #e8e8e8;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .workspace-card-body {
+        flex: 1;
+        position: relative;
+      }
+
+      #blocklyDiv-normal,
+      blockly-editor {
+        position: absolute;
+        inset: 0;
+      }
+    </style>
+
+    <script type="module">
+      import {loadScript} from '../scripts/load.mjs';
+      import * as Blockly from '../../build/blockly.loader.mjs';
+      import '../../build/blocks.loader.mjs';
+      await loadScript('../../build/msg/en.js');
+
+      const TOOLBOX = {
+        kind: 'flyoutToolbox',
+        contents: [
+          {kind: 'block', type: 'controls_ifelse'},
+          {kind: 'block', type: 'logic_compare'},
+          {kind: 'block', type: 'logic_operation'},
+          {kind: 'block', type: 'logic_negate'},
+          {kind: 'block', type: 'logic_boolean'},
+          {kind: 'block', type: 'math_number'},
+          {kind: 'block', type: 'math_arithmetic'},
+          {kind: 'block', type: 'text'},
+          {kind: 'block', type: 'text_print'},
+        ],
+      };
+
+      const INJECT_OPTIONS = {
+        media: '../../media/',
+        toolbox: TOOLBOX,
+        zoom: {
+          controls: true,
+          wheel: true,
+        },
+        grid: {
+          spacing: 25,
+          length: 3,
+          colour: '#ccc',
+          snap: true,
+        },
+      };
+
+      class BlocklyEditor extends HTMLElement {
+        constructor() {
+          super();
+          // Attach shadow root; Blockly will be injected into a div inside here.
+          this._shadow = this.attachShadow({mode: 'open'});
+
+          this._container = document.createElement('div');
+          this._container.style.cssText =
+            'position:absolute;inset:0;width:100%;height:100%;';
+          this._shadow.appendChild(this._container);
+
+          this._workspace = null;
+        }
+
+        connectedCallback() {
+          // Give the element a chance to size itself before injecting.
+          requestAnimationFrame(() => this._init());
+        }
+
+        _init() {
+          this._workspace = Blockly.inject(this._container, INJECT_OPTIONS);
+        }
+
+        disconnectedCallback() {
+          if (this._workspace) {
+            this._workspace.dispose();
+            this._workspace = null;
+          }
+        }
+      }
+
+      customElements.define('blockly-editor', BlocklyEditor);
+
+      Blockly.inject('blocklyDiv-normal', INJECT_OPTIONS);
+    </script>
+  </head>
+
+  <body>
+    <div id="page-header">
+      <h1>Blockly Web Component/Shadow DOM Playground</h1>
+    </div>
+
+    <div id="workspaces">
+      <div class="workspace-card">
+        <div class="workspace-card-header">Light DOM</div>
+        <div class="workspace-card-body">
+          <div id="blocklyDiv-normal"></div>
+        </div>
+      </div>
+
+      <div class="workspace-card">
+        <div class="workspace-card-header">
+          Shadow DOM via &lt;blockly-editor&gt;
+        </div>
+        <div class="workspace-card-body">
+          <blockly-editor></blockly-editor>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

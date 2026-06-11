@@ -7,10 +7,13 @@
 /**
  * @fileoverview Node.js script to run generator tests in Chrome, via webdriver.
  */
-var webdriverio = require('webdriverio');
-var fs = require('fs');
-var path = require('path');
-
+const webdriverio = require('webdriverio');
+const fs = require('fs');
+const path = require('path');
+const {
+  getWebdriverOptions,
+  runBrowserTestMain,
+} = require('../scripts/webdriver_helpers.js');
 
 /**
  * Run the generator for a given language and save the results to a file.
@@ -22,8 +25,8 @@ var path = require('path');
  */
 async function runLangGeneratorInBrowser(browser, filename, codegenFn) {
   await browser.execute(codegenFn);
-  var elem = await browser.$("#importExport");
-  var result = await elem.getValue();
+  const elem = await browser.$('#importExport');
+  const result = await elem.getValue();
   fs.writeFileSync(filename, result, function(err) {
     if (err) {
       return console.log(err);
@@ -36,88 +39,64 @@ async function runLangGeneratorInBrowser(browser, filename, codegenFn) {
  * launch Chrome and load index.html. Outputs a summary of the test results
  * to the console and outputs files for later validation.
  * @param {string} outputDir Output directory.
- * @return The Thenable managing the processing of the browser tests.
+ * @return {number} 0 on success.
  */
 async function runGeneratorsInBrowser(outputDir) {
-  var options = {
-    capabilities: {
-      browserName: 'chrome',
-      'goog:chromeOptions': {
-        args: ['--allow-file-access-from-files'],
-      },
-    },
-    logLevel: 'warn',
-  };
+  const options = getWebdriverOptions();
 
-  // Run in headless mode on Github Actions.
-  if (process.env.CI) {
-    options.capabilities['goog:chromeOptions'].args.push(
-        '--headless', '--no-sandbox', '--disable-dev-shm-usage',);
-  } else {
-    // --disable-gpu is needed to prevent Chrome from hanging on Linux with
-    // NVIDIA drivers older than v295.20. See
-    // https://github.com/google/blockly/issues/5345 for details.
-    options.capabilities['goog:chromeOptions'].args.push('--disable-gpu');
-  }
-
-  var url = 'file://' + __dirname + '/index.html';
-  var prefix = path.join(outputDir, 'generated');
+  const url = 'file://' + __dirname + '/index.html';
+  const prefix = path.join(outputDir, 'generated');
 
   console.log('Starting webdriverio...');
   const browser = await webdriverio.remote(options);
 
-  // Increase the script timeouts to 2 minutes to allow the generators to finish.
-  await browser.setTimeout({ 'script': 120000 })
+  try {
+    // Increase the script timeouts to 2 minutes to allow generators to finish.
+    await browser.setTimeout({'script': 120000});
 
-  console.log('Loading url: ' + url);
-  await browser.url(url);
+    console.log('Loading url: ' + url);
+    await browser.url(url);
 
-  await browser
-    .$('.blocklySvg .blocklyWorkspace > .blocklyBlockCanvas')
-    .waitForExist({timeout: 2000});
+    await browser
+        .$('.blocklySvg .blocklyWorkspace > .blocklyBlockCanvas')
+        .waitForExist({timeout: 2000});
 
-  await browser.execute(function() {
-    checkAll();
-    return loadSelected();
-  });
+    await browser.execute(function() {
+      checkAll();
+      return loadSelected();
+    });
 
-  await runLangGeneratorInBrowser(browser, prefix + '.js',
-      function() {
-        toJavaScript();
-      });
-  await runLangGeneratorInBrowser(browser, prefix + '.py',
-      function() {
-        toPython();
-      });
-  await runLangGeneratorInBrowser(browser, prefix + '.dart',
-      function() {
-        toDart();
-      });
-  await runLangGeneratorInBrowser(browser, prefix + '.lua',
-      function() {
-        toLua();
-      });
-  await runLangGeneratorInBrowser(browser, prefix + '.php',
-      function() {
-        toPhp();
-      });
+    await runLangGeneratorInBrowser(browser, prefix + '.js',
+        function() {
+          toJavaScript();
+        });
+    await runLangGeneratorInBrowser(browser, prefix + '.py',
+        function() {
+          toPython();
+        });
+    await runLangGeneratorInBrowser(browser, prefix + '.dart',
+        function() {
+          toDart();
+        });
+    await runLangGeneratorInBrowser(browser, prefix + '.lua',
+        function() {
+          toLua();
+        });
+    await runLangGeneratorInBrowser(browser, prefix + '.php',
+        function() {
+          toPhp();
+        });
+  } finally {
+    await browser.deleteSession();
+  }
 
-  await browser.deleteSession();
+  console.log('Generator browser tests completed.');
+  return 0;
 }
 
 if (require.main === module) {
-  runGeneratorsInBrowser('tests/generators/tmp').catch(e => {
-    console.error(e);
-    process.exit(1);
-  }).then(function(result) {
-    if (result) {
-      console.log('Generator tests failed');
-      process.exit(1);
-    } else {
-      console.log('Generator tests passed');
-      process.exit(0);
-    }
-  });
+  const outputDir = process.argv[2] || 'tests/generators/tmp';
+  runBrowserTestMain(() => runGeneratorsInBrowser(outputDir));
 }
 
 module.exports = {runGeneratorsInBrowser};
