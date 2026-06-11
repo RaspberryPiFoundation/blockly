@@ -352,6 +352,8 @@
 	"COLLAPSED_WARNINGS_WARNING": "Звернуті блоки містять попередження.",
 	"DIALOG_OK": "Гаразд",
 	"DIALOG_CANCEL": "Скасувати",
+	"EDIT_BLOCK_CONTENTS": "Редагувати вміст блоку",
+	"MOVE_BLOCK": "Перемістити блок",
 	"WINDOWS": "Windows",
 	"MAC_OS": "macOS",
 	"CHROME_OS": "ChromeOS",
@@ -363,5 +365,13 @@
 	"ALT_KEY": "Alt",
 	"CUT_SHORTCUT": "Вирізати",
 	"COPY_SHORTCUT": "Копіювати",
-	"PASTE_SHORTCUT": "Вставити"
+	"PASTE_SHORTCUT": "Вставити",
+	"HELP_PROMPT": "Натисніть %1 для отримання довідки щодо керування клавіатурою",
+	"SHORTCUTS_GENERAL": "Загальні",
+	"SHORTCUTS_EDITING": "Редагування",
+	"SHORTCUTS_CODE_NAVIGATION": "Навігація по коду",
+	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "Утримуйте %1 та використовуйте клавіші зі стрілками для вільного переміщення, потім %2, щоб прийняти позицію",
+	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Використовуйте клавіші зі стрілками для переміщення, потім %1, щоб прийняти позицію",
+	"KEYBOARD_NAV_COPIED_HINT": "Скопійовано. Натисніть %1, щоб вставити.",
+	"KEYBOARD_NAV_CUT_HINT": "Вирізано. Натисніть %1, щоб вставити."
 }
