@@ -156,8 +156,9 @@ export class Dragger implements IDragger {
   }
 
   /** Handles a drag being reverted. */
-  onDragRevert() {
+  onDragRevert(e?: PointerEvent | KeyboardEvent) {
     this.draggable.revertDrag();
+    this.draggable.endDrag(e, DragDisposition.REVERT);
     if (isFocusableNode(this.draggable)) {
       getFocusManager().focusNode(this.draggable);
     }

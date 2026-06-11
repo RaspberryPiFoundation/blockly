@@ -533,6 +533,33 @@ suite('Keyboard-driven movement', function () {
       assert.strictEqual(this.block1.nextConnection.targetBlock(), this.block2);
       assert.strictEqual(this.block2.nextConnection.targetBlock(), this.block3);
     });
+
+    test('Cancel after committed keyboard move does not throw', function () {
+      this.workspace.clear();
+      const ifBlock = this.workspace.newBlock('controls_if');
+      ifBlock.initSvg();
+      ifBlock.render();
+      this.drawBlock = this.workspace.newBlock('draw_emoji');
+      this.drawBlock.initSvg();
+      this.drawBlock.render();
+      this.workspace.cleanUp();
+
+      // Commit moving draw block from the stack into the if block's DO input.
+      Blockly.getFocusManager().focusNode(this.drawBlock);
+      startMove(this.workspace);
+      // move the block down to connect it to the do input.
+      moveUp(this.workspace);
+      endMove(this.workspace);
+
+      assert.strictEqual(this.drawBlock.getParent(), ifBlock);
+
+      // Start a second keyboard move and cancel before committing.
+      assert.doesNotThrow(() => {
+        Blockly.getFocusManager().focusNode(this.drawBlock);
+        startMove(this.workspace);
+        cancelMove(this.workspace);
+      });
+    });
   });
 
   suite('of blocks', function () {
