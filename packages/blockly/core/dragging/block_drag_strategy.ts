@@ -358,21 +358,7 @@ export class BlockDragStrategy implements IDragStrategy {
         new Coordinate(0, 0),
       );
       if (neighbour) {
-        let offset: Coordinate;
-        if (neighbour.type === ConnectionType.PREVIOUS_STATEMENT) {
-          offset = new Coordinate(
-            neighbour.x,
-            neighbour.y -
-              this.block.getHeightWidth().height -
-              this.BLOCK_CONNECTION_OFFSET,
-          );
-        } else {
-          offset = new Coordinate(
-            neighbour.x + this.BLOCK_CONNECTION_OFFSET,
-            neighbour.y + this.BLOCK_CONNECTION_OFFSET,
-          );
-        }
-        this.block.moveDuringDrag(offset);
+        this.block.moveDuringDrag(this.determineConnectionOffset());
       }
 
       if (this.allConnectionPairs.length) {
@@ -587,35 +573,7 @@ export class BlockDragStrategy implements IDragStrategy {
     // Handle the case where the drag has reached a possible connection.
     if (this.connectionCandidate) {
       if (this.moveMode === MoveMode.CONSTRAINED) {
-        const {local, neighbour} = this.connectionCandidate;
-
-        const dx = neighbour.x - local.x;
-        const dy = neighbour.y - local.y;
-
-        // Base aligned position
-        let x = this.startLoc!.x + dx;
-        let y = this.startLoc!.y + dy;
-
-        // Decide offset direction
-        const becomingChild =
-          local.type === ConnectionType.PREVIOUS_STATEMENT ||
-          local.type === ConnectionType.OUTPUT_VALUE;
-
-        const offset = this.BLOCK_CONNECTION_OFFSET;
-
-        // An offset is used to distinguish the block from insertion marker,
-        // while keeping the connection point visible. The offset direction
-        // changes based on the parent/child relationship of the blocks
-        // being connected.
-        if (becomingChild) {
-          x += offset;
-          y += offset;
-        } else {
-          x -= offset;
-          y -= offset;
-        }
-
-        this.block.moveDuringDrag(new Coordinate(x, y));
+        this.block.moveDuringDrag(this.determineConnectionOffset());
       }
     } else {
       // No connection was available or adequately close to the dragged block;
@@ -633,6 +591,44 @@ export class BlockDragStrategy implements IDragStrategy {
       }
     }
     this.announceMove();
+  }
+
+  /**
+   * Determines the offset to apply to the dragged block's position
+   * based on the current connection candidate.
+   *
+   * @returns coordinates representing the offset
+   */
+  private determineConnectionOffset(): Coordinate {
+    const {local, neighbour} = this.connectionCandidate!;
+
+    const dx = neighbour.x - local.x;
+    const dy = neighbour.y - local.y;
+
+    // Base aligned position
+    let x = this.startLoc!.x + dx;
+    let y = this.startLoc!.y + dy;
+
+    // Decide offset direction
+    const becomingChild =
+      local.type === ConnectionType.PREVIOUS_STATEMENT ||
+      local.type === ConnectionType.OUTPUT_VALUE;
+
+    const offset = this.BLOCK_CONNECTION_OFFSET;
+
+    // An offset is used to distinguish the block from insertion marker,
+    // while keeping the connection point visible. The offset direction
+    // changes based on the parent/child relationship of the blocks
+    // being connected.
+    if (becomingChild) {
+      x += offset;
+      y += offset;
+    } else {
+      x -= offset;
+      y -= offset;
+    }
+
+    return new Coordinate(x, y);
   }
 
   /**

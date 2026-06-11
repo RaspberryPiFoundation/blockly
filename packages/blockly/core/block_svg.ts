@@ -1615,6 +1615,7 @@ export class BlockSvg
     if (
       this.isDeadOrDying() ||
       this.workspace.isDragging() ||
+      this.isDragging() ||
       root.isInFlyout
     ) {
       return;
@@ -1636,7 +1637,7 @@ export class BlockSvg
 
         if (conn.isSuperior()) {
           neighbour.bumpAwayFrom(conn, /* initiatedByThis = */ false);
-        } else {
+        } else if (!neighbour.getSourceBlock().isDragging()) {
           conn.bumpAwayFrom(neighbour, /* initiatedByThis = */ true);
         }
       }
