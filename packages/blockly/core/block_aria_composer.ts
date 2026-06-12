@@ -172,6 +172,13 @@ export function computeFieldRowLabel(
       return computeFieldRowLabel(inputs[index - 1], lookback, verbosity);
     }
   }
+  if (
+    input.type === inputTypes.VALUE &&
+    input.connection?.targetConnection === null &&
+    verbosity >= Verbosity.STANDARD
+  ) {
+    fieldRowLabel.push(Msg['INPUT_LABEL_EMPTY']);
+  }
   return fieldRowLabel.filter((label) => !!label);
 }
 
