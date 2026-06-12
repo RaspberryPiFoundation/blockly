@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import type {Navigator} from '../keyboard_nav/navigators/navigator';
 import type {IFocusableNode} from './i_focusable_node.js';
 
 /**
@@ -122,6 +123,14 @@ export interface IFocusableTree {
    *     as in the case that Blockly is entirely losing DOM focus).
    */
   onTreeBlur(nextTree: IFocusableTree | null): void;
+
+  /**
+   * Returns a Navigator instance to be used to determine the navigation order
+   * between IFocusableNodes contained within this IFocusableTree. Generally
+   * this can just be an instance of Navigator, but trees may choose to return a
+   * subclass to customize navigation behavior within their context.
+   */
+  getNavigator(): Navigator;
 }
 
 /**

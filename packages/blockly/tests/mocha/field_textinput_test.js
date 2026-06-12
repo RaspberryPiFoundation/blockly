@@ -211,6 +211,9 @@ suite('Text Input Fields', function () {
             },
             markFocused: function () {},
             options: {},
+            getFocusableElement: function () {
+              return document.createElement('div');
+            },
           };
           field.sourceBlock_ = {
             workspace: workspace,
@@ -447,6 +450,7 @@ suite('Text Input Fields', function () {
           this.workspace.getBlockById('right_input_block');
         const leftField = this.getFieldFromShadowBlock(leftInputBlock);
         const rightField = this.getFieldFromShadowBlock(rightInputBlock);
+        Blockly.getFocusManager().focusNode(leftField);
         leftField.showEditor();
         // This must be called to avoid editor resize logic throwing an error.
         await Blockly.renderManagement.finishQueuedRenders();
@@ -530,6 +534,7 @@ suite('Text Input Fields', function () {
           this.workspace.getBlockById('right_input_block');
         const leftField = this.getFieldFromShadowBlock(leftInputBlock);
         const rightField = this.getFieldFromShadowBlock(rightInputBlock);
+        Blockly.getFocusManager().focusNode(leftField);
         leftField.showEditor();
         // This must be called to avoid editor resize logic throwing an error.
         await Blockly.renderManagement.finishQueuedRenders();
@@ -588,6 +593,57 @@ suite('Text Input Fields', function () {
           rightInputBlock.getFocusableElement(),
         );
       });
+    });
+  });
+
+  suite('ARIA', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv', {
+        renderer: 'geras',
+      });
+      this.block = this.workspace.newBlock('text');
+      this.field = this.block.getField('TEXT');
+      this.block.initSvg();
+      this.block.render();
+
+      this.focusableElement = this.field.getClickTarget_();
+    });
+    test('Field has field type name in ARIA label', function () {
+      const fieldLabel = this.focusableElement.getAttribute('aria-label');
+      assert.include(fieldLabel, 'text:');
+    });
+    test('Focusable element has role of button', function () {
+      const role = this.focusableElement.getAttribute('role');
+      assert.equal(role, 'button');
+    });
+    test('Hidden when in a flyout', function () {
+      this.block.isInFlyout = true;
+      // Force recompute of ARIA label.
+      this.field.setValue(this.field.getValue());
+      const ariaHidden = this.focusableElement.getAttribute('aria-hidden');
+      assert.equal(ariaHidden, 'true');
+    });
+    test('Has placeholder ARIA label by default', function () {
+      const label = this.focusableElement.getAttribute('aria-label');
+      assert.isTrue(label.includes('empty'));
+    });
+    test('Has Edit prefix if editable', function () {
+      const label = this.focusableElement.getAttribute('aria-label');
+      assert.isTrue(label.includes('Edit'));
+    });
+    test('Does not have Edit prefix if not editable', function () {
+      this.field.EDITABLE = false;
+      // Force recompute of ARIA label.
+      this.field.setValue(this.field.getValue());
+      const label = this.focusableElement.getAttribute('aria-label');
+      assert.isFalse(label.includes('Edit'));
+    });
+    test('setValue updates ARIA label', function () {
+      const initialLabel = this.focusableElement.getAttribute('aria-label');
+      assert.isTrue(initialLabel.includes('empty'));
+      this.field.setValue('new value');
+      const updatedLabel = this.focusableElement.getAttribute('aria-label');
+      assert.isTrue(updatedLabel.includes('new value'));
     });
   });
 });

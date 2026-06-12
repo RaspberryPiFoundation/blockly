@@ -28,9 +28,11 @@ import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
 import type {IKeyboardAccessible} from './interfaces/i_keyboard_accessible.js';
 import type {IRegistrable} from './interfaces/i_registrable.js';
 import {ISerializable} from './interfaces/i_serializable.js';
+import {Msg} from './msg.js';
 import type {ConstantProvider} from './renderers/common/constants.js';
 import type {KeyboardShortcut} from './shortcut_registry.js';
 import * as Tooltip from './tooltip.js';
+import * as aria from './utils/aria.js';
 import type {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
 import * as idGenerator from './utils/idgenerator.js';
@@ -64,7 +66,7 @@ export type FieldValidator<T = any> = (newValue: T) => T | null | undefined;
 /**
  * Abstract class for an editable field.
  *
- * @typeParam T - The value stored on the field.
+ * @template T - The value stored on the field.
  */
 export abstract class Field<T = any>
   implements IKeyboardAccessible, IRegistrable, ISerializable, IFocusableNode
@@ -97,6 +99,9 @@ export abstract class Field<T = any>
 
   /** Validation function called when user edits an editable field. */
   protected validator_: FieldValidator<T> | null = null;
+
+  /** The ARIA-friendly label representation of this field's type. */
+  protected ariaTypeName: string | null = null;
 
   /**
    * Used to cache the field's tooltip value if setTooltip is called when the
@@ -250,6 +255,9 @@ export abstract class Field<T = any>
     if (config.tooltip) {
       this.setTooltip(parsing.replaceMessageReferences(config.tooltip));
     }
+    if (config.ariaTypeName) {
+      this.ariaTypeName = config.ariaTypeName;
+    }
   }
 
   /**
@@ -268,7 +276,6 @@ export abstract class Field<T = any>
           `problems with focus: ${block.id}.`,
       );
     }
-    this.id_ = `${block.id}_field_${idGenerator.getNextUniqueId()}`;
   }
 
   /**
@@ -301,6 +308,87 @@ export abstract class Field<T = any>
   }
 
   /**
+   * Gets an ARIA-friendly label representation of this field's type.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's type.
+   *
+   * @returns An ARIA representation of the field's type or null if it is
+   *     unspecified.
+   */
+  getAriaTypeName(): string | null {
+    return this.ariaTypeName || null;
+  }
+
+  /**
+   * Gets an ARIA-friendly label representation of this field's value.
+   *
+   * Note that implementations should generally always override this value to
+   * ensure a non-null value is returned. The default implementation relies on
+   * 'getText' which may return an empty string. A null return value from this
+   * function will prompt ARIA label generation to skip the field's value
+   * entirely when there may be a better contextual placeholder to use isstead.
+   *
+   * For example, to avoid hiding an empty text input field from screen reader,
+   * implementations should ensure that if the text is an empty string, this
+   * function would return an appropriate, localized value such as "empty text".
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's value.
+   *
+   * @returns An ARIA representation of the field's text, or null if no text is
+   *     currently defined or known for the field.
+   */
+  getAriaValue(): string | null {
+    if (this.getValue() == null) {
+      return null;
+    } else {
+      return this.getText();
+    }
+  }
+
+  /**
+   * Computes a descriptive ARIA label to represent this field with configurable
+   * verbosity.
+   *
+   * A 'verbose' label includes type information, if available, whereas a
+   * non-verbose label only contains the field's value.
+   *
+   * Note that this will always return the latest representation of the field's
+   * label which may differ from any previously set ARIA label for the field
+   * itself. Implementations are largely responsible for ensuring that the
+   * field's ARIA label is set correctly at relevant moments in the field's
+   * lifecycle (such as when its value changes).
+   *
+   * Finally, it is never guaranteed that implementations use the label returned
+   * by this method for their actual ARIA label. Some implementations may rely
+   * on other contexts to convey information like the field's value. Example:
+   * checkboxes represent their checked/non-checked status (i.e. value) through
+   * a separate ARIA property.
+   *
+   * If the field's value is empty then it will return a localized placeholder
+   * indicating that its value is empty. If this method returns an empty string,
+   * the output will be ignored when composing the block-level ARIA label. Make
+   * sure you want your label hidden from screenreaders before returning an
+   * empty string.
+   *
+   * @param includeTypeInfo Whether to include the field's type information in
+   *     the returned label, if available.
+   */
+  computeAriaLabel(includeTypeInfo: boolean = true): string {
+    const ariaTypeName = includeTypeInfo ? this.getAriaTypeName() : null;
+    let ariaValue = this.getAriaValue();
+    if (ariaValue === null || ariaValue === '') {
+      ariaValue = Msg['FIELD_LABEL_EMPTY'];
+    }
+
+    if (ariaTypeName) {
+      return `${ariaTypeName}: ${ariaValue}`;
+    }
+    return ariaValue;
+  }
+
+  /**
    * Initialize everything to render this field. Override
    * methods initModel and initView rather than this method.
    *
@@ -312,11 +400,7 @@ export abstract class Field<T = any>
       // Field has already been initialized once.
       return;
     }
-    const id = this.id_;
-    if (!id) throw new Error('Expected ID to be defined prior to init.');
-    this.fieldGroup_ = dom.createSvgElement(Svg.G, {
-      'id': id,
-    });
+    this.fieldGroup_ = dom.createSvgElement(Svg.G, {});
     if (!this.isVisible()) {
       this.fieldGroup_.style.display = 'none';
     }
@@ -328,6 +412,15 @@ export abstract class Field<T = any>
     this.bindEvents_();
     this.initModel();
     this.applyColour();
+
+    // Since full-block fields can be focused from the workspace's tree,
+    // they need IDs in the format that the workspace is expecting.
+    if (this.isFullBlockField()) {
+      this.id_ = idGenerator.getNextUniqueId();
+    } else {
+      this.id_ = `${sourceBlockSvg.id}_field_${idGenerator.getNextUniqueId()}`;
+    }
+    this.fieldGroup_.setAttribute('id', this.id_);
   }
 
   /**
@@ -350,15 +443,19 @@ export abstract class Field<T = any>
   /**
    * Defines whether this field should take up the full block or not.
    *
-   * Be cautious when overriding this function. It may not work as you expect /
-   * intend because the behavior was kind of hacked in. If you are thinking
-   * about overriding this function, post on the forum with your intended
-   * behavior to see if there's another approach.
+   * This is typically only done for certain kinds of fields and in certain
+   * renderers. You should only override this if you're sure your field will
+   * render correctly in zelos and other renderers that support full-block
+   * fields.
    *
-   * @internal
+   * Blocks that contain only a single field that is a full-block-field
+   * have a special appearance in some renderers and their behavior is
+   * unique, because we pretend that the field is a whole block in some cases.
+   * This is hacky and you should use caution when attempting to do anything
+   * with this method.
    */
   isFullBlockField(): boolean {
-    return !this.borderRect_;
+    return false;
   }
 
   /**
@@ -383,15 +480,18 @@ export abstract class Field<T = any>
   }
 
   /**
-   * Create a field text element. Not to be overridden by subclasses. Instead
+   * Create a field text element. Not to be overridden by subclasses. Instead,
    * modify the result of the function inside initView, or create a separate
-   * function to call.
+   * function to call. Aria state is hidden; use the aria label for the field
+   * and/or containing block to expose content to screen readers. Text content
+   * for custom blocks can be set after creation.
    */
   protected createTextElement_() {
     this.textElement_ = dom.createSvgElement(
       Svg.TEXT,
       {
         'class': 'blocklyText blocklyFieldText',
+        'aria-hidden': 'true',
       },
       this.fieldGroup_,
     );
@@ -834,7 +934,7 @@ export abstract class Field<T = any>
     const xOffset =
       margin !== undefined
         ? margin
-        : !this.isFullBlockField()
+        : this.borderRect_
           ? this.getConstants()!.FIELD_BORDER_RECT_X_PADDING
           : 0;
     let totalWidth = xOffset * 2;
@@ -845,7 +945,7 @@ export abstract class Field<T = any>
       contentWidth = dom.getTextWidth(this.textElement_);
       totalWidth += contentWidth;
     }
-    if (!this.isFullBlockField()) {
+    if (this.borderRect_) {
       totalHeight = Math.max(totalHeight, constants!.FIELD_BORDER_RECT_HEIGHT);
     }
 
@@ -942,7 +1042,7 @@ export abstract class Field<T = any>
       throw new UnattachedFieldError();
     }
 
-    if (this.isFullBlockField()) {
+    if (!this.borderRect_) {
       // Browsers are inconsistent in what they return for a bounding box.
       // - Webkit / Blink: fill-box / object bounding box
       // - Gecko: stroke-box
@@ -960,7 +1060,7 @@ export abstract class Field<T = any>
         xy.y -= 0.5 * scale;
       }
     } else {
-      const bBox = this.borderRect_!.getBoundingClientRect();
+      const bBox = this.borderRect_.getBoundingClientRect();
       xy = style.getPageOffset(this.borderRect_!);
       scaledWidth = bBox.width;
       scaledHeight = bBox.height;
@@ -1396,6 +1496,76 @@ export abstract class Field<T = any>
   }
 
   /**
+   * Handles the user acting on this field via keyboard navigation.
+   * Shows and focuses the field editor.
+   */
+  performAction() {
+    this.showEditor();
+  }
+
+  /**
+   * Recomputes the aria state and label for this field. Fields are generally hidden
+   * when in blocks in the flyout (except for top-level full-block fields), and
+   * otherwise set to a role of button (indicating they can be clicked to edit)
+   * and given the label returned from their `computeAriaLabel` method.
+   *
+   * Subclasses can override this in order to change the role or label, but they must
+   * ensure they keep the correct behavior for fields in flyout blocks.
+   *
+   * This method will return a boolean indicating if the element is displayed in the
+   * aria tree or not. This can be used by subclasses to determine whether or not
+   * to continue customizing the role and label (hidden elements should not have labels).
+   *
+   * @returns true if the element is in the accessibility tree, false if the aria state is hidden
+   */
+  protected recomputeAriaContext(): boolean {
+    let focusableElement;
+    try {
+      focusableElement = this.getFocusableElement();
+    } catch {
+      // Just return because the field hasn't been initialized yet.
+      return false;
+    }
+
+    if (!focusableElement) return false;
+
+    if (this.getSourceBlock()?.isInFlyout) {
+      const isTopLevelFullBlockField =
+        this.getSourceBlock()?.getFullBlockField() &&
+        !this.getSourceBlock()?.getParent();
+      if (!isTopLevelFullBlockField) {
+        // Fields in the flyout are not generally focusable, so they should
+        // be hidden. An exception is full-block field blocks that don't have
+        // parents, since the block itself defers to the field's focusable element.
+        aria.setState(focusableElement, aria.State.HIDDEN, true);
+        return false;
+      } else {
+        // Top-level full-block fields in the flyout need to have their
+        // roledescription set. This can't happen in the flyout code because
+        // the field hasn't been initialized yet then.
+        // These blocks should also have the rest of the state in this method set.
+        const roleDescription =
+          this.getSourceBlock()?.getAriaRoleDescription() ||
+          Msg['BLOCK_LABEL_VALUE'];
+        aria.setState(
+          focusableElement,
+          aria.State.ROLEDESCRIPTION,
+          roleDescription,
+        );
+      }
+    }
+
+    aria.clearState(focusableElement, aria.State.HIDDEN);
+    // The button role is intended to indicate to users that the field has an
+    // editing mode that can be activated.
+    aria.setRole(focusableElement, aria.Role.BUTTON);
+
+    const label = this.computeAriaLabel(true);
+    aria.setState(focusableElement, aria.State.LABEL, label);
+    return true;
+  }
+
+  /**
    * Subclasses should reimplement this method to construct their Field
    * subclass from a JSON arg object.
    *
@@ -1417,6 +1587,7 @@ export abstract class Field<T = any>
  */
 export interface FieldConfig {
   tooltip?: string;
+  ariaTypeName?: string;
 }
 
 /**

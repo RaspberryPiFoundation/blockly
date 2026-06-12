@@ -34,10 +34,12 @@ collapsed.](/images/fields/dropdown/collapsed.png)
 
 The dropdown constructor takes in a menu generator and an optional
 [validator](#creating-a-dropdown-validator). The menu generator is either an
-array of options (where each option contains a human-readable part and a
-language-neutral string) or a function that generates an array of options. The
-human-readable part of each option can be a string, an image, or an HTML element
-and the array can contain a mixture of options of different types.
+array of options or a function that generates an array of options. A dropdown 
+can contain a mixture of options of different types. Each option
+contains:
+- A human-readable part which may be a string, image, or HTML element
+- A language-neutral string
+- An optional ARIA label
 
 ### Simple text dropdowns
 
@@ -401,6 +403,25 @@ text should be a valid language-neutral option key.
 
 </TabItem>
 </Tabs>
+
+## Accessibility
+
+A dropdown field's ARIA label is `dropdown: <ARIA value>`.
+
+The ARIA value is computed based on the type of the selected option. 
+- Simple text dropdowns use the human-readable string directly.
+- Image dropdowns use the `ariaLabel` of the selected image or fall back to the
+alt text for the selected image.
+- HTML dropdowns use the computed `aria-label` of the `HTMLElement`. You are
+responsible for making sure that your element either uses appropriate
+[semantic HTML](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/HTML) 
+or sets its [ARIA role and properties](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Guides/Techniques) appropriately.
+- Providing an ARIA value in the option definition overrides the automatic 
+label computation. 
+
+A dropdown field’s on-block display has the ARIA role `button`. Activating the
+field opens a dropdown menu with the role `listbox`. If you use an HTML dropdown
+you are responsible for ensuring that the contents are accessible.
 
 ## Customization
 

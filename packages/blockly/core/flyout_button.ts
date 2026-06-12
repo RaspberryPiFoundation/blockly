@@ -13,11 +13,13 @@
 
 import * as browserEvents from './browser_events.js';
 import * as Css from './css.js';
+import * as hints from './hints.js';
 import type {IBoundedElement} from './interfaces/i_bounded_element.js';
 import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
 import type {IRenderedElement} from './interfaces/i_rendered_element.js';
-import {idGenerator} from './utils.js';
+import {Msg} from './msg.js';
+import {aria, idGenerator} from './utils.js';
 import {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
 import * as parsing from './utils/parsing.js';
@@ -134,6 +136,7 @@ export class FlyoutButton
         },
         this.svgGroup!,
       );
+      aria.setRole(shadow, aria.Role.PRESENTATION);
     }
     // Background rectangle.
     const rect = dom.createSvgElement(
@@ -147,6 +150,7 @@ export class FlyoutButton
       },
       this.svgGroup!,
     );
+    aria.setRole(rect, aria.Role.PRESENTATION);
 
     const svgText = dom.createSvgElement(
       Svg.TEXT,
@@ -170,6 +174,13 @@ export class FlyoutButton
         .getThemeManager()
         .subscribe(this.svgText, 'flyoutForegroundColour', 'fill');
     }
+    aria.setRole(svgText, aria.Role.PRESENTATION);
+
+    // We add the word "heading" or "button" to the label so that they give appropriate hints
+    // we can't use the corresponding roles because that overwrites the context of it being a list item.
+    const ariaLabel = `${text}, ${this.isFlyoutLabel ? Msg['ARIA_LABEL_HEADING'] : Msg['ARIA_LABEL_BUTTON']}`;
+    aria.setState(this.getFocusableElement(), aria.State.LABEL, ariaLabel);
+    aria.setRole(this.getFocusableElement(), aria.Role.LISTITEM);
 
     const fontSize = style.getComputedStyle(svgText, 'fontSize');
     const fontWeight = style.getComputedStyle(svgText, 'fontWeight');
@@ -413,6 +424,30 @@ export class FlyoutButton
   /** See IFocusableNode.canBeFocused. */
   canBeFocused(): boolean {
     return true;
+  }
+
+  /**
+   * Returns the ID of this FlyoutButton.
+   */
+  getId() {
+    return this.id;
+  }
+
+  /**
+   * Handles the user acting on this button via keyboard navigation.
+   * Invokes the click handler callback for buttons. For labels, which are not
+   * interactive, shows a toast directing the user to navigate using the arrow
+   * keys or the next-heading shortcut.
+   */
+  performAction(): void {
+    if (this.isFlyoutLabel) {
+      hints.showFlyoutLabelActionHint(this.targetWorkspace);
+      return;
+    }
+    const callback = this.targetWorkspace.getButtonCallback(this.callbackKey);
+    if (callback) {
+      callback(this);
+    }
   }
 }
 

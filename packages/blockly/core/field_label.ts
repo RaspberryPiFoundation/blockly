@@ -14,6 +14,7 @@
 
 import {Field, FieldConfig} from './field.js';
 import * as fieldRegistry from './field_registry.js';
+import {aria} from './utils.js';
 import * as dom from './utils/dom.js';
 import * as parsing from './utils/parsing.js';
 
@@ -76,7 +77,44 @@ export class FieldLabel extends Field<string> {
     }
     if (this.fieldGroup_) {
       dom.addClass(this.fieldGroup_, 'blocklyLabelField');
+      aria.setState(this.fieldGroup_, aria.State.HIDDEN, true);
     }
+  }
+
+  /**
+   * Computes a descriptive ARIA label to represent this field with configurable
+   * verbosity.
+   *
+   * A 'verbose' label includes type information, if available, whereas a
+   * non-verbose label only contains the field's value.
+   *
+   * Note that this will always return the latest representation of the field's
+   * label which may differ from any previously set ARIA label for the field
+   * itself. Implementations are largely responsible for ensuring that the
+   * field's ARIA label is set correctly at relevant moments in the field's
+   * lifecycle (such as when its value changes).
+   *
+   * Finally, it is never guaranteed that implementations use the label returned
+   * by this method for their actual ARIA label. Some implementations may rely
+   * on other contexts to convey information like the field's value. Example:
+   * checkboxes represent their checked/non-checked status (i.e. value) through
+   * a separate ARIA property.
+   *
+   * Unlike other built-in fields, FieldLabel does return an empty string when its
+   * value is empty. This is because empty labels are sometimes used for layout
+   * purposes.
+   *
+   * @param includeTypeInfo Whether to include the field's type information in
+   *     the returned label, if available.
+   */
+  override computeAriaLabel(includeTypeInfo: boolean = true): string {
+    const ariaTypeName = includeTypeInfo ? this.getAriaTypeName() : null;
+    const ariaValue = this.getAriaValue() ?? '';
+
+    if (ariaTypeName) {
+      return `${ariaTypeName}: ${ariaValue}`;
+    }
+    return ariaValue;
   }
 
   /**

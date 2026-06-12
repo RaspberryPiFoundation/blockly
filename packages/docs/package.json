@@ -19,23 +19,25 @@
     "lint:fix": "eslint 'docs/**/*.mdx' --fix"
   },
   "dependencies": {
-    "@docusaurus/core": "3.9.2",
-    "@docusaurus/preset-classic": "3.9.2",
-    "@mdx-js/react": "^3.0.1",
+    "@docusaurus/core": "3.10.1",
+    "@docusaurus/plugin-client-redirects": "3.10.1",
+    "@docusaurus/preset-classic": "3.10.1",
+    "@mdx-js/react": "^3.1.1",
     "clsx": "^2.1.1",
-    "js-yaml": "^4.1.0",
-    "prism-react-renderer": "^2.3.1",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "js-yaml": "^4.1.1",
+    "prism-react-renderer": "^2.4.1",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
     "remark-directive": "^4.0.0"
   },
   "devDependencies": {
     "@docsearch/core": "^4.5.2",
-    "@docusaurus/module-type-aliases": "3.9.2",
-    "@docusaurus/types": "3.9.2",
-    "eslint": "9.36.0",
+    "@docusaurus/faster": "^3.10.1",
+    "@docusaurus/module-type-aliases": "^3.10.1",
+    "@docusaurus/types": "^3.10.1",
+    "eslint": "10.3.0",
     "eslint-plugin-mdx": "^3.7.0",
-    "prettier": "3.6.2"
+    "prettier": "3.8.3"
   },
   "browserslist": {
     "production": [

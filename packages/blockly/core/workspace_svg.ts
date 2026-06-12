@@ -45,6 +45,7 @@ import type {FlyoutButton} from './flyout_button.js';
 import {getFocusManager} from './focus_manager.js';
 import {Gesture} from './gesture.js';
 import {Grid} from './grid.js';
+import * as hints from './hints.js';
 import {MutatorIcon} from './icons/mutator_icon.js';
 import {isAutoHideable} from './interfaces/i_autohideable.js';
 import type {IBoundedElement} from './interfaces/i_bounded_element.js';
@@ -59,18 +60,17 @@ import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
 import {hasBubble} from './interfaces/i_has_bubble.js';
 import type {IMetricsManager} from './interfaces/i_metrics_manager.js';
 import type {IToolbox} from './interfaces/i_toolbox.js';
-import type {LineCursor} from './keyboard_nav/line_cursor.js';
-import type {Marker} from './keyboard_nav/marker.js';
+import {KeyboardMover} from './keyboard_nav/keyboard_mover.js';
+import {Navigator} from './keyboard_nav/navigators/navigator.js';
 import {LayerManager} from './layer_manager.js';
-import {MarkerManager} from './marker_manager.js';
 import {Msg} from './msg.js';
-import {Navigator} from './navigator.js';
 import {Options} from './options.js';
 import * as Procedures from './procedures.js';
 import * as registry from './registry.js';
 import * as blockRendering from './renderers/common/block_rendering.js';
 import type {Renderer} from './renderers/common/renderer.js';
 import type {ScrollbarPair} from './scrollbar_pair.js';
+import {names as ShortcutNames} from './shortcut_items.js';
 import type {Theme} from './theme.js';
 import {Classic} from './theme/classic.js';
 import {ThemeManager} from './theme_manager.js';
@@ -83,6 +83,7 @@ import * as dom from './utils/dom.js';
 import * as drag from './utils/drag.js';
 import type {Metrics} from './utils/metrics.js';
 import {Rect} from './utils/rect.js';
+import {getShortcutKeysShort} from './utils/shortcut_formatting.js';
 import {Size} from './utils/size.js';
 import {Svg} from './utils/svg.js';
 import * as svgMath from './utils/svg_math.js';
@@ -295,7 +296,6 @@ export class WorkspaceSvg
   private readonly highlightedBlocks: BlockSvg[] = [];
   private audioManager: WorkspaceAudio;
   private grid: Grid | null;
-  private markerManager: MarkerManager;
 
   /**
    * Map from function names to callbacks, for deciding what to do when a
@@ -317,12 +317,6 @@ export class WorkspaceSvg
   /** Cached parent SVG. */
   private cachedParentSvg: SVGElement | null = null;
 
-  /** True if keyboard accessibility mode is on, false otherwise. */
-  keyboardAccessibilityMode = false;
-
-  /** True iff a keyboard-initiated move ("drag") is in progress. */
-  keyboardMoveInProgress = false; // TODO(#8960): Delete this.
-
   /** The list of top-level bounded elements on the workspace. */
   private topBoundedElements: IBoundedElement[] = [];
 
@@ -342,10 +336,26 @@ export class WorkspaceSvg
   zoomControls_: ZoomControls | null = null;
 
   /**
+   * Focus ring in the workspace.
+   */
+  private workspaceFocusRing: Element | null = null;
+
+  /**
+   * Selection ring inside the workspace.
+   */
+  private workspaceSelectionRing: Element | null = null;
+
+  /**
    * Navigator that handles moving focus between items in this workspace in
    * response to keyboard navigation commands.
    */
   private navigator = new Navigator();
+
+  /**
+   * Whether this workspace has ever been focused. Used to announce usage hints
+   * to screenreaders on initial focus only.
+   */
+  private static everFocused = false;
 
   /**
    * @param options Dictionary of options.
@@ -377,36 +387,31 @@ export class WorkspaceSvg
     /**
      * Object in charge of loading, storing, and playing audio for a workspace.
      */
-    this.audioManager = new WorkspaceAudio(
-      options.parentWorkspace as WorkspaceSvg,
-    );
+    this.audioManager = new WorkspaceAudio(options.parentWorkspace ?? this);
 
     /** This workspace's grid object or null. */
     this.grid = this.options.gridPattern
       ? new Grid(this.options.gridPattern, options.gridOptions)
       : null;
 
-    /** Manager in charge of markers and cursors. */
-    this.markerManager = new MarkerManager(this);
-
-    if (Variables && Variables.internalFlyoutCategory) {
+    if (Variables && Variables.flyoutCategory) {
       this.registerToolboxCategoryCallback(
         Variables.CATEGORY_NAME,
-        Variables.internalFlyoutCategory,
+        Variables.flyoutCategory,
       );
     }
 
-    if (VariablesDynamic && VariablesDynamic.internalFlyoutCategory) {
+    if (VariablesDynamic && VariablesDynamic.flyoutCategory) {
       this.registerToolboxCategoryCallback(
         VariablesDynamic.CATEGORY_NAME,
-        VariablesDynamic.internalFlyoutCategory,
+        VariablesDynamic.flyoutCategory,
       );
     }
 
-    if (Procedures && Procedures.internalFlyoutCategory) {
+    if (Procedures && Procedures.flyoutCategory) {
       this.registerToolboxCategoryCallback(
         Procedures.CATEGORY_NAME,
-        Procedures.internalFlyoutCategory,
+        Procedures.flyoutCategory,
       );
       this.addChangeListener(Procedures.mutatorOpenListener);
     }
@@ -432,15 +437,6 @@ export class WorkspaceSvg
      * Used to compute svg metrics.
      */
     this.cachedParentSvgSize = new Size(0, 0);
-  }
-
-  /**
-   * Get the marker manager for this workspace.
-   *
-   * @returns The marker manager.
-   */
-  getMarkerManager(): MarkerManager {
-    return this.markerManager;
   }
 
   /**
@@ -470,27 +466,6 @@ export class WorkspaceSvg
    */
   getComponentManager(): ComponentManager {
     return this.componentManager;
-  }
-
-  /**
-   * Get the marker with the given ID.
-   *
-   * @param id The ID of the marker.
-   * @returns The marker with the given ID or null if no marker with the given
-   *     ID exists.
-   * @internal
-   */
-  getMarker(id: string): Marker | null {
-    return this.markerManager.getMarker(id);
-  }
-
-  /**
-   * The cursor for this workspace.
-   *
-   * @returns The cursor for the workspace.
-   */
-  getCursor(): LineCursor {
-    return this.markerManager.getCursor();
   }
 
   /**
@@ -740,6 +715,64 @@ export class WorkspaceSvg
   }
 
   /**
+   * Sets Aria labels, roles, etc. for the workspace depending on the type of workspace it is.
+   */
+  setInitialAriaContext() {
+    if (!this.svgGroup_) {
+      throw new Error(
+        'Must initialize svgGroup_ by calling `createDom` before calling setAriaContext',
+      );
+    }
+    if (this.isFlyout) {
+      // Flyouts have their aria attributes set when the flyout is shown.
+      return;
+    }
+    aria.setRole(this.svgGroup_, aria.Role.REGION);
+    if (this.isMutator) {
+      aria.setState(
+        this.svgGroup_,
+        aria.State.LABEL,
+        Msg['WORKSPACE_LABEL_MUTATOR_WORKSPACE'],
+      );
+    } else {
+      // Main workspaces get labelled with how many stacks of blocks they contain
+      // This will be updated on focus, but set it here in case there are blocks in the initial state of the workspace
+      this.updateAriaLabel();
+    }
+  }
+
+  /**
+   * Updates the label on the workspace to reflect the number of top-level stacks in the workspace.
+   */
+  private updateAriaLabel() {
+    if (userAgent.APPLE) {
+      // VoiceOver is reading this label inappropriately, so don't show the
+      // stack count because it might be inaccurate.
+      // https://github.com/RaspberryPiFoundation/blockly/issues/9885
+      aria.setState(
+        this.svgGroup_,
+        aria.State.LABEL,
+        Msg['WORKSPACE_LABEL_PLAIN'],
+      );
+      return;
+    }
+    const numStacks = this.getTopBlocks(false).length;
+    if (numStacks == 1) {
+      aria.setState(
+        this.svgGroup_,
+        aria.State.LABEL,
+        Msg['WORKSPACE_LABEL_1_STACK'],
+      );
+    } else {
+      aria.setState(
+        this.svgGroup_,
+        aria.State.LABEL,
+        Msg['WORKSPACE_LABEL_MANY_STACKS'].replace('%1', String(numStacks)),
+      );
+    }
+  }
+
+  /**
    * Create the workspace DOM elements.
    *
    * @param opt_backgroundClass Either 'blocklyMainBackground' or
@@ -763,13 +796,6 @@ export class WorkspaceSvg
       'class': 'blocklyWorkspace',
       'id': this.id,
     });
-    if (injectionDiv) {
-      aria.setState(
-        this.svgGroup_,
-        aria.State.LABEL,
-        Msg['WORKSPACE_ARIA_LABEL'],
-      );
-    }
 
     // Note that a <g> alone does not receive mouse events--it must have a
     // valid target inside it.  If no background class is specified, as in the
@@ -792,10 +818,29 @@ export class WorkspaceSvg
       }
     }
 
+    this.workspaceSelectionRing = dom.createSvgElement(
+      Svg.RECT,
+      {
+        fill: 'none',
+        class: 'blocklyWorkspaceSelectionRing',
+      },
+      this.svgGroup_,
+    );
+    this.workspaceFocusRing = dom.createSvgElement(
+      Svg.RECT,
+      {
+        fill: 'none',
+        class: 'blocklyWorkspaceFocusRing',
+      },
+      this.svgGroup_,
+    );
+
     this.layerManager = new LayerManager(this);
     // Assign the canvases for backwards compatibility.
     this.svgBlockCanvas_ = this.layerManager.getBlockLayer();
     this.svgBubbleCanvas_ = this.layerManager.getBubbleLayer();
+
+    this.setInitialAriaContext();
 
     if (!this.isFlyout) {
       browserEvents.conditionalBind(
@@ -836,12 +881,6 @@ export class WorkspaceSvg
       this.grid.update(this.scale);
     }
     this.recordDragTargets();
-    const CursorClass = registry.getClassFromOptions(
-      registry.Type.CURSOR,
-      this.options,
-    );
-
-    if (CursorClass) this.markerManager.setCursor(new CursorClass(this));
 
     const isParentWorkspace = this.options.parentWorkspace === null;
     this.renderer.createDom(
@@ -898,7 +937,6 @@ export class WorkspaceSvg
     }
 
     this.renderer.dispose();
-    this.markerManager.dispose();
 
     super.dispose();
 
@@ -934,6 +972,9 @@ export class WorkspaceSvg
       document.body.removeEventListener('wheel', this.dummyWheelListener);
       this.dummyWheelListener = null;
     }
+
+    this.workspaceFocusRing?.remove();
+    this.workspaceSelectionRing?.remove();
 
     if (getFocusManager().isRegistered(this)) {
       getFocusManager().unregisterTree(this);
@@ -1114,6 +1155,28 @@ export class WorkspaceSvg
       this.scrollbar.resize();
     }
     this.updateScreenCalculations();
+
+    if (!this.workspaceFocusRing || !this.workspaceSelectionRing) return;
+    this.resizeWorkspaceRing(this.workspaceSelectionRing, 5);
+    this.resizeWorkspaceRing(this.workspaceFocusRing, 0);
+  }
+
+  /**
+   * Sizes the given focus/selection ring inside the bounds of the workspace.
+   *
+   * @param ring The interior workspace ring indicator to resize.
+   * @param inset How many pixels in from the bounds of the workspace the ring
+   *     should be positioned.
+   */
+  private resizeWorkspaceRing(ring: Element, inset: number) {
+    const metrics = this.getMetrics();
+    ring.setAttribute('x', `${metrics.absoluteLeft + inset}`);
+    ring.setAttribute('y', `${metrics.absoluteTop + inset}`);
+    ring.setAttribute('width', `${Math.max(0, metrics.viewWidth - inset * 2)}`);
+    ring.setAttribute(
+      'height',
+      `${Math.max(0, metrics.svgHeight - inset * 2)}`,
+    );
   }
 
   /**
@@ -1427,13 +1490,17 @@ export class WorkspaceSvg
   /**
    * Returns the drag target the pointer event is over.
    *
-   * @param e Pointer move event.
+   * @param e Pointer move event or a workspace coordinate.
    * @returns Null if not over a drag target, or the drag target the event is
    *     over.
    */
-  getDragTarget(e: PointerEvent): IDragTarget | null {
+  getDragTarget(e: PointerEvent | Coordinate): IDragTarget | null {
+    const coordinate =
+      e instanceof Coordinate
+        ? svgMath.wsToScreenCoordinates(this, e)
+        : new Coordinate(e.clientX, e.clientY);
     for (let i = 0, targetArea; (targetArea = this.dragTargetAreas[i]); i++) {
-      if (targetArea.clientRect.contains(e.clientX, e.clientY)) {
+      if (targetArea.clientRect.contains(coordinate.x, coordinate.y)) {
         return targetArea.component;
       }
     }
@@ -1473,27 +1540,6 @@ export class WorkspaceSvg
   }
 
   /**
-   * Indicate whether a keyboard move is in progress or not.
-   *
-   * Should be called with true when a keyboard move of an IDraggable
-   * is starts, and false when it finishes or is aborted.
-   *
-   * N.B.: This method is experimental and internal-only.  It is
-   * intended only to called only from the keyboard navigation plugin.
-   * Its signature and behaviour may be modified, or the method
-   * removed, at an time without notice and without being treated
-   * as a breaking change.
-   *
-   * TODO(#8960): Delete this.
-   *
-   * @internal
-   * @param inProgress Is a keyboard-initated move in progress?
-   */
-  setKeyboardMoveInProgress(inProgress: boolean) {
-    this.keyboardMoveInProgress = inProgress;
-  }
-
-  /**
    * Returns true iff the user is currently engaged in a drag gesture,
    * or if a keyboard-initated move is in progress.
    *
@@ -1509,9 +1555,7 @@ export class WorkspaceSvg
    */
   isDragging(): boolean {
     return (
-      // TODO(#8960): Query Mover.isMoving to see if move is in
-      // progress rather than relying on a status flag.
-      this.keyboardMoveInProgress ||
+      KeyboardMover.mover.isMoving() ||
       (this.currentGesture_ !== null && this.currentGesture_.isDragging())
     );
   }
@@ -1757,8 +1801,8 @@ export class WorkspaceSvg
     if (e instanceof PointerEvent) {
       location = new Coordinate(e.clientX, e.clientY);
     } else {
-      // TODO: Get the location based on the workspace cursor location
-      location = svgMath.wsToScreenCoordinates(this, new Coordinate(5, 5));
+      const x = this.RTL ? this.getWidth() - 5 : 5;
+      location = svgMath.wsToScreenCoordinates(this, new Coordinate(x, 5));
     }
 
     ContextMenu.show(e, menuOptions, this.RTL, this, location);
@@ -2468,10 +2512,9 @@ export class WorkspaceSvg
    * @internal
    */
   getGesture(e?: PointerEvent): Gesture | null {
-    // TODO(#8960): Query Mover.isMoving to see if move is in progress
-    // rather than relying on .keyboardMoveInProgress status flag.
-    if (this.keyboardMoveInProgress) {
-      // Normally these would be called from Gesture.doStart.
+    // Ignore and cancel events that would start a gesture during a
+    // keyboard-driven move.
+    if (KeyboardMover.mover.isMoving()) {
       e?.preventDefault();
       e?.stopPropagation();
       return null;
@@ -2710,11 +2753,24 @@ export class WorkspaceSvg
 
   /** See IFocusableNode.getFocusableTree. */
   getFocusableTree(): IFocusableTree {
-    return (this.isMutator && this.options.parentWorkspace) || this;
+    return this;
   }
 
   /** See IFocusableNode.onNodeFocus. */
-  onNodeFocus(): void {}
+  onNodeFocus(): void {
+    if (!this.isFlyout && !this.isMutator) {
+      this.updateAriaLabel();
+    }
+    if (!WorkspaceSvg.everFocused && !this.options.parentWorkspace) {
+      aria.announceDynamicAriaState(
+        Msg['SCREENREADER_HINT'].replace(
+          '%1',
+          getShortcutKeysShort(ShortcutNames.TOGGLE_SCREENREADER),
+        ),
+      );
+      WorkspaceSvg.everFocused = true;
+    }
+  }
 
   /** See IFocusableNode.onNodeBlur. */
   onNodeBlur(): void {}
@@ -2733,22 +2789,29 @@ export class WorkspaceSvg
   getRestoredFocusableNode(
     previousNode: IFocusableNode | null,
   ): IFocusableNode | null {
-    if (!previousNode) {
-      const flyout = this.targetWorkspace?.getFlyout();
-      if (this.isFlyout && flyout) {
-        // Return the first focusable item of the flyout.
-        return (
-          flyout
-            .getContents()
-            .find((flyoutItem) => {
-              const element = flyoutItem.getElement();
-              return isFocusableNode(element) && element.canBeFocused();
-            })
-            ?.getElement() ?? null
-        );
-      }
+    if (previousNode) {
+      return previousNode;
+    }
+    const flyout = this.targetWorkspace?.getFlyout();
+    if (this.isFlyout && flyout) {
+      // Return the first focusable item of the flyout.
+      return (
+        flyout
+          .getContents()
+          .find((flyoutItem) => {
+            const element = flyoutItem.getElement();
+            return isFocusableNode(element) && element.canBeFocused();
+          })
+          ?.getElement() ?? null
+      );
+    }
+    if (this.isMutator) {
+      // Return the first block in the mutator workspace, if it exists.
       return this.getTopBlocks(true)[0] ?? null;
-    } else return null;
+    }
+    // This workspace has never been focused before, so return null to use
+    // the default focusing behavior (focus the workspace itself).
+    return null;
   }
 
   /** See IFocusableTree.getNestedTrees. */
@@ -2898,6 +2961,13 @@ export class WorkspaceSvg
       }
     }
 
+    if (this.trashcan?.getGloballyUniqueId() === id) {
+      return this.trashcan;
+    }
+
+    const zoomControl = this.zoomControls_?.getControlWithId(id);
+    if (zoomControl) return zoomControl;
+
     return null;
   }
 
@@ -2919,6 +2989,14 @@ export class WorkspaceSvg
       if (toolbox && nextTree === toolbox) return;
       if (isAutoHideable(toolbox)) toolbox.autoHide(false);
     }
+  }
+
+  /**
+   * Handles the user acting on this workspace via keyboard navigation by
+   * prompting them to use the arrow keys (instead of Enter) to navigate.
+   */
+  performAction() {
+    hints.showWorkspaceNavigationHint(this);
   }
 
   /**

@@ -13,7 +13,7 @@ import {
 suite('InsertionMarkers', function () {
   setup(function () {
     sharedTestSetup.call(this);
-    this.workspace = Blockly.inject('blocklyDiv', {});
+    this.workspace = Blockly.inject('blocklyDiv', {renderer: 'geras'});
     Blockly.defineBlocksWithJsonArray([
       {
         'type': 'stack_block',

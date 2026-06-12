@@ -177,5 +177,12 @@ export class ToolboxItem implements IToolboxItem {
   canBeFocused(): boolean {
     return true;
   }
+
+  /**
+   * Returns the toolbox this toolbox item belongs to.
+   */
+  getParentToolbox(): IToolbox {
+    return this.parentToolbox_;
+  }
 }
 // nop by default

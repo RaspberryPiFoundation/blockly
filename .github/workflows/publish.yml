@@ -154,6 +154,9 @@ jobs:
           git add packages/blockly/package.json package-lock.json
           git commit -m "release: v${{ needs.version.outputs.version }}"
           git push
+          TAG="blockly-v${{ needs.version.outputs.version }}"
+          git tag "$TAG"
+          git push origin "refs/tags/$TAG"
 
       - name: Setup Node.js
         uses: actions/setup-node@v5

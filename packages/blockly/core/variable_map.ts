@@ -23,9 +23,8 @@ import type {IVariableMap} from './interfaces/i_variable_map.js';
 import {IVariableModel, IVariableState} from './interfaces/i_variable_model.js';
 import {Names} from './names.js';
 import * as registry from './registry.js';
-import * as deprecation from './utils/deprecation.js';
 import * as idGenerator from './utils/idgenerator.js';
-import {deleteVariable, getVariableUsesById} from './variables.js';
+import {getVariableUsesById} from './variables.js';
 import type {Workspace} from './workspace.js';
 
 /**
@@ -33,9 +32,9 @@ import type {Workspace} from './workspace.js';
  * variable types as keys and lists of variables as values.  The list of
  * variables are the type indicated by the key.
  */
-export class VariableMap
-  implements IVariableMap<IVariableModel<IVariableState>>
-{
+export class VariableMap implements IVariableMap<
+  IVariableModel<IVariableState>
+> {
   /**
    * A map from variable type to map of IDs to variables. The maps contain
    * all of the named variables in the workspace, including variables that are
@@ -133,29 +132,6 @@ export class VariableMap
       ),
     );
     return variable;
-  }
-
-  /**
-   * Rename a variable by updating its name in the variable map. Identify the
-   * variable to rename with the given ID.
-   *
-   * @deprecated v12: use VariableMap.renameVariable.
-   * @param id ID of the variable to rename.
-   * @param newName New variable name.
-   */
-  renameVariableById(id: string, newName: string) {
-    deprecation.warn(
-      'VariableMap.renameVariableById',
-      'v12',
-      'v13',
-      'VariableMap.renameVariable',
-    );
-    const variable = this.getVariableById(id);
-    if (!variable) {
-      throw Error("Tried to rename a variable that didn't exist. ID: " + id);
-    }
-
-    this.renameVariable(variable, newName);
   }
 
   /**
@@ -335,26 +311,6 @@ export class VariableMap
     }
   }
 
-  /**
-   * Delete a variables by the passed in ID and all of its uses from this
-   * workspace. May prompt the user for confirmation.
-   *
-   * @deprecated v12: use Blockly.Variables.deleteVariable.
-   * @param id ID of variable to delete.
-   */
-  deleteVariableById(id: string) {
-    deprecation.warn(
-      'VariableMap.deleteVariableById',
-      'v12',
-      'v13',
-      'Blockly.Variables.deleteVariable',
-    );
-    const variable = this.getVariableById(id);
-    if (variable) {
-      deleteVariable(this.workspace, variable);
-    }
-  }
-
   /* End functions for variable deletion. */
   /**
    * Find the variable by the given name and type and return it.  Return null if
@@ -431,45 +387,6 @@ export class VariableMap
       allVariables = allVariables.concat(...variables.values());
     }
     return allVariables;
-  }
-
-  /**
-   * Returns all of the variable names of all types.
-   *
-   * @deprecated v12: use Blockly.Variables.getAllVariables.
-   * @returns All of the variable names of all types.
-   */
-  getAllVariableNames(): string[] {
-    deprecation.warn(
-      'VariableMap.getAllVariableNames',
-      'v12',
-      'v13',
-      'Blockly.Variables.getAllVariables',
-    );
-    const names: string[] = [];
-    for (const variables of this.variableMap.values()) {
-      for (const variable of variables.values()) {
-        names.push(variable.getName());
-      }
-    }
-    return names;
-  }
-
-  /**
-   * Find all the uses of a named variable.
-   *
-   * @deprecated v12: use Blockly.Variables.getVariableUsesById.
-   * @param id ID of the variable to find.
-   * @returns Array of block usages.
-   */
-  getVariableUsesById(id: string): Block[] {
-    deprecation.warn(
-      'VariableMap.getVariableUsesById',
-      'v12',
-      'v13',
-      'Blockly.Variables.getVariableUsesById',
-    );
-    return getVariableUsesById(this.workspace, id);
   }
 }
 

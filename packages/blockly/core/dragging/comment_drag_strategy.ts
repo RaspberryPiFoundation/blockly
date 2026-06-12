@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {RenderedWorkspaceComment} from '../comments.js';
-import {CommentMove} from '../events/events_comment_move.js';
+import type {RenderedWorkspaceComment} from '../comments.js';
+import type {CommentMove} from '../events/events_comment_move.js';
 import {EventType} from '../events/type.js';
 import * as eventUtils from '../events/utils.js';
-import {IDragStrategy} from '../interfaces/i_draggable.js';
+import type {IDragStrategy} from '../interfaces/i_draggable.js';
 import * as layers from '../layers.js';
-import {Coordinate} from '../utils.js';
-import {WorkspaceSvg} from '../workspace_svg.js';
+import type {Coordinate} from '../utils.js';
+import type {WorkspaceSvg} from '../workspace_svg.js';
 
 export class CommentDragStrategy implements IDragStrategy {
   private startLoc: Coordinate | null = null;
@@ -30,12 +30,13 @@ export class CommentDragStrategy implements IDragStrategy {
     );
   }
 
-  startDrag(): void {
+  startDrag() {
     this.fireDragStartEvent();
     this.startLoc = this.comment.getRelativeToSurfaceXY();
     this.workspace.setResizesEnabled(false);
     this.workspace.getLayerManager()?.moveToDragLayer(this.comment);
     this.comment.setDragging(true);
+    return this.comment;
   }
 
   drag(newLoc: Coordinate): void {
@@ -49,6 +50,7 @@ export class CommentDragStrategy implements IDragStrategy {
     this.workspace
       .getLayerManager()
       ?.moveOffDragLayer(this.comment, layers.BLOCK);
+    this.workspace.getAudioManager().play('drop');
     this.comment.setDragging(false);
 
     this.comment.snapToGrid();

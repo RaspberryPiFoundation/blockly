@@ -14,9 +14,7 @@
 import type {WorkspaceComment} from '../comments/workspace_comment.js';
 import * as registry from '../registry.js';
 import * as comments from '../serialization/workspace_comments.js';
-import * as utilsXml from '../utils/xml.js';
 import type {Workspace} from '../workspace.js';
-import * as Xml from '../xml.js';
 import {CommentBase, CommentBaseJson} from './events_comment_base.js';
 import {EventType} from './type.js';
 
@@ -25,9 +23,6 @@ import {EventType} from './type.js';
  */
 export class CommentCreate extends CommentBase {
   override type = EventType.COMMENT_CREATE;
-
-  /** The XML representation of the created workspace comment. */
-  xml?: Element | DocumentFragment;
 
   /** The JSON representation of the created workspace comment. */
   json?: comments.State;
@@ -43,7 +38,6 @@ export class CommentCreate extends CommentBase {
       return; // Blank event to be populated by fromJson.
     }
 
-    this.xml = Xml.saveWorkspaceComment(opt_comment);
     this.json = comments.save(opt_comment, {addCoordinates: true});
   }
 
@@ -55,19 +49,12 @@ export class CommentCreate extends CommentBase {
    */
   override toJson(): CommentCreateJson {
     const json = super.toJson() as CommentCreateJson;
-    if (!this.xml) {
-      throw new Error(
-        'The comment XML is undefined. Either pass a comment to ' +
-          'the constructor, or call fromJson',
-      );
-    }
     if (!this.json) {
       throw new Error(
         'The comment JSON is undefined. Either pass a block to ' +
           'the constructor, or call fromJson',
       );
     }
-    json['xml'] = Xml.domToText(this.xml);
     json['json'] = this.json;
     return json;
   }
@@ -91,7 +78,6 @@ export class CommentCreate extends CommentBase {
       workspace,
       event ?? new CommentCreate(),
     ) as CommentCreate;
-    newEvent.xml = utilsXml.textToDom(json['xml']);
     newEvent.json = json['json'];
     return newEvent;
   }
@@ -107,7 +93,6 @@ export class CommentCreate extends CommentBase {
 }
 
 export interface CommentCreateJson extends CommentBaseJson {
-  xml: string;
   json: object;
 }
 

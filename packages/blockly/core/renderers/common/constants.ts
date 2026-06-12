@@ -116,6 +116,8 @@ export function isNotch(shape: Shape): shape is Notch {
   );
 }
 
+const injectionSites = new Map<string, WeakSet<Document | ShadowRoot>>();
+
 /**
  * An object that provides constants for rendering blocks.
  */
@@ -326,9 +328,6 @@ export class ConstantProvider {
    * The <filter> element to use for a debug highlight, or null if not set.
    */
   private debugFilter: SVGElement | null = null;
-
-  /** The <style> element to use for injecting renderer specific CSS. */
-  private cssNode: HTMLStyleElement | null = null;
 
   /**
    * Cursor colour.
@@ -696,7 +695,6 @@ export class ConstantProvider {
     if (this.debugFilter) {
       dom.removeNode(this.debugFilter);
     }
-    this.cssNode = null;
   }
 
   /**
@@ -924,7 +922,6 @@ export class ConstantProvider {
    * Create any DOM elements that this renderer needs (filters, patterns, etc).
    *
    * @param svg The root of the workspace's SVG.
-   * @param tagName The name to use for the CSS style tag.
    * @param selector The CSS selector to use.
    * @param injectionDivIfIsParent The div containing the parent workspace and
    *   all related workspaces and block containers, if this renderer is for the
@@ -934,11 +931,15 @@ export class ConstantProvider {
    */
   createDom(
     svg: SVGElement,
-    tagName: string,
     selector: string,
     injectionDivIfIsParent?: HTMLElement,
   ) {
-    this.injectCSS_(tagName, selector);
+    if (injectionDivIfIsParent) {
+      const root = injectionDivIfIsParent.getRootNode() as
+        | Document
+        | ShadowRoot;
+      this.injectCSS_(root, selector);
+    }
 
     /*
         <defs>
@@ -1121,26 +1122,24 @@ export class ConstantProvider {
   /**
    * Inject renderer specific CSS into the page.
    *
-   * @param tagName The name of the style tag to use.
-   * @param selector The CSS selector to use.
+   * @param root The document root to inject the CSS into.
+   * @param selector The CSS selector to interpolate into the stylesheet.
    */
-  protected injectCSS_(tagName: string, selector: string) {
-    const cssArray = this.getCSS_(selector);
-    const cssNodeId = 'blockly-renderer-style-' + tagName;
-    this.cssNode = document.getElementById(cssNodeId) as HTMLStyleElement;
-    const text = cssArray.join('\n');
-    if (this.cssNode) {
-      // Already injected, update if the theme changed.
-      this.cssNode.firstChild!.textContent = text;
-      return;
-    }
-    // Inject CSS tag at start of head.
-    const cssNode = document.createElement('style');
-    cssNode.id = cssNodeId;
-    const cssTextNode = document.createTextNode(text);
-    cssNode.appendChild(cssTextNode);
-    document.head.insertBefore(cssNode, document.head.firstChild);
-    this.cssNode = cssNode;
+  protected injectCSS_(root: Document | ShadowRoot, selector: string) {
+    if (typeof window === 'undefined') return;
+    if (injectionSites.get(selector)?.has(root)) return;
+
+    const styleEl = document.createElement('style');
+    styleEl.className = 'blockly-renderer-style';
+    styleEl.textContent = this.getCSS_(selector).join('\n');
+    // See css.ts inject() for the rationale on prepending and shadow root
+    // handling.
+    (root instanceof ShadowRoot ? root : document.head).prepend(styleEl);
+
+    const sitesForSelector =
+      injectionSites.get(selector) ?? new WeakSet<Document | ShadowRoot>();
+    sitesForSelector.add(root);
+    injectionSites.set(selector, sitesForSelector);
   }
 
   /**
@@ -1152,6 +1151,9 @@ export class ConstantProvider {
   protected getCSS_(selector: string): string[] {
     // prettier-ignore
     return [
+      `${selector}.injectionDiv {`,
+        `--blockly-active-node-color: #fc3;`,
+      `}`,
       // Text.
       `${selector} .blocklyText, `,
       `${selector} .blocklyFlyoutLabelText {`,

@@ -23,7 +23,7 @@ To create a new field, do the following:
 1.  [Handle disposal of event listeners](#disposing) (UI disposal is handled for
     you).
 1.  [Implement value handling](#value-handling).
-1.  [Add a text-representation of your field's value, for accessibility](#text).
+1.  [Add a text-representation of your field's value](#text).
 1.  Add additional functionality such as:
     - [An editor](#creating-an-editor).
     - [On-block display updates](#updating-the-on-block-display).
@@ -166,6 +166,25 @@ The requirements of a field's on-block display are:
 - All DOM elements must be children of the field's `fieldGroup_`. The field
   group is created automatically.
 - All DOM elements must stay inside the reported dimensions of the field.
+- The root DOM element has an appropriate 
+[ARIA role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Guides/Techniques).
+
+
+### Accessibility
+
+You are responsible for ensuring that your custom fields are WCAG compliant and
+correctly implement `IFocusableNode`. That includes having an appropriate ARIA
+role for your on-block display and making your field editor WCAG compliant.
+
+In general, the on-block display for a clickable field should have the ARIA
+role `button` to indicate that an action will take place when it is clicked or
+activated.
+
+When the on-block display is focused, its focusable DOM element will have the 
+`blocklyActiveFocus` or `blocklyPassiveFocus` CSS class added. Blockly defaults
+to showing a yellow outline around the focused field. You may override this
+behaviour as long as you show [visible focus](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html).
+
 
 See the
 [Rendering](/guides/create-custom-blocks/fields/customizing-fields/creating#updating-the-on-block-display)
@@ -180,11 +199,13 @@ field's degree symbol) you can append the symbol element (usually contained in a
 
 ### Input events
 
-By default fields register tooltip events, and mousedown events (to be used for
-showing
-[editors](/guides/create-custom-blocks/fields/customizing-fields/creating#creating-an-editor)).
-If you want to listen for other kinds of events (e.g. if you want to handle
-dragging on a field) you should override the field's `bindEvents_` function.
+By default fields register tooltip events, mousedown events, and some keyboard
+events. Users can open the field 
+[editor](/guides/create-custom-blocks/fields/customizing-fields/creating#creating-an-editor)
+by tapping or clicking on the field, or by navigating to the field with the
+keyboard and pressing `Enter`. If you want to listen for other kinds of events 
+(e.g. if you want to handle dragging on a field) you should override the field's
+`bindEvents_` function.
 
 ```js
 bindEvents_() {
@@ -424,12 +445,36 @@ getText() {
 }
 ```
 
+### ARIA value
+
+All fields must have an ARIA type and value, which are used to construct the
+[ARIA label](/guides/create-custom-blocks/fields/anatomy-of-a-field#aria-label). 
+The ARIA label is generally of the form `<ARIA type>: <ARIA value>`. When
+extending a built-in field you will inherit its ARIA type and value logic.
+You can override the inherited ARIA logic by overriding any of `getAriaTypeName`,
+`getAriaValue`, and `computeAriaLabel`.
+
+`getAriaValue` must return a human-readable, screen reader–appropriate
+representation of the field’s current value. By default, it returns the result 
+of `getText`, which is not guaranteed to be informative for assistive 
+technologies. You must override `getAriaValue` when `getText` might not produce
+a meaningful spoken representation (for example, when possible values include 
+symbols, abbreviations, or non-textual representations such as icons or colors).
+If `getAriaValue` would return an empty or non-informative value, it must
+instead return a localized string indicating that the value is empty.
+
 ## Creating an editor
 
-If you define the `showEditor_` function, Blockly will automatically listen for
-clicks and call `showEditor_` at the appropriate time. You can display any HTML
-in your editor by wrapping it one of two special `div`s, called the
-`DropDownDiv` and `WidgetDiv`, which float above the rest of Blockly's UI.
+If you define the `showEditor_` function, Blockly will automatically call
+`showEditor_` and move focus into the editor when the field is activated.
+You can display any HTML in your editor by wrapping it one of two special 
+`div`s, called the `DropDownDiv` and `WidgetDiv`, which float above the rest of
+Blockly's UI. 
+
+You are responsible for the accessibility of your field editor, including
+setting [ARIA roles and properties](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Guides/Techniques).
+When possible you should use [semantic HTML](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/HTML)
+inside the `WidgetDiv` or `DropdownDiv`. 
 
 :::info
 Updates to an editor's display should be handled during

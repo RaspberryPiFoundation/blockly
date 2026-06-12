@@ -4,15 +4,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {Coordinate} from '../utils/coordinate';
+import type {Coordinate} from '../utils/coordinate.js';
+import type {IBoundedElement} from './i_bounded_element.js';
+import type {ISelectable} from './i_selectable.js';
+
+export enum DragDisposition {
+  COMMIT = 1,
+  DELETE = 2,
+  REVERT = 3,
+}
 
 /**
  * Represents an object that can be dragged.
  */
-export interface IDraggable extends IDragStrategy {
+export interface IDraggable
+  extends IDragStrategy, IBoundedElement, ISelectable {
   /**
-   * Returns the current location of the draggable in workspace
-   * coordinates.
+   * Returns the current location of the draggable in workspace coordinates.
    *
    * @returns Coordinate of current location on workspace.
    */
@@ -27,11 +35,11 @@ export interface IDragStrategy {
    * Handles any drag startup (e.g moving elements to the front of the
    * workspace).
    *
-   * @param e PointerEvent that started the drag; can be used to
-   *     check modifier keys, etc.  May be missing when dragging is
-   *     triggered programatically rather than by user.
+   * @param e Event that started the drag; can be used to check modifier keys,
+   *     etc. May be missing when dragging is triggered programmatically rather
+   *     than by user.
    */
-  startDrag(e?: PointerEvent): void;
+  startDrag(e?: PointerEvent | KeyboardEvent): IDraggable;
 
   /**
    * Handles moving elements to the new location, and updating any
@@ -39,21 +47,23 @@ export interface IDragStrategy {
    *
    * @param newLoc Workspace coordinate to which the draggable has
    *     been dragged.
-   * @param e PointerEvent that continued the drag.  Can be
-   *     used to check modifier keys, etc.
+   * @param e Event that continued the drag.  Can be used to check modifier
+   *     keys, etc.
    */
-  drag(newLoc: Coordinate, e?: PointerEvent): void;
+  drag(newLoc: Coordinate, e?: PointerEvent | KeyboardEvent): void;
 
   /**
-   * Handles any drag cleanup, including e.g. connecting or deleting
-   * blocks.
+   * Handles any drag cleanup, including e.g. connecting or deleting blocks.
    *
    * @param newLoc Workspace coordinate at which the drag finished.
-   *     been dragged.
-   * @param e PointerEvent that finished the drag.  Can be
-   *     used to check modifier keys, etc.
+   * @param e Event that finished the drag. Can be used to check modifier keys,
+   *     etc.
+   * @param disposition The end result of the drag.
    */
-  endDrag(e?: PointerEvent): void;
+  endDrag(
+    e: PointerEvent | KeyboardEvent | undefined,
+    disposition: DragDisposition,
+  ): void;
 
   /** Moves the draggable back to where it was at the start of the drag. */
   revertDrag(): void;

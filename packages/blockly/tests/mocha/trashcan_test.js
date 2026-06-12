@@ -373,4 +373,27 @@ suite('Trashcan', function () {
       this.workspace.options.maxTrashcanContents = Infinity;
     });
   });
+  suite('delete area', function () {
+    test('Keyboard drag - wouldDelete returns false', function () {
+      // Create a deletable block
+      const block = this.workspace.newBlock('test_field_block');
+      block.initSvg();
+      block.render();
+
+      // Stub KeyboardMover.mover.isMoving() to return true
+      const isMovingStub = sinon
+        .stub(Blockly.KeyboardMover.mover, 'isMoving')
+        .returns(true);
+
+      try {
+        const result = this.trashcan.wouldDelete(block);
+        assert.isFalse(
+          result,
+          'wouldDelete should return false during keyboard move',
+        );
+      } finally {
+        isMovingStub.restore();
+      }
+    });
+  });
 });

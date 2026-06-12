@@ -14,6 +14,7 @@ suite('Toasts', function () {
   setup(function () {
     sharedTestSetup.call(this);
     this.workspace = Blockly.inject('blocklyDiv', {});
+    this.liveRegion = document.getElementById('blocklyAriaAnnounce');
     this.toastIsVisible = (message) => {
       const toast = this.workspace
         .getInjectionDiv()
@@ -97,16 +98,20 @@ suite('Toasts', function () {
     clock.restore();
   });
 
-  test('default to polite assertiveness', function () {
+  test('toast announces message with status role and polite assertiveness', function () {
     const message = 'texas toast';
     Blockly.Toast.show(this.workspace, {message, id: 'test'});
-    const toast = this.workspace
-      .getInjectionDiv()
-      .querySelector('.blocklyToast');
 
+    this.clock.tick(11);
+
+    assert.include(this.liveRegion.textContent, message);
     assert.equal(
-      toast.getAttribute('aria-live'),
-      Blockly.Toast.Assertiveness.POLITE,
+      this.liveRegion.getAttribute('role'),
+      Blockly.utils.aria.Role.STATUS,
+    );
+    assert.equal(
+      this.liveRegion.getAttribute('aria-live'),
+      Blockly.utils.aria.LiveRegionAssertiveness.POLITE,
     );
   });
 
@@ -115,15 +120,26 @@ suite('Toasts', function () {
     Blockly.Toast.show(this.workspace, {
       message,
       id: 'test',
-      assertiveness: Blockly.Toast.Assertiveness.ASSERTIVE,
+      assertiveness: Blockly.utils.aria.LiveRegionAssertiveness.ASSERTIVE,
     });
+
+    this.clock.tick(11);
+
+    assert.equal(
+      this.liveRegion.getAttribute('aria-live'),
+      Blockly.utils.aria.LiveRegionAssertiveness.ASSERTIVE,
+    );
+  });
+
+  test('toast is not itself a live region', function () {
+    const message = 'texas toast';
+    Blockly.Toast.show(this.workspace, {message, id: 'test'});
+
     const toast = this.workspace
       .getInjectionDiv()
       .querySelector('.blocklyToast');
 
-    assert.equal(
-      toast.getAttribute('aria-live'),
-      Blockly.Toast.Assertiveness.ASSERTIVE,
-    );
+    assert.isNull(toast.getAttribute('aria-live'));
+    assert.notEqual(toast.getAttribute('role'), Blockly.utils.aria.Role.STATUS);
   });
 });

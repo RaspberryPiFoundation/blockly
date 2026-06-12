@@ -12,6 +12,7 @@ import {EventType} from '../events/type.js';
 import * as eventUtils from '../events/utils.js';
 import type {IBubble} from '../interfaces/i_bubble.js';
 import type {IHasBubble} from '../interfaces/i_has_bubble.js';
+import {Msg} from '../msg.js';
 import * as renderManagement from '../render_management.js';
 import {Size} from '../utils.js';
 import {Coordinate} from '../utils/coordinate.js';
@@ -182,8 +183,12 @@ export class WarningIcon extends Icon implements IHasBubble {
         this.sourceBlock.workspace,
         this.getAnchorLocation(),
         this.getBubbleOwnerRect(),
+        this,
       );
       this.applyColour();
+      this.textBubble.setAriaLabelProvider(() =>
+        Msg['BUBBLE_LABEL_WARNING'].replace('%1', this.getText()),
+      );
     } else {
       this.textBubble?.dispose();
       this.textBubble = null;
@@ -196,6 +201,7 @@ export class WarningIcon extends Icon implements IHasBubble {
         'warning',
       ),
     );
+    this.recomputeAriaContext();
   }
 
   /** See IHasBubble.getBubble. */
@@ -222,5 +228,18 @@ export class WarningIcon extends Icon implements IHasBubble {
   private getBubbleOwnerRect(): Rect {
     const bbox = this.sourceBlock.getSvgRoot().getBBox();
     return new Rect(bbox.y, bbox.y + bbox.height, bbox.x, bbox.x + bbox.width);
+  }
+
+  /**
+   * Returns the ARIA label to use for this icon (defaults to null). Note that this
+   * method will only be called during initialization by default, so dynamic changes
+   * to the icon's ARIA label need to be applied by calling recomputeAriaContext.
+   *
+   * @returns The ARIA label to use for this icon, or null to use a default.
+   */
+  protected override getAriaLabel(): string | null {
+    return this.bubbleIsVisible()
+      ? Msg['ICON_LABEL_WARNING_OPEN']
+      : Msg['ICON_LABEL_WARNING_CLOSED'];
   }
 }

@@ -73,6 +73,13 @@ export class ToolboxSeparator extends ToolboxItem {
   override dispose() {
     dom.removeNode(this.htmlDiv as HTMLDivElement);
   }
+
+  /**
+   * Prevents separator toolbox items from gaining focus.
+   */
+  override canBeFocused(): boolean {
+    return false;
+  }
 }
 
 export namespace ToolboxSeparator {

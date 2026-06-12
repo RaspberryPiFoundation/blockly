@@ -4,16 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {CommentBarButton} from '../comments/comment_bar_button.js';
-import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
-import type {INavigationPolicy} from '../interfaces/i_navigation_policy.js';
+import {CommentBarButton} from '../../comments/comment_bar_button.js';
+import type {IFocusableNode} from '../../interfaces/i_focusable_node.js';
+import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
 
 /**
  * Set of rules controlling keyboard navigation from a CommentBarButton.
  */
-export class CommentBarButtonNavigationPolicy
-  implements INavigationPolicy<CommentBarButton>
-{
+export class CommentBarButtonNavigationPolicy implements INavigationPolicy<CommentBarButton> {
   /**
    * Returns the first child of the given CommentBarButton.
    *
@@ -64,6 +62,16 @@ export class CommentBarButtonNavigationPolicy
       return children[currentIndex - 1];
     }
     return null;
+  }
+
+  /**
+   * Returns the row ID of the given CommentBarButton.
+   *
+   * @param current The CommentBarButton to retrieve the row ID of.
+   * @returns The row ID of the given CommentBarButton.
+   */
+  getRowId(current: CommentBarButton) {
+    return current.getCommentView().commentId;
   }
 
   /**

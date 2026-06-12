@@ -12,6 +12,9 @@
  */
 // Former goog.module ID: Blockly.WorkspaceAudio
 
+import {getFocusManager} from './focus_manager.js';
+import type {IFocusableNode} from './interfaces/i_focusable_node.js';
+import {keyboardNavigationController} from './keyboard_navigation_controller.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 
 /**
@@ -38,7 +41,7 @@ export class WorkspaceAudio {
 
   /**
    * @param parentWorkspace The parent of the workspace this audio object
-   *     belongs to, or null.
+   *     belongs to if it has one, or the workspace that owns this instance.
    */
   constructor(private parentWorkspace: WorkspaceSvg) {
     if (window.AudioContext) {
@@ -83,24 +86,10 @@ export class WorkspaceAudio {
    * @param opt_volume Volume of sound (0-1).
    */
   async play(name: string, opt_volume?: number) {
-    if (this.muted || opt_volume === 0 || !this.context) {
-      return;
-    }
+    if (!this.isPlayingAllowed() || opt_volume === 0) return;
     const sound = this.sounds.get(name);
     if (sound) {
-      // Don't play one sound on top of another.
-      const now = new Date();
-      if (
-        this.lastSound !== null &&
-        now.getTime() - this.lastSound.getTime() < SOUND_LIMIT
-      ) {
-        return;
-      }
-      this.lastSound = now;
-
-      if (this.context.state === 'suspended') {
-        await this.context.resume();
-      }
+      await this.prepareToPlay();
 
       const source = this.context.createBufferSource();
       const gainNode = this.context.createGain();
@@ -117,7 +106,111 @@ export class WorkspaceAudio {
       source.start();
     } else if (this.parentWorkspace) {
       // Maybe a workspace on a lower level knows about this sound.
-      this.parentWorkspace.getAudioManager().play(name, opt_volume);
+      const parentAudio = this.parentWorkspace.getAudioManager();
+      if (parentAudio !== this) {
+        parentAudio.play(name, opt_volume);
+      }
+    }
+  }
+
+  /**
+   * Plays a beep at the given frequency.
+   *
+   * @param tone The frequency of the beep to play, in hertz.
+   * @param duration The duration of the beep, in seconds. Defaults to 0.2.
+   */
+  async beep(tone: number, duration = 0.2) {
+    if (!this.isPlayingAllowed()) return;
+    await this.prepareToPlay();
+
+    const oscillator = this.context.createOscillator();
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(tone, this.context.currentTime);
+
+    const gainNode = this.context.createGain();
+    gainNode.gain.setValueAtTime(0, this.context.currentTime);
+    // Fade in
+    gainNode.gain.linearRampToValueAtTime(0.5, this.context.currentTime + 0.01);
+    // Fade out
+    gainNode.gain.linearRampToValueAtTime(
+      0,
+      this.context.currentTime + duration,
+    );
+
+    oscillator.connect(gainNode);
+    gainNode.connect(this.context.destination);
+
+    oscillator.start(this.context.currentTime);
+    oscillator.stop(this.context.currentTime + duration);
+  }
+
+  /**
+   * Plays a standard error beep.
+   */
+  async playErrorBeep() {
+    return this.beep(260);
+  }
+
+  /**
+   * If enabled, plays a tone corresponding to the nesting level of the given
+   * node when it differs from the nesting level of the currently focused node.
+   * These tones are generally used for accessibility purposes to indicate a
+   * scope transition to users who use a screenreader. This method must be
+   * called before focus transitions to the given node.
+   *
+   * @internal
+   * @param newNode The soon-to-be-focused node.
+   */
+  maybePlayScopeChangeAudioCue(newNode: IFocusableNode) {
+    if (!keyboardNavigationController.getScopeChangeAudioCuesEnabled()) return;
+    const navigator = this.parentWorkspace.getNavigator();
+    const oldBlock = navigator.getSourceBlockFromNode(
+      getFocusManager().getFocusedNode(),
+    );
+    const newBlock = navigator.getSourceBlockFromNode(newNode);
+    let level = 0;
+    if (
+      oldBlock &&
+      newBlock &&
+      oldBlock.getNestingLevel() !== (level = newBlock.getNestingLevel())
+    ) {
+      this.beep(400 + level * 60);
+    }
+  }
+
+  /**
+   * Returns whether or not playing sounds is currently allowed.
+   *
+   * @returns False if audio is muted or a sound has just been played, otherwise
+   *     true.
+   */
+  private isPlayingAllowed(
+    this: WorkspaceAudio,
+  ): this is WorkspaceAudio & Required<{context: AudioContext}> {
+    const now = new Date();
+
+    if (
+      this.getMuted() ||
+      !this.context ||
+      (this.lastSound !== null &&
+        now.getTime() - this.lastSound.getTime() < SOUND_LIMIT)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Prepares to play audio by recording the time of the last play and resuming
+   * the audio context.
+   */
+  private async prepareToPlay(
+    this: WorkspaceAudio & Required<{context: AudioContext}>,
+  ) {
+    this.lastSound = new Date();
+
+    if (this.context.state === 'suspended') {
+      await this.context.resume();
     }
   }
 

@@ -15,9 +15,10 @@ import {Coordinate} from '../utils/coordinate.js';
 import {WorkspaceSvg} from '../workspace_svg.js';
 import * as registry from './registry.js';
 
-export class WorkspaceCommentPaster
-  implements IPaster<WorkspaceCommentCopyData, RenderedWorkspaceComment>
-{
+export class WorkspaceCommentPaster implements IPaster<
+  WorkspaceCommentCopyData,
+  RenderedWorkspaceComment
+> {
   static TYPE = 'workspace-comment';
 
   paste(

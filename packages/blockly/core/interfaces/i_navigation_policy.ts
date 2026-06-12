@@ -45,6 +45,19 @@ export interface INavigationPolicy<T> {
   getPreviousSibling(current: T): IFocusableNode | null;
 
   /**
+   * Returns an ID corresponding to the visual "row" the given element is part
+   * of. All elements on the same visual row should share the same ID. For
+   * example, icons share their parent block's row ID, as do inline connected
+   * blocks or value inputs. Statement inputs, external inputs, or blocks
+   * connected to one another's previous or next connections form distinct
+   * visual rows and should have distinct row IDs.
+   *
+   * @param current The element to return the row ID of.
+   * @returns The row ID of the given element.
+   */
+  getRowId(current: T): string;
+
+  /**
    * Returns whether or not the given instance should be reachable via keyboard
    * navigation.
    *

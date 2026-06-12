@@ -59,6 +59,7 @@ export class RenderedWorkspaceComment
     this.workspace = workspace;
 
     this.view = new CommentView(workspace, this.id);
+    this.view.getEditorFocusableNode().setParent(this);
     // Set the size to the default size as defined in the superclass.
     this.view.setSize(this.getSize());
     this.view.setEditable(this.isEditable());
@@ -239,8 +240,8 @@ export class RenderedWorkspaceComment
   }
 
   /** Starts a drag on the comment. */
-  startDrag(): void {
-    this.dragStrategy.startDrag();
+  startDrag() {
+    return this.dragStrategy.startDrag();
   }
 
   /** Drags the comment to the given location. */
@@ -357,5 +358,14 @@ export class RenderedWorkspaceComment
   /** See IFocusableNode.canBeFocused. */
   canBeFocused(): boolean {
     return true;
+  }
+
+  /**
+   * Handles the user acting on this comment via keyboard navigation.
+   * Expands the comment and focuses its editor.
+   */
+  performAction() {
+    this.setCollapsed(false);
+    getFocusManager().focusNode(this.getEditorFocusableNode());
   }
 }

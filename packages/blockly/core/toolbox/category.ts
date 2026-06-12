@@ -359,6 +359,15 @@ export class ToolboxCategory
   }
 
   /**
+   * Returns the colour of this category.
+   *
+   * @internal
+   */
+  getColour() {
+    return this.colour_;
+  }
+
+  /**
    * Sets the colour for the category using the style name and returns the new
    * colour as a hex string.
    *
@@ -594,6 +603,16 @@ export class ToolboxCategory
   }
 
   /**
+   * Handles this toolbox category gaining focus by informing its parent
+   * toolbox that it has been selected.
+   */
+  override onNodeFocus(): void {
+    if (this.getParentToolbox().getSelectedItem() !== this) {
+      this.getParentToolbox().setSelectedItem(this);
+    }
+  }
+
+  /**
    * Gets the contents of the category. These are items that are meant to be
    * displayed in the flyout.
    *
@@ -692,7 +711,7 @@ Css.register(`
 }
 
 .blocklyToolboxCategoryIcon {
-  background-image: url(<<<PATH>>>/sprites.png);
+  background-image: url(<<<PATH>>>/sprites.svg);
   height: 16px;
   vertical-align: middle;
   visibility: hidden;

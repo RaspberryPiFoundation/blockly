@@ -347,14 +347,6 @@ const PROCEDURE_DEF_COMMON = {
   /**
    * Return all variables referenced by this block.
    *
-   * @returns List of variable names.
-   */
-  getVars: function (this: ProcedureBlock): string[] {
-    return this.arguments_;
-  },
-  /**
-   * Return all variables referenced by this block.
-   *
    * @returns List of variable models.
    */
   getVarModels: function (
@@ -507,6 +499,7 @@ blocks['procedures_defnoreturn'] = {
     const nameField = fieldRegistry.fromJson({
       type: 'field_input',
       text: initName,
+      ariaTypeName: Msg['ARIA_TYPE_FIELD_TEXT_INPUT_PROCEDURE'],
     }) as FieldTextInput;
     nameField!.setValidator(Procedures.rename);
     nameField.setSpellcheck(false);
@@ -555,6 +548,7 @@ blocks['procedures_defreturn'] = {
     const nameField = fieldRegistry.fromJson({
       type: 'field_input',
       text: initName,
+      ariaTypeName: Msg['ARIA_TYPE_FIELD_TEXT_INPUT_PROCEDURE'],
     }) as FieldTextInput;
     nameField.setValidator(Procedures.rename);
     nameField.setSpellcheck(false);
@@ -673,6 +667,9 @@ const PROCEDURES_MUTATORARGUMENT = {
     const field = new ProcedureArgumentField(
       Procedures.DEFAULT_ARG,
       this.validator_,
+      {
+        ariaTypeName: Msg['ARIA_TYPE_FIELD_TEXT_INPUT_ARGUMENT'],
+      },
     );
 
     this.appendDummyInput()
@@ -1022,14 +1019,6 @@ const PROCEDURE_CALL_COMMON = {
   /**
    * Return all variables referenced by this block.
    *
-   * @returns List of variable names.
-   */
-  getVars: function (this: CallBlock): string[] {
-    return this.arguments_;
-  },
-  /**
-   * Return all variables referenced by this block.
-   *
    * @returns List of variable models.
    */
   getVarModels: function (this: CallBlock): IVariableModel<IVariableState>[] {
@@ -1062,7 +1051,8 @@ const PROCEDURE_CALL_COMMON = {
       if (
         def &&
         (def.type !== this.defType_ ||
-          JSON.stringify(def.getVars()) !== JSON.stringify(this.arguments_))
+          JSON.stringify(def.getVarModels().map((model) => model.getName())) !==
+            JSON.stringify(this.arguments_))
       ) {
         // The signatures don't match.
         def = null;

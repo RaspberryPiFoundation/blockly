@@ -7,7 +7,6 @@
 /**
  * @fileoverview Helper functions for build/test.
  */
-/* eslint-env node */
 
 const path = require('path');
 

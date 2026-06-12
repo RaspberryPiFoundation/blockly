@@ -5,8 +5,9 @@
  */
 
 // Former goog.module ID: Blockly.Css
-/** Has CSS already been injected? */
-let injected = false;
+const injectionSites = new WeakSet<Document | ShadowRoot>();
+const registeredCss: Array<string> = [];
+import * as userAgent from './utils/useragent.js';
 
 /**
  * Add some CSS to the blob that will be injected later.  Allows optional
@@ -15,10 +16,7 @@ let injected = false;
  * @param cssContent Multiline CSS string or an array of single lines of CSS.
  */
 export function register(cssContent: string) {
-  if (injected) {
-    throw Error('CSS already injected');
-  }
-  content += '\n' + cssContent;
+  registeredCss.push(cssContent);
 }
 
 /**
@@ -28,37 +26,51 @@ export function register(cssContent: string) {
  * b) It speeds up loading by not blocking on a separate HTTP transfer.
  * c) The CSS content may be made dynamic depending on init options.
  *
+ * @param container The div or other HTML element into which Blockly was injected.
  * @param hasCss If false, don't inject CSS (providing CSS becomes the
  *     document's responsibility).
  * @param pathToMedia Path from page to the Blockly media directory.
  */
-export function inject(hasCss: boolean, pathToMedia: string) {
-  // Only inject the CSS once.
-  if (injected) {
-    return;
-  }
-  injected = true;
-  if (!hasCss) {
-    return;
-  }
+export function inject(
+  container: HTMLElement,
+  hasCss: boolean,
+  pathToMedia: string,
+) {
+  if (!hasCss || typeof window === 'undefined') return;
+
+  const root = container.getRootNode() as Document | ShadowRoot;
+  if (injectionSites.has(root)) return;
+  injectionSites.add(root);
+
   // Strip off any trailing slash (either Unix or Windows).
   const mediaPath = pathToMedia.replace(/[\\/]$/, '');
-  const cssContent = content.replace(/<<<PATH>>>/g, mediaPath);
-  // Cleanup the collected css content after injecting it to the DOM.
-  content = '';
+  const cssText = [content, ...registeredCss]
+    .join('\n')
+    .replace(/<<<PATH>>>/g, mediaPath);
 
-  // Inject CSS tag at start of head.
-  const cssNode = document.createElement('style');
-  cssNode.id = 'blockly-common-style';
-  const cssTextNode = document.createTextNode(cssContent);
-  cssNode.appendChild(cssTextNode);
-  document.head.insertBefore(cssNode, document.head.firstChild);
+  const styleEl = document.createElement('style');
+  styleEl.id = 'blockly-common-style';
+  styleEl.textContent = cssText;
+  // Prepend so Blockly's rules sit at the start of the cascade; any user
+  // stylesheet declared later wins by document order. Style elements appended
+  // to the light DOM don't apply inside shadow roots, so for the shadow DOM
+  // case we prepend the style element to the shadow root itself.
+  (root instanceof ShadowRoot ? root : document.head).prepend(styleEl);
 }
 
 /**
  * The CSS content for Blockly.
  */
-let content = `
+const content = `
+:is(
+  .injectionDiv,
+  .blocklyWidgetDiv,
+  .blocklyDropdownDiv,
+  .blocklyTooltipDiv,
+) * {
+  box-sizing: border-box;
+}
+
 .blocklySvg {
   background-color: #fff;
   outline: none;
@@ -109,7 +121,7 @@ let content = `
   left: 0;
   top: 0;
   z-index: 1000;
-  display: none;
+  visibility: hidden;
   border: 1px solid;
   border-color: #dadce0;
   background-color: #fff;
@@ -365,6 +377,7 @@ input[type=number] {
 .blocklyContextMenu {
   border-radius: 4px;
   max-height: 100%;
+  box-sizing: content-box;
 }
 
 .blocklyDropdownMenu {
@@ -446,7 +459,7 @@ input[type=number] {
 
 /* State: selected/checked. */
 .blocklyMenuItemSelected .blocklyMenuItemCheckbox {
-  background: url(<<<PATH>>>/sprites.png) no-repeat -48px -16px;
+  background: url(<<<PATH>>>/sprites.svg) no-repeat -48px -16px;
   float: left;
   margin-left: -24px;
   width: 16px;
@@ -466,6 +479,19 @@ input[type=number] {
   border: 0;
   margin-left: 4px;
   margin-right: 4px;
+}
+
+.blocklyRTL .blocklyMenuItemContent .blocklyShortcutContainer {
+  flex-direction: row-reverse;
+}
+.blocklyMenuItemContent .blocklyShortcutContainer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+.blocklyMenuItemContent .blocklyShortcutContainer .blocklyShortcut {
+  color: #ccc;
 }
 
 .blocklyBlockDragSurface, .blocklyAnimationLayer {
@@ -501,8 +527,163 @@ input[type=number] {
   .blocklyComment,
   .blocklyBubble,
   .blocklyIconGroup,
-  .blocklyTextarea
+  .blocklyTextarea,
+  .blocklyZoom,
+  .blocklyTrash,
 ) {
   outline: none;
+}
+.hiddenForAria {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.injectionDiv {
+  --blockly-active-node-color: #fff200;
+  --blockly-active-tree-color: #1379f6;
+  --blockly-selection-width: 3px;
+}
+
+/* Active focus cases: */
+/* Blocks with active focus. */
+.blocklyKeyboardNavigation
+  .blocklyActiveFocus:is(.blocklyPath, .blocklyHighlightedConnectionPath),
+/* Fields with active focus, */
+.blocklyKeyboardNavigation
+  .blocklyActiveFocus.blocklyField
+  > .blocklyFieldRect,
+/* Icons with active focus. */
+.blocklyKeyboardNavigation
+  .blocklyActiveFocus.blocklyIconGroup
+  > .blocklyIconShape:first-child,
+.blocklyKeyboardNavigation
+  .blocklyActiveFocus
+  > .blocklyFocusRing {
+  stroke: var(--blockly-active-node-color);
+  stroke-width: var(--blockly-selection-width);
+}
+
+/* Passive focus cases: */
+/* Blocks with passive focus except when widget/dropdown div in use. */
+  .blocklyPassiveFocus:is(
+    .blocklyPath:not(.blocklyFlyout .blocklyPath),
+    .blocklyHighlightedConnectionPath
+  ),
+/* Fields with passive focus except when widget/dropdown div in use. */
+.blocklyKeyboardNavigation:not(
+        :has(
+            .blocklyDropDownDiv:focus-within,
+            .blocklyWidgetDiv:focus-within
+          )
+      )
+  .blocklyPassiveFocus.blocklyField
+  > .blocklyFieldRect,
+/* Icons with passive focus except when widget/dropdown div in use. */
+.blocklyKeyboardNavigation:not(
+        :has(
+            .blocklyDropDownDiv:focus-within,
+            .blocklyWidgetDiv:focus-within
+          )
+      )
+  .blocklyPassiveFocus.blocklyIconGroup
+  > .blocklyIconShape:first-child {
+  stroke: var(--blockly-active-node-color);
+  stroke-dasharray: 5px 3px;
+  stroke-width: var(--blockly-selection-width);
+}
+
+/* Workaround for unexpectedly hidden connection path due to core style. */
+.blocklyKeyboardNavigation
+  .blocklyPassiveFocus.blocklyHighlightedConnectionPath {
+  display: unset !important;
+}
+
+/* Different ways for toolbox/flyout to be the active tree: */
+/* Active focus in the flyout. */
+.blocklyKeyboardNavigation .blocklyFlyout:has(.blocklyActiveFocus),
+/* Active focus in the toolbox. */
+.blocklyKeyboardNavigation .blocklyToolbox:has(.blocklyActiveFocus),
+/* Active focus on the toolbox/flyout. */
+.blocklyKeyboardNavigation
+  .blocklyActiveFocus:is(.blocklyFlyout, .blocklyToolbox) {
+  outline-offset: calc(var(--blockly-selection-width) * -1);
+  outline: var(--blockly-selection-width) solid
+    var(--blockly-active-tree-color);
+}
+
+/* Suppress default outline. */
+.blocklyKeyboardNavigation
+  .blocklyToolboxCategoryContainer:focus-visible {
+  outline: none;
+}
+
+ /* Different ways for the workspace to be the active tree: */
+/* Active focus within workspace. */
+.blocklyKeyboardNavigation
+  .blocklyWorkspace:has(.blocklyActiveFocus)
+  .blocklyWorkspaceFocusRing,
+/* Active focus within drag layer. */
+.blocklyKeyboardNavigation
+  .blocklySvg:has(~ .blocklyBlockDragSurface .blocklyActiveFocus)
+  .blocklyWorkspaceFocusRing,
+/* Active focus on workspace. */
+.blocklyKeyboardNavigation
+  .blocklyWorkspace.blocklyActiveFocus
+  .blocklyWorkspaceFocusRing,
+/* Focus in widget/dropdown div considered to be in workspace. */
+  .blocklyKeyboardNavigation
+  .blocklyWorkspace.blocklyShowingDropDownDiv
+  .blocklyWorkspaceFocusRing,
+.blocklyKeyboardNavigation
+  .blocklyWorkspace.blocklyShowingWidgetDiv
+  .blocklyWorkspaceFocusRing {
+  stroke: var(--blockly-active-tree-color);
+  stroke-width: calc(var(--blockly-selection-width) * 2);
+}
+
+/* The workspace itself is the active node. */
+.blocklyKeyboardNavigation
+  .blocklyWorkspace.blocklyActiveFocus
+  .blocklyWorkspaceSelectionRing {
+  stroke: var(--blockly-active-node-color);
+  stroke-width: var(--blockly-selection-width);
+}
+
+/* The workspace itself is the active node. */
+.blocklyKeyboardNavigation
+  .blocklyBubble.blocklyActiveFocus
+  .blocklyEmboss .blocklyDraggable {
+  stroke: var(--blockly-active-node-color);
+  stroke-width: var(--blockly-selection-width);
+}
+/* Flyout buttons and labels */
+.blocklyKeyboardNavigation .blocklyFlyout .blocklyFlyoutLabel.blocklyActiveFocus,
+.blocklyKeyboardNavigation .blocklyFlyout .blocklyFlyoutButton.blocklyActiveFocus {
+  outline: none;
+}
+.blocklyKeyboardNavigation .blocklyFlyout .blocklyFlyoutLabel.blocklyActiveFocus > .blocklyFlyoutLabelText,
+.blocklyKeyboardNavigation .blocklyFlyout .blocklyFlyoutButton.blocklyActiveFocus > .blocklyFlyoutButtonBackground {
+  outline-offset: 2px;
+  outline: var(--blockly-selection-width) solid var(--blockly-active-node-color);
+  border-radius: 2px;
+}
+.blocklyDialog {
+  min-width: 300px;
+  border-radius: 16px;
+  box-shadow: 0 8px 8px rgba(0, 0, 0, 0.2);
+  border: 1px solid #999;
+}
+.blocklyDialogForm {
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+}
+.blocklyDialogButtonRow {
+  display: flex;
+  flex-direction: ${userAgent.MOBILE || userAgent.APPLE ? 'row-reverse' : 'row'};
+  column-gap: 8px;
 }
 `;

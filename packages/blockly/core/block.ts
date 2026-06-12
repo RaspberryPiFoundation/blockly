@@ -46,12 +46,14 @@ import type {
   IVariableModel,
   IVariableState,
 } from './interfaces/i_variable_model.js';
+import {Msg} from './msg.js';
 import * as registry from './registry.js';
 import * as Tooltip from './tooltip.js';
 import * as arrayUtils from './utils/array.js';
 import {Coordinate} from './utils/coordinate.js';
 import * as idGenerator from './utils/idgenerator.js';
 import * as parsing from './utils/parsing.js';
+import {replaceMessageReferences} from './utils/parsing.js';
 import {Size} from './utils/size.js';
 import type {Workspace} from './workspace.js';
 
@@ -241,6 +243,9 @@ export class Block {
   // Record initial inline state.
   inputsInlineDefault?: boolean;
   workspace: Workspace;
+
+  /** A custom provider for generating the aria role description for this block. */
+  private ariaRoleDescriptionProvider: string | (() => string) | undefined;
 
   /**
    * @param workspace The block's workspace.
@@ -962,7 +967,30 @@ export class Block {
   }
 
   /**
-   * @returns True if this block is a value block with a single editable field.
+   * Determines and returns the full-block field for this block, or null if there isn't one
+   * and this block can't be considered a singleton field block.
+   *
+   * Note that this method is unreliable if a block contains a single field that
+   * hasn't been initialized/rendered yet.
+   *
+   * @returns The full-block field this block contains, or null if it doesn't contain one.
+   * @internal
+   */
+  getFullBlockField(): Field<any> | null {
+    if (!this.isSimpleReporter()) return null;
+    const field = this.inputList[0]?.fieldRow[0];
+    return field?.isFullBlockField() ? field : null;
+  }
+
+  /**
+   * A block is a simple reporter if it has an output connection and exactly one field.
+   * In some renderers, simple reporters are rendered differently from other blocks.
+   * Being a simple reporter block is a prerequisite to the single field rendering itself
+   * as a "full-block field", but it is not sufficient, as not all fields or renderers use
+   * this special rendering. Use `getFullBlockField` to determine if the block is rendered
+   * as a "full-block field block".
+   *
+   * @returns True if this block is a value block with a single field.
    * @internal
    */
   isSimpleReporter(): boolean {
@@ -1139,23 +1167,7 @@ export class Block {
   /**
    * Return all variables referenced by this block.
    *
-   * @returns List of variable ids.
-   */
-  getVars(): string[] {
-    const vars: string[] = [];
-    for (const field of this.getFields()) {
-      if (field.referencesVariables()) {
-        vars.push(field.getValue());
-      }
-    }
-    return vars;
-  }
-
-  /**
-   * Return all variables referenced by this block.
-   *
    * @returns List of variable models.
-   * @internal
    */
   getVarModels(): IVariableModel<IVariableState>[] {
     const vars = [];
@@ -1542,6 +1554,44 @@ export class Block {
   }
 
   /**
+   * Set a custom aria role description provider for this block. If not set,
+   * uses a default provider based on the block's properties (e.g. whether it has
+   * inputs, outputs, etc.).
+   *
+   * @param description The description or function to provide the description.
+   *   If a string, we'll replace message references in the string, e.g.
+   *   `%{BKY_CUSTOM_MESSAGE}` will be replaced with the value of
+   *   `Blockly.Msg['CUSTOM_MESSAGE']`.}'
+   */
+  setAriaRoleDescriptionProvider(description: string | (() => string)) {
+    this.ariaRoleDescriptionProvider = description;
+  }
+
+  /**
+   * @returns The string to use as the role description for this block. If a
+   *    custom provider has been set, use that. Otherwise, return a default
+   *    description based on the block's properties.
+   */
+  getAriaRoleDescription(): string {
+    if (this.ariaRoleDescriptionProvider) {
+      if (typeof this.ariaRoleDescriptionProvider === 'function') {
+        return this.ariaRoleDescriptionProvider();
+      }
+      return replaceMessageReferences(this.ariaRoleDescriptionProvider);
+    }
+
+    let roleDescription: string;
+    if (this.statementInputCount) {
+      roleDescription = Msg['BLOCK_LABEL_CONTAINER'];
+    } else if (this.outputConnection) {
+      roleDescription = Msg['BLOCK_LABEL_VALUE'];
+    } else {
+      roleDescription = Msg['BLOCK_LABEL_STATEMENT'];
+    }
+    return roleDescription;
+  }
+
+  /**
    * Create a human-readable text representation of this block and any children.
    *
    * @param opt_maxLength Truncate the string to this length.
@@ -1795,6 +1845,11 @@ export class Block {
       const localizedValue = parsing.replaceMessageReferences(rawValue);
       this.setHelpUrl(localizedValue);
     }
+
+    if (json['ariaRoleDescription'] !== undefined) {
+      this.setAriaRoleDescriptionProvider(json['ariaRoleDescription']);
+    }
+
     if (typeof json['extensions'] === 'string') {
       console.warn(
         warningPrefix +
@@ -2122,6 +2177,9 @@ export class Block {
       } else {
         input.setAlign(alignment);
       }
+    }
+    if (element['ariaLabelText']) {
+      input.setAriaLabelProvider(element['ariaLabelText']);
     }
     return input;
   }
