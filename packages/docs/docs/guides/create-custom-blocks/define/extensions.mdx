@@ -92,22 +92,24 @@ extension.
 ### Mutators
 
 Mutators are a type of mixin that allow you to add extra details about the state 
-of a block. If there's an aspect of the state of your block that can't be
-captured by the block's existing properties, you will likely need a mutator. For
-instance, the builtin ```list_create_with``` block uses a mutator so that the
-number of items in the list can be serialized and deserialized as part of the
-block's state. 
+of a block. If the full state of your block that can't be captured by the 
+block's existing properties, you may need a mutator. By default, Blockly 
+represents mutators with a small gear icon on the block. When the user 
+clicks the icon, a mutator UI and the user can select options that affect the 
+shape and/or behavior of the block.
 
-**add more **
+For instance, the builtin ```list_create_with``` block uses a mutator. The
+mutator allows for the user to change the shape of the block and allows the
+block to keep track of how many items are in the list. 
 
-** add screenshot of list_create_with **
+![A list_create_with block with its mutator bubble open. This lets users add 
+more items to the list.](/images/list-create-with-mutator.png)
 
-When you create a mutator, you'll need to define the functions ```saveExtraState``` 
-and ```loadExtraState```, which specify how serialize and deserialize the extra
-state of the block.
+When you create a mutator, you'll need to define the certain functions that
+specify how the mutator should serialize and deserialize the state of the block,
+as well as how the mutator should compose and decompose the block's shape in the
+UI. As with any mixin, you'll also need to register the mutator before you can 
+reference it in your block's JSON definition. 
 
-As with any mixin, you'll need to register the mutator before you can reference 
-it in your block's JSON definition. 
-
-For more information about when and how to use mutators, see the [Mutators](/guides/create-custom-blocks/mutators)
+For more details about when and how to use mutators, see the [Mutators](/guides/create-custom-blocks/mutators)
 guide.
