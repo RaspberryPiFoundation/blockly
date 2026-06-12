@@ -245,24 +245,6 @@ export class BlockDragStrategy implements IDragStrategy {
         eventUtils.setRecordUndo(false);
         this.positionNewBlock(this.block, newBlock);
 
-        // If the block came from a flyout, collapse open categories to avoid
-        // weirdness with reopening categories
-        const selectedCategory = this.block.workspace.targetWorkspace?.getToolbox()?.getSelectedItem();
-        if(selectedCategory && selectedCategory.isCollapsible()) {
-          const collapsibleCategory = selectedCategory as CollapsibleToolboxCategory;
-          collapsibleCategory.setExpanded(false);
-        }
-        
-        // Code for closing the collapsible category if you drag out a child
-        // prob don't want this
-
-        // const selectedCategoryParent = selectedCategory?.getParent();
-        // //AND the parent opens a flyout-- how do I check for that from here???
-        // if(selectedCategoryParent && selectedCategoryParent.isCollapsible()) {
-        //   const collapsibleCategory = selectedCategoryParent as CollapsibleToolboxCategory;
-        //   collapsibleCategory.setExpanded(false);
-        // }
-
         eventUtils.setRecordUndo(true);
 
         return newBlock;
