@@ -55,7 +55,10 @@ export function inject(
   // stylesheet declared later wins by document order. Style elements appended
   // to the light DOM don't apply inside shadow roots, so for the shadow DOM
   // case we prepend the style element to the shadow root itself.
-  (root instanceof ShadowRoot ? root : document.head).prepend(styleEl);
+  (typeof globalThis.ShadowRoot !== 'undefined' && root instanceof ShadowRoot
+    ? root
+    : document.head
+  ).prepend(styleEl);
 }
 
 /**

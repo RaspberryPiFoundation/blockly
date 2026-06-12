@@ -1134,7 +1134,10 @@ export class ConstantProvider {
     styleEl.textContent = this.getCSS_(selector).join('\n');
     // See css.ts inject() for the rationale on prepending and shadow root
     // handling.
-    (root instanceof ShadowRoot ? root : document.head).prepend(styleEl);
+    (typeof globalThis.ShadowRoot !== 'undefined' && root instanceof ShadowRoot
+      ? root
+      : document.head
+    ).prepend(styleEl);
 
     const sitesForSelector =
       injectionSites.get(selector) ?? new WeakSet<Document | ShadowRoot>();
