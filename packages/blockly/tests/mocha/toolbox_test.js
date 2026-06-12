@@ -261,8 +261,108 @@ suite('Toolbox', function () {
       sinon.assert.calledOnce(setSelectedSpy);
       sinon.assert.calledOnce(onClickSpy);
     });
-    //add tests here
-    
+    suite('collapsible category with flyout', function () {
+      setup(function () {
+        const collapsibleCategoryWithFlyout = {
+          kind: 'categoryToolbox',
+          contents: [
+            {
+              kind: 'category',
+              name: 'Parent',
+              categorystyle: 'text_category',
+              contents: [
+                {
+                  kind: 'block',
+                  type: 'text',
+                },
+                {
+                  kind: 'category',
+                  name: 'Child',
+                  categorystyle: 'text_category',
+                  contents: [
+                    {
+                      kind: 'block',
+                      type: 'text_join',
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+        };
+
+        this.flyoutWorkspace = Blockly.inject(this.div, {
+          toolbox: collapsibleCategoryWithFlyout,
+        });
+        this.flyoutToolbox = this.flyoutWorkspace.getToolbox();
+        this.flyout = this.flyoutToolbox.getFlyout();
+        this.parentCategory = this.flyoutToolbox.getToolboxItems()[0];
+      });
+
+      teardown(function () {
+        this.flyoutWorkspace.dispose();
+      });
+
+      test('collapsed and flyout hidden, click should uncollapse and open flyout',
+        function () {
+          assert.isFalse(this.parentCategory.isExpanded());
+          assert.isFalse(this.flyout.isVisible());
+
+          this.parentCategory.onClick(new Event('click'));
+
+          assert.isTrue(this.parentCategory.isExpanded());
+          assert.equal(
+            this.toolbox.getSelectedItem(),
+            this.parentCategory,
+          );
+          assert.isTrue(this.flyout.isVisible());
+        },
+      );
+      test('expanded and flyout hidden, click should open flyout',
+        function () {
+          // First click opens both.
+          this.parentCategory.onClick(new Event('click'));
+
+          assert.isTrue(this.parentCategory.isExpanded());
+          assert.isTrue(this.flyout.isVisible());
+
+          this.toolbox.setSelectedItem(null);
+
+          assert.isTrue(this.parentCategory.isExpanded());
+          assert.isFalse(this.flyout.isVisible());
+
+          this.parentCategory.onClick(new Event('click'));
+
+          assert.isTrue(this.parentCategory.isExpanded());
+          assert.equal(
+            this.toolbox.getSelectedItem(),
+            this.parentCategory,
+          );
+          assert.isTrue(this.flyout.isVisible());
+        },
+      );
+      test('expanded and flyout visible, click should collapse and close',
+      function () {
+        this.parentCategory.onClick(new Event('click'));
+
+        assert.isTrue(this.parentCategory.isExpanded());
+        assert.isTrue(this.flyout.isVisible());
+
+        this.parentCategory.onClick(new Event('click'));
+
+        assert.isFalse(this.parentCategory.isExpanded());
+        assert.notEqual(
+          this.toolbox.getSelectedItem(),
+          this.parentCategory,
+        );
+        assert.isFalse(this.flyout.isVisible());
+        assert.isTrue(this.flyout.isVisible());
+
+      },
+    );
+
+      });
+    });
   });
 
   suite('on key down', function () {
