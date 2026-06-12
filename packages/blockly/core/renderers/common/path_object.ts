@@ -7,7 +7,6 @@
 // Former goog.module ID: Blockly.blockRendering.PathObject
 
 import type {BlockSvg} from '../../block_svg.js';
-import type {Connection} from '../../connection.js';
 import {RenderedConnection} from '../../rendered_connection.js';
 import type {BlockStyle} from '../../theme.js';
 import {Coordinate} from '../../utils/coordinate.js';
@@ -193,25 +192,14 @@ export class PathObject implements IPathObject {
   }
 
   /**
-   * Add or remove styling that shows that if the dragging block is dropped,
-   * this block will be replaced.  If a shadow block, it will disappear.
-   * Otherwise it will bump.
+   * Add or remove styling indicating that a block will be bumped out and
+   * replaced by another block that is mid-move.
    *
-   * @param enable True if styling should be added.
+   * @param replacing True if the block is at risk of being replaced, false
+   *     otherwise.
    */
-  updateReplacementFade(enable: boolean) {
-    this.setClass_('blocklyReplaceable', enable);
-  }
-
-  /**
-   * Add or remove styling that shows that if the dragging block is dropped,
-   * this block will be connected to the input.
-   *
-   * @param _conn The connection on the input to highlight.
-   * @param _enable True if styling should be added.
-   */
-  updateShapeForInputHighlight(_conn: Connection, _enable: boolean) {
-    // NOOP
+  updateReplacing(replacing: boolean) {
+    this.setClass_('blocklyReplaceable', replacing);
   }
 
   /** Adds the given path as a connection highlight for the given connection. */

@@ -11,7 +11,6 @@
  */
 // Former goog.module ID: Blockly.Flyout
 
-import {BlockSvg} from './block_svg.js';
 import * as browserEvents from './browser_events.js';
 import {ComponentManager} from './component_manager.js';
 import {DeleteArea} from './delete_area.js';
@@ -20,20 +19,20 @@ import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
 import {FlyoutItem} from './flyout_item.js';
 import {FlyoutMetricsManager} from './flyout_metrics_manager.js';
-import {FlyoutNavigator} from './flyout_navigator.js';
 import {FlyoutSeparator, SeparatorAxis} from './flyout_separator.js';
+import {getFocusManager} from './focus_manager.js';
 import {IAutoHideable} from './interfaces/i_autohideable.js';
 import type {IFlyout} from './interfaces/i_flyout.js';
 import type {IFlyoutInflater} from './interfaces/i_flyout_inflater.js';
-import {IFocusableNode} from './interfaces/i_focusable_node.js';
-import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
+import {isSelectableToolboxItem} from './interfaces/i_selectable_toolbox_item.js';
+import {FlyoutNavigator} from './keyboard_nav/navigators/flyout_navigator.js';
+import {Msg} from './msg.js';
 import type {Options} from './options.js';
 import * as registry from './registry.js';
 import * as renderManagement from './render_management.js';
 import {ScrollbarPair} from './scrollbar_pair.js';
 import {SEPARATOR_TYPE} from './separator_flyout_inflater.js';
-import * as blocks from './serialization/blocks.js';
-import {Coordinate} from './utils/coordinate.js';
+import * as aria from './utils/aria.js';
 import * as dom from './utils/dom.js';
 import * as idGenerator from './utils/idgenerator.js';
 import {Svg} from './utils/svg.js';
@@ -45,23 +44,12 @@ import {WorkspaceSvg} from './workspace_svg.js';
  */
 export abstract class Flyout
   extends DeleteArea
-  implements IAutoHideable, IFlyout, IFocusableNode
+  implements IAutoHideable, IFlyout
 {
   /**
    * Position the flyout.
    */
   abstract position(): void;
-
-  /**
-   * Determine if a drag delta is toward the workspace, based on the position
-   * and orientation of the flyout. This is used in determineDragIntention_ to
-   * determine if a new block should be created or if the flyout should scroll.
-   *
-   * @param currentDragDeltaXY How far the pointer has
-   *     moved from the position at mouse down, in pixel units.
-   * @returns True if the drag is toward the workspace.
-   */
-  abstract isDragTowardWorkspace(currentDragDeltaXY: Coordinate): boolean;
 
   /**
    * Sets the translation of the flyout to match the scrollbars.
@@ -191,29 +179,6 @@ export abstract class Flyout
    * Height of flyout.
    */
   protected height_ = 0;
-  // clang-format off
-  /**
-   * Range of a drag angle from a flyout considered "dragging toward
-   * workspace". Drags that are within the bounds of this many degrees from
-   * the orthogonal line to the flyout edge are considered to be "drags toward
-   * the workspace".
-   *
-   * @example
-   *
-   * ```
-   * Flyout                                                 Edge   Workspace
-   * [block] /  <-within this angle, drags "toward workspace" |
-   * [block] ---- orthogonal to flyout boundary ----          |
-   * [block] \                                                |
-   * ```
-   *
-   * The angle is given in degrees from the orthogonal.
-   *
-   * This is used to know when to create a new block and when to scroll the
-   * flyout. Setting it to 360 means that all drags create a new block.
-   */
-  // clang-format on
-  protected dragAngleRange_ = 70;
 
   /**
    * The path around the background of the flyout, which will be filled with a
@@ -327,6 +292,17 @@ export abstract class Flyout
       .getThemeManager()
       .subscribe(this.svgBackground_, 'flyoutOpacity', 'fill-opacity');
 
+    this.svgGroup_.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        getFocusManager().focusTree(this.targetWorkspace);
+        if (!this.targetWorkspace.isMutator) {
+          this.autoHide(false);
+        }
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+
     return this.svgGroup_;
   }
 
@@ -339,6 +315,7 @@ export abstract class Flyout
   init(targetWorkspace: WorkspaceSvg) {
     this.targetWorkspace = targetWorkspace;
     this.workspace_.targetWorkspace = targetWorkspace;
+    this.workspace_.setInitialAriaContext();
 
     this.workspace_.scrollbar = new ScrollbarPair(
       this.workspace_,
@@ -622,6 +599,16 @@ export abstract class Flyout
    *     toolbox definition, or a string with the name of the dynamic category.
    */
   show(flyoutDef: toolbox.FlyoutDefinition | string) {
+    // As part of showing, the existing contents of the flyout will be cleared.
+    // If the focused element is a flyout item, i.e. a child of the workspace
+    // and not the workspace itself, move focus to the workspace to prevent
+    // focus from being lost when the currently focused element is destroyed.
+    if (
+      getFocusManager().getFocusedTree() === this.workspace_ &&
+      getFocusManager().getFocusedNode() !== this.workspace_
+    ) {
+      getFocusManager().focusNode(this.workspace_);
+    }
     this.workspace_.setResizesEnabled(false);
     eventUtils.setRecordUndo(false);
     this.hide();
@@ -649,6 +636,7 @@ export abstract class Flyout
       this.width_ = 0;
     }
     this.reflow();
+    this.updateAriaContext();
     eventUtils.setRecordUndo(true);
     this.workspace_.setResizesEnabled(true);
 
@@ -665,6 +653,53 @@ export abstract class Flyout
       }
     };
     this.workspace_.addChangeListener(this.reflowWrapper);
+  }
+
+  /**
+   * Updates the aria attributes for the entire flyout dom.
+   * This needs to do two things:
+   * 1. Set aria-owns on the flyout's workspace canvas to include the ids of all
+   *    focusable elements in the flyout.
+   * 2. Update the aria attributes on the flyout's workspace. This can't be done at workspace
+   *    creation because the workspace may not have all required information until the flyout
+   *    is fully shown.
+   */
+  protected updateAriaContext() {
+    // Set aria-owns on the flyout's workspace canvas to include the ids of all focusable elements in the flyout.
+    // This is probably not necessary if the listitems are all direct descendants of the canvas, but
+    // we can't know the dom structure of the flyout contents, so it's best to be explicit.
+    const focusableIds = this.getContents()
+      .map((item) => item.getElement())
+      .filter((item) => item.canBeFocused())
+      .map((item) => item.getFocusableElement().id);
+    aria.setState(
+      this.getWorkspace().getCanvas(),
+      aria.State.OWNS,
+      focusableIds.join(' '),
+    );
+
+    // Update aria attributes on the flyout's workspace.
+    // Only call a flyout's workspace a region if it's not auto-closing and not a mutator
+    if (!this.targetWorkspace.isMutator && !this.autoClose) {
+      aria.setRole(this.getWorkspace().svgGroup_, aria.Role.REGION);
+    } else {
+      aria.setRole(this.getWorkspace().svgGroup_, aria.Role.PRESENTATION);
+    }
+
+    // the label for a flyout includes the category name if it's available
+    const selectedItem = this.targetWorkspace.getToolbox()?.getSelectedItem();
+    const selectedItemName =
+      selectedItem && isSelectableToolboxItem(selectedItem)
+        ? selectedItem.getName()
+        : '';
+    const ariaLabel = Msg['WORKSPACE_LABEL_FLYOUT_WORKSPACE']
+      .replace('%1', selectedItemName)
+      .trim();
+    aria.setState(this.getWorkspace().getCanvas(), aria.State.LABEL, ariaLabel);
+
+    // The block canvas is a list. The list items must be direct descendants of the list,
+    // and the flyout may or may not be a region, so we set the role on the block canvas rather than the svgGroup_.
+    aria.setRole(this.getWorkspace().getCanvas(), aria.Role.LIST);
   }
 
   /**
@@ -791,47 +826,6 @@ export abstract class Flyout
   }
 
   /**
-   * Does this flyout allow you to create a new instance of the given block?
-   * Used for deciding if a block can be "dragged out of" the flyout.
-   *
-   * @param block The block to copy from the flyout.
-   * @returns True if you can create a new instance of the block, false
-   *    otherwise.
-   * @internal
-   */
-  isBlockCreatable(block: BlockSvg): boolean {
-    return block.isEnabled() && !this.getTargetWorkspace().isReadOnly();
-  }
-
-  /**
-   * Create a copy of this block on the workspace.
-   *
-   * @param originalBlock The block to copy from the flyout.
-   * @returns The newly created block.
-   * @throws {Error} if something went wrong with deserialization.
-   * @internal
-   */
-  createBlock(originalBlock: BlockSvg): BlockSvg {
-    const targetWorkspace = this.targetWorkspace;
-    const svgRootOld = originalBlock.getSvgRoot();
-    if (!svgRootOld) {
-      throw Error('oldBlock is not rendered');
-    }
-
-    // Clone the block.
-    const json = this.serializeBlock(originalBlock);
-    // Normally this resizes leading to weird jumps. Save it for terminateDrag.
-    targetWorkspace.setResizesEnabled(false);
-    const block = blocks.appendInternal(json, targetWorkspace, {
-      recordUndo: true,
-    }) as BlockSvg;
-
-    this.positionNewBlock(originalBlock, block);
-    targetWorkspace.hideChaff();
-    return block;
-  }
-
-  /**
    * Reflow flyout contents.
    */
   reflow() {
@@ -849,59 +843,6 @@ export abstract class Flyout
     return this.workspace_.scrollbar
       ? this.workspace_.scrollbar.isVisible()
       : false;
-  }
-
-  /**
-   * Serialize a block to JSON.
-   *
-   * @param block The block to serialize.
-   * @returns A serialized representation of the block.
-   */
-  protected serializeBlock(block: BlockSvg): blocks.State {
-    return blocks.save(block) as blocks.State;
-  }
-
-  /**
-   * Positions a block on the target workspace.
-   *
-   * @param oldBlock The flyout block being copied.
-   * @param block The block to posiiton.
-   */
-  private positionNewBlock(oldBlock: BlockSvg, block: BlockSvg) {
-    const targetWorkspace = this.targetWorkspace;
-
-    // The offset in pixels between the main workspace's origin and the upper
-    // left corner of the injection div.
-    const mainOffsetPixels = targetWorkspace.getOriginOffsetInPixels();
-
-    // The offset in pixels between the flyout workspace's origin and the upper
-    // left corner of the injection div.
-    const flyoutOffsetPixels = this.workspace_.getOriginOffsetInPixels();
-
-    // The position of the old block in flyout workspace coordinates.
-    const oldBlockPos = oldBlock.getRelativeToSurfaceXY();
-    // The position of the old block in pixels relative to the flyout
-    // workspace's origin.
-    oldBlockPos.scale(this.workspace_.scale);
-
-    // The position of the old block in pixels relative to the upper left corner
-    // of the injection div.
-    const oldBlockOffsetPixels = Coordinate.sum(
-      flyoutOffsetPixels,
-      oldBlockPos,
-    );
-
-    // The position of the old block in pixels relative to the origin of the
-    // main workspace.
-    const finalOffset = Coordinate.difference(
-      oldBlockOffsetPixels,
-      mainOffsetPixels,
-    );
-    // The position of the old block in main workspace coordinates.
-    finalOffset.scale(1 / targetWorkspace.scale);
-
-    // No 'reason' provided since events are disabled.
-    block.moveTo(new Coordinate(finalOffset.x, finalOffset.y));
   }
 
   /**
@@ -927,87 +868,5 @@ export abstract class Flyout
     }
 
     return null;
-  }
-
-  /**
-   * See IFocusableNode.getFocusableElement.
-   *
-   * @deprecated v12: Use the Flyout's workspace for focus operations, instead.
-   */
-  getFocusableElement(): HTMLElement | SVGElement {
-    throw new Error('Flyouts are not directly focusable.');
-  }
-
-  /**
-   * See IFocusableNode.getFocusableTree.
-   *
-   * @deprecated v12: Use the Flyout's workspace for focus operations, instead.
-   */
-  getFocusableTree(): IFocusableTree {
-    throw new Error('Flyouts are not directly focusable.');
-  }
-
-  /** See IFocusableNode.onNodeFocus. */
-  onNodeFocus(): void {}
-
-  /** See IFocusableNode.onNodeBlur. */
-  onNodeBlur(): void {}
-
-  /** See IFocusableNode.canBeFocused. */
-  canBeFocused(): boolean {
-    return false;
-  }
-
-  /**
-   * See IFocusableNode.getRootFocusableNode.
-   *
-   * @deprecated v12: Use the Flyout's workspace for focus operations, instead.
-   */
-  getRootFocusableNode(): IFocusableNode {
-    throw new Error('Flyouts are not directly focusable.');
-  }
-
-  /**
-   * See IFocusableNode.getRestoredFocusableNode.
-   *
-   * @deprecated v12: Use the Flyout's workspace for focus operations, instead.
-   */
-  getRestoredFocusableNode(
-    _previousNode: IFocusableNode | null,
-  ): IFocusableNode | null {
-    throw new Error('Flyouts are not directly focusable.');
-  }
-
-  /**
-   * See IFocusableNode.getNestedTrees.
-   *
-   * @deprecated v12: Use the Flyout's workspace for focus operations, instead.
-   */
-  getNestedTrees(): Array<IFocusableTree> {
-    throw new Error('Flyouts are not directly focusable.');
-  }
-
-  /**
-   * See IFocusableNode.lookUpFocusableNode.
-   *
-   * @deprecated v12: Use the Flyout's workspace for focus operations, instead.
-   */
-  lookUpFocusableNode(_id: string): IFocusableNode | null {
-    throw new Error('Flyouts are not directly focusable.');
-  }
-
-  /** See IFocusableTree.onTreeFocus. */
-  onTreeFocus(
-    _node: IFocusableNode,
-    _previousTree: IFocusableTree | null,
-  ): void {}
-
-  /**
-   * See IFocusableNode.onTreeBlur.
-   *
-   * @deprecated v12: Use the Flyout's workspace for focus operations, instead.
-   */
-  onTreeBlur(_nextTree: IFocusableTree | null): void {
-    throw new Error('Flyouts are not directly focusable.');
   }
 }

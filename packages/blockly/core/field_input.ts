@@ -53,7 +53,7 @@ const MINIMUM_WIDTH = 14;
 /**
  * Abstract class for an editable input field.
  *
- * @typeParam T - The value stored on the field.
+ * @template T - The value stored on the field.
  * @internal
  */
 export abstract class FieldInput<T extends InputTypes> extends Field<
@@ -166,7 +166,15 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
   override initView() {
     const block = this.getSourceBlock();
     if (!block) throw new UnattachedFieldError();
-    super.initView();
+
+    if (!this.isFullBlockField()) {
+      // Full-block fields don't get the border-rect element.
+      this.createBorderRect_();
+    }
+    this.createTextElement_();
+    if (this.fieldGroup_) {
+      dom.addClass(this.fieldGroup_, 'blocklyField');
+    }
 
     if (this.isFullBlockField()) {
       this.clickTarget_ = (this.sourceBlock_ as BlockSvg).getSvgRoot();
@@ -175,6 +183,7 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
     if (this.fieldGroup_) {
       dom.addClass(this.fieldGroup_, 'blocklyInputField');
     }
+    this.recomputeAriaContext();
   }
 
   override isFullBlockField(): boolean {
@@ -224,6 +233,7 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
         );
       }
     }
+    this.recomputeAriaContext();
   }
 
   /**
@@ -238,6 +248,7 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
     this.isDirty_ = true;
     this.isTextValid_ = true;
     this.value_ = newValue;
+    this.recomputeAriaContext();
   }
 
   /**
@@ -251,10 +262,9 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
     if (!this.fieldGroup_) return;
 
     if (!this.isFullBlockField() && this.borderRect_) {
-      this.borderRect_!.style.display = 'block';
+      this.borderRect_.style.display = 'block';
       this.borderRect_.setAttribute('stroke', block.getColourTertiary());
     } else {
-      this.borderRect_!.style.display = 'none';
       // In general, do *not* let fields control the color of blocks. Having the
       // field control the color is unexpected, and could have performance
       // impacts.
@@ -600,16 +610,20 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
       dropDownDiv.hideWithoutAnimation();
     } else if (e.key === 'Tab') {
       e.preventDefault();
-      const cursor = this.workspace_?.getCursor();
+      const navigator = this.workspace_?.getNavigator();
 
       const isValidDestination = (node: IFocusableNode | null) =>
         (node instanceof FieldInput ||
           (node instanceof BlockSvg && node.isSimpleReporter())) &&
         node !== this.getSourceBlock();
 
-      let target = e.shiftKey
-        ? cursor?.getPreviousNode(this, isValidDestination, false)
-        : cursor?.getNextNode(this, isValidDestination, false);
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
+      let target: IFocusableNode | null | undefined = this;
+      do {
+        target = e.shiftKey
+          ? navigator?.getOutNode(target)
+          : navigator?.getInNode(target);
+      } while (target && !isValidDestination(target));
       target =
         target instanceof BlockSvg && target.isSimpleReporter()
           ? target.getFields().next().value
@@ -625,7 +639,9 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
           targetSourceBlock instanceof BlockSvg
         ) {
           getFocusManager().focusNode(targetSourceBlock);
-        } else getFocusManager().focusNode(target);
+        } else {
+          getFocusManager().focusNode(target);
+        }
         target.showEditor();
       }
     }
@@ -702,8 +718,15 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
 
       // In RTL mode block fields and LTR input fields the left edge moves,
       // whereas the right edge is fixed.  Reposition the editor.
-      const x = block.RTL ? bBox.right - div!.offsetWidth : bBox.left;
-      const y = bBox.top;
+      let x = block.RTL ? bBox.right - div!.offsetWidth : bBox.left;
+      let y = bBox.top;
+
+      const parentElement = div?.parentElement;
+      if (parentElement) {
+        const bounds = parentElement.getBoundingClientRect();
+        x -= bounds.left + window.scrollX;
+        y -= bounds.top + window.scrollY;
+      }
 
       div!.style.left = `${x}px`;
       div!.style.top = `${y}px`;
@@ -793,6 +816,47 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
    */
   protected getValueFromEditorText_(text: string): AnyDuringMigration {
     return text;
+  }
+
+  /**
+   * Gets an ARIA-friendly label representation of this field's type.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's type.
+   *
+   * @returns An ARIA representation of the field's type or a default if it is
+   *     unspecified.
+   */
+  override getAriaTypeName(): string | null {
+    return this.ariaTypeName || Msg['ARIA_TYPE_FIELD_INPUT'];
+  }
+
+  /**
+   * Gets an ARIA-friendly label representation of this field's value.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's value.
+   *
+   * @returns An ARIA representation of the field's text.
+   */
+  override getAriaValue(): string | null {
+    return this.getText() || Msg['FIELD_LABEL_EMPTY'];
+  }
+
+  /**
+   * Customizes the label for this field to include "editable" if it applies.
+   */
+  override recomputeAriaContext(): boolean {
+    const shouldCustomize = super.recomputeAriaContext();
+    if (!shouldCustomize) return false;
+    const focusableElement = this.getFocusableElement();
+
+    let label = this.computeAriaLabel(true);
+    if (this.isCurrentlyEditable() && !this.getSourceBlock()?.isInFlyout) {
+      label = Msg['FIELD_LABEL_EDIT_PREFIX'].replace('%1', label);
+    }
+    aria.setState(focusableElement, aria.State.LABEL, label);
+    return true;
   }
 }
 

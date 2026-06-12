@@ -7,7 +7,7 @@
 // Former goog.module ID: Blockly.ISelectableToolboxItem
 
 import type {FlyoutItemInfoArray} from '../utils/toolbox';
-import type {IToolboxItem} from './i_toolbox_item.js';
+import {isToolboxItem, type IToolboxItem} from './i_toolbox_item.js';
 
 /**
  * Interface for an item in the toolbox that can be selected.
@@ -54,10 +54,17 @@ export interface ISelectableToolboxItem extends IToolboxItem {
 }
 
 /**
- * Type guard that checks whether an IToolboxItem is an ISelectableToolboxItem.
+ * Type guard that checks whether an object is an ISelectableToolboxItem.
  */
 export function isSelectableToolboxItem(
-  toolboxItem: IToolboxItem,
-): toolboxItem is ISelectableToolboxItem {
-  return toolboxItem.isSelectable();
+  obj: any,
+): obj is ISelectableToolboxItem {
+  return (
+    typeof obj.getName === 'function' &&
+    typeof obj.getContents === 'function' &&
+    typeof obj.setSelected === 'function' &&
+    typeof obj.onClick === 'function' &&
+    isToolboxItem(obj) &&
+    obj.isSelectable()
+  );
 }

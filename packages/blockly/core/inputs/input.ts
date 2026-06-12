@@ -15,14 +15,24 @@
 import '../field_label.js';
 
 import type {Block} from '../block.js';
+import {computeFieldRowLabel, getInputLabels} from '../block_aria_composer.js';
 import type {BlockSvg} from '../block_svg.js';
 import type {Connection} from '../connection.js';
-import type {ConnectionType} from '../connection_type.js';
+import {ConnectionType} from '../connection_type.js';
 import type {Field} from '../field.js';
 import * as fieldRegistry from '../field_registry.js';
 import {RenderedConnection} from '../rendered_connection.js';
+import {Verbosity} from '../utils/aria.js';
+import * as parsing from '../utils/parsing.js';
 import {Align} from './align.js';
 import {inputTypes} from './input_types.js';
+
+/**
+ * Represents a string or a function that returns a string which can be used as a
+ * custom ARIA string to represent an Input, or null if the default fallback should
+ * be used. See setAriaLabelProvider for more context.
+ */
+export type AriaLabelProvider = ((input: Input) => string | null) | string;
 
 /** Class for an input with optional fields. */
 export class Input {
@@ -32,6 +42,9 @@ export class Input {
 
   /** Is the input visible? */
   private visible = true;
+
+  /** The AriaLabelProvider */
+  private ariaLabelProvider: AriaLabelProvider | null = null;
 
   public readonly type: inputTypes = inputTypes.CUSTOM;
 
@@ -272,6 +285,42 @@ export class Input {
   }
 
   /**
+   * Sets a custom ARIA label provider for this input, or null if it should be reset
+   * to use the default method.
+   *
+   * Inputs do not compute ARIA contexts directly, so the set provider will be used
+   * in select cases when the Input needs to be represented (such as for parts of a
+   * block label or for connections). Note that overriding this provider will not
+   * recompute any already constructed ARIA labels, and it cannot be assumed that the
+   * provider will be called any particular number of times during label
+   * recomputation. As such, implementations should make sure to provide a
+   * deterministic and idempotent ARIA representation each time the provider is
+   * called for a given input. It's also fine to reuse providers across multiple
+   * Input implementations.
+   *
+   * @param provider The string or function to use to set the ARIA label for the input
+   * @returns The input being modified (to allow chaining).
+   */
+  setAriaLabelProvider(provider: AriaLabelProvider | null): Input {
+    this.ariaLabelProvider = provider;
+    return this;
+  }
+
+  /**
+   * Returns the string from the custom ARIA label provider set, or null if the default label (from the field row) should
+   * be used. See setAriaLabelProvider for more context.
+   */
+  getAriaLabelText(): string | null {
+    if (!this.ariaLabelProvider) {
+      return null;
+    } else if (typeof this.ariaLabelProvider === 'string') {
+      return parsing.replaceMessageReferences(this.ariaLabelProvider);
+    } else {
+      return this.ariaLabelProvider(this);
+    }
+  }
+
+  /**
    * Initializes the fields on this input for a headless block.
    *
    * @internal
@@ -313,5 +362,87 @@ export class Input {
    */
   protected makeConnection(type: ConnectionType): Connection {
     return this.sourceBlock.makeConnection_(type);
+  }
+
+  /**
+   * Returns an ID for the logical "row" this input is part of. A "row" is
+   * bounded by a previous/next connection, a statement input, or a block stack
+   * boundary; all blocks/inputs nested inside of one of those are conceptually
+   * part of its same row.
+   *
+   * @internal
+   */
+  getRowId(): string {
+    const inputs = this.getSourceBlock().inputList;
+
+    // The first visible input shares the block's row id; this also covers
+    // the collapsed-input placeholder, since every other input is hidden.
+    if (this === inputs.find((i) => i.isVisible())) {
+      return (this.getSourceBlock() as BlockSvg).getRowId();
+    }
+
+    // Fallback when inputs[0] itself is hidden.
+    if (this === inputs[0]) {
+      return (this.getSourceBlock() as BlockSvg).getRowId();
+    }
+
+    const inputIndex = inputs.indexOf(this);
+    const precedingStatementInput =
+      inputs[inputIndex - 1].connection?.type === ConnectionType.NEXT_STATEMENT;
+
+    // Each subsequent statement input or value input following a statement
+    // input is on its own row and has its own row ID.
+    if (
+      this.connection?.type === ConnectionType.NEXT_STATEMENT ||
+      precedingStatementInput
+    ) {
+      return `${this.getSourceBlock().id}-input${inputIndex}`;
+    }
+
+    // Value inputs have the same row ID as their preceding input, since
+    // they're all on one row.
+    return inputs[inputIndex - 1].getRowId();
+  }
+
+  /**
+   * Returns a derived accessibility label for this input: field row text plus
+   * labels of any connected child blocks (unless excluded). Does not include
+   * custom labels from {@link getAriaLabelText}; those are used in move-mode
+   * and parent-input context only.
+   *
+   * @internal
+   */
+  getLabel(verbosity = Verbosity.STANDARD, includeChildren = true): string {
+    if (!this.isVisible()) return '';
+
+    const labels = computeFieldRowLabel(this, false, verbosity);
+
+    if (
+      includeChildren &&
+      this.connection?.type === ConnectionType.INPUT_VALUE
+    ) {
+      const childBlock = this.connection.targetBlock();
+      if (childBlock && !childBlock.isInsertionMarker()) {
+        labels.push(
+          getInputLabels(childBlock as BlockSvg, verbosity).join(', '),
+        );
+      }
+    }
+    return labels.join(', ');
+  }
+
+  /**
+   * Returns the index of this input, excluding inputs without connections, on its
+   * source block.
+   *
+   * @internal
+   */
+  getIndex(): number {
+    const noConnectionInputTypes = [inputTypes.DUMMY, inputTypes.END_ROW];
+    const allInputs = this.getSourceBlock().inputList;
+    const allConnectionInputs = allInputs.filter(
+      (input) => !noConnectionInputTypes.includes(input.type),
+    );
+    return allConnectionInputs.indexOf(this);
   }
 }

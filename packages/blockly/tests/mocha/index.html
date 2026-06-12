@@ -39,6 +39,7 @@
     <div id="mocha"></div>
     <div id="failureCount" style="display: none" tests_failed="unset"></div>
     <div id="failureMessages" style="display: none"></div>
+    <div id="loadStatus" data-status="pending" style="display: none"></div>
     <div id="testFocusableTree1">
       Focusable tree 1
       <div id="testFocusableTree1.node1" style="margin-left: 1em">
@@ -149,6 +150,121 @@
         failZero: true,
       });
     </script>
+    <script>
+      (function () {
+        const failureDiv = document.getElementById('failureCount');
+        const failureMessages = document.getElementById('failureMessages');
+        const loadStatus = document.getElementById('loadStatus');
+
+        /**
+         * Mark the test run as failed before Mocha starts.
+         * @param {string} message Error message to report.
+         */
+        function reportLoadFailure(message) {
+          const state = window.__blocklyTestLoadState;
+          if (state?.finished || state?.testsStarted) {
+            return;
+          }
+          state.finished = true;
+          failureDiv.setAttribute('tests_failed', '1');
+          loadStatus.setAttribute('data-status', 'failed');
+          const msg = document.createElement('p');
+          msg.textContent = message;
+          failureMessages.appendChild(msg);
+        }
+
+        window.__blocklyTestLoadState = {
+          finished: false,
+          importsComplete: false,
+          testsStarted: false,
+          errors: [],
+          markImportsComplete() {
+            this.importsComplete = true;
+            loadStatus.setAttribute('data-status', 'imports-complete');
+          },
+          markTestsStarted() {
+            this.testsStarted = true;
+            loadStatus.setAttribute('data-status', 'running');
+          },
+          reportFailure(error) {
+            const message =
+              error instanceof Error ? error.message : String(error);
+            this.errors.push(message);
+            reportLoadFailure('Failed to load Blockly or tests: ' + message);
+          },
+        };
+
+        window.addEventListener('error', (event) => {
+          const state = window.__blocklyTestLoadState;
+          if (state.finished || state.testsStarted) {
+            return;
+          }
+          const message = event.message || 'Unknown script error';
+          const loc = event.filename
+            ? ' at ' + event.filename + ':' + event.lineno
+            : '';
+          state.errors.push(message + loc);
+          if (
+            message.includes('initialized before') ||
+            message.includes('before initialization') ||
+            message.includes('Cannot access')
+          ) {
+            reportLoadFailure(
+              'Blockly module load error (likely circular dependency): ' +
+                message +
+                loc,
+            );
+          } else if (!state.importsComplete) {
+            reportLoadFailure(
+              'Error loading Blockly test modules: ' + message + loc,
+            );
+          }
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+          const state = window.__blocklyTestLoadState;
+          if (state.finished || state.testsStarted) {
+            return;
+          }
+          const reason =
+            event.reason instanceof Error
+              ? event.reason.message
+              : String(event.reason);
+          state.errors.push('Unhandled rejection: ' + reason);
+          reportLoadFailure(
+            'Unhandled rejection while loading Blockly tests: ' + reason + hint,
+          );
+        });
+
+        // Fail fast if modules never finish loading or mocha never starts.
+        setTimeout(() => {
+          if (failureDiv.getAttribute('tests_failed') !== 'unset') {
+            return;
+          }
+          const state = window.__blocklyTestLoadState;
+          if (state.testsStarted) {
+            return;
+          }
+          const status = loadStatus.getAttribute('data-status');
+          let hint;
+          if (status === 'pending') {
+            hint =
+              'The test module script did not finish loading. This is often ' +
+              'caused by a circular dependency in imports (e.g. importing ' +
+              'from "./blockly.js" or "./utils.js" instead of a specific ' +
+              'file). Check the browser console for "initialized before" ' +
+              'errors.';
+          } else {
+            hint =
+              'Tests finished loading (status: ' +
+              status +
+              ') but mocha.run() never started.';
+          }
+          const errors = state.errors.join('; ');
+          reportLoadFailure(hint + (errors ? ' Errors: ' + errors : ''));
+        }, 90000);
+      })();
+    </script>
 
     <script type="module">
       import {loadScript} from '../scripts/load.mjs';
@@ -157,8 +273,11 @@
       import * as Blockly from '../../build/blockly.loader.mjs';
       import '../../build/blocks.loader.mjs';
       import {javascriptGenerator} from '../../build/javascript.loader.mjs';
+      import {config} from '../../node_modules/chai/index.js';
+      config.showDiff = false;
 
       // Import tests.
+      import './aria_test.js';
       import './block_json_test.js';
       import './block_test.js';
       import './clipboard_test.js';
@@ -169,7 +288,6 @@
       import './connection_test.js';
       import './contextmenu_items_test.js';
       import './contextmenu_test.js';
-      import './cursor_test.js';
       import './dialog_test.js';
       import './dropdowndiv_test.js';
       import './event_test.js';
@@ -219,7 +337,9 @@
       import './jso_deserialization_test.js';
       import './jso_serialization_test.js';
       import './json_test.js';
+      import './keyboard_movement_test.js';
       import './keyboard_navigation_controller_test.js';
+      import './keyboard_navigation_test.js';
       import './layering_test.js';
       import './blocks/lists_test.js';
       import './blocks/logic_ternary_test.js';
@@ -257,25 +377,60 @@
       import './xml_test.js';
       import './zoom_controls_test.js';
 
-      // Make Blockly and generators available via global scope.
-      globalThis.Blockly = Blockly;
-      globalThis.javascriptGenerator = javascriptGenerator;
+      window.__blocklyTestLoadState.markImportsComplete();
 
-      // Load additional scripts.
-      await loadScript('../../build/msg/en.js');
-      await loadScript('../playgrounds/screenshot.js');
-      await loadScript('../../node_modules/@blockly/dev-tools/dist/index.js');
+      /**
+       * Verify Blockly loaded correctly. Partial initialization often
+       * indicates a circular dependency in the module graph.
+       * @param {!Object} blockly The Blockly namespace.
+       */
+      function verifyBlocklyLoaded(blockly) {
+        // Subset of Blockly namespaces that often fail to load correctly
+        // when a circular dependency is present.
+        const required = ['inject', 'FieldDropdown', 'BlockSvg'];
+        const missing = required.filter((name) => !blockly[name]);
+        if (missing.length) {
+          throw new Error(
+            'Blockly failed to initialize; missing exports: ' +
+              missing.join(', ') +
+              '. This is often caused by a circular dependency (e.g. ' +
+              'importing from "./blockly.js" or "./utils.js" instead of a ' +
+              'specific module). Check the browser console for ' +
+              '"initialized before" errors.',
+          );
+        }
+      }
 
-      let runner = mocha.run(function (failures) {
-        var failureDiv = document.getElementById('failureCount');
-        failureDiv.setAttribute('tests_failed', failures);
-      });
-      runner.on('fail', function (test, err) {
-        const msg = document.createElement('p');
-        msg.textContent = `"${test.fullTitle()}" failed: ${err.message}`;
-        const div = document.getElementById('failureMessages');
-        div.appendChild(msg);
-      });
+      try {
+        verifyBlocklyLoaded(Blockly);
+
+        // Make Blockly and generators available via global scope.
+        globalThis.Blockly = Blockly;
+        globalThis.javascriptGenerator = javascriptGenerator;
+
+        // Load additional scripts.
+        await loadScript('../../build/msg/en.js');
+        await loadScript('../playgrounds/screenshot.js');
+        await loadScript('../../node_modules/@blockly/dev-tools/dist/index.js');
+
+        window.__blocklyTestLoadState.markTestsStarted();
+
+        let runner = mocha.run(function (failures) {
+          var failureDiv = document.getElementById('failureCount');
+          failureDiv.setAttribute('tests_failed', failures);
+          document
+            .getElementById('loadStatus')
+            .setAttribute('data-status', 'done');
+        });
+        runner.on('fail', function (test, err) {
+          const msg = document.createElement('p');
+          msg.textContent = `"${test.fullTitle()}" failed: ${err.message}`;
+          const div = document.getElementById('failureMessages');
+          div.appendChild(msg);
+        });
+      } catch (error) {
+        window.__blocklyTestLoadState.reportFailure(error);
+      }
     </script>
 
     <div id="blocklyDiv"></div>
@@ -337,9 +492,10 @@
       <sep toolboxitemid="separator" gap="-1"></sep>
       <category name="Variables" custom="VARIABLE"></category>
       <category name="NestedCategory">
-        <category
-          toolboxitemid="nestedCategory"
-          name="NestedItemOne"></category>
+        <category toolboxitemid="nestedCategory" name="NestedItemOne">
+          <block type="stack_block"></block>
+        </category>
+        <block type="stack_block"></block>
       </category>
       <category name="lastItem"></category>
     </xml>

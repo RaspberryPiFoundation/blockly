@@ -774,4 +774,36 @@ suite('Block JSON initialization', function () {
       });
     });
   });
+  suite('blockFromJson', function () {
+    test('Custom aria role description', function () {
+      const testBlockDefinition = {
+        'type': 'test_block',
+        'ariaRoleDescription': 'Custom aria description',
+      };
+      Blockly.common.defineBlocksWithJsonArray([testBlockDefinition]);
+      const block = this.workspace.newBlock('test_block');
+      assert.equal(
+        block.getAriaRoleDescription(),
+        'Custom aria description',
+        'Expected getAriaRoleDescription to return the custom description.',
+      );
+      delete Blockly.Blocks['test_block'];
+    });
+    test('Custom aria role description with message reference', function () {
+      const testBlockDefinition = {
+        'type': 'test_block',
+        'ariaRoleDescription': '%{BKY_CUSTOM_ROLE_DESCRIPTION}',
+      };
+      Blockly.Msg['CUSTOM_ROLE_DESCRIPTION'] = 'Custom aria description';
+      Blockly.common.defineBlocksWithJsonArray([testBlockDefinition]);
+      const block = this.workspace.newBlock('test_block');
+      assert.equal(
+        block.getAriaRoleDescription(),
+        'Custom aria description',
+        'Expected getAriaRoleDescription to return the custom description.',
+      );
+      delete Blockly.Blocks['test_block'];
+      delete Blockly.Msg['CUSTOM_ROLE_DESCRIPTION'];
+    });
+  });
 });

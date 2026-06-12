@@ -7,6 +7,8 @@
 // Former goog.module ID: Blockly.zelos.Renderer
 
 import type {BlockSvg} from '../../block_svg.js';
+import {ConnectionType} from '../../connection_type.js';
+import type {RenderedConnection} from '../../rendered_connection.js';
 import type {BlockStyle} from '../../theme.js';
 import * as blockRendering from '../common/block_rendering.js';
 import type {RenderInfo as BaseRenderInfo} from '../common/info.js';
@@ -85,6 +87,19 @@ export class Renderer extends BaseRenderer {
    */
   override getConstants(): ConstantProvider {
     return this.constants_;
+  }
+
+  /**
+   * Determine whether or not to highlight a connection.
+   *
+   * @param connection The connection to determine whether or not to highlight.
+   * @returns True if we should highlight the connection.
+   */
+  override shouldHighlightConnection(connection: RenderedConnection): boolean {
+    return (
+      super.shouldHighlightConnection(connection) ||
+      connection.type === ConnectionType.INPUT_VALUE
+    );
   }
 }
 

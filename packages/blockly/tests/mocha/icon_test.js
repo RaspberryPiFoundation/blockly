@@ -428,4 +428,21 @@ suite('Icon', function () {
       }
     });
   });
+  suite('ARIA', function () {
+    setup(function () {
+      const workspace = createWorkspaceSvg();
+      const block = createInitializedBlock(workspace);
+      const icon = new TestIcon(block);
+      block.addIcon(icon);
+      this.element = icon.getFocusableElement();
+    });
+    test('Generic icons use button role', function () {
+      const role = this.element.getAttribute('role');
+      assert.equal(role, 'button');
+    });
+    test('Generic icons default to "Icon" ARIA label', function () {
+      const label = this.element.getAttribute('aria-label');
+      assert.equal(label, 'Icon');
+    });
+  });
 });

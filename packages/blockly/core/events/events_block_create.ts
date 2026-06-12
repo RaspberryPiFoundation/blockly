@@ -14,9 +14,7 @@
 import type {Block} from '../block.js';
 import * as registry from '../registry.js';
 import * as blocks from '../serialization/blocks.js';
-import * as utilsXml from '../utils/xml.js';
 import {Workspace} from '../workspace.js';
-import * as Xml from '../xml.js';
 import {BlockBase, BlockBaseJson} from './events_block_base.js';
 import {EventType} from './type.js';
 import * as eventUtils from './utils.js';
@@ -27,9 +25,6 @@ import * as eventUtils from './utils.js';
  */
 export class BlockCreate extends BlockBase {
   override type = EventType.BLOCK_CREATE;
-
-  /** The XML representation of the created block(s). */
-  xml?: Element | DocumentFragment;
 
   /** The JSON respresentation of the created block(s). */
   json?: blocks.State;
@@ -50,7 +45,6 @@ export class BlockCreate extends BlockBase {
       this.recordUndo = false;
     }
 
-    this.xml = Xml.blockToDomWithXY(opt_block);
     this.ids = eventUtils.getDescendantIds(opt_block);
 
     this.json = blocks.save(opt_block, {addCoordinates: true}) as blocks.State;
@@ -63,12 +57,6 @@ export class BlockCreate extends BlockBase {
    */
   override toJson(): BlockCreateJson {
     const json = super.toJson() as BlockCreateJson;
-    if (!this.xml) {
-      throw new Error(
-        'The block XML is undefined. Either pass a block to ' +
-          'the constructor, or call fromJson',
-      );
-    }
     if (!this.ids) {
       throw new Error(
         'The block IDs are undefined. Either pass a block to ' +
@@ -81,7 +69,6 @@ export class BlockCreate extends BlockBase {
           'the constructor, or call fromJson',
       );
     }
-    json['xml'] = Xml.domToText(this.xml);
     json['ids'] = this.ids;
     json['json'] = this.json;
     if (!this.recordUndo) {
@@ -109,7 +96,6 @@ export class BlockCreate extends BlockBase {
       workspace,
       event ?? new BlockCreate(),
     ) as BlockCreate;
-    newEvent.xml = utilsXml.textToDom(json['xml']);
     newEvent.ids = json['ids'];
     newEvent.json = json['json'] as blocks.State;
     if (json['recordUndo'] !== undefined) {
@@ -176,7 +162,6 @@ const allShadowBlocks = function (
 };
 
 export interface BlockCreateJson extends BlockBaseJson {
-  xml: string;
   ids: string[];
   json: object;
   recordUndo?: boolean;

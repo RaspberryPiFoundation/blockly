@@ -8,7 +8,9 @@
 
 import * as browserEvents from './browser_events.js';
 import * as common from './common.js';
+import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import * as blocklyString from './utils/string.js';
+import type {WorkspaceSvg} from './workspace_svg.js';
 
 /**
  * A type which can define a tooltip.
@@ -287,7 +289,7 @@ function onMouseOut(_e: PointerEvent) {
  *
  * @param e Mouse event.
  */
-function onMouseMove(e: Event) {
+function onMouseMove(this: any, e: Event) {
   if (!element || !(element as AnyDuringMigration).tooltip) {
     // No tooltip here to show.
     return;
@@ -318,7 +320,20 @@ function onMouseMove(e: Event) {
     // AnyDuringMigration because:  Property 'pageY' does not exist on type
     // 'Event'.
     lastY = (e as AnyDuringMigration).pageY;
-    showPid = setTimeout(show, HOVER_MS);
+    showPid = setTimeout(() => {
+      let workspace: WorkspaceSvg | undefined;
+      if (this instanceof Element) {
+        for (const ws of common.getAllWorkspaces()) {
+          if (!ws.rendered) continue;
+          if ((ws as WorkspaceSvg).getInjectionDiv()?.contains(this)) {
+            workspace = ws as WorkspaceSvg;
+            break;
+          }
+        }
+      }
+
+      show(workspace);
+    }, HOVER_MS);
   }
 }
 
@@ -347,6 +362,41 @@ export function hide() {
     clearTimeout(showPid);
     showPid = 0;
   }
+}
+
+/**
+ * Display the tooltip for a given target.
+ *
+ * @internal
+ * @param target The node upon which the tooltip should be displayed.
+ * @param workspace The target node's workspace.
+ */
+export function display(target: IFocusableNode, workspace?: WorkspaceSvg) {
+  // If the target is not the same element currently displaying a tooltip, hide
+  // the existing tooltip and set the target as our element.
+  if (element !== target) {
+    hide();
+    poisonedElement = null;
+    element = target;
+  }
+
+  if (!element || !(element as AnyDuringMigration).tooltip) {
+    // No tooltip here to show.
+    return;
+  } else if (blocked) {
+    // Someone doesn't want us to show tooltips.  We are probably handling a
+    // user gesture, such as a click or drag.
+    return;
+  }
+
+  // Set the position to just below the element with horizontal alignment based
+  // on the target's RTL/LTR orientation.
+  const targetRect = target.getFocusableElement().getBoundingClientRect();
+  const rtl = element.RTL;
+  lastX = rtl ? targetRect.x + targetRect.width : targetRect.x;
+  lastY = targetRect.y + targetRect.height;
+
+  show(workspace);
 }
 
 /**
@@ -416,7 +466,16 @@ function getPosition(rtl: boolean): {x: number; y: number} {
   }
 
   let anchorY = lastY + OFFSET_Y;
-  if (anchorY + containerDiv!.offsetHeight > windowHeight + window.scrollY) {
+
+  const parentElement = containerDiv?.parentElement;
+  if (parentElement) {
+    const parentBounds = parentElement.getBoundingClientRect();
+    anchorX -= parentBounds.left + window.scrollX;
+    anchorY -= parentBounds.top + window.scrollY;
+  }
+
+  const tooltipBottom = anchorY + containerDiv!.offsetHeight;
+  if (tooltipBottom > windowHeight + window.scrollY) {
     // Falling off the bottom of the screen; shift the tooltip up.
     anchorY -= containerDiv!.offsetHeight + 2 * OFFSET_Y;
   }
@@ -439,7 +498,7 @@ function getPosition(rtl: boolean): {x: number; y: number} {
 }
 
 /** Create the tooltip and show it. */
-function show() {
+function show(workspace?: WorkspaceSvg) {
   if (blocked) {
     // Someone doesn't want us to show tooltips.
     return;
@@ -448,6 +507,10 @@ function show() {
   if (!containerDiv) {
     return;
   }
+
+  const parentDiv = common.getParentContainer(workspace);
+  parentDiv?.appendChild(containerDiv);
+
   // Erase all existing text.
   containerDiv.textContent = '';
 

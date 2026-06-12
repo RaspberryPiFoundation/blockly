@@ -15,6 +15,7 @@ import {isBlockChange, isBlockCreate} from '../events/predicates.js';
 import {EventType} from '../events/type.js';
 import * as eventUtils from '../events/utils.js';
 import type {IHasBubble} from '../interfaces/i_has_bubble.js';
+import {Msg} from '../msg.js';
 import * as renderManagement from '../render_management.js';
 import {Coordinate} from '../utils/coordinate.js';
 import * as dom from '../utils/dom.js';
@@ -176,12 +177,16 @@ export class MutatorIcon extends Icon implements IHasBubble {
         this.sourceBlock.workspace,
         this.getAnchorLocation(),
         this.getBubbleOwnerRect(),
+        this,
       );
       this.applyColour();
       this.createRootBlock();
       this.addSaveConnectionsListener();
       this.miniWorkspaceBubble?.addWorkspaceChangeListener(
         this.createMiniWorkspaceChangeListener(),
+      );
+      this.miniWorkspaceBubble.setAriaLabelProvider(
+        Msg['WORKSPACE_LABEL_MUTATOR_WORKSPACE'],
       );
     } else {
       this.miniWorkspaceBubble?.dispose();
@@ -201,6 +206,7 @@ export class MutatorIcon extends Icon implements IHasBubble {
         'mutator',
       ),
     );
+    this.recomputeAriaContext();
   }
 
   /** See IHasBubble.getBubble. */
@@ -356,5 +362,18 @@ export class MutatorIcon extends Icon implements IHasBubble {
    */
   getWorkspace(): WorkspaceSvg | undefined {
     return this.miniWorkspaceBubble?.getWorkspace();
+  }
+
+  /**
+   * Returns the ARIA label to use for this icon (defaults to null). Note that this
+   * method will only be called during initialization by default, so dynamic changes
+   * to the icon's ARIA label need to be applied by calling recomputeAriaContext.
+   *
+   * @returns The ARIA label to use for this icon, or null to use a default.
+   */
+  protected override getAriaLabel(): string | null {
+    return this.bubbleIsVisible()
+      ? Msg['ICON_LABEL_MUTATOR_OPEN']
+      : Msg['ICON_LABEL_MUTATOR_CLOSED'];
   }
 }

@@ -72,3 +72,33 @@ static fromJson(options) {
 
 For more information about registering a field see the [JSON and registration](/guides/create-custom-blocks/fields/customizing-fields/creating#json-and-registration)
 section in Creating a Custom Field.
+
+## Accessibility
+
+You are responsible for ensuring that your custom fields are WCAG compliant and
+correctly implement `IFocusableNode`. That includes having an appropriate
+[ARIA role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Guides/Techniques)
+for your on-block display and making your field editor WCAG compliant.
+
+When the on-block display is focused, its focusable DOM element will have the 
+`blocklyActiveFocus` or `blocklyPassiveFocus` CSS class added. Blockly defaults
+to showing a yellow outline around the focused field. You may override this
+behaviour as long as you show [visible focus](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html).
+
+All fields must have an ARIA type and value, which are used to construct the
+[ARIA label](/guides/create-custom-blocks/fields/anatomy-of-a-field#aria-label). 
+The ARIA label is generally of the form `<ARIA type>: <ARIA value>`. When
+extending a built-in field you will inherit its ARIA type and value logic.
+You can override the inherited ARIA logic by overriding any of `getAriaTypeName`,
+`getAriaValue`, and `computeAriaLabel`.
+
+### ARIA value vs text
+
+`getAriaValue` must return a human-readable, screen reader–appropriate
+representation of the field’s current value. By default, it returns the result 
+of `getText`, which is not guaranteed to be informative for assistive 
+technologies. You must override `getAriaValue` when `getText` might not produce
+a meaningful spoken representation (for example, when possible values include 
+symbols, abbreviations, or non-textual representations such as icons or colors).
+If `getAriaValue` would return an empty or non-informative value, it must
+instead return a localized string indicating that the value is empty.

@@ -138,7 +138,7 @@ export class Options {
     if (hasCss === undefined) {
       hasCss = true;
     }
-    let pathToMedia = 'https://blockly-demo.appspot.com/static/media/';
+    let pathToMedia = 'https://static.blockly.com/media/';
     if (options['media']) {
       pathToMedia = options['media'].endsWith('/')
         ? options['media']
@@ -147,7 +147,7 @@ export class Options {
     const rawOneBasedIndex = options['oneBasedIndex'];
     const oneBasedIndex =
       rawOneBasedIndex === undefined ? true : rawOneBasedIndex;
-    const renderer = options['renderer'] || 'geras';
+    const renderer = options['renderer'] || 'thrasos';
 
     const plugins = options['plugins'] || {};
 

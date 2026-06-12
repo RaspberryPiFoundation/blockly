@@ -17,7 +17,9 @@ import * as browserEvents from './browser_events.js';
 import * as common from './common.js';
 import type {Field} from './field.js';
 import {ReturnEphemeralFocus, getFocusManager} from './focus_manager.js';
+import * as aria from './utils/aria.js';
 import * as dom from './utils/dom.js';
+import * as idGenerator from './utils/idgenerator.js';
 import * as math from './utils/math.js';
 import {Rect} from './utils/rect.js';
 import type {Size} from './utils/size.js';
@@ -47,6 +49,12 @@ export const PADDING_Y = 16;
 
 /** Length of animations in seconds. */
 export const ANIMATION_TIME = 0.25;
+
+/**
+ * Class applied to the element that is displaying the DropDownDiv, used to
+ * apply focus styles.
+ */
+const SHOWING_DROPDOWNDIV_SELECTOR = 'blocklyShowingDropDownDiv';
 
 /**
  * Timer for animation out, to be cleared if we need to immediately hide
@@ -127,6 +135,7 @@ export function createDom() {
   div = document.createElement('div');
   div.className = 'blocklyDropDownDiv';
   div.tabIndex = -1;
+  div.id = idGenerator.getNextUniqueId();
   const parentDiv = common.getParentContainer() || document.body;
   parentDiv.appendChild(div);
 
@@ -149,6 +158,19 @@ export function createDom() {
   // Transition animation for transform: translate() and opacity.
   div.style.transition =
     'transform ' + ANIMATION_TIME + 's, ' + 'opacity ' + ANIMATION_TIME + 's';
+}
+
+/**
+ * Deals with the root element that contains this and other popovers losing
+ * focus by returning ephemeral focus if we hold it and hiding the DropDownDiv.
+ */
+function handleFocusLoss() {
+  if (returnEphemeralFocus) {
+    returnEphemeralFocus(false);
+    returnEphemeralFocus = null;
+  }
+
+  hide();
 }
 
 /**
@@ -370,6 +392,11 @@ export function show<T>(
   manageEphemeralFocus: boolean,
   opt_onHide?: () => void,
 ): boolean {
+  getFocusManager().registerPopoverFocusLossHandler(handleFocusLoss);
+
+  const parentDiv = common.getParentContainer();
+  parentDiv?.appendChild(div);
+
   owner = newOwner as Field;
   onHide = opt_onHide || null;
   // Set direction.
@@ -380,6 +407,19 @@ export function show<T>(
   themeClassName = mainWorkspace.getTheme().getClassName();
   dom.addClass(div, renderedClassName);
   dom.addClass(div, themeClassName);
+
+  const existingOwnership = aria.getState(
+    mainWorkspace.getFocusableElement(),
+    aria.State.OWNS,
+  );
+  aria.setState(
+    mainWorkspace.getFocusableElement(),
+    aria.State.OWNS,
+    existingOwnership ? [existingOwnership, div.id] : div.id,
+  );
+  mainWorkspace
+    .getFocusableElement()
+    .classList.add(SHOWING_DROPDOWNDIV_SELECTOR);
 
   // When we change `translate` multiple times in close succession,
   // Chrome may choose to wait and apply them all at once.
@@ -666,6 +706,7 @@ export function hideIfOwner<T>(
 
 /** Hide the menu, triggering animation. */
 export function hide() {
+  getFocusManager().unregisterPopoverFocusLossHandler(handleFocusLoss);
   // Start the animation by setting the translation and fading out.
   // Reset to (initialX, initialY) - i.e., no translation.
   div.style.transform = 'translate(0, 0)';
@@ -693,15 +734,28 @@ export function hideWithoutAnimation() {
     onHide();
     onHide = null;
   }
-  clearContent();
   owner = null;
 
-  (common.getMainWorkspace() as WorkspaceSvg).markFocused();
+  const workspace = common.getMainWorkspace() as WorkspaceSvg;
+  const existingOwnership =
+    aria.getState(workspace.getFocusableElement(), aria.State.OWNS) ?? '';
+  aria.setState(
+    workspace.getFocusableElement(),
+    aria.State.OWNS,
+    existingOwnership.replace(div.id, ''),
+  );
+  workspace
+    .getFocusableElement()
+    .classList.remove(SHOWING_DROPDOWNDIV_SELECTOR);
+
+  workspace.markFocused();
 
   if (returnEphemeralFocus) {
     returnEphemeralFocus();
     returnEphemeralFocus = null;
   }
+
+  clearContent();
 }
 
 /**
@@ -738,17 +792,26 @@ function positionInternal(
     arrow.style.display = 'none';
   }
 
-  const initialX = Math.floor(metrics.initialX);
-  const initialY = Math.floor(metrics.initialY);
-  const finalX = Math.floor(metrics.finalX);
-  const finalY = Math.floor(metrics.finalY);
+  let initialX = Math.floor(metrics.initialX);
+  let initialY = Math.floor(metrics.initialY);
+  let finalX = Math.floor(metrics.finalX);
+  let finalY = Math.floor(metrics.finalY);
+
+  const parentElement = div.parentElement;
+  if (parentElement) {
+    const bounds = parentElement.getBoundingClientRect();
+    initialX -= bounds.left + window.scrollX;
+    finalX -= bounds.left + window.scrollX;
+    initialY -= bounds.top + window.scrollY;
+    finalY -= bounds.top + window.scrollY;
+  }
 
   // First apply initial translation.
   div.style.left = initialX + 'px';
   div.style.top = initialY + 'px';
 
   // Show the div.
-  div.style.display = 'block';
+  div.style.visibility = 'visible';
   div.style.opacity = '1';
   // Add final translate, animated through `transition`.
   // Coordinates are relative to (initialX, initialY),

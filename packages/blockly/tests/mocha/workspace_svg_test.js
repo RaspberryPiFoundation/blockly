@@ -126,6 +126,59 @@ suite('WorkspaceSvg', function () {
     assert.isNotNull(gesture);
   });
 
+  test('Announces a screenreader hint on first focus', function () {
+    document.getElementById('blocklyAriaAnnounce').textContent = '';
+    Blockly.WorkspaceSvg.everFocused = false;
+    Blockly.getFocusManager().focusNode(this.workspace);
+    this.clock.runAll();
+    assert.include(
+      document.getElementById('blocklyAriaAnnounce').textContent,
+      'Use the arrow keys to navigate',
+    );
+  });
+
+  test('Nested workspaces do not announce screenreader hints', function () {
+    document.getElementById('blocklyAriaAnnounce').textContent = '';
+    Blockly.getFocusManager().focusNode(
+      this.workspace.getFlyout().getWorkspace(),
+    );
+    this.clock.runAll();
+    assert.notInclude(
+      document.getElementById('blocklyAriaAnnounce').textContent,
+      'Use the arrow keys to navigate',
+    );
+  });
+
+  suite('getRestoredFocusableNode', function () {
+    test('restores focus to the workspace itself for a non-mutator non-flyout workspace', function () {
+      Blockly.getFocusManager().focusTree(this.workspace);
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.workspace,
+      );
+    });
+
+    test('restores focus to the first block for a mutator workspace', async function () {
+      const block = this.workspace.newBlock('controls_if');
+      block.initSvg();
+      block.render();
+      const icon = block.getIcon(Blockly.icons.MutatorIcon.TYPE);
+      await icon.setBubbleVisible(true);
+      const mutatorWorkspace = icon.getWorkspace();
+      const firstBlock = mutatorWorkspace.getTopBlocks(true)[0];
+
+      assert.strictEqual(
+        mutatorWorkspace.getRestoredFocusableNode(null),
+        firstBlock,
+      );
+      Blockly.getFocusManager().focusTree(mutatorWorkspace);
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        firstBlock,
+      );
+    });
+  });
+
   suite('updateToolbox', function () {
     test('Passes in null when toolbox exists', function () {
       assert.throws(

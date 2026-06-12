@@ -1,0 +1,193 @@
+/**
+ * @license
+ * Copyright 2026 Raspberry Pi Foundation
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import {Msg} from './msg.js';
+import {names} from './shortcut_items.js';
+import {Toast} from './toast.js';
+import {getShortcutKeysShort} from './utils/shortcut_formatting.js';
+import * as userAgent from './utils/useragent.js';
+import type {WorkspaceSvg} from './workspace_svg.js';
+
+const unconstrainedMoveHintId = 'unconstrainedMoveHint';
+const constrainedMoveHintId = 'constrainedMoveHint';
+const helpHintId = 'helpHint';
+const blockNavigationHintId = 'blockNavigationHint';
+const workspaceNavigationHintId = 'workspaceNavigationHint';
+const flyoutLabelHintId = 'flyoutLabelHint';
+const copiedHintId = 'copiedHint';
+const cutHintId = 'cutHint';
+const screenreaderHintId = 'screenreaderHint';
+
+/**
+ * Nudge the user to use unconstrained movement.
+ *
+ * @param workspace Workspace.
+ * @param force Set to show it even if previously shown.
+ */
+export function showUnconstrainedMoveHint(
+  workspace: WorkspaceSvg,
+  force = false,
+) {
+  const modifier =
+    userAgent.MAC || userAgent.IPAD || userAgent.IPHONE
+      ? Msg['COMMAND_KEY']
+      : Msg['CONTROL_KEY'];
+  const message = Msg['KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT']
+    .replace('%1', modifier)
+    .replace('%2', Msg['ENTER_KEY']);
+  Toast.show(workspace, {
+    message,
+    id: unconstrainedMoveHintId,
+    oncePerSession: !force,
+  });
+}
+
+/**
+ * Nudge the user to move a block that's in move mode.
+ *
+ * @param workspace Workspace.
+ */
+export function showConstrainedMovementHint(workspace: WorkspaceSvg) {
+  const message = Msg['KEYBOARD_NAV_CONSTRAINED_MOVE_HINT'].replace(
+    '%1',
+    Msg['ENTER_KEY'],
+  );
+  Toast.show(workspace, {
+    message,
+    id: constrainedMoveHintId,
+    oncePerSession: true,
+  });
+}
+
+/**
+ * Clear active move-related hints, if any.
+ *
+ * @param workspace The workspace.
+ */
+export function clearMoveHints(workspace: WorkspaceSvg) {
+  Toast.hide(workspace, constrainedMoveHintId);
+  Toast.hide(workspace, unconstrainedMoveHintId);
+}
+
+/**
+ * Nudge the user to open the help.
+ *
+ * @param workspace The workspace.
+ */
+export function showHelpHint(workspace: WorkspaceSvg) {
+  const shortcut = getShortcutKeysShort('list_shortcuts');
+  if (!shortcut) return;
+
+  const message = Msg['HELP_PROMPT'].replace('%1', shortcut);
+  const id = helpHintId;
+  Toast.show(workspace, {message, id});
+}
+
+/**
+ * Tell the user how to navigate inside blocks.
+ *
+ * @param workspace The workspace.
+ */
+export function showBlockNavigationHint(workspace: WorkspaceSvg) {
+  const shortcut = getShortcutKeysShort(
+    workspace.RTL ? names.NAVIGATE_LEFT : names.NAVIGATE_RIGHT,
+  );
+  const message = Msg['KEYBOARD_NAV_BLOCK_NAVIGATION_HINT'].replace(
+    '%1',
+    shortcut,
+  );
+  const id = blockNavigationHintId;
+  Toast.show(workspace, {message, id});
+}
+
+/**
+ * Tell the user how to navigate inside the workspace.
+ *
+ * @param workspace The workspace.
+ */
+export function showWorkspaceNavigationHint(workspace: WorkspaceSvg) {
+  const message = Msg['KEYBOARD_NAV_WORKSPACE_NAVIGATION_HINT'];
+  const id = workspaceNavigationHintId;
+  Toast.show(workspace, {message, id});
+}
+
+/**
+ * Tell the user how to navigate away from a flyout label (heading) when they
+ * try to act on it. Labels are not interactive, so direct them to use the
+ * arrow keys to reach a block or the next-heading shortcut to skip ahead.
+ *
+ * @param workspace The workspace.
+ */
+export function showFlyoutLabelActionHint(workspace: WorkspaceSvg) {
+  const message = Msg['KEYBOARD_NAV_FLYOUT_LABEL_HINT'].replace(
+    '%1',
+    getShortcutKeysShort(names.NEXT_HEADING),
+  );
+  Toast.show(workspace, {message, id: flyoutLabelHintId});
+}
+
+/**
+ * Nudge the user to paste after a copy.
+ *
+ * @param workspace Workspace.
+ */
+export function showCopiedHint(workspace: WorkspaceSvg) {
+  Toast.show(workspace, {
+    message: Msg['KEYBOARD_NAV_COPIED_HINT'].replace(
+      '%1',
+      getShortcutKeysShort(names.PASTE),
+    ),
+    duration: 7,
+    id: copiedHintId,
+  });
+}
+
+/**
+ * Nudge the user to paste after a cut.
+ *
+ * @param workspace Workspace.
+ */
+export function showCutHint(workspace: WorkspaceSvg) {
+  Toast.show(workspace, {
+    message: Msg['KEYBOARD_NAV_CUT_HINT'].replace(
+      '%1',
+      getShortcutKeysShort(names.PASTE),
+    ),
+    duration: 7,
+    id: cutHintId,
+  });
+}
+
+/**
+ * Clear active paste-related hints, if any.
+ *
+ * @param workspace The workspace.
+ */
+export function clearPasteHints(workspace: WorkspaceSvg) {
+  Toast.hide(workspace, cutHintId);
+  Toast.hide(workspace, copiedHintId);
+}
+
+/**
+ * Inform the user about screenreader optimization mode being toggled, and how
+ * to undo it.
+ *
+ * @param workspace The workspace where screenreader mode was toggled.
+ * @param enabled True if screenreader mode is now enabled, otherwise false.
+ */
+export function showScreenreaderModeHint(
+  workspace: WorkspaceSvg,
+  enabled: boolean,
+) {
+  Toast.show(workspace, {
+    message: (enabled
+      ? Msg['SCREENREADER_MODE_ENABLED']
+      : Msg['SCREENREADER_MODE_DISABLED']
+    ).replace('%1', getShortcutKeysShort(names.TOGGLE_SCREENREADER)),
+    duration: 7,
+    id: screenreaderHintId,
+  });
+}

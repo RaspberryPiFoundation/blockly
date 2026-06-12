@@ -52,9 +52,6 @@ suite('Block Create Event', function () {
       this.workspace.id,
       'shadowId',
     );
-    const calls = this.eventsFireStub.getCalls();
-    const event = calls[calls.length - 1].args[0];
-    assert.equal(event.xml.tagName, 'shadow');
   });
 
   test('Does not create extra shadow blocks', function () {
@@ -100,8 +97,6 @@ suite('Block Create Event', function () {
 
       const json = origEvent.toJson();
       const newEvent = new Blockly.Events.fromJson(json, this.workspace);
-      delete origEvent.xml; // xml fails deep equals for some reason.
-      delete newEvent.xml; // xml fails deep equals for some reason.
 
       assert.deepEqual(newEvent, origEvent);
     });

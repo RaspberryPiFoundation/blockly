@@ -24,11 +24,15 @@ suite('Dialog utilities', function () {
     Blockly.dialog.setToast();
   });
 
-  test('use the browser alert by default', function () {
-    const alert = sinon.stub(window, 'alert');
-    Blockly.dialog.alert('test');
-    assert.isTrue(alert.calledWith('test'));
-    alert.restore();
+  test('use the built in alert by default', function (done) {
+    const callback = () => {
+      done();
+    };
+    const message = 'test';
+    Blockly.dialog.alert(message, callback);
+    const dialog = document.querySelector('dialog');
+    assert.include(dialog.textContent, 'test');
+    dialog.querySelector('.blocklyDialogConfirmButton').click();
   });
 
   test('support setting a custom alert handler', function () {
@@ -40,24 +44,23 @@ suite('Dialog utilities', function () {
     assert.isTrue(alert.calledWith('test', callback));
   });
 
-  test('do not call the browser alert if a custom alert handler is set', function () {
-    const browserAlert = sinon.stub(window, 'alert');
-
+  test('do not call the built in alert if a custom alert handler is set', function () {
     const alert = sinon.spy();
     Blockly.dialog.setAlert(alert);
     Blockly.dialog.alert(test);
-    assert.isFalse(browserAlert.called);
-
-    browserAlert.restore();
+    const dialog = document.querySelector('dialog');
+    assert.isNull(dialog);
   });
 
-  test('use the browser confirm by default', function () {
-    const confirm = sinon.stub(window, 'confirm');
-    const callback = () => {};
+  test('use the built in confirm by default', function (done) {
+    const callback = () => {
+      done();
+    };
     const message = 'test';
     Blockly.dialog.confirm(message, callback);
-    assert.isTrue(confirm.calledWith(message));
-    confirm.restore();
+    const dialog = document.querySelector('dialog');
+    assert.include(dialog.textContent, 'test');
+    dialog.querySelector('.blocklyDialogCancelButton').click();
   });
 
   test('support setting a custom confirm handler', function () {
@@ -69,36 +72,39 @@ suite('Dialog utilities', function () {
     assert.isTrue(confirm.calledWith('test', callback));
   });
 
-  test('do not call the browser confirm if a custom confirm handler is set', function () {
-    const browserConfirm = sinon.stub(window, 'confirm');
-
+  test('do not call the built in confirm if a custom confirm handler is set', function () {
     const confirm = sinon.spy();
     Blockly.dialog.setConfirm(confirm);
     const callback = () => {};
     const message = 'test';
     Blockly.dialog.confirm(message, callback);
-    assert.isFalse(browserConfirm.called);
-
-    browserConfirm.restore();
+    const dialog = document.querySelector('dialog');
+    assert.isNull(dialog);
   });
 
-  test('invokes the provided callback with the confirmation response', function () {
-    const confirm = sinon.stub(window, 'confirm').returns(true);
-    const callback = sinon.spy();
+  test('invokes the provided callback with the confirmation response', function (done) {
+    const callback = (result) => {
+      assert.isTrue(result);
+      done();
+    };
     const message = 'test';
     Blockly.dialog.confirm(message, callback);
-    assert.isTrue(callback.calledWith(true));
-    confirm.restore();
+    const dialog = document.querySelector('dialog');
+    dialog.querySelector('.blocklyDialogConfirmButton').click();
   });
 
-  test('use the browser prompt by default', function () {
-    const prompt = sinon.stub(window, 'prompt');
-    const callback = () => {};
+  test('use the built in prompt by default', function (done) {
+    const callback = () => {
+      done();
+    };
     const message = 'test';
     const defaultValue = 'default';
     Blockly.dialog.prompt(message, defaultValue, callback);
-    assert.isTrue(prompt.calledWith(message, defaultValue));
-    prompt.restore();
+    const dialog = document.querySelector('dialog');
+    assert.include(dialog.textContent, 'test');
+    const input = dialog.querySelector('input');
+    assert.equal(input.value, 'default');
+    dialog.querySelector('.blocklyDialogCancelButton').click();
   });
 
   test('support setting a custom prompt handler', function () {
@@ -111,28 +117,30 @@ suite('Dialog utilities', function () {
     assert.isTrue(prompt.calledWith('test', defaultValue, callback));
   });
 
-  test('do not call the browser prompt if a custom prompt handler is set', function () {
-    const browserPrompt = sinon.stub(window, 'prompt');
-
+  test('do not call the built in prompt if a custom prompt handler is set', function () {
     const prompt = sinon.spy();
     Blockly.dialog.setPrompt(prompt);
     const callback = () => {};
     const message = 'test';
     const defaultValue = 'default';
     Blockly.dialog.prompt(message, defaultValue, callback);
-    assert.isFalse(browserPrompt.called);
-
-    browserPrompt.restore();
+    const dialog = document.querySelector('dialog');
+    assert.isNull(dialog);
   });
 
-  test('invokes the provided callback with the prompt response', function () {
-    const prompt = sinon.stub(window, 'prompt').returns('something');
-    const callback = sinon.spy();
+  test('invokes the provided callback with the prompt response', function (done) {
+    const callback = (response) => {
+      assert.equal(response, 'something');
+      done();
+    };
     const message = 'test';
     const defaultValue = 'default';
     Blockly.dialog.prompt(message, defaultValue, callback);
-    assert.isTrue(callback.calledWith('something'));
-    prompt.restore();
+    const dialog = document.querySelector('dialog');
+    assert.include(dialog.textContent, 'test');
+    const input = dialog.querySelector('input');
+    input.value = 'something';
+    dialog.querySelector('.blocklyDialogConfirmButton').click();
   });
 
   test('use the built-in toast by default', function () {

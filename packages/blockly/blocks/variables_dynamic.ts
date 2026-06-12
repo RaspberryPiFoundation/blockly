@@ -117,12 +117,12 @@ const CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MIXIN = {
         this.type === 'variables_get_dynamic' ||
         this.type === 'variables_get_reporter_dynamic'
       ) {
+        const name = this.getField('VAR')!.getText();
         const renameOption = {
-          text: Msg['RENAME_VARIABLE'],
+          text: Msg['RENAME_VARIABLE'].replace('%1', name),
           enabled: true,
           callback: renameOptionCallbackFactory(this),
         };
-        const name = this.getField('VAR')!.getText();
         const deleteOption = {
           text: Msg['DELETE_VARIABLE'].replace('%1', name),
           enabled: true,

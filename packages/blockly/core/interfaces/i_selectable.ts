@@ -6,7 +6,7 @@
 
 // Former goog.module ID: Blockly.ISelectable
 
-import type {Workspace} from '../workspace.js';
+import type {WorkspaceSvg} from '../workspace_svg.js';
 import {IFocusableNode, isFocusableNode} from './i_focusable_node.js';
 
 /**
@@ -20,7 +20,7 @@ import {IFocusableNode, isFocusableNode} from './i_focusable_node.js';
 export interface ISelectable extends IFocusableNode {
   id: string;
 
-  workspace: Workspace;
+  workspace: WorkspaceSvg;
 
   /** Select this.  Highlight it visually. */
   select(): void;

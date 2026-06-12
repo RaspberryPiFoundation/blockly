@@ -7,10 +7,9 @@ image: images/blockly_banner.png
 # Keyboard shortcuts
 
 Blockly maintains a registry of keyboard shortcuts that map keys (or key
-combinations like `ctrl-C`) to actions. The registry is
-[prepopulated](#default-shortcuts) with a number of shortcuts, such as `ctrl-C`
-and `meta-C` for copy. You can add shortcuts to and delete shortcuts from the
-registry.
+combinations) to actions. The registry is [prepopulated](#default-shortcuts)
+with a number of shortcuts, such as `Ctrl + C` and `Command + C` for copy. You 
+can add shortcuts to and delete shortcuts from the registry.
 
 ## How keyboard shortcuts work
 
@@ -44,7 +43,8 @@ implements
 [`IFocusableNode`](/reference/blockly.ifocusablenode). This
 interface is implemented by all Blockly components that the user can focus on,
 including workspaces, blocks, fields, comments, and your own custom components;
-for more information, see [Focus system](/guides/configure/focus).
+for more information, see the documentation on the
+[focus system](/guides/configure/focus).
 
 For example, a `preconditionFn` might use `focusedNode` to ensure that a
 shortcut only applies to blocks.
@@ -72,6 +72,9 @@ const logFieldsShortcut = {
   // ...
 };
 ```
+
+You can use the shortcut name to associate keyboard shortcuts with 
+[context menu items](/guides/configure/web/context-menus#keyboard-shortcut). 
 
 ### preconditionFn (optional)
 
@@ -128,8 +131,8 @@ const logFieldsShortcut = {
 };
 ```
 
-Although `callback` is optional, there is generally no reason not to implement
-it.
+Although `callback` is optional, leaving it undefined means your shortcut will 
+not do anything.
 
 ### keyCodes (optional)
 
@@ -155,41 +158,21 @@ This is not common.
 
 If your keyboard shortcut is activated by a combination of keys, such as holding
 `Control` and `C` simultaneously, create a serialized keycode by calling
-`Blockly.ShortcutRegistry.registry.createSerializedKey`:
-
-```js
-const ctrlC = Blockly.ShortcutRegistry.registry.createSerializedKey(
-  Blockly.utils.KeyCodes.C, // Keycode of main key
-  [Blockly.utils.KeyCodes.CTRL], // Array of modifier keys
-);
-
-const copyShortcut = {
-  // ...
-  keyCodes: [ctrlC], // Use the serialized keycode
-  // ...
-};
-```
-
-#### Control and Meta
-
-On Windows, many shortcuts are activated with the `Control` key. On Mac, these
-keyboard shortcuts use the `Command` key instead, which is recognized as the
-`META` keycode. To support both operating systems, register your shortcuts with
-both the `CTRL` keycode and the `META` keycode.
+`Blockly.ShortcutRegistry.registry.createSerializedKey`. On Windows and Linux 
+many shortcuts are activated with the `Control` key. On Apple plaforms these
+keyboard shortcuts use the `Command` key instead. Register your shortcuts with 
+the `CTRL_CMD` keycode whenever you want your shortcut to use the system's 
+primary modifier key. Blockly will map the key combination appropriately.
 
 ```js
 const ctrlC = Blockly.ShortcutRegistry.registry.createSerializedKey(
   Blockly.utils.KeyCodes.C,
-  [Blockly.utils.KeyCodes.CTRL],
-);
-const metaC = Blockly.ShortcutRegistry.registry.createSerializedKey(
-  Blockly.utils.KeyCodes.C,
-  [Blockly.utils.KeyCodes.META],
+  [Blockly.utils.KeyCodes.CTRL_CMD],
 );
 
 const copyShortcut = {
   // ...
-  keyCodes: [ctrlC, metaC],
+  keyCodes: [ctrlC],
   // ...
 };
 ```
@@ -270,12 +253,16 @@ Blockly.ShortcutRegistry.registry.register(modLogFieldsShortcut);
 The shortcut registry is prepopulated with a number of shortcuts. You can find
 these in
 [https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/blockly/core/shortcut_items.ts](https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/blockly/core/shortcut_items.ts).
-The shortcuts are defined in the `registerXxxx` functions.
+The shortcuts are defined in the `registerXxxx` functions. You can also view
+all currently registered shortcuts by running
+`Blockly.ShortcutRegistry.registry.getKeyMap()`.
 
-## Keyboard navigation shortcuts
+### Keyboard navigation
 
-The [keyboard navigation plugin](/guides/configure/keyboard-nav)
-contains shortcuts that allow users to navigate Blockly with the keyboard, such
-as by using arrow keys. Keyboard navigation is essential for users who cannot
-use a mouse, such as those with motor or visual impairments. It is also useful
-for power users who may want to use keyboard shortcuts for efficiency.
+Starting in v13, Blockly can be entirely 
+[controlled from the keyboard](/guides/configure/keyboard-nav). Where
+possible developers should use the default keyboard navigation shortcuts rather
+than overriding or remapping them. Keyboard navigation is essential for users 
+who cannot use a mouse, such as those with motor or visual impairments. It is 
+also useful for power users who may want to use keyboard shortcuts for
+efficiency.

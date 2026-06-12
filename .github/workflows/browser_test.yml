@@ -21,14 +21,14 @@ jobs:
         # TODO (#2114): re-enable osx build.
         # os: [ubuntu-latest, macos-latest]
         os: [macos-latest]
-        node-version: [18.x, 20.x]
+        node-version: [22.x, 24.x]
         # See supported Node.js release schedule at
         # https://nodejs.org/en/about/releases/
 
     defaults:
       run:
         working-directory: ./packages/blockly
-    
+
     steps:
       - uses: actions/checkout@v5
         with:

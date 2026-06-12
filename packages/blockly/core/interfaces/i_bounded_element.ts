@@ -29,3 +29,16 @@ export interface IBoundedElement {
    */
   moveBy(dx: number, dy: number, reason?: string[]): void;
 }
+
+/**
+ * Returns whether or not the given object conforms to IBoundedElement.
+ *
+ * @param object The object to test for conformance.
+ * @returns True if the object conforms to IBoundedElement, otherwise false.
+ */
+export function isBoundedElement(object: any): object is IBoundedElement {
+  return (
+    typeof (object as IBoundedElement).getBoundingRectangle === 'function' &&
+    typeof (object as IBoundedElement).moveBy === 'function'
+  );
+}

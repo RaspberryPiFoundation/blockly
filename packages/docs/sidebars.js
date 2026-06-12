@@ -527,6 +527,11 @@ const sidebars = {
           label: 'Block appearance',
           id: 'guides/design/appearance',
         },
+        {
+          type: 'doc',
+          label: 'Accessibility',
+          id: 'guides/design/accessibility',
+        },
       ],
     },
     {
@@ -812,6 +817,11 @@ const sidebars = {
               type: 'doc',
               label: 'Keyboard navigation',
               id: 'guides/configure/keyboard-nav',
+            },
+            {
+              type: 'doc',
+              label: 'Screen reader',
+              id: 'guides/configure/screen-reader',
             },
             {
               type: 'doc',
@@ -1265,6 +1275,22 @@ const sidebars = {
               type: 'doc',
               label: 'Generate and run JavaScript',
               id: 'guides/app-integration/running-javascript',
+            },
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Accessibility',
+          items: [
+            {
+              type: 'doc',
+              label: 'Compliance',
+              id: 'guides/app-integration/accessibility/compliance',
+            },
+            {
+              type: 'doc',
+              label: 'Best practices',
+              id: 'guides/app-integration/accessibility/best-practices',
             },
           ],
         },

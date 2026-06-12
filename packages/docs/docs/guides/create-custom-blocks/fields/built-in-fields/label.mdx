@@ -89,6 +89,12 @@ If you would like your label to be serialized, because it is being changed
 programmatically, see the [Serializable Label](/guides/create-custom-blocks/fields/built-in-fields/label-serializable)
 field.
 
+## Accessibility
+
+Label fields cannot be focused directly with keyboard navigation. The on-block
+display has the ARIA role `generic`. There is no editor display. The label's
+text is used to construct the parent block's ARIA label.
+
 ## Validators
 
 Label fields do not support validators, because they are not editable.

@@ -7,13 +7,17 @@
 // Former goog.module ID: Blockly.Variables
 
 import type {Block} from './block.js';
+import type {BlockSvg} from './block_svg.js';
 import {Blocks} from './blocks.js';
 import * as dialog from './dialog.js';
+import type {BlockCreate} from './events/events.js';
+import * as Events from './events/events.js';
+import {getFocusManager} from './focus_manager.js';
 import {isLegacyProcedureDefBlock} from './interfaces/i_legacy_procedure_blocks.js';
 import {isVariableBackedParameterModel} from './interfaces/i_variable_backed_parameter_model.js';
 import {IVariableModel, IVariableState} from './interfaces/i_variable_model.js';
+import {keyboardNavigationController} from './keyboard_navigation_controller.js';
 import {Msg} from './msg.js';
-import * as deprecation from './utils/deprecation.js';
 import type {BlockInfo, FlyoutItemInfo} from './utils/toolbox.js';
 import * as utilsXml from './utils/xml.js';
 import type {Workspace} from './workspace.js';
@@ -89,51 +93,17 @@ export function allDeveloperVariables(workspace: Workspace): string[] {
 }
 
 /**
- * Internal wrapper that returns the contents of the variables category.
- *
- * @internal
- * @param workspace The workspace to populate variable blocks for.
- */
-export function internalFlyoutCategory(
-  workspace: WorkspaceSvg,
-): FlyoutItemInfo[] {
-  return flyoutCategory(workspace, false);
-}
-
-export function flyoutCategory(
-  workspace: WorkspaceSvg,
-  useXml: true,
-): Element[];
-export function flyoutCategory(
-  workspace: WorkspaceSvg,
-  useXml: false,
-): FlyoutItemInfo[];
-/**
  * Construct the elements (blocks and button) required by the flyout for the
  * variable category.
  *
  * @param workspace The workspace containing variables.
- * @param useXml True to return the contents as XML, false to use JSON.
- * @returns List of flyout contents as either XML or JSON.
+ * @returns List of flyout contents as JSON.
  */
-export function flyoutCategory(
-  workspace: WorkspaceSvg,
-  useXml = true,
-): Element[] | FlyoutItemInfo[] {
+export function flyoutCategory(workspace: WorkspaceSvg): FlyoutItemInfo[] {
   if (!Blocks['variables_set'] && !Blocks['variables_get']) {
     console.warn(
       'There are no variable blocks, but there is a variable category.',
     );
-  }
-
-  if (useXml) {
-    deprecation.warn(
-      'The XML return value of Blockly.Variables.flyoutCategory()',
-      'v12',
-      'v13',
-      'the same method, but handle a return type of FlyoutItemInfo[] (JSON) instead.',
-    );
-    return xmlFlyoutCategory(workspace);
   }
 
   workspace.registerButtonCallback('CREATE_VARIABLE', function (button) {
@@ -237,30 +207,6 @@ export function jsonFlyoutCategoryBlocks(
   }
 
   return blocks;
-}
-
-/**
- * Construct the elements (blocks and button) required by the flyout for the
- * variable category.
- *
- * @param workspace The workspace containing variables.
- * @returns Array of XML elements.
- */
-function xmlFlyoutCategory(workspace: WorkspaceSvg): Element[] {
-  let xmlList = new Array<Element>();
-  const button = document.createElement('button');
-  button.setAttribute('text', '%{BKY_NEW_VARIABLE}');
-  button.setAttribute('callbackKey', 'CREATE_VARIABLE');
-
-  workspace.registerButtonCallback('CREATE_VARIABLE', function (button) {
-    createVariableButtonHandler(button.getTargetWorkspace());
-  });
-
-  xmlList.push(button);
-
-  const blockList = flyoutCategoryBlocks(workspace);
-  xmlList = xmlList.concat(blockList);
-  return xmlList;
 }
 
 /**
@@ -403,7 +349,7 @@ export function generateUniqueNameFromOptions(
  *     will default to '', which is a specific type.
  */
 export function createVariableButtonHandler(
-  workspace: Workspace,
+  workspace: WorkspaceSvg,
   opt_callback?: (p1?: string | null) => void,
   opt_type?: string,
 ) {
@@ -420,8 +366,30 @@ export function createVariableButtonHandler(
       const existing = nameUsedWithAnyType(text, workspace);
       if (!existing) {
         // No conflict
-        workspace.getVariableMap().createVariable(text, type);
+        const variable = workspace.getVariableMap().createVariable(text, type);
         if (opt_callback) opt_callback(text);
+        const flyoutWorkspace = workspace.getFlyout()?.getWorkspace();
+        if (!flyoutWorkspace || !keyboardNavigationController.getIsActive()) {
+          return;
+        }
+        const changeListener = (e: Events.Abstract) => {
+          // Focus the newly created variable_set block.
+          if (e.type === Events.BLOCK_CREATE) {
+            const blockId = (e as BlockCreate).blockId;
+            if (blockId) {
+              const block = flyoutWorkspace.getBlockById(blockId);
+              if (
+                block &&
+                block.type === 'variables_set' &&
+                block.getFieldValue('VAR') === variable.getId()
+              ) {
+                getFocusManager().focusNode(block as BlockSvg);
+                flyoutWorkspace.removeChangeListener(changeListener);
+              }
+            }
+          }
+        };
+        flyoutWorkspace.addChangeListener(changeListener);
         return;
       }
 

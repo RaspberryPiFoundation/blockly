@@ -102,6 +102,25 @@ The `value` should cast to a number. If it does not 0 will be used.
   inner text value follows the same rules as the constructor value.
   </TabItem>
 </Tabs>
+
+## Accessibility
+
+A number field's ARIA label is `number: <ARIA value>`. A number fields's 
+on-block display has the ARIA role `button`. Activating the field overlays and
+focuses an HTML text input.
+
+:::note
+The HTML input type is `text` rather than `number` because the semantics of
+an HTML `number` input do not match Blockly's behaviour. Blockly number fields
+provide feedback for invalid values and handle the value `Infinity`.
+[According to MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/number#accessibility)
+“the implicit role for the `<input type="number">` element is `spinbutton`. 
+[...] With `<input type="number">`, there is a risk of users accidentally 
+incrementing a number when they're trying to do something else. Additionally, 
+if users try to enter something that's not a number, there's no explicit 
+feedback about what they're doing wrong.”
+:::
+
 ## Constraints
 
 Constraints can be set in the field definition, or by using the
@@ -127,9 +146,7 @@ used to make the field only accept multiples of .01, 10, 42, etc.
 
 ### Positive numbers
 
-To force your field to only accept positive numbers, set the `min` value to
-
-1.
+To force your field to only accept positive numbers, set the `min` value to 1.
 
 ### Integers
 

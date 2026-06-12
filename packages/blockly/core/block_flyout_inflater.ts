@@ -15,6 +15,7 @@ import type {IFlyout} from './interfaces/i_flyout.js';
 import type {IFlyoutInflater} from './interfaces/i_flyout_inflater.js';
 import * as registry from './registry.js';
 import * as blocks from './serialization/blocks.js';
+import {aria} from './utils.js';
 import type {BlockInfo} from './utils/toolbox.js';
 import * as utilsXml from './utils/xml.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
@@ -67,7 +68,19 @@ export class BlockFlyoutInflater implements IFlyoutInflater {
     // Mark blocks as being inside a flyout.  This is used to detect and
     // prevent the closure of the flyout if the user right-clicks on such
     // a block.
-    block.getDescendants(false).forEach((b) => (b.isInFlyout = true));
+    block.getDescendants(false).forEach((b) => {
+      b.isInFlyout = true;
+      const focusableElement = b.getFocusableElement();
+      // blocks can't be focused if they're in a flyout and not top-level
+      // nonfocusable blocks should be hidden from the aria tree
+      aria.setState(focusableElement, aria.State.HIDDEN, true);
+      aria.setRole(focusableElement, aria.Role.PRESENTATION);
+    });
+    // Since getDescencdants includes the root block, we need
+    // to correct the role and hidden state for it.
+    const focusableElement = block.getFocusableElement();
+    aria.clearState(focusableElement, aria.State.HIDDEN);
+    aria.setRole(focusableElement, aria.Role.LISTITEM);
     this.addBlockListeners(block);
 
     return new FlyoutItem(block, BLOCK_TYPE);

@@ -1894,6 +1894,60 @@ suite('Blocks', function () {
           'Expected warning icon to be deleted after all warning text is cleared',
         );
       });
+
+      suite('ARIA', function () {
+        setup(async function () {
+          this.block.setWarningText('Something went wrong');
+          this.block.initSvg();
+          this.block.render();
+          this.icon = this.block.getIcon(Blockly.icons.WarningIcon.TYPE);
+          await this.icon.setBubbleVisible(true);
+
+          this.bubble = this.icon.getBubble();
+        });
+        function getFocusableAriaLabel(iFocusable) {
+          return iFocusable.getFocusableElement().getAttribute('aria-label');
+        }
+        test('Bubble has ARIA label', async function () {
+          assert.isTrue(
+            this.bubble.focusableElement.hasAttribute('aria-label'),
+          );
+        });
+        test('Bubble has working ARIA label provider', function () {
+          const label = getFocusableAriaLabel(this.bubble);
+          assert.include(label, 'Warning');
+          assert.include(label, 'Something went wrong');
+        });
+        test('Bubble has ARIA role of group', async function () {
+          assert.equal(
+            this.bubble.focusableElement.getAttribute('role'),
+            'group',
+          );
+        });
+        test('Bubble uses function provider ARIA label when provided', function () {
+          this.bubble.setAriaLabelProvider(() => 'Custom warning label');
+          const label = getFocusableAriaLabel(this.bubble);
+          assert.equal(label, 'Custom warning label');
+        });
+        test('Bubble uses string provider ARIA label when provided', function () {
+          this.bubble.setAriaLabelProvider('Custom warning label');
+          const label = getFocusableAriaLabel(this.bubble);
+          assert.equal(label, 'Custom warning label');
+        });
+        test('Mutator icon label changes when bubble is opened', async function () {
+          const openLabel = getFocusableAriaLabel(this.icon);
+          assert.equal(openLabel, 'Close Warning');
+          await this.icon.setBubbleVisible(false);
+
+          const closedLabel = getFocusableAriaLabel(this.icon);
+          assert.equal(closedLabel, 'Open Warning');
+        });
+        test('Bubble uses default ARIA label when no provider is set', function () {
+          this.bubble.setAriaLabelProvider(null);
+          const label = getFocusableAriaLabel(this.bubble);
+          assert.equal(label, 'Bubble');
+        });
+      });
     });
 
     suite('Warning icons and collapsing', function () {

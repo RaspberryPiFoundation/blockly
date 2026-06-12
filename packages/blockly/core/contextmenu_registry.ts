@@ -100,6 +100,7 @@ export class ContextMenuRegistry {
         | ContextMenuRegistry.SeparatorContextMenuOption
         | ContextMenuRegistry.ActionContextMenuOption;
       menuOption = {
+        id: item.id,
         scope,
         weight: item.weight,
       };
@@ -122,6 +123,7 @@ export class ContextMenuRegistry {
           text: displayText,
           callback: item.callback,
           enabled: precondition === 'enabled',
+          associatedKeyboardShortcut: item.associatedKeyboardShortcut,
         };
       }
 
@@ -188,6 +190,13 @@ export namespace ContextMenuRegistry {
     displayText: ((p1: Scope) => string | HTMLElement) | string | HTMLElement;
     separator?: never;
     preconditionFn: (p1: Scope, menuOpenEvent: Event) => string;
+    /**
+     * Identifier used to associate this context menu item with a keyboard
+     * shortcut  which will be displayed in the menu as a hint. Should
+     * correspond to the name under which a keyboard shortcut that performs the
+     * same action as this menu item is registered.
+     */
+    associatedKeyboardShortcut?: string;
   }
 
   /**
@@ -208,8 +217,10 @@ export namespace ContextMenuRegistry {
    * Fields common to all context menu items as used by contextmenu.ts.
    */
   export interface CoreContextMenuOption {
+    id: string;
     scope: Scope;
     weight: number;
+    associatedKeyboardShortcut?: string;
   }
 
   /**
@@ -276,3 +287,5 @@ export type RegistryItem = ContextMenuRegistry.RegistryItem;
 export type ContextMenuOption = ContextMenuRegistry.ContextMenuOption;
 export type LegacyContextMenuOption =
   ContextMenuRegistry.LegacyContextMenuOption;
+export type ActionContextMenuOption =
+  ContextMenuRegistry.ActionContextMenuOption;

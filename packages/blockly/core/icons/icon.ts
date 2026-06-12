@@ -7,11 +7,15 @@
 import type {Block} from '../block.js';
 import type {BlockSvg} from '../block_svg.js';
 import * as browserEvents from '../browser_events.js';
+import {getFocusManager} from '../focus_manager.js';
 import type {IContextMenu} from '../interfaces/i_contextmenu.js';
 import type {IFocusableTree} from '../interfaces/i_focusable_tree.js';
 import {hasBubble} from '../interfaces/i_has_bubble.js';
 import type {IIcon} from '../interfaces/i_icon.js';
+import {Msg} from '../msg.js';
+import * as renderManagement from '../render_management.js';
 import * as tooltip from '../tooltip.js';
+import {aria} from '../utils.js';
 import {Coordinate} from '../utils/coordinate.js';
 import * as dom from '../utils/dom.js';
 import * as idGenerator from '../utils/idgenerator.js';
@@ -73,6 +77,7 @@ export abstract class Icon implements IIcon, IContextMenu {
     );
     (this.svgRoot as any).tooltip = this;
     tooltip.bindMouseEvents(this.svgRoot);
+    this.recomputeAriaContext();
   }
 
   dispose(): void {
@@ -190,6 +195,22 @@ export abstract class Icon implements IIcon, IContextMenu {
   }
 
   /**
+   * Handles the user acting on this icon via keyboard navigation.
+   * Performs the same action as a click would, and focuses this icon's bubble
+   * if it has one.
+   */
+  performAction() {
+    this.onClick();
+    renderManagement.finishQueuedRenders().then(() => {
+      if (hasBubble(this) && this.bubbleIsVisible()) {
+        const bubble = this.getBubble();
+        if (!bubble) return;
+        getFocusManager().focusNode(bubble);
+      }
+    });
+  }
+
+  /**
    * Returns the block that this icon is attached to.
    *
    * @returns The block this icon is attached to.
@@ -200,5 +221,29 @@ export abstract class Icon implements IIcon, IContextMenu {
 
   showContextMenu(e: PointerEvent) {
     (this.getSourceBlock() as BlockSvg).showContextMenu(e);
+  }
+
+  /**
+   * Recomputes the ARIA label and role for this icon. This is automatically called
+   * during initialization, but implementations may find it useful to call this if
+   * the icon's label should be changed.
+   */
+  protected recomputeAriaContext(): void {
+    const element = this.getFocusableElement();
+    if (!element) return;
+    aria.setRole(element, aria.Role.BUTTON);
+    const label = this.getAriaLabel() ?? Msg['ICON_LABEL_DEFAULT'];
+    aria.setState(element, aria.State.LABEL, label);
+  }
+
+  /**
+   * Returns the ARIA label to use for this icon (defaults to null). Note that this
+   * method will only be called during initialization by default, so dynamic changes
+   * to the icon's ARIA label need to be applied by calling recomputeAriaContext.
+   *
+   * @returns The ARIA label to use for this icon, or null to use a default.
+   */
+  protected getAriaLabel(): string | null {
+    return null;
   }
 }

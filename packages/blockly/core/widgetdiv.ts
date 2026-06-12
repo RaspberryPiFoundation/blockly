@@ -10,7 +10,9 @@ import * as browserEvents from './browser_events.js';
 import * as common from './common.js';
 import {Field} from './field.js';
 import {ReturnEphemeralFocus, getFocusManager} from './focus_manager.js';
+import * as aria from './utils/aria.js';
 import * as dom from './utils/dom.js';
+import * as idGenerator from './utils/idgenerator.js';
 import type {Rect} from './utils/rect.js';
 import type {Size} from './utils/size.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
@@ -40,6 +42,12 @@ let containerDiv: HTMLDivElement | null;
 let returnEphemeralFocus: ReturnEphemeralFocus | null = null;
 
 /**
+ * Class applied to the element that is displaying the WidgetDiv, used to apply
+ * focus styles.
+ */
+const SHOWING_WIDGETDIV_SELECTOR = 'blocklyShowingWidgetDiv';
+
+/**
  * Returns the HTML container for editor widgets.
  *
  * @returns The editor widget container.
@@ -62,6 +70,19 @@ export function testOnly_setDiv(newDiv: HTMLDivElement | null) {
 }
 
 /**
+ * Deals with the root element that contains this and other popovers losing
+ * focus by returning ephemeral focus if we hold it and hiding the WidgetDiv.
+ */
+function handleFocusLoss() {
+  if (returnEphemeralFocus) {
+    returnEphemeralFocus(false);
+    returnEphemeralFocus = null;
+  }
+
+  hide();
+}
+
+/**
  * Create the widget div and inject it onto the page.
  */
 export function createDom() {
@@ -72,6 +93,7 @@ export function createDom() {
     containerDiv = existingContainer as HTMLDivElement;
   } else {
     containerDiv = document.createElement('div');
+    containerDiv.id = idGenerator.getNextUniqueId();
     containerDiv.className = containerClassName;
     containerDiv.tabIndex = -1;
   }
@@ -112,6 +134,24 @@ export function show(
   dispose = newDispose;
   const div = containerDiv;
   if (!div) return;
+
+  ownerWorkspace = workspace ?? (common.getMainWorkspace() as WorkspaceSvg);
+  const existingOwnership = aria.getState(
+    ownerWorkspace.getFocusableElement(),
+    aria.State.OWNS,
+  );
+  aria.setState(
+    ownerWorkspace.getFocusableElement(),
+    aria.State.OWNS,
+    existingOwnership ? [existingOwnership, div.id] : div.id,
+  );
+  ownerWorkspace
+    .getFocusableElement()
+    .classList.add(SHOWING_WIDGETDIV_SELECTOR);
+
+  const parentDiv = common.getParentContainer();
+  parentDiv?.appendChild(div);
+
   div.style.direction = rtl ? 'rtl' : 'ltr';
   div.style.display = 'block';
   if (!workspace && newOwner instanceof Field) {
@@ -119,11 +159,8 @@ export function show(
     // workspace to this function, attempt to derive it from the field.
     workspace = (newOwner as Field).getSourceBlock()?.workspace as WorkspaceSvg;
   }
-  ownerWorkspace = workspace ?? null;
-  const rendererWorkspace =
-    workspace ?? (common.getMainWorkspace() as WorkspaceSvg);
-  rendererClassName = rendererWorkspace.getRenderer().getClassName();
-  themeClassName = rendererWorkspace.getTheme().getClassName();
+  rendererClassName = ownerWorkspace.getRenderer().getClassName();
+  themeClassName = ownerWorkspace.getTheme().getClassName();
   if (rendererClassName) {
     dom.addClass(div, rendererClassName);
   }
@@ -133,6 +170,7 @@ export function show(
   if (manageEphemeralFocus) {
     returnEphemeralFocus = getFocusManager().takeEphemeralFocus(div);
   }
+  getFocusManager().registerPopoverFocusLossHandler(handleFocusLoss);
 }
 
 /**
@@ -146,6 +184,7 @@ export function hide() {
 
   const div = containerDiv;
   if (!div) return;
+  getFocusManager().unregisterPopoverFocusLossHandler(handleFocusLoss);
   div.style.display = 'none';
   div.style.left = '';
   div.style.top = '';
@@ -163,12 +202,25 @@ export function hide() {
     dom.removeClass(div, themeClassName);
     themeClassName = '';
   }
-  (common.getMainWorkspace() as WorkspaceSvg).markFocused();
+  ownerWorkspace?.markFocused();
 
   if (returnEphemeralFocus) {
     returnEphemeralFocus();
     returnEphemeralFocus = null;
   }
+
+  if (!ownerWorkspace || !containerDiv) return;
+
+  const existingOwnership =
+    aria.getState(ownerWorkspace.getFocusableElement(), aria.State.OWNS) ?? '';
+  aria.setState(
+    ownerWorkspace.getFocusableElement(),
+    aria.State.OWNS,
+    existingOwnership.replace(containerDiv.id, ''),
+  );
+  ownerWorkspace
+    .getFocusableElement()
+    .classList.remove(SHOWING_WIDGETDIV_SELECTOR);
 }
 
 /**
@@ -225,9 +277,18 @@ export function hideIfOwnerIsInWorkspace(workspace: WorkspaceSvg) {
  * @param height The height of the widget div (pixels).
  */
 function positionInternal(x: number, y: number, height: number) {
-  containerDiv!.style.left = x + 'px';
-  containerDiv!.style.top = y + 'px';
-  containerDiv!.style.height = height + 'px';
+  if (!containerDiv) return;
+
+  const parentElement = containerDiv.parentElement;
+  if (parentElement) {
+    const bounds = parentElement.getBoundingClientRect();
+    x -= bounds.left + window.scrollX;
+    y -= bounds.top + window.scrollY;
+  }
+
+  containerDiv.style.left = x + 'px';
+  containerDiv.style.top = y + 'px';
+  containerDiv.style.height = height + 'px';
 }
 
 /**

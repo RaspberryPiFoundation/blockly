@@ -13,6 +13,8 @@
 
 import {Field, FieldConfig} from './field.js';
 import * as fieldRegistry from './field_registry.js';
+import {Msg} from './msg.js';
+import {aria} from './utils.js';
 import * as dom from './utils/dom.js';
 import * as parsing from './utils/parsing.js';
 import {Size} from './utils/size.js';
@@ -111,9 +113,18 @@ export class FieldImage extends Field<string> {
 
     if (config) {
       this.configure_(config);
+    } else if (isFieldImageConfig(alt)) {
+      // Block Factory and some hand-written blocks pass a config object as the
+      // fourth argument instead of using the seventh `config` parameter.
+      // This is wrong, and typescript will complain about it, but handle it
+      // for backwards compatibility.
+      this.configure_(alt);
     } else {
       this.flipRtl = !!flipRtl;
-      this.altText = parsing.replaceMessageReferences(alt) || '';
+      this.altText =
+        typeof alt === 'string'
+          ? parsing.replaceMessageReferences(alt) || ''
+          : '';
     }
     this.setValue(parsing.replaceMessageReferences(src));
   }
@@ -157,6 +168,8 @@ export class FieldImage extends Field<string> {
     if (this.clickHandler) {
       this.imageElement.style.cursor = 'pointer';
     }
+
+    this.recomputeAriaContext();
   }
 
   override updateSize_() {}
@@ -186,6 +199,7 @@ export class FieldImage extends Field<string> {
     if (this.imageElement) {
       this.imageElement.setAttributeNS(dom.XLINK_NS, 'xlink:href', this.value_);
     }
+    this.recomputeAriaContext();
   }
 
   /**
@@ -283,6 +297,104 @@ export class FieldImage extends Field<string> {
       options,
     );
   }
+
+  /**
+   * Gets an ARIA-friendly label representation of this field's type.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's type.
+   *
+   * @returns An ARIA representation of the field's type or a default if it is
+   *     unspecified.
+   */
+  override getAriaTypeName(): string | null {
+    return this.ariaTypeName || Msg['ARIA_TYPE_FIELD_IMAGE'];
+  }
+
+  /**
+   * Gets an ARIA-friendly label representation of this field's value.
+   *
+   * Implementations are responsible for, and encouraged to, return a localized
+   * version of the ARIA representation of the field's value.
+   *
+   * @returns An ARIA representation of the field's text, or null if no text is
+   *     currently defined or known for the field.
+   */
+  override getAriaValue(): string | null {
+    return this.altText || null;
+  }
+
+  /**
+   * Computes a descriptive ARIA label to represent this field with configurable
+   * verbosity.
+   *
+   * A 'verbose' label includes type information, if available, whereas a
+   * non-verbose label only contains the field's value.
+   *
+   * Note that this will always return the latest representation of the field's
+   * label which may differ from any previously set ARIA label for the field
+   * itself. Implementations are largely responsible for ensuring that the
+   * field's ARIA label is set correctly at relevant moments in the field's
+   * lifecycle (such as when its value changes).
+   *
+   * Finally, it is never guaranteed that implementations use the label returned
+   * by this method for their actual ARIA label. Some implementations may rely
+   * on other contexts to convey information like the field's value. Example:
+   * checkboxes represent their checked/non-checked status (i.e. value) through
+   * a separate ARIA property.
+   *
+   * Returns an empty string on clickable images (buttons), as we do not want to
+   * include image buttons on the block-level ARIA label. When the button is
+   * focused the label is set in recomputeAriaContext below.
+   *
+   * @param includeTypeInfo Whether to include the field's type information in
+   *     the returned label, if available.
+   */
+  override computeAriaLabel(includeTypeInfo: boolean): string {
+    return this.isClickable() ? '' : super.computeAriaLabel(includeTypeInfo);
+  }
+
+  /**
+   * Customizes label and sets additional aria state.
+   */
+  override recomputeAriaContext(): boolean {
+    const shouldCustomize = super.recomputeAriaContext();
+    if (!shouldCustomize) return false;
+
+    const focusableElement = this.getFocusableElement();
+
+    // The button role is intended to indicate to users that the field has an
+    // editing mode that can be activated. The presentation role is used to
+    // prevent screen readers from  reading the content or its descendants.
+    // Only clickable image fields are navigable.
+    if (!this.isClickable()) {
+      aria.setRole(focusableElement, aria.Role.PRESENTATION);
+      aria.clearState(focusableElement, aria.State.LABEL);
+      return false;
+    }
+    // For clickable images we need to set the label to the alt text here as
+    // we have overridden the computeAriaLabel to return an empty string. This
+    // will set it at the element level.
+    const label = this.getAriaValue() || '';
+    aria.setState(focusableElement, aria.State.LABEL, label);
+    return true;
+  }
+}
+
+/**
+ * Returns whether a value is a FieldImage config object passed in place of alt
+ * text (e.g. `{alt: '*', flipRtl: false}`). You shouldn't do this on purpose,
+ * but the block factory generates block definitions in this format.
+ *
+ * @param value The value to test.
+ */
+function isFieldImageConfig(value: unknown): value is FieldImageConfig {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    ('alt' in value || 'flipRtl' in value)
+  );
 }
 
 fieldRegistry.register('field_image', FieldImage);

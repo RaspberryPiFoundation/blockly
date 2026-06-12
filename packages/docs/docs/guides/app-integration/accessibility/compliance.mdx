@@ -1,0 +1,84 @@
+---
+description: How to make your use of Blockly meet accessibility standards.
+title: Compliance
+image: images/blockly_banner.png
+---
+
+# Compliance
+
+The [Web Content Accessibility Guidelines (WCAG) 2.2](https://www.w3.org/TR/WCAG22/)
+are international standards for the development of accessible web content.
+Blockly targets WCAG 2.2 Level AA compliance.
+
+## Web Content or Authoring Tool?
+
+As a library for creating block-based programming environments, Blockly sits 
+in two categories for WCAG compliance.
+
+Blockly is "web content" because it provides a default set of content (blocks 
+and fields) that can be used without customization. When assessed as web 
+content, we assume that a Blockly workspace containing only library blocks and 
+fields is instantiated on a page with no other contents.
+
+Blockly is also an "[authoring tool](https://www.w3.org/TR/ATAG20/#def-Authoring-Tool)"
+by WCAG standards. When assessed as an authoring tool, we assume that a Blockly
+workspace containing developer-defined blocks and fields (as well as library 
+blocks and fields) is instantiated on a web page with other contents.
+
+## Creating an ACR
+
+Blockly provides two accessibility compliance reports (ACR) in the VPAT format,
+which you can use to write an ACR for your full application:
+- The [core Blockly ACR](https://docs.google.com/document/d/e/2PACX-1vRR6Tb_n3zzrsI-p2uTLZIPj6AaKxJuLKbXLsRnjfyN0OA8RMhsA51Fn5ujGC8LLR0_REFzYJ4mzpR5/pub)
+applies to the use of the core library, fields, and blocks. This applies to use
+of Blockly as web content.
+- The [extended Blockly ACR](https://docs.google.com/document/d/e/2PACX-1vTkwFqJRUm7kkHpJ8IAn3iwjJv7OxIhpMnQxeURLmK-4NN5EF7TZ6CoC7TmTvUFsyMw16FTiM54ZTIE/pub)
+applies to the use of Blockly with custom fields and blocks. This applies to use
+of Blockly as an authoring tool.
+
+No part of Blockly's ACR provides information about page contents outside of the
+Blockly region. If a Blockly integration exists as a standalone portion of a
+larger web page we recommend creating one ACR for only the Blockly portions of
+the page, then integrating that into a larger ACR assessing the full page. For
+instance, a page with a Blockly-based editor and a simulated output window
+should assess the accessibility of the two regions separately.
+
+Developers building with Blockly can assess the accessibility of their Blockly
+integration by checking customizations against the criteria marked “Developer
+Responsibility” in the Conformance section of the Blockly ACR. The Remarks and
+Explanations column describes which customizations the developer must check.
+
+## Screen reader support
+
+Blockly provides extensive support for
+[screen reader usage](/guides/configure/screen-reader) through its
+[keyboard navigation](/guides/configure/keyboard-nav) system. As of Blockly
+v13 (released in June 2026) the core library meets standards for keyboard
+controls. v13 also includes APIs to support developers in creating accessible
+custom fields and blocks.
+
+Blockly computes text descriptions of blocks and fields for use by screen 
+readers and other assistive technology. By default, descriptions are computed
+based on block definitions. Developers are encouraged to further customize their
+labels with language that is appropriate for their audiences. Screen reader
+label generation can take advantage of Blockly's 
+[localization system](/guides/configure/web/translations).
+
+### Standard interfaces
+
+Blockly's screen reader and keyboard navigation systems are based on 
+extensive user research with sighted and visually impaired children. The
+keyboard shortcuts and vocabulary were selected to balance the needs of novice
+and advanced users. We recommend that developers use the default key mappings
+and terms unless they conflict with pre-existing portions of your application.
+Doing so will allow users to transfer experience between block-based programming
+environments. Please speak to the Blockly team about your options before
+diverging from the standard interface.
+
+## Custom fields
+
+Blockly allows developers to create
+[custom fields](/guides/create-custom-blocks/fields/customizing-fields/creating)
+with arbitrarily complex editors. Developers are responsible for the WCAG
+compliance of their editors, while Blockly is responsible for supporting
+navigation to the custom fields.

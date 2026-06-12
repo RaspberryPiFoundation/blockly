@@ -11,6 +11,7 @@
  */
 // Former goog.module ID: Blockly.RenderedConnection
 
+import {getInputLabelsSubset} from './block_aria_composer.js';
 import type {BlockSvg} from './block_svg.js';
 import {config} from './config.js';
 import {Connection} from './connection.js';
@@ -24,6 +25,8 @@ import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
 import {hasBubble} from './interfaces/i_has_bubble.js';
 import * as internalConstants from './internal_constants.js';
+import {Msg} from './msg.js';
+import * as aria from './utils/aria.js';
 import {Coordinate} from './utils/coordinate.js';
 import * as svgMath from './utils/svg_math.js';
 import {WorkspaceSvg} from './workspace_svg.js';
@@ -318,6 +321,58 @@ export class RenderedConnection
     return this.dbOpposite.searchForClosest(this, maxLimit, dxy);
   }
 
+  /**
+   * Sets the aria role, label, and other state for this connection.
+   *
+   * @param highlightSvg The focusable element for this connection.
+   */
+  private recomputeAriaContext(highlightSvg: SVGElement) {
+    // Note that output connections don't have highlights so this doesn't need to take them into account.
+    const roleDescription =
+      this.type === ConnectionType.INPUT_VALUE
+        ? Msg['INPUT_LABEL_VALUE']
+        : Msg['INPUT_LABEL_STATEMENT'];
+
+    aria.setRole(highlightSvg, aria.Role.FIGURE);
+    aria.setState(highlightSvg, aria.State.ROLEDESCRIPTION, roleDescription);
+
+    // 'Next' connections are only focusable if they're the last connection
+    // inside a statement input. The label for these connections comes from
+    // that statement input, even though there may be a stack of blocks
+    // between this current connection and that statement input.
+    const parentInput =
+      this.getParentInput() ??
+      this.getSourceBlock()
+        .getTopStackBlock()
+        .previousConnection?.targetConnection?.getParentInput();
+    if (!parentInput) {
+      // This doesn't happen in the default navigation policy, but it could happen
+      // if using a different policy that enables navigation to all statement
+      // inputs, for example.
+      aria.setState(highlightSvg, aria.State.LABEL, Msg['INPUT_LABEL_EMPTY']);
+      return;
+    }
+
+    // Use the custom label for an input if it exists, otherwise use the
+    // "field row" approach to get the default label for the input.
+    const parentInputLabel =
+      parentInput?.getAriaLabelText() ??
+      getInputLabelsSubset(
+        parentInput.getSourceBlock() as BlockSvg,
+        parentInput,
+        true,
+      ).join(', ');
+    if (this.type === ConnectionType.NEXT_STATEMENT) {
+      aria.setState(
+        highlightSvg,
+        aria.State.LABEL,
+        Msg['INPUT_LABEL_END_STATEMENT'].replace('%1', parentInputLabel),
+      );
+    } else {
+      aria.setState(highlightSvg, aria.State.LABEL, parentInputLabel);
+    }
+  }
+
   /** Add highlighting around this connection. */
   highlight() {
     this.highlighted = true;
@@ -331,6 +386,8 @@ export class RenderedConnection
     const highlightSvg = this.findHighlightSvg();
     if (highlightSvg) {
       highlightSvg.style.display = '';
+      highlightSvg.parentElement?.appendChild(highlightSvg);
+      this.recomputeAriaContext(highlightSvg);
     }
   }
 
@@ -655,15 +712,18 @@ export class RenderedConnection
 
   /** See IFocusableNode.canBeFocused. */
   canBeFocused(): boolean {
-    return true;
+    // Since the highlightSvg is the focusable element,
+    // if it doesn't exist then the connection can't be focused.
+    return this.findHighlightSvg() !== null;
   }
 
   private findHighlightSvg(): SVGPathElement | null {
     // This cast is valid as TypeScript's definition is wrong. See:
     // https://github.com/microsoft/TypeScript/issues/60996.
-    return document.getElementById(this.id) as
-      | unknown
-      | null as SVGPathElement | null;
+    const root = this.getSourceBlock().getSvgRoot().getRootNode() as
+      | ShadowRoot
+      | HTMLDocument;
+    return root.getElementById(this.id) as SVGPathElement | null;
   }
 }
 

@@ -52,6 +52,7 @@ export function registerUndo() {
     scopeType: ContextMenuRegistry.ScopeType.WORKSPACE,
     id: 'undoWorkspace',
     weight: 1,
+    associatedKeyboardShortcut: 'undo',
   };
   ContextMenuRegistry.registry.register(undoOption);
 }
@@ -76,6 +77,7 @@ export function registerRedo() {
     scopeType: ContextMenuRegistry.ScopeType.WORKSPACE,
     id: 'redoWorkspace',
     weight: 2,
+    associatedKeyboardShortcut: 'redo',
   };
   ContextMenuRegistry.registry.register(redoOption);
 }
@@ -103,6 +105,7 @@ export function registerCleanup() {
     scopeType: ContextMenuRegistry.ScopeType.WORKSPACE,
     id: 'cleanWorkspace',
     weight: 3,
+    associatedKeyboardShortcut: 'cleanup',
   };
   ContextMenuRegistry.registry.register(cleanOption);
 }
@@ -349,6 +352,7 @@ export function registerDuplicate() {
     scopeType: ContextMenuRegistry.ScopeType.BLOCK,
     id: 'blockDuplicate',
     weight: 1,
+    associatedKeyboardShortcut: 'duplicate',
   };
   ContextMenuRegistry.registry.register(duplicateOption);
 }
@@ -541,12 +545,14 @@ export function registerDelete() {
     },
     callback(scope: Scope) {
       if (scope.block) {
+        getFocusManager().focusNode(scope.block);
         scope.block.checkAndDelete();
       }
     },
     scopeType: ContextMenuRegistry.ScopeType.BLOCK,
     id: 'blockDelete',
     weight: 6,
+    associatedKeyboardShortcut: 'delete',
   };
   ContextMenuRegistry.registry.register(deleteOption);
 }
@@ -591,10 +597,12 @@ export function registerCommentDelete() {
       eventUtils.setGroup(true);
       scope.comment?.dispose();
       eventUtils.setGroup(false);
+      scope.comment?.workspace.getAudioManager().play('delete');
     },
     scopeType: ContextMenuRegistry.ScopeType.COMMENT,
     id: 'commentDelete',
     weight: 6,
+    associatedKeyboardShortcut: 'delete',
   };
   ContextMenuRegistry.registry.register(deleteOption);
 }
@@ -615,6 +623,7 @@ export function registerCommentDuplicate() {
     scopeType: ContextMenuRegistry.ScopeType.COMMENT,
     id: 'commentDuplicate',
     weight: 1,
+    associatedKeyboardShortcut: 'duplicate',
   };
   ContextMenuRegistry.registry.register(duplicateOption);
 }

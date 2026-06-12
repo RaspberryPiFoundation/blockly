@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {getMainWorkspace} from './common.js';
+import type {WorkspaceSvg} from './workspace_svg.js';
+
 /**
  * The KeyboardNavigationController handles coordinating Blockly-wide
  * keyboard navigation behavior, such as enabling/disabling full
@@ -12,6 +15,8 @@
 export class KeyboardNavigationController {
   /** Whether the user is actively using keyboard navigation. */
   private isActive = false;
+  /** Whether to play audio cues when navigating between scope levels. */
+  private scopeChangeAudioCuesEnabled = false;
   /** Css class name added to body if keyboard nav is active. */
   private activeClassName = 'blocklyKeyboardNavigation';
 
@@ -49,12 +54,30 @@ export class KeyboardNavigationController {
     return this.isActive;
   }
 
+  /**
+   * Sets whether or not audio cues should be played when keyboard navigation
+   * transitions between blocks of different nesting levels.
+   */
+  setScopeChangeAudioCuesEnabled(enabled: boolean) {
+    this.scopeChangeAudioCuesEnabled = enabled;
+  }
+
+  /**
+   * Returns whether or not audio cues should be played when keyboard navigation
+   * transitions between blocks of different nesting levels.
+   */
+  getScopeChangeAudioCuesEnabled() {
+    return this.scopeChangeAudioCuesEnabled;
+  }
+
   /** Adds or removes the css class that indicates keyboard navigation is active. */
   private updateActiveVisualization() {
+    const root = (getMainWorkspace() as WorkspaceSvg).getInjectionDiv()
+      .parentElement;
     if (this.isActive) {
-      document.body.classList.add(this.activeClassName);
+      root?.classList.add(this.activeClassName);
     } else {
-      document.body.classList.remove(this.activeClassName);
+      root?.classList.remove(this.activeClassName);
     }
   }
 }

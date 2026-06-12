@@ -434,6 +434,13 @@ export namespace ShortcutRegistry {
      * name.
      */
     allowCollision?: boolean;
+
+    /**
+     * Display text for the shortcut. This is not used in core but may
+     * be used by plugins or applications to provide a user-facing
+     * label for the shortcut.
+     */
+    displayText?: string | (() => string);
   }
 
   /** Supported modifiers. */
