@@ -916,6 +916,10 @@ export class BlockDragStrategy implements IDragStrategy {
     }
 
     this.allConnectionPairs = [];
+    this.startParentConn = null;
+    this.startChildConn = null;
+    this.connectionCandidate = null;
+    this.dragging = false;
   }
 
   /** Disposes of any state at the end of the drag. */
