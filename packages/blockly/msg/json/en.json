@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-06-12 08:24:49.493474",
+		"lastupdated": "2026-06-12 09:20:03.058537",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -618,6 +618,12 @@
 	"SCREENREADER_HINT": "Use the arrow keys to navigate. Press %1 to toggle screenreader accessibility mode.",
 	"ARIA_LABEL_ADD_ELSE_IF": "Add else if",
 	"ARIA_LABEL_REMOVE_ELSE_IF": "Remove else if",
+	"ARIA_LABEL_ADD_LIST_ITEM": "Add list item",
+	"ARIA_LABEL_REMOVE_LIST_ITEM": "Remove list item",
+	"ARIA_LABEL_ADD_TEXT": "Add text",
+	"ARIA_LABEL_REMOVE_TEXT": "Remove text",
+	"ARIA_LABEL_ADD_INPUT": "Add input",
+	"ARIA_LABEL_REMOVE_INPUT": "Remove input",
 	"ARIA_TYPE_FIELD_ANGLE": "angle",
 	"ARIA_LABEL_FIELD_ANGLE": "%1 degrees",
 	"ARIA_TYPE_FIELD_DATE": "date",

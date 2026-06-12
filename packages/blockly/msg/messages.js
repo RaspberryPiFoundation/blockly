@@ -2363,6 +2363,24 @@ Blockly.Msg.ARIA_LABEL_ADD_ELSE_IF = 'Add else if';
 /// ARIA label for button that removes an else if clause from a block.
 Blockly.Msg.ARIA_LABEL_REMOVE_ELSE_IF = 'Remove else if';
 /** @type {string} */
+/// ARIA label for button that adds a list item to a block.
+Blockly.Msg.ARIA_LABEL_ADD_LIST_ITEM = 'Add list item';
+/** @type {string} */
+/// ARIA label for button that removes a list item from a block.
+Blockly.Msg.ARIA_LABEL_REMOVE_LIST_ITEM = 'Remove list item';
+/** @type {string} */
+/// ARIA label for button that adds a substring to a create text block.
+Blockly.Msg.ARIA_LABEL_ADD_TEXT = 'Add text';
+/** @type {string} */
+/// ARIA label for button that removes a substring from a create text block.
+Blockly.Msg.ARIA_LABEL_REMOVE_TEXT = 'Remove text';
+/** @type {string} */
+/// ARIA label for button that adds an input/argument to a procedure block.
+Blockly.Msg.ARIA_LABEL_ADD_INPUT = 'Add input';
+/** @type {string} */
+/// ARIA label for button that removes an input/argument from a procedure block.
+Blockly.Msg.ARIA_LABEL_REMOVE_INPUT = 'Remove input';
+/** @type {string} */
 /// ARIA type name for the angle field.
 Blockly.Msg.ARIA_TYPE_FIELD_ANGLE = 'angle';
 /** @type {string} */
