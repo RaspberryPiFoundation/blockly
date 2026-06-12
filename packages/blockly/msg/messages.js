@@ -2356,3 +2356,27 @@ Blockly.Msg.NO_PARENT_ANNOUNCEMENT = 'Current block has no parent';
 /** @type {string} */
 /// Message announced when screenreader optimization mode is turned off.
 Blockly.Msg.SCREENREADER_HINT = 'Use the arrow keys to navigate. Press %1 to toggle screenreader accessibility mode.';
+/** @type {string} */
+/// ARIA label for button that adds an else if clause to a block.
+Blockly.Msg.ARIA_LABEL_ADD_ELSE_IF = 'Add else if';
+/** @type {string} */
+/// ARIA label for button that removes an else if clause from a block.
+Blockly.Msg.ARIA_LABEL_REMOVE_ELSE_IF = 'Remove else if';
+/** @type {string} */
+/// ARIA type name for the angle field.
+Blockly.Msg.ARIA_TYPE_FIELD_ANGLE = 'angle';
+/** @type {string} */
+/// ARIA label for the angle field's value.
+Blockly.Msg.ARIA_LABEL_FIELD_ANGLE = '%1 degrees';
+/** @type {string} */
+/// ARIA type name for the date field.
+Blockly.Msg.ARIA_TYPE_FIELD_DATE = 'date';
+/** @type {string} */
+/// ARIA type name for the colour field.
+Blockly.Msg.ARIA_TYPE_FIELD_COLOUR = 'color';
+/** @type {string} */
+/// ARIA type name for the bitmap field.
+Blockly.Msg.ARIA_TYPE_FIELD_BITMAP = 'pixel image';
+/** @type {string} */
+/// ARIA type name for the grid field.
+Blockly.Msg.ARIA_TYPE_FIELD_GRID = 'grid dropdown';

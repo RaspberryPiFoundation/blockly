@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-05-26 18:03:57.831506",
+		"lastupdated": "2026-06-12 08:24:49.493474",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -615,5 +615,13 @@
 	"CURRENT_BLOCK_ANNOUNCEMENT": "Current block: %1",
 	"PARENT_BLOCKS_ANNOUNCEMENT": "Parent blocks: %1",
 	"NO_PARENT_ANNOUNCEMENT": "Current block has no parent",
-	"SCREENREADER_HINT": "Use the arrow keys to navigate. Press %1 to toggle screenreader accessibility mode."
+	"SCREENREADER_HINT": "Use the arrow keys to navigate. Press %1 to toggle screenreader accessibility mode.",
+	"ARIA_LABEL_ADD_ELSE_IF": "Add else if",
+	"ARIA_LABEL_REMOVE_ELSE_IF": "Remove else if",
+	"ARIA_TYPE_FIELD_ANGLE": "angle",
+	"ARIA_LABEL_FIELD_ANGLE": "%1 degrees",
+	"ARIA_TYPE_FIELD_DATE": "date",
+	"ARIA_TYPE_FIELD_COLOUR": "color",
+	"ARIA_TYPE_FIELD_BITMAP": "pixel image",
+	"ARIA_TYPE_FIELD_GRID": "grid dropdown"
 }

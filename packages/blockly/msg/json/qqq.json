@@ -609,5 +609,13 @@
 	"CURRENT_BLOCK_ANNOUNCEMENT": "Screenreader announcement providing context about the currently focused block.",
 	"PARENT_BLOCKS_ANNOUNCEMENT": "Screenreader announcement providing context about the currently focused block's parents.",
 	"NO_PARENT_ANNOUNCEMENT": "Screenreader announcement informing users that the currently focused block has no parent blocks.",
-	"SCREENREADER_HINT": "Message announced when screenreader optimization mode is turned off."
+	"SCREENREADER_HINT": "Message announced when screenreader optimization mode is turned off.",
+	"ARIA_LABEL_ADD_ELSE_IF": "ARIA label for button that adds an else if clause to a block.",
+	"ARIA_LABEL_REMOVE_ELSE_IF": "ARIA label for button that removes an else if clause from a block.",
+	"ARIA_TYPE_FIELD_ANGLE": "ARIA type name for the angle field.",
+	"ARIA_LABEL_FIELD_ANGLE": "ARIA label for the angle field's value.",
+	"ARIA_TYPE_FIELD_DATE": "ARIA type name for the date field.",
+	"ARIA_TYPE_FIELD_COLOUR": "ARIA type name for the colour field.",
+	"ARIA_TYPE_FIELD_BITMAP": "ARIA type name for the bitmap field.",
+	"ARIA_TYPE_FIELD_GRID": "ARIA type name for the grid field."
 }
