@@ -843,7 +843,9 @@ suite('Keyboard Shortcut Items', function () {
       block.initSvg();
       block.render();
       Blockly.getFocusManager().focusNode(block);
-      this.assertAnnouncement('Begin stack, if, Empty, do, First category, has input');
+      this.assertAnnouncement(
+        'Begin stack, if, Empty, do, First category, has input',
+      );
     });
 
     test('Icon', function () {
@@ -853,7 +855,9 @@ suite('Keyboard Shortcut Items', function () {
       Blockly.getFocusManager().focusNode(
         block.getIcon(Blockly.icons.IconType.MUTATOR),
       );
-      this.assertAnnouncement('Begin stack, if, Empty, do, First category, has input');
+      this.assertAnnouncement(
+        'Begin stack, if, Empty, do, First category, has input',
+      );
     });
 
     test('Field', function () {
@@ -869,7 +873,9 @@ suite('Keyboard Shortcut Items', function () {
       block.initSvg();
       block.render();
       Blockly.getFocusManager().focusNode(block.getInput('DO0').connection);
-      this.assertAnnouncement('Begin stack, if, Empty, do, First category, has input');
+      this.assertAnnouncement(
+        'Begin stack, if, Empty, do, First category, has input',
+      );
     });
   });
 
