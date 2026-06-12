@@ -326,3 +326,13 @@ var helper = function () {
 
 [shareable-procedures]: https://www.npmjs.com/package/@blockly/block-shareable-procedures
 [serializer]: /guides/configure/serialization#serializer-hooks
+
+### MutatorIcon class
+
+Blockly's default mutator UI is implemented in the `MutatorIcon` class. In most 
+cases, you can use the default mutator UI that Blockly provides or create your 
+own custom UI without instantiating `MutatorIcon` directly. If you are extending
+Blockly itself to add new mutator features, you might want to extend the 
+`MutatorIcon` class, but note that this will not always be needed. You can 
+look at the [MutatorIcon](https://docs.blockly.com/reference/blockly.icons_namespace.mutatoricon_class/#iconsmutatoricon-class)
+reference documentation for more details about this class. 
