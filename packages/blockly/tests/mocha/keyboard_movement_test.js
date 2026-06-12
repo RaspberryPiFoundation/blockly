@@ -779,6 +779,61 @@ suite('Keyboard-driven movement', function () {
         assert.isFalse(ifBlock.isEnabled());
       });
 
+      test('Cancel after committed keyboard move does not throw', function () {
+        // if block with repeat block in next connection
+        const json = {
+          'blocks': {
+            'languageVersion': 0,
+            'blocks': [
+              {
+                'type': 'controls_if',
+                'id': 'ifBlock',
+                'x': 25,
+                'y': 10,
+                'next': {
+                  'block': {
+                    'type': 'controls_repeat_ext',
+                    'id': 'repeatBlock',
+                    'inputs': {
+                      'TIMES': {
+                        'shadow': {
+                          'type': 'math_number',
+                          'fields': {
+                            'NUM': 10,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        };
+        this.workspace.clear();
+        Blockly.serialization.workspaces.load(json, this.workspace);
+        const ifBlock = this.workspace.getBlockById('ifBlock');
+        const repeatBlock = this.workspace.getBlockById('repeatBlock');
+
+        // Move the if block down twice so it connects to the repeat block statement input.
+        Blockly.getFocusManager().focusNode(ifBlock);
+        startMove(this.workspace);
+        moveDown(this.workspace);
+        moveDown(this.workspace);
+        endMove(this.workspace);
+
+        assert.strictEqual(ifBlock.getParent(), repeatBlock);
+
+        // Start a second keyboard move and cancel before committing.
+        assert.doesNotThrow(() => {
+          Blockly.getFocusManager().focusNode(ifBlock);
+          startMove(this.workspace);
+          moveUp(this.workspace);
+          moveUp(this.workspace);
+          cancelMove(this.workspace);
+        });
+      });
+
       suite('Statement move tests', function () {
         // Clear the workspace and load start blocks.
         setup(function () {
