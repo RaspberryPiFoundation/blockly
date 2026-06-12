@@ -506,8 +506,6 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
    */
   protected widgetDispose_() {
     // Non-disposal related things that we do when the editor closes.
-    console.log('widget dispose');
-    console.trace();
     this.isBeingEdited_ = false;
     this.isTextValid_ = true;
     // Make sure the field's node matches the field's internal value.
