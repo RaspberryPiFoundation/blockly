@@ -319,7 +319,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Ja pirmā vērtība ir \"patiesa\", tad atgriezt otro vērtību.",
 	"PROCEDURES_IFRETURN_WARNING": "Brīdinājums: Šo bloku var izmantot tikai funkcijas definīcijā.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Saki kaut ko...",
-	"WORKSPACE_ARIA_LABEL": "Blockly Darbavieta",
 	"COLLAPSED_WARNINGS_WARNING": "Sakļautie bloki satur brīdinājumus.",
 	"DIALOG_OK": "Labi",
 	"DIALOG_CANCEL": "Atcelt",

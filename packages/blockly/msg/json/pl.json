@@ -353,7 +353,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Jeśli warunek jest spełniony zwróć drugą wartość.",
 	"PROCEDURES_IFRETURN_WARNING": "Uwaga: Ten klocek może być używany tylko w definicji funkcji.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Powiedz coś...",
-	"WORKSPACE_ARIA_LABEL": "Obszar roboczy Blockly",
 	"COLLAPSED_WARNINGS_WARNING": "Zwinięte bloki zawierają ostrzeżenia.",
 	"DIALOG_OK": "OK",
 	"DIALOG_CANCEL": "Anuluj",

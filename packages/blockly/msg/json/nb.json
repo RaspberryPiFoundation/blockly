@@ -324,7 +324,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Hvis en verdi er sann, returner da en annen verdi.",
 	"PROCEDURES_IFRETURN_WARNING": "Advarsel: Denne blokken kan bare benyttes innenfor en funksjonsdefinisjon.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Si noe …",
-	"WORKSPACE_ARIA_LABEL": "Blockly-arbeidsrom",
 	"COLLAPSED_WARNINGS_WARNING": "Sammenslåtte blokker inneholder advarsler.",
 	"DIALOG_OK": "OK",
 	"DIALOG_CANCEL": "Avbryt"

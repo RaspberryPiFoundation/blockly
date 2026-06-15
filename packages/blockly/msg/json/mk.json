@@ -172,7 +172,6 @@
 	"PROCEDURES_ALLOW_STATEMENTS": "дозволи тврдења",
 	"PROCEDURES_MUTATORCONTAINER_TOOLTIP": "Додај, отстрани или пренареди ги влезните параметри за оваа функција.",
 	"PROCEDURES_CREATE_DO": "Создај го '%1'",
-	"WORKSPACE_ARIA_LABEL": "Работен простор на Blockly",
 	"DIALOG_OK": "ОК",
 	"DIALOG_CANCEL": "Откажи"
 }

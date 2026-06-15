@@ -384,7 +384,6 @@
 	"PROCEDURES_IFRETURN_HELPURL": "https://c2.com/cgi/wiki?GuardClause",
 	"PROCEDURES_IFRETURN_WARNING": "Эс бёлюгюз: Бу блок къуру функция айгъакълаууну ичинде хайырланырчады.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Бир зат айт...",
-	"WORKSPACE_ARIA_LABEL": "Blockly Иш Бёлге",
 	"COLLAPSED_WARNINGS_WARNING": "Чырмалгъан блоклада эс бёллюуле бардыла.",
 	"DIALOG_OK": "ОК",
 	"DIALOG_CANCEL": "Ызына ал",

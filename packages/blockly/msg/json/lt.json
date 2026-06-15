@@ -316,7 +316,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Jeigu pirma reikšmė yra teisinga (sąlyga tenkinama), grąžina antrą reikšmę.",
 	"PROCEDURES_IFRETURN_WARNING": "Perspėjimas: šis blokas gali būti naudojamas tik aprašant funkciją.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Kažką pasakykite...",
-	"WORKSPACE_ARIA_LABEL": "Blockly darbalaukis",
 	"COLLAPSED_WARNINGS_WARNING": "Suskleistuose blokuose yra įspėjimų.",
 	"DIALOG_OK": "Gerai",
 	"DIALOG_CANCEL": "Atšaukti"

@@ -338,7 +338,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Dacă o valoare este adevărată, atunci returnează valoarea a doua.",
 	"PROCEDURES_IFRETURN_WARNING": "Avertisment: Acest bloc poate fi utilizat numai în definiția unei funcții.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Spune ceva...",
-	"WORKSPACE_ARIA_LABEL": "Spațiu de lucru Blockly",
 	"COLLAPSED_WARNINGS_WARNING": "Blocurile blocate conțin avertismente.",
 	"DIALOG_OK": "OK",
 	"DIALOG_CANCEL": "Revocare",

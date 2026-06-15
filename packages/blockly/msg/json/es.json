@@ -357,7 +357,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Si un valor es verdadero, entonces devuelve un segundo valor.",
 	"PROCEDURES_IFRETURN_WARNING": "Advertencia: Este bloque solo puede ser utilizado dentro de la definición de una función.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Di algo…",
-	"WORKSPACE_ARIA_LABEL": "Espacio de trabajo de Blockly",
 	"COLLAPSED_WARNINGS_WARNING": "Bloques colapsados contienen advertencias.",
 	"DIALOG_OK": "Aceptar",
 	"DIALOG_CANCEL": "Cancelar",

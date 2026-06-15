@@ -330,7 +330,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Se valoro estas vero, do liveras duan valoron.",
 	"PROCEDURES_IFRETURN_WARNING": "Averto: Ĉi tiu bloko estas uzebla nur en difino de funkcio.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Diru ion…",
-	"WORKSPACE_ARIA_LABEL": "Laborspaco de Blockly",
 	"COLLAPSED_WARNINGS_WARNING": "Falditaj blokoj enhavas avertojn.",
 	"DIALOG_OK": "Bone",
 	"DIALOG_CANCEL": "Nuligi"

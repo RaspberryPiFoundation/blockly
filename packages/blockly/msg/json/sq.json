@@ -338,7 +338,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Nëse një vlerë është e saktë, atëherë kthe një vlerë të dytë.",
 	"PROCEDURES_IFRETURN_WARNING": "Paralajmërim: Ky bllok mund të përdoret vetëm brenda definicionit të funksionit.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Thuaj dicka...",
-	"WORKSPACE_ARIA_LABEL": "Hapësira e punës e Blockly",
 	"COLLAPSED_WARNINGS_WARNING": "Blloqet e shembura përmbajnë paralajmërime.",
 	"DIALOG_OK": "Në rregull",
 	"DIALOG_CANCEL": "Anulo",

@@ -341,7 +341,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Ако стойността е вярна, върни втората стойност.",
 	"PROCEDURES_IFRETURN_WARNING": "Предупреждение: Този блок може да се използва само във функция.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Коментирайте нещо...",
-	"WORKSPACE_ARIA_LABEL": "Работна област на Blockly",
 	"COLLAPSED_WARNINGS_WARNING": "Свитите блокове съдържат предупреждения.",
 	"DIALOG_OK": "ОК",
 	"DIALOG_CANCEL": "Отказ",

@@ -15,7 +15,8 @@
 			"Pettevi",
 			"Pyscowicz",
 			"SNuutti",
-			"Silvonen"
+			"Silvonen",
+			"Wikipeedikko"
 		]
 	},
 	"VARIABLES_DEFAULT_NAME": "kohde",
@@ -347,7 +348,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Jos arvo on tosi, palauta toinen arvo.",
 	"PROCEDURES_IFRETURN_WARNING": "Varoitus: tätä lohkoa voi käyttää vain funktion määrityksessä.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Sano jotakin...",
-	"WORKSPACE_ARIA_LABEL": "Blocklyn työnäkymä",
 	"COLLAPSED_WARNINGS_WARNING": "Supistetut lohkot sisältävät varoituksia.",
 	"DIALOG_OK": "OK",
 	"DIALOG_CANCEL": "Peru",
@@ -372,5 +372,15 @@
 	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "Pidä %1 pohjassa ja käytä nuolinäppäimiä liikkuaksesi vapaasti, sitten paina %2 hyväksyäksesi sijainnin",
 	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Käytä nuolinäppäimiä liikkuaksesi ja hyväksy sitten sijainti painamalla %1",
 	"KEYBOARD_NAV_COPIED_HINT": "Kopioitu. Liitä painamalla %1.",
-	"KEYBOARD_NAV_CUT_HINT": "Leikattu. Liitä painamalla %1."
+	"KEYBOARD_NAV_CUT_HINT": "Leikattu. Liitä painamalla %1.",
+	"ARIA_LABEL_ADD_LIST_ITEM": "Lisää luettelon kohta",
+	"ARIA_LABEL_REMOVE_LIST_ITEM": "Poista luettelon kohta",
+	"ARIA_LABEL_ADD_TEXT": "Lisää tekstiä",
+	"ARIA_LABEL_REMOVE_TEXT": "Poista teksti",
+	"ARIA_LABEL_ADD_INPUT": "Lisää syöte",
+	"ARIA_LABEL_REMOVE_INPUT": "Poista syöte",
+	"ARIA_TYPE_FIELD_ANGLE": "kulma",
+	"ARIA_LABEL_FIELD_ANGLE": "%1 astetta",
+	"ARIA_TYPE_FIELD_DATE": "päivämäärä",
+	"ARIA_TYPE_FIELD_COLOUR": "väri"
 }

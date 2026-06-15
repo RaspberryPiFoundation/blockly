@@ -327,7 +327,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "ถ้ามีค่าเป็นจริง ให้คืนค่าที่สอง",
 	"PROCEDURES_IFRETURN_WARNING": "ระวัง: บล็อกนี้ใช้เฉพาะในการสร้างฟังก์ชันเท่านั้น",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "เขียนอะไรสักอย่าง",
-	"WORKSPACE_ARIA_LABEL": "พื้นที่ทำงาน Blockly",
 	"COLLAPSED_WARNINGS_WARNING": "บล็อกที่ถูกพับมีคำเตือนอยู่ข้างใน.",
 	"DIALOG_OK": "ตกลง",
 	"DIALOG_CANCEL": "ยกเลิก"

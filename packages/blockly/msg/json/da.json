@@ -341,7 +341,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Hvis en værdi er sand, så returnér en anden værdi.",
 	"PROCEDURES_IFRETURN_WARNING": "Advarsel: Denne blok kan kun anvendes inden for en funktionsdefinition.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Sig noget ...",
-	"WORKSPACE_ARIA_LABEL": "Blockly Workspace",
 	"COLLAPSED_WARNINGS_WARNING": "Sammenklappede blokke indeholder advarsler.",
 	"DIALOG_OK": "OK",
 	"DIALOG_CANCEL": "Afbryd",

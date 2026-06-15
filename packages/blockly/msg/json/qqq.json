@@ -1,4 +1,13 @@
 {
+	"@metadata": {
+		"authors": [
+			"Ajeje Brazorf",
+			"Espertus",
+			"Liuxinyu970226",
+			"McDutchie",
+			"Shirayuki"
+		]
+	},
 	"VARIABLES_DEFAULT_NAME": "default name - A simple, general default name for a variable, preferably short. For more context, see [[Translating:Blockly#infrequent_message_types]].\n{{Identical|Item}}",
 	"UNNAMED_KEY": "default name - A simple, default name for an unnamed function or variable. Preferably indicates that the item is unnamed.",
 	"TODAY": "button text - Button that sets a calendar to today's date.\n{{Identical|Today}}",

@@ -350,7 +350,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Če je vrednost resnična, vrne drugo vrednost.",
 	"PROCEDURES_IFRETURN_WARNING": "Pozor: Ta blok lahko uporabite samo v bloku funkcije.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Povej nekaj ...",
-	"WORKSPACE_ARIA_LABEL": "Blocklyjev delovni prostor",
 	"COLLAPSED_WARNINGS_WARNING": "Skrčeni bloki vsebujejo opozorila.",
 	"DIALOG_OK": "V redu",
 	"DIALOG_CANCEL": "Prekliči",

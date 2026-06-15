@@ -330,7 +330,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Iako je vrijednost istina, tada vrati drugu vrijednost",
 	"PROCEDURES_IFRETURN_WARNING": "Upozorenje: Ovaj blok se može koristiti samo u definiciji funkcije",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Recite nešto",
-	"WORKSPACE_ARIA_LABEL": "Radni prostor Blocklyja",
 	"COLLAPSED_WARNINGS_WARNING": "Sažeti blokovi sadrže upozorenje",
 	"DIALOG_OK": "U redu",
 	"DIALOG_CANCEL": "Odustani"

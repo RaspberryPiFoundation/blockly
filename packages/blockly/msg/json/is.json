@@ -324,7 +324,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Ef gildi er satt, skal skila öðru gildi.",
 	"PROCEDURES_IFRETURN_WARNING": "Aðvörun: Þennan kubb má aðeins nota í skilgreiningu falls.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Segðu eitthvað...",
-	"WORKSPACE_ARIA_LABEL": "Blockly-vinnusvæðið",
 	"COLLAPSED_WARNINGS_WARNING": "Samfallnir kubbar innihalda aðvaranir.",
 	"DIALOG_OK": "Í lagi",
 	"DIALOG_CANCEL": "Hætta við"

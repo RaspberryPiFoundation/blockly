@@ -356,7 +356,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "如果值為 true，則返回第二個值。",
 	"PROCEDURES_IFRETURN_WARNING": "警告：這個區塊只可以在定義函式時使用。",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "來說些事情...",
-	"WORKSPACE_ARIA_LABEL": "Blockly工作區",
 	"COLLAPSED_WARNINGS_WARNING": "收合含有警告的區塊。",
 	"DIALOG_OK": "確定",
 	"DIALOG_CANCEL": "取消",

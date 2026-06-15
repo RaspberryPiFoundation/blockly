@@ -328,7 +328,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Kui väärtus on tõene, tagastatakse teine väärtus.",
 	"PROCEDURES_IFRETURN_WARNING": "Hoiatus: Seda plokki saab kasutada ainult funktsiooni definitsioonis.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Ütle midagi...",
-	"WORKSPACE_ARIA_LABEL": "Blockly tööruum",
 	"COLLAPSED_WARNINGS_WARNING": "Kokkuvajunud plokid sisaldavad hoiatusi.",
 	"DIALOG_OK": "Sobib",
 	"DIALOG_CANCEL": "Loobu"

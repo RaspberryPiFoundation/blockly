@@ -334,7 +334,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Si el valor és cert, llavors retorna un segon valor.",
 	"PROCEDURES_IFRETURN_WARNING": "Advertència: Aquest bloc només es pot utilitzar dins de la definició d'una funció.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Digues alguna cosa...",
-	"WORKSPACE_ARIA_LABEL": "Espai de treball Blockly",
 	"COLLAPSED_WARNINGS_WARNING": "Els blocs plegats contenen avisos.",
 	"DIALOG_OK": "D'acord",
 	"DIALOG_CANCEL": "Cancel·la"

@@ -334,7 +334,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Jika nilai yang benar, kemudian kembalikan nilai kedua.",
 	"PROCEDURES_IFRETURN_WARNING": "Peringatan: Blok ini dapat digunakan hanya dalam definisi fungsi.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Katakan sesuatu...",
-	"WORKSPACE_ARIA_LABEL": "Ruang Kerja Blockly",
 	"COLLAPSED_WARNINGS_WARNING": "Blok yang diciutkan mengandung peringatan.",
 	"DIALOG_OK": "Baik",
 	"DIALOG_CANCEL": "Batal",

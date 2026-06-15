@@ -365,7 +365,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Bir değer true ise, ikinci bir değer döndürün.",
 	"PROCEDURES_IFRETURN_WARNING": "Uyarı: Bu blok yalnızca bir işlev tanımı içinde kullanılabilir.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Bir şeyler söyle...",
-	"WORKSPACE_ARIA_LABEL": "Blockly Çalışma Alanı",
 	"COLLAPSED_WARNINGS_WARNING": "Daraltılmış bloklar uyarı içerir.",
 	"DIALOG_OK": "Tamam",
 	"DIALOG_CANCEL": "İptal",

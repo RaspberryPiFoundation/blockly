@@ -321,7 +321,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Нагахь хьалхара маьӀна нийса делалахь, йухадерзадо шолгӀа маьӀна.",
 	"PROCEDURES_IFRETURN_WARNING": "ДӀахедар: ХӀокху блоко лелон таро йу функцин чоьхьара билгало.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Йазйе кхузахь цхьа хӀума...",
-	"WORKSPACE_ARIA_LABEL": "Blockly белхан область",
 	"COLLAPSED_WARNINGS_WARNING": "ДӀакъевлина блокашкахь дӀахьедар ду",
 	"DIALOG_OK": "OK",
 	"DIALOG_CANCEL": "Йухайаккхар"

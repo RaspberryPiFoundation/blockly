@@ -320,7 +320,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Más fíor luach, cuirtear an dara luach ar ais.",
 	"PROCEDURES_IFRETURN_WARNING": "Rabhadh: Ní féidir an bloc seo a úsáid ach amháin laistigh de shainmhíniú feidhme.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Abair rud éigin...",
-	"WORKSPACE_ARIA_LABEL": "Spás Oibre Blockly",
 	"COLLAPSED_WARNINGS_WARNING": "Tá rabhaidh i mblocanna fillte.",
 	"DIALOG_OK": "Ceart go leor",
 	"DIALOG_CANCEL": "Cealaigh",

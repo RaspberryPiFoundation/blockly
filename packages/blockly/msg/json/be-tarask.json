@@ -330,7 +330,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Калі значэньне ісьціна, вярнуць другое значэньне.",
 	"PROCEDURES_IFRETURN_WARNING": "Папярэджаньне: гэты блёк можа выкарыстоўвацца толькі ў вызначанай функцыі.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Напішыце што-небудзь…",
-	"WORKSPACE_ARIA_LABEL": "Працоўная прастора Blockly",
 	"COLLAPSED_WARNINGS_WARNING": "Згорнутыя блёкі ўтрымліваюць папярэджаньні.",
 	"DIALOG_OK": "OK",
 	"DIALOG_CANCEL": "Скасаваць",

@@ -122,7 +122,6 @@
 	"PROCEDURES_DEF_DUPLICATE_WARNING": "Kedźbu: Tuta funkcija ma dwójne parametry.",
 	"PROCEDURES_IFRETURN_WARNING": "Kedźbu: Tutón blok so jenož w funkcije definicije wužiwa.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Zdźěl něšto…",
-	"WORKSPACE_ARIA_LABEL": "Dźěłowy wobłuk Blockly",
 	"DIALOG_OK": "W porjadku",
 	"DIALOG_CANCEL": "Přetorhnyć"
 }

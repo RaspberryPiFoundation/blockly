@@ -344,7 +344,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Ha az érték igaz, akkor visszatér a függvény értékével.",
 	"PROCEDURES_IFRETURN_WARNING": "Figyelem: Ez a blokk csak függvénydefiníción belül használható.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Mondj valamit...",
-	"WORKSPACE_ARIA_LABEL": "Blockly munkaterület",
 	"COLLAPSED_WARNINGS_WARNING": "Az összecsukott blokk figyelmeztetéseket tartalmaz.",
 	"DIALOG_OK": "OK",
 	"DIALOG_CANCEL": "Mégse"

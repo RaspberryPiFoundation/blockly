@@ -335,7 +335,6 @@
 	"PROCEDURES_IFRETURN_TOOLTIP": "Ak je hodnota pravda, tak vráti druhú hodnotu.",
 	"PROCEDURES_IFRETURN_WARNING": "Upozornenie: Tento blok môže byť len vo vnútri funkcie.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Povedz niečo...",
-	"WORKSPACE_ARIA_LABEL": "Pracovisko Bloskly",
 	"COLLAPSED_WARNINGS_WARNING": "Zrútené bloky obsahujú varovanie.",
 	"DIALOG_OK": "OK",
 	"DIALOG_CANCEL": "Zrušiť",
