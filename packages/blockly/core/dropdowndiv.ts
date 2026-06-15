@@ -706,6 +706,9 @@ export function hideIfOwner<T>(
 
 /** Hide the menu, triggering animation. */
 export function hide() {
+  if (!isVisible()) {
+    return;
+  }
   getFocusManager().unregisterPopoverFocusLossHandler(handleFocusLoss);
   // Start the animation by setting the translation and fading out.
   // Reset to (initialX, initialY) - i.e., no translation.
