@@ -8,7 +8,6 @@ import type {Block} from '../block.js';
 import * as blockAnimation from '../block_animations.js';
 import {computeMoveLabel} from '../block_aria_composer.js';
 import type {BlockSvg} from '../block_svg.js';
-import { CollapsibleToolboxCategory } from '../blockly.js';
 import * as bumpObjects from '../bump_objects.js';
 import {config} from '../config.js';
 import {Connection} from '../connection.js';
@@ -244,7 +243,6 @@ export class BlockDragStrategy implements IDragStrategy {
         ) as BlockSvg;
         eventUtils.setRecordUndo(false);
         this.positionNewBlock(this.block, newBlock);
-
         eventUtils.setRecordUndo(true);
 
         return newBlock;
