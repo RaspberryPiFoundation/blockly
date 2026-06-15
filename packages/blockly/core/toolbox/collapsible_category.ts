@@ -195,7 +195,7 @@ export class CollapsibleToolboxCategory
       this.subcategoriesDiv_!.style.display = 'block';
       this.openIcon_(this.iconDom_);
     } else {
-      this.parentToolbox_.getFlyout()?.setVisible(false);
+      this.setFlyout(false);
       this.subcategoriesDiv_!.style.display = 'none';
       this.closeIcon_(this.iconDom_);
     }
@@ -237,15 +237,15 @@ export class CollapsibleToolboxCategory
   }
 
   override onClick(_e: Event) {
-    // Check for special case where the category has its own flyout items. 
-    if(this.flyoutItems_.length > 0) {
+    // Check for special case where the category has its own flyout items.
+    if (this.flyoutItems_.length > 0) {
       const parentToolbox = this.getParentToolbox();
-      const thisFlyoutVisible = 
+      const thisFlyoutVisible =
         parentToolbox.getSelectedItem() === this &&
         parentToolbox.getFlyout()?.isVisible();
 
-      if(this.expanded_ && !thisFlyoutVisible) {
-        this.toggleFlyout();
+      if (this.expanded_ && !thisFlyoutVisible) {
+        this.setFlyout(true);
         return;
       }
     }
@@ -253,13 +253,9 @@ export class CollapsibleToolboxCategory
     this.toggleExpanded();
   }
 
-  /** Toggles the parent toolbox's flyout. */
-  toggleFlyout() {
-    if(this.parentToolbox_.getFlyout()?.isVisible()) {
-      this.parentToolbox_.getFlyout()?.setVisible(false);
-    } else {
-      this.parentToolbox_.getFlyout()?.setVisible(true);
-    }
+  /** Sets the visibility of the parent toolbox's flyout. */
+  setFlyout(isVisible: boolean) {
+    this.parentToolbox_.getFlyout()?.setVisible(isVisible);
   }
 
   /** Toggles whether or not the category is expanded. */
