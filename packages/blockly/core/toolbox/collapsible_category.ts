@@ -195,7 +195,7 @@ export class CollapsibleToolboxCategory
       this.subcategoriesDiv_!.style.display = 'block';
       this.openIcon_(this.iconDom_);
     } else {
-      this.setFlyout(false);
+      this.setFlyoutVisible(false);
       this.subcategoriesDiv_!.style.display = 'none';
       this.closeIcon_(this.iconDom_);
     }
@@ -245,7 +245,7 @@ export class CollapsibleToolboxCategory
         parentToolbox.getFlyout()?.isVisible();
 
       if (this.expanded_ && !thisFlyoutVisible) {
-        this.setFlyout(true);
+        this.setFlyoutVisible(true);
         return;
       }
     }
@@ -254,7 +254,7 @@ export class CollapsibleToolboxCategory
   }
 
   /** Sets the visibility of the parent toolbox's flyout. */
-  setFlyout(isVisible: boolean) {
+  private setFlyoutVisible(isVisible: boolean) {
     this.parentToolbox_.getFlyout()?.setVisible(isVisible);
   }
 

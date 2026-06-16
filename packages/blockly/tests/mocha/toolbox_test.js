@@ -306,7 +306,7 @@ suite('Toolbox', function () {
       });
       test('if category expanded and flyout hidden, click should open flyout', function () {
         this.parentCategory.setExpanded(true);
-        this.flyout.getWorkspace().hideChaff();
+        this.flyout.hide();
 
         this.parentCategory.onClick(new Event('click'));
         this.toolbox.selectItemByPosition(0);
@@ -316,7 +316,6 @@ suite('Toolbox', function () {
       });
       test('category expanded and flyout visible, click should collapse and close', function () {
         this.parentCategory.setExpanded(true);
-        this.parentCategory.setFlyout(true);
         this.toolbox.selectItemByPosition(0);
 
         this.parentCategory.onClick(new Event('click'));
