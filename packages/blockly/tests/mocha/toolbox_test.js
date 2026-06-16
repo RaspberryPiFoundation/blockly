@@ -294,12 +294,14 @@ suite('Toolbox', function () {
         this.flyout = this.toolbox.getFlyout();
         this.parentCategory = this.toolbox.getToolboxItems()[0];
       });
-
+      function clickCategory(category) {
+        const target = category.getClickTarget();
+        const event = new PointerEvent('pointerdown', {bubbles: true});
+        target.dispatchEvent(event);
+      }
       test('if category collapsed and flyout hidden, click should uncollapse and open flyout', function () {
         this.parentCategory.setExpanded(false);
-
-        this.parentCategory.onClick(new Event('click'));
-        this.toolbox.selectItemByPosition(0);
+        clickCategory(this.parentCategory);
 
         assert.isTrue(this.parentCategory.isExpanded());
         assert.isTrue(this.flyout.isVisible());
@@ -307,19 +309,15 @@ suite('Toolbox', function () {
       test('if category expanded and flyout hidden, click should open flyout', function () {
         this.parentCategory.setExpanded(true);
         this.flyout.hide();
-
-        this.parentCategory.onClick(new Event('click'));
-        this.toolbox.selectItemByPosition(0);
+        clickCategory(this.parentCategory);
 
         assert.isTrue(this.parentCategory.isExpanded());
         assert.isTrue(this.flyout.isVisible());
       });
       test('category expanded and flyout visible, click should collapse and close', function () {
-        this.parentCategory.setExpanded(true);
-        this.toolbox.selectItemByPosition(0);
-
-        this.parentCategory.onClick(new Event('click'));
-        this.parentCategory.getParentToolbox().clearSelection();
+        // Click in to expand, then click again to close
+        clickCategory(this.parentCategory);
+        clickCategory(this.parentCategory);
 
         assert.isFalse(this.parentCategory.isExpanded());
         assert.isFalse(this.flyout.isVisible());
