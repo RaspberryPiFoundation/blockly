@@ -7,7 +7,7 @@ version: 2
 updates:
   - package-ecosystem: 'npm' # See documentation for possible values
     directory: '/' # Location of package manifests
-    target-branch: 'develop'
+    target-branch: 'main'
     schedule:
       interval: 'weekly'
     commit-message:
@@ -17,13 +17,13 @@ updates:
       - 'PR: dependencies'
   - package-ecosystem: 'github-actions' # See documentation for possible values
     directory: '/'
-    target-branch: 'develop'
+    target-branch: 'main'
     schedule:
       interval: 'weekly'
     ignore:
       # See notes in welcome_new_contributors.yml for details on this.
       - dependency-name: 'actions/first-interaction'
-        versions: ['*']
+        versions: ['> 1.3.0']
     commit-message:
       prefix: 'chore(deps)'
     labels:
