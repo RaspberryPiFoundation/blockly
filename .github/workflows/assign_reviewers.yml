@@ -19,7 +19,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Assign requested reviewer
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             try {
