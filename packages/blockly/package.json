@@ -112,7 +112,7 @@
     "ajv": "^8.20.0",
     "async-done": "^2.0.0",
     "chai": "^6.2.2",
-    "concurrently": "^9.2.1",
+    "concurrently": "^10.0.3",
     "conventional-changelog-conventionalcommits": "^9.3.1",
     "conventional-recommended-bump": "^11.2.0",
     "eslint": "10.3.0",
