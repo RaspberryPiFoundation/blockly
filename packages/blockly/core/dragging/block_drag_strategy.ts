@@ -653,7 +653,8 @@ export class BlockDragStrategy implements IDragStrategy {
     if (!newCandidate) {
       // Position above or below the first/last block.
       if (this.moveMode === MoveMode.CONSTRAINED) {
-        const connectedBlock = currCandidate?.neighbour.getSourceBlock() ?? null;
+        const connectedBlock =
+          currCandidate?.neighbour.getSourceBlock() ?? null;
         let root = connectedBlock?.getRootBlock() ?? connectedBlock;
         if (root === draggingBlock) root = connectedBlock;
         if (!root) return;
@@ -677,17 +678,16 @@ export class BlockDragStrategy implements IDragStrategy {
         switch (direction) {
           case Direction.LEFT:
           case Direction.UP:
-            const blocksTop = Math.min(...blockRects.map((rect) => rect.top));
             destinationY =
-              blocksTop - offset - draggingBlock.getHeightWidth().height;
+              Math.min(...blockRects.map((rect) => rect.top)) -
+              offset -
+              draggingBlock.getHeightWidth().height;
             break;
           case Direction.RIGHT:
           case Direction.DOWN:
           default:
-            const blocksBottom = Math.max(
-              ...blockRects.map((rect) => rect.bottom),
-            );
-            destinationY = blocksBottom + offset;
+            destinationY =
+              Math.max(...blockRects.map((rect) => rect.bottom)) + offset;
             break;
         }
         draggingBlock.moveDuringDrag(
