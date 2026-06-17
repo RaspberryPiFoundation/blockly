@@ -30,7 +30,7 @@ jobs:
         working-directory: ./packages/blockly
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
 
@@ -40,7 +40,7 @@ jobs:
           ssh://git@github.com/
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
 

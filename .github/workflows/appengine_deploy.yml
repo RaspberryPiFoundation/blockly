@@ -15,7 +15,7 @@ jobs:
     steps:
       # Checks-out the repository under $GITHUB_WORKSPACE.
       # When running manually this checks out the master branch.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Prepare demo files
         # Install all dependencies, then copy all the files needed for demos.
@@ -37,7 +37,7 @@ jobs:
     needs: prepare
     steps:
       - name: Download prepared files
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: appengine_files
           path: _deploy/
