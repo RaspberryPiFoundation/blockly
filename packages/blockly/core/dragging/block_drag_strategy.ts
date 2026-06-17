@@ -604,12 +604,10 @@ export class BlockDragStrategy implements IDragStrategy {
   private determineConnectionOffset(): Coordinate {
     const {local, neighbour} = this.connectionCandidate!;
 
-    const dx = neighbour.x - local.x;
-    const dy = neighbour.y - local.y;
+    const connOffset = local.getOffsetInBlock();
 
-    // Base aligned position
-    let x = this.startLoc!.x + dx;
-    let y = this.startLoc!.y + dy;
+    let x = neighbour.x - connOffset.x;
+    let y = neighbour.y - connOffset.y;
 
     // Decide offset direction
     const becomingChild =
@@ -650,51 +648,52 @@ export class BlockDragStrategy implements IDragStrategy {
     const newCandidate =
       this.getInitialCandidate() ?? this.getConnectionCandidate(delta);
 
+    this.connectionPreviewer?.hidePreview();
+    this.connectionCandidate = null;
     if (!newCandidate) {
       // Position above or below the first/last block.
       if (this.moveMode === MoveMode.CONSTRAINED) {
-        const connectedBlock = currCandidate?.neighbour.getSourceBlock();
+        const connectedBlock = currCandidate?.neighbour.getSourceBlock() ?? null;
         let root = connectedBlock?.getRootBlock() ?? connectedBlock;
         if (root === draggingBlock) root = connectedBlock;
-        const direction = this.getDirectionToNewLocation(
-          Coordinate.sum(this.startLoc!, delta),
-        );
-        const bounds = root?.getBoundingRectangle();
-        if (!bounds) return;
+        if (!root) return;
 
         const blockRects = draggingBlock.workspace
           .getTopBlocks()
+          .filter((block) => block !== draggingBlock.getRootBlock())
           .map((block) => block.getBoundingRectangle());
-        const blocksLeft = Math.min(...blockRects.map((rect) => rect.left));
+        if (!blockRects.length) return;
 
-        let destination: Coordinate;
-        let blockBound: number;
+        // If the block was previously connected, position the block near its previous connection.
+        const destinationX =
+          currCandidate?.neighbour.x ??
+          draggingBlock.getRelativeToSurfaceXY().x;
+        let destinationY: number;
+        const offset = this.BLOCK_CONNECTION_OFFSET * 2;
+
+        const direction = this.getDirectionToNewLocation(
+          Coordinate.sum(this.startLoc!, delta),
+        );
         switch (direction) {
           case Direction.LEFT:
           case Direction.UP:
-            blockBound = Math.min(...blockRects.map((rect) => rect.top));
-            destination = new Coordinate(
-              blocksLeft,
-              blockBound -
-                this.BLOCK_CONNECTION_OFFSET * 2 -
-                draggingBlock.getHeightWidth().height,
-            );
+            const blocksTop = Math.min(...blockRects.map((rect) => rect.top));
+            destinationY =
+              blocksTop - offset - draggingBlock.getHeightWidth().height;
             break;
           case Direction.RIGHT:
           case Direction.DOWN:
           default:
-            blockBound = Math.max(...blockRects.map((rect) => rect.bottom));
-            destination = new Coordinate(
-              blocksLeft,
-              blockBound + this.BLOCK_CONNECTION_OFFSET * 2,
+            const blocksBottom = Math.max(
+              ...blockRects.map((rect) => rect.bottom),
             );
+            destinationY = blocksBottom + offset;
             break;
         }
-        draggingBlock.moveDuringDrag(destination);
+        draggingBlock.moveDuringDrag(
+          new Coordinate(destinationX, destinationY),
+        );
       }
-
-      this.connectionPreviewer?.hidePreview();
-      this.connectionCandidate = null;
       return;
     }
     const candidate =
