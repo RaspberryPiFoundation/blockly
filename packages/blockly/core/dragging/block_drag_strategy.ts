@@ -1142,11 +1142,15 @@ export class BlockDragStrategy implements IDragStrategy {
     const actualPosition = this.block.getRelativeToSurfaceXY();
     const delta = Coordinate.difference(newLocation, actualPosition);
     const {x, y} = delta;
-
-    if (x < 0) return Direction.LEFT;
-    if (x > 0) return Direction.RIGHT;
-    if (y < 0) return Direction.UP;
-    if (y > 0) return Direction.DOWN;
+    // Pick the dominant axis rather than testing x before y. A keyboard move is
+    // single-axis by intent, but the delta is round-tripped through pixels
+    // (KeyboardMover scales up by workspace.scale, Dragger scales back down), so
+    // at any zoom != 1 the axis that should be zero carries ~1e-14 of
+    // floating-point residue. Comparing magnitudes keeps that residue from
+    // outranking the real movement and flipping e.g. a DOWN press to RIGHT.
+    if (Math.abs(x) > Math.abs(y))
+      return x < 0 ? Direction.LEFT : Direction.RIGHT;
+    if (Math.abs(y) > 0) return y < 0 ? Direction.UP : Direction.DOWN;
     return Direction.NONE;
   }
 
