@@ -1354,6 +1354,29 @@ export class BlockSvg
    */
   bringToFront(blockOnly = false) {
     const previouslyFocused = getFocusManager().getFocusedNode();
+    this.moveSvgRootToFront(blockOnly);
+    if (previouslyFocused) {
+      // Bringing a block to the front of the stack doesn't fundamentally change
+      // the logical structure of the page, but it does change element ordering
+      // which can take automatically take away focus from a node. Ensure focus
+      // is restored to avoid a discontinuity.
+      getFocusManager().focusNode(previouslyFocused);
+    }
+  }
+
+  /**
+   * Reorders this block's SVG root and those of its parents (unless
+   * `blockOnly`` is set to `true`) to the end of their respective parents so
+   * they render on top of their siblings.
+   *
+   * Unlike `bringToFront`, this does not preserve focus across the reorder, so
+   * it is safe to call from within a focus callback
+   *
+   * @param blockOnly True to only move this block to the front without
+   * adjusting its parents.
+   * @internal
+   */
+  moveSvgRootToFront(blockOnly = false) {
     /* eslint-disable-next-line @typescript-eslint/no-this-alias */
     let block: this | null = this;
     if (block.isDeadOrDying()) {
@@ -1370,13 +1393,6 @@ export class BlockSvg
       if (blockOnly) break;
       block = block.getParent();
     } while (block);
-    if (previouslyFocused) {
-      // Bringing a block to the front of the stack doesn't fundamentally change
-      // the logical structure of the page, but it does change element ordering
-      // which can take automatically take away focus from a node. Ensure focus
-      // is restored to avoid a discontinuity.
-      getFocusManager().focusNode(previouslyFocused);
-    }
   }
 
   /**
@@ -1909,6 +1925,9 @@ export class BlockSvg
   onNodeFocus(): void {
     this.recomputeAriaContext();
     this.select();
+    if (!this.workspace.isFlyout) {
+      this.moveSvgRootToFront();
+    }
     const focusedNode = getFocusManager().getFocusedNode();
     if (focusedNode && focusedNode !== this) {
       renderManagement.finishQueuedRenders().then(() => {

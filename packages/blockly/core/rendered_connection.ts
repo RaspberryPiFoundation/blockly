@@ -700,8 +700,12 @@ export class RenderedConnection
   /** See IFocusableNode.onNodeFocus. */
   onNodeFocus(): void {
     this.highlight();
-    this.getSourceBlock().workspace.scrollBoundsIntoView(
-      this.getSourceBlock().getBoundingRectangleWithoutChildren(),
+    const sourceBlock = this.getSourceBlock();
+    if (!sourceBlock.workspace.isFlyout) {
+      sourceBlock.moveSvgRootToFront();
+    }
+    sourceBlock.workspace.scrollBoundsIntoView(
+      sourceBlock.getBoundingRectangleWithoutChildren(),
     );
   }
 
