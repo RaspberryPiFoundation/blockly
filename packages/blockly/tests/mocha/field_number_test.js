@@ -551,5 +551,53 @@ suite('Number Fields', function () {
       const updatedLabel = this.focusableElement.getAttribute('aria-label');
       assert.isTrue(updatedLabel.includes('1'));
     });
+    suite('Full block fields', function () {
+      setup(function () {
+        this.workspace = Blockly.inject('blocklyDiv', {
+          renderer: 'zelos',
+        });
+        this.block = this.workspace.newBlock('math_number');
+        this.field = this.block.getField('NUM');
+        this.block.initSvg();
+        this.block.render();
+      });
+      test('Top block ARIA label includes "Begin stack" label before expected field label', function () {
+        const labels = this.block
+          .getFocusableElement()
+          .getAttribute('aria-label')
+          .split(', ');
+
+        const expectedBeginStackLabel = 'Begin stack';
+        const expectedFieldLabel = 'Edit number: 0';
+        assert.include(labels, expectedBeginStackLabel);
+        assert.include(labels, expectedFieldLabel);
+        assert.isTrue(
+          labels.indexOf(expectedBeginStackLabel) <
+            labels.indexOf(expectedFieldLabel),
+        );
+      });
+      test('Child block ARIA label includes parent input custom label after "Edit" label and before field label', function () {
+        const parentBlock = this.workspace.newBlock('controls_repeat_ext');
+        parentBlock.initSvg();
+        parentBlock.render();
+        this.block.outputConnection.connect(
+          parentBlock.getInput('TIMES').connection,
+        );
+        this.block.getField('NUM').recomputeAriaContext();
+        const labels = this.block
+          .getFocusableElement()
+          .getAttribute('aria-label')
+          .split(', ');
+
+        const expectedInputLabel = 'Edit number of times to repeat';
+        const expectedFieldLabel = 'number: 0';
+        assert.include(labels, expectedInputLabel);
+        assert.include(labels, expectedFieldLabel);
+        assert.isTrue(
+          labels.indexOf(expectedInputLabel) <
+            labels.indexOf(expectedFieldLabel),
+        );
+      });
+    });
   });
 });

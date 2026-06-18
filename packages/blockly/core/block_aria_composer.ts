@@ -63,13 +63,6 @@ export function computeAriaLabel(
   block: BlockSvg,
   verbosity = Verbosity.STANDARD,
 ) {
-  if (block.isSimpleReporter()) {
-    // special case for full-block field blocks.
-    const field = block.getFullBlockField();
-    if (field) {
-      return field.computeAriaLabel(verbosity >= Verbosity.STANDARD);
-    }
-  }
   return [
     verbosity >= Verbosity.STANDARD && getBeginStackLabel(block),
     getParentInputLabel(block),
@@ -271,7 +264,7 @@ function getParentInputLabel(block: BlockSvg) {
  * @returns Text indicating that the block begins a stack, or undefined if it
  *     does not.
  */
-function getBeginStackLabel(block: BlockSvg) {
+export function getBeginStackLabel(block: BlockSvg) {
   // Don't include the "begin stack" label for blocks that are moving
   // or blocks in the flyout
   if (block.isInFlyout || block.isDragging()) return undefined;

@@ -580,5 +580,58 @@ suite('Dropdown Fields', function () {
         assert.include(label, 'Option 5');
       });
     });
+    suite('Full block fields', function () {
+      setup(function () {
+        this.workspace = Blockly.inject('blocklyDiv', {
+          renderer: 'zelos',
+        });
+        this.block = this.workspace.newBlock('variables_get');
+        this.block.initSvg();
+        this.block.render();
+        this.field = this.block.getField('VAR');
+      });
+
+      test('Top block ARIA label includes "Begin stack" label before dropdown field label', function () {
+        const labels = this.block
+          .getFocusableElement()
+          .getAttribute('aria-label')
+          .split(', ');
+
+        const expectedBeginStackLabel = 'Begin stack';
+        const expectedFieldLabel = "dropdown: Variable 'item'";
+        assert.include(labels, expectedBeginStackLabel);
+        assert.include(labels, expectedFieldLabel);
+        assert.isTrue(
+          labels.indexOf(expectedBeginStackLabel) <
+            labels.indexOf(expectedFieldLabel),
+        );
+      });
+
+      test('Child block ARIA label includes parent input custom label before dropdown field label', function () {
+        const parentBlock = this.workspace.newBlock('controls_repeat_ext');
+        parentBlock.initSvg();
+        parentBlock.render();
+
+        this.block.outputConnection.connect(
+          parentBlock.getInput('TIMES').connection,
+        );
+
+        this.block.getField('VAR').recomputeAriaContext();
+
+        const labels = this.block
+          .getFocusableElement()
+          .getAttribute('aria-label')
+          .split(', ');
+
+        const expectedInputLabel = 'number of times to repeat';
+        const expectedFieldLabel = "dropdown: Variable 'item'";
+        assert.include(labels, expectedInputLabel);
+        assert.include(labels, expectedFieldLabel);
+        assert.isTrue(
+          labels.indexOf(expectedInputLabel) <
+            labels.indexOf(expectedFieldLabel),
+        );
+      });
+    });
   });
 });

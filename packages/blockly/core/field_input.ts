@@ -14,6 +14,7 @@
 // Unused import preserved for side-effects. Remove if unneeded.
 import './events/events_block_change.js';
 
+import {computeAriaLabel, getBeginStackLabel} from './block_aria_composer.js';
 import {BlockSvg} from './block_svg.js';
 import * as browserEvents from './browser_events.js';
 import * as bumpObjects from './bump_objects.js';
@@ -855,8 +856,35 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
     const focusableElement = this.getFocusableElement();
 
     let label = this.computeAriaLabel(true);
-    if (this.isCurrentlyEditable() && !this.getSourceBlock()?.isInFlyout) {
-      label = Msg['FIELD_LABEL_EDIT_PREFIX'].replace('%1', label);
+    const requiresEditableLabel =
+      this.isCurrentlyEditable() && !this.getSourceBlock()?.isInFlyout;
+
+    if (!this.isFullBlockField()) {
+      if (requiresEditableLabel) {
+        label = Msg['FIELD_LABEL_EDIT_PREFIX'].replace('%1', label);
+      }
+    } else {
+      // Full block fields get a more detailed label that includes the block's label
+      const fullBlockLabel = computeAriaLabel(
+        this.getSourceBlock() as BlockSvg,
+      ).replace(this.computeAriaLabel(false), label);
+      if (requiresEditableLabel) {
+        const labels = fullBlockLabel.split(', ');
+        const beginStackLabel = getBeginStackLabel(
+          this.getSourceBlock() as BlockSvg,
+        );
+
+        // Insert "Edit" after "Begin stack" if found, otherwise at start.
+        const beginStackLabelIndex =
+          beginStackLabel === undefined ? -1 : labels.indexOf(beginStackLabel);
+        const insertIndex =
+          beginStackLabelIndex === -1 ? 0 : beginStackLabelIndex + 1;
+        labels[insertIndex] = Msg['FIELD_LABEL_EDIT_PREFIX'].replace(
+          '%1',
+          labels[insertIndex] ?? '',
+        );
+        label = labels.join(', ');
+      }
     }
     aria.setState(focusableElement, aria.State.LABEL, label);
     return true;
