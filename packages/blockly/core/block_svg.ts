@@ -1385,10 +1385,11 @@ export class BlockSvg
     do {
       const root = block.getSvgRoot();
       const parent = root.parentNode;
-      const childNodes = parent!.childNodes;
+      if (!parent) return;
+      const childNodes = parent.childNodes;
       // Avoid moving the block if it's already at the bottom.
       if (childNodes[childNodes.length - 1] !== root) {
-        parent!.appendChild(root);
+        parent.appendChild(root);
       }
       if (blockOnly) break;
       block = block.getParent();
