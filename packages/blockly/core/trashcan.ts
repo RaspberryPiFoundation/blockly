@@ -22,6 +22,7 @@ import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
 import {getFocusManager} from './focus_manager.js';
 import type {IAutoHideable} from './interfaces/i_autohideable.js';
+import type {IComponent} from './interfaces/i_component';
 import type {IDraggable} from './interfaces/i_draggable.js';
 import type {IFlyout} from './interfaces/i_flyout.js';
 import type {IFocusableNode} from './interfaces/i_focusable_node.js';
@@ -49,7 +50,7 @@ import type {WorkspaceSvg} from './workspace_svg.js';
  */
 export class Trashcan
   extends DeleteArea
-  implements IAutoHideable, IPositionable, IFocusableNode
+  implements IAutoHideable, IPositionable, IFocusableNode, IComponent
 {
   /**
    * The id for this component that is used to register with the
@@ -269,6 +270,7 @@ export class Trashcan
         ComponentManager.Capability.DELETE_AREA,
         ComponentManager.Capability.DRAG_TARGET,
         ComponentManager.Capability.POSITIONABLE,
+        ComponentManager.Capability.FOCUSABLE,
       ],
     });
     this.initialized = true;
@@ -658,16 +660,6 @@ export class Trashcan
 
   performAction() {
     this.click();
-  }
-
-  /**
-   * Retrieves the globally unique ID of this Trashcan instance. Used for focus
-   * management.
-   *
-   * @internal
-   */
-  getGloballyUniqueId() {
-    return this.uniqueId;
   }
 }
 

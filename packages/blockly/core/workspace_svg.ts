@@ -49,6 +49,7 @@ import * as hints from './hints.js';
 import {MutatorIcon} from './icons/mutator_icon.js';
 import {isAutoHideable} from './interfaces/i_autohideable.js';
 import type {IBoundedElement} from './interfaces/i_bounded_element.js';
+import type {IComponent} from './interfaces/i_component.js';
 import {IContextMenu} from './interfaces/i_contextmenu.js';
 import type {IDragTarget} from './interfaces/i_drag_target.js';
 import type {IFlyout} from './interfaces/i_flyout.js';
@@ -2961,12 +2962,14 @@ export class WorkspaceSvg
       }
     }
 
-    if (this.trashcan?.getGloballyUniqueId() === id) {
-      return this.trashcan;
+    const focusableComponents = this.getComponentManager().getComponents<
+      IFocusableNode & IComponent
+    >(ComponentManager.Capability.FOCUSABLE, false);
+    for (const component of focusableComponents) {
+      if (component.getFocusableElement().getAttribute('id') === id) {
+        return component;
+      }
     }
-
-    const zoomControl = this.zoomControls_?.getControlWithId(id);
-    if (zoomControl) return zoomControl;
 
     return null;
   }

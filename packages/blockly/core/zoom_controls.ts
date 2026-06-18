@@ -19,6 +19,7 @@ import {ComponentManager} from './component_manager.js';
 import * as Css from './css.js';
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
+import type {IComponent} from './interfaces/i_component.js';
 import {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IPositionable} from './interfaces/i_positionable.js';
 import type {UiMetrics} from './metrics_manager.js';
@@ -39,9 +40,9 @@ import type {WorkspaceSvg} from './workspace_svg.js';
  *
  * @internal
  */
-abstract class ZoomControl implements IFocusableNode {
+abstract class ZoomControl implements IFocusableNode, IComponent {
   private pointerDownHandler: browserEvents.Data;
-  private id: string;
+  id: string;
 
   constructor(
     protected workspace: WorkspaceSvg,
@@ -58,10 +59,6 @@ abstract class ZoomControl implements IFocusableNode {
 
     this.id = getNextUniqueId();
     this.group.id = this.id;
-  }
-
-  getId() {
-    return this.id;
   }
 
   /**
@@ -385,6 +382,21 @@ export class ZoomControls implements IPositionable {
         this.svgGroup,
       );
     }
+
+    for (const control of [
+      this.zoomOutControl,
+      this.zoomInControl,
+      this.zoomResetControl,
+    ]) {
+      if (!control) continue;
+
+      this.workspace.getComponentManager().addComponent({
+        component: control,
+        weight: ComponentManager.ComponentWeight.ZOOM_CONTROLS_WEIGHT,
+        capabilities: [ComponentManager.Capability.FOCUSABLE],
+      });
+    }
+
     return this.svgGroup;
   }
 
@@ -507,24 +519,6 @@ export class ZoomControls implements IPositionable {
       'transform',
       'translate(' + this.left + ',' + this.top + ')',
     );
-  }
-
-  /**
-   * Returns the individual zoom control, if any, with the given ID. Used for
-   * focus management.
-   *
-   * @internal
-   */
-  getControlWithId(id: string) {
-    for (const control of [
-      this.zoomInControl,
-      this.zoomOutControl,
-      this.zoomResetControl,
-    ]) {
-      if (control?.getId() === id) {
-        return control;
-      }
-    }
   }
 }
 

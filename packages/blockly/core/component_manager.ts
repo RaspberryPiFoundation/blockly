@@ -15,6 +15,7 @@ import type {IAutoHideable} from './interfaces/i_autohideable.js';
 import type {IComponent} from './interfaces/i_component.js';
 import type {IDeleteArea} from './interfaces/i_delete_area.js';
 import type {IDragTarget} from './interfaces/i_drag_target.js';
+import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IPositionable} from './interfaces/i_positionable.js';
 import * as arrayUtils from './utils/array.js';
 
@@ -23,6 +24,7 @@ class Capability<_T> {
   static DRAG_TARGET = new Capability<IDragTarget>('drag_target');
   static DELETE_AREA = new Capability<IDeleteArea>('delete_area');
   static AUTOHIDEABLE = new Capability<IAutoHideable>('autohideable');
+  static FOCUSABLE = new Capability<IFocusableNode>('focusable');
   private readonly name: string;
   /** @param name The name of the component capability. */
   constructor(name: string) {
