@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Alpinistbg",
+			"ArcaneIE",
 			"Gkostov",
 			"InsomniHat",
 			"MTongov",
@@ -365,5 +366,7 @@
 	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "Задръжте %1 и използвайте клавишите със стрелки, за да се движите свободно, след това %2, за да приемете позицията",
 	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Използвайте стрелките, за да се преместите, след това %1 да приемете позицията",
 	"KEYBOARD_NAV_COPIED_HINT": "Копирано. Натиснете %1, за да поставите.",
-	"KEYBOARD_NAV_CUT_HINT": "Изрязано. Натиснете %1, за да поставите."
+	"KEYBOARD_NAV_CUT_HINT": "Изрязано. Натиснете %1, за да поставите.",
+	"ARIA_LABEL_ADD_LIST_ITEM": "Добавяне на елемент от списъка",
+	"ARIA_LABEL_REMOVE_LIST_ITEM": "Премахване на елемент от списъка"
 }

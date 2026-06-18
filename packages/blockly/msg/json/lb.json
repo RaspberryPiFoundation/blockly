@@ -97,6 +97,7 @@
 	"MATH_ROUND_OPERATOR_ROUNDUP": "oprënnen",
 	"MATH_ROUND_OPERATOR_ROUNDDOWN": "ofrënnen",
 	"MATH_ONLIST_OPERATOR_MAX": "Maximum aus der Lëscht",
+	"MATH_ONLIST_OPERATOR_MAX_ARIA": "Maximum",
 	"MATH_ONLIST_TOOLTIP_MAX": "Schéckt de gréisste Wäert aus enger Lëscht zréck.",
 	"MATH_ONLIST_OPERATOR_AVERAGE": "Moyenne vun der Lëscht",
 	"MATH_ONLIST_OPERATOR_RANDOM": "zoufällegt Element vun enger Lëscht",
@@ -162,5 +163,9 @@
 	"COPY_SHORTCUT": "Kopéieren",
 	"SHORTCUTS_EDITING": "Änneren",
 	"SHORTCUTS_CODE_NAVIGATION": "Code-Navigatioun",
-	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Benotzt d'Feiltaste fir ze réckelen an dann %1 fir d'Positioun ze validéieren"
+	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Benotzt d'Feiltaste fir ze réckelen an dann %1 fir d'Positioun ze validéieren",
+	"ARIA_TYPE_FIELD_ANGLE": "Wénkel",
+	"ARIA_LABEL_FIELD_ANGLE": "%1 Grad",
+	"ARIA_TYPE_FIELD_DATE": "Datum",
+	"ARIA_TYPE_FIELD_COLOUR": "Faarf"
 }
