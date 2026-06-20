@@ -118,7 +118,7 @@ jobs:
 
       - name: Upload versioned files
         if: ${{ !inputs.skip_versioning }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: versioned-files
           path: |
