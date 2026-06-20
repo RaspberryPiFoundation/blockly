@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout your repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ inputs.ref || 'main' }}
           # Allow Docusaurus to view the full commit history (required for "last edited at <date> by <person>" functionality)
