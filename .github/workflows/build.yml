@@ -45,7 +45,7 @@ jobs:
 
       - name: Setup Chrome
         if: runner.os == 'Linux'
-        uses: browser-actions/setup-chrome@v1
+        uses: browser-actions/setup-chrome@v2
 
       - name: Linux Test Setup
         if: runner.os == 'Linux'
