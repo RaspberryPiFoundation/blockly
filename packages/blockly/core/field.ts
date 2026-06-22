@@ -1518,7 +1518,7 @@ export abstract class Field<T = any>
    *
    * @returns true if the element is in the accessibility tree, false if the aria state is hidden
    */
-  protected recomputeAriaContext(): boolean {
+  recomputeAriaContext(): boolean {
     let focusableElement;
     try {
       focusableElement = this.getFocusableElement();

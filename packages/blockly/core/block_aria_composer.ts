@@ -57,16 +57,18 @@ export enum ConnectionPreposition {
  * @internal
  * @param block The block for which an ARIA representation should be created.
  * @param verbosity How much detail to include in the description.
+ * @param fullBlockFieldLabel An optional override for input labels for full-block fields
  * @returns The ARIA representation for the specified block.
  */
 export function computeAriaLabel(
   block: BlockSvg,
   verbosity = Verbosity.STANDARD,
+  fullBlockFieldLabel?: string,
 ) {
   return [
     verbosity >= Verbosity.STANDARD && getBeginStackLabel(block),
     getParentInputLabel(block),
-    ...getInputLabels(block, verbosity),
+    ...getInputLabels(block, verbosity, fullBlockFieldLabel),
     verbosity === Verbosity.LOQUACIOUS && getParentToolboxCategoryLabel(block),
     verbosity >= Verbosity.STANDARD && getDisabledLabel(block),
     verbosity >= Verbosity.STANDARD && getCollapsedLabel(block),
@@ -288,12 +290,17 @@ export function getBeginStackLabel(block: BlockSvg) {
  * @internal
  * @param block The block to retrieve a list of field/input labels for.
  * @param verbosity How much detail to include in each input label.
+ * @param fullBlockFieldLabel An optional override for full-block fields.
  * @returns A list of field/input labels for the given block.
  */
 export function getInputLabels(
   block: BlockSvg,
   verbosity = Verbosity.STANDARD,
+  fullBlockFieldLabel?: string,
 ): string[] {
+  if (fullBlockFieldLabel) {
+    return [fullBlockFieldLabel];
+  }
   const visibleInputs = block.inputList.filter((input) => input.isVisible());
   let inputsToLabel = visibleInputs;
 

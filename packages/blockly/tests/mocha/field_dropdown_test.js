@@ -590,6 +590,9 @@ suite('Dropdown Fields', function () {
         this.block.render();
         this.field = this.block.getField('VAR');
       });
+      teardown(function () {
+        workspaceTeardown.call(this, this.workspace);
+      });
 
       test('Top block ARIA label includes "Begin stack" label before dropdown field label', function () {
         const labels = this.block
@@ -607,7 +610,7 @@ suite('Dropdown Fields', function () {
         );
       });
 
-      test('Child block ARIA label includes parent input custom label before dropdown field label', function () {
+      test('Connect to parent updates ARIA label with parent input label', function () {
         const parentBlock = this.workspace.newBlock('controls_repeat_ext');
         parentBlock.initSvg();
         parentBlock.render();
@@ -615,8 +618,6 @@ suite('Dropdown Fields', function () {
         this.block.outputConnection.connect(
           parentBlock.getInput('TIMES').connection,
         );
-
-        this.block.getField('VAR').recomputeAriaContext();
 
         const labels = this.block
           .getFocusableElement()
@@ -631,6 +632,45 @@ suite('Dropdown Fields', function () {
           labels.indexOf(expectedInputLabel) <
             labels.indexOf(expectedFieldLabel),
         );
+        assert.notInclude(labels, 'Begin stack');
+      });
+      test('Disconnect from parent updates ARIA label with Begin stack', function () {
+        const parentBlock = this.workspace.newBlock('controls_repeat_ext');
+        parentBlock.initSvg();
+        parentBlock.render();
+        this.block.outputConnection.connect(
+          parentBlock.getInput('TIMES').connection,
+        );
+        this.block.outputConnection.disconnect();
+
+        const label = this.block
+          .getFocusableElement()
+          .getAttribute('aria-label');
+        assert.include(label, 'Begin stack');
+        assert.notInclude(label, 'number of times to repeat');
+      });
+      test('Disconnect during drag updates ARIA label after drag ends', function () {
+        const parentBlock = this.workspace.newBlock('controls_repeat_ext');
+        parentBlock.initSvg();
+        parentBlock.render();
+        this.block.outputConnection.connect(
+          parentBlock.getInput('TIMES').connection,
+        );
+
+        this.block.setDragging(true);
+        this.block.outputConnection.disconnect();
+
+        const labelWhileDragging = this.block
+          .getFocusableElement()
+          .getAttribute('aria-label');
+        assert.notInclude(labelWhileDragging, 'Begin stack');
+
+        this.block.setDragging(false);
+
+        const labelAfterDrag = this.block
+          .getFocusableElement()
+          .getAttribute('aria-label');
+        assert.include(labelAfterDrag, 'Begin stack');
       });
     });
   });

@@ -348,6 +348,7 @@ export class BlockSvg
     }
 
     this.applyColour();
+    this.recomputeAriaContext();
   }
 
   /**
@@ -791,6 +792,9 @@ export class BlockSvg
     } else {
       common.draggingConnections.length = 0;
       this.removeClass('blocklyDragging');
+      if (this.getFullBlockField()) {
+        this.recomputeAriaContext();
+      }
     }
     // Recurse through all blocks attached under this one.
     for (let i = 0; i < this.childBlocks_.length; i++) {
@@ -2038,7 +2042,11 @@ export class BlockSvg
    * Updates the ARIA label, role and roledescription for this block.
    */
   private recomputeAriaContext() {
-    if (this.getFullBlockField()) return;
+    const fullBlockField = this.getFullBlockField();
+    if (fullBlockField) {
+      fullBlockField.recomputeAriaContext();
+      return;
+    }
     aria.setState(
       this.getFocusableElement(),
       aria.State.LABEL,

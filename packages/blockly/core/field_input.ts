@@ -33,6 +33,7 @@ import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import {Msg} from './msg.js';
 import * as renderManagement from './render_management.js';
 import * as aria from './utils/aria.js';
+import {Verbosity} from './utils/aria.js';
 import * as dom from './utils/dom.js';
 import {Size} from './utils/size.js';
 import * as userAgent from './utils/useragent.js';
@@ -867,7 +868,9 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
       // Full block fields get a more detailed label that includes the block's label
       const fullBlockLabel = computeAriaLabel(
         this.getSourceBlock() as BlockSvg,
-      ).replace(this.computeAriaLabel(false), label);
+        Verbosity.STANDARD,
+        label,
+      );
       if (requiresEditableLabel) {
         const labels = fullBlockLabel.split(', ');
         const beginStackLabel = getBeginStackLabel(
