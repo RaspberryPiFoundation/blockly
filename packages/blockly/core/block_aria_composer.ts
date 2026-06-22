@@ -63,7 +63,7 @@ export enum ConnectionPreposition {
 export function computeAriaLabel(
   block: BlockSvg,
   verbosity = Verbosity.STANDARD,
-  fullBlockFieldLabel?: string,
+  fullBlockFieldLabel: string | undefined = undefined,
 ) {
   return [
     verbosity >= Verbosity.STANDARD && getBeginStackLabel(block),
@@ -296,7 +296,7 @@ export function getBeginStackLabel(block: BlockSvg) {
 export function getInputLabels(
   block: BlockSvg,
   verbosity = Verbosity.STANDARD,
-  fullBlockFieldLabel?: string,
+  fullBlockFieldLabel: string | undefined = undefined,
 ): string[] {
   if (fullBlockFieldLabel) {
     return [fullBlockFieldLabel];
