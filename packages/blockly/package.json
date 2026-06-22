@@ -138,7 +138,7 @@
     "markdown-tables-to-json": "^0.1.7",
     "mocha": "^11.7.5",
     "patch-package": "^8.0.1",
-    "prettier": "3.8.3",
+    "prettier": "3.8.4",
     "prettier-plugin-organize-imports": "^4.3.0",
     "puppeteer-core": "^25.1.0",
     "readline-sync": "^1.4.10",

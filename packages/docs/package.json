@@ -37,7 +37,7 @@
     "@docusaurus/types": "^3.10.1",
     "eslint": "10.5.0",
     "eslint-plugin-mdx": "^3.7.0",
-    "prettier": "3.8.3"
+    "prettier": "3.8.4"
   },
   "browserslist": {
     "production": [
