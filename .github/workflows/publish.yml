@@ -42,7 +42,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.ref }}
           fetch-depth: 0
@@ -134,7 +134,7 @@ jobs:
       NPM_DIST_TAG: ${{ github.ref_name == github.event.repository.default_branch && 'latest' || 'beta' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.ref }}
           fetch-depth: 0

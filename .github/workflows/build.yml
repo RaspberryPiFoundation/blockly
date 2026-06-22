@@ -25,7 +25,7 @@ jobs:
         # https://nodejs.org/en/about/releases/
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.ref }}
           persist-credentials: false
@@ -45,7 +45,7 @@ jobs:
 
       - name: Setup Chrome
         if: runner.os == 'Linux'
-        uses: browser-actions/setup-chrome@v1
+        uses: browser-actions/setup-chrome@v2
 
       - name: Linux Test Setup
         if: runner.os == 'Linux'
@@ -62,7 +62,7 @@ jobs:
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.ref }}
 
@@ -81,7 +81,7 @@ jobs:
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.ref }}
 
