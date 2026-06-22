@@ -35,7 +35,7 @@
     "@docusaurus/faster": "^3.10.1",
     "@docusaurus/module-type-aliases": "^3.10.1",
     "@docusaurus/types": "^3.10.1",
-    "eslint": "10.3.0",
+    "eslint": "10.5.0",
     "eslint-plugin-mdx": "^3.7.0",
     "prettier": "3.8.3"
   },
