@@ -944,8 +944,9 @@ export class FieldDropdown extends Field<string> {
     let label = this.computeAriaLabel(true);
     if (this.isFullBlockField()) {
       // Full block fields get a more detailed label that includes the block's label
-      label = computeAriaLabel(this.getSourceBlock() as BlockSvg).replace(
-        this.computeAriaLabel(false),
+      label = computeAriaLabel(
+        this.getSourceBlock() as BlockSvg,
+        aria.Verbosity.STANDARD,
         label,
       );
     }
