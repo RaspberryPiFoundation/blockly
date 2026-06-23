@@ -1,9 +1,16 @@
 # Blockly
 
-Google's Blockly is a web-based, visual programming editor. Users can drag
-blocks together to build programs. All code is free and open source.
+Blockly is a web-based visual programming editor maintained by the
+[Raspberry Pi Foundation](https://www.raspberrypi.org). The Blockly editor uses
+interlocking graphical blocks to represent code concepts like variables,
+logical expressions, loops, and more. It allows users to apply programming
+principles without having to worry about syntax or the intimidation of a
+blinking cursor on the command line, and can automatically translate block-based
+programs into a variety of text-based programming languages like Python,
+Javascript and Lua. All code is free and open source.
 
-The source for this module is in the [Blockly repo](http://github.com/google/blockly).
+[Try a live demo](https://raspberrypifoundation.github.io/blockly/packages/blockly/demos/code/index.html),
+or browse the source code in the [Blockly repo](http://github.com/RaspberryPiFoundation/blockly).
 
 ## Example Usage
 
@@ -14,13 +21,24 @@ Blockly.inject('blocklyDiv', {
 })
 ```
 
-## Samples
+## Plugins
 
-For samples on how to integrate Blockly into your project, view the list of samples at [blockly-samples](https://github.com/google/blockly-samples).
+A [wide variety of plugins](https://raspberrypifoundation.github.io/blockly-samples/)
+that add additional features and functionality to Blockly are available. All
+plugins are distributed via NPM; source code can be found in the
+[Blockly Samples repo](http://github.com/RaspberryPiFoundation/blockly-samples).
 
 ## Installation
 
-You can install this package either via `npm` or `unpkg`.
+You can install Blockly either via `npm` or `unpkg`. Or, if you're starting an
+entirely new project that uses Blockly, you can bootstrap it using our
+`create-package` tool:
+
+### npm
+
+```bash
+npm install blockly
+```
 
 ### unpkg
 
@@ -39,15 +57,16 @@ Blockly.Blocks['block_type'];
 javascript.javascriptGenerator;
 ```
 
-### npm
+### create-package
 
 ```bash
-npm install blockly
+npx @blockly/create-package app my-cool-blockly-app --typescript
 ```
 
 ## Imports
 
-Note: Using import of our package targets requires you to use a bundler (like webpack), since Blockly is packaged as a UMD, rather than an ESM.
+Note: Using import of our package targets requires you to use a bundler
+(like webpack), since Blockly is packaged as a UMD, rather than an ESM.
 
 ```js
 // Import Blockly core.
@@ -73,20 +92,27 @@ const {javascriptGenerator} = require('blockly/javascript');
 const En = require('blockly/msg/en');
 ```
 
-## Applying messages
+## Loading messages
 
-Once you have the message files, you also need to apply them.
+Blockly is translated into [more than 100 different languages](https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/blockly/msg/json).
+Once you've imported or required the message file for the language you want to
+use as shown above, it needs to be applied:
 
 ```js
-Blockly.setLocal(En);
+Blockly.setLocale(En);
 ```
-
-For a full list of supported Blockly locales, see: [https://github.com/google/blockly/tree/master/msg/js](https://github.com/google/blockly/tree/master/msg/js)
 
 ## Docs
 
 For more information about how to use Blockly, check out our
-[devsite](https://developers.google.com/blockly/guides/overview).
+[developer documentation](https://docs.blockly.com).
+
+## Accessibility
+
+Although Blockly is built around drag-and-drop, it is fully usable with the
+keyboard alone. Blockly is also accessible to screenreader users by default. We
+provide [Accessibility Conformance Reports](https://docs.blockly.com/guides/app-integration/accessibility/compliance/)
+in the VPAT format that outline Blockly's conformance to WCAG 2.2 Level AA.
 
 ## License
 
