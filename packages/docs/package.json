@@ -27,7 +27,7 @@
     "js-yaml": "^4.2.0",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.2.7",
-    "react-dom": "^19.2.6",
+    "react-dom": "^19.2.7",
     "remark-directive": "^4.0.0"
   },
   "devDependencies": {
