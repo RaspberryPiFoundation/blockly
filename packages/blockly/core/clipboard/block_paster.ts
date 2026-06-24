@@ -37,7 +37,7 @@ export class BlockPaster implements IPaster<BlockCopyData, BlockSvg> {
     // However, the algorithm for deciding where to paste a block depends on
     // the starting position of the copied block, so we'll pass those coordinates along
     const initialCoordinates =
-      coordinate ||
+      coordinate ??
       new Coordinate(
         copyData.blockState['x'] || 0,
         copyData.blockState['y'] || 0,

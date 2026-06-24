@@ -429,6 +429,79 @@ suite('Keyboard Shortcut Items', function () {
       sinon.assert.calledWith(toastSpy, this.workspace, 'copiedHint');
       toastSpy.restore();
     });
+
+    test('Pastes near focused block instead of copy origin', function () {
+      this.workspace.clear();
+      const blockA = setSelectedBlock(this.workspace);
+
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.C, [
+          Blockly.utils.KeyCodes.CTRL_CMD,
+        ]),
+      );
+
+      const blockB = Blockly.serialization.blocks.append(
+        {type: 'stack_block', x: 300, y: 300},
+        this.workspace,
+      );
+      Blockly.getFocusManager().focusNode(blockB);
+
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.V, [
+          Blockly.utils.KeyCodes.CTRL_CMD,
+        ]),
+      );
+
+      const pastedBlock = this.workspace
+        .getAllBlocks(false)
+        .find((b) => ![blockA, blockB].includes(b));
+      assert.isDefined(pastedBlock);
+
+      const pastedXY = pastedBlock.getRelativeToSurfaceXY();
+      // Check that the pasted block is closer to blockB than blockA, which means
+      // it used the focus location instead of the copy origin.
+      assert.isBelow(
+        Blockly.utils.Coordinate.distance(
+          pastedXY,
+          blockB.getRelativeToSurfaceXY(),
+        ),
+        Blockly.utils.Coordinate.distance(
+          pastedXY,
+          blockA.getRelativeToSurfaceXY(),
+        ),
+      );
+    });
+
+    test('Uses copy origin when workspace has focus', function () {
+      const blockA = setSelectedBlock(this.workspace);
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.C, [
+          Blockly.utils.KeyCodes.CTRL_CMD,
+        ]),
+      );
+
+      Blockly.getFocusManager().focusNode(this.workspace);
+      this.injectionDiv.dispatchEvent(
+        createKeyDownEvent(Blockly.utils.KeyCodes.V, [
+          Blockly.utils.KeyCodes.CTRL_CMD,
+        ]),
+      );
+
+      const pastedBlock = this.workspace
+        .getAllBlocks(false)
+        .find((b) => b.id !== blockA.id);
+      assert.isDefined(pastedBlock);
+
+      const copyOrigin = blockA.getRelativeToSurfaceXY();
+      const pastedXY = pastedBlock.getRelativeToSurfaceXY();
+      assert.isBelow(
+        Blockly.utils.Coordinate.distance(pastedXY, copyOrigin),
+        Blockly.utils.Coordinate.distance(
+          pastedXY,
+          new Blockly.utils.Coordinate(300, 300),
+        ),
+      );
+    });
   });
 
   suite('Undo', function () {

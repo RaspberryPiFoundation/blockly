@@ -297,6 +297,27 @@ export function registerCut() {
 }
 
 /**
+ * Returns workspace coordinates to use as the paste origin when focus is on a
+ * block or one of its children (fields, connections, icons, block comments).
+ *
+ * @param focusedNode The node that currently has focus.
+ * @param targetWorkspace The workspace where the paste will occur.
+ * @returns The parent block's location in workspace coordinates, or undefined
+ *     if focus is not on a block or one of its children.
+ */
+function getPasteOriginFromFocus(
+  focusedNode: IFocusableNode | null,
+  targetWorkspace: WorkspaceSvg,
+): Coordinate | undefined {
+  const block = targetWorkspace
+    .getNavigator()
+    .getSourceBlockFromNode(focusedNode);
+  if (!block) return undefined;
+
+  return block.getRelativeToSurfaceXY();
+}
+
+/**
  * Keyboard shortcut to paste a block on ctrl+v, cmd+v, or alt+v.
  */
 export function registerPaste() {
@@ -330,6 +351,7 @@ export function registerPaste() {
     },
     callback(workspace: WorkspaceSvg, e: Event) {
       const copyData = clipboard.getLastCopiedData();
+      const focusedNode = getFocusManager().getFocusedNode();
       if (!copyData) return false;
 
       const copyWorkspace = clipboard.getLastCopiedWorkspace();
@@ -355,6 +377,15 @@ export function registerPaste() {
         return !!clipboard.paste(copyData, targetWorkspace, mouseCoords);
       }
 
+      const pasteOrigin = getPasteOriginFromFocus(
+        focusedNode,
+        targetWorkspace,
+      );
+      if (pasteOrigin) {
+        return !!clipboard.paste(copyData, targetWorkspace, pasteOrigin);
+      }
+
+      // No spatial focus target (e.g. workspace root) — use copy-location behavior.
       const copyCoords = clipboard.getLastCopiedLocation();
       if (!copyCoords) {
         // If we don't have location data about the original copyable, let the

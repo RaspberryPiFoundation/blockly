@@ -5,6 +5,7 @@
  */
 
 import {BlockSvg} from '../../block_svg.js';
+import {CommentEditor} from '../../comments/comment_editor.js';
 import {Field} from '../../field.js';
 import {getFocusManager} from '../../focus_manager.js';
 import {Icon} from '../../icons/icon.js';
@@ -499,6 +500,9 @@ export class Navigator {
       return node.getSourceBlock();
     } else if (node instanceof Icon) {
       return node.getSourceBlock() as BlockSvg;
+    } else if (node instanceof CommentEditor) {
+      const parent = node.getParent();
+      return parent instanceof BlockSvg ? parent : null;
     }
 
     return null;
