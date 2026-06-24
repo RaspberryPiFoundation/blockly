@@ -377,10 +377,7 @@ export function registerPaste() {
         return !!clipboard.paste(copyData, targetWorkspace, mouseCoords);
       }
 
-      const pasteOrigin = getPasteOriginFromFocus(
-        focusedNode,
-        targetWorkspace,
-      );
+      const pasteOrigin = getPasteOriginFromFocus(focusedNode, targetWorkspace);
       if (pasteOrigin) {
         return !!clipboard.paste(copyData, targetWorkspace, pasteOrigin);
       }
