@@ -13,7 +13,6 @@
  */
 // Former goog.module ID: Blockly.FieldDropdown
 
-import {computeAriaLabel} from './block_aria_composer.js';
 import type {BlockSvg} from './block_svg.js';
 import * as dropDownDiv from './dropdowndiv.js';
 import {
@@ -934,24 +933,13 @@ export class FieldDropdown extends Field<string> {
   }
 
   /**
-   * Overrides the default label and sets additional aria state.
+   * Sets additional aria state.
    */
   override recomputeAriaContext(): boolean {
     const shouldCustomize = super.recomputeAriaContext();
     if (!shouldCustomize) return false;
 
     const focusableElement = this.getFocusableElement();
-    let label = this.computeAriaLabel(true);
-    if (this.isFullBlockField()) {
-      // Full block fields get a more detailed label that includes the block's label
-      label = computeAriaLabel(
-        this.getSourceBlock() as BlockSvg,
-        aria.Verbosity.STANDARD,
-        label,
-      );
-    }
-
-    aria.setState(focusableElement, aria.State.LABEL, label);
     aria.setState(focusableElement, aria.State.HASPOPUP, 'listbox');
     aria.setState(focusableElement, aria.State.EXPANDED, !!this.menu_);
     return true;

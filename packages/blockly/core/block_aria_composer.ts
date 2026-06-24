@@ -6,7 +6,6 @@
 
 import type {BlockSvg} from './block_svg.js';
 import {ConnectionType} from './connection_type.js';
-import {FieldLabel} from './field_label.js';
 import type {Input} from './inputs/input.js';
 import {inputTypes} from './inputs/input_types.js';
 import {
@@ -138,11 +137,11 @@ export function computeFieldRowLabel(
   const fieldRowLabel = input.fieldRow
     .filter((field) => field.isVisible())
     .flatMap((field, index, visibleFields) => {
-      const isFieldLabel = field instanceof FieldLabel;
+      const isFieldLabel = field.isLabelField();
       if (isFieldLabel) {
         if (
           index < visibleFields.length - 1 &&
-          visibleFields[index + 1] instanceof FieldLabel
+          visibleFields[index + 1].isLabelField()
         ) {
           // Both this item and the next item are FieldLabels. We want to
           // combine these, so we add this one to the list for later handling.
@@ -354,7 +353,7 @@ export function getInputLabels(
  */
 function beginsWithFieldLabel(input: Input): boolean {
   const visibleFields = input.fieldRow.filter((field) => field.isVisible());
-  return visibleFields.length > 0 && visibleFields[0] instanceof FieldLabel;
+  return visibleFields.length > 0 && visibleFields[0].isLabelField();
 }
 
 /**
@@ -372,7 +371,7 @@ function endsWithFieldLabel(input: Input): boolean {
   const visibleFields = input.fieldRow.filter((field) => field.isVisible());
   return (
     visibleFields.length > 0 &&
-    visibleFields[visibleFields.length - 1] instanceof FieldLabel
+    visibleFields[visibleFields.length - 1].isLabelField()
   );
 }
 
