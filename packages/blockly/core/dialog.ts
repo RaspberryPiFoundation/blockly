@@ -251,7 +251,11 @@ function displayDialog(
 
   let restoreFocus: (() => void) | undefined;
   if (activeDialogCount === 0) {
-    restoreFocus = getFocusManager().takeEphemeralFocus(dialog);
+    if (getFocusManager().ephemeralFocusTaken()) {
+      restoreFocus = undefined;
+    } else {
+      restoreFocus = getFocusManager().takeEphemeralFocus(dialog);
+    }
   }
 
   activeDialogCount++;
