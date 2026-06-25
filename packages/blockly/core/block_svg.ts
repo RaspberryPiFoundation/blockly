@@ -709,6 +709,18 @@ export class BlockSvg
    * @internal
    */
   showContextMenu(e: Event) {
+    // Forward to the nearest non-shadow ancestor and focus it for keyboard users.
+    if (this.isShadow()) {
+      let parent = this.getParent();
+      while (parent && parent.isShadow()) {
+        parent = parent.getParent();
+      }
+      if (parent) {
+        getFocusManager().focusNode(parent);
+        parent.showContextMenu(e);
+      }
+      return;
+    }
     const menuOptions = this.generateContextMenu(e);
 
     const location = this.calculateContextMenuLocation(e);
