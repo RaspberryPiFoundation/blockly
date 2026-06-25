@@ -683,7 +683,7 @@ export abstract class Flyout
     if (!this.targetWorkspace.isMutator && !this.autoClose) {
       aria.setRole(this.getWorkspace().svgGroup_, aria.Role.REGION);
     } else {
-      aria.setRole(this.getWorkspace().svgGroup_, aria.Role.PRESENTATION);
+      aria.setRole(this.getWorkspace().svgGroup_, aria.Role.NONE);
     }
 
     // the label for a flyout includes the category name if it's available

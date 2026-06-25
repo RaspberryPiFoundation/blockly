@@ -435,23 +435,23 @@ suite('Utils', function () {
     });
 
     suite('createSvgElement', function () {
-      test('svg elements of type g have the presentation role by default', function () {
+      test('svg elements of type g have the none role by default', function () {
         const svgG = Blockly.utils.dom.createSvgElement(
           Blockly.utils.Svg.G,
           {},
         );
         const g = Blockly.utils.dom.createSvgElement('g', {});
-        assert.equal(svgG.getAttribute('role'), 'presentation');
-        assert.equal(g.getAttribute('role'), 'presentation');
+        assert.equal(svgG.getAttribute('role'), 'none');
+        assert.equal(g.getAttribute('role'), 'none');
       });
-      test('svg elements of type svg have the presentation role by default', function () {
+      test('svg elements of type svg have the none role by default', function () {
         const svgSvg = Blockly.utils.dom.createSvgElement(
           Blockly.utils.Svg.SVG,
           {},
         );
         const svg = Blockly.utils.dom.createSvgElement('svg', {});
-        assert.equal(svgSvg.getAttribute('role'), 'presentation');
-        assert.equal(svg.getAttribute('role'), 'presentation');
+        assert.equal(svgSvg.getAttribute('role'), 'none');
+        assert.equal(svg.getAttribute('role'), 'none');
       });
       test('svg elements of type g reflect the role passed in when created', function () {
         const svgG = Blockly.utils.dom.createSvgElement(Blockly.utils.Svg.G, {

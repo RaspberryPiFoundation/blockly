@@ -364,11 +364,11 @@ export class FieldImage extends Field<string> {
     const focusableElement = this.getFocusableElement();
 
     // The button role is intended to indicate to users that the field has an
-    // editing mode that can be activated. The presentation role is used to
+    // editing mode that can be activated. The none role is used to
     // prevent screen readers from  reading the content or its descendants.
     // Only clickable image fields are navigable.
     if (!this.isClickable()) {
-      aria.setRole(focusableElement, aria.Role.PRESENTATION);
+      aria.setRole(focusableElement, aria.Role.NONE);
       aria.clearState(focusableElement, aria.State.LABEL);
       return false;
     }

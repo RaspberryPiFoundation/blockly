@@ -77,9 +77,9 @@ export class MenuItem {
 
     const content = document.createElement('div');
     aria.setState(element, aria.State.LABEL, this.getAriaLabel());
-    // The presentation role is used to prevent screen readers from also reading the
+    // The none role is used to prevent screen readers from also reading the
     // content or its descendants.
-    aria.setRole(content, aria.Role.PRESENTATION);
+    aria.setRole(content, aria.Role.NONE);
     content.className = 'blocklyMenuItemContent';
 
     let contentDom: Node = this.content as HTMLElement;

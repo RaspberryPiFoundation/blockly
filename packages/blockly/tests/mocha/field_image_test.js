@@ -374,9 +374,9 @@ suite('Image Fields', function () {
         const blockLabel = this.block.getAriaLabel();
         assert.include(blockLabel, this.field.altText);
       });
-      test('Focusable element has role of presentation', function () {
+      test('Focusable element has role of none', function () {
         const role = this.focusableElement.getAttribute('role');
-        assert.equal(role, 'presentation');
+        assert.equal(role, 'none');
       });
       test('Hidden when in a flyout', function () {
         this.block.isInFlyout = true;

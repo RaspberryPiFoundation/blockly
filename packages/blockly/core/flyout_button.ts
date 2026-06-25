@@ -136,7 +136,7 @@ export class FlyoutButton
         },
         this.svgGroup!,
       );
-      aria.setRole(shadow, aria.Role.PRESENTATION);
+      aria.setRole(shadow, aria.Role.NONE);
     }
     // Background rectangle.
     const rect = dom.createSvgElement(
@@ -150,7 +150,7 @@ export class FlyoutButton
       },
       this.svgGroup!,
     );
-    aria.setRole(rect, aria.Role.PRESENTATION);
+    aria.setRole(rect, aria.Role.NONE);
 
     const svgText = dom.createSvgElement(
       Svg.TEXT,
@@ -174,7 +174,7 @@ export class FlyoutButton
         .getThemeManager()
         .subscribe(this.svgText, 'flyoutForegroundColour', 'fill');
     }
-    aria.setRole(svgText, aria.Role.PRESENTATION);
+    aria.setRole(svgText, aria.Role.NONE);
 
     // We add the word "heading" or "button" to the label so that they give appropriate hints
     // we can't use the corresponding roles because that overwrites the context of it being an option.

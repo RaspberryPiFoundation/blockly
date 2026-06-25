@@ -74,7 +74,7 @@ export class BlockFlyoutInflater implements IFlyoutInflater {
       // blocks can't be focused if they're in a flyout and not top-level
       // nonfocusable blocks should be hidden from the aria tree
       aria.setState(focusableElement, aria.State.HIDDEN, true);
-      aria.setRole(focusableElement, aria.Role.PRESENTATION);
+      aria.setRole(focusableElement, aria.Role.NONE);
     });
     // Since getDescencdants includes the root block, we need
     // to correct the role and hidden state for it.

@@ -202,7 +202,7 @@ export class ToolboxCategory
     this.rowDiv_.appendChild(this.rowContents_);
 
     this.iconDom_ = this.createIconDom_();
-    aria.setRole(this.iconDom_, aria.Role.PRESENTATION);
+    aria.setRole(this.iconDom_, aria.Role.NONE);
     this.rowContents_.appendChild(this.iconDom_);
 
     this.labelDom_ = this.createLabelDom_(this.name_);

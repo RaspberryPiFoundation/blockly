@@ -87,7 +87,7 @@ export function computeAriaLabel(
  * @param block The block to set ARIA role and roledescription attributes on.
  */
 export function configureAriaRole(block: BlockSvg) {
-  setRole(block.getSvgRoot(), Role.PRESENTATION);
+  setRole(block.getSvgRoot(), Role.NONE);
   const focusableElement = block.getFocusableElement();
   if (!block.isInFlyout) {
     // blocks in the flyout have their role set by the Flyout's block inflater
