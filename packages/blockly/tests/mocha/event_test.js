@@ -1637,5 +1637,39 @@ suite('Events', function () {
         'Undo stack should not contain any disabled events',
       );
     });
+    test('Orphan is disabled by end-of-drag event', function () {
+      this.workspace.addChangeListener(eventUtils.disableOrphans);
+
+      // Simulate a drag/move being in progress, as happens when a block is
+      // inserted from the flyout via the keyboard. The block-create event
+      // fires while dragging, so its orphan-disabling branch is skipped.
+      const isDraggingStub = sinon
+        .stub(this.workspace, 'isDragging')
+        .returns(true);
+      const block = this.workspace.newBlock('controls_for');
+      block.initSvg();
+      block.render();
+
+      this.clock.runAll();
+
+      assert.isTrue(
+        block.isEnabled(),
+        'Block should not be disabled while a drag is in progress',
+      );
+
+      // The drag ends with no further move event (e.g. the block was
+      // committed in place). The end-of-drag event should disable the orphan.
+      isDraggingStub.returns(false);
+      eventUtils.fire(
+        new Blockly.Events.BlockDrag(block, false, block.getDescendants(false)),
+      );
+
+      this.clock.runAll();
+
+      assert.isFalse(
+        block.isEnabled(),
+        'Expected orphan block to be disabled after the drag ends',
+      );
+    });
   });
 });

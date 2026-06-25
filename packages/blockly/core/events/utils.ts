@@ -14,6 +14,7 @@ import type {Workspace} from '../workspace.js';
 import type {WorkspaceSvg} from '../workspace_svg.js';
 import type {Abstract} from './events_abstract.js';
 import type {BlockCreate} from './events_block_create.js';
+import type {BlockDrag} from './events_block_drag.js';
 import type {BlockMove} from './events_block_move.js';
 import type {CommentCreate} from './events_comment_create.js';
 import type {CommentMove} from './events_comment_move.js';
@@ -21,6 +22,7 @@ import type {CommentResize} from './events_comment_resize.js';
 import {
   isBlockChange,
   isBlockCreate,
+  isBlockDrag,
   isBlockMove,
   isBubbleOpen,
   isClick,
@@ -404,8 +406,17 @@ export function get(
  * @param event Custom data for event.
  */
 export function disableOrphans(event: Abstract) {
-  if (isBlockMove(event) || isBlockCreate(event)) {
-    const blockEvent = event as BlockMove | BlockCreate;
+  // BlockMove/BlockCreate events that fire mid-drag are skipped below (we
+  // don't want to disable a block while it's still being positioned). For
+  // keyboard-driven inserts from the flyout there may be no further move
+  // event after the drag ends, so also act on the end-of-drag event, at
+  // which point the workspace is no longer dragging.
+  if (
+    isBlockMove(event) ||
+    isBlockCreate(event) ||
+    (isBlockDrag(event) && !event.isStart)
+  ) {
+    const blockEvent = event as BlockMove | BlockCreate | BlockDrag;
     if (!blockEvent.workspaceId) {
       return;
     }
