@@ -87,10 +87,10 @@ export enum Role {
   MENU = 'menu',
   /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/menuitem_role. */
   MENUITEM = 'menuitem',
-  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/option_role. */
-  OPTION = 'option',
   /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/none_role. */
   NONE = 'none',
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/option_role. */
+  OPTION = 'option',
   /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/region_role. */
   REGION = 'region',
   /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/row_role. */
