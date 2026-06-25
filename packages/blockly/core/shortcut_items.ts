@@ -356,7 +356,8 @@ export function registerPaste() {
         return !!clipboard.paste(copyData, targetWorkspace, mouseCoords);
       }
 
-      // If the focused node is a block, paste relative to that block's position.
+      // If the focused node is a block, or part of a block (connection, field, etc.),
+      // paste relative to that block's position.
       const block = targetWorkspace
         .getNavigator()
         .getSourceBlockFromNode(focusedNode);
