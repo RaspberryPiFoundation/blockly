@@ -16,7 +16,7 @@ import {
 
 suite('Dragger', function () {
   /**
-   * @param {!Blockly.BlockSvg} block
+   * @param {!Blockly.BlockSvg} block The block to measure.
    * @returns {{x: number, y: number}} Viewport coordinates at the block center.
    */
   function blockCenterClient(block) {
@@ -28,7 +28,7 @@ suite('Dragger', function () {
   }
 
   /**
-   * @param {!Blockly.BlockSvg} block
+   * @param {!Blockly.BlockSvg} block The block to measure.
    * @returns {{x: number, y: number}} Viewport coordinates at the block origin.
    */
   function blockOriginClient(block) {
@@ -40,7 +40,7 @@ suite('Dragger', function () {
   }
 
   /**
-   * @param {!Blockly.utils.Rect} rect
+   * @param {!Blockly.utils.Rect} rect The rectangle to measure.
    * @returns {{x: number, y: number}} Viewport coordinates at the rect center.
    */
   function rectCenterClient(rect) {
@@ -51,10 +51,10 @@ suite('Dragger', function () {
   }
 
   /**
-   * @param {number} clientX
-   * @param {number} clientY
-   * @param {string=} type
-   * @returns {!PointerEvent}
+   * @param {number} clientX The viewport x coordinate.
+   * @param {number} clientY The viewport y coordinate.
+   * @param {string=} type The pointer event type.
+   * @returns {!PointerEvent} A synthetic pointer event at the given location.
    */
   function pointerAt(clientX, clientY, type = 'pointermove') {
     return new PointerEvent(type, {clientX, clientY});
@@ -67,9 +67,10 @@ suite('Dragger', function () {
   /**
    * Simulates pressing on the block center and dragging to a viewport point.
    *
-   * @param {!Blockly.BlockSvg} block
-   * @param {{x: number, y: number}} pointerEnd
+   * @param {!Blockly.BlockSvg} block The block to drag.
+   * @param {{x: number, y: number}} pointerEnd The viewport point to drag to.
    * @returns {{dragger: !Blockly.dragging.Dragger, dragEvent: !PointerEvent}}
+   *     The dragger and final pointer event from the simulated drag.
    */
   function dragBlock(block, pointerEnd) {
     const start = blockCenterClient(block);
