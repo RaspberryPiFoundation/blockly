@@ -11,9 +11,6 @@
  */
 // Former goog.module ID: Blockly.VariableModel
 
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_var_create.js';
-
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
 import {IVariableModel, IVariableState} from './interfaces/i_variable_model.js';

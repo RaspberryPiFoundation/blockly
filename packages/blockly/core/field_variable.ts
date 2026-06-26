@@ -11,9 +11,6 @@
  */
 // Former goog.module ID: Blockly.FieldVariable
 
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_block_change.js';
-
 import type {Block} from './block.js';
 import {Field, FieldConfig, UnattachedFieldError} from './field.js';
 import {

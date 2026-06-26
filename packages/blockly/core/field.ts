@@ -13,9 +13,6 @@
  */
 // Former goog.module ID: Blockly.Field
 
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_block_change.js';
-
 import type {Block} from './block.js';
 import {computeAriaLabel} from './block_aria_composer.js';
 import type {BlockSvg} from './block_svg.js';

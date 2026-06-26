@@ -11,9 +11,6 @@
  */
 // Former goog.module ID: Blockly.ZoomControls
 
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_click.js';
-
 import * as browserEvents from './browser_events.js';
 import {ComponentManager} from './component_manager.js';
 import * as Css from './css.js';

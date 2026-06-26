@@ -12,9 +12,6 @@
  */
 // Former goog.module ID: Blockly.Gesture
 
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_click.js';
-
 import * as blockAnimations from './block_animations.js';
 import type {BlockSvg} from './block_svg.js';
 import * as browserEvents from './browser_events.js';

@@ -11,11 +11,6 @@
  */
 // Former goog.module ID: Blockly.VariableMap
 
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_var_delete.js';
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_var_rename.js';
-
 import type {Block} from './block.js';
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';

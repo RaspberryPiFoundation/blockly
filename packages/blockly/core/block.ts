@@ -11,13 +11,6 @@
  */
 // Former goog.module ID: Blockly.Block
 
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_block_change.js';
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_block_create.js';
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_block_delete.js';
-
 import {Blocks} from './blocks.js';
 import * as common from './common.js';
 import {Connection} from './connection.js';

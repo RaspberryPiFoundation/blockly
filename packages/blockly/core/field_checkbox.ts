@@ -10,10 +10,6 @@
  * @class
  */
 // Former goog.module ID: Blockly.FieldCheckbox
-
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_block_change.js';
-
 import {Field, FieldConfig, FieldValidator} from './field.js';
 import * as fieldRegistry from './field_registry.js';
 import {Msg} from './msg.js';

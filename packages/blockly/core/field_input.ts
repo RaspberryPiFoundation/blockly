@@ -11,9 +11,6 @@
  */
 // Former goog.module ID: Blockly.FieldInput
 
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_block_change.js';
-
 import {computeAriaLabel, getBeginStackLabel} from './block_aria_composer.js';
 import {BlockSvg} from './block_svg.js';
 import * as browserEvents from './browser_events.js';

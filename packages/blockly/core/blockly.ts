@@ -6,15 +6,6 @@
 
 // Former goog.module ID: Blockly
 
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_block_create.js';
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/workspace_events.js';
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_ui_base.js';
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_var_create.js';
-
 import {Block} from './block.js';
 import * as blockAnimations from './block_animations.js';
 import {BlockFlyoutInflater} from './block_flyout_inflater.js';

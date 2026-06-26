@@ -11,9 +11,6 @@
  */
 // Former goog.module ID: Blockly.FieldTextInput
 
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_block_change.js';
-
 import {Field} from './field.js';
 import {
   FieldInput,

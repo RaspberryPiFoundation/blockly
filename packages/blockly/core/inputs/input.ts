@@ -11,9 +11,6 @@
  */
 // Former goog.module ID: Blockly.Input
 
-// Unused import preserved for side-effects. Remove if unneeded.
-import '../field_label.js';
-
 import type {Block} from '../block.js';
 import {computeFieldRowLabel, getInputLabels} from '../block_aria_composer.js';
 import type {BlockSvg} from '../block_svg.js';

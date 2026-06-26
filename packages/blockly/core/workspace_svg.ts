@@ -11,13 +11,6 @@
  */
 // Former goog.module ID: Blockly.WorkspaceSvg
 
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_block_create.js';
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_theme_change.js';
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_viewport.js';
-
 import type {Block} from './block.js';
 import type {BlockSvg} from './block_svg.js';
 import type {BlocklyOptions} from './blockly_options.js';

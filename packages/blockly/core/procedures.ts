@@ -6,9 +6,6 @@
 
 // Former goog.module ID: Blockly.Procedures
 
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_block_change.js';
-
 import type {Block} from './block.js';
 import type {BlockSvg} from './block_svg.js';
 import {Blocks} from './blocks.js';

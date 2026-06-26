@@ -11,9 +11,6 @@
  */
 // Former goog.module ID: Blockly.BlockSvg
 
-// Unused import preserved for side-effects. Remove if unneeded.
-import './events/events_selected.js';
-
 import {Block} from './block.js';
 import * as blockAnimations from './block_animations.js';
 import {computeAriaLabel, configureAriaRole} from './block_aria_composer.js';

@@ -11,9 +11,6 @@
  */
 // Former goog.module ID: Blockly.Workspace
 
-// Unused import preserved for side-effects. Remove if unneeded.
-import './connection_checker.js';
-
 import type {Block} from './block.js';
 import type {BlocklyOptions} from './blockly_options.js';
 import {WorkspaceComment} from './comments/workspace_comment.js';
