@@ -91,8 +91,11 @@ export class BlockFlyoutInflater implements IFlyoutInflater {
       .filter((icon) => icon.isClickableInFlyout?.(flyout.autoClose))
       .map((icon) => icon.getFocusableElement().id)
       .filter((id) => !!id);
-    if (ownedIconIds.length) {
-      aria.setState(focusableElement, aria.State.OWNS, ownedIconIds);
+    // Likewise for connections.
+    const ownedConnectionIds = block.getConnections_(true).map((c) => c.id);
+    const ownedChildIds = [...ownedIconIds, ...ownedConnectionIds];
+    if (ownedChildIds.length) {
+      aria.setState(focusableElement, aria.State.OWNS, ownedChildIds);
     }
 
     this.addBlockListeners(block);
