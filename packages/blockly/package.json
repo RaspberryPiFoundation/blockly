@@ -145,7 +145,7 @@
     "rimraf": "^6.1.3",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.3",
-    "webdriverio": "^9.27.1",
+    "webdriverio": "^9.29.1",
     "yargs": "^18.0.0"
   },
   "engines": {
