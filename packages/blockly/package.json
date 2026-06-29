@@ -136,7 +136,7 @@
     "jsdom": "29.1.1",
     "json5": "^2.2.3",
     "markdown-tables-to-json": "^0.1.7",
-    "mocha": "^11.7.5",
+    "mocha": "^11.7.6",
     "patch-package": "^8.0.1",
     "prettier": "3.8.4",
     "prettier-plugin-organize-imports": "^4.3.0",
