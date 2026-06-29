@@ -19,7 +19,6 @@
 import codecs
 import json
 import os
-from datetime import datetime
 
 class InputError(Exception):
     """Exception raised for errors in the input.
@@ -63,7 +62,7 @@ def read_json_file(filename):
     raise InputError(filename, str(e))
 
 
-def _create_qqq_file(output_dir):
+def _create_qqq_file(output_dir, existing_metadata=None):
     """Creates a qqq.json file with message documentation for translatewiki.net.
 
     The file consists of key-value pairs, where the keys are message ids and
@@ -75,6 +74,8 @@ def _create_qqq_file(output_dir):
 
     Parameters:
         output_dir: The output directory.
+        existing_metadata: Optional dict of @metadata from a pre-existing
+            qqq.json to preserve (e.g. translator credits added by TranslateWiki).
 
     Returns:
         A pointer to a file to which a left brace and newline have been written.
@@ -82,10 +83,20 @@ def _create_qqq_file(output_dir):
     Raises:
         IOError: An error occurred while opening or writing the file.
     """
+    metadata = dict(existing_metadata) if existing_metadata else {}
+    metadata['comment'] = (
+        'This file is auto-generated from msg/messages.js.'
+        ' Do not edit it on TranslateWiki — submit a PR to'
+        ' https://github.com/RaspberryPiFoundation/blockly instead.'
+    )
     qqq_file_name = os.path.join(os.curdir, output_dir, 'qqq.json')
     qqq_file = codecs.open(qqq_file_name, 'w', 'utf-8')
     print('Created file: ' + qqq_file_name)
     qqq_file.write('{\n')
+    metadata_str = json.dumps(metadata, indent='\t', ensure_ascii=False)
+    lines = metadata_str.splitlines()
+    indented_lines = [lines[0]] + ['\t' + line for line in lines[1:]]
+    qqq_file.write('\t"@metadata": ' + '\n'.join(indented_lines) + ',\n')
     return qqq_file
 
 
@@ -130,10 +141,9 @@ def _create_lang_file(author, lang, output_dir):
     lang_file.write('{\n\t"@metadata": {')
     lang_file.write("""
 \t\t"author": "{0}",
-\t\t"lastupdated": "{1}",
-\t\t"locale": "{2}",
+\t\t"locale": "{1}",
 \t\t"messagedocumentation" : "qqq"
-""".format(author, str(datetime.now()), lang))
+""".format(author, lang))
     lang_file.write('\t},\n')
     return lang_file
 
@@ -206,8 +216,18 @@ def write_files(author, lang, output_dir, units, write_key_file):
         IOError: An error occurs opening, writing to, or closing a file.
         KeyError: An expected key is missing from units.
     """
+    # Preserve any @metadata that TranslateWiki may have added to qqq.json.
+    qqq_file_name = os.path.join(os.curdir, output_dir, 'qqq.json')
+    existing_qqq_metadata = None
+    if os.path.exists(qqq_file_name):
+        try:
+            with codecs.open(qqq_file_name, 'r', 'utf-8') as f:
+                existing_qqq_metadata = json.load(f).get('@metadata')
+        except (ValueError, IOError):
+            pass
+
     lang_file = _create_lang_file(author, lang, output_dir)
-    qqq_file = _create_qqq_file(output_dir)
+    qqq_file = _create_qqq_file(output_dir, existing_qqq_metadata)
     if write_key_file:
       key_file = _create_key_file(output_dir)
     first_entry = True
