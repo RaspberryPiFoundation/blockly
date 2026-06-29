@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-06-29 14:27:29.644968",
+		"lastupdated": "2026-06-29 15:05:18.961697",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -635,5 +635,8 @@
 	"ARIA_TYPE_FIELD_DATE": "date",
 	"ARIA_TYPE_FIELD_COLOUR": "color",
 	"ARIA_TYPE_FIELD_BITMAP": "pixel image",
-	"ARIA_TYPE_FIELD_GRID": "grid dropdown"
+	"ARIA_TYPE_FIELD_GRID": "grid dropdown",
+	"FIELD_MULTILINEINPUT_FINISH_EDITING": "Finish editing",
+	"FIELD_MULTILINEINPUT_NEW_LINE": "New line",
+	"MINIMAP_ARIA_LABEL": "Workspace minimap. Use the arrow keys to pan the workspace."
 }

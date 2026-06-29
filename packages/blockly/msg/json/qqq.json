@@ -629,5 +629,8 @@
 	"ARIA_TYPE_FIELD_DATE": "ARIA type name for the date field.",
 	"ARIA_TYPE_FIELD_COLOUR": "ARIA type name for the colour field.",
 	"ARIA_TYPE_FIELD_BITMAP": "ARIA type name for the bitmap field.",
-	"ARIA_TYPE_FIELD_GRID": "ARIA type name for the grid field."
+	"ARIA_TYPE_FIELD_GRID": "ARIA type name for the grid field.",
+	"FIELD_MULTILINEINPUT_FINISH_EDITING": "Label for the hint shown in the multiline input field editor indicating the key to finish editing. Keep this message brief.",
+	"FIELD_MULTILINEINPUT_NEW_LINE": "Label for the hint shown in the multiline input field editor indicating the key to insert a new line. Keep this message brief.",
+	"MINIMAP_ARIA_LABEL": "ARIA label for the workspace minimap with instructions on keyboard use."
 }

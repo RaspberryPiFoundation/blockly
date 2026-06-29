@@ -2416,3 +2416,14 @@ Blockly.Msg.ARIA_TYPE_FIELD_BITMAP = 'pixel image';
 /** @type {string} */
 /// ARIA type name for the grid field.
 Blockly.Msg.ARIA_TYPE_FIELD_GRID = 'grid dropdown';
+/** @type {string} */
+/// Label for the hint shown in the multiline input field editor indicating the key to finish editing.
+/// Keep this message brief.
+Blockly.Msg.FIELD_MULTILINEINPUT_FINISH_EDITING = 'Finish editing';
+/** @type {string} */
+/// Label for the hint shown in the multiline input field editor indicating the key to insert a new line.
+/// Keep this message brief.
+Blockly.Msg.FIELD_MULTILINEINPUT_NEW_LINE = 'New line';
+/** @type {string} */
+/// ARIA label for the workspace minimap with instructions on keyboard use.
+Blockly.Msg.MINIMAP_ARIA_LABEL = 'Workspace minimap. Use the arrow keys to pan the workspace.';
