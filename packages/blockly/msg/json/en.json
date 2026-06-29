@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-06-29 15:57:06.354589",
+		"lastupdated": "2026-06-29 16:13:36.878873",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -636,7 +636,17 @@
 	"ARIA_TYPE_FIELD_COLOUR": "color",
 	"ARIA_TYPE_FIELD_BITMAP": "pixel image",
 	"ARIA_TYPE_FIELD_GRID": "grid dropdown",
+	"FIELD_BITMAP_BUTTON_LABEL_RANDOMIZE": "Randomize",
+	"FIELD_BITMAP_BUTTON_LABEL_CLEAR": "Clear",
+	"OPEN_BACKPACK": "Open backpack",
+	"CLOSE_BACKPACK": "Close backpack",
+	"COPY_ALL_TO_BACKPACK": "Copy All Blocks to Backpack",
+	"COPY_TO_BACKPACK": "Copy to Backpack",
+	"EMPTY_BACKPACK": "Empty",
+	"PASTE_ALL_FROM_BACKPACK": "Paste All Blocks from Backpack",
+	"REMOVE_FROM_BACKPACK": "Remove from Backpack",
 	"FIELD_MULTILINEINPUT_FINISH_EDITING": "Finish editing",
 	"FIELD_MULTILINEINPUT_NEW_LINE": "New line",
+	"ZOOM_TO_FIT_ARIA_LABEL": "Zoom to fit",
 	"MINIMAP_ARIA_LABEL": "Workspace minimap. Use the arrow keys to pan the workspace."
 }

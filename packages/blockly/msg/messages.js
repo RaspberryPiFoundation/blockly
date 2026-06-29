@@ -2418,6 +2418,33 @@ Blockly.Msg.ARIA_TYPE_FIELD_BITMAP = 'pixel image';
 /// ARIA type name for the grid field.
 Blockly.Msg.ARIA_TYPE_FIELD_GRID = 'grid dropdown';
 /** @type {string} */
+/// Label for the 'Randomize' button in the bitmap field editor.
+Blockly.Msg.FIELD_BITMAP_BUTTON_LABEL_RANDOMIZE = 'Randomize';
+/** @type {string} */
+/// Label for the 'Clear' button in the bitmap field editor.
+Blockly.Msg.FIELD_BITMAP_BUTTON_LABEL_CLEAR = 'Clear';
+/** @type {string} */
+/// ARIA label for the button that opens the backpack flyout.
+Blockly.Msg.OPEN_BACKPACK = 'Open backpack';
+/** @type {string} */
+/// ARIA label for the button that closes the backpack flyout.
+Blockly.Msg.CLOSE_BACKPACK = 'Close backpack';
+/** @type {string} */
+/// Context menu item to copy all blocks on the workspace to the backpack.
+Blockly.Msg.COPY_ALL_TO_BACKPACK = 'Copy All Blocks to Backpack';
+/** @type {string} */
+/// Context menu item to copy the selected block to the backpack.
+Blockly.Msg.COPY_TO_BACKPACK = 'Copy to Backpack';
+/** @type {string} */
+/// Context menu item to empty the backpack.
+Blockly.Msg.EMPTY_BACKPACK = 'Empty';
+/** @type {string} */
+/// Context menu item to paste all blocks from the backpack to the workspace.
+Blockly.Msg.PASTE_ALL_FROM_BACKPACK = 'Paste All Blocks from Backpack';
+/** @type {string} */
+/// Context menu item to remove the selected block from the backpack.
+Blockly.Msg.REMOVE_FROM_BACKPACK = 'Remove from Backpack';
+/** @type {string} */
 /// Label for the hint shown in the multiline input field editor indicating the key to finish editing.
 /// Keep this message brief.
 Blockly.Msg.FIELD_MULTILINEINPUT_FINISH_EDITING = 'Finish editing';
@@ -2425,6 +2452,9 @@ Blockly.Msg.FIELD_MULTILINEINPUT_FINISH_EDITING = 'Finish editing';
 /// Label for the hint shown in the multiline input field editor indicating the key to insert a new line.
 /// Keep this message brief.
 Blockly.Msg.FIELD_MULTILINEINPUT_NEW_LINE = 'New line';
+/** @type {string} */
+/// ARIA label for the zoom-to-fit button that zooms the workspace to fit all blocks.
+Blockly.Msg.ZOOM_TO_FIT_ARIA_LABEL = 'Zoom to fit';
 /** @type {string} */
 /// ARIA label for the workspace minimap with instructions on keyboard use.
 Blockly.Msg.MINIMAP_ARIA_LABEL = 'Workspace minimap. Use the arrow keys to pan the workspace.';

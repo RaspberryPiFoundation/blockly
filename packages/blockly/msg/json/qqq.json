@@ -630,7 +630,17 @@
 	"ARIA_TYPE_FIELD_COLOUR": "ARIA type name for the colour field.",
 	"ARIA_TYPE_FIELD_BITMAP": "ARIA type name for the bitmap field.",
 	"ARIA_TYPE_FIELD_GRID": "ARIA type name for the grid field.",
+	"FIELD_BITMAP_BUTTON_LABEL_RANDOMIZE": "Label for the 'Randomize' button in the bitmap field editor.",
+	"FIELD_BITMAP_BUTTON_LABEL_CLEAR": "Label for the 'Clear' button in the bitmap field editor.",
+	"OPEN_BACKPACK": "ARIA label for the button that opens the backpack flyout.",
+	"CLOSE_BACKPACK": "ARIA label for the button that closes the backpack flyout.",
+	"COPY_ALL_TO_BACKPACK": "Context menu item to copy all blocks on the workspace to the backpack.",
+	"COPY_TO_BACKPACK": "Context menu item to copy the selected block to the backpack.",
+	"EMPTY_BACKPACK": "Context menu item to empty the backpack.",
+	"PASTE_ALL_FROM_BACKPACK": "Context menu item to paste all blocks from the backpack to the workspace.",
+	"REMOVE_FROM_BACKPACK": "Context menu item to remove the selected block from the backpack.",
 	"FIELD_MULTILINEINPUT_FINISH_EDITING": "Label for the hint shown in the multiline input field editor indicating the key to finish editing. Keep this message brief.",
 	"FIELD_MULTILINEINPUT_NEW_LINE": "Label for the hint shown in the multiline input field editor indicating the key to insert a new line. Keep this message brief.",
+	"ZOOM_TO_FIT_ARIA_LABEL": "ARIA label for the zoom-to-fit button that zooms the workspace to fit all blocks.",
 	"MINIMAP_ARIA_LABEL": "ARIA label for the workspace minimap with instructions on keyboard use."
 }
