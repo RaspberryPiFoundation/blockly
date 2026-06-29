@@ -150,11 +150,11 @@ suite('WorkspaceSvg', function () {
   });
 
   suite('getRestoredFocusableNode', function () {
-    test('restores focus to the workspace itself for a non-mutator non-flyout workspace', function () {
+    test('restores focus to the workspace focus target for a non-mutator non-flyout workspace', function () {
       Blockly.getFocusManager().focusTree(this.workspace);
       assert.strictEqual(
         Blockly.getFocusManager().getFocusedNode(),
-        this.workspace,
+        this.workspace.getWorkspaceFocusTarget(),
       );
     });
 

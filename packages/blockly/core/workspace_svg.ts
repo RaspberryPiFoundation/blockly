@@ -88,6 +88,7 @@ import * as VariablesDynamic from './variables_dynamic.js';
 import * as WidgetDiv from './widgetdiv.js';
 import {Workspace} from './workspace.js';
 import {WorkspaceAudio} from './workspace_audio.js';
+import {WorkspaceFocusTarget} from './workspace_focus_target.js';
 import {ZoomControls} from './zoom_controls.js';
 
 /** Margin around the top/bottom/left/right after a zoomToFit call. */
@@ -338,6 +339,20 @@ export class WorkspaceSvg
    * Selection ring inside the workspace.
    */
   private workspaceSelectionRing: Element | null = null;
+
+  /**
+   * Element that receives focus when the workspace itself (rather than any of
+   * its contents) is focused. See {@link WorkspaceFocusTarget}. This is the
+   * selection ring (which already represents the workspace being the active
+   * node); it's set only for main (non-flyout, non-mutator) workspaces.
+   */
+  private workspaceFocusTargetElement: SVGElement | null = null;
+
+  /**
+   * Focusable node wrapping {@link workspaceFocusTargetElement}, or null if this
+   * workspace has no focus target.
+   */
+  private workspaceFocusTarget: WorkspaceFocusTarget | null = null;
 
   /**
    * Navigator that handles moving focus between items in this workspace in
@@ -729,26 +744,44 @@ export class WorkspaceSvg
         Msg['WORKSPACE_LABEL_MUTATOR_WORKSPACE'],
       );
     } else {
-      // Main workspaces get labelled with how many stacks of blocks they contain
-      // This will be updated on focus, but set it here in case there are blocks in the initial state of the workspace
-      this.updateAriaLabel();
+      // The region carries a short, stable label as enclosing context; the
+      // stack count lives on the focus target, which (unlike the region) VoiceOver
+      // announces when focus moves to it. See WorkspaceFocusTarget.
+      aria.setState(
+        this.svgGroup_,
+        aria.State.LABEL,
+        Msg['WORKSPACE_LABEL_PLAIN'],
+      );
+      if (this.workspaceFocusTargetElement) {
+        aria.setRole(this.workspaceFocusTargetElement, aria.Role.FIGURE);
+        aria.setState(
+          this.workspaceFocusTargetElement,
+          aria.State.ROLEDESCRIPTION,
+          Msg['WORKSPACE_ROLEDESCRIPTION'],
+        );
+        // Set here in case there are blocks in the initial state of the
+        // workspace; refreshed whenever the workspace regains focus.
+        this.updateAriaLabel();
+      }
     }
   }
 
   /**
-   * Updates the label on the workspace to reflect the number of top-level stacks in the workspace.
+   * Updates the focus target's label to reflect the number of top-level stacks in the
+   * workspace. No-op for workspaces without a focus target (flyouts and mutators).
    */
   private updateAriaLabel() {
+    if (!this.workspaceFocusTargetElement) return;
     const numStacks = this.getTopBlocks(false).length;
     if (numStacks == 1) {
       aria.setState(
-        this.svgGroup_,
+        this.workspaceFocusTargetElement,
         aria.State.LABEL,
         Msg['WORKSPACE_LABEL_1_STACK'],
       );
     } else {
       aria.setState(
-        this.svgGroup_,
+        this.workspaceFocusTargetElement,
         aria.State.LABEL,
         Msg['WORKSPACE_LABEL_MANY_STACKS'].replace('%1', String(numStacks)),
       );
@@ -801,7 +834,7 @@ export class WorkspaceSvg
       }
     }
 
-    this.workspaceSelectionRing = dom.createSvgElement(
+    const selectionRing = dom.createSvgElement(
       Svg.RECT,
       {
         fill: 'none',
@@ -809,6 +842,7 @@ export class WorkspaceSvg
       },
       this.svgGroup_,
     );
+    this.workspaceSelectionRing = selectionRing;
     this.workspaceFocusRing = dom.createSvgElement(
       Svg.RECT,
       {
@@ -817,6 +851,18 @@ export class WorkspaceSvg
       },
       this.svgGroup_,
     );
+
+    // The selection ring already represents the workspace being the active
+    // node, so it doubles as the keyboard focus target representing the
+    // workspace as a whole. It lives inside the region (svgGroup_), so screen
+    // readers announce the region's label as enclosing context, then the focus
+    // target's stack count. Flyouts and mutators don't report a stack count, so
+    // their selection ring stays purely decorative.
+    if (!this.isFlyout && !this.isMutator) {
+      selectionRing.id = `${this.id}_focusTarget`;
+      this.workspaceFocusTargetElement = selectionRing;
+      this.workspaceFocusTarget = new WorkspaceFocusTarget(this, selectionRing);
+    }
 
     this.layerManager = new LayerManager(this);
     // Assign the canvases for backwards compatibility.
@@ -2741,9 +2787,29 @@ export class WorkspaceSvg
 
   /** See IFocusableNode.onNodeFocus. */
   onNodeFocus(): void {
-    if (!this.isFlyout && !this.isMutator) {
-      this.updateAriaLabel();
-    }
+    // This fires when the region itself is focused, e.g. by clicking the
+    // workspace background. Keyboard entry lands on the focus target instead (see
+    // handleWorkspaceFocusTargetFocus).
+    this.maybeAnnounceScreenreaderHint();
+  }
+
+  /**
+   * Handles the workspace's focus target receiving focus, which represents focus
+   * landing on the workspace as a whole.
+   *
+   * @internal
+   */
+  handleWorkspaceFocusTargetFocus(): void {
+    // Keep the focus target's stack count fresh, since blocks may have been added or
+    // removed since it was last focused.
+    this.updateAriaLabel();
+    this.maybeAnnounceScreenreaderHint();
+  }
+
+  /**
+   * Announces the screen reader hint the first time any workspace is focused.
+   */
+  private maybeAnnounceScreenreaderHint(): void {
     if (!WorkspaceSvg.everFocused && !this.options.parentWorkspace) {
       aria.announceDynamicAriaState(
         Msg['SCREENREADER_HINT'].replace(
@@ -2792,9 +2858,22 @@ export class WorkspaceSvg
       // Return the first block in the mutator workspace, if it exists.
       return this.getTopBlocks(true)[0] ?? null;
     }
-    // This workspace has never been focused before, so return null to use
-    // the default focusing behavior (focus the workspace itself).
-    return null;
+    // Entering the workspace with no previously focused node lands on the
+    // focus target (which announces the stack count) rather than the bare region.
+    return this.workspaceFocusTarget;
+  }
+
+  /**
+   * Returns the focusable node representing this workspace as a whole, or null
+   * for workspaces without one (flyouts and mutators).
+   *
+   * Focus lands here when the workspace itself is focused (e.g. via the focus
+   * workspace shortcut) rather than on any of its contents.
+   *
+   * @returns This workspace's focus target node, if any.
+   */
+  getWorkspaceFocusTarget(): WorkspaceFocusTarget | null {
+    return this.workspaceFocusTarget;
   }
 
   /** See IFocusableTree.getNestedTrees. */
@@ -2839,6 +2918,12 @@ export class WorkspaceSvg
 
   /** See IFocusableTree.lookUpFocusableNode. */
   lookUpFocusableNode(id: string): IFocusableNode | null {
+    if (
+      this.workspaceFocusTargetElement &&
+      this.workspaceFocusTargetElement.id === id
+    ) {
+      return this.workspaceFocusTarget;
+    }
     // Check against flyout items if this workspace is part of a flyout. Note
     // that blocks may match against this pass before reaching getBlockById()
     // below (but only for a flyout workspace).
@@ -2961,12 +3046,9 @@ export class WorkspaceSvg
     _node: IFocusableNode,
     _previousTree: IFocusableTree | null,
   ): void {
-    // Screen readers read this label as the enclosing region when workspace
-    // contents are focused, so refresh it here to keep the stack count from
-    // going stale.
-    if (!this.isFlyout && !this.isMutator) {
-      this.updateAriaLabel();
-    }
+    // Refresh the focus target's stack count whenever focus enters the workspace so
+    // that it isn't stale if the user navigates back up to the focus target.
+    this.updateAriaLabel();
   }
 
   /** See IFocusableTree.onTreeBlur. */

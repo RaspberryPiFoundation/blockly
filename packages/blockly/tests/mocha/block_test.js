@@ -3014,9 +3014,11 @@ suite('Blocks', function () {
       block.dispose();
       this.clock.runAll();
 
+      // Focus falls back to the workspace as a whole, which is represented by
+      // its focus target (so screen readers announce the updated stack count).
       assert.strictEqual(
         Blockly.getFocusManager().getFocusedNode(),
-        this.workspace,
+        this.workspace.getWorkspaceFocusTarget(),
         'Focus should move to the workspace when the focused block is deleted',
       );
     });
@@ -3066,7 +3068,7 @@ suite('Blocks', function () {
       }
       assert.strictEqual(
         Blockly.getFocusManager().getFocusedNode(),
-        this.workspace,
+        this.workspace.getWorkspaceFocusTarget(),
         'Focus should move to the workspace, not a dying peer block',
       );
 

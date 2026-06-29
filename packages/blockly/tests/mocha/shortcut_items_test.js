@@ -794,15 +794,17 @@ suite('Keyboard Shortcut Items', function () {
         );
         const event = createKeyDownEvent(Blockly.utils.KeyCodes.W);
         this.workspace.getInjectionDiv().dispatchEvent(event);
+        // Focusing the workspace lands on its focus target, which announces the
+        // stack count, rather than on the workspace region itself.
         assert.strictEqual(
           Blockly.getFocusManager().getFocusedNode(),
-          this.workspace,
+          this.workspace.getWorkspaceFocusTarget(),
         );
       };
     });
 
     test('Does not change focus when workspace is already focused', function () {
-      this.testFocusChange(this.workspace);
+      this.testFocusChange(this.workspace.getWorkspaceFocusTarget());
     });
 
     test('Focuses workspace when toolbox is focused', function () {

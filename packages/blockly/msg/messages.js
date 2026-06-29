@@ -1933,13 +1933,16 @@ Blockly.Msg.KEYBOARD_NAV_CUT_HINT = 'Cut. Press %1 to paste.';
 /// Aria label for a workspace. Avoid using the name "Blockly" as this could appear in branded products.
 Blockly.Msg.WORKSPACE_LABEL_PLAIN = 'Blocks workspace.';
 /** @type {string} */
-/// Aria label for a workspace with one stack of blocks.
-Blockly.Msg.WORKSPACE_LABEL_1_STACK = 'Blocks workspace. 1 stack of blocks';
+/// Aria role description for the workspace, announced alongside the stack count when the workspace itself is focused.
+Blockly.Msg.WORKSPACE_ROLEDESCRIPTION = 'workspace';
 /** @type {string} */
-/// Aria label for a workspace with 0 or >1 stacks of blocks.
+/// Aria label announcing that the workspace contains one stack of blocks. Announced after the "Blocks workspace." region label when the workspace itself is focused, so it should not repeat that text.
+Blockly.Msg.WORKSPACE_LABEL_1_STACK = '1 stack of blocks';
+/** @type {string} */
+/// Aria label announcing how many stacks of blocks the workspace contains, for 0 or >1 stacks. Announced after the "Blocks workspace." region label when the workspace itself is focused, so it should not repeat that text.
 /// \n\nParameters:\n* %1 - the number of stacks of blocks. A stack of blocks is a group of connected
 /// blocks that are not connected to any other blocks. 0 stacks means there are no blocks on the workspace.
-Blockly.Msg.WORKSPACE_LABEL_MANY_STACKS = 'Blocks workspace. %1 stacks of blocks';
+Blockly.Msg.WORKSPACE_LABEL_MANY_STACKS = '%1 stacks of blocks';
 /** @type {string} */
 /// Aria label for a mutator workspace, which is a secondary workspace used for editing a block's structure.
 /// This type of workspace appears when a user clicks on the gear icon of a block that has a mutator, and
@@ -2310,8 +2313,9 @@ Blockly.Msg.FIELD_LABEL_VARIABLE = 'Variable "%1"';
 Blockly.Msg.ARIA_LABEL_BUTTON = 'button';
 /** @type {string} */
 /// Part of an aria label for an element that indicates it is a heading, but for
-/// technial reasons cannot be given a role of heading. Ideally, this would match
-/// the localized name for what screenreaders announce for <h1> elements in your language.
+/// technical reasons cannot be given a role of heading. Ideally, this would match
+/// the localized name for what screen readers announce for
+/// <code><nowiki><h1></nowiki></code> elements in your language.
 Blockly.Msg.ARIA_LABEL_HEADING = 'heading';
 /** @type {string} */
 /// Default label for bubbles.  This is only used if a bubble is created without a label provider.
@@ -2416,3 +2420,44 @@ Blockly.Msg.ARIA_TYPE_FIELD_BITMAP = 'pixel image';
 /** @type {string} */
 /// ARIA type name for the grid field.
 Blockly.Msg.ARIA_TYPE_FIELD_GRID = 'grid dropdown';
+/** @type {string} */
+/// Label for the 'Randomize' button in the bitmap field editor.
+Blockly.Msg.FIELD_BITMAP_BUTTON_LABEL_RANDOMIZE = 'Randomize';
+/** @type {string} */
+/// Label for the 'Clear' button in the bitmap field editor.
+Blockly.Msg.FIELD_BITMAP_BUTTON_LABEL_CLEAR = 'Clear';
+/** @type {string} */
+/// ARIA label for the button that opens the backpack flyout.
+Blockly.Msg.OPEN_BACKPACK = 'Open backpack';
+/** @type {string} */
+/// ARIA label for the button that closes the backpack flyout.
+Blockly.Msg.CLOSE_BACKPACK = 'Close backpack';
+/** @type {string} */
+/// Context menu item to copy all blocks on the workspace to the backpack.
+Blockly.Msg.COPY_ALL_TO_BACKPACK = 'Copy All Blocks to Backpack';
+/** @type {string} */
+/// Context menu item to copy the selected block to the backpack.
+Blockly.Msg.COPY_TO_BACKPACK = 'Copy to Backpack';
+/** @type {string} */
+/// Context menu item to empty the backpack.
+Blockly.Msg.EMPTY_BACKPACK = 'Empty Backpack';
+/** @type {string} */
+/// Context menu item to paste all blocks from the backpack to the workspace.
+Blockly.Msg.PASTE_ALL_FROM_BACKPACK = 'Paste All Blocks from Backpack';
+/** @type {string} */
+/// Context menu item to remove the selected block from the backpack.
+Blockly.Msg.REMOVE_FROM_BACKPACK = 'Remove from Backpack';
+/** @type {string} */
+/// Label for the hint shown in the multiline input field editor indicating the key to finish editing.
+/// Keep this message brief.
+Blockly.Msg.FIELD_MULTILINEINPUT_FINISH_EDITING = 'Finish editing';
+/** @type {string} */
+/// Label for the hint shown in the multiline input field editor indicating the key to insert a new line.
+/// Keep this message brief.
+Blockly.Msg.FIELD_MULTILINEINPUT_NEW_LINE = 'New line';
+/** @type {string} */
+/// ARIA label for the zoom-to-fit button that zooms the workspace to fit all blocks.
+Blockly.Msg.ZOOM_TO_FIT_ARIA_LABEL = 'Zoom to fit';
+/** @type {string} */
+/// ARIA label for the workspace minimap with instructions on keyboard use.
+Blockly.Msg.MINIMAP_ARIA_LABEL = 'Workspace minimap. Use the arrow keys to pan the workspace.';

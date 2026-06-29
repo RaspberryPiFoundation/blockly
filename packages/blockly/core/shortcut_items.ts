@@ -782,7 +782,12 @@ export function registerFocusWorkspace() {
     preconditionFn: (workspace) => !workspace.isDragging(),
     callback: (workspace) => {
       keyboardNavigationController.setIsActive(true);
-      getFocusManager().focusNode(resolveWorkspace(workspace));
+      // Focus the focus target (which announces the stack count) rather than the
+      // workspace region, falling back to the region if there's no focus target.
+      const rootWorkspace = resolveWorkspace(workspace);
+      getFocusManager().focusNode(
+        rootWorkspace.getWorkspaceFocusTarget() ?? rootWorkspace,
+      );
       return true;
     },
     keyCodes: [KeyCodes.W],
