@@ -1972,10 +1972,10 @@ suite('Keyboard Shortcut Items', function () {
     });
   });
 
-  suite('Toggle screenreader mode (Ctrl+Alt+Z / Cmd+Option+Z)', function () {
-    const event = createKeyDownEvent(Blockly.utils.KeyCodes.Z, [
-      Blockly.utils.KeyCodes.CTRL_CMD,
+  suite('Toggle screenreader mode (Alt+Shift+A / Option+Shift+A)', function () {
+    const event = createKeyDownEvent(Blockly.utils.KeyCodes.A, [
       Blockly.utils.KeyCodes.ALT,
+      Blockly.utils.KeyCodes.SHIFT,
     ]);
 
     setup(function () {

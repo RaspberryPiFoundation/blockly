@@ -1293,9 +1293,9 @@ export function registerShowTooltip() {
  * improve the experience for individuals using screenreaders.
  */
 export function registerToggleScreenreaderMode() {
-  const shortcut = ShortcutRegistry.registry.createSerializedKey(KeyCodes.Z, [
-    KeyCodes.CTRL_CMD,
+  const shortcut = ShortcutRegistry.registry.createSerializedKey(KeyCodes.A, [
     KeyCodes.ALT,
+    KeyCodes.SHIFT,
   ]);
 
   let enabled = false;
