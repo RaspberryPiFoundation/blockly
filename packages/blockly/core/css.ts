@@ -162,6 +162,9 @@ const content = `
 
 .blocklyHighlightedConnectionPath {
   fill: none;
+}
+
+.blocklyHighlightedConnectionPathVisible {
   stroke: #fc3;
   stroke-width: 4px;
 }
@@ -602,12 +605,6 @@ input[type=number] {
   stroke: var(--blockly-active-node-color);
   stroke-dasharray: 5px 3px;
   stroke-width: var(--blockly-selection-width);
-}
-
-/* Workaround for unexpectedly hidden connection path due to core style. */
-.blocklyKeyboardNavigation
-  .blocklyPassiveFocus.blocklyHighlightedConnectionPath {
-  display: unset !important;
 }
 
 /* Different ways for toolbox/flyout to be the active tree: */

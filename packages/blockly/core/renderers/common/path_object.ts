@@ -226,7 +226,6 @@ export class PathObject implements IPathObject {
       {
         'id': connection.id,
         'class': 'blocklyHighlightedConnectionPath',
-        'style': 'display: none;',
         'd': connectionPath,
         'transform': transformation,
       },

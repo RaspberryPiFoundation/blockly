@@ -551,6 +551,8 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
     const clickTarget = this.getClickTarget_();
     if (!clickTarget) throw new Error('A click target has not been set.');
     dom.removeClass(clickTarget, 'blocklyEditing');
+
+    this.recomputeAriaContext();
   }
 
   /**

@@ -551,6 +551,24 @@ suite('Number Fields', function () {
       const updatedLabel = this.focusableElement.getAttribute('aria-label');
       assert.isTrue(updatedLabel.includes('1'));
     });
+    test('ARIA label resets after closing editor with invalid input', function () {
+      this.field.setValue(5);
+      this.field.showEditor();
+
+      this.field.htmlInput_.value = 'dog';
+      this.field.onHtmlInputChange(null);
+      assert.equal(this.field.getValue(), 5);
+
+      const labelWhileInvalid =
+        this.focusableElement.getAttribute('aria-label');
+      assert.include(labelWhileInvalid, 'dog');
+
+      Blockly.WidgetDiv.hideIfOwner(this.field);
+
+      const label = this.focusableElement.getAttribute('aria-label');
+      assert.notInclude(label, 'dog');
+      assert.include(label, '5');
+    });
     suite('Full block fields', function () {
       setup(function () {
         this.workspace = Blockly.inject('blocklyDiv', {

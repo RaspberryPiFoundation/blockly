@@ -89,3 +89,27 @@ extension.
  "extensions": ["my_mixin"],
 }
 ```
+### Mutators
+
+Mutators are a type of mixin that allow you to add state to a block, especially 
+when the state can't be represented using the block's standard fields or 
+properties. If the full state of your block that can't be captured by the 
+block's existing properties, you may need a mutator. By default, Blockly 
+represents mutators with a small gear icon on the block. When the user 
+clicks the icon, a mutator UI and the user can select options that affect the 
+shape and/or behavior of the block.
+
+For instance, the built-in `list_create_with` block uses a mutator. The
+mutator tracks the item count of the list and updates the shape accordingly.
+
+![A list_create_with block with its mutator bubble open, with red arrows and 
+text that identify the dialog button and the mutator UI bubble.](/images/list-create-with-mutator.png)
+
+When you create a mutator, you define the certain functions that
+specify how the mutator should serialize and deserialize the state of the block,
+as well as how the mutator should compose and decompose the block's shape in the
+UI. As with any mixin, you'll also need to register the mutator before you can 
+reference it in your block's JSON definition. 
+
+For more details about when and how to use mutators, see the [Mutators](/guides/create-custom-blocks/mutators)
+guide.

@@ -709,6 +709,18 @@ export class BlockSvg
    * @internal
    */
   showContextMenu(e: Event) {
+    // Forward to the nearest non-shadow ancestor and focus it for keyboard users.
+    if (this.isShadow()) {
+      let parent = this.getParent();
+      while (parent && parent.isShadow()) {
+        parent = parent.getParent();
+      }
+      if (parent) {
+        getFocusManager().focusNode(parent);
+        parent.showContextMenu(e);
+      }
+      return;
+    }
     const menuOptions = this.generateContextMenu(e);
 
     const location = this.calculateContextMenuLocation(e);
@@ -1381,23 +1393,29 @@ export class BlockSvg
    * @internal
    */
   moveSvgRootToFront(blockOnly = false) {
-    /* eslint-disable-next-line @typescript-eslint/no-this-alias */
-    let block: this | null = this;
-    if (block.isDeadOrDying()) {
+    if (this.isDeadOrDying()) {
       return;
     }
-    do {
-      const root = block.getSvgRoot();
-      const parent = root.parentNode;
-      if (!parent) return;
-      const childNodes = parent.childNodes;
-      // Avoid moving the block if it's already at the bottom.
-      if (childNodes[childNodes.length - 1] !== root) {
-        parent.appendChild(root);
-      }
-      if (blockOnly) break;
-      block = block.getParent();
-    } while (block);
+    requestAnimationFrame(() => {
+      if (this.dragging) return;
+      /* eslint-disable-next-line @typescript-eslint/no-this-alias */
+      let block: this | null = this;
+      do {
+        if (block.isDeadOrDying()) return;
+        const root = block.getSvgRoot();
+        const parent = root.parentNode;
+        if (!parent) return;
+        const childNodes = parent.childNodes;
+        // Avoid moving the block if it's already at the bottom.
+        if (childNodes[childNodes.length - 1] !== root) {
+          while (root.nextSibling) {
+            parent.insertBefore(root.nextSibling, root);
+          }
+        }
+        if (blockOnly) break;
+        block = block.getParent();
+      } while (block);
+    });
   }
 
   /**

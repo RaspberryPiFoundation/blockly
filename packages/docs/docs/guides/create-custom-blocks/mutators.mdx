@@ -148,8 +148,11 @@ added to the XML.
 
 ## UI Hooks
 
-If you provide certain functions as part of your mutator, Blockly will add a
-default "mutator" UI to your block.
+In many cases, you will want to add a UI to your mutators so that users can 
+select the block shape that they want. If you add the `compose` and `decompose` 
+functions (explained below), Blockly will add a default mutator UI to your 
+block. This includes a clickable gear icon which opens the mutator UI in a 
+bubble. 
 
 ![An if-do block with its mutator bubble open. This lets users add else-if and
 else clauses to the if-do block.](/images/mutator-annot.png)
@@ -295,7 +298,8 @@ Blockly.Extensions.registerMutator(
   added to the flyout in the default mutator UI, if the UI methods are also
   defined.
 
-Note that unlike extensions, each block type may only have one mutator.
+Note that unlike extensions, each block type may only have one mutator. Once you
+have registered your mutator, you can add it to a block's JSON definition. 
 
 ```js
 {
@@ -322,3 +326,13 @@ var helper = function () {
 
 [shareable-procedures]: https://www.npmjs.com/package/@blockly/block-shareable-procedures
 [serializer]: /guides/configure/serialization#serializer-hooks
+
+### MutatorIcon class
+
+`MutatorIcon` manages the bubble for Blockly's default mutator UI when a mutator 
+is defined for a block. You don't have to instantiate `MutatorIcon` directly to 
+use the default mutator UI or to make a custom mutator UI. If you are extending 
+Blockly itself to add new mutator features, you might want to extend the 
+`MutatorIcon` class, but note that this will not always be needed. See the 
+[MutatorIcon](https://docs.blockly.com/reference/blockly.icons_namespace.mutatoricon_class/#iconsmutatoricon-class)
+reference documentation for more details about this class. 

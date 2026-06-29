@@ -28,6 +28,7 @@ import * as internalConstants from './internal_constants.js';
 import {Msg} from './msg.js';
 import * as aria from './utils/aria.js';
 import {Coordinate} from './utils/coordinate.js';
+import * as dom from './utils/dom.js';
 import * as svgMath from './utils/svg_math.js';
 import {WorkspaceSvg} from './workspace_svg.js';
 
@@ -322,11 +323,11 @@ export class RenderedConnection
   }
 
   /**
-   * Sets the aria role, label, and other state for this connection.
+   * Sets the aria role and role description for this connection.
    *
    * @param highlightSvg The focusable element for this connection.
    */
-  private recomputeAriaContext(highlightSvg: SVGElement) {
+  setAriaRole(highlightSvg: SVGElement) {
     // Note that output connections don't have highlights so this doesn't need to take them into account.
     const roleDescription =
       this.type === ConnectionType.INPUT_VALUE
@@ -335,6 +336,15 @@ export class RenderedConnection
 
     aria.setRole(highlightSvg, aria.Role.FIGURE);
     aria.setState(highlightSvg, aria.State.ROLEDESCRIPTION, roleDescription);
+  }
+
+  /**
+   * Sets the aria role, label, and other state for this connection.
+   *
+   * @param highlightSvg The focusable element for this connection.
+   */
+  private recomputeAriaContext(highlightSvg: SVGElement) {
+    this.setAriaRole(highlightSvg);
 
     // 'Next' connections are only focusable if they're the last connection
     // inside a statement input. The label for these connections comes from
@@ -385,8 +395,14 @@ export class RenderedConnection
     // draw pass).
     const highlightSvg = this.findHighlightSvg();
     if (highlightSvg) {
-      highlightSvg.style.display = '';
-      highlightSvg.parentElement?.appendChild(highlightSvg);
+      dom.addClass(highlightSvg, 'blocklyHighlightedConnectionPathVisible');
+      requestAnimationFrame(() => {
+        const parent = highlightSvg.parentElement;
+        if (!parent) return;
+        while (highlightSvg.nextSibling) {
+          parent.insertBefore(highlightSvg.nextSibling, highlightSvg);
+        }
+      });
       this.recomputeAriaContext(highlightSvg);
     }
   }
@@ -398,7 +414,7 @@ export class RenderedConnection
     // Note that this is done synchronously for parity with highlight().
     const highlightSvg = this.findHighlightSvg();
     if (highlightSvg) {
-      highlightSvg.style.display = 'none';
+      dom.removeClass(highlightSvg, 'blocklyHighlightedConnectionPathVisible');
     }
   }
 

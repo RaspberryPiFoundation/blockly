@@ -789,7 +789,7 @@ export class ConstantProvider extends BaseConstantProvider {
       `}`,
 
       // Connection highlight.
-      `${selector} .blocklyHighlightedConnectionPath {`,
+      `${selector} .blocklyHighlightedConnectionPathVisible {`,
       `stroke: ${this.SELECTED_GLOW_COLOUR};`,
       `}`,
 

@@ -440,7 +440,11 @@ export class Drawer {
 
         const highlightSvg = this.drawConnectionHighlightPath(elem);
         if (highlightSvg) {
-          highlightSvg.style.display = elem.highlighted ? '' : 'none';
+          elem.connectionModel.setAriaRole(highlightSvg);
+          highlightSvg.classList.toggle(
+            'blocklyHighlightedConnectionPathVisible',
+            elem.highlighted,
+          );
         }
       }
     }

@@ -1208,7 +1208,7 @@ export class ConstantProvider {
       `}`,
 
       // Connection highlight.
-      `${selector} .blocklyHighlightedConnectionPath {`,
+      `${selector} .blocklyHighlightedConnectionPathVisible {`,
         `stroke: #fc3;`,
       `}`,
 
