@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-06-12 09:20:03.058537",
+		"lastupdated": "2026-06-29 14:27:29.644968",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -488,6 +488,12 @@
 	"SHORTCUTS_CLEANUP": "Clean up workspace",
 	"SHORTCUTS_SHOW_TOOLTIP": "Show tooltip",
 	"SHORTCUTS_TOGGLE_SCREENREADER_MODE": "Toggle screenreader mode",
+	"SHORTCUTS_JUMP_BLOCK_START": "Jump to block start",
+	"SHORTCUTS_JUMP_BLOCK_END": "Jump to block end",
+	"SHORTCUTS_JUMP_TOP_STACK": "Jump to top of stack",
+	"SHORTCUTS_JUMP_BOTTOM_STACK": "Jump to bottom of stack",
+	"SHORTCUTS_JUMP_FIRST_BLOCK": "Jump to first block",
+	"SHORTCUTS_JUMP_LAST_BLOCK": "Jump to last block",
 	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "Hold %1 and use arrow keys to move freely, then %2 to accept the position.",
 	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Use the arrow keys to move, then %1 to accept the position.",
 	"KEYBOARD_NAV_COPIED_HINT": "Copied. Press %1 to paste.",
