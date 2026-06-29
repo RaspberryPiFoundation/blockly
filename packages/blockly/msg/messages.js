@@ -2310,8 +2310,9 @@ Blockly.Msg.FIELD_LABEL_VARIABLE = 'Variable "%1"';
 Blockly.Msg.ARIA_LABEL_BUTTON = 'button';
 /** @type {string} */
 /// Part of an aria label for an element that indicates it is a heading, but for
-/// technial reasons cannot be given a role of heading. Ideally, this would match
-/// the localized name for what screenreaders announce for <h1> elements in your language.
+/// technical reasons cannot be given a role of heading. Ideally, this would match
+/// the localized name for what screen readers announce for
+/// <code><nowiki><h1></nowiki></code> elements in your language.
 Blockly.Msg.ARIA_LABEL_HEADING = 'heading';
 /** @type {string} */
 /// Default label for bubbles.  This is only used if a bubble is created without a label provider.
