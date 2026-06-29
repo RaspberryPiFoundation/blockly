@@ -82,6 +82,27 @@ shortcuts are displayed in the context menu.
 Press **C** to clean up the workspace by moving all block stacks into a single
 column with no overlaps, preserving their order on the page. 
 
+## Optional navigation shortcuts
+
+We also provide optional navigation shortcuts to make navigating the workspace easier:
+
+| Key | Action |
+| --- | --- |
+| Home | Jump to block start |
+| End | Jump to block end |
+| Page Up | Jump to top of stack |
+| Page Down | Jump to bottom of stack |
+| Ctrl/Cmd + Home | Jump to first block |
+| Ctrl/Cmd + End | Jump to last block |
+
+We recommend that you enable these for your application by calling:
+
+```js
+Blockly.ShortcutItems.registerNavigationShortcuts()
+```
+
+These shortcuts may become enabled by default in future versions of Blockly.
+
 ## Technical details
 
 Blockly keyboard navigation uses the [focus system](/guides/configure/web/focus)
