@@ -20,10 +20,10 @@ suite('Dragger', function () {
    * @returns {{x: number, y: number}} Viewport coordinates at the block center.
    */
   function blockCenterClient(block) {
-    const bounds = block.getSvgRoot().getBoundingClientRect();
+    const boundingRect = block.getSvgRoot().getBoundingClientRect();
     return {
-      x: (bounds.left + bounds.right) / 2,
-      y: (bounds.top + bounds.bottom) / 2,
+      x: (boundingRect.left + boundingRect.right) / 2,
+      y: (boundingRect.top + boundingRect.bottom) / 2,
     };
   }
 
@@ -32,11 +32,11 @@ suite('Dragger', function () {
    * @returns {{x: number, y: number}} Viewport coordinates at the block origin.
    */
   function blockOriginClient(block) {
-    const screen = Blockly.utils.svgMath.wsToScreenCoordinates(
+    const screenCoords = Blockly.utils.svgMath.wsToScreenCoordinates(
       block.workspace,
       block.getRelativeToSurfaceXY(),
     );
-    return {x: screen.x, y: screen.y};
+    return {x: screenCoords.x, y: screenCoords.y};
   }
 
   /**
