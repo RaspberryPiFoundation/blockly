@@ -2437,7 +2437,7 @@ Blockly.Msg.COPY_ALL_TO_BACKPACK = 'Copy All Blocks to Backpack';
 Blockly.Msg.COPY_TO_BACKPACK = 'Copy to Backpack';
 /** @type {string} */
 /// Context menu item to empty the backpack.
-Blockly.Msg.EMPTY_BACKPACK = 'Empty';
+Blockly.Msg.EMPTY_BACKPACK = 'Empty Backpack';
 /** @type {string} */
 /// Context menu item to paste all blocks from the backpack to the workspace.
 Blockly.Msg.PASTE_ALL_FROM_BACKPACK = 'Paste All Blocks from Backpack';

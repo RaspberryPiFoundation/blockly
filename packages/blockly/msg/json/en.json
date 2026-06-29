@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2026-06-29 16:13:36.878873",
+		"lastupdated": "2026-06-29 16:44:10.465694",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -642,7 +642,7 @@
 	"CLOSE_BACKPACK": "Close backpack",
 	"COPY_ALL_TO_BACKPACK": "Copy All Blocks to Backpack",
 	"COPY_TO_BACKPACK": "Copy to Backpack",
-	"EMPTY_BACKPACK": "Empty",
+	"EMPTY_BACKPACK": "Empty Backpack",
 	"PASTE_ALL_FROM_BACKPACK": "Paste All Blocks from Backpack",
 	"REMOVE_FROM_BACKPACK": "Remove from Backpack",
 	"FIELD_MULTILINEINPUT_FINISH_EDITING": "Finish editing",
