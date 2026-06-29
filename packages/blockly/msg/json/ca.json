@@ -6,6 +6,7 @@
 			"Fitoschido",
 			"Hiperpobla",
 			"Jaumeortola",
+			"Lluis Cat",
 			"Lluís Batlle",
 			"Mguix",
 			"Micobu",
@@ -336,5 +337,10 @@
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Digues alguna cosa...",
 	"COLLAPSED_WARNINGS_WARNING": "Els blocs plegats contenen avisos.",
 	"DIALOG_OK": "D'acord",
-	"DIALOG_CANCEL": "Cancel·la"
+	"DIALOG_CANCEL": "Cancel·la",
+	"ARIA_LABEL_ADD_TEXT": "Afegeix text",
+	"ARIA_LABEL_REMOVE_TEXT": "Elimina text",
+	"ARIA_TYPE_FIELD_ANGLE": "angle",
+	"ARIA_TYPE_FIELD_DATE": "data",
+	"ARIA_TYPE_FIELD_COLOUR": "color"
 }
