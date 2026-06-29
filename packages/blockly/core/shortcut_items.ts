@@ -1472,13 +1472,9 @@ export function registerJumpBottomStack() {
  * block in the workspace.
  */
 export function registerJumpFirstBlock() {
-  const ctrlHome = ShortcutRegistry.registry.createSerializedKey(
+  const ctrlCmdHome = ShortcutRegistry.registry.createSerializedKey(
     KeyCodes.HOME,
-    [KeyCodes.CTRL],
-  );
-  const metaHome = ShortcutRegistry.registry.createSerializedKey(
-    KeyCodes.HOME,
-    [KeyCodes.META],
+    [KeyCodes.CTRL_CMD],
   );
   const jumpFirstBlockShortcut: KeyboardShortcut = {
     name: names.JUMP_FIRST_BLOCK,
@@ -1493,7 +1489,7 @@ export function registerJumpFirstBlock() {
       getFocusManager().focusNode(topBlocks[0]);
       return true;
     },
-    keyCodes: [ctrlHome, metaHome],
+    keyCodes: [ctrlCmdHome],
     displayText: () => Msg['SHORTCUTS_JUMP_FIRST_BLOCK'],
   };
   ShortcutRegistry.registry.register(jumpFirstBlockShortcut);
@@ -1504,12 +1500,10 @@ export function registerJumpFirstBlock() {
  * block in the workspace.
  */
 export function registerJumpLastBlock() {
-  const ctrlEnd = ShortcutRegistry.registry.createSerializedKey(KeyCodes.END, [
-    KeyCodes.CTRL,
-  ]);
-  const metaEnd = ShortcutRegistry.registry.createSerializedKey(KeyCodes.END, [
-    KeyCodes.META,
-  ]);
+  const ctrlCmdEnd = ShortcutRegistry.registry.createSerializedKey(
+    KeyCodes.END,
+    [KeyCodes.CTRL_CMD],
+  );
   const jumpLastBlockShortcut: KeyboardShortcut = {
     name: names.JUMP_LAST_BLOCK,
     preconditionFn: (workspace) => {
@@ -1523,7 +1517,7 @@ export function registerJumpLastBlock() {
       getFocusManager().focusNode(allBlocks[allBlocks.length - 1]);
       return true;
     },
-    keyCodes: [ctrlEnd, metaEnd],
+    keyCodes: [ctrlCmdEnd],
     displayText: () => Msg['SHORTCUTS_JUMP_LAST_BLOCK'],
   };
   ShortcutRegistry.registry.register(jumpLastBlockShortcut);

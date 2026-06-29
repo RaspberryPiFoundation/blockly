@@ -2251,7 +2251,7 @@ suite('Keyboard Shortcut Items', function () {
       const topBlock = this.workspace.getBlockById('controls_repeat_1');
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.HOME, [
-          Blockly.utils.KeyCodes.CTRL,
+          Blockly.utils.KeyCodes.CTRL_CMD,
         ]),
       );
       sinon.assert.calledWith(this.focusNodeSpy, topBlock);
@@ -2264,7 +2264,7 @@ suite('Keyboard Shortcut Items', function () {
       const topBlock = this.workspace.getBlockById('controls_repeat_1');
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.HOME, [
-          Blockly.utils.KeyCodes.CTRL,
+          Blockly.utils.KeyCodes.CTRL_CMD,
         ]),
       );
       sinon.assert.calledWith(this.focusNodeSpy, topBlock);
@@ -2275,7 +2275,7 @@ suite('Keyboard Shortcut Items', function () {
       const topBlock = this.workspace.getBlockById('controls_repeat_1');
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.HOME, [
-          Blockly.utils.KeyCodes.CTRL,
+          Blockly.utils.KeyCodes.CTRL_CMD,
         ]),
       );
       sinon.assert.calledWith(this.focusNodeSpy, topBlock);
@@ -2287,7 +2287,7 @@ suite('Keyboard Shortcut Items', function () {
       const lastBlock = this.workspace.getBlockById('text_2');
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.END, [
-          Blockly.utils.KeyCodes.CTRL,
+          Blockly.utils.KeyCodes.CTRL_CMD,
         ]),
       );
       sinon.assert.calledWith(this.focusNodeSpy, lastBlock);
@@ -2300,7 +2300,7 @@ suite('Keyboard Shortcut Items', function () {
       const lastBlock = this.workspace.getBlockById('text_2');
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.END, [
-          Blockly.utils.KeyCodes.CTRL,
+          Blockly.utils.KeyCodes.CTRL_CMD,
         ]),
       );
       sinon.assert.calledWith(this.focusNodeSpy, lastBlock);
@@ -2311,7 +2311,7 @@ suite('Keyboard Shortcut Items', function () {
       const lastBlock = this.workspace.getBlockById('text_2');
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.END, [
-          Blockly.utils.KeyCodes.CTRL,
+          Blockly.utils.KeyCodes.CTRL_CMD,
         ]),
       );
       sinon.assert.calledWith(this.focusNodeSpy, lastBlock);
@@ -2375,7 +2375,7 @@ suite('Keyboard Shortcut Items', function () {
         const topBlock = this.workspace.getBlockById('controls_repeat_1');
         this.injectionDiv.dispatchEvent(
           createKeyDownEvent(Blockly.utils.KeyCodes.HOME, [
-            Blockly.utils.KeyCodes.CTRL,
+            Blockly.utils.KeyCodes.CTRL_CMD,
           ]),
         );
         sinon.assert.calledWith(this.focusNodeSpy, topBlock);
@@ -2387,7 +2387,7 @@ suite('Keyboard Shortcut Items', function () {
         const lastBlock = this.workspace.getBlockById('text_2');
         this.injectionDiv.dispatchEvent(
           createKeyDownEvent(Blockly.utils.KeyCodes.END, [
-            Blockly.utils.KeyCodes.CTRL,
+            Blockly.utils.KeyCodes.CTRL_CMD,
           ]),
         );
         sinon.assert.calledWith(this.focusNodeSpy, lastBlock);
