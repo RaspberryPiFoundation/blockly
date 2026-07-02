@@ -23,10 +23,6 @@
     "@commitlint/cli": "^21.0.2",
     "@commitlint/config-conventional": "^21.0.2"
   },
-  "overrides": {
-    "eslint": "10.3.0",
-    "prettier": "3.8.3"
-  },
   "scripts": {
     "test": "npm run test --ws --if-present",
     "lint": "npm run lint --ws --if-present",
