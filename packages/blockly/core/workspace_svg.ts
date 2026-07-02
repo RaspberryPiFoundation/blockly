@@ -2138,6 +2138,7 @@ export class WorkspaceSvg
     const flyout = this.getFlyout(false);
     if (flyout && flyout.isVisible()) {
       flyout.reflow();
+      this.recordDragTargets();
     }
     if (this.grid) {
       this.grid.update(this.scale);
@@ -2163,7 +2164,6 @@ export class WorkspaceSvg
         this.scrollbar.resizeContent(metrics);
       }
     }
-    this.recordDragTargets();
   }
 
   /**
