@@ -5,7 +5,7 @@ on:
       - edited
 name: commit lint & label
 jobs:
-  lint:
+  commit-lint:
     runs-on: ubuntu-latest
     env:
       PR_TITLE: ${{ github.event.pull_request.title }}

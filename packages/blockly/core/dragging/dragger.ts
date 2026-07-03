@@ -16,7 +16,6 @@ import type {IDragger} from '../interfaces/i_dragger.js';
 import {isFocusableNode} from '../interfaces/i_focusable_node.js';
 import * as registry from '../registry.js';
 import {Coordinate} from '../utils/coordinate.js';
-import {screenToWsCoordinates} from '../utils/svg_math.js';
 
 export class Dragger implements IDragger {
   protected startLoc: Coordinate;
@@ -50,7 +49,10 @@ export class Dragger implements IDragger {
     const pointerEvent = e instanceof PointerEvent ? e : null;
     if (!pointerEvent) return;
 
-    const coordinate = this.pointerToWorkspaceCoordinate(pointerEvent);
+    const coordinate = new Coordinate(
+      pointerEvent.clientX,
+      pointerEvent.clientY,
+    );
     // Must check `wouldDelete` before calling other hooks on drag targets
     // since we have documented that we would do so.
     if (isDeletable(this.draggable)) {
@@ -122,7 +124,10 @@ export class Dragger implements IDragger {
       return;
     }
 
-    const coordinate = this.pointerToWorkspaceCoordinate(pointerEvent);
+    const coordinate = new Coordinate(
+      pointerEvent.clientX,
+      pointerEvent.clientY,
+    );
     const dragTarget = this.draggable.workspace.getDragTarget(coordinate);
 
     if (dragTarget) {
@@ -180,17 +185,6 @@ export class Dragger implements IDragger {
     const dragTarget = this.draggable.workspace.getDragTarget(coordinate);
     if (!dragTarget) return false;
     return dragTarget.shouldPreventMove(rootDraggable);
-  }
-
-  /**
-   * Returns the workspace coordinate for a pointer position, for delete-area
-   * hit testing.
-   */
-  private pointerToWorkspaceCoordinate(e: PointerEvent): Coordinate {
-    return screenToWsCoordinates(
-      this.draggable.workspace,
-      new Coordinate(e.clientX, e.clientY),
-    );
   }
 
   protected pixelsToWorkspaceUnits(pixelCoord: Coordinate): Coordinate {

@@ -1517,17 +1517,16 @@ export class WorkspaceSvg
   /* eslint-enable */
 
   /**
-   * Returns the drag target the pointer event is over.
+   * Returns the drag target at the given point.
    *
-   * @param e Pointer move event or a workspace coordinate.
-   * @returns Null if not over a drag target, or the drag target the event is
-   *     over.
+   * @param point A pointer event, or a point in client/viewport coordinates.
+   * @returns Null if not over a drag target, or the drag target at that point.
    */
-  getDragTarget(e: PointerEvent | Coordinate): IDragTarget | null {
+  getDragTarget(point: PointerEvent | Coordinate): IDragTarget | null {
     const coordinate =
-      e instanceof Coordinate
-        ? svgMath.wsToScreenCoordinates(this, e)
-        : new Coordinate(e.clientX, e.clientY);
+      point instanceof Coordinate
+        ? point
+        : new Coordinate(point.clientX, point.clientY);
     for (let i = 0, targetArea; (targetArea = this.dragTargetAreas[i]); i++) {
       if (targetArea.clientRect.contains(coordinate.x, coordinate.y)) {
         return targetArea.component;
