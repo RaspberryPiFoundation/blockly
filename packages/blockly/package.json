@@ -114,7 +114,7 @@
     "chai": "^6.2.2",
     "concurrently": "^10.0.3",
     "conventional-changelog-conventionalcommits": "^9.3.1",
-    "conventional-recommended-bump": "^11.2.0",
+    "conventional-recommended-bump": "^12.0.0",
     "eslint": "10.5.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^10.1.8",
