@@ -21,6 +21,12 @@ export function deepMerge(
   source: AnyDuringMigration,
 ): AnyDuringMigration {
   for (const x in source) {
+    // Skip prototype-pollution vectors so a source object with an own
+    // enumerable `__proto__`, `constructor`, or `prototype` key cannot mutate
+    // Object.prototype during the recursive merge.
+    if (x === '__proto__' || x === 'constructor' || x === 'prototype') {
+      continue;
+    }
     if (source[x] !== null && Array.isArray(source[x])) {
       target[x] = deepMerge(target[x] || [], source[x]);
     } else if (source[x] !== null && typeof source[x] === 'object') {
