@@ -598,5 +598,15 @@ suite('Utils', function () {
 
       assert.deepEqual(expected, actual);
     });
+    test('Does not pollute Object.prototype via __proto__', function () {
+      delete Object.prototype.blocklyPolluted;
+      const payload = JSON.parse('{"__proto__": {"blocklyPolluted": "yes"}}');
+
+      Blockly.utils.object.deepMerge({}, payload);
+
+      assert.isUndefined(Object.prototype.blocklyPolluted);
+      assert.isUndefined(({}).blocklyPolluted);
+      delete Object.prototype.blocklyPolluted;
+    });
   });
 });
