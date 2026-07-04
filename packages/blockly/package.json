@@ -118,7 +118,7 @@
     "eslint": "10.5.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-jsdoc": "^63.0.7",
+    "eslint-plugin-jsdoc": "^63.0.11",
     "eslint-plugin-mocha": "^11.3.0",
     "eslint-plugin-prettier": "^5.5.5",
     "glob": "^13.0.6",
