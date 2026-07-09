@@ -21,7 +21,7 @@
     "style-loader": "^3.3.1",
     "webpack": "^5.93.0",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.0.4"
+    "webpack-dev-server": "^6.0.0"
   },
   "dependencies": {
     "blockly": "^13.0.0"
