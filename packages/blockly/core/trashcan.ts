@@ -172,7 +172,12 @@ export class Trashcan
     );
 
     aria.setRole(this.svgGroup, aria.Role.BUTTON);
-    aria.setState(this.svgGroup, aria.State.LABEL, Msg['OPEN_TRASH']);
+    aria.setState(
+      this.svgGroup,
+      aria.State.LABEL,
+      Msg['ARIA_LABEL_TRASH_EMPTY'],
+    );
+    aria.setState(this.svgGroup, aria.State.DISABLED, true);
 
     let clip;
     const rnd = String(Math.random()).substring(2);
@@ -362,11 +367,17 @@ export class Trashcan
    * it will be closed.
    */
   emptyContents() {
-    if (!this.hasContents()) {
+    if (!this.hasContents() || !this.svgGroup) {
       return;
     }
     this.contents.length = 0;
-    this.svgGroup?.classList.remove(TRASH_FULL);
+    this.svgGroup.classList.remove(TRASH_FULL);
+    aria.setState(
+      this.svgGroup,
+      aria.State.LABEL,
+      Msg['ARIA_LABEL_TRASH_EMPTY'],
+    );
+    aria.setState(this.svgGroup, aria.State.DISABLED, true);
     this.closeFlyout();
   }
 
@@ -554,7 +565,8 @@ export class Trashcan
     if (
       this.workspace.options.maxTrashcanContents <= 0 ||
       !isBlockDelete(event) ||
-      event.wasShadow
+      event.wasShadow ||
+      !this.svgGroup
     ) {
       return;
     }
@@ -569,6 +581,8 @@ export class Trashcan
     }
 
     this.svgGroup?.classList.add(TRASH_FULL);
+    aria.setState(this.svgGroup, aria.State.LABEL, Msg['OPEN_TRASH']);
+    aria.clearState(this.svgGroup, aria.State.DISABLED);
   }
 
   /**
@@ -716,12 +730,12 @@ Css.register(`
   }
 
   .blocklyTrash.blocklyTrashOpen,
-  .blocklyTrash:hover,
-  .blocklyTrash:focus {
+  .blocklyTrash.blocklyTrashFull:hover,
+  .blocklyTrash.blocklyTrashFull:focus {
     opacity: 0.8;
   }
 
-  .blocklyTrash.blocklyTrashFull.blocklyTrashOpen .blocklyTrashLid,
+  .blocklyTrash.blocklyTrashOpen .blocklyTrashLid,
   .blocklyTrash.blocklyTrashFull:hover .blocklyTrashLid,
   .blocklyTrash.blocklyTrashFull:focus .blocklyTrashLid {
     rotate: 45deg;

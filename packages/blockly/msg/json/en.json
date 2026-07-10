@@ -648,5 +648,6 @@
 	"FIELD_MULTILINEINPUT_FINISH_EDITING": "Finish editing",
 	"FIELD_MULTILINEINPUT_NEW_LINE": "New line",
 	"ZOOM_TO_FIT_ARIA_LABEL": "Zoom to fit",
-	"MINIMAP_ARIA_LABEL": "Workspace minimap. Use the arrow keys to pan the workspace."
+	"MINIMAP_ARIA_LABEL": "Workspace minimap. Use the arrow keys to pan the workspace.",
+	"ARIA_LABEL_TRASH_EMPTY": "Trash, currently empty"
 }

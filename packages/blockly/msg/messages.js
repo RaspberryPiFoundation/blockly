@@ -2461,3 +2461,6 @@ Blockly.Msg.ZOOM_TO_FIT_ARIA_LABEL = 'Zoom to fit';
 /** @type {string} */
 /// ARIA label for the workspace minimap with instructions on keyboard use.
 Blockly.Msg.MINIMAP_ARIA_LABEL = 'Workspace minimap. Use the arrow keys to pan the workspace.';
+/** @type {string} */
+/// ARIA label for the trashcan when it contains no blocks and cannot be interacted with.
+Blockly.Msg.ARIA_LABEL_TRASH_EMPTY = 'Trash, currently empty';

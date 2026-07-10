@@ -653,5 +653,6 @@
 	"FIELD_MULTILINEINPUT_FINISH_EDITING": "Label for the hint shown in the multiline input field editor indicating the key to finish editing. Keep this message brief.",
 	"FIELD_MULTILINEINPUT_NEW_LINE": "Label for the hint shown in the multiline input field editor indicating the key to insert a new line. Keep this message brief.",
 	"ZOOM_TO_FIT_ARIA_LABEL": "ARIA label for the zoom-to-fit button that zooms the workspace to fit all blocks.",
-	"MINIMAP_ARIA_LABEL": "ARIA label for the workspace minimap with instructions on keyboard use."
+	"MINIMAP_ARIA_LABEL": "ARIA label for the workspace minimap with instructions on keyboard use.",
+	"ARIA_LABEL_TRASH_EMPTY": "ARIA label for the trashcan when it contains no blocks and cannot be interacted with."
 }
