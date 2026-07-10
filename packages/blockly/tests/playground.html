@@ -94,6 +94,8 @@
         }
 
         addEventHandlers();
+
+        document.querySelector('#version').innerText = Blockly.VERSION;
       }
 
       /**
@@ -527,7 +529,7 @@
   <body>
     <div id="blocklyDiv"></div>
 
-    <h1>Blockly Playground</h1>
+    <h1>Blockly Playground (<span id="version"></span>)</h1>
 
     <p>
       <input id="show" type="button" value="Show" /> -
