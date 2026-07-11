@@ -17,7 +17,7 @@
     "lint:fix": "eslint 'docs/**/*.mdx' --fix"
   },
   "dependencies": {
-    "@docusaurus/core": "3.10.1",
+    "@docusaurus/core": "3.10.2",
     "@docusaurus/plugin-client-redirects": "3.10.1",
     "@docusaurus/preset-classic": "3.10.1",
     "@mdx-js/react": "^3.1.1",
