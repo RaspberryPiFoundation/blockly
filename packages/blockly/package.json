@@ -99,7 +99,7 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "@blockly/block-test": "^7.0.6",
+    "@blockly/block-test": "^13.1.0",
     "@blockly/dev-tools": "^9.0.9",
     "@blockly/theme-modern": "^7.0.5",
     "@hyperjump/browser": "^1.3.1",
