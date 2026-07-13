@@ -129,7 +129,7 @@
     "markdown-tables-to-json": "^0.1.7",
     "mocha": "^11.7.6",
     "patch-package": "^8.0.1",
-    "puppeteer-core": "^25.1.0",
+    "puppeteer-core": "^25.3.0",
     "readline-sync": "^1.4.10",
     "rimraf": "^6.1.3",
     "typescript": "^6.0.3",
