@@ -580,7 +580,7 @@ export class Trashcan
       this.contents.pop();
     }
 
-    this.svgGroup?.classList.add(TRASH_FULL);
+    this.svgGroup.classList.add(TRASH_FULL);
     aria.setState(this.svgGroup, aria.State.LABEL, Msg['OPEN_TRASH']);
     aria.clearState(this.svgGroup, aria.State.DISABLED);
   }
