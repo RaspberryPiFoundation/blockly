@@ -39,8 +39,7 @@ export class FlyoutMetricsManager extends MetricsManager {
    * @returns The bounding box of the blocks on the workspace.
    */
   private getBoundingBox():
-    | SVGRect
-    | {height: number; y: number; width: number; x: number} {
+    SVGRect | {height: number; y: number; width: number; x: number} {
     let blockBoundingBox;
     try {
       blockBoundingBox = this.workspace_.getCanvas().getBBox();

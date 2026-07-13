@@ -110,11 +110,7 @@ export type ToolboxItemInfo = FlyoutItemInfo | StaticCategoryInfo;
  * All the different types that can be displayed in a flyout.
  */
 export type FlyoutItemInfo =
-  | BlockInfo
-  | SeparatorInfo
-  | ButtonInfo
-  | LabelInfo
-  | DynamicCategoryInfo;
+  BlockInfo | SeparatorInfo | ButtonInfo | LabelInfo | DynamicCategoryInfo;
 
 /**
  * The JSON definition of a toolbox.
@@ -138,10 +134,7 @@ export type ToolboxDefinition = Node | ToolboxInfo | string;
  * All of the different types that can be used to show items in a flyout.
  */
 export type FlyoutDefinition =
-  | FlyoutItemInfoArray
-  | NodeList
-  | ToolboxInfo
-  | Node[];
+  FlyoutItemInfoArray | NodeList | ToolboxInfo | Node[];
 
 /**
  * The name used to identify a toolbox that has category like items.

@@ -142,9 +142,7 @@ export function register<T>(
   type: string | Type<T>,
   name: string,
   registryItem:
-    | (new (...p1: AnyDuringMigration[]) => T)
-    | null
-    | AnyDuringMigration,
+    (new (...p1: AnyDuringMigration[]) => T) | null | AnyDuringMigration,
   opt_allowOverrides?: boolean,
 ): void {
   if (
@@ -313,8 +311,7 @@ export function getClass<T>(
   opt_throwIfMissing?: boolean,
 ): (new (...p1: AnyDuringMigration[]) => T) | null {
   return getItem(type, name, opt_throwIfMissing) as
-    | (new (...p1: AnyDuringMigration[]) => T)
-    | null;
+    (new (...p1: AnyDuringMigration[]) => T) | null;
 }
 
 /**

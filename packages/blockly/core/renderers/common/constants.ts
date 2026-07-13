@@ -936,8 +936,7 @@ export class ConstantProvider {
   ) {
     if (injectionDivIfIsParent) {
       const root = injectionDivIfIsParent.getRootNode() as
-        | Document
-        | ShadowRoot;
+        Document | ShadowRoot;
       this.injectCSS_(root, selector);
     }
 

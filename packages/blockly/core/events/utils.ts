@@ -70,11 +70,7 @@ const ORPHANED_BLOCK_DISABLED_REASON = 'ORPHANED_BLOCK';
  * appear connected.
  */
 export type BumpEvent =
-  | BlockCreate
-  | BlockMove
-  | CommentCreate
-  | CommentMove
-  | CommentResize;
+  BlockCreate | BlockMove | CommentCreate | CommentMove | CommentResize;
 
 /** List of events queued for firing. */
 const FIRE_QUEUE: Abstract[] = [];

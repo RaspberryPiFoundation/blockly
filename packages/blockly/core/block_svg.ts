@@ -325,9 +325,7 @@ export class BlockSvg
         .getCanvas()
         .querySelector('.blocklyDragging');
       const draggingParentElement = draggingBlockElement?.parentElement as
-        | SVGElement
-        | null
-        | undefined;
+        SVGElement | null | undefined;
       const canvas = this.workspace.getCanvas();
       if (draggingParentElement === canvas) {
         canvas.insertBefore(svgRoot, draggingBlockElement);

@@ -73,8 +73,7 @@ export class BubbleNavigationPolicy implements INavigationPolicy<Bubble> {
     return (
       (
         (current.getOwner() as Icon | undefined)?.getSourceBlock() as
-          | BlockSvg
-          | undefined
+          BlockSvg | undefined
       )?.getRowId() ?? ''
     );
   }

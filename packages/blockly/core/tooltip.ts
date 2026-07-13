@@ -19,9 +19,7 @@ import type {WorkspaceSvg} from './workspace_svg.js';
  * eventually unwinds to a string.
  */
 export type TipInfo =
-  | string
-  | {tooltip: AnyDuringMigration}
-  | (() => TipInfo | string);
+  string | {tooltip: AnyDuringMigration} | (() => TipInfo | string);
 
 /**
  * A function that renders custom tooltip UI.

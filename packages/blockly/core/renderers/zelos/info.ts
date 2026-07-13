@@ -399,9 +399,9 @@ export class RenderInfo extends BaseRenderInfo {
       return;
     }
     const outputConnectionShape = this.outputConnection.shape;
-    if (
-      !('isDynamic' in outputConnectionShape && outputConnectionShape.isDynamic)
-    ) {
+    if (!(
+      'isDynamic' in outputConnectionShape && outputConnectionShape.isDynamic
+    )) {
       return;
     }
 

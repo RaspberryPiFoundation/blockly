@@ -259,8 +259,7 @@ export namespace ContextMenuRegistry {
    * A menu item as presented to contextmenu.ts.
    */
   export type ContextMenuOption =
-    | ActionContextMenuOption
-    | SeparatorContextMenuOption;
+    ActionContextMenuOption | SeparatorContextMenuOption;
 
   /**
    * A subset of ContextMenuOption corresponding to what was publicly
