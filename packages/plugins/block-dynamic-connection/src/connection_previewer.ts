@@ -10,10 +10,10 @@ interface ConnectionPreviewerConstructor {
   new (draggedBlock: Blockly.BlockSvg): Blockly.IConnectionPreviewer;
 }
 
-interface DynamicBlock extends Blockly.BlockSvg {
+type DynamicBlock = Blockly.BlockSvg & {
   onPendingConnection(connection: Blockly.RenderedConnection): void;
   finalizeConnections(): void;
-}
+};
 
 /**
  * A type guard that checks if the given block fulfills the DynamicBlock
@@ -45,10 +45,13 @@ export function decoratePreviewer(
 
     private pendingBlocks: Set<DynamicBlock> = new Set();
 
+    private draggedBlock: Blockly.BlockSvg;
+
     constructor(draggedBlock: Blockly.BlockSvg) {
       const BaseConstructor =
         BasePreviewerConstructor ?? Blockly.InsertionMarkerPreviewer;
       this.basePreviewer = new BaseConstructor(draggedBlock);
+      this.draggedBlock = draggedBlock;
     }
 
     previewReplacement(
@@ -87,15 +90,34 @@ export function decoratePreviewer(
 
     /**
      * If the block is a dynamic block, calls onPendingConnection and
-     * stores the block to be finalized later.
+     * stores the block to be finalized later. When new inputs are added,
+     * refreshes the dragged block's connection-pair cache so constrained
+     * / keyboard moves can see the new connections.
      *
      * @param conn The block to trigger onPendingConnection on.
      */
     private previewDynamism(conn: Blockly.RenderedConnection) {
       const block = conn.getSourceBlock();
-      if (blockIsDynamic(block)) {
-        block.onPendingConnection(conn);
-        this.pendingBlocks.add(block);
+      if (!blockIsDynamic(block)) {
+        return;
+      }
+
+      // During onPendingConnection, dynamic blocks only grow (append inputs);
+      // they never remove or replace them. So an input-count change is enough
+      // to detect when the block shape has changed.
+      const inputCountBefore = block.inputList.length;
+      block.onPendingConnection(conn);
+      this.pendingBlocks.add(block);
+
+      if (block.inputList.length === inputCountBefore) {
+        return;
+      }
+
+      const strategy = this.draggedBlock.getDragStrategy() as {
+        cacheAllConnectionPairs?: () => void;
+      };
+      if (typeof strategy.cacheAllConnectionPairs === 'function') {
+        strategy.cacheAllConnectionPairs();
       }
     }
   };
