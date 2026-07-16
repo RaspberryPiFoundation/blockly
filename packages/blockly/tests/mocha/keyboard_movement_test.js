@@ -1146,6 +1146,66 @@ suite('Keyboard-driven movement', function () {
                   EXPECTED_SIMPLE_LEFT,
                 ),
               );
+              suite('Recaching after inputs change mid-move', function () {
+                setup(function () {
+                  this.mover = this.workspace.getBlockById(VALUE_SIMPLE.id);
+                  this.join = this.workspace.getBlockById('join0');
+                  this.strategy = this.mover.getDragStrategy();
+
+                  Blockly.getFocusManager().focusNode(this.mover);
+                  startMove(this.workspace);
+
+                  // Snapshot the start-of-drag cache before the block grows.
+                  this.originalPairs = [...this.strategy.allConnectionPairs];
+
+                  this.join.appendValueInput('ADD2');
+                  this.newConnection = this.join.getInput('ADD2').connection;
+                });
+
+                teardown(function () {
+                  if (Blockly.KeyboardMover.mover.isMoving()) {
+                    cancelMove(this.workspace);
+                  }
+                });
+
+                test('the original cache excludes the new connection', function () {
+                  assert.isFalse(
+                    this.originalPairs.some(
+                      (pair) => pair.neighbour === this.newConnection,
+                    ),
+                  );
+                });
+
+                test('the refreshed cache includes the new connection', function () {
+                  this.strategy.cacheAllConnectionPairs();
+
+                  assert.isTrue(
+                    this.strategy.allConnectionPairs.some(
+                      (pair) => pair.neighbour === this.newConnection,
+                    ),
+                  );
+                });
+
+                test('traverses to the new connection in order after recaching', function () {
+                  this.strategy.cacheAllConnectionPairs();
+
+                  moveRight(this.workspace);
+                  console.log(getConnectionCandidate());
+                  assert.deepEqual(getConnectionCandidate(), {
+                    id: 'join0',
+                    index: 2,
+                    ownIndex: 0,
+                  });
+
+                  moveRight(this.workspace);
+                  console.log(getConnectionCandidate());
+                  assert.deepEqual(getConnectionCandidate(), {
+                    id: 'join0',
+                    index: 3,
+                    ownIndex: 0,
+                  });
+                });
+              });
             });
 
             suite('Constrained moves of row of value blocks', function () {
