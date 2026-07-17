@@ -14,6 +14,7 @@
 import * as Css from '../css.js';
 import type {IToolbox} from '../interfaces/i_toolbox.js';
 import * as registry from '../registry.js';
+import * as aria from '../utils/aria.js';
 import * as dom from '../utils/dom.js';
 import type * as toolbox from '../utils/toolbox.js';
 import {ToolboxItem} from './toolbox_item.js';
@@ -54,14 +55,12 @@ export class ToolboxSeparator extends ToolboxItem {
    */
   protected createDom_(): HTMLDivElement {
     const container = document.createElement('div');
-    // Ensure that the separator has a tab index to ensure it receives focus
-    // when clicked (since clicking isn't managed by the toolbox).
-    container.tabIndex = -1;
     container.id = this.getId();
     const className = this.cssConfig_['container'];
     if (className) {
       dom.addClass(container, className);
     }
+    aria.setRole(container, aria.Role.NONE);
     this.htmlDiv = container;
     return container;
   }

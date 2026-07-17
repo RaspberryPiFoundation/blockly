@@ -174,6 +174,16 @@ suite('Toolbox', function () {
     });
   });
 
+  suite('separator accessibility', function () {
+    test('Separator is presentational and not focusable via tabindex', function () {
+      const separator = getSeparator(this.toolbox);
+      const separatorDiv = separator.getDiv();
+      assert.equal(separatorDiv.getAttribute('role'), 'none');
+      assert.isFalse(separatorDiv.hasAttribute('tabindex'));
+      assert.isFalse(separator.canBeFocused());
+    });
+  });
+
   suite('focus management', function () {
     test('Losing focus hides autoclosing flyout', function () {
       // Focus the toolbox and select a category to open the flyout.
