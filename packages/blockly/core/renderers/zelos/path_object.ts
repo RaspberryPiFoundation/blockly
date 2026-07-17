@@ -83,6 +83,10 @@ export class PathObject extends BasePathObject {
     for (const outline of this.outlines.values()) {
       outline.setAttribute('transform', 'scale(-1 1)');
     }
+    // Also transform svgPathSelected if it exists.
+    if (this.svgPathSelected) {
+      this.svgPathSelected.setAttribute('transform', 'scale(-1 1)');
+    }
   }
 
   override updateSelected(enable: boolean) {
