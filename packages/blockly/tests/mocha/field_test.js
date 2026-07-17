@@ -896,6 +896,13 @@ suite('Abstract Fields', function () {
         assert.equal(field.computeAriaLabel(true), 'text: hello');
       });
 
+      test('Custom type and value when ariaTypeName is set', function () {
+        const field = new TestField();
+        field.setAriaTypeName('speed');
+        field.setValue('fast');
+        assert.equal(field.computeAriaLabel(), 'speed: fast');
+      });
+
       test('Type and placeholder when value is null', function () {
         const field = new TestField(null, {ariaTypeName: 'text'});
         assert.equal(
