@@ -758,6 +758,7 @@ export class RenderedConnection
 
   /**
    * Associates the given insertion marker with this connection.
+   *
    * @internal
    */
   attachInsertionMarker(marker: InsertionMarker) {
@@ -766,6 +767,7 @@ export class RenderedConnection
 
   /**
    * Removes the insertion marker associated with this connection, if any.
+   *
    * @internal
    */
   detachInsertionMarker() {
@@ -774,6 +776,7 @@ export class RenderedConnection
 
   /**
    * Returns the insertion marker associated with this connection, if any.
+   *
    * @internal
    */
   getInsertionMarker() {
