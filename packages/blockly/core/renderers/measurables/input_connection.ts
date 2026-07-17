@@ -44,13 +44,23 @@ export class InputConnection extends Connection {
         ? (input.connection.targetBlock() as BlockSvg)
         : null;
 
+    const insertionMarker = (
+      input.connection as RenderedConnection
+    ).getInsertionMarker();
+
+    this.connectedBlockWidth = 0;
+    this.connectedBlockHeight = 0;
+
     if (this.connectedBlock) {
       const bBox = this.connectedBlock.getHeightWidth();
       this.connectedBlockWidth = bBox.width;
       this.connectedBlockHeight = bBox.height;
-    } else {
-      this.connectedBlockWidth = 0;
-      this.connectedBlockHeight = 0;
+    }
+
+    if (insertionMarker) {
+      const bBox = insertionMarker.getHeightWidth();
+      this.connectedBlockWidth += bBox.width;
+      this.connectedBlockHeight += bBox.height;
     }
   }
 }

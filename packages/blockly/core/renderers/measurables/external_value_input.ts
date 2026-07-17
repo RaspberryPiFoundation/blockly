@@ -29,9 +29,15 @@ export class ExternalValueInput extends InputConnection {
   constructor(constants: ConstantProvider, input: Input) {
     super(constants, input);
     this.type |= Types.EXTERNAL_VALUE_INPUT;
-    if (!this.connectedBlock) {
+
+    if (!this.connectedBlockHeight) {
       this.height = this.shape.height as number;
     } else {
+      const insertionMarker = this.connectionModel.getInsertionMarker();
+      if (insertionMarker) {
+        this.connectedBlockHeight = insertionMarker.getHeightWidth().height;
+      }
+
       this.height =
         this.connectedBlockHeight -
         this.constants_.TAB_OFFSET_FROM_TOP -

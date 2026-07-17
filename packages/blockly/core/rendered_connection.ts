@@ -20,6 +20,7 @@ import {ConnectionType} from './connection_type.js';
 import * as ContextMenu from './contextmenu.js';
 import {ContextMenuRegistry} from './contextmenu_registry.js';
 import * as eventUtils from './events/utils.js';
+import type {InsertionMarker} from './insertion_marker.js';
 import {IContextMenu} from './interfaces/i_contextmenu.js';
 import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
@@ -49,6 +50,7 @@ export class RenderedConnection
   private readonly offsetInBlock: Coordinate;
   private trackedState: TrackedState;
   private highlighted: boolean = false;
+  private insertionMarker?: InsertionMarker;
 
   /** Connection this connection connects to.  Null if not connected. */
   override targetConnection: RenderedConnection | null = null;
@@ -302,6 +304,15 @@ export class RenderedConnection
       this.offsetInBlock,
       target.offsetInBlock,
     );
+
+    if (this.insertionMarker) {
+      if (this.type === ConnectionType.INPUT_VALUE) {
+        offset.x += this.insertionMarker.getHeightWidth().width;
+      } else {
+        offset.y += this.insertionMarker.getHeightWidth().height;
+      }
+    }
+
     block.translate(offset.x, offset.y);
   }
 
@@ -741,8 +752,33 @@ export class RenderedConnection
     // This cast is valid as TypeScript's definition is wrong. See:
     // https://github.com/microsoft/TypeScript/issues/60996.
     const root = this.getSourceBlock().getSvgRoot().getRootNode() as
-      ShadowRoot | HTMLDocument;
+      | ShadowRoot
+      | HTMLDocument;
     return root.getElementById(this.id) as SVGPathElement | null;
+  }
+
+  /**
+   * Associates the given insertion marker with this connection.
+   * @internal
+   */
+  attachInsertionMarker(marker: InsertionMarker) {
+    this.insertionMarker = marker;
+  }
+
+  /**
+   * Removes the insertion marker associated with this connection, if any.
+   * @internal
+   */
+  detachInsertionMarker() {
+    this.insertionMarker = undefined;
+  }
+
+  /**
+   * Returns the insertion marker associated with this connection, if any.
+   * @internal
+   */
+  getInsertionMarker() {
+    return this.insertionMarker;
   }
 }
 

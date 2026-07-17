@@ -27,7 +27,7 @@ export class InlineInput extends InputConnection {
     super(constants, input);
     this.type |= Types.INLINE_INPUT;
 
-    if (!this.connectedBlock) {
+    if (!this.connectedBlockWidth && !this.connectedBlockHeight) {
       this.height = this.constants_.EMPTY_INLINE_INPUT_HEIGHT;
       this.width = this.constants_.EMPTY_INLINE_INPUT_PADDING;
     } else {
@@ -44,7 +44,7 @@ export class InlineInput extends InputConnection {
     this.connectionWidth = !this.isDynamicShape
       ? (this.shape.width as number)
       : (this.shape.width as (p1: number) => number)(this.height);
-    if (!this.connectedBlock) {
+    if (!this.connectedBlockHeight) {
       this.width += this.connectionWidth * (this.isDynamicShape ? 2 : 1);
     }
 

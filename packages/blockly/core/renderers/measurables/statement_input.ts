@@ -32,7 +32,7 @@ export class StatementInput extends InputConnection {
     super(constants, input);
     this.type |= Types.STATEMENT_INPUT;
 
-    if (!this.connectedBlock) {
+    if (!this.connectedBlockHeight) {
       this.height = this.constants_.EMPTY_STATEMENT_INPUT_HEIGHT;
     } else {
       // We allow the dark path to show on the parent block so that the child

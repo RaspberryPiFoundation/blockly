@@ -7,10 +7,13 @@
 import {BlockSvg} from './block_svg.js';
 import {ConnectionType} from './connection_type.js';
 import * as eventUtils from './events/utils.js';
+import {InsertionMarker} from './insertion_marker.js';
 import {IConnectionPreviewer} from './interfaces/i_connection_previewer.js';
 import * as registry from './registry.js';
 import * as renderManagement from './render_management.js';
 import {RenderedConnection} from './rendered_connection.js';
+import {Renderer as GerasRenderer} from './renderers/geras/renderer.js';
+import {Renderer as ThrasosRenderer} from './renderers/thrasos/renderer.js';
 import {Renderer as ZelosRenderer} from './renderers/zelos/renderer.js';
 import * as blocks from './serialization/blocks.js';
 import {WorkspaceSvg} from './workspace_svg.js';
@@ -26,8 +29,21 @@ export class InsertionMarkerPreviewer implements IConnectionPreviewer {
 
   private staticConn: RenderedConnection | null = null;
 
+  private insertionMarker: InsertionMarker;
+
+  /**
+   * If set to true, uses a faster method for rendering insertion markers which
+   * will become the default in v14. This rendering method is enabled for the
+   * built-in Thrasos, Geras and Zelos renderers regardless of the state of this
+   * flag. Custom renderers will use the old rendering behavior unless this is
+   * set to true. This field will be removed in v14.
+   */
+  static useFastInsertionMarkers = false;
+
   constructor(draggedBlock: BlockSvg) {
     this.workspace = draggedBlock.workspace;
+
+    this.insertionMarker = new InsertionMarker();
   }
 
   /**
@@ -62,7 +78,7 @@ export class InsertionMarkerPreviewer implements IConnectionPreviewer {
 
   /**
    * Display a connection preview where the draggedCon connects to the
-   * staticCon, and no block is being relaced.
+   * staticCon, and no block is being replaced.
    *
    * @param draggedConn The connection on the block stack being dragged.
    * @param staticConn The connection not being dragged that we are
@@ -85,7 +101,11 @@ export class InsertionMarkerPreviewer implements IConnectionPreviewer {
       //   static connection, so that it doesn't disconnect  unless that
       //   (+ a bit) has been exceeded.
       if (this.shouldUseMarkerPreview(draggedConn, staticConn)) {
-        this.markerConn = this.previewMarker(draggedConn, staticConn);
+        if (this.shouldUseFastInsertionMarkers()) {
+          this.insertionMarker.show(staticConn, draggedConn);
+        } else {
+          this.markerConn = this.previewMarker(draggedConn, staticConn);
+        }
       }
 
       if (this.workspace.getRenderer().shouldHighlightConnection(staticConn)) {
@@ -236,10 +256,14 @@ export class InsertionMarkerPreviewer implements IConnectionPreviewer {
         this.fadedBlock.fadeForReplacement(false);
         this.fadedBlock = null;
       }
-      if (this.markerConn) {
-        this.hideInsertionMarker(this.markerConn);
-        this.markerConn = null;
-        this.draggedConn = null;
+      if (this.shouldUseFastInsertionMarkers()) {
+        this.insertionMarker.hide();
+      } else {
+        if (this.markerConn) {
+          this.hideInsertionMarker(this.markerConn);
+          this.markerConn = null;
+          this.draggedConn = null;
+        }
       }
     } finally {
       eventUtils.enable();
@@ -266,6 +290,22 @@ export class InsertionMarkerPreviewer implements IConnectionPreviewer {
   /** Dispose of any references held by this connection previewer. */
   dispose() {
     this.hidePreview();
+  }
+
+  /**
+   * Returns whether or not new fast insertion marker rendering should be used.
+   * Defaults on for built-in renderers and off for custom renderers. Can be
+   * enabled for custom renderers by setting
+   * `InsertionMarkerPreviewer.useFastInsertionMarkers = true`.
+   */
+  private shouldUseFastInsertionMarkers() {
+    const renderer = this.workspace.getRenderer();
+    return (
+      renderer.constructor === ThrasosRenderer ||
+      renderer.constructor === GerasRenderer ||
+      renderer.constructor === ZelosRenderer ||
+      InsertionMarkerPreviewer.useFastInsertionMarkers
+    );
   }
 }
 

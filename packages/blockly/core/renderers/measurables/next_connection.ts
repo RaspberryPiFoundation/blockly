@@ -37,5 +37,10 @@ export class NextConnection extends Connection {
     this.type |= Types.NEXT_CONNECTION;
     this.height = this.shape.height as number;
     this.width = this.shape.width as number;
+
+    const insertionMarker = connectionModel.getInsertionMarker();
+    if (insertionMarker) {
+      this.height += insertionMarker.getHeightWidth().height;
+    }
   }
 }
