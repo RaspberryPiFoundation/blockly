@@ -319,6 +319,18 @@ export abstract class Field<T = any>
   }
 
   /**
+   * Sets the ARIA-friendly label representation of this field's type.
+   *
+   * Implementations are responsible for, and encouraged to, set a localized
+   * version of the ARIA representation of the field's type.
+   *
+   * @param ariaTypeName An ARIA representation of the field's type.
+   */
+  setAriaTypeName(ariaTypeName: string) {
+    this.ariaTypeName = ariaTypeName;
+  }
+
+  /**
    * Gets an ARIA-friendly label representation of this field's value.
    *
    * Note that implementations should generally always override this value to
