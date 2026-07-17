@@ -1539,8 +1539,8 @@ suite('Keyboard Shortcut Items', function () {
 
       const hasInsertionMarker = this.workspace
         .getTopBlocks()
-        .flatMap((b) => b.getChildren())
-        .some((b) => b.isInsertionMarker());
+        .flatMap((b) => b.getConnections_())
+        .some((c) => !!c.getInsertionMarker());
       assert.isTrue(hasInsertionMarker);
 
       Blockly.KeyboardMover.mover.abortMove();

@@ -1226,6 +1226,7 @@ suite('Keyboard-driven movement', function () {
         this.workspace.clear();
         this.liveRegion = document.getElementById('blocklyAriaAnnounce');
         this.moveAndAssert = (moveFn, incPhrases, exclPhrases = []) => {
+          this.clock.tick(11);
           moveFn(this.workspace);
           this.clock.tick(11);
           let text = this.liveRegion.textContent;
@@ -1245,6 +1246,10 @@ suite('Keyboard-driven movement', function () {
         this.block1 = this.workspace.newBlock('draw_emoji');
         this.block1.initSvg();
         this.block1.render();
+      });
+
+      teardown(function () {
+        cancelMove(this.workspace);
       });
 
       test('announces simple block moving on workspace', function () {
