@@ -358,9 +358,11 @@ export class BlockDragStrategy implements IDragStrategy {
     // use in constrained moved mode.
     if (e instanceof KeyboardEvent) {
       // Scooch the block to be offset from the connection preview indicator.
+      const initialCandidate = this.getInitialCandidate() ?? undefined;
       const neighbour = this.updateConnectionPreview(
         this.block,
         new Coordinate(0, 0),
+        initialCandidate,
       );
       if (neighbour) {
         this.block.moveDuringDrag(this.determineConnectionOffset());
@@ -645,16 +647,18 @@ export class BlockDragStrategy implements IDragStrategy {
    * @param draggingBlock The block being dragged.
    * @param delta How far the pointer has moved from the position
    *     at the start of the drag, in workspace units.
+   * @param initialCandidate If provided, a connection candidate that the
+   *     connection preview indicator will be attached to.
    * @returns The neighbouring connection to which the connection preview will
    *     be attached.
    */
   private updateConnectionPreview(
     draggingBlock: BlockSvg,
     delta: Coordinate,
+    initialCandidate?: ConnectionCandidate,
   ): RenderedConnection | undefined {
     const currCandidate = this.connectionCandidate;
-    const newCandidate =
-      this.getInitialCandidate() ?? this.getConnectionCandidate(delta);
+    const newCandidate = initialCandidate ?? this.getConnectionCandidate(delta);
 
     this.connectionPreviewer?.hidePreview();
     this.connectionCandidate = null;
