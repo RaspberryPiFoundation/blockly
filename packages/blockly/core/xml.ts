@@ -1004,22 +1004,37 @@ function domToBlockHeadless(
 
   // Connect parent after processing mutation and before setting fields.
   if (parentConnection) {
+    let childConnection: Connection;
     if (connectedToParentNext) {
       if (block.previousConnection) {
-        parentConnection.connect(block.previousConnection);
+        childConnection = block.previousConnection;
       } else {
         throw TypeError('Next block does not have previous statement.');
       }
     } else {
       if (block.outputConnection) {
-        parentConnection.connect(block.outputConnection);
+        childConnection = block.outputConnection;
       } else if (block.previousConnection) {
-        parentConnection.connect(block.previousConnection);
+        childConnection = block.previousConnection;
       } else {
         throw TypeError(
           'Child block does not have output or previous statement.',
         );
       }
+    }
+    if (!parentConnection.connect(childConnection)) {
+      const checker = block.workspace.connectionChecker;
+      throw TypeError(
+        checker.getErrorMessage(
+          checker.canConnectWithReason(
+            childConnection,
+            parentConnection,
+            false,
+          ),
+          childConnection,
+          parentConnection,
+        ),
+      );
     }
   }
 

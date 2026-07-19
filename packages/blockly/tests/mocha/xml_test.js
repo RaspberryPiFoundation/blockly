@@ -726,6 +726,32 @@ suite('XML', function () {
             },
           ],
         },
+        {
+          'type': 'xml_parent_value_check_int',
+          'message0': '%1',
+          'args0': [
+            {
+              'type': 'input_value',
+              'name': 'VALUE',
+              'check': 'Int',
+            },
+          ],
+        },
+        {
+          'type': 'xml_child_output_check_long',
+          'message0': '',
+          'output': 'Long',
+        },
+        {
+          'type': 'xml_parent_next_check_int',
+          'message0': '',
+          'nextStatement': 'Int',
+        },
+        {
+          'type': 'xml_child_previous_check_long',
+          'message0': '',
+          'previousStatement': 'Long',
+        },
       ]);
     });
     teardown(function () {
@@ -805,6 +831,36 @@ suite('XML', function () {
       assert.throws(function () {
         Blockly.Xml.domToWorkspace(dom, this.workspace);
       });
+    });
+    test('Throws for incompatible value input connection', function () {
+      const dom = Blockly.utils.xml.textToDom(
+        '<xml xmlns="https://developers.google.com/blockly/xml">' +
+          '  <block type="xml_parent_value_check_int">' +
+          '    <value name="VALUE">' +
+          '      <block type="xml_child_output_check_long"></block>' +
+          '    </value>' +
+          '  </block>' +
+          '</xml>',
+      );
+      assert.throws(
+        () => Blockly.Xml.domToWorkspace(dom, this.workspace),
+        TypeError,
+      );
+    });
+    test('Throws for incompatible next connection', function () {
+      const dom = Blockly.utils.xml.textToDom(
+        '<xml xmlns="https://developers.google.com/blockly/xml">' +
+          '  <block type="xml_parent_next_check_int">' +
+          '    <next>' +
+          '      <block type="xml_child_previous_check_long"></block>' +
+          '    </next>' +
+          '  </block>' +
+          '</xml>',
+      );
+      assert.throws(
+        () => Blockly.Xml.domToWorkspace(dom, this.workspace),
+        TypeError,
+      );
     });
   });
   suite('appendDomToWorkspace', function () {
