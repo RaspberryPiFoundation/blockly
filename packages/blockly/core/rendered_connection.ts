@@ -216,9 +216,7 @@ export class RenderedConnection
    *     was updated.
    */
   moveTo(x: number, y: number): boolean {
-    // TODO(#6922): Readd this optimization.
-    // const moved = this.x !== x || this.y !== y;
-    const moved = true;
+    const moved = this.x !== x || this.y !== y;
     let updated = false;
 
     if (this.trackedState === RenderedConnection.TrackedState.WILL_TRACK) {
@@ -229,8 +227,7 @@ export class RenderedConnection
       this.trackedState === RenderedConnection.TrackedState.TRACKED &&
       moved
     ) {
-      this.db.removeConnection(this, this.y);
-      this.db.addConnection(this, y);
+      this.db.reorderConnection(this, y);
       updated = true;
     }
 

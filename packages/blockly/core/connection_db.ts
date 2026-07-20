@@ -28,6 +28,12 @@ export class ConnectionDB {
   private readonly connections: RenderedConnection[] = [];
 
   /**
+   * Count of how many times bulk updates have been enabled. When reaching 0,
+   * the connection DB will be resorted.
+   */
+  private bulkCounter = 0;
+
+  /**
    * @param connectionChecker The workspace's connection type checker, used to
    *     decide if connections are valid during a drag.
    */
@@ -132,6 +138,23 @@ export class ConnectionDB {
       throw Error('Unable to find connection in connectionDB.');
     }
     this.connections.splice(index, 1);
+  }
+
+  /**
+   * Moves the given connection in the connection DB to reflect its new Y
+   * position. For performance, this will be deferred if the connection DB is in
+   * the middle of a bulk update.
+   *
+   * @param connection The connection that is moving. Should be provided before
+   *     its `Connection.y` field has been updated.
+   * @param newYPos The y coordinate (in workspace units) to which the
+   *     connection will move.
+   */
+  reorderConnection(connection: RenderedConnection, newYPos: number) {
+    if (this.bulkCounter !== 0) return;
+
+    this.removeConnection(connection, connection.y);
+    this.addConnection(connection, newYPos);
   }
 
   /**
@@ -276,6 +299,47 @@ export class ConnectionDB {
     conn.y = baseY;
     // If there were no valid connections, bestConnection will be null.
     return {connection: bestConnection, radius: bestRadius};
+  }
+
+  /**
+   * Notifies the connection DB that a series of connection moves is about to
+   * begin. May be called multiple times, and must be paired with a
+   * corresponding call to `endBulkUpdates()`.
+   *
+   * @internal
+   */
+  beginBulkUpdates() {
+    this.bulkCounter++;
+  }
+
+  /**
+   * Notifies the connection DB that the most recent bulk series of connection
+   * moves has ended. Must be called after the corresponding
+   * `beginBulkUpdates()`. If all in-flight bulk updates have ended, this method
+   * will reorder the connection DB to reflect the current state of the
+   * connections.
+   *
+   * @internal
+   */
+  endBulkUpdates() {
+    if (this.bulkCounter === 0) {
+      throw new Error('Bulk updates are already ended.');
+    }
+    this.bulkCounter--;
+    if (this.bulkCounter === 0) {
+      this.reorderConnections();
+    }
+  }
+
+  /**
+   * Sorts the connections in the connection DB to reflect the current
+   * coordinates of the connections to allow for quick and correct connection
+   * lookups. Run automatically when a bulk update finishes.
+   */
+  private reorderConnections() {
+    this.connections.sort((a, b) => {
+      return a.y - b.y;
+    });
   }
 
   /**

@@ -400,7 +400,9 @@ export class BlockSvg
     const currLoc = this.getRelativeToSurfaceXY();
     const newLoc = Coordinate.sum(currLoc, delta);
     this.translate(newLoc.x, newLoc.y);
+    this.workspace.connectionDBList.forEach((db) => db?.beginBulkUpdates());
     this.updateComponentLocations(newLoc);
+    this.workspace.connectionDBList.forEach((db) => db?.endBulkUpdates());
 
     if (eventsEnabled && event) {
       event!.recordNew();

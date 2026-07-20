@@ -133,10 +133,14 @@ function doRenders(workspace?: WorkspaceSvg) {
   }
   for (const workspace of workspaces) {
     workspace.resizeContents();
+    workspace.connectionDBList.forEach((db) => db?.beginBulkUpdates());
   }
   for (const block of blocks) {
     const blockOrigin = block.getRelativeToSurfaceXY();
     block.updateComponentLocations(blockOrigin);
+  }
+  for (const workspace of workspaces) {
+    workspace.connectionDBList.forEach((db) => db?.endBulkUpdates());
   }
   for (const block of blocks) {
     const oldGroup = eventUtils.getGroup();

@@ -37,6 +37,7 @@ suite('Render Management', function () {
         initialized: true,
         workspace: {
           resizeContents: () => {},
+          connectionDBList: [],
         },
       };
     }
@@ -84,6 +85,7 @@ suite('Render Management', function () {
     function createMockWorkspace() {
       return {
         resizeContents: () => {},
+        connectionDBList: [],
       };
     }
 
