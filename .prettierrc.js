@@ -26,10 +26,7 @@ module.exports = {
       },
     },
     {
-      files: [
-        'packages/plugins/theme-*/**/*',
-        'packages/plugins/dev-tools/**/*'
-      ],
+      files: 'packages/plugins/**/*',
       options: {
         // Some properties must be quoted to preserve closure compiler behavior.
         // If at least one property in an object requires quotes, quote all 

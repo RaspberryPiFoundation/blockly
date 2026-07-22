@@ -18,6 +18,7 @@
   "private": true,
   "workspaces": [
     "packages/blockly",
+    "packages/plugins/dev-scripts",
     "packages/plugins/theme-dark",
     "packages/plugins/theme-deuteranopia",
     "packages/plugins/theme-hackermode",
