@@ -232,7 +232,7 @@ export class BlockDragStrategy implements IDragStrategy {
     } else if (this.block.isInFlyout && this.block.workspace.targetWorkspace) {
       const rootBlock = this.block.getRootBlock();
 
-      const json = blocks.save(rootBlock, {saveIds: false});
+      const json = blocks.save(rootBlock);
       if (json) {
         const newBlock = blocks.appendInternal(
           json,
