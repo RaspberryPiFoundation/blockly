@@ -1,0 +1,51 @@
+{
+  "name": "@blockly/dev-scripts",
+  "version": "13.1.0",
+  "description": "Configuration and scripts for Blockly plugins.",
+  "bin": {
+    "blockly-scripts": "./bin/blockly-scripts.js"
+  },
+  "author": "Blockly Team",
+  "keywords": [
+    "blockly",
+    "dev",
+    "scripts"
+  ],
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly-samples/tree/master/plugins/dev-scripts#readme",
+  "bugs": {
+    "url": "https://github.com/RaspberryPiFoundation/blockly-samples/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RaspberryPiFoundation/blockly-samples.git",
+    "directory": "plugins/dev-scripts"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@babel/code-frame": "^8.0.0",
+    "chalk": "^4.1.2",
+    "fork-ts-checker-webpack-plugin": "^9.1.0",
+    "install": "^0.13.0",
+    "mocha": "^11.7.6",
+    "rimraf": "^6.1.3",
+    "source-map-loader": "^5.0.0",
+    "ts-loader": "^9.6.1",
+    "webpack": "^5.107.2",
+    "webpack-cli": "^7.0.3",
+    "webpack-dev-server": "^5.2.5"
+  },
+  "peerDependencies": {
+    "typescript": "^4.3.2 || ^5"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}
