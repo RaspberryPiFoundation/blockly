@@ -141,6 +141,6 @@
     "node": ">=22"
   },
   "peerDependencies": {
-    "jsdom": "^27.4.0"
+    "jsdom": ">=27.4.0 <30.0.0"
   }
 }
