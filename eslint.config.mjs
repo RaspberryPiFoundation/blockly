@@ -327,10 +327,7 @@ export default defineConfig(
     },
   },
   {
-    files: [
-      'packages/plugins/theme-*/**',
-      'packages/plugins/dev-tools/**'
-    ],
+    files: ['packages/plugins/**'],
     languageOptions: {
       globals: {
         ...globals.browser,
