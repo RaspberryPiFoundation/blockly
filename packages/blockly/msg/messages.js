@@ -2427,6 +2427,20 @@ Blockly.Msg.FIELD_BITMAP_BUTTON_LABEL_RANDOMIZE = 'Randomize';
 /// Label for the 'Clear' button in the bitmap field editor.
 Blockly.Msg.FIELD_BITMAP_BUTTON_LABEL_CLEAR = 'Clear';
 /** @type {string} */
+/// Word used in bitmap pixel ARIA labels when a pixel is filled/on.
+Blockly.Msg.FIELD_BITMAP_PIXEL_ON = 'on';
+/** @type {string} */
+/// Word used in bitmap pixel ARIA labels when a pixel is empty/off.
+Blockly.Msg.FIELD_BITMAP_PIXEL_OFF = 'off';
+/** @type {string} */
+/// ARIA label for a single pixel in the bitmap field editor.
+/// \n\nParameters:\n* %1 - on/off state\n* %2 - 1-based row index\n* %3 - 1-based column index
+Blockly.Msg.FIELD_BITMAP_PIXEL_LABEL = '%1, row %2, column %3';
+/** @type {string} */
+/// ARIA value summarising the bitmap field contents.
+/// \n\nParameters:\n* %1 - width in pixels\n* %2 - height in pixels\n* %3 - number of filled pixels
+Blockly.Msg.FIELD_BITMAP_ARIA_VALUE = '%1 by %2, %3 pixels on';
+/** @type {string} */
 /// ARIA label for the button that opens the backpack flyout.
 Blockly.Msg.OPEN_BACKPACK = 'Open backpack';
 /** @type {string} */
