@@ -1,0 +1,55 @@
+{
+  "name": "@blockly/plugin-modal",
+  "version": "13.1.0",
+  "description": "A Blockly plugin that creates a modal.",
+  "scripts": {
+    "audit:fix": "blockly-scripts auditFix",
+    "build": "blockly-scripts build",
+    "clean": "blockly-scripts clean",
+    "lint": "eslint .",
+    "predeploy": "blockly-scripts predeploy",
+    "start": "blockly-scripts start",
+    "test": "blockly-scripts test"
+  },
+  "main": "./dist/index.js",
+  "module": "./src/index.js",
+  "unpkg": "./dist/index.js",
+  "author": "Blockly Team",
+  "keywords": [
+    "blockly",
+    "blockly-plugin",
+    "modal"
+  ],
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly-samples/tree/master/plugins/modal#readme",
+  "bugs": {
+    "url": "https://github.com/RaspberryPiFoundation/blockly-samples/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RaspberryPiFoundation/blockly-samples.git",
+    "directory": "plugins/modal"
+  },
+  "license": "Apache 2.0",
+  "directories": {
+    "dist": "dist",
+    "src": "src"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "devDependencies": {
+    "@blockly/dev-scripts": "^13.1.0",
+    "@blockly/dev-tools": "^13.1.0",
+    "jsdom": "^29.1.1",
+    "jsdom-global": "3.0.2",
+    "mocha": "^11.7.6",
+    "sinon": "22.0.0"
+  },
+  "peerDependencies": {
+    "blockly": "^13.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "@blockly/suggested-blocks",
+  "version": "13.1.0",
+  "description": "A plugin that adds toolbox panes with suggested blocks based on the user's past usage of blocks.",
+  "scripts": {
+    "audit:fix": "blockly-scripts auditFix",
+    "build": "blockly-scripts build",
+    "clean": "blockly-scripts clean",
+    "lint": "eslint .",
+    "predeploy": "blockly-scripts predeploy",
+    "start": "blockly-scripts start",
+    "test": "blockly-scripts test"
+  },
+  "main": "./dist/index.js",
+  "module": "./src/index.js",
+  "unpkg": "./dist/index.js",
+  "author": "",
+  "keywords": [
+    "blockly",
+    "blockly-plugin",
+    "suggested-blocks",
+    "@blockly/suggested-blocks"
+  ],
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly-samples/tree/master/plugins/suggested-blocks#readme",
+  "bugs": {
+    "url": "https://github.com/RaspberryPiFoundation/blockly-samples/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RaspberryPiFoundation/blockly-samples.git",
+    "directory": "plugins/suggested-blocks"
+  },
+  "license": "Apache-2.0",
+  "directories": {
+    "dist": "dist",
+    "src": "src"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "devDependencies": {
+    "@blockly/dev-scripts": "^13.1.0",
+    "@blockly/dev-tools": "^13.1.0",
+    "chai": "^6.2.2",
+    "sinon": "^22.0.0"
+  },
+  "peerDependencies": {
+    "blockly": "^13.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "@blockly/create-package",
+  "version": "13.1.0",
+  "description": "A tool for creating a Blockly plugin based on a template.",
+  "bin": "./bin/create.js",
+  "author": "Blockly Team",
+  "keywords": [
+    "blockly",
+    "dev",
+    "create",
+    "package",
+    "plugin",
+    "template"
+  ],
+  "files": [
+    "*",
+    "templates/sample-app/*",
+    "templates/sample-app-ts/*"
+  ],
+  "scripts": {
+    "prepack": "cp -r ../../examples/sample-app ./templates && cp -r ../../examples/sample-app-ts ./templates"
+  },
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly-samples/tree/master/plugins/dev-create#readme",
+  "bugs": {
+    "url": "https://github.com/RaspberryPiFoundation/blockly-samples/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RaspberryPiFoundation/blockly-samples.git",
+    "directory": "plugins/dev-create"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^15.0.0",
+    "fs-extra": "^11.3.5",
+    "install": "^0.13.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

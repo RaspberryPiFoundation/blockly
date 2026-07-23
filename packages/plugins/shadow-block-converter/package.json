@@ -1,0 +1,56 @@
+{
+  "name": "@blockly/shadow-block-converter",
+  "version": "13.1.0",
+  "description": "A workspace change listener that converts shadow blocks to real blocks when the user edits them.",
+  "scripts": {
+    "audit:fix": "blockly-scripts auditFix",
+    "build": "blockly-scripts build",
+    "clean": "blockly-scripts clean",
+    "lint": "eslint .",
+    "predeploy": "blockly-scripts predeploy",
+    "start": "blockly-scripts start",
+    "test": "blockly-scripts test"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "unpkg": "./dist/index.js",
+  "author": "Blockly Team",
+  "keywords": [
+    "blockly",
+    "shadow",
+    "block"
+  ],
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly-samples/tree/master/plugins/shadow-block-converter#readme",
+  "bugs": {
+    "url": "https://github.com/RaspberryPiFoundation/blockly-samples/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RaspberryPiFoundation/blockly-samples.git",
+    "directory": "plugins/shadow-block-converter"
+  },
+  "license": "Apache-2.0",
+  "directories": {
+    "dist": "dist",
+    "src": "src"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "devDependencies": {
+    "@blockly/dev-scripts": "^13.1.0",
+    "@blockly/dev-tools": "^13.1.0",
+    "chai": "^6.2.2",
+    "jsdom": "^29.1.1",
+    "jsdom-global": "^3.0.2",
+    "sinon": "^22.0.0",
+    "typescript": "^6.0.3"
+  },
+  "peerDependencies": {
+    "blockly": "^13.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

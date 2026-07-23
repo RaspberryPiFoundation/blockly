@@ -1,0 +1,53 @@
+{
+  "name": "@blockly/workspace-backpack",
+  "version": "13.1.0",
+  "description": "A Blockly plugin that adds Backpack support.",
+  "scripts": {
+    "audit:fix": "blockly-scripts auditFix",
+    "build": "blockly-scripts build",
+    "clean": "blockly-scripts clean",
+    "lint": "eslint .",
+    "predeploy": "blockly-scripts predeploy",
+    "start": "blockly-scripts start",
+    "test": "blockly-scripts test"
+  },
+  "main": "./dist/index.js",
+  "types": "./src/index.d.ts",
+  "unpkg": "./dist/index.js",
+  "author": "Blockly Team",
+  "keywords": [
+    "blockly",
+    "blockly-plugin",
+    "workspace",
+    "backpack"
+  ],
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly-samples/tree/master/plugins/workspace-backpack#readme",
+  "bugs": {
+    "url": "https://github.com/RaspberryPiFoundation/blockly-samples/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RaspberryPiFoundation/blockly-samples.git",
+    "directory": "plugins/backpack"
+  },
+  "license": "Apache-2.0",
+  "directories": {
+    "dist": "dist",
+    "src": "src"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "devDependencies": {
+    "@blockly/dev-scripts": "^13.1.0",
+    "@blockly/dev-tools": "^13.1.0",
+    "typescript": "^6.0.3"
+  },
+  "peerDependencies": {
+    "blockly": "^13.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

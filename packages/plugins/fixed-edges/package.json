@@ -1,0 +1,50 @@
+{
+  "name": "@blockly/fixed-edges",
+  "version": "13.1.0",
+  "description": "A plugin that provides a MetricsManager that can be used to prevent the workspace from expanding to the top/left/right/bottom when blocks are dragged to that edge.",
+  "scripts": {
+    "audit:fix": "blockly-scripts auditFix",
+    "build": "blockly-scripts build",
+    "clean": "blockly-scripts clean",
+    "lint": "eslint .",
+    "predeploy": "blockly-scripts predeploy",
+    "start": "blockly-scripts start"
+  },
+  "main": "./dist/index.js",
+  "module": "./src/index.js",
+  "unpkg": "./dist/index.js",
+  "author": "Blockly Team",
+  "keywords": [
+    "blockly",
+    "blockly-plugin",
+    "fixed-edges"
+  ],
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly-samples/tree/master/fixed-edges#readme",
+  "bugs": {
+    "url": "https://github.com/RaspberryPiFoundation/blockly-samples/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RaspberryPiFoundation/blockly-samples.git",
+    "directory": "fixed-edges"
+  },
+  "license": "Apache-2.0",
+  "directories": {
+    "dist": "dist",
+    "src": "src"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "devDependencies": {
+    "@blockly/dev-scripts": "^13.1.0",
+    "@blockly/dev-tools": "^13.1.0"
+  },
+  "peerDependencies": {
+    "blockly": "^13.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
