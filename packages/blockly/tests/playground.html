@@ -283,23 +283,25 @@
         for (var i = 0, block; (block = blocks[i]); i++) {
           prototypes.push(block.getAttribute('type'));
         }
+
+        const scatteredBlocks = [];
+        const data = {
+          'blocks': {
+            blocks: scatteredBlocks,
+          },
+        };
+
         for (var i = 0; i < n; i++) {
           var prototype =
             prototypes[Math.floor(Math.random() * prototypes.length)];
-          var block = workspace.newBlock(prototype);
-          block.initSvg();
-          block
-            .getSvgRoot()
-            .setAttribute(
-              'transform',
-              'translate(' +
-                Math.round(Math.random() * 450 + 40) +
-                ', ' +
-                Math.round(Math.random() * 600 + 40) +
-                ')',
-            );
-          block.render();
+          scatteredBlocks.push({
+            type: prototype,
+            x: Math.round(Math.random() * 450 + 40),
+            y: Math.round(Math.random() * 600 + 40),
+          });
         }
+
+        Blockly.serialization.workspaces.load(data, workspace);
       }
 
       function spaghetti(n) {
