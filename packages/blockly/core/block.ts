@@ -203,7 +203,7 @@ export class Block {
    */
   initialized = false;
 
-  private readonly xy: Coordinate;
+  protected readonly xy: Coordinate;
   isInFlyout: boolean;
   isInMutator: boolean;
   RTL: boolean;
@@ -2462,7 +2462,7 @@ export class Block {
    * @returns Object with .x and .y properties.
    */
   getRelativeToSurfaceXY(): Coordinate {
-    return this.xy;
+    return this.xy.clone();
   }
 
   /**

@@ -347,38 +347,6 @@ export class BlockSvg
   }
 
   /**
-   * Return the coordinates of the top-left corner of this block relative to the
-   * drawing surface's origin (0,0), in workspace units.
-   * If the block is on the workspace, (0, 0) is the origin of the workspace
-   * coordinate system.
-   * This does not change with workspace scale.
-   *
-   * @returns Object with .x and .y properties in workspace coordinates.
-   */
-  override getRelativeToSurfaceXY(): Coordinate {
-    const layerManager = this.workspace.getLayerManager();
-    if (!layerManager) {
-      throw new Error(
-        'Cannot calculate position because the workspace has not been appended',
-      );
-    }
-    let x = 0;
-    let y = 0;
-
-    let element: SVGElement = this.getSvgRoot();
-    if (element) {
-      do {
-        // Loop through this block and every parent.
-        const xy = svgMath.getRelativeXY(element);
-        x += xy.x;
-        y += xy.y;
-        element = element.parentNode as SVGElement;
-      } while (element && !layerManager.hasLayer(element));
-    }
-    return new Coordinate(x, y);
-  }
-
-  /**
    * Move a block by a relative offset.
    *
    * @param dx Horizontal offset in workspace units.
@@ -736,6 +704,9 @@ export class BlockSvg
    * @internal
    */
   updateComponentLocations(blockOrigin: Coordinate) {
+    this.xy.x = blockOrigin.x;
+    this.xy.y = blockOrigin.y;
+
     if (!this.dragging) this.updateConnectionLocations(blockOrigin);
     this.updateIconLocations(blockOrigin);
     this.updateFieldLocations(blockOrigin);
