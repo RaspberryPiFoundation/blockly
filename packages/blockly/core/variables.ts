@@ -23,6 +23,10 @@ import * as utilsXml from './utils/xml.js';
 import type {Workspace} from './workspace.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 
+const nameComparisonCollator = new Intl.Collator(undefined, {
+  sensitivity: 'base',
+});
+
 /**
  * String for use in the "custom" attribute of a category in toolbox XML.
  * This string indicates that the category should be dynamically populated with
@@ -805,9 +809,7 @@ export function compareByName(
   var1: IVariableModel<IVariableState>,
   var2: IVariableModel<IVariableState>,
 ): number {
-  return var1
-    .getName()
-    .localeCompare(var2.getName(), undefined, {sensitivity: 'base'});
+  return nameComparisonCollator.compare(var1.getName(), var2.getName());
 }
 
 /**
