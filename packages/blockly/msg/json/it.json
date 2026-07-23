@@ -377,6 +377,9 @@
 	"SHORTCUTS_GENERAL": "Generale",
 	"SHORTCUTS_EDITING": "Modifica",
 	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "Tieni premuto %1 e usa i tasti freccia per muoverti liberamente, poi %2 per confermare la posizione.",
+	"WORKSPACE_ROLEDESCRIPTION": "spazio di lavoro",
+	"WORKSPACE_LABEL_1_STACK": "1 pila di blocchi",
+	"WORKSPACE_LABEL_MANY_STACKS": "%1 pile di blocchi",
 	"INPUT_LABEL_CONDITION": "condizione",
 	"INPUT_LABEL_NUMBER": "numero",
 	"INPUT_LABEL_NUMBER_ATAN2_X": "coordinata x",
@@ -390,5 +393,8 @@
 	"ARIA_LABEL_REMOVE_INPUT": "Rimuovi ingresso",
 	"ARIA_TYPE_FIELD_ANGLE": "angolo",
 	"ARIA_TYPE_FIELD_DATE": "data",
-	"ARIA_TYPE_FIELD_COLOUR": "colore"
+	"ARIA_TYPE_FIELD_COLOUR": "colore",
+	"FIELD_BITMAP_BUTTON_LABEL_CLEAR": "Pulisci",
+	"FIELD_MULTILINEINPUT_NEW_LINE": "Nuova riga",
+	"ARIA_LABEL_TRASH_EMPTY": "Cestino, attualmente vuoto"
 }

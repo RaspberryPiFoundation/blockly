@@ -1,13 +1,13 @@
 {
 	"@metadata": {
+		"comment": "This file is auto-generated from msg/messages.js. Do not edit it on TranslateWiki — submit a PR to https://github.com/RaspberryPiFoundation/blockly instead.",
 		"authors": [
 			"Ajeje Brazorf",
 			"Espertus",
 			"Liuxinyu970226",
 			"McDutchie",
 			"Shirayuki"
-		],
-		"comment": "This file is auto-generated from msg/messages.js. Do not edit it on TranslateWiki — submit a PR to https://github.com/RaspberryPiFoundation/blockly instead."
+		]
 	},
 	"VARIABLES_DEFAULT_NAME": "default name - A simple, general default name for a variable, preferably short. For more context, see [[Translating:Blockly#infrequent_message_types]].\n{{Identical|Item}}",
 	"UNNAMED_KEY": "default name - A simple, default name for an unnamed function or variable. Preferably indicates that the item is unnamed.",
