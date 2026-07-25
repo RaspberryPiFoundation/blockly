@@ -20,14 +20,14 @@
     "workspace",
     "search"
   ],
-  "homepage": "https://github.com/RaspberryPiFoundation/blockly-samples/tree/master/plugins/workspace-search#readme",
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/workspace-search#readme",
   "bugs": {
-    "url": "https://github.com/RaspberryPiFoundation/blockly-samples/issues"
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/RaspberryPiFoundation/blockly-samples.git",
-    "directory": "plugins/workspace-search"
+    "url": "https://github.com/RaspberryPiFoundation/blockly.git",
+    "directory": "packages/plugins/workspace-search"
   },
   "license": "Apache-2.0",
   "directories": {
@@ -47,7 +47,7 @@
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "blockly": "^13.1.0"
+    "blockly": "^13.1.1"
   },
   "publishConfig": {
     "access": "public"

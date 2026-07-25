@@ -20,14 +20,14 @@
     "blockly-plugin",
     "continuous-toolbox"
   ],
-  "homepage": "https://github.com/RaspberryPiFoundation/blockly-samples/tree/master/plugins/continuous-toolbox#readme",
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/continuous-toolbox#readme",
   "bugs": {
-    "url": "https://github.com/RaspberryPiFoundation/blockly-samples/issues"
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/RaspberryPiFoundation/blockly-samples.git",
-    "directory": "plugins/continuous-toolbox"
+    "url": "https://github.com/RaspberryPiFoundation/blockly.git",
+    "directory": "packages/plugins/continuous-toolbox"
   },
   "license": "Apache-2.0",
   "directories": {
@@ -44,7 +44,7 @@
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "blockly": "^13.1.0"
+    "blockly": "^13.1.1"
   },
   "publishConfig": {
     "access": "public"

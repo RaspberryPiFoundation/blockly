@@ -21,14 +21,14 @@
     "toolbox search",
     "block search"
   ],
-  "homepage": "https://github.com/RaspberryPiFoundation/blockly-samples/tree/master/plugins/toolbox-search#readme",
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/toolbox-search#readme",
   "bugs": {
-    "url": "https://github.com/RaspberryPiFoundation/blockly-samples/issues"
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/RaspberryPiFoundation/blockly-samples.git",
-    "directory": "plugins/toolbox-search"
+    "url": "https://github.com/RaspberryPiFoundation/blockly.git",
+    "directory": "packages/plugins/toolbox-search"
   },
   "license": "Apache-2.0",
   "directories": {
@@ -46,7 +46,7 @@
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "blockly": "^13.1.0"
+    "blockly": "^13.1.1"
   },
   "publishConfig": {
     "access": "public"

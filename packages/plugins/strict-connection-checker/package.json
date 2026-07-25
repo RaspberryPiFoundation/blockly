@@ -21,14 +21,14 @@
     "strict-connection-checker",
     "connection-checker"
   ],
-  "homepage": "https://github.com/RaspberryPiFoundation/blockly-samples/tree/master/plugins/strict-connection-checker#readme",
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/strict-connection-checker#readme",
   "bugs": {
-    "url": "https://github.com/RaspberryPiFoundation/blockly-samples/issues"
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/RaspberryPiFoundation/blockly-samples.git",
-    "directory": "plugins/strict-connection-checker"
+    "url": "https://github.com/RaspberryPiFoundation/blockly.git",
+    "directory": "packages/plugins/strict-connection-checker"
   },
   "license": "Apache 2.0",
   "directories": {
@@ -45,7 +45,7 @@
     "chai": "^6.2.2"
   },
   "peerDependencies": {
-    "blockly": "^13.1.0"
+    "blockly": "^13.1.1"
   },
   "publishConfig": {
     "access": "public"

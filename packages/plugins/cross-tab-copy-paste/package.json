@@ -20,14 +20,14 @@
     "blockly",
     "blockly-plugin"
   ],
-  "homepage": "https://github.com/RaspberryPiFoundation/blockly-samples/tree/master/plugins/cross-tab-copy-paste#readme",
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/cross-tab-copy-paste#readme",
   "bugs": {
-    "url": "https://github.com/RaspberryPiFoundation/blockly-samples/issues"
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/RaspberryPiFoundation/blockly-samples.git",
-    "directory": "plugins/cross-tab-copy-paste"
+    "url": "https://github.com/RaspberryPiFoundation/blockly.git",
+    "directory": "packages/plugins/cross-tab-copy-paste"
   },
   "license": "Apache-2.0",
   "directories": {
@@ -43,7 +43,7 @@
     "@blockly/dev-tools": "^13.1.0"
   },
   "peerDependencies": {
-    "blockly": "^13.1.0"
+    "blockly": "^13.1.1"
   },
   "publishConfig": {
     "access": "public"

@@ -20,14 +20,14 @@
     "modal",
     "typed variables"
   ],
-  "homepage": "https://github.com/RaspberryPiFoundation/blockly-samples/tree/master/plugins/typed-variable-modal#readme",
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/typed-variable-modal#readme",
   "bugs": {
-    "url": "https://github.com/RaspberryPiFoundation/blockly-samples/issues"
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/RaspberryPiFoundation/blockly-samples.git",
-    "directory": "plugins/typed-variable-modal"
+    "url": "https://github.com/RaspberryPiFoundation/blockly.git",
+    "directory": "packages/plugins/typed-variable-modal"
   },
   "license": "Apache-2.0",
   "directories": {
@@ -44,10 +44,10 @@
     "jsdom": "^29.1.1",
     "jsdom-global": "3.0.2",
     "mocha": "^11.7.6",
-    "sinon": "22.0.0"
+    "sinon": "^22.0.0"
   },
   "peerDependencies": {
-    "blockly": "^13.1.0"
+    "blockly": "^13.1.1"
   },
   "dependencies": {
     "@blockly/plugin-modal": "^13.1.0"

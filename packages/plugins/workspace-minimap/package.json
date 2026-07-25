@@ -20,14 +20,14 @@
     "blockly-plugin",
     "workspace-minimap"
   ],
-  "homepage": "git@github.com:RaspberryPiFoundation/blockly-samples/tree/master/plugins/workspace-minimap#readme",
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/workspace-minimap#readme",
   "bugs": {
-    "url": "git@github.com:RaspberryPiFoundation/blockly-samples/issues"
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:RaspberryPiFoundation/blockly-samples.git",
-    "directory": "plugins/workspace-minimap"
+    "url": "https://github.com/RaspberryPiFoundation/blockly.git",
+    "directory": "packages/plugins/workspace-minimap"
   },
   "license": "Apache-2.0",
   "directories": {
@@ -45,7 +45,7 @@
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "blockly": "^13.1.0"
+    "blockly": "^13.1.1"
   },
   "publishConfig": {
     "access": "public"

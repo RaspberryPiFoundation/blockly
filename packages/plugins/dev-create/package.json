@@ -20,14 +20,14 @@
   "scripts": {
     "prepack": "cp -r ../../examples/sample-app ./templates && cp -r ../../examples/sample-app-ts ./templates"
   },
-  "homepage": "https://github.com/RaspberryPiFoundation/blockly-samples/tree/master/plugins/dev-create#readme",
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/dev-create#readme",
   "bugs": {
-    "url": "https://github.com/RaspberryPiFoundation/blockly-samples/issues"
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/RaspberryPiFoundation/blockly-samples.git",
-    "directory": "plugins/dev-create"
+    "url": "https://github.com/RaspberryPiFoundation/blockly.git",
+    "directory": "packages/plugins/dev-create"
   },
   "license": "Apache-2.0",
   "dependencies": {
