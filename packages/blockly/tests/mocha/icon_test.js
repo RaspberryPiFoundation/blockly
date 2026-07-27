@@ -400,6 +400,10 @@ suite('Icon', function () {
       this.block.initSvg();
     });
 
+    teardown(function () {
+      sharedTestTeardown.call(this);
+    });
+
     test('are shown when icons are right clicked', function () {
       const icon = new TestIcon(this.block);
       this.block.addIcon(icon);
