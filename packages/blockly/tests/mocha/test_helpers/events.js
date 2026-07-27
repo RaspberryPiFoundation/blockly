@@ -118,7 +118,7 @@ export function assertEventEquals(
     if (isXmlProperty_(key)) {
       assertXmlPropertyEqual_(value, expectedValue, prependMessage + key);
     } else {
-      assert.equal(value, expectedValue, prependMessage + key);
+      assert.deepEqual(value, expectedValue, prependMessage + key);
     }
   });
   if (isUiEvent) {

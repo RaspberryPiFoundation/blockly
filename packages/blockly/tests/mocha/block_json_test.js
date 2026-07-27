@@ -805,5 +805,95 @@ suite('Block JSON initialization', function () {
       delete Blockly.Blocks['test_block'];
       delete Blockly.Msg['CUSTOM_ROLE_DESCRIPTION'];
     });
+    test('Custom input aria label', function () {
+      const testBlockDefinition = {
+        'type': 'test_block',
+        'message0': 'test %1',
+        'args0': [
+          {
+            'type': 'input_value',
+            'name': 'INPUT',
+            'ariaLabelText': 'Custom input label',
+          },
+        ],
+      };
+      Blockly.common.defineBlocksWithJsonArray([testBlockDefinition]);
+      const block = this.workspace.newBlock('test_block');
+      assert.equal(
+        block.getInput('INPUT').getAriaLabelText(),
+        'Custom input label',
+        'Expected getAriaLabelText to return the custom label.',
+      );
+      delete Blockly.Blocks['test_block'];
+    });
+    test('Custom input aria label with message reference', function () {
+      const testBlockDefinition = {
+        'type': 'test_block',
+        'message0': 'test %1',
+        'args0': [
+          {
+            'type': 'input_value',
+            'name': 'INPUT',
+            'ariaLabelText': '%{BKY_CUSTOM_INPUT_LABEL}',
+          },
+        ],
+      };
+      Blockly.Msg['CUSTOM_INPUT_LABEL'] = 'Custom input label';
+      Blockly.common.defineBlocksWithJsonArray([testBlockDefinition]);
+      const block = this.workspace.newBlock('test_block');
+      assert.equal(
+        block.getInput('INPUT').getAriaLabelText(),
+        'Custom input label',
+        'Expected getAriaLabelText to return the custom label.',
+      );
+      delete Blockly.Blocks['test_block'];
+      delete Blockly.Msg['CUSTOM_INPUT_LABEL'];
+    });
+    test('Custom field aria type name', function () {
+      const testBlockDefinition = {
+        'type': 'test_block',
+        'message0': 'test %1',
+        'args0': [
+          {
+            'type': 'field_number',
+            'name': 'FIELD',
+            'value': 100,
+            'ariaTypeName': 'speed',
+          },
+        ],
+      };
+      Blockly.common.defineBlocksWithJsonArray([testBlockDefinition]);
+      const block = this.workspace.newBlock('test_block');
+      assert.equal(
+        block.getField('FIELD').getAriaTypeName(),
+        'speed',
+        'Expected getAriaTypeName to return the custom type name.',
+      );
+      delete Blockly.Blocks['test_block'];
+    });
+    test('Custom field aria type name with message reference', function () {
+      const testBlockDefinition = {
+        'type': 'test_block',
+        'message0': 'test %1',
+        'args0': [
+          {
+            'type': 'field_number',
+            'name': 'FIELD',
+            'value': 100,
+            'ariaTypeName': '%{BKY_CUSTOM_FIELD_TYPE}',
+          },
+        ],
+      };
+      Blockly.Msg['CUSTOM_FIELD_TYPE'] = 'speed';
+      Blockly.common.defineBlocksWithJsonArray([testBlockDefinition]);
+      const block = this.workspace.newBlock('test_block');
+      assert.equal(
+        block.getField('FIELD').getAriaTypeName(),
+        'speed',
+        'Expected getAriaTypeName to return the custom type name.',
+      );
+      delete Blockly.Blocks['test_block'];
+      delete Blockly.Msg['CUSTOM_FIELD_TYPE'];
+    });
   });
 });

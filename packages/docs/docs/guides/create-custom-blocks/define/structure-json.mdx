@@ -394,5 +394,110 @@ An `alt` object may have its own `alt` object, thus allowing for chaining.
 Ultimately, if Blockly cannot create an object in the `args0` array (after
 attempting any `alt` objects) then that object is simply skipped.
 
+## Accessibility labels and roles
+
+Blockly generates accessibility labels and roles for blocks, inputs, and fields
+so that screen readers can describe them. You can customize these from JSON. For
+a fuller explanation of what each one controls, see the corresponding sections
+of the [JavaScript structure
+guide](/guides/create-custom-blocks/define/structure-js#input-labels).
+
+Unlike the JavaScript API, the JSON properties accept only strings (not
+functions). All of them support
+[`Blockly.Msg`](/guides/configure/translations) references of the form
+`%{BKY_...}`, which are replaced at render time.
+
+### Input labels
+
+An input's accessibility label is derived from the label fields that precede it.
+When that derived label isn't descriptive enough, add an `ariaLabelText`
+property to the input's argument object to override it. For example, the two
+value inputs in this coordinate block are preceded only by punctuation, so each
+one gets a custom label:
+
+<Tabs groupId="json">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "message0": "point ( %1 , %2 )",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "X",
+        "ariaLabelText": "x coordinate"
+      },
+      {
+        "type": "input_value",
+        "name": "Y",
+        "ariaLabelText": "y coordinate"
+      }
+    ]
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+<Image alt='A block with the label "point (", a value input, the label ",", another value input, and the label ")".' src="/images/structure-js/aria-input-label.png" />
+
+### Field labels
+
+Every field has a default accessibility label of the form `<type>: <value>`
+(for example, `number: 100`). To use a more specific type name for a particular
+field, add an `ariaTypeName` property to the field's argument object. The motor
+block below is announced as `speed: 100` instead of `number: 100`:
+
+<Tabs groupId="json">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "message0": "set motor speed to %1",
+    "args0": [
+      {
+        "type": "field_number",
+        "name": "SPEED",
+        "value": 100,
+        "ariaTypeName": "speed"
+      }
+    ]
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+To set the type name for all instances of a field type, override
+`getAriaTypeName` in a [custom
+field](/guides/create-custom-blocks/fields/customizing-fields/creating#aria-value)
+instead.
+
+### Role descriptions
+
+Every block has an
+[`aria-roledescription`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-roledescription)
+that describes its shape. By default it is `container`, `value`, or `statement`,
+based on the block's connections. To override it, add a top-level
+`ariaRoleDescription` property to the block definition. For example, a
+hexagonal boolean block in the Zelos renderer might use:
+
+<Tabs groupId="json">
+  <TabItem value="json" label="JSON" default>
+  ```js
+  {
+    "message0": "%1 and %2",
+    "args0": [
+      {"type": "input_value", "name": "A", "check": "Boolean"},
+      {"type": "input_value", "name": "B", "check": "Boolean"}
+    ],
+    "output": "Boolean",
+    "ariaRoleDescription": "boolean"
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+In most cases you should rely on the default role descriptions rather than
+setting a custom one for every block. See [Custom role
+descriptions](/guides/create-custom-blocks/define/structure-js#custom-role-descriptions)
+for guidance on when a custom role description is worthwhile.
+
 [custom-inputs]: /guides/create-custom-blocks/inputs/creating-custom-inputs
 [custom-fields]: /guides/create-custom-blocks/fields/customizing-fields/creating

@@ -24,7 +24,7 @@
     "packages/plugins/theme-highcontrast",
     "packages/plugins/theme-modern",
     "packages/plugins/theme-tritanopia",
-    "packages/dev-tools",
+    "packages/plugins/dev-tools",
     "packages/docs"
   ],
   "devDependencies": {
@@ -47,7 +47,7 @@
     "test": "npm run test --ws --if-present",
     "lint": "npm run lint --ws --if-present",
     "lint:fix": "npm run lint:fix --ws --if-present",
-    "build": "npm run package --workspace=blockly && npm run build --ws --if-present",
+    "build": "npm run package --workspace=blockly && npm run docs --workspace=blockly && npm run build --ws --if-present",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "postinstall": "patch-package"

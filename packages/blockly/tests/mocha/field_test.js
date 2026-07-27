@@ -851,6 +851,26 @@ suite('Abstract Fields', function () {
         const field = CustomField.fromJson({ariaTypeName: 'text input'});
         assert.equal(field.getAriaTypeName(), 'text input');
       });
+
+      suite('W/ Msg References', function () {
+        setup(function () {
+          addMessageToCleanup(this.sharedCleanup, 'ARIA_TYPE');
+          Blockly.Msg['ARIA_TYPE'] = 'speed';
+        });
+
+        test('setAriaTypeName resolves message references', function () {
+          const field = new TestField();
+          field.setAriaTypeName('%{BKY_ARIA_TYPE}');
+          assert.equal(field.getAriaTypeName(), 'speed');
+        });
+
+        test('Configured ariaTypeName resolves message references', function () {
+          const field = new TestField('value', {
+            ariaTypeName: '%{BKY_ARIA_TYPE}',
+          });
+          assert.equal(field.getAriaTypeName(), 'speed');
+        });
+      });
     });
 
     suite('getAriaValue', function () {
@@ -894,6 +914,13 @@ suite('Abstract Fields', function () {
       test('Type and value when includeTypeInfo=true', function () {
         const field = new TestField('hello', {ariaTypeName: 'text'});
         assert.equal(field.computeAriaLabel(true), 'text: hello');
+      });
+
+      test('Custom type and value when ariaTypeName is set', function () {
+        const field = new TestField();
+        field.setAriaTypeName('speed');
+        field.setValue('fast');
+        assert.equal(field.computeAriaLabel(), 'speed: fast');
       });
 
       test('Type and placeholder when value is null', function () {

@@ -1,13 +1,13 @@
 {
 	"@metadata": {
+		"comment": "This file is auto-generated from msg/messages.js. Do not edit it on TranslateWiki — submit a PR to https://github.com/RaspberryPiFoundation/blockly instead.",
 		"authors": [
 			"Ajeje Brazorf",
 			"Espertus",
 			"Liuxinyu970226",
 			"McDutchie",
 			"Shirayuki"
-		],
-		"comment": "This file is auto-generated from msg/messages.js. Do not edit it on TranslateWiki — submit a PR to https://github.com/RaspberryPiFoundation/blockly instead."
+		]
 	},
 	"VARIABLES_DEFAULT_NAME": "default name - A simple, general default name for a variable, preferably short. For more context, see [[Translating:Blockly#infrequent_message_types]].\n{{Identical|Item}}",
 	"UNNAMED_KEY": "default name - A simple, default name for an unnamed function or variable. Preferably indicates that the item is unnamed.",
@@ -643,6 +643,10 @@
 	"ARIA_TYPE_FIELD_GRID": "ARIA type name for the grid field.",
 	"FIELD_BITMAP_BUTTON_LABEL_RANDOMIZE": "Label for the 'Randomize' button in the bitmap field editor.",
 	"FIELD_BITMAP_BUTTON_LABEL_CLEAR": "Label for the 'Clear' button in the bitmap field editor.",
+	"FIELD_BITMAP_PIXEL_ON": "Word used in bitmap pixel ARIA labels when a pixel is filled/on.",
+	"FIELD_BITMAP_PIXEL_OFF": "Word used in bitmap pixel ARIA labels when a pixel is empty/off.",
+	"FIELD_BITMAP_PIXEL_LABEL": "ARIA label for a single pixel in the bitmap field editor. \n\nParameters:\n* %1 - on/off state\n* %2 - 1-based row index\n* %3 - 1-based column index",
+	"FIELD_BITMAP_ARIA_VALUE": "ARIA value summarising the bitmap field contents. \n\nParameters:\n* %1 - width in pixels\n* %2 - height in pixels\n* %3 - number of filled pixels",
 	"OPEN_BACKPACK": "ARIA label for the button that opens the backpack flyout.",
 	"CLOSE_BACKPACK": "ARIA label for the button that closes the backpack flyout.",
 	"COPY_ALL_TO_BACKPACK": "Context menu item to copy all blocks on the workspace to the backpack.",

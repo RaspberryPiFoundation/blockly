@@ -109,7 +109,7 @@
     "ajv": "^8.20.0",
     "async-done": "^2.0.0",
     "chai": "^6.2.2",
-    "concurrently": "^10.0.3",
+    "concurrently": "^10.0.4",
     "conventional-changelog-conventionalcommits": "^10.2.1",
     "conventional-recommended-bump": "^12.0.0",
     "glob": "^13.0.6",

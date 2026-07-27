@@ -1465,7 +1465,7 @@ suite('Events', function () {
       const genUidStub = createGenUidStubWithReturns(TEST_GROUP_ID);
       const dom = Blockly.utils.xml.textToDom(
         '<xml xmlns="https://developers.google.com/blockly/xml">' +
-          '  <block type="field_variable_test_block" id="test_block_id">' +
+          '  <block type="field_variable_test_block" id="test_block_id" x="0" y="0">' +
           '    <field name="VAR" id="test_var_id">name1</field>' +
           '  </block>' +
           '</xml>',

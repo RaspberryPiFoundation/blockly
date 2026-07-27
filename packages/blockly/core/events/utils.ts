@@ -26,6 +26,7 @@ import {
   isBlockMove,
   isBubbleOpen,
   isClick,
+  isSelected,
   isViewportChange,
 } from './predicates.js';
 
@@ -272,6 +273,33 @@ export function filter(queue: Abstract[]): Abstract[] {
       lastEvent.oldScale = event.oldScale;
     } else if (isClick(event) && isBubbleOpen(lastEvent)) {
       // Drop click events caused by opening/closing bubbles.
+    } else if (
+      isSelected(event) &&
+      isSelected(lastEvent) &&
+      lastEvent.newElementId === undefined
+    ) {
+      // Selection events are a bit quirky; they are fired by both the item
+      // losing selection and the one gaining selection. This means that if item
+      // A is selected, and item B is then clicked, A will fire a selection
+      // event from A to undefined when it is unselected, and B will fire an
+      // event from A to B when it becomes selected. In this case, condense the
+      // event steam to a single event from A to B. Note that the A to undefined
+      // event must be fired, because it's possible for an element to be
+      // unselected without another becoming selected, e.g. clicking on the
+      // workspace while a block is selected. In that case, the A to undefined
+      // event should remain in the event stream.
+      lastEvent.newElementId = event.newElementId;
+      // Selection events have an additional quirk in that, because moving
+      // elements in the DOM causes them to lose focus, various parts of Blockly
+      // refocus an element after moving it to preserve selection. This results
+      // in selected item A firing an A to undefined event when it loses
+      // selection due to the DOM move, and then firing an A to A event when it
+      // is refocused. In that case, we would have condensed this down to one
+      // event above, but that event is now a no-op, so pop it off the event
+      // queue.
+      if (lastEvent.oldElementId === lastEvent.newElementId) {
+        mergedQueue.pop();
+      }
     } else {
       mergedQueue.push(event);
     }

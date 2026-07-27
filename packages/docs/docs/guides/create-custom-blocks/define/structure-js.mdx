@@ -72,6 +72,86 @@ All of the `appendInput` methods (both generic and non-generic) return the input
 object so that they can be further configured using method chaining. There are
 three built-in methods used for configuring inputs.
 
+### Input labels
+
+Inputs on blocks have default accessibility labels that are derived from the
+surrounding text on the block. For example, the "in list" value input on the
+`for each` block above is labeled `in list`, which comes from the label field
+that precedes it. A screen reader uses this label to describe the input's empty
+connection and to give context to any block plugged into it.
+
+For some custom blocks, this derived label does not provide enough information.
+Consider a block that builds a coordinate point:
+
+<Image alt='A block with the label "point (", a value input, the label ",", another value input, and the label ")".' src="/images/structure-js/aria-input-label.png" />
+
+Both value inputs are preceded only by punctuation, so the highlighted input's
+derived label would read `,`, which tells assistive technology users nothing
+about what belongs there. To provide more information, you can set custom labels.
+In this case, "x coordinate" and "y coordinate" would be appropriate.
+
+You can set the label for an input by calling `setAriaLabelProvider` on the
+input in the block definition. The provider can be either a string or a function
+that returns a string, to support dynamic labels.
+
+<Tabs groupId="javascript">
+  <TabItem value="javascript" label="JavaScript" default>
+  ```js
+  init: function() {
+    // ...
+    this.appendValueInput('X')
+        .setAriaLabelProvider('x coordinate')
+        .appendField('point (');
+    this.appendValueInput('Y')
+        .setAriaLabelProvider('y coordinate')
+        .appendField(',');
+    this.appendDummyInput()
+        .appendField(')');
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+Passing a function instead of a string lets you build the label dynamically, for
+example from the block's current field values. The function receives the
+`Input` and returns a string (or `null` to fall back to the default label).
+
+<Tabs groupId="javascript">
+  <TabItem value="javascript" label="JavaScript" default>
+  ```js
+  init: function() {
+    // ...
+    this.appendValueInput('DURATION')
+        .setAriaLabelProvider((input) => {
+          const units = input.getSourceBlock().getFieldValue('UNITS');
+          return `duration in ${units}`;
+        })
+        .appendField('wait');
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+To provide a localized label, pass a string containing a
+[`Blockly.Msg`](/guides/configure/translations) reference of the form
+`%{BKY_...}`. Blockly replaces the reference with the corresponding message at
+render time.
+
+<Tabs groupId="javascript">
+  <TabItem value="javascript" label="JavaScript" default>
+  ```js
+  init: function() {
+    // ...
+    this.appendValueInput('X')
+        .setAriaLabelProvider('%{BKY_POINT_X_ARIA_LABEL}')
+        .appendField('point (');
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+You can set the same labels [in JSON](/guides/create-custom-blocks/define/structure-json#input-labels).
+
 ## Append fields
 
 Once an input has been created and appended to a block with `appendInput`, one
@@ -120,6 +200,76 @@ The `appendField('hello')` call is actually a shortcut for using an explicit
 The only time one would wish to use the constructor is when specifying a
 class name so that the label may be styled using a CSS rule.
 
+### Field labels
+
+Similar to inputs, every field has an accessibility label. The default label is
+determined by the type and value of the field, in the form
+`<type>: <value>`. For example, a `FieldNumber` with the value 123 is labeled
+`number: 123`.
+
+For some blocks, you might want to use a more specific description for the type
+of field than simply "number" or "dropdown". A block that sets the speed of a
+motor might want to label its number field as "speed", for example, so that a
+screen reader announces `speed: 100` instead of `number: 100`.
+
+There are two ways to set the type name for a particular field instance on a
+block.
+
+The simplest is to pass an `ariaTypeName` in the field's constructor
+configuration object. This object is the field's last constructor argument (its
+position depends on the field type), and is where you configure other field
+options too.
+
+<Tabs groupId="javascript">
+  <TabItem value="javascript" label="JavaScript" default>
+  ```js
+  init: function() {
+    // ...
+    this.appendDummyInput()
+        .appendField('set motor speed to')
+        .appendField(
+            new Blockly.FieldNumber(
+                100, // value
+                0, // min
+                255, // max
+                undefined, // precision
+                undefined, // validator
+                {ariaTypeName: 'speed'}, // config
+            ),
+            'SPEED');
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+Alternatively, call `setAriaTypeName` on the field:
+
+<Tabs groupId="javascript">
+  <TabItem value="javascript" label="JavaScript" default>
+  ```js
+  init: function() {
+    // ...
+    const speed = new Blockly.FieldNumber(100, 0, 255);
+    speed.setAriaTypeName('speed');
+    this.appendDummyInput()
+        .appendField('set motor speed to')
+        .appendField(speed, 'SPEED');
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+Either way, the type name may contain a
+[`Blockly.Msg`](/guides/configure/translations) reference of the form
+`%{BKY_...}` for localization, the same as input labels and role descriptions.
+
+To set the label for all instances of a particular type of field, override
+`getAriaTypeName` in a [custom
+field](/guides/create-custom-blocks/fields/customizing-fields/creating#aria-value)
+instead of setting it per instance.
+
+You can set the type name [in JSON](/guides/create-custom-blocks/define/structure-json#field-labels) as well.
+
 ## Connection checks
 
 <Tabs groupId="javascript">
@@ -163,3 +313,70 @@ and right are reversed. Thus `Blockly.inputs.Align.RIGHT` would align fields to
 the left.
 
 [custom-inputs]: /guides/create-custom-blocks/inputs/creating-custom-inputs
+
+## Accessibility role descriptions
+
+All blocks have an [`aria-roledescription`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-roledescription)
+so that screen readers announce the block with a useful role rather than the
+default "graphics element".
+
+The default roles Blockly uses are based on the connections available on a
+block. They are:
+
+- `container` (has at least one statement input)
+- `value` (has an output connection)
+- `statement` (all other blocks)
+
+These role descriptions are localized. Note that we do not include the word
+"block" in the role description, as feedback from users was that including the
+word "block" was too repetitive and noisy in the screen reader output.
+
+### Custom role descriptions
+
+In some situations, you may want to set a custom role description on your custom
+blocks. We recommend that in most cases you use the default role descriptions
+rather than setting a custom role description for every block. Generally, the
+text on the block, forming the aria label for it, should tell users what the
+block does. The role description gives users a hint about the shape of the block
+and what kind of connections it can form.
+
+If you have blocks that are a different shape from other blocks, that may be a
+good use case for setting a custom role description. For example, boolean blocks
+in the Zelos renderer have a hexagonal shape and can only be put into certain
+input connections, so they are different from other "value" blocks. You can set
+a custom role description by calling `setAriaRoleDescriptionProvider` in the
+block definition. As with input labels, you can pass either a string or a
+function that returns a string.
+
+<Tabs groupId="javascript">
+  <TabItem value="javascript" label="JavaScript" default>
+  ```js
+  init: function() {
+    // ...
+    this.setAriaRoleDescriptionProvider('boolean');
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+To localize the role description, pass a string containing a `Blockly.Msg`
+reference of the form `%{BKY_...}`; Blockly replaces it at render time.
+
+<Tabs groupId="javascript">
+  <TabItem value="javascript" label="JavaScript" default>
+  ```js
+  init: function() {
+    // ...
+    this.setAriaRoleDescriptionProvider('%{BKY_BOOLEAN_ROLE_DESCRIPTION}');
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+You can set a custom role description [in JSON](/guides/create-custom-blocks/define/structure-json#role-descriptions) as well.
+
+:::note
+By default, Blockly does not set boolean blocks in Zelos to a "boolean" role
+description, as not all users will be familiar with this term. However, you can
+do this in your own application if the term makes sense for your users.
+:::

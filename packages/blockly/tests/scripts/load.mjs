@@ -118,7 +118,12 @@ export function loadScript(src) {
     const script = document.createElement('script');
     script.src = src;
     script.onload = resolve;
-    script.onerror = reject;
+    script.onerror = () =>
+      reject(
+        new Error(
+          `Failed to load script "${src}" (does the file exist / was it built?)`,
+        ),
+      );
     document.getElementsByTagName('head')[0].appendChild(script);
   });
 }

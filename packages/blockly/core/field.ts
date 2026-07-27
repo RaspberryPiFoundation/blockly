@@ -254,7 +254,7 @@ export abstract class Field<T = any>
       this.setTooltip(parsing.replaceMessageReferences(config.tooltip));
     }
     if (config.ariaTypeName) {
-      this.ariaTypeName = config.ariaTypeName;
+      this.setAriaTypeName(config.ariaTypeName);
     }
   }
 
@@ -316,6 +316,21 @@ export abstract class Field<T = any>
    */
   getAriaTypeName(): string | null {
     return this.ariaTypeName || null;
+  }
+
+  /**
+   * Sets the ARIA-friendly label representation of this field's type.
+   *
+   * Implementations are responsible for, and encouraged to, set a localized
+   * version of the ARIA representation of the field's type. To that end, the
+   * provided value may contain message references of the form `%{BKY_...}`
+   * (e.g. `%{BKY_MY_FIELD_ARIA_TYPE}`), which are replaced with the
+   * corresponding `Blockly.Msg` value.
+   *
+   * @param ariaTypeName An ARIA representation of the field's type.
+   */
+  setAriaTypeName(ariaTypeName: string) {
+    this.ariaTypeName = parsing.replaceMessageReferences(ariaTypeName);
   }
 
   /**
