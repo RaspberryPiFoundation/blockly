@@ -116,5 +116,6 @@
 	"DIALOG_OK": "ٹھیک ہے",
 	"DIALOG_CANCEL": "منسوخ",
 	"UNKNOWN": "نامعلوم",
-	"SHORTCUTS_GENERAL": "عمومی"
+	"SHORTCUTS_GENERAL": "عمومی",
+	"FIELD_BITMAP_PIXEL_OFF": "بند"
 }

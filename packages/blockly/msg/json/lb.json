@@ -150,6 +150,7 @@
 	"PROCEDURES_CALL_BEFORE_PARAMS": "mat:",
 	"PROCEDURES_DEFNORETURN_COMMENT": "Dës Funktioun beschreiwen...",
 	"PROCEDURES_DEFRETURN_RETURN": "zeréck",
+	"PROCEDURES_MUTATORARG_TITLE": "Inputnumm:",
 	"PROCEDURES_CREATE_DO": "'%1' uleeën",
 	"PROCEDURES_IFRETURN_WARNING": "Opgepasst: Dëse Block däerf nëmmen bannent enger Funktiounsdefitioun benotzt ginn.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Sot eppes...",
@@ -172,10 +173,16 @@
 	"BLOCK_LABEL_DISABLED": "desaktivéiert",
 	"BLOCK_LABEL_COLLAPSED": "zesummegeklappt",
 	"BLOCK_LABEL_VALUE": "Wäert",
+	"ARIA_TYPE_FIELD_INPUT": "Input",
+	"ARIA_TYPE_FIELD_TEXT_INPUT_ARGUMENT": "Inputnumm",
 	"ICON_LABEL_MUTATOR_CLOSED": "Dëse Block änneren",
 	"CURRENT_BLOCK_ANNOUNCEMENT": "Aktuelle Block: %1",
+	"ARIA_LABEL_ADD_INPUT": "Input derbäisetzen",
+	"ARIA_LABEL_REMOVE_INPUT": "Input ewechhuelen",
 	"ARIA_TYPE_FIELD_ANGLE": "Wénkel",
 	"ARIA_LABEL_FIELD_ANGLE": "%1 Grad",
 	"ARIA_TYPE_FIELD_DATE": "Datum",
-	"ARIA_TYPE_FIELD_COLOUR": "Faarf"
+	"ARIA_TYPE_FIELD_COLOUR": "Faarf",
+	"FIELD_BITMAP_PIXEL_ON": "un",
+	"FIELD_BITMAP_PIXEL_OFF": "aus"
 }
