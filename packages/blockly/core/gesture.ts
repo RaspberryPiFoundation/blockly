@@ -975,9 +975,17 @@ export class Gesture {
    * @internal
    */
   setStartBlock(block: BlockSvg) {
-    // If the gesture already went through a block child, don't set the start
-    // block.
-    if (!this.startBlock && !this.startBubble && !this.startIcon) {
+    // If the gesture already went through a clickable block child, don't set
+    // the start block.
+    if (
+      !this.startBlock &&
+      !this.startBubble &&
+      (!this.startIcon ||
+        (block.isInFlyout &&
+          !this.startIcon.isClickableInFlyout?.(
+            !!block.workspace.getFlyout()?.autoClose,
+          )))
+    ) {
       this.startBlock = block;
       if (block.isInFlyout && block !== block.getRootBlock()) {
         this.setTargetBlock(block.getRootBlock());
