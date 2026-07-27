@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {isFocusableNode} from '../../../build/src/core/interfaces/i_focusable_node.js';
-import {hasBubble} from '../../../build/src/core/interfaces/i_has_bubble.js';
-import {isIcon} from '../../../build/src/core/interfaces/i_icon.js';
-import {isSerializable} from '../../../build/src/core/interfaces/i_serializable.js';
+import {isFocusableNode} from '#core/interfaces/i_focusable_node.js';
+import {hasBubble} from '#core/interfaces/i_has_bubble.js';
+import {isIcon} from '#core/interfaces/i_icon.js';
+import {isSerializable} from '#core/interfaces/i_serializable.js';
 
 export class MockFocusable {
   getFocusableElement() {}

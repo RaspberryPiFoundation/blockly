@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {EventType} from '../../build/src/core/events/type.js';
-import * as eventUtils from '../../build/src/core/events/utils.js';
-import {assert} from '../../node_modules/chai/index.js';
+import {EventType} from '#core/events/type.js';
+import * as eventUtils from '#core/events/utils.js';
+import {assert} from 'chai';
 import {
   defineBasicBlockWithField,
   defineMutatorBlocks,

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {assert} from '../../node_modules/chai/index.js';
+import {assert} from 'chai';
 import {
   addBlockTypeToCleanup,
   createGenUidStubWithReturns,

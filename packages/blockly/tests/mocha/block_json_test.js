@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {Align} from '../../build/src/core/inputs/align.js';
-import {assert} from '../../node_modules/chai/index.js';
+import {Align} from '#core/inputs/align.js';
+import {assert} from 'chai';
 import {
   sharedTestSetup,
   sharedTestTeardown,

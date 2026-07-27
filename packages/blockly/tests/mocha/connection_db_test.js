@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {ConnectionType} from '../../build/src/core/connection_type.js';
-import * as idGenerator from '../../build/src/core/utils/idgenerator.js';
-import {assert} from '../../node_modules/chai/index.js';
+import {ConnectionType} from '#core/connection_type.js';
+import * as idGenerator from '#core/utils/idgenerator.js';
+import {assert} from 'chai';
 import {
   sharedTestSetup,
   sharedTestTeardown,

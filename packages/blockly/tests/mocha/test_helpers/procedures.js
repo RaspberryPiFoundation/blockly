@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {ConnectionType} from '../../../build/src/core/connection_type.js';
-import {VariableModel} from '../../../build/src/core/variable_model.js';
-import {assert} from '../../../node_modules/chai/index.js';
+import {ConnectionType} from '#core/connection_type.js';
+import {VariableModel} from '#core/variable_model.js';
+import {assert} from 'chai';
 
 /**
  * Asserts that the procedure definition or call block has the expected var

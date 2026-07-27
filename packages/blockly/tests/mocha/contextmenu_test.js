@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {callbackFactory} from '../../build/src/core/contextmenu.js';
-import * as xmlUtils from '../../build/src/core/utils/xml.js';
-import {assert} from '../../node_modules/chai/index.js';
+import {callbackFactory} from '#core/contextmenu.js';
+import * as xmlUtils from '#core/utils/xml.js';
+import {assert} from 'chai';
 import {
   defineRowBlock,
   defineStackBlock,

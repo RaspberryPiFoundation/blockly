@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {assert} from '../../../node_modules/chai/index.js';
+import {assert} from 'chai';
 
 /**
  * Check if a variable with the given values exists.

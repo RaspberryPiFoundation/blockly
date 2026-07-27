@@ -5,6 +5,20 @@
     <title>Mocha Tests for Blockly</title>
 
     <link href="../../node_modules/mocha/mocha.css" rel="stylesheet" />
+
+    <!-- Resolve the bare/subpath specifiers used by the test modules so the
+         same import statements work in both the browser and under Node. The
+         "#core/" and "#generators/" prefixes mirror the "imports" field in
+         package.json (used by the Node runner). -->
+    <script type="importmap">
+      {
+        "imports": {
+          "chai": "../../node_modules/chai/index.js",
+          "#core/": "../../build/src/core/",
+          "#generators/": "../../build/src/generators/"
+        }
+      }
+    </script>
   </head>
   <style>
     #blocklyDiv {
@@ -273,7 +287,7 @@
       import * as Blockly from '../../build/blockly.loader.mjs';
       import '../../build/blocks.loader.mjs';
       import {javascriptGenerator} from '../../build/javascript.loader.mjs';
-      import {config} from '../../node_modules/chai/index.js';
+      import {config} from 'chai';
       config.showDiff = false;
 
       // Import tests.

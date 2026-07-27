@@ -19,6 +19,10 @@
   "browser": {
     "jsdom": false
   },
+  "imports": {
+    "#core/*": "./build/src/core/*",
+    "#generators/*": "./build/src/generators/*"
+  },
   "scripts": {
     "build": "gulp build",
     "build-debug": "gulp build --verbose --debug",

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as eventUtils from '../../../build/src/core/events/utils.js';
-import {assert} from '../../../node_modules/chai/index.js';
+import * as eventUtils from '#core/events/utils.js';
+import {assert} from 'chai';
 import {runSerializationTestSuite} from '../test_helpers/serialization.js';
 import {
   sharedTestSetup,

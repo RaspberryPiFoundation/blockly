@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {FocusManager} from '../../build/src/core/focus_manager.js';
-import {FocusableTreeTraverser} from '../../build/src/core/utils/focusable_tree_traverser.js';
-import {assert} from '../../node_modules/chai/index.js';
+import {FocusManager} from '#core/focus_manager.js';
+import {FocusableTreeTraverser} from '#core/utils/focusable_tree_traverser.js';
+import {assert} from 'chai';
 import {
   sharedTestSetup,
   sharedTestTeardown,

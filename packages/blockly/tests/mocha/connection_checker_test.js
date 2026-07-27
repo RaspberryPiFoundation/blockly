@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {ConnectionType} from '../../build/src/core/connection_type.js';
-import {assert} from '../../node_modules/chai/index.js';
+import {ConnectionType} from '#core/connection_type.js';
+import {assert} from 'chai';
 import {
   sharedTestSetup,
   sharedTestTeardown,

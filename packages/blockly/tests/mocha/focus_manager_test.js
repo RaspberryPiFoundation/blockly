@@ -4,11 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {
-  FocusManager,
-  getFocusManager,
-} from '../../build/src/core/focus_manager.js';
-import {assert} from '../../node_modules/chai/index.js';
+import {FocusManager, getFocusManager} from '#core/focus_manager.js';
+import {assert} from 'chai';
 import {
   sharedTestSetup,
   sharedTestTeardown,

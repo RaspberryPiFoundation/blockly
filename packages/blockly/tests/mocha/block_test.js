@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {ConnectionType} from '../../build/src/core/connection_type.js';
-import {EventType} from '../../build/src/core/events/type.js';
-import * as eventUtils from '../../build/src/core/events/utils.js';
-import {IconType} from '../../build/src/core/icons/icon_types.js';
-import {EndRowInput} from '../../build/src/core/inputs/end_row_input.js';
-import {isCommentIcon} from '../../build/src/core/interfaces/i_comment_icon.js';
-import {Size} from '../../build/src/core/utils/size.js';
-import {assert} from '../../node_modules/chai/index.js';
+import {ConnectionType} from '#core/connection_type.js';
+import {EventType} from '#core/events/type.js';
+import * as eventUtils from '#core/events/utils.js';
+import {IconType} from '#core/icons/icon_types.js';
+import {EndRowInput} from '#core/inputs/end_row_input.js';
+import {isCommentIcon} from '#core/interfaces/i_comment_icon.js';
+import {Size} from '#core/utils/size.js';
+import {assert} from 'chai';
 import {createRenderedBlock} from './test_helpers/block_definitions.js';
 import {
   createChangeListenerSpy,

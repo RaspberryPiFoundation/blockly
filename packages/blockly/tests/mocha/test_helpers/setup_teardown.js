@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as eventUtils from '../../../build/src/core/events/utils.js';
-import {FocusManager} from '../../../build/src/core/focus_manager.js';
+import * as eventUtils from '#core/events/utils.js';
+import {FocusManager} from '#core/focus_manager.js';
 
 /**
  * Safely disposes of Blockly workspace, logging any errors.

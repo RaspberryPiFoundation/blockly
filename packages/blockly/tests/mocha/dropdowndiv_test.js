@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {Rect} from '../../build/src/core/utils/rect.js';
-import * as style from '../../build/src/core/utils/style.js';
-import {assert} from '../../node_modules/chai/index.js';
+import {Rect} from '#core/utils/rect.js';
+import * as style from '#core/utils/style.js';
+import {assert} from 'chai';
 import {
   sharedTestSetup,
   sharedTestTeardown,
@@ -196,6 +196,9 @@ suite('DropDownDiv', function () {
     });
 
     test('sets the dropdowndiv as owned by the workspace', function () {
+      // Set the bounds element explicitly rather than relying on a previous
+      // test having set this module-global, so this test is order-independent.
+      Blockly.DropDownDiv.setBoundsElement(document.body);
       const block = this.setUpBlockWithField();
       const field = Array.from(block.getFields())[0];
 

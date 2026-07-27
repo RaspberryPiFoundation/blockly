@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {getInputLabelsSubset} from '../../build/src/core/block_aria_composer.js';
-import {assert} from '../../node_modules/chai/index.js';
+import {getInputLabelsSubset} from '#core/block_aria_composer.js';
+import {assert} from 'chai';
 import {
   sharedTestSetup,
   sharedTestTeardown,

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {EventType} from '../../build/src/core/events/type.js';
-import {assert} from '../../node_modules/chai/index.js';
+import {EventType} from '#core/events/type.js';
+import {assert} from 'chai';
 import {defineBasicBlockWithField} from './test_helpers/block_definitions.js';
 import {assertEventFired, assertEventNotFired} from './test_helpers/events.js';
 import {

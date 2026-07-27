@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {KeyCodes} from '../../../build/src/core/utils/keycodes.js';
+import {KeyCodes} from '#core/utils/keycodes.js';
 
 /**
  * Triggers pointer event on target.
