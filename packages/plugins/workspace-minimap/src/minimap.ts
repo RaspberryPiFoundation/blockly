@@ -21,6 +21,9 @@ const blockEvents = new Set<string>([
   Blockly.Events.BLOCK_DELETE,
   Blockly.Events.BLOCK_DRAG,
   Blockly.Events.BLOCK_MOVE,
+  Blockly.Events.VAR_CREATE,
+  Blockly.Events.VAR_DELETE,
+  Blockly.Events.VAR_RENAME,
 ]);
 
 /** Default primary-workspace pixels to pan per arrow keypress. */

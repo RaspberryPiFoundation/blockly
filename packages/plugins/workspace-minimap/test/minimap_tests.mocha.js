@@ -435,6 +435,45 @@ suite('Positioning the minimap in the primary workspace', function () {
   });
 });
 
+suite('Mirroring events', function () {
+  setup(function () {
+    this.jsdomCleanup = require('jsdom-global')(
+      '<!DOCTYPE html><div id="blocklyDiv"></div>',
+    );
+    global.SVGElement = window.SVGElement;
+    window.requestAnimationFrame = (callback) => setTimeout(callback, 0);
+    window.cancelAnimationFrame = (id) => clearTimeout(id);
+    this.workspace = Blockly.inject('blocklyDiv', {
+      move: {scrollbars: true},
+    });
+    this.minimap = new Minimap(this.workspace);
+    this.minimap.init();
+  });
+
+  teardown(function () {
+    this.minimap.dispose();
+    this.workspace.dispose();
+    this.jsdomCleanup();
+  });
+
+  test('Renaming a variable updates the minimap', async function () {
+    const variable = this.workspace.getVariableMap().createVariable('a');
+    const block = this.workspace.newBlock('variables_set');
+    block.getField('VAR').setValue(variable.getId());
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    this.workspace.getVariableMap().renameVariable(variable, 'b');
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    const minimapBlock = this.minimap.minimapWorkspace.getBlockById(block.id);
+    assert.equal(
+      minimapBlock.getField('VAR').getText(),
+      'b',
+      'Minimap block should show the renamed variable',
+    );
+  });
+});
+
 suite('Keyboard navigation', function () {
   setup(function () {
     this.jsdomCleanup = require('jsdom-global')(
