@@ -177,6 +177,7 @@ export default defineConfig(
       'packages/docs/.docusaurus/**',
       // Plugins
       'packages/plugins/dev-tools/src/index.d.ts',
+      'packages/plugins/**/golden/*',
     ],
   },
   jsdoc.configs['flat/recommended'],

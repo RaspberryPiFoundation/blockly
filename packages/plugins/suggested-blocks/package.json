@@ -46,7 +46,7 @@
     "sinon": "^22.0.0"
   },
   "peerDependencies": {
-    "blockly": "^13.1.1"
+    "blockly": "^13.2.0"
   },
   "publishConfig": {
     "access": "public"

@@ -55,7 +55,7 @@
     "@types/dat.gui": "^0.7.13"
   },
   "peerDependencies": {
-    "blockly": "^13.1.1"
+    "blockly": "^13.2.0"
   },
   "publishConfig": {
     "access": "public"
