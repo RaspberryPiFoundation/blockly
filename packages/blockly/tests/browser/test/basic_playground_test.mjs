@@ -250,6 +250,7 @@ suite('Focused nodes are scrolled into bounds', function () {
     await this.browser.execute(() => {
       window.focusScrollTest = async (testcase) => {
         const workspace = Blockly.getMainWorkspace();
+        Blockly.getFocusManager().focusNode(workspace);
         const metrics = workspace.getMetricsManager();
         const initialViewport = metrics.getViewMetrics(true);
         const elementBounds = await testcase(workspace);

@@ -179,11 +179,14 @@ export async function getSelectedBlockElement(browser) {
 /**
  * @param browser The active WebdriverIO Browser object.
  * @param id The ID of the Blockly block to search for.
+ * @param toolbox True if this block is in the toolbox (which must be open already).
  * @return A Promise that resolves to the root SVG element of the block with
  *     the given ID, as an interactable browser element.
  */
-export async function getBlockElementById(browser, id) {
-  const elem = await browser.$(`[data-id="${id}"]`);
+export async function getBlockElementById(browser, id, toolbox) {
+  const elem = await browser.$(
+    `${toolbox ? '' : '.blocklySvg'} [data-id="${id}"]`,
+  );
   elem['id'] = id;
   return elem;
 }
@@ -245,7 +248,7 @@ async function getTargetableBlockElement(browser, blockId, toolbox) {
     toolbox,
   );
 
-  return await getBlockElementById(browser, id);
+  return await getBlockElementById(browser, id, toolbox);
 }
 
 /**
@@ -584,9 +587,14 @@ export async function contextMenuSelect(browser, block, itemText) {
   await clickBlock(browser, block.id, {button: 2});
 
   await browser.pause(PAUSE_TIME);
-  const item = await browser.$(`div=${itemText}`);
-  await item.waitForExist();
-  await item.click();
+  const items = await browser.$$('.blocklyMenuItemContent');
+  for (const item of items) {
+    const text = await item.getText();
+    if (text.includes(itemText)) {
+      await item.click();
+      break;
+    }
+  }
 
   await browser.pause(PAUSE_TIME);
 }
@@ -599,7 +607,9 @@ export async function contextMenuSelect(browser, block, itemText) {
  * @return A Promise that resolves when the actions are complete.
  */
 export async function openMutatorForBlock(browser, block) {
-  const icon = await browser.$(`[data-id="${block.id}"] > g.blocklyIconGroup`);
+  const icon = await browser.$(
+    `.blocklySvg [data-id="${block.id}"] > g.blocklyIconGroup`,
+  );
   await icon.click();
 }
 

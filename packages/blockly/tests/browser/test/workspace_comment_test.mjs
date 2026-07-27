@@ -179,7 +179,9 @@ suite('Workspace comments', function () {
       const textArea = await this.browser.$('.blocklyComment .blocklyTextarea');
       await textArea.addValue('test text');
       // Deselect text area to fire browser change event.
-      await this.browser.$('.blocklyWorkspace').click();
+      await this.browser.execute(() => {
+        Blockly.getFocusManager().focusNode(Blockly.getMainWorkspace());
+      });
 
       chai.assert.equal(
         await getCommentText(this.browser, commentId),
