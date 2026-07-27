@@ -194,6 +194,12 @@ export enum State {
    */
   LIVE = 'live',
   /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-pressed.
+   *
+   * Value: one of {true, false, mixed, undefined}.
+   */
+  PRESSED = 'pressed',
+  /**
    * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-roledescription.
    *
    * Value: a string.
