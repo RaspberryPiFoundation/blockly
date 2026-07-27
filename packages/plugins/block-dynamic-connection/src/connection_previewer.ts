@@ -113,10 +113,8 @@ export function decoratePreviewer(
         return;
       }
 
-      const strategy = this.draggedBlock.getDragStrategy() as {
-        cacheAllConnectionPairs?: () => void;
-      };
-      if (typeof strategy.cacheAllConnectionPairs === 'function') {
+      const strategy = this.draggedBlock.getDragStrategy();
+      if (strategy instanceof Blockly.dragging.BlockDragStrategy) {
         strategy.cacheAllConnectionPairs();
       }
     }
