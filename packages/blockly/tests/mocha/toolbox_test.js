@@ -332,6 +332,23 @@ suite('Toolbox', function () {
         assert.isFalse(this.parentCategory.isExpanded());
         assert.isFalse(this.flyout.isVisible());
       });
+      test('resizing a toolbox item with an auto-closing flyout visible should not offset the workspace by the flyout size', function () {
+        clickCategory(this.parentCategory);
+        assert.isTrue(this.flyout.isVisible());
+        assert.isAbove(this.flyout.getWidth(), 0);
+
+        const workspace = this.toolbox.workspace_;
+        const translateSpy = sinon.spy(workspace, 'translate');
+        this.toolbox.handleToolboxItemResize();
+
+        const expectedX =
+          workspace.scrollX +
+          this.toolbox.HtmlDiv.getBoundingClientRect().width;
+        assert.deepEqual(translateSpy.firstCall.args, [
+          expectedX,
+          workspace.scrollY,
+        ]);
+      });
     });
   });
 
