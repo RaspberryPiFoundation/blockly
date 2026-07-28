@@ -201,7 +201,11 @@ export class RenderedWorkspaceComment
     this.disposing = true;
     const focusManager = getFocusManager();
     if (focusManager.getFocusedNode() === this) {
-      setTimeout(() => focusManager.focusTree(this.workspace), 0);
+      setTimeout(() => {
+        if (focusManager.isRegistered(this.workspace)) {
+          focusManager.focusTree(this.workspace);
+        }
+      }, 0);
     }
     if (!this.view.isDeadOrDying()) this.view.dispose();
 
