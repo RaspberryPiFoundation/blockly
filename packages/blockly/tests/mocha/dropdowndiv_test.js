@@ -36,6 +36,7 @@ suite('DropDownDiv', function () {
   teardown(function () {
     sharedTestTeardown.call(this);
     document.getElementById('blocklyDiv').style.visibility = 'hidden';
+    Blockly.common.setParentContainer(null);
   });
 
   suite('Positioning', function () {

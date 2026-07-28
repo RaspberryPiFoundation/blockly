@@ -34,6 +34,7 @@ suite('WidgetDiv', function () {
   teardown(function () {
     sharedTestTeardown.call(this);
     document.getElementById('blocklyDiv').style.visibility = 'hidden';
+    Blockly.common.setParentContainer(null);
   });
 
   suite('positionWithAnchor', function () {

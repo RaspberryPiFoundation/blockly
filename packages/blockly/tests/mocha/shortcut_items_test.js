@@ -1924,6 +1924,14 @@ suite('Keyboard Shortcut Items', function () {
       Blockly.utils.KeyCodes.CTRL_CMD,
     ]);
 
+    setup(function () {
+      Blockly.common.setParentContainer(document.firstElementChild);
+    });
+
+    teardown(function () {
+      Blockly.common.setParentContainer(null);
+    });
+
     test('Displays tooltip on a block using the keyboard shortcut', function () {
       const block = this.workspace.newBlock('controls_if');
       Blockly.getFocusManager().focusNode(block);

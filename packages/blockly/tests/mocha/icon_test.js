@@ -390,6 +390,7 @@ suite('Icon', function () {
 
   suite('Contextual menus', function () {
     setup(function () {
+      Blockly.common.setParentContainer(document.firstElementChild);
       this.workspace = Blockly.inject('blocklyDiv', {});
       Blockly.icons.registry.register(
         new Blockly.icons.IconType('test'),
@@ -402,6 +403,7 @@ suite('Icon', function () {
 
     teardown(function () {
       sharedTestTeardown.call(this);
+      Blockly.common.setParentContainer(null);
     });
 
     test('are shown when icons are right clicked', function () {
