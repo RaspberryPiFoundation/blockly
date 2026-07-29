@@ -7,67 +7,11 @@
 import {FocusManager} from '#core/focus_manager.js';
 import {FocusableTreeTraverser} from '#core/utils/focusable_tree_traverser.js';
 import {assert} from 'chai';
+import {FocusableTreeImpl} from './test_helpers/focusable_tree.js';
 import {
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
-
-class FocusableNodeImpl {
-  constructor(element, tree) {
-    this.element = element;
-    this.tree = tree;
-  }
-
-  getFocusableElement() {
-    return this.element;
-  }
-
-  getFocusableTree() {
-    return this.tree;
-  }
-
-  onNodeFocus() {}
-
-  onNodeBlur() {}
-
-  canBeFocused() {
-    return true;
-  }
-}
-
-class FocusableTreeImpl {
-  constructor(rootElement, nestedTrees) {
-    this.nestedTrees = nestedTrees;
-    this.idToNodeMap = {};
-    this.rootNode = this.addNode(rootElement);
-  }
-
-  addNode(element) {
-    const node = new FocusableNodeImpl(element, this);
-    this.idToNodeMap[element.id] = node;
-    return node;
-  }
-
-  getRootFocusableNode() {
-    return this.rootNode;
-  }
-
-  getRestoredFocusableNode() {
-    return null;
-  }
-
-  getNestedTrees() {
-    return this.nestedTrees;
-  }
-
-  lookUpFocusableNode(id) {
-    return this.idToNodeMap[id];
-  }
-
-  onTreeFocus() {}
-
-  onTreeBlur() {}
-}
 
 suite('FocusableTreeTraverser', function () {
   setup(function () {
