@@ -4,8 +4,6 @@
     <meta charset="utf-8" />
     <title>Mocha Tests for Blockly</title>
 
-    <link href="../../node_modules/mocha/mocha.css" rel="stylesheet" />
-
     <!-- Resolve the bare/subpath specifiers used by the test modules so the
          same import statements work in both the browser and under Node. The
          "#core/" and "#generators/" prefixes mirror the "imports" field in
@@ -14,6 +12,9 @@
       {
         "imports": {
           "chai": "../../node_modules/chai/index.js",
+          "mocha": "../../node_modules/mocha/mocha.js",
+          "mocha/": "../../node_modules/mocha/",
+          "sinon": "../../node_modules/sinon/pkg/sinon-esm.js",
           "#core/": "../../build/src/core/",
           "#generators/": "../../build/src/generators/"
         }
@@ -153,17 +154,6 @@
       </g>
       <g id="nonTreeGroupForEphemeralFocus"></g>
     </svg>
-    <!-- Load mocha et al. before Blockly and the test modules so that
-         we can safely import the test modules that make calls
-         to (e.g.)  suite() at the top level. -->
-    <script src="../../node_modules/mocha/mocha.js"></script>
-    <script src="../../node_modules/sinon/pkg/sinon.js"></script>
-    <script>
-      mocha.setup({
-        ui: 'tdd',
-        failZero: true,
-      });
-    </script>
     <script>
       (function () {
         const failureDiv = document.getElementById('failureCount');
@@ -288,10 +278,20 @@
       import '../../build/blocks.loader.mjs';
       import {javascriptGenerator} from '../../build/javascript.loader.mjs';
       import {config} from 'chai';
+      import 'mocha';
+      import mochaStyles from 'mocha/mocha.css' with {type: 'css'};
+      import sinon from 'sinon';
+
       config.showDiff = false;
+      globalThis.sinon = sinon;
+      document.adoptedStyleSheets.push(mochaStyles);
+      mocha.setup({
+        ui: 'tdd',
+        failZero: true,
+      });
 
       // Import tests.
-      import './test-modules.generated.mjs';
+      await import('./test-modules.generated.mjs');
 
       window.__blocklyTestLoadState.markImportsComplete();
 
