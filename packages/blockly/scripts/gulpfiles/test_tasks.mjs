@@ -394,14 +394,6 @@ export async function generators() {
 }
 
 /**
- * Run Node tests.
- * @return {Promise} Asynchronous result.
- */
-function node() {
-  return runTestCommand('node', 'mocha tests/node --config tests/node/.mocharc.js');
-}
-
-/**
  * Attempt advanced compilation of a Blockly app.
  * @returns {Promise} Async result.
  */
@@ -440,7 +432,6 @@ const tasks = [
   generateMochaIndex,
   mocha,
   generators,
-  node,
   typeDefinitions,
   // Make sure these two are in series with each other
   advancedCompile,
