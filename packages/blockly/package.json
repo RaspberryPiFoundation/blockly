@@ -46,6 +46,7 @@
     "tsc": "gulp tsc",
     "test": "gulp test",
     "test:browser": "npx mocha --config tests/browser/.mocharc.js",
+    "test:mocha:node": "npx mocha --config tests/mocha/.mocharc.node.cjs \"tests/mocha/**/*_test.js\"",
     "test:generators": "gulp testGenerators",
     "test:mocha:interactive": "npm run build && concurrently -n tsc,server \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"gulp interactiveMocha\"",
     "test:compile:advanced": "gulp buildAdvancedCompilationTest --debug",
