@@ -167,6 +167,14 @@ function renamings() {
 }
 
 /**
+ * Run message validation test.
+ * @return {Promise} Asynchronous result.
+ */
+function messages() {
+  return runTestCommand('messages', 'tests/messages/validate-messages.mjs');
+}
+
+/**
  * Helper method for gzipping file.
  * @param {string} file Target file.
  * @return {Promise} Asynchronous result.
@@ -417,6 +425,7 @@ const tasks = [
   // Build must run before the remaining tasks
   build,
   renamings,
+  messages,
   mocha,
   generators,
   node,
