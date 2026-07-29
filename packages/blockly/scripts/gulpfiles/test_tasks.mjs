@@ -10,11 +10,12 @@
 /* eslint-env node */
 
 import asyncDone from 'async-done';
+import {spawnSync} from 'child_process';
+import * as fs from 'fs';
+import {globSync} from 'glob';
 import * as gulp from 'gulp';
 import gzip from 'gulp-gzip';
-import * as fs from 'fs';
 import * as path from 'path';
-import {spawnSync} from 'child_process';
 import {rimraf} from 'rimraf';
 
 import {RELEASE_DIR, TEST_TSC_OUTPUT_DIR} from './config.mjs';
@@ -264,6 +265,22 @@ async function metadata() {
 }
 
 /**
+ * Generates tests/mocha/test-modules.generated.mjs,
+ * the list of tests imported by the browser harness (tests/mocha/index.html).
+ * Keeping it generated from a glob means new *_test.js files are picked up
+ * automatically and the browser and Node runners stay in sync.
+ * @return {Promise} Asynchronous result.
+ */
+function generateMochaIndex() {
+  return runTestTask('generateMochaIndex', async () => {
+    const files = globSync('**/*_test.js', {cwd: 'tests/mocha'}).sort();
+
+    const body = files.map((f) => `import './${f}';`).join('\n') + '\n';
+    fs.writeFileSync('tests/mocha/test-modules.generated.mjs', body);
+  });
+}
+
+/**
  * Run Mocha tests inside a browser.
  * @return {Promise} Asynchronous result.
  */
@@ -277,16 +294,19 @@ function mocha() {
  * Run Mocha tests inside a browser and keep the browser open upon completion.
  * @return {Promise} Asynchronous result.
  */
-export function interactiveMocha() {
-  return runTestTask('interactiveMocha', () => {
-    return runMochaTestsInBrowser(false).then((result) => {
-      if (result) {
-        throw new Error('Mocha tests failed');
-      }
-      console.log('Mocha tests passed');
+export const interactiveMocha = gulp.series(
+  generateMochaIndex,
+  function interactiveMochaRun() {
+    return runTestTask('interactiveMocha', () => {
+      return runMochaTestsInBrowser(false).then((result) => {
+        if (result) {
+          throw new Error('Mocha tests failed');
+        }
+        console.log('Mocha tests passed');
+      });
     });
-  });
-}
+  },
+);
 
 /**
  * Helper method for comparison file.
@@ -417,6 +437,7 @@ const tasks = [
   // Build must run before the remaining tasks
   build,
   renamings,
+  generateMochaIndex,
   mocha,
   generators,
   node,
