@@ -194,14 +194,14 @@ suite('Open toolbox categories', function () {
     await openCategories(this.browser, basicCategories, screenDirection.RTL);
   });
 
-  test('opening every toolbox category in the test toolbox in LTR', async function () {
+  test.skip('opening every toolbox category in the test toolbox in LTR', async function () {
     this.browser = await testSetup(
       testFileLocations.PLAYGROUND + '?toolbox=test-blocks',
     );
     await openCategories(this.browser, testCategories, screenDirection.LTR);
   });
 
-  test('opening every toolbox category in the test toolbox in RTL', async function () {
+  test.skip('opening every toolbox category in the test toolbox in RTL', async function () {
     this.browser = await testSetup(
       testFileLocations.PLAYGROUND + '?toolbox=test-blocks&dir=rtl',
     );

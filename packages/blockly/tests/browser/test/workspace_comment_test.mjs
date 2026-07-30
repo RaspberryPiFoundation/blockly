@@ -13,9 +13,7 @@ suite('Workspace comments', function () {
   this.timeout(0);
 
   suiteSetup(async function () {
-    this.browser = await testSetup(
-      testFileLocations.PLAYGROUND + '?toolbox=test-blocks',
-    );
+    this.browser = await testSetup(testFileLocations.PLAYGROUND);
   });
 
   teardown(async function () {
