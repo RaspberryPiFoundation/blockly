@@ -7,6 +7,9 @@ name: commit lint & label
 jobs:
   commit-lint:
     runs-on: ubuntu-latest
+    # translatewiki PRs are retitled and labelled by translatewiki.yml, so
+    # skip them here to avoid a spurious commit-lint failure on their raw title.
+    if: ${{ !(github.event.pull_request.user.login == 'translatewiki' && github.event.pull_request.head.ref == 'translatewiki') }}
     env:
       PR_TITLE: ${{ github.event.pull_request.title }}
     permissions:
@@ -29,6 +32,8 @@ jobs:
 
   label:
     runs-on: ubuntu-latest
+    # translatewiki PRs are labelled by translatewiki.yml instead.
+    if: ${{ !(github.event.pull_request.user.login == 'translatewiki' && github.event.pull_request.head.ref == 'translatewiki') }}
     permissions:
       issues: write
       pull-requests: write

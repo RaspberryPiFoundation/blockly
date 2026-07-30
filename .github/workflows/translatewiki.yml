@@ -1,0 +1,63 @@
+name: translatewiki automation
+
+# Automation for the localisation PRs opened by the translatewiki.net bot.
+#
+# The bot opens a PR from the `translatewiki` branch with a title like
+# "Localisation updates from https://translatewiki.net." That title has no
+# conventional-commit type prefix and a trailing full stop, so it fails
+# commit-lint. This workflow retitles the PR to a lint-clean
+# "chore: Localisation updates from https://translatewiki.net" and applies the
+# "PR: chore" label. conventional-label.yml deliberately skips these PRs so
+# they don't get a spurious commit-lint failure on their raw title.
+
+on:
+  pull_request_target:
+    types:
+      - opened
+
+jobs:
+  translatewiki:
+    runs-on: ubuntu-latest
+    # Only run for the translatewiki bot's PRs, matching on both the author and
+    # the source branch.
+    if: ${{ github.event.pull_request.user.login == 'translatewiki' && github.event.pull_request.head.ref == 'translatewiki' }}
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Retitle and label translatewiki PR
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const {number: issue_number, title} = context.payload.pull_request;
+
+            // Conventional-commit types accepted by commitlint.config.mjs,
+            // optionally with a scope, e.g. "chore(deps):".
+            const typePrefix =
+              /^(build|chore|ci|docs|feat|fix|refactor|release|revert|test)(\([^)]*\))?!?:/;
+
+            // Strip trailing full stops / whitespace, then prepend "chore: "
+            // unless the title already starts with a conventional type.
+            let corrected = title.replace(/[.\s]+$/, '');
+            if (!typePrefix.test(corrected)) {
+              corrected = `chore: ${corrected}`;
+            }
+
+            if (corrected !== title) {
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: issue_number,
+                title: corrected,
+              });
+              core.info(`Retitled #${issue_number}: "${title}" -> "${corrected}"`);
+            } else {
+              core.info(`Title already clean for #${issue_number}: "${title}"`);
+            }
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number,
+              labels: ['PR: chore'],
+            });
