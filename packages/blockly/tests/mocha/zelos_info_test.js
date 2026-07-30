@@ -22,8 +22,7 @@ suite('Zelos RenderInfo', function () {
           {
             'type': 'field_image',
             'name': 'IMG',
-            'src':
-              'https://blockly-demo.appspot.com/static/tests/media/a.png',
+            'src': 'https://blockly-demo.appspot.com/static/tests/media/a.png',
             'width': 75,
             'height': 75,
             'alt': 'A',
