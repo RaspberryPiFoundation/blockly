@@ -661,6 +661,13 @@ export abstract class Field<T = any>
       dom.removeNode(this.fieldGroup_);
     }
 
+    const clickTarget = this.getClickTarget_();
+    if (clickTarget) {
+      Tooltip.unbindMouseEvents(clickTarget);
+      delete (clickTarget as any).tooltip;
+    }
+    this.tooltip = null;
+
     this.disposed = true;
   }
 
