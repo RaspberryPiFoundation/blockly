@@ -1,0 +1,9 @@
+{
+  "version": "13.2.0",
+  "npmClient": "npm",
+  "changelogPreset": {
+    "name": "conventionalcommits"
+  },
+  "ignoreChanges": ["**/package-lock.json"],
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json"
+}
