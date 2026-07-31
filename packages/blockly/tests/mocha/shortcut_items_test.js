@@ -2211,6 +2211,8 @@ suite('Keyboard Shortcut Items', function () {
         'jump_to_block_end',
         'jump_to_first_block',
         'jump_to_last_block',
+        'jump_to_previous_page',
+        'jump_to_next_page',
       ]) {
         Blockly.ShortcutRegistry.registry.unregister(shortcut);
       }
@@ -2402,7 +2404,10 @@ suite('Keyboard Shortcut Items', function () {
         );
         sinon.assert.calledWith(this.focusNodeSpy, lastBlock);
       });
-      test('PageUp has no effect', function () {
+      // Page Up and Page Down page through flyout items instead of jumping
+      // between stacks, which flyouts do not have. The paging behaviour itself
+      // is covered by keyboard_navigation_test.js, against a real flyout.
+      test('PageUp does not jump to the top of a stack', function () {
         this.workspace.internalIsFlyout = true;
         const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
         this.getFocusedNodeStub.returns(inListBlock);
@@ -2411,7 +2416,7 @@ suite('Keyboard Shortcut Items', function () {
         );
         sinon.assert.notCalled(this.focusNodeSpy);
       });
-      test('PageDown has no effect', function () {
+      test('PageDown does not jump to the bottom of a stack', function () {
         this.workspace.internalIsFlyout = true;
         const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
         this.getFocusedNodeStub.returns(inListBlock);

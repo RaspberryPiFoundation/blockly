@@ -95,6 +95,21 @@ We also provide optional navigation shortcuts to make navigating the workspace e
 | Ctrl/Cmd + Home | Jump to first block |
 | Ctrl/Cmd + End | Jump to last block |
 
+When focus is in the toolbox or the flyout, the same keys move between the
+items there instead:
+
+| Key | Action |
+| --- | --- |
+| Page Up | Jump to previous page |
+| Page Down | Jump to next page |
+| Ctrl/Cmd + Home | Jump to first item |
+| Ctrl/Cmd + End | Jump to last item |
+
+Paging moves focus to the last item that is currently visible and scrolls it to
+the edge of the viewport it moved towards, so that nothing between the old and
+new position is passed over unseen. Home and End keep their workspace meaning
+and do nothing in the toolbox or flyout.
+
 We recommend that you enable these for your application by calling:
 
 ```js

@@ -22,6 +22,10 @@ import {
   showCutHint,
   showScreenreaderModeHint,
 } from './hints.js';
+import {
+  type IBoundedElement,
+  isBoundedElement,
+} from './interfaces/i_bounded_element.js';
 import {hasContextMenu} from './interfaces/i_contextmenu.js';
 import {isCopyable as isICopyable} from './interfaces/i_copyable.js';
 import {isDeletable as isIDeletable} from './interfaces/i_deletable.js';
@@ -29,6 +33,7 @@ import {type IDraggable, isDraggable} from './interfaces/i_draggable.js';
 import {type IFlyout} from './interfaces/i_flyout.js';
 import {type IFocusableNode} from './interfaces/i_focusable_node.js';
 import {isSelectable} from './interfaces/i_selectable.js';
+import type {IToolbox} from './interfaces/i_toolbox.js';
 import {Direction, KeyboardMover} from './keyboard_nav/keyboard_mover.js';
 import {keyboardNavigationController} from './keyboard_navigation_controller.js';
 import {Msg} from './msg.js';
@@ -87,6 +92,8 @@ export enum names {
   JUMP_BLOCK_END = 'jump_to_block_end',
   JUMP_FIRST_BLOCK = 'jump_to_first_block',
   JUMP_LAST_BLOCK = 'jump_to_last_block',
+  JUMP_PREVIOUS_PAGE = 'jump_to_previous_page',
+  JUMP_NEXT_PAGE = 'jump_to_next_page',
 }
 
 /**
@@ -1473,6 +1480,46 @@ export function registerJumpBottomStack() {
 }
 
 /**
+ * Returns the toolbox of the given workspace if the toolbox currently holds
+ * focus, otherwise null.
+ *
+ * @param workspace The workspace the shortcut is being handled on.
+ * @returns The focused toolbox, or null if focus is elsewhere.
+ */
+const getFocusedToolbox = (workspace: WorkspaceSvg) => {
+  const toolbox = workspace.getToolbox();
+  if (!toolbox || getFocusManager().getFocusedTree() !== toolbox) return null;
+  return toolbox;
+};
+
+/**
+ * Returns whether the given workspace is a flyout workspace that currently
+ * holds focus.
+ *
+ * @param workspace The workspace the shortcut is being handled on.
+ * @returns True if focus is inside this flyout, otherwise false.
+ */
+const isFocusedFlyout = (workspace: WorkspaceSvg) => {
+  return workspace.isFlyout && getFocusManager().getFocusedTree() === workspace;
+};
+
+/**
+ * Returns the navigable items of the toolbox or flyout that currently holds
+ * focus.
+ *
+ * @param workspace The workspace the shortcut is being handled on.
+ * @returns The items to move between, or null if neither the toolbox nor a
+ *     flyout has focus.
+ */
+const getFocusedItems = (workspace: WorkspaceSvg) => {
+  const tree =
+    getFocusedToolbox(workspace) ??
+    (isFocusedFlyout(workspace) ? workspace : null);
+  if (!tree) return null;
+  return tree.getNavigator().getNavigableItems(tree.getRootFocusableNode());
+};
+
+/**
  * Registers a keyboard shortcut that sets the focus to the first
  * block in the workspace.
  */
@@ -1489,6 +1536,13 @@ export function registerJumpFirstBlock() {
       );
     },
     callback(workspace) {
+      const items = getFocusedItems(workspace);
+      if (items) {
+        if (!items.length) return false;
+        getFocusManager().focusNode(items[0]);
+        return true;
+      }
+
       const topBlocks = workspace.getTopBlocks(true);
       if (!topBlocks.length) return false;
       getFocusManager().focusNode(topBlocks[0]);
@@ -1517,6 +1571,13 @@ export function registerJumpLastBlock() {
       );
     },
     callback(workspace) {
+      const items = getFocusedItems(workspace);
+      if (items) {
+        if (!items.length) return false;
+        getFocusManager().focusNode(items[items.length - 1]);
+        return true;
+      }
+
       const allBlocks = workspace.getAllBlocks(true);
       if (!allBlocks.length) return false;
       getFocusManager().focusNode(allBlocks[allBlocks.length - 1]);
@@ -1526,6 +1587,250 @@ export function registerJumpLastBlock() {
     displayText: () => Msg['SHORTCUTS_JUMP_LAST_BLOCK'],
   };
   ShortcutRegistry.registry.register(jumpLastBlockShortcut);
+}
+
+/**
+ * A list of items laid out along one axis, with coordinates oriented so that
+ * they increase in navigation order. Expressing paging in this space keeps it
+ * free of RTL and horizontal-layout special cases.
+ */
+interface PagedItemList {
+  /** The navigable items, in navigation order. */
+  items: IFocusableNode[];
+  /** The edge of the item at the given index that is reached first. */
+  leadingEdge(index: number): number;
+  /** The edge of the item at the given index that is reached last. */
+  trailingEdge(index: number): number;
+  /** The edge of the visible area that is reached first. */
+  viewLeadingEdge: number;
+  /** The edge of the visible area that is reached last. */
+  viewTrailingEdge: number;
+  /** Moves the visible area forwards in navigation order by the given amount. */
+  scrollBy(delta: number): void;
+}
+
+/** The extent of an item along the axis it is laid out on. */
+interface Span {
+  start: number;
+  end: number;
+}
+
+/**
+ * Orients raw measurements taken in a container's own coordinate system so
+ * that they increase in navigation order.
+ *
+ * @param items The navigable items, in navigation order.
+ * @param spans The extent of each item, in the same order as `items`. These
+ *     are a snapshot: paging scrolls the container, so they must not be
+ *     re-measured partway through.
+ * @param view The extent of the visible area.
+ * @param scrollRawBy Moves the visible area by the given amount, in the
+ *     container's own coordinate system.
+ * @returns The oriented list.
+ */
+function createPagedItemList(
+  items: IFocusableNode[],
+  spans: Span[],
+  view: Span,
+  scrollRawBy: (delta: number) => void,
+): PagedItemList {
+  // Items may run either way along the axis; an RTL horizontal flyout, for
+  // example, lays its first item out on the right.
+  const forwards = spans[spans.length - 1].start >= spans[0].start;
+
+  return {
+    items,
+    leadingEdge: (index) => (forwards ? spans[index].start : -spans[index].end),
+    trailingEdge: (index) =>
+      forwards ? spans[index].end : -spans[index].start,
+    viewLeadingEdge: forwards ? view.start : -view.end,
+    viewTrailingEdge: forwards ? view.end : -view.start,
+    scrollBy: (delta) => scrollRawBy(forwards ? delta : -delta),
+  };
+}
+
+/**
+ * Measures the categories of a toolbox for paging.
+ *
+ * @param toolbox The toolbox to measure.
+ * @returns The measured list, or null if it cannot be paged through.
+ */
+function createToolboxPagedList(toolbox: IToolbox): PagedItemList | null {
+  const items = toolbox
+    .getNavigator()
+    .getNavigableItems(toolbox.getRootFocusableNode());
+  if (!items.length) return null;
+
+  const horizontal = toolbox.isHorizontal();
+  const measure = (element: Element): Span => {
+    const rect = element.getBoundingClientRect();
+    return horizontal
+      ? {start: rect.left, end: rect.right}
+      : {start: rect.top, end: rect.bottom};
+  };
+  const container = toolbox.getRootFocusableNode().getFocusableElement();
+  const spans = items.map((item) => measure(item.getFocusableElement()));
+
+  return createPagedItemList(items, spans, measure(container), (delta) => {
+    if (horizontal) {
+      container.scrollLeft += delta;
+    } else {
+      container.scrollTop += delta;
+    }
+  });
+}
+
+/**
+ * Measures the contents of a flyout for paging.
+ *
+ * @param workspace The flyout's workspace.
+ * @returns The measured list, or null if it cannot be paged through.
+ */
+function createFlyoutPagedList(workspace: WorkspaceSvg): PagedItemList | null {
+  const items = workspace
+    .getNavigator()
+    .getNavigableItems(workspace.getRootFocusableNode())
+    .filter((item): item is IFocusableNode & IBoundedElement =>
+      isBoundedElement(item),
+    );
+  if (!items.length) return null;
+
+  const horizontal = !!workspace.targetWorkspace?.getFlyout()?.horizontalLayout;
+  const metrics = workspace.getMetricsManager().getViewMetrics(true);
+  const view = horizontal
+    ? {start: metrics.left, end: metrics.left + metrics.width}
+    : {start: metrics.top, end: metrics.top + metrics.height};
+  const spans = items.map((item): Span => {
+    const rect = item.getBoundingRectangle();
+    return horizontal
+      ? {start: rect.left, end: rect.right}
+      : {start: rect.top, end: rect.bottom};
+  });
+  const scale = workspace.getScale();
+
+  return createPagedItemList(items, spans, view, (delta) => {
+    // Moving the visible area forwards moves the contents backwards.
+    const contentDelta = -delta * scale;
+    workspace.scroll(
+      workspace.scrollX + (horizontal ? contentDelta : 0),
+      workspace.scrollY + (horizontal ? 0 : contentDelta),
+    );
+  });
+}
+
+/**
+ * Moves focus by one viewport's worth of items through the focused toolbox or
+ * flyout, then scrolls the newly focused item to the edge of the viewport it
+ * was moved towards. Landing on the edge rather than merely in view is what
+ * lets someone paging through a long list see that nothing was skipped.
+ *
+ * @param workspace The workspace the shortcut is being handled on.
+ * @param forward True to page towards the end of the list, false towards the
+ *     start.
+ * @returns True if focus moved, otherwise false.
+ */
+function jumpPage(workspace: WorkspaceSvg, forward: boolean): boolean {
+  const toolbox = getFocusedToolbox(workspace);
+  const list = toolbox
+    ? createToolboxPagedList(toolbox)
+    : createFlyoutPagedList(workspace);
+  if (!list) return false;
+
+  const items = list.items;
+  const current = getFocusManager().getFocusedNode();
+  const currentIndex = current ? items.indexOf(current) : -1;
+  const pageSize = list.viewTrailingEdge - list.viewLeadingEdge;
+  let targetIndex = -1;
+
+  if (forward) {
+    // Page from whichever is further along: the leading edge of the viewport,
+    // or the focused item, which may have been scrolled past it.
+    const from =
+      currentIndex >= 0
+        ? Math.max(list.viewLeadingEdge, list.leadingEdge(currentIndex))
+        : list.viewLeadingEdge;
+    for (let i = 0; i < items.length; i++) {
+      if (list.leadingEdge(i) >= from + pageSize) break;
+      targetIndex = i;
+    }
+  } else {
+    const from =
+      currentIndex >= 0
+        ? Math.min(list.viewTrailingEdge, list.trailingEdge(currentIndex))
+        : list.viewTrailingEdge;
+    for (let i = items.length - 1; i >= 0; i--) {
+      if (list.trailingEdge(i) <= from - pageSize) break;
+      targetIndex = i;
+    }
+  }
+
+  if (targetIndex < 0) return false;
+  if (targetIndex === currentIndex) {
+    // An item longer than the viewport fills the page on its own; step over it
+    // so that the shortcut always moves.
+    targetIndex += forward ? 1 : -1;
+    if (targetIndex < 0 || targetIndex >= items.length) return false;
+  }
+
+  getFocusManager().focusNode(items[targetIndex]);
+  list.scrollBy(
+    forward
+      ? list.leadingEdge(targetIndex) - list.viewLeadingEdge
+      : list.trailingEdge(targetIndex) - list.viewTrailingEdge,
+  );
+  return true;
+}
+
+/**
+ * @param workspace
+ * @returns true if the paging shortcuts should be allowed, false otherwise.
+ */
+const shouldDoItemPaging = (workspace: WorkspaceSvg) => {
+  return (
+    !workspace.isDragging() &&
+    !getFocusManager().ephemeralFocusTaken() &&
+    (!!getFocusedToolbox(workspace) || isFocusedFlyout(workspace))
+  );
+};
+
+/**
+ * Registers a keyboard shortcut that pages backwards through the items of the
+ * focused toolbox or flyout.
+ */
+export function registerJumpPreviousPage() {
+  const jumpPreviousPageShortcut: KeyboardShortcut = {
+    name: names.JUMP_PREVIOUS_PAGE,
+    preconditionFn: shouldDoItemPaging,
+    callback(workspace, e) {
+      if (!jumpPage(workspace, false)) return false;
+      e.preventDefault();
+      return true;
+    },
+    keyCodes: [KeyCodes.PAGE_UP],
+    allowCollision: true,
+    displayText: () => Msg['SHORTCUTS_JUMP_PREVIOUS_PAGE'],
+  };
+  ShortcutRegistry.registry.register(jumpPreviousPageShortcut);
+}
+
+/**
+ * Registers a keyboard shortcut that pages forwards through the items of the
+ * focused toolbox or flyout.
+ */
+export function registerJumpNextPage() {
+  const jumpNextPageShortcut: KeyboardShortcut = {
+    name: names.JUMP_NEXT_PAGE,
+    preconditionFn: shouldDoItemPaging,
+    callback(workspace, e) {
+      if (!jumpPage(workspace, true)) return false;
+      e.preventDefault();
+      return true;
+    },
+    keyCodes: [KeyCodes.PAGE_DOWN],
+    allowCollision: true,
+    displayText: () => Msg['SHORTCUTS_JUMP_NEXT_PAGE'],
+  };
+  ShortcutRegistry.registry.register(jumpNextPageShortcut);
 }
 
 /**
@@ -1573,7 +1878,8 @@ export function registerScreenReaderShortcuts() {
 }
 
 /**
- * Registers keyboard shortcuts used to jump between blocks and stacks in the workspace.
+ * Registers keyboard shortcuts used to jump between blocks and stacks in the workspace,
+ * and between items in the toolbox and flyout.
  * Note these are not registered by default, so call this function to enable them if desired.
  */
 export function registerNavigationShortcuts() {
@@ -1583,6 +1889,8 @@ export function registerNavigationShortcuts() {
   registerJumpBottomStack();
   registerJumpFirstBlock();
   registerJumpLastBlock();
+  registerJumpPreviousPage();
+  registerJumpNextPage();
 }
 
 registerDefaultShortcuts();
