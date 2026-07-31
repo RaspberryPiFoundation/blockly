@@ -729,7 +729,8 @@ export class ConstantProvider extends BaseConstantProvider {
         `pt ${this.FIELD_TEXT_FONTFAMILY};`,
       `}`,
 
-      `${selector} .blocklyTextInputBubble textarea {`,
+      // Comments share .blocklyText with block labels; keep comment text normal.
+      `${selector} textarea.blocklyCommentText.blocklyTextarea {`,
       `font-weight: normal;`,
       `}`,
 
