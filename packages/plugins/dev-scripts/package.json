@@ -32,7 +32,7 @@
     "ts-loader": "^9.6.1",
     "webpack": "^5.107.2",
     "webpack-cli": "^7.0.3",
-    "webpack-dev-server": "^5.2.5"
+    "webpack-dev-server": "^6.0.0"
   },
   "peerDependencies": {
     "typescript": "^4.3.2 || ^5"
