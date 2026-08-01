@@ -22,7 +22,8 @@ suite('Zelos RenderInfo', function () {
           {
             'type': 'field_image',
             'name': 'IMG',
-            'src': 'https://blockly-demo.appspot.com/static/tests/media/a.png',
+            // Layout uses width/height only; src need not resolve.
+            'src': 'about:blank',
             'width': 75,
             'height': 75,
             'alt': 'A',
