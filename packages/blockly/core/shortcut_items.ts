@@ -1605,8 +1605,6 @@ interface PagedItemList {
   viewLeadingEdge: number;
   /** The edge of the visible area that is reached last. */
   viewTrailingEdge: number;
-  /** Moves the visible area forwards in navigation order by the given amount. */
-  scrollBy(delta: number): void;
 }
 
 /** The extent of an item along the axis it is laid out on. */
@@ -1621,18 +1619,15 @@ interface Span {
  *
  * @param items The navigable items, in navigation order.
  * @param spans The extent of each item, in the same order as `items`. These
- *     are a snapshot: paging scrolls the container, so they must not be
- *     re-measured partway through.
+ *     are a snapshot: focusing an item scrolls the container, so they must not
+ *     be re-measured partway through.
  * @param view The extent of the visible area.
- * @param scrollRawBy Moves the visible area by the given amount, in the
- *     container's own coordinate system.
  * @returns The oriented list.
  */
 function createPagedItemList(
   items: IFocusableNode[],
   spans: Span[],
   view: Span,
-  scrollRawBy: (delta: number) => void,
 ): PagedItemList {
   // Items may run either way along the axis; an RTL horizontal flyout, for
   // example, lays its first item out on the right.
@@ -1645,7 +1640,6 @@ function createPagedItemList(
       forwards ? spans[index].end : -spans[index].start,
     viewLeadingEdge: forwards ? view.start : -view.end,
     viewTrailingEdge: forwards ? view.end : -view.start,
-    scrollBy: (delta) => scrollRawBy(forwards ? delta : -delta),
   };
 }
 
@@ -1671,13 +1665,7 @@ function createToolboxPagedList(toolbox: IToolbox): PagedItemList | null {
   const container = toolbox.getRootFocusableNode().getFocusableElement();
   const spans = items.map((item) => measure(item.getFocusableElement()));
 
-  return createPagedItemList(items, spans, measure(container), (delta) => {
-    if (horizontal) {
-      container.scrollLeft += delta;
-    } else {
-      container.scrollTop += delta;
-    }
-  });
+  return createPagedItemList(items, spans, measure(container));
 }
 
 /**
@@ -1706,23 +1694,15 @@ function createFlyoutPagedList(workspace: WorkspaceSvg): PagedItemList | null {
       ? {start: rect.left, end: rect.right}
       : {start: rect.top, end: rect.bottom};
   });
-  const scale = workspace.getScale();
 
-  return createPagedItemList(items, spans, view, (delta) => {
-    // Moving the visible area forwards moves the contents backwards.
-    const contentDelta = -delta * scale;
-    workspace.scroll(
-      workspace.scrollX + (horizontal ? contentDelta : 0),
-      workspace.scrollY + (horizontal ? 0 : contentDelta),
-    );
-  });
+  return createPagedItemList(items, spans, view);
 }
 
 /**
  * Moves focus by one viewport's worth of items through the focused toolbox or
- * flyout, then scrolls the newly focused item to the edge of the viewport it
- * was moved towards. Landing on the edge rather than merely in view is what
- * lets someone paging through a long list see that nothing was skipped.
+ * flyout. The target is the furthest item that is at least partly visible after
+ * the move, so paging never skips one; scrolling it into view is left to the
+ * item itself, which moves only as far as it takes to show it.
  *
  * @param workspace The workspace the shortcut is being handled on.
  * @param forward True to page towards the end of the list, false towards the
@@ -1773,11 +1753,6 @@ function jumpPage(workspace: WorkspaceSvg, forward: boolean): boolean {
   }
 
   getFocusManager().focusNode(items[targetIndex]);
-  list.scrollBy(
-    forward
-      ? list.leadingEdge(targetIndex) - list.viewLeadingEdge
-      : list.trailingEdge(targetIndex) - list.viewTrailingEdge,
-  );
   return true;
 }
 

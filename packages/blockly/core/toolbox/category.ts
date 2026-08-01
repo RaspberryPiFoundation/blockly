@@ -607,6 +607,7 @@ export class ToolboxCategory
    * toolbox that it has been selected.
    */
   override onNodeFocus(): void {
+    super.onNodeFocus();
     if (this.getParentToolbox().getSelectedItem() !== this) {
       this.getParentToolbox().setSelectedItem(this);
     }

@@ -1279,7 +1279,9 @@ suite('Toolbox and flyout paging shortcuts (Page Up / Page Down)', function () {
       });
       this.flyoutWorkspace = this.workspace.getFlyout().getWorkspace();
       this.blocks = this.flyoutWorkspace.getTopBlocks(true);
-      this.scrollSpy = sinon.stub(this.flyoutWorkspace, 'scroll');
+      // Focusing a block scrolls it into view; stub that out so the layout set
+      // up below stays valid for the whole test.
+      sinon.stub(this.flyoutWorkspace, 'scroll');
       sinon.stub(this.flyoutWorkspace, 'getScale').returns(1);
 
       /**
@@ -1317,19 +1319,6 @@ suite('Toolbox and flyout paging shortcuts (Page Up / Page Down)', function () {
       Blockly.getFocusManager().focusNode(this.blocks[0]);
       pressKey(this.workspace, Blockly.utils.KeyCodes.PAGE_DOWN);
       assert.equal(Blockly.getFocusManager().getFocusedNode(), this.blocks[2]);
-    });
-
-    test('PageDown scrolls the newly focused block to the top of the viewport', function () {
-      this.layOutFlyout(0);
-      Blockly.getFocusManager().focusNode(this.blocks[0]);
-      this.scrollSpy.resetHistory();
-      pressKey(this.workspace, Blockly.utils.KeyCodes.PAGE_DOWN);
-      // Moving the viewport down by 80 moves the contents up by the same.
-      sinon.assert.calledWith(
-        this.scrollSpy,
-        this.flyoutWorkspace.scrollX,
-        this.flyoutWorkspace.scrollY - 2 * ITEM_PITCH,
-      );
     });
 
     test('A second PageDown advances by another page', function () {
@@ -1377,7 +1366,6 @@ suite('Toolbox and flyout paging shortcuts (Page Up / Page Down)', function () {
       this.container = this.toolbox
         .getRootFocusableNode()
         .getFocusableElement();
-      this.container.scrollTop = 0;
       sinon.stub(this.container, 'getBoundingClientRect').returns({
         top: 0,
         bottom: VIEWPORT_LENGTH,
@@ -1402,10 +1390,17 @@ suite('Toolbox and flyout paging shortcuts (Page Up / Page Down)', function () {
       assert.equal(Blockly.getFocusManager().getFocusedNode(), this.items[2]);
     });
 
-    test('PageDown scrolls the newly focused category to the top', function () {
+    test('PageDown scrolls the newly focused category into view', function () {
       Blockly.getFocusManager().focusNode(this.items[0]);
+      const scrollIntoView = sinon.spy(
+        this.items[2].getFocusableElement(),
+        'scrollIntoView',
+      );
       pressKey(this.workspace, Blockly.utils.KeyCodes.PAGE_DOWN);
-      assert.equal(this.container.scrollTop, 2 * ITEM_PITCH);
+      sinon.assert.calledWith(scrollIntoView, {
+        block: 'nearest',
+        inline: 'nearest',
+      });
     });
 
     test('PageUp focuses the first visible category', function () {

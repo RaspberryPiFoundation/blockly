@@ -227,6 +227,23 @@ suite('Toolbox', function () {
       assert.isTrue(this.toolbox.getFlyout().isVisible());
     });
 
+    test('Focusing an item scrolls it into view', function () {
+      const item = getNonCollapsibleItem(this.toolbox);
+      const scrollIntoView = sinon.spy(
+        item.getFocusableElement(),
+        'scrollIntoView',
+      );
+
+      Blockly.getFocusManager().focusNode(item);
+
+      // Focus is taken with preventScroll, so an item outside the visible area
+      // of a scrolling toolbox would otherwise stay out of sight.
+      sinon.assert.calledWith(scrollIntoView, {
+        block: 'nearest',
+        inline: 'nearest',
+      });
+    });
+
     test('Tab order follows toolbox, flyout, workspace DOM order', function () {
       const injectionDiv = this.toolbox.getWorkspace().getInjectionDiv();
       const children = Array.from(injectionDiv.children);
