@@ -7,9 +7,9 @@
 import {assert} from 'chai';
 import {createRenderedBlock} from './test_helpers/block_definitions.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
-  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 
 suite('Inputs', function () {
@@ -23,10 +23,7 @@ suite('Inputs', function () {
       },
     ]);
 
-    this.workspace = Blockly.inject('blocklyDiv', {
-      media: TEST_MEDIA_PATH,
-      sounds: false,
-    });
+    this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
     this.block = Blockly.Xml.domToBlock(
       Blockly.utils.xml.textToDom('<block type="empty_block"/>'),
       this.workspace,

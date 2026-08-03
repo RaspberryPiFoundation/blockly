@@ -10,18 +10,15 @@ import {
   createChangeListenerSpy,
 } from './test_helpers/events.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
-  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 
 suite('Clipboard', function () {
   setup(function () {
     this.clock = sharedTestSetup.call(this, {fireEventsNow: false}).clock;
-    this.workspace = Blockly.inject('blocklyDiv', {
-      media: TEST_MEDIA_PATH,
-      sounds: false,
-    });
+    this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
   });
 
   teardown(function () {
@@ -164,8 +161,7 @@ suite('Clipboard', function () {
       test('pasted blocks are bumped to not overlap in RTL', function () {
         this.workspace.dispose();
         this.workspace = Blockly.inject('blocklyDiv', {
-          media: TEST_MEDIA_PATH,
-          sounds: false,
+          ...DEFAULT_INJECT_OPTIONS,
           rtl: true,
         });
         const block = Blockly.serialization.blocks.append(
@@ -190,10 +186,7 @@ suite('Clipboard', function () {
 
         // Restore an LTR workspace.
         this.workspace.dispose();
-        this.workspace = Blockly.inject('blocklyDiv', {
-          media: TEST_MEDIA_PATH,
-          sounds: false,
-        });
+        this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
       });
 
       test('pasted blocks are bumped to be outside the connection snap radius', function () {
@@ -251,8 +244,7 @@ suite('Clipboard', function () {
     test('pasted comments are bumped to not overlap in RTL', function () {
       this.workspace.dispose();
       this.workspace = Blockly.inject('blocklyDiv', {
-        media: TEST_MEDIA_PATH,
-        sounds: false,
+        ...DEFAULT_INJECT_OPTIONS,
         rtl: true,
       });
       Blockly.Xml.domToWorkspace(
@@ -272,10 +264,7 @@ suite('Clipboard', function () {
       );
       // Restore an LTR workspace.
       this.workspace.dispose();
-      this.workspace = Blockly.inject('blocklyDiv', {
-        media: TEST_MEDIA_PATH,
-        sounds: false,
-      });
+      this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
     });
   });
 });

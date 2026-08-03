@@ -6,18 +6,15 @@
 
 import {assert} from 'chai';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
-  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 
 suite('Workspace comment', function () {
   setup(function () {
     sharedTestSetup.call(this);
-    this.workspace = new Blockly.inject('blocklyDiv', {
-      media: TEST_MEDIA_PATH,
-      sounds: false,
-    });
+    this.workspace = new Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
     this.commentView = new Blockly.comments.CommentView(this.workspace);
   });
 

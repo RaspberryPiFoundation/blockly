@@ -12,9 +12,9 @@ import {
 } from './test_helpers/block_definitions.js';
 import {
   createGenUidStubWithReturns,
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
-  TEST_MEDIA_PATH,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
@@ -102,10 +102,7 @@ suite('Connection', function () {
       {
         title: 'Rendered',
         createWorkspace: () => {
-          return Blockly.inject('blocklyDiv', {
-            media: TEST_MEDIA_PATH,
-            sounds: false,
-          });
+          return Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
         },
       },
       {

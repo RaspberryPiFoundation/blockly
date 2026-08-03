@@ -14,9 +14,9 @@ import {
   runSetValueTests,
 } from './test_helpers/fields.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
-  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 
 suite('Label Fields', function () {
@@ -228,8 +228,7 @@ suite('Label Fields', function () {
   suite('ARIA', function () {
     test('Is hidden', function () {
       const workspace = Blockly.inject('blocklyDiv', {
-        media: TEST_MEDIA_PATH,
-        sounds: false,
+        ...DEFAULT_INJECT_OPTIONS,
         renderer: 'geras',
       });
       const block = workspace.newBlock('text_print');

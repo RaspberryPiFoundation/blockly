@@ -10,18 +10,15 @@ import {
   createChangeListenerSpy,
 } from './test_helpers/events.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
-  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 
 suite('Workspace comment', function () {
   setup(function () {
     this.clock = sharedTestSetup.call(this, {fireEventsNow: false}).clock;
-    this.workspace = new Blockly.inject('blocklyDiv', {
-      media: TEST_MEDIA_PATH,
-      sounds: false,
-    });
+    this.workspace = new Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
   });
 
   teardown(function () {

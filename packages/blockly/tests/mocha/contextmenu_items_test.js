@@ -6,9 +6,9 @@
 
 import {assert} from 'chai';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
-  TEST_MEDIA_PATH,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
@@ -19,8 +19,7 @@ suite('Context Menu Items', function () {
     // Creates a WorkspaceSVG
     const toolbox = document.getElementById('toolbox-categories');
     this.workspace = Blockly.inject('blocklyDiv', {
-      media: TEST_MEDIA_PATH,
-      sounds: false,
+      ...DEFAULT_INJECT_OPTIONS,
       toolbox: toolbox,
     });
 

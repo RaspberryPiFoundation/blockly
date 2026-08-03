@@ -13,18 +13,15 @@ import {
   runSetValueTests,
 } from './test_helpers/fields.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
-  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 
 suite('Image Fields', function () {
   setup(function () {
     sharedTestSetup.call(this);
-    this.workspace = Blockly.inject('blocklyDiv', {
-      media: TEST_MEDIA_PATH,
-      sounds: false,
-    });
+    this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
   });
   teardown(function () {
     sharedTestTeardown.call(this);
@@ -363,8 +360,7 @@ suite('Image Fields', function () {
   suite('ARIA', function () {
     setup(function () {
       this.workspace = Blockly.inject('blocklyDiv', {
-        media: TEST_MEDIA_PATH,
-        sounds: false,
+        ...DEFAULT_INJECT_OPTIONS,
         renderer: 'geras',
       });
     });

@@ -12,9 +12,9 @@ import {
 } from './test_helpers/move_test_blocks.js';
 import {p5blocks} from './test_helpers/p5_blocks.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
-  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 import {createKeyDownEvent} from './test_helpers/user_input.js';
 
@@ -42,8 +42,7 @@ suite('Keyboard-driven movement', function () {
     };
 
     this.workspace = Blockly.inject('blocklyDiv', {
-      media: TEST_MEDIA_PATH,
-      sounds: false,
+      ...DEFAULT_INJECT_OPTIONS,
       toolbox: toolbox,
     });
     Blockly.common.defineBlocks(p5blocks);
@@ -1122,8 +1121,7 @@ suite('Keyboard-driven movement', function () {
             setup(function () {
               const toolbox = document.getElementById('toolbox-simple');
               this.workspace = Blockly.inject('blocklyDiv', {
-                media: TEST_MEDIA_PATH,
-                sounds: false,
+                ...DEFAULT_INJECT_OPTIONS,
                 toolbox: toolbox,
                 renderer: renderer,
               });

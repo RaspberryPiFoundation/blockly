@@ -15,9 +15,9 @@ import {
   runSetValueTests,
 } from './test_helpers/fields.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
-  TEST_MEDIA_PATH,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
@@ -506,8 +506,7 @@ suite('Number Fields', function () {
   suite('ARIA', function () {
     setup(function () {
       this.workspace = Blockly.inject('blocklyDiv', {
-        media: TEST_MEDIA_PATH,
-        sounds: false,
+        ...DEFAULT_INJECT_OPTIONS,
         renderer: 'geras',
       });
       this.block = this.workspace.newBlock('math_number');
@@ -599,8 +598,7 @@ suite('Number Fields', function () {
     suite('Full block fields', function () {
       setup(function () {
         this.workspace = Blockly.inject('blocklyDiv', {
-          media: TEST_MEDIA_PATH,
-          sounds: false,
+          ...DEFAULT_INJECT_OPTIONS,
           renderer: 'zelos',
         });
         this.block = this.workspace.newBlock('math_number');

@@ -11,9 +11,9 @@ import {
   defineStackBlock,
 } from './test_helpers/block_definitions.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
-  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 import {createKeyDownEvent} from './test_helpers/user_input.js';
 
@@ -23,8 +23,7 @@ suite('Keyboard Shortcut Items', function () {
     const toolbox = document.getElementById('toolbox-test');
     // Zelos has full-block fields, which we want to exercise in tests.
     this.workspace = Blockly.inject('blocklyDiv', {
-      media: TEST_MEDIA_PATH,
-      sounds: false,
+      ...DEFAULT_INJECT_OPTIONS,
       toolbox,
       renderer: 'zelos',
     });
@@ -1576,8 +1575,7 @@ suite('Keyboard Shortcut Items', function () {
     test('Shows a toast with RTL navigation hints for navigable blocks', function () {
       const toolbox = document.getElementById('toolbox-test');
       const ws = Blockly.inject('blocklyDiv', {
-        media: TEST_MEDIA_PATH,
-        sounds: false,
+        ...DEFAULT_INJECT_OPTIONS,
         toolbox,
         renderer: 'zelos',
         rtl: true,
@@ -1605,8 +1603,7 @@ suite('Keyboard Shortcut Items', function () {
 
     test('Shows a toast with navigation hints for flyout labels', function () {
       const ws = Blockly.inject('blocklyDiv', {
-        media: TEST_MEDIA_PATH,
-        sounds: false,
+        ...DEFAULT_INJECT_OPTIONS,
         toolbox: {
           kind: 'flyoutToolbox',
           contents: [

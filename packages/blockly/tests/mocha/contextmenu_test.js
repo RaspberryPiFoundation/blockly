@@ -12,9 +12,9 @@ import {
   defineStackBlock,
 } from './test_helpers/block_definitions.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
-  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 
 suite('Context Menu', function () {
@@ -24,8 +24,7 @@ suite('Context Menu', function () {
     // Creates a WorkspaceSVG
     const toolbox = document.getElementById('toolbox-categories');
     this.workspace = Blockly.inject('blocklyDiv', {
-      media: TEST_MEDIA_PATH,
-      sounds: false,
+      ...DEFAULT_INJECT_OPTIONS,
       toolbox: toolbox,
     });
   });

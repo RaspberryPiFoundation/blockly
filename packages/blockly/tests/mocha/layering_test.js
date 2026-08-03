@@ -5,18 +5,15 @@
  */
 import {assert} from 'chai';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
-  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 
 suite('Layering', function () {
   setup(function () {
     sharedTestSetup.call(this);
-    this.workspace = Blockly.inject('blocklyDiv', {
-      media: TEST_MEDIA_PATH,
-      sounds: false,
-    });
+    this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
     this.layerManager = this.workspace.getLayerManager();
   });
 

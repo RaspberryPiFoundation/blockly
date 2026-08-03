@@ -9,11 +9,22 @@ import {FocusManager} from '#core/focus_manager.js';
 
 /**
  * Path to Blockly's media directory, relative to the test harness page
- * (tests/mocha/index.html). Tests pass this to Blockly.inject so that media is
- * loaded from the local checkout rather than fetched from the public CDN.
+ * (tests/mocha/index.html).
  * @type {string}
  */
-export const TEST_MEDIA_PATH = '../../media/';
+const TEST_MEDIA_PATH = '../../media/';
+
+/**
+ * Default options for Blockly.inject in tests. Media is loaded from the local
+ * checkout and sounds are disabled so that tests never fetch assets over the
+ * network. Spread this to add or override options, e.g.
+ *
+ *     Blockly.inject('blocklyDiv', {...DEFAULT_INJECT_OPTIONS, rtl: true});
+ */
+export const DEFAULT_INJECT_OPTIONS = Object.freeze({
+  media: TEST_MEDIA_PATH,
+  sounds: false,
+});
 
 /**
  * Safely disposes of Blockly workspace, logging any errors.

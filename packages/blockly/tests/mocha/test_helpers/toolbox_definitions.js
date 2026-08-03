@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {TEST_MEDIA_PATH} from './setup_teardown.js';
+import {DEFAULT_INJECT_OPTIONS} from './setup_teardown.js';
 
 /**
  * Get JSON for a toolbox that contains categories.
@@ -231,8 +231,7 @@ export function getInjectedToolbox() {
    */
   const toolboxXml = document.getElementById('toolbox-test');
   const workspace = Blockly.inject('blocklyDiv', {
-    media: TEST_MEDIA_PATH,
-    sounds: false,
+    ...DEFAULT_INJECT_OPTIONS,
     toolbox: toolboxXml,
   });
   return workspace.getToolbox();
