@@ -13,6 +13,7 @@ import {assertEventFired, assertEventNotFired} from './test_helpers/events.js';
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 
 suite('Mutator', function () {
@@ -22,7 +23,10 @@ suite('Mutator', function () {
 
   suite('Firing change event', function () {
     setup(function () {
-      this.workspace = Blockly.inject('blocklyDiv', {});
+      this.workspace = Blockly.inject('blocklyDiv', {
+        media: TEST_MEDIA_PATH,
+        sounds: false,
+      });
       defineMutatorBlocks();
     });
 
@@ -86,7 +90,10 @@ suite('Mutator', function () {
   });
   suite('ARIA', function () {
     setup(async function () {
-      this.workspace = Blockly.inject('blocklyDiv', {});
+      this.workspace = Blockly.inject('blocklyDiv', {
+        media: TEST_MEDIA_PATH,
+        sounds: false,
+      });
       const block = createRenderedBlock(this.workspace, 'controls_if');
       this.icon = block.getIcon(Blockly.icons.MutatorIcon.TYPE);
       await this.icon.setBubbleVisible(true);

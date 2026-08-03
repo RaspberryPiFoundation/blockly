@@ -443,6 +443,8 @@ suite('Keyboard navigation', function () {
     // jsdom does not implement SVGElement natively; expose the shim.
     global.SVGElement = window.SVGElement;
     this.workspace = Blockly.inject('blocklyDiv', {
+      media: 'media/',
+      sounds: false,
       move: {scrollbars: true},
     });
     this.minimap = new Minimap(this.workspace);

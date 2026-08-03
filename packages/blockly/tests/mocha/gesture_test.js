@@ -11,6 +11,7 @@ import {assertEventFired, assertEventNotFired} from './test_helpers/events.js';
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 import {getProperSimpleJson} from './test_helpers/toolbox_definitions.js';
 import {dispatchPointerEvent} from './test_helpers/user_input.js';
@@ -60,7 +61,11 @@ suite('Gesture', function () {
       'kind': 'block',
       'type': 'test_field_block',
     });
-    this.workspace = Blockly.inject('blocklyDiv', {toolbox});
+    this.workspace = Blockly.inject('blocklyDiv', {
+      media: TEST_MEDIA_PATH,
+      sounds: false,
+      toolbox,
+    });
   });
 
   teardown(function () {

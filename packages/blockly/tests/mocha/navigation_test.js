@@ -8,6 +8,7 @@ import {assert} from 'chai';
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
@@ -87,7 +88,10 @@ suite('Navigation', function () {
         ],
       },
     ]);
-    this.workspace = Blockly.inject('blocklyDiv', {});
+    this.workspace = Blockly.inject('blocklyDiv', {
+      media: TEST_MEDIA_PATH,
+      sounds: false,
+    });
     this.navigator = this.workspace.getNavigator();
     const statementInput1 = this.workspace.newBlock('input_statement');
     const statementInput2 = this.workspace.newBlock('input_statement');
@@ -703,7 +707,10 @@ suite('Navigation', function () {
       setup(function () {
         const container = document.createElement('div');
         document.body.appendChild(container);
-        this.emptyWorkspace = Blockly.inject(container, {});
+        this.emptyWorkspace = Blockly.inject(container, {
+          media: TEST_MEDIA_PATH,
+          sounds: false,
+        });
       });
       teardown(function () {
         workspaceTeardown.call(this, this.emptyWorkspace);

@@ -11,6 +11,7 @@ import {MockIcon, MockSerializableIcon} from './test_helpers/icon_mocks.js';
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 import {simulateClick} from './test_helpers/user_input.js';
 
@@ -391,7 +392,10 @@ suite('Icon', function () {
   suite('Contextual menus', function () {
     setup(function () {
       Blockly.common.setParentContainer(document.firstElementChild);
-      this.workspace = Blockly.inject('blocklyDiv', {});
+      this.workspace = Blockly.inject('blocklyDiv', {
+        media: TEST_MEDIA_PATH,
+        sounds: false,
+      });
       Blockly.icons.registry.register(
         new Blockly.icons.IconType('test'),
         TestIcon,

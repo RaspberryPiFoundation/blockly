@@ -10,6 +10,7 @@ import {
   createGenUidStubWithReturns,
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 import {assertVariableValues} from './test_helpers/variables.js';
@@ -368,7 +369,11 @@ suite('XML', function () {
       suite('Rendered', function () {
         setup(function () {
           // Let the parent teardown dispose of it.
-          this.workspace = Blockly.inject('blocklyDiv', {comments: true});
+          this.workspace = Blockly.inject('blocklyDiv', {
+            media: TEST_MEDIA_PATH,
+            sounds: false,
+            comments: true,
+          });
           this.block = Blockly.Xml.domToBlock(
             Blockly.utils.xml.textToDom('<block type="empty_block"/>'),
             this.workspace,
@@ -616,7 +621,11 @@ suite('XML', function () {
       });
       suite('Rendered', function () {
         setup(function () {
-          this.workspace = Blockly.inject('blocklyDiv', {comments: true});
+          this.workspace = Blockly.inject('blocklyDiv', {
+            media: TEST_MEDIA_PATH,
+            sounds: false,
+            comments: true,
+          });
         });
         teardown(function () {
           workspaceTeardown.call(this, this.workspace);
@@ -896,6 +905,8 @@ suite('XML', function () {
     setup(function () {
       const options = {
         comments: true,
+        media: TEST_MEDIA_PATH,
+        sounds: false,
       };
       this.renderedWorkspace = Blockly.inject('blocklyDiv', options);
       this.headlessWorkspace = new Blockly.Workspace(

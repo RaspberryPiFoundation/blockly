@@ -8,12 +8,16 @@ import {assert} from 'chai';
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 
 suite('Workspace comment', function () {
   setup(function () {
     sharedTestSetup.call(this);
-    this.workspace = new Blockly.inject('blocklyDiv', {});
+    this.workspace = new Blockly.inject('blocklyDiv', {
+      media: TEST_MEDIA_PATH,
+      sounds: false,
+    });
     this.commentView = new Blockly.comments.CommentView(this.workspace);
   });
 

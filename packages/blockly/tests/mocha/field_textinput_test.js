@@ -19,6 +19,7 @@ import {
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
@@ -347,6 +348,8 @@ suite('Text Input Fields', function () {
     suite('Geras theme', function () {
       setup(function () {
         this.workspace = Blockly.inject('blocklyDiv', {
+          media: TEST_MEDIA_PATH,
+          sounds: false,
           renderer: 'geras',
         });
         Blockly.serialization.blocks.append(this.blockJson, this.workspace);
@@ -540,6 +543,8 @@ suite('Text Input Fields', function () {
     suite('Zelos theme', function () {
       setup(function () {
         this.workspace = Blockly.inject('blocklyDiv', {
+          media: TEST_MEDIA_PATH,
+          sounds: false,
           renderer: 'zelos',
         });
         Blockly.serialization.blocks.append(this.blockJson, this.workspace);
@@ -623,6 +628,8 @@ suite('Text Input Fields', function () {
   suite('ARIA', function () {
     setup(function () {
       this.workspace = Blockly.inject('blocklyDiv', {
+        media: TEST_MEDIA_PATH,
+        sounds: false,
         renderer: 'geras',
       });
       this.block = this.workspace.newBlock('text');

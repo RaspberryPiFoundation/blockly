@@ -14,6 +14,7 @@ import {
   createGenUidStubWithReturns,
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
@@ -101,7 +102,10 @@ suite('Connection', function () {
       {
         title: 'Rendered',
         createWorkspace: () => {
-          return Blockly.inject('blocklyDiv');
+          return Blockly.inject('blocklyDiv', {
+            media: TEST_MEDIA_PATH,
+            sounds: false,
+          });
         },
       },
       {

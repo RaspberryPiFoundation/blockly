@@ -9,6 +9,7 @@ import {assert} from 'chai';
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 
 suite('ARIA', function () {
@@ -28,7 +29,11 @@ suite('ARIA', function () {
       },
     ]);
     const toolbox = document.getElementById('toolbox-categories');
-    this.workspace = Blockly.inject('blocklyDiv', {toolbox});
+    this.workspace = Blockly.inject('blocklyDiv', {
+      media: TEST_MEDIA_PATH,
+      sounds: false,
+      toolbox,
+    });
     this.liveRegion = document.getElementById('blocklyAriaAnnounce');
   });
 

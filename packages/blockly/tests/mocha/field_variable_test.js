@@ -20,6 +20,7 @@ import {
   createGenUidStubWithReturns,
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
@@ -652,6 +653,8 @@ suite('Variable Fields', function () {
   suite('ARIA', function () {
     setup(function () {
       this.workspace = Blockly.inject('blocklyDiv', {
+        media: TEST_MEDIA_PATH,
+        sounds: false,
         renderer: 'geras',
       });
       this.block = this.workspace.newBlock('variables_set');

@@ -16,6 +16,7 @@ import {
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
@@ -297,6 +298,8 @@ suite('Checkbox Fields', function () {
   suite('ARIA', function () {
     setup(function () {
       this.workspace = Blockly.inject('blocklyDiv', {
+        media: TEST_MEDIA_PATH,
+        sounds: false,
         renderer: 'geras',
       });
       this.block = this.workspace.newBlock('test_fields_checkbox');

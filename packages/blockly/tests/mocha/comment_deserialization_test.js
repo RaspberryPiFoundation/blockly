@@ -8,6 +8,7 @@ import {assert} from 'chai';
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 import {simulateClick} from './test_helpers/user_input.js';
 
@@ -31,6 +32,8 @@ suite('Comment Deserialization', function () {
     </xml>
     `;
     this.workspace = Blockly.inject('blocklyDiv', {
+      media: TEST_MEDIA_PATH,
+      sounds: false,
       comments: true,
       scrollbars: true,
       trashcan: true,

@@ -19,13 +19,17 @@ import {
   createGenUidStubWithReturns,
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
   workspaceTeardown,
 } from '../test_helpers/setup_teardown.js';
 
 suite('Procedures', function () {
   setup(function () {
     sharedTestSetup.call(this, {fireEventsNow: false});
-    this.workspace = Blockly.inject('blocklyDiv', {});
+    this.workspace = Blockly.inject('blocklyDiv', {
+      media: TEST_MEDIA_PATH,
+      sounds: false,
+    });
     this.workspace
       .getVariableMap()
       .createVariable('preCreatedVar', '', 'preCreatedVarId');

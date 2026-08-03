@@ -42,7 +42,10 @@ suite('Procedures', function () {
 
     registerProcedureSerializer();
 
-    this.workspace = Blockly.inject('blocklyDiv', {});
+    this.workspace = Blockly.inject('blocklyDiv', {
+      media: 'media/',
+      sounds: false,
+    });
 
     this.eventSpy = this.sandbox.spy();
     this.workspace.addChangeListener(this.eventSpy);

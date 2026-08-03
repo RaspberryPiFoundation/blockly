@@ -14,6 +14,7 @@ import {
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 
 suite('Context Menu', function () {
@@ -22,7 +23,11 @@ suite('Context Menu', function () {
 
     // Creates a WorkspaceSVG
     const toolbox = document.getElementById('toolbox-categories');
-    this.workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+    this.workspace = Blockly.inject('blocklyDiv', {
+      media: TEST_MEDIA_PATH,
+      sounds: false,
+      toolbox: toolbox,
+    });
   });
 
   teardown(function () {

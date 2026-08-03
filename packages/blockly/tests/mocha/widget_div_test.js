@@ -8,13 +8,17 @@ import {assert} from 'chai';
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 
 suite('WidgetDiv', function () {
   setup(function () {
     sharedTestSetup.call(this);
     Blockly.common.setParentContainer(document.firstElementChild);
-    this.workspace = Blockly.inject('blocklyDiv');
+    this.workspace = Blockly.inject('blocklyDiv', {
+      media: TEST_MEDIA_PATH,
+      sounds: false,
+    });
     this.setUpBlockWithField = function () {
       const blockJson = {
         'type': 'text',

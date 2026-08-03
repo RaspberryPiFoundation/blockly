@@ -19,6 +19,7 @@ import {
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
@@ -329,6 +330,8 @@ suite('Dropdown Fields', function () {
   suite('ARIA', function () {
     setup(function () {
       this.workspace = Blockly.inject('blocklyDiv', {
+        media: TEST_MEDIA_PATH,
+        sounds: false,
         renderer: 'geras',
       });
     });
@@ -583,6 +586,8 @@ suite('Dropdown Fields', function () {
     suite('Full block fields', function () {
       setup(function () {
         this.workspace = Blockly.inject('blocklyDiv', {
+          media: TEST_MEDIA_PATH,
+          sounds: false,
           renderer: 'zelos',
         });
         this.block = this.workspace.newBlock('variables_get');

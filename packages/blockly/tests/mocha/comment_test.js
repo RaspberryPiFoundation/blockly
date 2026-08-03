@@ -10,6 +10,7 @@ import {assertEventFired} from './test_helpers/events.js';
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 
 suite('Comments', function () {
@@ -23,6 +24,8 @@ suite('Comments', function () {
       },
     ]);
     this.workspace = Blockly.inject('blocklyDiv', {
+      media: TEST_MEDIA_PATH,
+      sounds: false,
       comments: true,
       scrollbars: true,
     });

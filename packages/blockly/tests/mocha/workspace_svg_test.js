@@ -15,6 +15,7 @@ import {
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 import {dispatchPointerEvent} from './test_helpers/user_input.js';
 import {testAWorkspace} from './test_helpers/workspace.js';
@@ -23,7 +24,11 @@ suite('WorkspaceSvg', function () {
   setup(function () {
     this.clock = sharedTestSetup.call(this, {fireEventsNow: false}).clock;
     const toolbox = document.getElementById('toolbox-categories');
-    this.workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+    this.workspace = Blockly.inject('blocklyDiv', {
+      media: TEST_MEDIA_PATH,
+      sounds: false,
+      toolbox: toolbox,
+    });
     Blockly.defineBlocksWithJsonArray([
       {
         'type': 'simple_test_block',

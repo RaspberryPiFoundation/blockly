@@ -16,6 +16,7 @@ import {
   createGenUidStubWithReturns,
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 import {assertVariableValues} from './test_helpers/variables.js';
@@ -1367,7 +1368,11 @@ suite('Events', function () {
       let workspaceSvg;
       try {
         const toolbox = document.getElementById('toolbox-categories');
-        workspaceSvg = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+        workspaceSvg = Blockly.inject('blocklyDiv', {
+          media: TEST_MEDIA_PATH,
+          sounds: false,
+          toolbox: toolbox,
+        });
         const TEST_BLOCK_ID = 'test_block_id';
         const genUidStub = createGenUidStubWithReturns([
           TEST_BLOCK_ID,
@@ -1530,7 +1535,11 @@ suite('Events', function () {
     setup(function () {
       // disableOrphans needs a WorkspaceSVG
       const toolbox = document.getElementById('toolbox-categories');
-      this.workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+      this.workspace = Blockly.inject('blocklyDiv', {
+        media: TEST_MEDIA_PATH,
+        sounds: false,
+        toolbox: toolbox,
+      });
     });
     teardown(function () {
       workspaceTeardown.call(this, this.workspace);

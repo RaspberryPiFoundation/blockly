@@ -10,6 +10,7 @@ import {assertEventFired} from './test_helpers/events.js';
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
@@ -127,7 +128,10 @@ suite('Theme', function () {
     try {
       const blockStyles = createBlockStyles();
       const theme = new Blockly.Theme('themeName', blockStyles);
-      workspace = Blockly.inject('blocklyDiv', {});
+      workspace = Blockly.inject('blocklyDiv', {
+        media: TEST_MEDIA_PATH,
+        sounds: false,
+      });
       const blockA = workspace.newBlock('stack_block');
 
       blockA.setStyle = function () {

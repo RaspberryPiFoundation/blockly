@@ -21,6 +21,7 @@ import {MockBubbleIcon, MockIcon} from './test_helpers/icon_mocks.js';
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
@@ -479,7 +480,10 @@ suite('Blocks', function () {
 
     suite('Disposing selected shadow block', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv');
+        this.workspace = Blockly.inject('blocklyDiv', {
+          media: TEST_MEDIA_PATH,
+          sounds: false,
+        });
         this.parentBlock = this.workspace.newBlock('row_block');
         this.parentBlock.initSvg();
         this.parentBlock.render();
@@ -579,7 +583,10 @@ suite('Blocks', function () {
 
   suite('Connection Tracking', function () {
     setup(function () {
-      this.workspace = Blockly.inject('blocklyDiv');
+      this.workspace = Blockly.inject('blocklyDiv', {
+        media: TEST_MEDIA_PATH,
+        sounds: false,
+      });
 
       this.getInputs = function () {
         return this.workspace.connectionDBList[ConnectionType.INPUT_VALUE]
@@ -1401,6 +1408,8 @@ suite('Blocks', function () {
       suite('Rendered', function () {
         setup(function () {
           this.workspace = Blockly.inject('blocklyDiv', {
+            media: TEST_MEDIA_PATH,
+            sounds: false,
             comments: true,
             scrollbars: true,
           });
@@ -1491,7 +1500,10 @@ suite('Blocks', function () {
       }
 
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv', {});
+        this.workspace = Blockly.inject('blocklyDiv', {
+          media: TEST_MEDIA_PATH,
+          sounds: false,
+        });
 
         this.block = this.workspace.newBlock('stack_block');
         this.block.initSvg();
@@ -1555,7 +1567,10 @@ suite('Blocks', function () {
 
   suite('Getting/Setting Field (Values)', function () {
     setup(function () {
-      this.workspace = Blockly.inject('blocklyDiv');
+      this.workspace = Blockly.inject('blocklyDiv', {
+        media: TEST_MEDIA_PATH,
+        sounds: false,
+      });
       this.block = Blockly.Xml.domToBlock(
         Blockly.utils.xml.textToDom(
           '<block type="text"><field name = "TEXT">test</field></block>',
@@ -1664,7 +1679,10 @@ suite('Blocks', function () {
 
     suite('Adding icons', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv', {});
+        this.workspace = Blockly.inject('blocklyDiv', {
+          media: TEST_MEDIA_PATH,
+          sounds: false,
+        });
 
         this.block = this.workspace.newBlock('stack_block');
         this.block.initSvg();
@@ -1706,7 +1724,10 @@ suite('Blocks', function () {
 
     suite('Removing icons', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv');
+        this.workspace = Blockly.inject('blocklyDiv', {
+          media: TEST_MEDIA_PATH,
+          sounds: false,
+        });
 
         this.block = this.workspace.newBlock('stack_block');
         this.block.initSvg();
@@ -1806,7 +1827,10 @@ suite('Blocks', function () {
 
     suite('Warning icons', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv');
+        this.workspace = Blockly.inject('blocklyDiv', {
+          media: TEST_MEDIA_PATH,
+          sounds: false,
+        });
 
         this.block = this.workspace.newBlock('stack_block');
         this.block.initSvg();
@@ -1952,7 +1976,10 @@ suite('Blocks', function () {
 
     suite('Warning icons and collapsing', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv');
+        this.workspace = Blockly.inject('blocklyDiv', {
+          media: TEST_MEDIA_PATH,
+          sounds: false,
+        });
         this.parentBlock = Blockly.serialization.blocks.append(
           {
             'type': 'statement_block',
@@ -2025,7 +2052,10 @@ suite('Blocks', function () {
 
     suite('Bubbles and collapsing', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv');
+        this.workspace = Blockly.inject('blocklyDiv', {
+          media: TEST_MEDIA_PATH,
+          sounds: false,
+        });
       });
 
       teardown(function () {
@@ -2145,7 +2175,10 @@ suite('Blocks', function () {
     setup(function () {
       eventUtils.disable();
       // We need a visible workspace.
-      this.workspace = Blockly.inject('blocklyDiv', {});
+      this.workspace = Blockly.inject('blocklyDiv', {
+        media: TEST_MEDIA_PATH,
+        sounds: false,
+      });
       Blockly.defineBlocksWithJsonArray([
         {
           'type': 'variable_block',
@@ -2724,7 +2757,10 @@ suite('Blocks', function () {
     });
     suite('Rendered', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv', {});
+        this.workspace = Blockly.inject('blocklyDiv', {
+          media: TEST_MEDIA_PATH,
+          sounds: false,
+        });
         this.block = Blockly.Xml.domToBlock(
           Blockly.utils.xml.textToDom('<block type="empty_block"/>'),
           this.workspace,
@@ -2957,7 +2993,10 @@ suite('Blocks', function () {
 
   suite('Dragging', function () {
     setup(function () {
-      this.workspace = Blockly.inject('blocklyDiv');
+      this.workspace = Blockly.inject('blocklyDiv', {
+        media: TEST_MEDIA_PATH,
+        sounds: false,
+      });
       this.blocks = createTestBlocks(this.workspace, false);
       for (const block of Object.values(this.blocks)) {
         block.initSvg();
@@ -3003,7 +3042,10 @@ suite('Blocks', function () {
 
   suite('Disposal focus management', function () {
     setup(function () {
-      this.workspace = Blockly.inject('blocklyDiv');
+      this.workspace = Blockly.inject('blocklyDiv', {
+        media: TEST_MEDIA_PATH,
+        sounds: false,
+      });
       const firstBlock = this.workspace.newBlock('stack_block');
       firstBlock.moveBy(-500, -500);
     });

@@ -8,6 +8,7 @@ import {assert} from 'chai';
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
@@ -37,7 +38,10 @@ suite('Tooltip', function () {
 
   suite('Custom Tooltip', function () {
     setup(function () {
-      this.renderedWorkspace = Blockly.inject('blocklyDiv', {});
+      this.renderedWorkspace = Blockly.inject('blocklyDiv', {
+        media: TEST_MEDIA_PATH,
+        sounds: false,
+      });
     });
 
     teardown(function () {
@@ -145,7 +149,10 @@ suite('Tooltip', function () {
 
     suite('Rendered Blocks', function () {
       setup(function () {
-        this.renderedWorkspace = Blockly.inject('blocklyDiv');
+        this.renderedWorkspace = Blockly.inject('blocklyDiv', {
+          media: TEST_MEDIA_PATH,
+          sounds: false,
+        });
         this.block = this.renderedWorkspace.newBlock('test_block');
         this.block.initSvg();
         this.block.render();
@@ -227,7 +234,10 @@ suite('Tooltip', function () {
 
     suite('Rendered Fields', function () {
       setup(function () {
-        this.renderedWorkspace = Blockly.inject('blocklyDiv');
+        this.renderedWorkspace = Blockly.inject('blocklyDiv', {
+          media: TEST_MEDIA_PATH,
+          sounds: false,
+        });
         this.block = this.renderedWorkspace.newBlock('test_block');
         this.block.initSvg();
         this.block.render();

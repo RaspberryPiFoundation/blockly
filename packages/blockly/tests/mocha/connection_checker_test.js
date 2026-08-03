@@ -9,6 +9,7 @@ import {assert} from 'chai';
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 
 suite('Connection checker', function () {
@@ -515,7 +516,10 @@ suite('Connection checker', function () {
   suite('Dragging Checks', function () {
     suite('Stacks', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv');
+        this.workspace = Blockly.inject('blocklyDiv', {
+          media: TEST_MEDIA_PATH,
+          sounds: false,
+        });
         // Load in three blocks: A and B are connected (next/prev); B is unmovable.
         Blockly.Xml.domToWorkspace(
           Blockly.utils.xml
@@ -626,7 +630,10 @@ suite('Connection checker', function () {
     });
     suite('Rows', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv');
+        this.workspace = Blockly.inject('blocklyDiv', {
+          media: TEST_MEDIA_PATH,
+          sounds: false,
+        });
         // Load 3 blocks: A and B are connected (input/output); B is unmovable.
         Blockly.Xml.domToWorkspace(
           Blockly.utils.xml

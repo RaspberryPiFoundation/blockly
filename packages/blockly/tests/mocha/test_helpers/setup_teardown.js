@@ -8,6 +8,14 @@ import * as eventUtils from '#core/events/utils.js';
 import {FocusManager} from '#core/focus_manager.js';
 
 /**
+ * Path to Blockly's media directory, relative to the test harness page
+ * (tests/mocha/index.html). Tests pass this to Blockly.inject so that media is
+ * loaded from the local checkout rather than fetched from the public CDN.
+ * @type {string}
+ */
+export const TEST_MEDIA_PATH = '../../media/';
+
+/**
  * Safely disposes of Blockly workspace, logging any errors.
  * Assumes that sharedTestSetup has also been called. This should be called
  * using workspaceTeardown.call(this).

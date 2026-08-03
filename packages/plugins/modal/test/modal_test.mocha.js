@@ -20,7 +20,10 @@ suite('Modal', function () {
     this.jsdomCleanup = require('jsdom-global')(
       '<!DOCTYPE html><div id="blocklyDiv"></div>',
     );
-    this.workspace = Blockly.inject('blocklyDiv', {});
+    this.workspace = Blockly.inject('blocklyDiv', {
+      media: 'media/',
+      sounds: false,
+    });
     this.modal = new Modal('Title', this.workspace);
   });
 

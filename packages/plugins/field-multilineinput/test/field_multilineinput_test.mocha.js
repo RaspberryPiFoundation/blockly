@@ -164,7 +164,10 @@ suite('FieldMultilineInput', function () {
       this.clock = sinon.useFakeTimers();
       window.requestAnimationFrame = (cb) => setTimeout(cb, 0);
       window.cancelAnimationFrame = (id) => clearTimeout(id);
-      this.workspace = Blockly.inject('blocklyDiv');
+      this.workspace = Blockly.inject('blocklyDiv', {
+        media: 'media/',
+        sounds: false,
+      });
 
       if (!Blockly.Blocks['multiline_block']) {
         Blockly.defineBlocksWithJsonArray([

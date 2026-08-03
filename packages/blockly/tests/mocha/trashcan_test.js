@@ -18,6 +18,7 @@ import {assertEventFired, assertEventNotFired} from './test_helpers/events.js';
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  TEST_MEDIA_PATH,
 } from './test_helpers/setup_teardown.js';
 import {simulateClick} from './test_helpers/user_input.js';
 
@@ -54,6 +55,8 @@ suite('Trashcan', function () {
     defineStackBlock('stack_block2');
     defineMutatorBlocks();
     this.workspace = Blockly.inject('blocklyDiv', {
+      media: TEST_MEDIA_PATH,
+      sounds: false,
       'trashcan': true,
       'maxTrashcanContents': Infinity,
     });
