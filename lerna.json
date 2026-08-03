@@ -4,7 +4,9 @@
   "changelogPreset": {
     "name": "conventionalcommits"
   },
-  "ignoreChanges": ["**/package-lock.json"],
+  "ignoreChanges": [
+    "**/package-lock.json"
+  ],
   "command": {
     "version": {
       "tagVersionPrefix": "blockly-v"

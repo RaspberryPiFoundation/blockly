@@ -96,40 +96,38 @@ jobs:
         working-directory: packages/blockly
         run: npm run package
 
-      # Step 1: Version packages that SHOULD have a changelog
-      # npx lerna version --scope "libs-*" --conventional-commits
-
-      # Step 2: Version packages that SHOULD NOT have a changelog
-      # npx lerna version --ignore "libs-*" --no-changelog --yes
-
-      - name: Version
+      # We need to split out versioning between core and plugins as we only want 
+      # changelogs for plugins and lerna does not have a per-package
+      # configuration option for the version command.
+      - name: Version core
         if: ${{ !inputs.skip_versioning }}
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION_OVERRIDE: ${{ inputs.version_override }}
-        # If we're on the default branch, do a package release. Otherwise, do a prerelease (beta)
+        # If we're on the default branch, do a package release. Otherwise, do a 
+        # prerelease (beta)
         run: |
           if [ "${REF_NAME}" = "${DEFAULT_BRANCH}" ]; then
-            npx lerna version "${VERSION_OVERRIDE}" --conventional-commits --no-git-tag-version --yes --loglevel silly
+            npx lerna version "${VERSION_OVERRIDE}" --conventional-commits --no-git-tag-version --scope "packages/blockly" --no-changelog --yes --loglevel silly
           else
-            npm lerna version "${VERSION_OVERRIDE}" --conventional-prerelease --preid beta --no-git-tag-version --yes --loglevel silly
+            npm lerna version "${VERSION_OVERRIDE}" --conventional-prerelease --preid beta --scope "packages/blockly" --no-changelog --no-git-tag-version --yes --loglevel silly
           fi
 
-      # TODO: We should be able to combine these and set the --contents dist in the lerna.json
-      - name: Publish core
-        working-directory: packages/blockly
+      - name: Version plugins
+        if: ${{ !inputs.skip_versioning }}
         env:
           GH_TOKEN: ${{ github.token }}
-          SKIP_VERSIONING: ${{ inputs.skip_versioning }}
+          VERSION_OVERRIDE: ${{ inputs.version_override }}
+        # If we're on the default branch, do a package release. Otherwise, do a 
+        # prerelease (beta)
         run: |
-          if [ "${SKIP_VERSIONING}" = "true" ]; then
-            npx lerna publish from-package --contents dist --yes --loglevel silly
+          if [ "${REF_NAME}" = "${DEFAULT_BRANCH}" ]; then
+            npx lerna version "${VERSION_OVERRIDE}" --conventional-commits --no-git-tag-version --scope "packages/plugins" --yes --loglevel silly
           else
-            npx lerna publish from-git --contents dist --yes --loglevel silly
+            npm lerna version "${VERSION_OVERRIDE}" --conventional-prerelease --preid beta --scope "packages/plugins" --no-git-tag-version --yes --loglevel silly
           fi
 
-      - name: Publish plugins
-        working-directory: packages/plugins
+      - name: Publish
         env:
           GH_TOKEN: ${{ github.token }}
           SKIP_VERSIONING: ${{ inputs.skip_versioning }}
@@ -139,8 +137,7 @@ jobs:
           else
             npx lerna publish from-git --yes --loglevel silly
           fi
-      
-      # TODO: does this actually work? Do we need to iterate through all the packages?
+
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
