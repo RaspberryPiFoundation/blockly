@@ -23,6 +23,9 @@
     "#core/*": "./build/src/core/*",
     "#generators/*": "./build/src/generators/*"
   },
+  "publishConfig": {
+    "directory": "dist"
+  },
   "scripts": {
     "build": "gulp build",
     "build-debug": "gulp build --verbose --debug",

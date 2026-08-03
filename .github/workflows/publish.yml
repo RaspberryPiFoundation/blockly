@@ -96,14 +96,26 @@ jobs:
         working-directory: packages/blockly
         run: npm run package
 
+      # Step 1: Version packages that SHOULD have a changelog
+      # npx lerna version --scope "libs-*" --conventional-commits
+
+      # Step 2: Version packages that SHOULD NOT have a changelog
+      # npx lerna version --ignore "libs-*" --no-changelog --yes
+
       - name: Version
         if: ${{ !inputs.skip_versioning }}
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION_OVERRIDE: ${{ inputs.version_override }}
+        # If we're on the default branch, do a package release. Otherwise, do a prerelease (beta)
         run: |
-          npx lerna version "${VERSION_OVERRIDE}" --conventional-commits --create-release github --no-git-tag-version --yes --loglevel silly
+          if [ "${REF_NAME}" = "${DEFAULT_BRANCH}" ]; then
+            npx lerna version "${VERSION_OVERRIDE}" --conventional-commits --no-git-tag-version --yes --loglevel silly
+          else
+            npm lerna version "${VERSION_OVERRIDE}" --conventional-prerelease --preid beta --no-git-tag-version --yes --loglevel silly
+          fi
 
+      # TODO: We should be able to combine these and set the --contents dist in the lerna.json
       - name: Publish core
         working-directory: packages/blockly
         env:
@@ -126,4 +138,24 @@ jobs:
             npx lerna publish from-package --yes --loglevel silly
           else
             npx lerna publish from-git --yes --loglevel silly
+          fi
+      
+      # TODO: does this actually work? Do we need to iterate through all the packages?
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(node -p "require('.packages/blockly/package.json').version")
+          TARBALL="blockly-${VERSION}.tgz"
+          if [ "${{ github.ref_name }}" != "${{ github.event.repository.default_branch }}" ]; then
+            gh release create "blockly-v${VERSION}" "$TARBALL" \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "blockly-v${VERSION}" \
+              --generate-notes \
+              --prerelease
+          else
+            gh release create "blockly-v${VERSION}" "$TARBALL" \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "blockly-v${VERSION}" \
+              --generate-notes
           fi
