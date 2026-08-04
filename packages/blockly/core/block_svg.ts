@@ -899,6 +899,8 @@ export class BlockSvg
   override dispose(healStack?: boolean, animate?: boolean) {
     this.disposing = true;
 
+    Tooltip.unbindMouseEvents(this.pathObject.svgPath);
+    delete (this.pathObject.svgPath as any).tooltip;
     Tooltip.dispose();
     ContextMenu.hide();
 
