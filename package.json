@@ -27,6 +27,8 @@
     "packages/plugins/theme-tritanopia",
     "packages/plugins/block-test",
     "packages/plugins/dev-tools",
+    "packages/plugins/sample-app",
+    "packages/plugins/sample-app-ts",
     "packages/plugins/field-grid-dropdown",
     "packages/plugins/block-dynamic-connection",
     "packages/plugins/block-plus-minus",
