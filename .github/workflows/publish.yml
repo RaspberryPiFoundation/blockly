@@ -34,44 +34,9 @@ jobs:
   ci:
     uses: ./.github/workflows/build.yml
 
-  dry-run:
-    needs: ci
-    runs-on: ubuntu-latest
-    if: ${{ inputs.dry_run }}
-    timeout-minutes: 30
-    outputs:
-      version: ${{ steps.version.outputs.version }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.ref }}
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: 24.x
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Install dependencies
-        if: ${{ !inputs.skip_versioning }}
-        run: npm ci
-
-      - name: Dry run summary
-        run: |
-          DIST_TAG="${{ github.ref_name == github.event.repository.default_branch && 'latest' || 'beta' }}"
-          RELEASE_VERSIONS=$(npx lerna version --yes --exact --conventional-commits --no-git-tag-version --no-push --no-changelog)
-          echo "Dry run: would publish the following versions to npm dist-tag: ${DIST_TAG}"
-          echo "${RELEASE_VERSIONS}"
-          if [ "${{ github.ref_name }}" != "${{ github.event.repository.default_branch }}" ]; then
-            echo "GitHub release would be created as prerelease."
-          fi
-
   publish:
     needs: ci
     runs-on: ubuntu-latest
-    if: ${{ !inputs.dry_run }}
     environment: release
     env:
       NPM_DIST_TAG: ${{ github.ref_name == github.event.repository.default_branch && 'latest' || 'beta' }}
@@ -96,35 +61,39 @@ jobs:
         working-directory: packages/blockly
         run: npm run package
 
-      # We need to split out versioning between core and plugins as we only want 
-      # changelogs for plugins and lerna does not have a per-package
-      # configuration option for the version command.
-      - name: Version core
+      - name: Version
         if: ${{ !inputs.skip_versioning }}
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION_OVERRIDE: ${{ inputs.version_override }}
-        # If we're on the default branch, do a package release. Otherwise, do a 
-        # prerelease (beta)
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          REF_NAME: ${{ github.ref_name }}
+          DRY_RUN: ${{ inputs.dry_run}}
         run: |
-          if [ "${REF_NAME}" = "${DEFAULT_BRANCH}" ]; then
-            npx lerna version "${VERSION_OVERRIDE}" --conventional-commits --no-git-tag-version --scope "packages/blockly" --no-changelog --yes --loglevel silly
-          else
-            npm lerna version "${VERSION_OVERRIDE}" --conventional-prerelease --preid beta --scope "packages/blockly" --no-changelog --no-git-tag-version --yes --loglevel silly
+          VERSION_COMMAND="npx lerna version"
+          if [ -n "${VERSION_OVERRIDE}" ]; then
+            VERSION_COMMAND="${VERSION_COMMAND} ${VERSION_OVERRIDE}"
           fi
-
-      - name: Version plugins
-        if: ${{ !inputs.skip_versioning }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-          VERSION_OVERRIDE: ${{ inputs.version_override }}
-        # If we're on the default branch, do a package release. Otherwise, do a 
-        # prerelease (beta)
-        run: |
           if [ "${REF_NAME}" = "${DEFAULT_BRANCH}" ]; then
-            npx lerna version "${VERSION_OVERRIDE}" --conventional-commits --no-git-tag-version --scope "packages/plugins" --yes --loglevel silly
+            VERSION=$(node -p "require('./packages/blockly/package.json').version")
+            if [[ "${VERSION}" == *"-beta."* ]]; then
+              VERSION_COMMAND="${VERSION_COMMAND} --conventional-graduate"
+            fi
           else
-            npm lerna version "${VERSION_OVERRIDE}" --conventional-prerelease --preid beta --scope "packages/plugins" --no-git-tag-version --yes --loglevel silly
+            VERSION_COMMAND="${VERSION_COMMAND} --conventional-prerelease --preid beta"
+          fi
+          VERSION_COMMAND="${VERSION_COMMAND} --conventional-commits --no-git-tag-version --yes"
+          if [ "${DRY_RUN}" = "true" ]; then
+            DIST_TAG=$([ ${REF_NAME} = ${DEFAULT_BRANCH} ] && echo "latest" || echo "beta")
+            VERSION_COMMAND="${VERSION_COMMAND} --no-push"
+            RELEASE_VERSIONS=$(eval "$VERSION_COMMAND")
+            echo "Dry run: would publish the following versions to npm dist-tag: ${DIST_TAG}"
+            echo "${RELEASE_VERSIONS}"
+            if [ "${REF_NAME}" != "${DEFAULT_BRANCH}" ]; then
+              echo "GitHub release would be created as prerelease."  
+            fi
+          else
+            eval "$VERSION_COMMAND"
           fi
 
       - name: Publish
@@ -143,7 +112,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION=$(node -p "require('.packages/blockly/package.json').version")
-          TARBALL="blockly-${VERSION}.tgz"
+          TARBALL="blockly-*${VERSION}.tgz"
           if [ "${{ github.ref_name }}" != "${{ github.event.repository.default_branch }}" ]; then
             gh release create "blockly-v${VERSION}" "$TARBALL" \
               --repo "$GITHUB_REPOSITORY" \
