@@ -6,51 +6,48 @@ image: images/blockly_banner.png
 
 # Write a good pull request
 
-Pull requests are like the life blood of a repository. They keep everything
+Pull requests (PRs) are requests to merge new code into the repository. They keep everything
 healthy and moving. This page details how to create a PR that is complete and
 easy to review, which makes it more likely that your PR will get merged.
 
-Here are steps you can take to make sure you create the best PR possible.
+If this is your first time contributing to Blockly or blockly-samples, start at
+the [development setup](/guides/contribute/get-started/) page.
+
+Here are steps you can take to make sure you create the best PR possible:
 
 1.  [Communicate](#communicate)
-1.  [Get Set Up](#get-set-up)
-1.  [Keep it Small](#keep-it-small)
-1.  [Keep it Clean](#keep-it-clean)
-1.  [Test your Change](#test-your-change)
-1.  [Communicate (pt2)](#communicate-1)
+1.  [Keep it small](#keep-it-small)
+1.  [Keep it clean](#keep-it-clean)
+1.  [Test your changes](#test-your-changes)
+1.  [Write a summary](#write-a-summary)
+1.  [Read the review](#read-the-review)
+1.  [Discuss, revise, and repeat](#discuss-revise-and-repeat)
+1.  [Merge!](#merge)
 
-### Communicate
+## Communicate
 
 Before you jump in and start writing code, it's helpful to communicate with the
-core team so they know what you're interested in.
+team so they know what you're interested in. If there is an issue that you are 
+interested in, put a comment on the issue saying you're going to start to work 
+on it. A team member will respond to confirm that it's yours. 
 
-If there is an issue you are interested in, put a comment on the issue saying
-you're going to start to work on it. This makes sure that we don't have multiple
-people working on the same thing. A team member will respond to confirm that
-it's yours.
+If you're not sure where to start, use the [`good first issue`](https://github.com/RaspberryPiFoundation/blockly/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22) 
+label to find issues that are good candidates for your first contribution to Blockly.
 
 If you have an idea which is not covered by an issue, please [write one
 up](/guides/contribute/get-started/write_a_good_issue) before you begin work.
-This gives the team a chance to discuss how best to build out the change
-_before_ you start building, which saves you work in the long run.
+This gives the team a chance to discuss how best to build out the change 
+_before_ you start building.
 
-### Get Set Up
+## Keep it Small
 
-If this is your first time contributing to Blockly or blockly-samples, start at
-the [development setup](/guides/contribute/get-started/development_tools) page.
-
-### Keep it Small
-
-Always try to keep your changes small and focused. We would much rather review
-multiple smaller PRs than review one giant PR. Some good rules of thumb are:
+Keep your changes small and focused. Some good rules of thumb are:
 
 - **Fix one problem.** Don't try to tackle multiple issues at once.
-- **Limit the scope.** Usually a PR should take < 8hrs (depending on your
-  familiarity with the codebase).
 - **Use commits.** If your PR feels a little big, split the changes into
   logical groups using git commits.
 
-### Keep it Clean
+## Keep it clean
 
 Why care about code style? We're in it for the long term, and consistent style
 makes maintenance easier. Style refers to how you name your variables, but also
@@ -59,40 +56,71 @@ use tools such as eslint to automate style checks.
 
 In addition to eslint, please follow these guides:
 
-- [Google JavaScript style
-  guide](https://google.github.io/styleguide/jsguide.html).
-- [Commit Message Guide](/guides/contribute/get-started/commits)
+- [Blockly style guide](/guides/contribute/core/style_guide)
+- [Commit message guide](/guides/contribute/get-started/commits)
 - [API visibility](/guides/programming/using_blockly_apis)
 - [Codelab style guide](/guides/contribute/core/write_a_codelab#writing-tips)
 
-### Test your Change
+## Test your changes
 
-Before you put up a PR you should always test that your changes are working, so
-that you don't have to go back and fix things later. Here are some ideas for
-testing the different categories of projects:
+Before you put up a PR, you should always test that your changes are working.
+That way, you don't have to go back and fix things later. You should write 
+[unit tests](/guides/contribute/core/testing/unit_testing) covering your changes. 
+You should also test your demonstrated functionality on the [playground](/guides/contribute/core/testing/playground). 
 
-- For **plugins**: write automated mocha tests covering your changes.
-- For **examples**: manually test all of your demonstrated functionality.
-- For **codelabs**: run through the entire tutorial in a clean environment and
-  test any example code you provide.
 
-### Communicate
+## Write a summary
 
-This is the last and arguably the most important part of creating a PR: writing
-the summary.
-
+After finishing the code, you'll need to [create the PR](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request). 
+During the PR creation process, you'll write a summary describing your changes.
 Writing a great PR summary helps other developers review your changes, making it
 more likely that it will get accepted faster!
 
-Your summary should include things like:
-
-- What issue your PR is related to.
-- What change your PR adds.
-- How you tested your change.
-- Anything you want reviewers to scrutinize.
-- Any other information you think reviewers need.
+If you use an LLM to assist with writing your PR, we encourage you to edit the 
+PR for length and clarity. LLMs tend to write lengthy PR descriptions, making 
+them harder to review. 
 
 If you follow the PR template when your create your request you should be good
 to go. Just remember to be as **concise** and **complete** as possible.
 
-Happy Coding!
+## Read the review
+
+After your PR is submitted, it will be reviewed by a member of the Blockly team.
+As reviewers, we aim to work with you to make your change as good as possible.
+We ask that you, as contributors, engage in conversation with us to get your
+pull requests through review and merged. All code is reviewed, regardless of 
+whether it is written by community contributors or Blockly team members.
+
+Our review process has several goals:
+
+- **Ensure high quality code**, in both functionality and readability.
+- **Catch bugs**, because bugs happen.
+- **Maintain consistent style** so that it's easy to start working in any part
+  of the codebase.
+
+## Discuss, revise, and repeat
+
+Reviewers will leave comments on your PR. They may suggest changes or ask questions
+about the code you've written. You're welcome to ask for clarification, explain 
+your choices, or point out issues with a requested change. 
+
+:::tip[Be collaborative!]
+For this to work, both parties need to go into the discussion with a
+spirit of **collaboration**. The goal is not to "win" but to make something
+you're both proud of.
+:::
+
+Once you and your reviewer(s) have determined next steps, you can make revisions
+to your PR. GitHub will automatically update your PR if you push new commits on 
+the same branch. 
+
+After revision, your reviewer may have more comments; this is completely normal! 
+You'll repeat this process together until the PR is approved. 
+
+## Merge!
+
+Once the PR is approved, a member of the Blockly team will merge it. The merge 
+phase is your chance to **celebrate**. You've created a change, discussed and 
+revised it, and finally gotten it merged!
+
+Thank you for all of your hard work to make Blockly better. And congratulations!

@@ -3,13 +3,19 @@ description: How to add a new localization token to Blockly core.
 title: Add a new localization token to Blockly core
 image: images/blockly_banner.png
 ---
+# Localization and translation
 
-# Add a new localization token to Blockly core
+Blockly uses a localization system to translate user-visible text into a variety
+of languages. If you add a feature to Blockly core that requires new
+user-visible strings, you must add those strings to the message file so that
+they can be [translated by Translatewiki](#translatewiki). For information about 
+adding localization tokens for your _own_ application, see 
+[Localization][localization].
 
-If you add a feature to Blockly core that requires new user-visible strings, you
-must add those strings to `Blockly.Msg` so that they can be [translated by
-Translatewiki][translatewiki]. (For information about adding localization tokens
-for your own application, see [Localization][localization].)
+## Add a new localization token to Blockly core
+
+New user-visible strings must be added to `Blockly.Msg`. Follow 
+these steps to ensure that the new strings can be properly translated:
 
 1.  Add your new string with an appropriate name and description to the
     `msg/messages.js` file.
@@ -51,7 +57,7 @@ and in `msg/qqq.json`:
 
 Then you can reference this string in code with `Blockly.Msg['MY_NEW_MESSAGE']`.
 
-## Translation hints
+### Translation hints
 
 The triple-slash comment in `msg/messages.js` is shown to TranslateWiki users as
 supplementary information when translating. Provide context for where the
@@ -72,7 +78,7 @@ provides a link to more information.
 Blockly.Msg.CONTROLS_FOR_TITLE = 'count with %1 from %2 to %3 by %4';
 ```
 
-### Context types
+#### Context types
 
 Many of the hints use a prefix to explain the context of a message. The common
 prefixes include:
@@ -87,7 +93,7 @@ prefixes include:
 
 If your message appears in one of these context, use the appropriate prefix.
 
-## Synonyms
+### Synonyms
 
 Sometimes a message key needs to be changed, but the translations don't. In that
 case, you can set the old message as a synonym of the new message, like so:
@@ -97,7 +103,7 @@ case, you can set the old message as a synonym of the new message, like so:
 Blockly.Msg.CONTROLS_FOR_INPUT_DO = Blockly.Msg.CONTROLS_REPEAT_INPUT_DO;
 ```
 
-## Optional messages
+### Optional messages
 
 Some message strings are unlikely to need translation except in certain
 circumstances, for example, proper nouns or symbols. In Blockly, help URLs are
@@ -114,7 +120,7 @@ complete the optional translations.
 Blockly.Msg.MATH_ADDITION_SYMBOL = '+';
 ```
 
-## Notranslate items
+### Notranslate items
 
 The colours used for default block categories are marked `{{notranslate}}`. These colours are not intended to be
 localized, but are in the localization system so that developers can easily
@@ -133,3 +139,78 @@ Blockly.Msg.LOGIC_HUE = '210';
 [translatewiki]: /guides/contribute/core/translating
 [localization]: /guides/configure/translations
 [block-colour]: /guides/configure/appearance/block-colour#set-block-colour
+
+# Translate text
+
+Students shouldn't have to struggle with learning English at the same time as
+they're learning computer science concepts. If you are a native speaker of a
+language other than English, we'd appreciate your assistance in reaching the 95%
+of the world that doesn't speak English natively.
+
+## Translatewiki
+
+Translations for Blockly are handled by Translatewiki.
+
+1.  Sign up to become a translator at
+    [translatewiki.net](https://translatewiki.net/).
+1.  Do some [test
+    translations](https://translatewiki.net/wiki/Special:TranslationStash) to
+    get permission to translate (choose a language in the upper-right).
+1.  Briefly read over the [style
+    guide](https://translatewiki.net/wiki/Translating:Blockly) for Blockly's
+    translations.
+1.  Go to Blockly's [message group](https://translatewiki.net/w/i.php?title=Special:Translate&group=out-blockly-0-all)
+    (choose a language in the upper-right), and start translating!
+
+New translations may take a few months to show up on the live site.
+
+![A photo showing three Vietnamese girls in front of a
+computer.](/images/vietnam.jpg)
+
+## Klingon translations
+
+On 1 April 2014 we released a
+[Klingon translation of Blockly](https://blockly-demo.appspot.com/static/demos/code/index.html?lang=tlh#ortpyd).
+Klingon is an unusual choice for a translation, and on this page we wanted to
+give some context on the hows and whys, as well as how you can help.
+
+![A stack of blocks in Klingon.](/images/klingon.png)
+
+### Why?
+
+Blockly has been translated into over 40 languages, including RTL languages such
+as Arabic and Hebrew. We feel that it is important that novice programmers are
+able to learn the fundamentals of programming in their own language, before
+making the transition to conventional English-based programming languages.
+
+Klingon is a real language in every sense of the word. It is not just a
+collection of made-up words thrown together for a movie. Instead, it has been
+crafted by linguists over the course of decades. The Klingon language has a
+complicated grammar that is completely unique.
+
+Consider word order. English follows the Subject-Verb-Object order ("The cat
+eats the food."). Hungarian follows the Object-Subject-Verb order ("The food
+the cat eats."). Hebrew follows the Verb-Subject-Object order ("Eats the cat
+the food."). Klingon is the most bizarre, with Object-Verb-Subject order ("The
+food eats the cat."). Supporting Klingon is the ultimate test of Blockly's
+flexibility. Block inputs need to be reordered, suffix groups need to be added,
+rules for plurals need to be rethought. Infrastructure improvements made during
+the course of translating to Klingon help us support all languages.
+
+### How?
+
+Most of [Blockly's translations](/guides/contribute/core/translating) are done by volunteers
+using Translatewiki. Unfortunately, Klingon is not in their language matrix.
+As a result, Klingon contributors need to edit the translation manually:
+
+[msg/json/tlh.json](https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/blockly/msg/json/tlh.json)
+
+See the `en` files in each directory for the English phrases (including
+those not yet translated to Klingon).
+We actively do not want tooltip messages or help URLs translated since they
+offer useful context for those new to Klingon.
+
+All phrases _must_ be manually translated. Bing Translate produces such
+translations as `"Library" -> "be'nI''a'wI', Datu'"` which actually means
+`"discover my big sister"`.
+Clearly this would be an inadvisable phrase to use in a Klingon environment.

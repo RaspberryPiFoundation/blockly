@@ -1336,11 +1336,6 @@ const sidebars = {
             },
             {
               type: 'doc',
-              label: 'Development tools',
-              id: 'guides/contribute/get-started/development_tools',
-            },
-            {
-              type: 'doc',
               label: 'Write a good issue',
               id: 'guides/contribute/get-started/write_a_good_issue',
             },
@@ -1353,21 +1348,6 @@ const sidebars = {
               type: 'doc',
               label: 'Commit message guide',
               id: 'guides/contribute/get-started/commits',
-            },
-            {
-              type: 'doc',
-              label: 'Code review process',
-              id: 'guides/contribute/get-started/pr_review_process',
-            },
-            {
-              type: 'doc',
-              label: 'Issue labels',
-              id: 'guides/contribute/get-started/issue_labels',
-            },
-            {
-              type: 'doc',
-              label: 'Use the playground',
-              id: 'guides/contribute/get-started/playground',
             },
           ],
         },
@@ -1386,10 +1366,20 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
+                  label: 'Core tour',
+                  id: 'guides/contribute/core/core-architecture/core-tour',
+                },
+                {
+                  type: 'doc',
                   label: 'Render management',
-                  id: 'guides/contribute/core-architecture/render-management',
+                  id: 'guides/contribute/core/core-architecture/render-management',
                 },
               ],
+            },
+            {
+              type: 'doc',
+              label: 'Development tools',
+              id: 'guides/contribute/core/development_tools',
             },
             {
               type: 'doc',
@@ -1398,39 +1388,40 @@ const sidebars = {
             },
             {
               type: 'doc',
-              label: 'Build scripts',
-              id: 'guides/contribute/core/building',
-            },
-            {
-              type: 'doc',
-              label: 'Advanced compilation',
-              id: 'guides/contribute/core/advanced',
+              label: 'Localization and translation',
+              id: 'guides/contribute/core/localization_and_translation',
             },
             {
               type: 'category',
-              label: 'Localization',
+              label: 'Testing',
               items: [
                 {
                   type: 'doc',
-                  label: 'Add a new localization token',
-                  id: 'guides/contribute/core/add_localization_token',
+                  label: 'Use the playground',
+                  id: 'guides/contribute/core/testing/playground',
                 },
                 {
                   type: 'doc',
-                  label: 'Translate text',
-                  id: 'guides/contribute/core/translating',
-                },
-                {
-                  type: 'doc',
-                  label: 'Klingon',
-                  id: 'guides/contribute/core/klingon',
+                  label: 'Unit tests',
+                  id: 'guides/contribute/core/testing/unit_testing',
                 },
               ],
             },
             {
-              type: 'doc',
-              label: 'Unit tests',
-              id: 'guides/contribute/core/unit_testing',
+              type: 'category',
+              label: 'Building and compilation',
+              items: [
+                {
+                  type: 'doc',
+                  label: 'Build scripts',
+                  id: 'guides/contribute/core/building_and_compilation/building',
+                },
+                {
+                  type: 'doc',
+                  label: 'Advanced compilation',
+                  id: 'guides/contribute/core/building_and_compilation/advanced',
+                },
+              ],
             },
             {
               type: 'doc',

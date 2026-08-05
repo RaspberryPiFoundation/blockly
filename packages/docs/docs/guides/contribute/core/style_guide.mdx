@@ -14,7 +14,7 @@ guide](https://google.github.io/styleguide/tsguide.html).
 Blockly was originally written in ES5.1 in compliance with an [older,
 then-current version of the Google JavaScript style
 guide](https://google.github.io/styleguide/javascriptguide.xml). Newly-written
-code should comply with the current style guide and use ES6 language features
+code should comply with the [current style guide](https://google.github.io/styleguide/tsguide.html) and use ES6 language features
 like `let`, `const`, `class`, destructuring assignment where applicable.
 Existing code may be updated or may be left out of compliance. The Blockly team
 tries to make the best decision taking into account code consistency and the
@@ -25,18 +25,17 @@ public functions that no longer comply with the style guide.
 
 - Use linting and formatting tools.
   - We use [eslint](http://eslint.org/) and have an [`eslint.config.mjs`
-    file](https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/blockly/eslint.config.mjs)
+    file](https://github.com/RaspberryPiFoundation/blockly/blob/main/eslint.config.mjs)
     set up with rules for our preferred style.
   - We use [prettier](https://prettier.io/) for automatic formatting.
   - Run `npm run lint` to run the linter and `npm run format` to run the
     formatter.
 - Indent with spaces, not tabs.
-- Use [semicolons][semicolons-rule].
+- Use [semicolons](https://google.github.io/styleguide/tsguide.html#automatic-semicolon-insertion).
 - Use `camelCase` for variables and functions.
 - Use `TitleCase` for classes.
 - Use `ALL_CAPS` for constants.
-- [Use braces](https://google.github.io/styleguide/jsguide.html#formatting-braces-all)
-  for all control structures.
+- Use braces for all control structures.
   - Exception: You may omit the braces for single-line `if` statements.
 - Use single quotes (except when writing JSON).
 - Redeclare variables in `for` loops. That is, always write `for (const i = 0;
@@ -130,5 +129,3 @@ export function getWorkspaceById(id: string): Workspace | null {
   return WorkspaceDB_[id] || null;
 }
 ```
-
-[semicolons-rule]: https://google.github.io/styleguide/jsguide.html#formatting-semicolons-are-required

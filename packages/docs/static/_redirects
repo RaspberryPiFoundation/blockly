@@ -37,12 +37,12 @@
 
 # Contributing Get Started section
 /guides/modify/contribute/commits   /guides/contribute/get-started/commits/   301
-/guides/modify/development_setup   /guides/contribute/get-started/development_tools/   301
-/guides/modify/contribute/issue_labels   /guides/contribute/get-started/issue_labels/   301
-/guides/modify/contribute/pr_review_process   /guides/contribute/get-started/pr_review_process/   301
+/guides/modify/development_setup   /guides/contribute/core/development_tools/   301
+/guides/modify/contribute/issue_labels   https://github.com/RaspberryPiFoundation/blockly/labels   301
+/guides/modify/contribute/pr_review_process   /guides/contribute/get-started/write_a_good_pr/#read-the-review   301
 /guides/modify/contribute/write_a_good_issue   /guides/contribute/get-started/write_a_good_issue/   301
 /guides/modify/contribute/write_a_good_pr   /guides/contribute/get-started/write_a_good_pr/   301
-/guides/modify/web/playground   /guides/contribute/get-started/playground/   301
+/guides/modify/web/playground   /guides/contribute/core/testing/playground/   301
 
 # Contributing to Samples section
 /guides/modify/contribute/add_a_plugin   /guides/contribute/samples/add_a_plugin/   301
@@ -54,8 +54,21 @@
 
 # Contributing to Core section
 /guides/modify/web/style-guide   /guides/contribute/core/style_guide/   301
-/guides/modify/web/unit-testing   /guides/contribute/core/unit_testing/   301
+/guides/modify/web/unit-testing   /guides/contribute/core/testing/unit_testing/   301
 /guides/modify/web/*   /guides/contribute/core/   301
+
+# Reorganize contribute docs
+/guides/contribute/core/advanced   /guides/contribute/core/building_and_compilation/advanced/   301
+/guides/contribute/core/building   /guides/contribute/core/building_and_compilation/building/   301
+/guides/contribute/core-architecture/render-management   /guides/contribute/core/core-architecture/render-management/   301
+/guides/contribute/get-started/development_tools   /guides/contribute/core/development_tools/   301
+/guides/contribute/core/unit_testing   /guides/contribute/core/testing/unit_testing/   301
+/guides/contribute/get-started/playground   /guides/contribute/core/testing/playground/   301
+/guides/contribute/core/add_localization_token   /guides/contribute/core/localization_and_translation/   301
+/guides/contribute/core/translating   /guides/contribute/core/localization_and_translation/#translate-text   301
+/guides/contribute/core/klingon   /guides/contribute/core/localization_and_translation/#klingon-translations   301
+/guides/contribute/get-started/issue_labels   https://github.com/RaspberryPiFoundation/blockly/labels   301
+/guides/contribute/get-started/pr_review_process   /guides/contribute/get-started/write_a_good_pr/#read-the-review   301
 
 # Advanced Customization section (under Configure)
 /guides/plugins/interfaces/overview   /guides/configure/customization/   301
