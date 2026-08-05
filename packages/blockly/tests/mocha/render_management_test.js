@@ -126,4 +126,75 @@ suite('Render Management', function () {
       assert.isFalse(block2.hasRendered, 'Expected block2 to not be rendered');
     });
   });
+
+  suite('Post-render bumpNeighbours', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv', {});
+
+      // Create and init two identical overlapping blocks so that the first
+      // render will need to bump one.
+      this.block = this.workspace.newBlock('controls_if');
+      this.block.initSvg();
+
+      const block2 = this.workspace.newBlock('controls_if');
+      block2.initSvg();
+    });
+
+    test('does not record undo event when the render was queued with recordUndo disabled', function () {
+      Blockly.Events.setRecordUndo(false);
+      Blockly.renderManagement.queueRender(this.block);
+      Blockly.Events.setRecordUndo(true);
+
+      Blockly.renderManagement.triggerQueuedRenders();
+
+      assert.isFalse(
+        this.workspace.getUndoStack().some((item) => {
+          return (
+            item.type === 'move' &&
+            item.reason[0] === 'bump' &&
+            item.blockId === this.block.id
+          );
+        }),
+      );
+    });
+
+    test('records undo event when the render was queued with recordUndo enabled', function () {
+      Blockly.Events.setRecordUndo(true);
+      Blockly.renderManagement.queueRender(this.block);
+      Blockly.Events.setRecordUndo(false);
+
+      Blockly.renderManagement.triggerQueuedRenders();
+
+      assert.isTrue(
+        this.workspace.getUndoStack().some((item) => {
+          return (
+            item.type === 'move' &&
+            item.reason[0] === 'bump' &&
+            item.blockId === this.block.id
+          );
+        }),
+      );
+    });
+
+    test('associates bump undo events with the event group from when the render was queued', function () {
+      Blockly.Events.setRecordUndo(true);
+      Blockly.Events.setGroup('test-group');
+      Blockly.renderManagement.queueRender(this.block);
+      Blockly.Events.setGroup(false);
+      Blockly.Events.setRecordUndo(false);
+
+      Blockly.renderManagement.triggerQueuedRenders();
+
+      assert.isTrue(
+        this.workspace.getUndoStack().some((item) => {
+          return (
+            item.type === 'move' &&
+            item.reason[0] === 'bump' &&
+            item.blockId === this.block.id &&
+            item.group === 'test-group'
+          );
+        }),
+      );
+    });
+  });
 });
