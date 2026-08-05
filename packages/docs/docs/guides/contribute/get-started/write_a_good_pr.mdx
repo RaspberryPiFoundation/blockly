@@ -4,9 +4,9 @@ title: Write a good pull request
 image: images/blockly_banner.png
 ---
 
-# Write and merge a good pull request
+# Write a good pull request
 
-Pull requests (PRs) are like the life blood of a repository. They keep everything
+Pull requests (PRs) are requests to merge new code into the repository. They keep everything
 healthy and moving. This page details how to create a PR that is complete and
 easy to review, which makes it more likely that your PR will get merged.
 
@@ -36,16 +36,14 @@ label to find issues that are good candidates for your first contribution to Blo
 
 If you have an idea which is not covered by an issue, please [write one
 up](/guides/contribute/get-started/write_a_good_issue) before you begin work.
-This gives the team a chance to determine the issue's priority and discuss how 
-best to build out the change _before_ you start building.
+This gives the team a chance to discuss how best to build out the change 
+_before_ you start building.
 
 ## Keep it Small
 
 Keep your changes small and focused. Some good rules of thumb are:
 
 - **Fix one problem.** Don't try to tackle multiple issues at once.
-- **Limit the scope.** Usually a PR should take < 8hrs (depending on your
-  familiarity with the codebase).
 - **Use commits.** If your PR feels a little big, split the changes into
   logical groups using git commits.
 
@@ -66,10 +64,10 @@ In addition to eslint, please follow these guides:
 ## Test your changes
 
 Before you put up a PR, you should always test that your changes are working.
-That way, you don't have to go back and fix things later. You should test all of your 
-demonstrated functionality on the [playground](/guides/contribute/core/testing/playground). 
-If possible, you should also write [unit tests](/guides/contribute/core/testing/unit_testing) 
-covering your changes. 
+That way, you don't have to go back and fix things later. You should write 
+[unit tests](/guides/contribute/core/testing/unit_testing) covering your changes. 
+You should also test your demonstrated functionality on the [playground](/guides/contribute/core/testing/playground). 
+
 
 ## Write a summary
 
@@ -77,6 +75,10 @@ After finishing the code, you'll need to [create the PR](https://docs.github.com
 During the PR creation process, you'll write a summary describing your changes.
 Writing a great PR summary helps other developers review your changes, making it
 more likely that it will get accepted faster!
+
+If you use an LLM to assist with writing your PR, we encourage you to edit the 
+PR for length and clarity. LLMs tend to write lengthy PR descriptions, making 
+them harder to review. 
 
 If you follow the PR template when your create your request you should be good
 to go. Just remember to be as **concise** and **complete** as possible.

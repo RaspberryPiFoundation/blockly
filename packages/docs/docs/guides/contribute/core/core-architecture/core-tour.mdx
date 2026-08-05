@@ -39,7 +39,7 @@ folders, but all of the folders are listed below.
 - `core/`
   - `bubbles/` - Code for creating popover bubbles, such as mutator UI
   - `clipboard/` - [Copy/paste](/guides/configure/copy-paste/) logic
-  - `comments/` - Workspace [comments](/guides/configure/)
+  - `comments/` - Workspace [comments](/guides/configure/) and block comments
   - `dragging/` - Mechanics for
     [dragging objects](/guides/configure/dragging/draggable/) in the workspace
   - `events/` - [Events](/guides/configure/events) class and built-in events
@@ -63,9 +63,9 @@ folders, but all of the folders are listed below.
   - `serialization/` - [Saving and loading](/guides/configure/serialization/)
     workspace state
   - `theme/` - Built-in [themes](/guides/configure/appearance/themes/)
-  - `toolbox/` - The [toolbox](/guides/configure/toolboxes/toolbox/) and flyout
+  - `toolbox/` - The [toolbox](/guides/configure/toolboxes/toolbox/)
   - `utils/` - Utility functions used throughout core
-- `demos/` - Some Blockly demos. Most demos and examples are in [blockly-samples](https://github.com/raspberrypifoundation/blockly-samples).
+- `demos/` - Some deprecated Blockly demos. Up-to-date demos and examples are in [blockly-samples](https://github.com/raspberrypifoundation/blockly-samples).
 - `generators/` -
   [Code generators](/guides/create-custom-blocks/code-generation/overview/) for
   the built-in languages
@@ -82,7 +82,7 @@ reasons. If you're making a change to Blockly, you should take a look at these
 files, as well as the subfolders in `core/`, to find the relevant code.
 
 Note that Blockly's foundational base classes, like `Block`, `Workspace`, and
-`Connection` are located in the `core/` folder, outside of any subcategories.
+`Connection` are located in the `core/` folder, outside of any subfolders.
 
 ## Blockly docs
 
@@ -116,7 +116,7 @@ code.
 
 Before digging into `core/`, it's worth understanding one key part of Blockly's 
 architecture: Blockly separates data modeling from rendering. In practice, this 
-means that many parts of Blockly have two classes that represent them: one for 
+means that some parts of Blockly have two classes that represent them: one for 
 the data model, and one for the rendered version.
 
 For an example, look at the implementation of blocks. In the `core/` folder, 
@@ -132,28 +132,3 @@ saves the colour. It does not render or display that colour.
 `Block` class to add render management. The `setColour` override in BlockSvg 
 calls the super (which saves the colour) and also *applies* that colour
 to the rendered block.
-
-### Headless workspaces
-
-The model/view architecture makes it possible for Blockly to run headless. This 
-means that the data models that represent Blockly components can run without rendering anything in a 
-browser. Running Blockly in headless mode can be useful for testing, server-side 
-operations, or executing operations without rendering more workspaces (see the 
-[parallel program example](/guides/design/applications#parallel-program)). 
-
-To create a headless workspace, you can use `new Blockly.Workspace()` instead of
-injecting Blockly. 
-
-```js
-const renderedWorkspace = Blockly.inject(blocklyDiv);
-const headlessWorkspace = new Blockly.Workspace();
-```
-
-### Conventions
-
-When you see a class named `…Svg` (`BlockSvg`, `WorkspaceSvg`) or `Rendered…` 
-(`RenderedConnection`), that's the "view" half of a model/view pair.
-
-Note that some smaller components, like `Field`, do combine both the model and 
-view into one file. Where the model and view are combined, there is still a 
-`rendered` flag that determines whether the component will actually be rendered. 
