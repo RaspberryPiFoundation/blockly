@@ -4,9 +4,7 @@
   "changelogPreset": {
     "name": "conventionalcommits"
   },
-  "ignoreChanges": [
-    "**/package-lock.json"
-  ],
+  "ignoreChanges": ["**/package-lock.json"],
   "command": {
     "version": {
       "tagVersionPrefix": "blockly-v"
@@ -15,9 +13,6 @@
       "tagVersionPrefix": "blockly-v"
     }
   },
-  "packages": [
-    "packages/blockly",
-    "packages/plugins/*"
-  ],
+  "packages": ["packages/blockly", "packages/plugins/*"],
   "$schema": "node_modules/lerna/schemas/lerna-schema.json"
 }
