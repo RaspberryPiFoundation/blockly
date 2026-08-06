@@ -2,7 +2,7 @@
 
 A [Blockly](https://www.npmjs.com/package/blockly) plugin that creates a continuous-scrolling style toolbox/flyout that is always open. All of the blocks from all categories are in the flyout together, and the user can either click a category name in the toolbox or scroll to the category they're looking for. This flyout only works as a vertical flyout and it works in both left-to-right and right-to-left modes. Parts of the toolbox style have been changed already, but you can customize the style further by following the [toolbox documentation](https://developers.google.com/blockly/guides/configure/web/toolbox).
 
-![Screenshot of continuous toolbox showing multiple categories of blocks in the flyout at once](https://github.com/RaspberryPiFoundation/blockly-samples/blob/master/plugins/continuous-toolbox/screenshot.png?raw=true)
+![Screenshot of continuous toolbox showing multiple categories of blocks in the flyout at once](https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/plugins/continuous-toolbox/screenshot.png?raw=true)
 The continuous toolbox is shown here with the 'Zelos' theme, and the style can be further customized.
 
 ## Installation
