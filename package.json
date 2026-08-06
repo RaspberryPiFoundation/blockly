@@ -85,5 +85,11 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "postinstall": "patch-package"
+  },
+  "overrides": {
+    "serialize-javascript": "7.0.3"
+  },
+  "dependencies": {
+    "serialize-javascript": "^7.0.3"
   }
 }
