@@ -39,7 +39,6 @@ import {getFocusManager} from './focus_manager.js';
 import {Gesture} from './gesture.js';
 import {Grid} from './grid.js';
 import * as hints from './hints.js';
-import {MutatorIcon} from './icons/mutator_icon.js';
 import {isAutoHideable} from './interfaces/i_autohideable.js';
 import type {IBoundedElement} from './interfaces/i_bounded_element.js';
 import type {IComponent} from './interfaces/i_component.js';
@@ -2876,15 +2875,11 @@ export class WorkspaceSvg
 
   /** See IFocusableTree.getNestedTrees. */
   getNestedTrees(): Array<IFocusableTree> {
-    const nestedWorkspaces = this.getAllBlocks()
-      .map((block) => block.getIcons())
-      .flat()
+    const nestedWorkspaces = common
+      .getAllWorkspaces()
       .filter(
-        (icon): icon is MutatorIcon =>
-          icon instanceof MutatorIcon && icon.bubbleIsVisible(),
-      )
-      .map((icon) => icon.getBubble()?.getWorkspace())
-      .filter((workspace) => !!workspace);
+        (w) => w.isMutator && w.options.parentWorkspace === this,
+      ) as WorkspaceSvg[];
 
     const ownFlyout = this.getFlyout(true);
     if (ownFlyout) {

@@ -149,7 +149,7 @@ suite('WorkspaceSvg', function () {
     );
   });
 
-  suite('getRestoredFocusableNode', function () {
+  suite('Focus Management', function () {
     test('restores focus to the workspace focus target for a non-mutator non-flyout workspace', function () {
       Blockly.getFocusManager().focusTree(this.workspace);
       assert.strictEqual(
@@ -176,6 +176,30 @@ suite('WorkspaceSvg', function () {
         Blockly.getFocusManager().getFocusedNode(),
         firstBlock,
       );
+    });
+
+    test('includes mutators in nested trees', async function () {
+      const block = this.workspace.newBlock('controls_if');
+      block.initSvg();
+      block.render();
+      const icon = block.getIcon(Blockly.icons.MutatorIcon.TYPE);
+      await icon.setBubbleVisible(true);
+      const mutatorWorkspace = icon.getWorkspace();
+
+      const nestedTrees = this.workspace.getNestedTrees();
+      assert.sameMembers(nestedTrees, [mutatorWorkspace]);
+    });
+
+    test('includes flyouts in nested trees', async function () {
+      this.workspace.dispose();
+      const toolbox = document.getElementById('toolbox-simple');
+      this.workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+
+      const nestedTrees = this.workspace.getNestedTrees();
+      assert.isNotNull(this.workspace.getFlyout());
+      assert.sameMembers(nestedTrees, [
+        this.workspace.getFlyout().getWorkspace(),
+      ]);
     });
   });
 
