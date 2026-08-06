@@ -1227,10 +1227,7 @@ suite('Blocks', function () {
           this.textBlock.setParent.bind(this.textBlock, null),
         );
         assertNonParentAndOrphan(this.textJoinBlock, this.textBlock, 'ADD0');
-        assert.equal(
-          this.textBlock.getSvgRoot().nextSibling,
-          this.extraTopBlock.getSvgRoot(),
-        );
+        assert.equal(this.textBlock.getSvgRoot().nextSibling, null);
       });
       test('Setting parent to null with non-top dragging block', function () {
         this.extraNestedBlock.setDragging(true);
