@@ -21,7 +21,7 @@
     "field",
     "colour"
   ],
-  "homepage": "packages/plugins/field-colour/package.jsonfield-colour#readme",
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/field-colour#readme",
   "bugs": {
     "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
   },
