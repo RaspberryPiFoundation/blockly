@@ -16,8 +16,8 @@ const TEST_MEDIA_PATH = '../../media/';
 
 /**
  * Default options for Blockly.inject in tests. Media is loaded from the local
- * checkout and sounds are disabled so that tests never fetch assets over the
- * network. Spread this to add or override options, e.g.
+ * instance so that tests never fetch assets over the network. Spread this to
+ * add or override options, e.g.
  *
  *     Blockly.inject('blocklyDiv', {...DEFAULT_INJECT_OPTIONS, rtl: true});
  */
