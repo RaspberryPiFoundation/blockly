@@ -166,7 +166,6 @@ suite('FieldMultilineInput', function () {
       window.cancelAnimationFrame = (id) => clearTimeout(id);
       this.workspace = Blockly.inject('blocklyDiv', {
         media: 'media/',
-        sounds: false,
       });
 
       if (!Blockly.Blocks['multiline_block']) {

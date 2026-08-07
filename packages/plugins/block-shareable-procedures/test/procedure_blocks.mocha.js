@@ -44,7 +44,6 @@ suite('Procedures', function () {
 
     this.workspace = Blockly.inject('blocklyDiv', {
       media: 'media/',
-      sounds: false,
     });
 
     this.eventSpy = this.sandbox.spy();

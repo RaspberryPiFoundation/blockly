@@ -70,7 +70,6 @@ suite('WorkspaceSearch', function () {
     this.clock = sinon.useFakeTimers();
     this.workspace = Blockly.inject('blocklyDiv', {
       media: 'media/',
-      sounds: false,
     });
     this.workspaceSearch = new WorkspaceSearch(this.workspace);
     // See https://github.com/RaspberryPiFoundation/blockly-samples/issues/2528 for context.

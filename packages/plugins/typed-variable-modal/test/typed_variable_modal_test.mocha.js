@@ -24,7 +24,7 @@ suite('TypedVariableModal', function () {
    * @returns {Blockly.WorkspaceSvg} The workspace to use for testing.
    */
   function workspaceSetup(toolbox, types) {
-    const options = {media: 'media/', sounds: false};
+    const options = {media: 'media/'};
     const createFlyout = function (workspace) {
       let xmlList = [];
       const button = document.createElement('button');

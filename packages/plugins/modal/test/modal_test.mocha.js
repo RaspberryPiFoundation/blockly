@@ -22,7 +22,6 @@ suite('Modal', function () {
     );
     this.workspace = Blockly.inject('blocklyDiv', {
       media: 'media/',
-      sounds: false,
     });
     this.modal = new Modal('Title', this.workspace);
   });

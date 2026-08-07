@@ -41,7 +41,6 @@ suite('shadowBlockConversionChangeListener', function () {
 
     this.workspace = Blockly.inject('blocklyDiv', {
       media: 'media/',
-      sounds: false,
     });
     this.workspace.addChangeListener(shadowBlockConversionChangeListener);
 

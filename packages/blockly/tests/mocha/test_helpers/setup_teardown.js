@@ -23,7 +23,6 @@ const TEST_MEDIA_PATH = '../../media/';
  */
 export const DEFAULT_INJECT_OPTIONS = Object.freeze({
   media: TEST_MEDIA_PATH,
-  sounds: false,
 });
 
 /**
