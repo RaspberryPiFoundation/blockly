@@ -85,5 +85,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "postinstall": "patch-package"
+  },
+  "overrides": {
+    "js-yaml": "4.3.1"
   }
 }
