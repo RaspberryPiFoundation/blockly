@@ -125,7 +125,7 @@
     "gulp-sourcemaps": "^3.0.0",
     "gulp-umd": "^2.0.0",
     "http-server": "^14.1.1",
-    "jsdom": "29.1.1",
+    "jsdom": "30.0.1",
     "json5": "^2.2.3",
     "markdown-tables-to-json": "^0.1.7",
     "mocha": "^11.7.6",

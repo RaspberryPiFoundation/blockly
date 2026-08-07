@@ -44,7 +44,7 @@
     "@blockly/dev-tools": "^13.1.0",
     "@typescript-eslint/parser": "^8.61.1",
     "chai": "^6.2.2",
-    "jsdom": "^29.1.1",
+    "jsdom": "^30.0.1",
     "jsdom-global": "^3.0.2",
     "sinon": "^22.0.0",
     "typescript": "^6.0.3"
