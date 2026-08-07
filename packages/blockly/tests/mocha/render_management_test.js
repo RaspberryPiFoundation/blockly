@@ -131,13 +131,20 @@ suite('Render Management', function () {
     setup(function () {
       this.workspace = Blockly.inject('blocklyDiv', {});
 
-      // Create and init two identical overlapping blocks so that the first
-      // render will need to bump one.
       this.block = this.workspace.newBlock('controls_if');
       this.block.initSvg();
 
       const block2 = this.workspace.newBlock('controls_if');
       block2.initSvg();
+      Blockly.renderManagement.triggerQueuedRenders();
+
+      // Align the blocks' next and previous connections without connecting them
+      // so that they'll need to bump one another.
+      this.block.moveBy(
+        block2.nextConnection.x - this.block.previousConnection.x,
+        block2.nextConnection.y - this.block.previousConnection.y,
+        ['test'],
+      );
     });
 
     test('does not record undo event when the render was queued with recordUndo disabled', function () {
