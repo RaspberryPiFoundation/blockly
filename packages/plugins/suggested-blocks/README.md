@@ -28,7 +28,9 @@ const toolbox = {
     {
       kind: 'category',
       name: 'My Category',
-      contents: [/* your category contents */],
+      contents: [
+        /* your category contents */
+      ],
     },
     {
       kind: 'category',
