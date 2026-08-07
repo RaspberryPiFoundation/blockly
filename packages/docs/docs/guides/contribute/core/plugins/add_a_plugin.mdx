@@ -22,17 +22,66 @@ talk
 The target user for a plugin is a developer who finds and uses the plugin
 through npm.
 
-First-party plugins are supported by the Blockly team and published under the
+The way that plugins are maintained falls into two categories:
+
+- *First-party plugins* are supported by the Blockly team and published under the
 `@blockly` scope on npm. They are designed to be usable in a wide range of
 Blockly applications and are stable and easy to use. They are stored in the
-[blockly-samples](https://github.com/RaspberryPiFoundation/blockly-samples). A field for
-setting motor speed could be used in many robotics projects and is a good
-candidate for a first-party plugin.
+[blockly repository](https://github.com/RaspberryPiFoundation/blockly-samples). 
+A field for setting motor speed could be used in many robotics projects and is a
+good candidate for a first-party plugin.
 
-Third-party plugins are maintained and published independently. They may be more
+- *Third-party plugins* are maintained and published independently. They may be more
 complex, more experimental, or targeted to a narrower range of Blockly
 applications. A field for editing a specific object defined by your database
 schema is better as a third-party plugin.
+
+## First-party vs third-party
+
+The way that plugins are maintained falls into two categories:
+
+**First-party plugins** are:
+- Supported by the Blockly team.
+- Stored in the [blockly repository](https://github.com/RaspberryPiFoundation/blockly-samples).
+- Published under the `@blockly` scope on npm.
+- Usable in a wide range of Blockly applications.
+- Stable and well-documented. 
+
+A field for setting motor speed could be used in many robotics projects and is a
+good candidate for a first-party plugin.
+
+**Third-party plugins** are:
+- Maintained and published independently. 
+- More complex, more experimental, or targeted to a narrower range of Blockly applications. 
+
+A field for editing a specific object defined by your database schema is better 
+as a third-party plugin.
+
+## First-party vs third-party
+
+The way that plugins are maintained falls into two categories: first-party and 
+third-party.
+
+### First-party plugins
+
+**First-party plugins** are:
+- Supported by the Blockly team.
+- Stored in the [blockly repository](https://github.com/RaspberryPiFoundation/blockly-samples).
+- Published under the `@blockly` scope on npm.
+- Usable in a wide range of Blockly applications.
+- Stable and well-documented. 
+
+A field for setting motor speed could be used in many robotics projects and is a
+good candidate for a first-party plugin.
+
+### Third-party plugins
+
+**Third-party plugins** are:
+- Maintained and published independently. 
+- More complex, more experimental, or targeted to a narrower range of Blockly applications. 
+
+A field for editing a specific object defined by your database schema is better 
+as a third-party plugin.
 
 ### First party criteria
 
@@ -60,7 +109,7 @@ Plugins go through four stages: [suggestion](#suggestion),
 
 A plugin starts as a **suggestion**. You can suggest a plugin by creating a new
 issue with the [Feature
-Request](https://github.com/RaspberryPiFoundation/blockly-samples/issues/new?assignees=&labels=type%3A+feature+request%2C+triage&template=feature_request.yaml)
+Request](https://github.com/RaspberryPiFoundation/blockly/issues/new?template=feature_request.yaml)
 template. For more information, read about [how to write a feature
 request](/guides/contribute/get-started/write_a_good_issue#feature-requests).
 
@@ -82,16 +131,13 @@ Next, a plugin goes into the **discussion** phase. This phase includes:
 
 - Clarification of the desired functionality.
 - Clarification of the plugin's API.
-- Planning for implementation.
-- Planning for tests.
+- Planning the implementation steps and tests.
 - Discussion of API changes in core Blockly.
-- Breaking large plugins into implementation steps.
 - Plugin naming, based on our [naming
   conventions](/guides/contribute/samples/naming).
 - Confirming all [first party criteria](#first-party-criteria) will be met.
 
-This discussion generally happens on the GitHub issue. The smaller the scope of
-the plugin, the faster the discussion phase can be. Larger plugins may attract
+This discussion generally happens on the GitHub issue. Larger plugins may attract
 community attention and strong opinions about the Right Solution. If this
 happens on your issue, congratulations! You have found something that people
 care about.
@@ -113,7 +159,7 @@ implemented.
 
 - Running `npx @blockly/create-package` to set up the plugin and its directory
   from a template. [Learn
-  more...](https://github.com/RaspberryPiFoundation/blockly-samples/tree/main/plugins/dev-create)
+  more...](https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/dev-create)
 - Implementing core logic for the plugin.
 - Implementing a UI, if needed.
 - Testing the plugin, using Mocha.
@@ -126,6 +172,8 @@ Implementation may be done by multiple contributors in parallel. You may
 implement a plugin collaboratively on your own fork, or through pull requests
 against this repository. If you want to collaborate on a plugin in this
 repository, ask the Blockly team to create a feature branch for you.
+
+TODO: do we want to do the above? make development branches for plugins on main
 
 Plugins should be added to the [`gh-pages/_index.html`](https://github.com/RaspberryPiFoundation/blockly-samples/blob/main/gh-pages/_index.html)
 file in the `main` branch of blockly-samples. This will cause them to appear
@@ -149,3 +197,6 @@ Plugins that are not ready for publishing should be marked `private` in their
 `package.json`. This may happen if a plugin relies on a not-yet-published change
 in [core Blockly](https://github.com/RaspberryPiFoundation/blockly). Core Blockly is published
 in the last week of each quarter (once every three months).
+
+TODO: This whole section needs to be updated
+TODO: are we still going to use Lerna?

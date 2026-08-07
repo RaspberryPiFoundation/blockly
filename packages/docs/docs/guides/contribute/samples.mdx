@@ -1,0 +1,94 @@
+---
+description: Learn how to contribute changes to Blockly Samples.
+title: Contribute to samples
+image: images/blockly_banner.png
+---
+
+# Blockly samples
+
+The [blockly-samples](https://github.com/RaspberryPiFoundation/blockly-samples) 
+respository contains extra content related to Blockly that isn't part of the 
+core repository. There are two main pieces of blockly-samples: 
+
+1. [Examples](#examples)
+1. [GitHub Pages](#github-pages)
+
+## Examples
+
+Examples are self-contained sample projects demonstrating techniques to include
+and extend the Blockly library. They usually consist of a demo web page, and
+some supporting code. While codelab walk you through building something
+step-by-step, Examples show you a finished product, and allow you to explore it
+at your own pace.
+
+![Screenshot of the blockly-react example](/images/structure-examples.png)
+
+Example code is meant to be extremely well-commented so that it is easy to copy.
+The target user may be reading the code, running it locally, or copying code
+snippets.
+
+The
+[examples directory](https://github.com/RaspberryPiFoundation/blockly-samples/tree/main/examples)
+has one folder per example. Each example can be run with `npm install && npm run
+start`, and has a `README.md` file with additional context or instructions.
+
+## GitHub Pages
+
+Blockly-samples has a [webpage](https://raspberrypifoundation.github.io/blockly-samples/) where
+many of the plugins and demos are available in a playground environment. This
+page is hosted on GitHub pages, and the code for this site is in the
+[gh-pages](https://github.com/RaspberryPiFoundation/blockly-samples/tree/main/gh-pages)
+directory of blockly-samples. This directory contains templates for the pages on
+the site. The actual site content is generated based on these templates and
+metadata from each plugin or example hosted.
+
+# Contribute to samples
+
+You can make contributions to blockly-samples in the form of updating examples, 
+adding your own examples, or making updates to the GitHub pages site.
+
+## Need to know
+
+Here is a quick overview of facts about blockly-samples you need to know in
+order to create a PR.
+
+- The working branch is **main** and all PRs should be made against main.
+- **Run `npm install` at the root level of blockly-samples,** not at the
+  individual plugin level. Blockly-samples is a monorepo, meaning it contains
+  multiple packages in the same repository, and installing at the root level
+  is part of the workflow for managing the monorepo with Lerna.
+- Code must conform to either Google's [JavaScript Style Guide](https://google.github.io/styleguide/jsguide.html)
+  or [TypeScript Style
+  Guide](https://google.github.io/styleguide/tsguide.html) depending on the
+  language used.
+- Use [conventional commits](/guides/contribute/get-started/commits)
+  in your commit messages and pull request titles.
+- Any new code files must be prefixed with the Apache License v2.0:
+
+  ```js
+  /**
+   *   @license
+   *   Copyright <Current YYYY> Raspberry Pi Foundation
+   *   SPDX-License-Identifier: Apache-2.0
+   */
+  ```
+
+## Make and Verify a Change
+
+1.  Run `npm install` at the root level of blockly-samples to install
+    dependencies.
+1.  For examples, you can run `npm run start` in an example's directory to start
+    up a server running the example. For GitHub pages, you can run 
+    `npm run test:ghpages` to launch the GitHub pages locally.
+1.  Make any necessary changes to the code.
+1.  If you've left the server running, your changes will load automatically.
+    Otherwise, restart the server and verify that everything behaves as expected 
+    and there are no errors or warnings in the console.
+1.  Run `npm run build` and ensure there are no build errors.
+1.  Write automated mocha tests in the `test/` directory.
+1.  If applicable, run `npm run test` to run the automated tests.
+1.  Run `npm run lint:fix` to fix lint errors. Address any remaining warnings or
+    errors.
+1.  Run `npm run format` to run the autoformatter.
+1.  If all tests pass, you are ready to open a PR against **main** with your
+    changes.
