@@ -37,6 +37,8 @@ jobs:
   publish:
     needs: ci
     runs-on: ubuntu-latest
+    # Don't try to publish from a fork of RaspberryPiFoundation/blockly-samples.
+    if: ${{ github.repository_owner == 'RaspberryPiFoundation' }}
     environment: release
     steps:
       - name: Checkout
@@ -55,10 +57,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build core package
-        working-directory: packages/blockly
-        run: npm run package
-
       - name: Determine Dist Tag
         id: dist
         env: 
@@ -75,9 +73,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION_OVERRIDE: ${{ inputs.version_override }}
-          DRY_RUN: ${{ inputs.dry_run}}
+          DRY_RUN: ${{ inputs.dry_run }}
           DIST_TAG: ${{ steps.dist.outputs.dist_tag }}
         run: |
+          set -euo pipefail
           VERSION_COMMAND="npx lerna version"
           if [ -n "${VERSION_OVERRIDE}" ]; then
             VERSION_COMMAND="${VERSION_COMMAND} ${VERSION_OVERRIDE}"
@@ -90,12 +89,11 @@ jobs:
           else
             VERSION_COMMAND="${VERSION_COMMAND} --conventional-prerelease --preid beta"
           fi
-          VERSION_COMMAND="${VERSION_COMMAND} --conventional-commits --no-git-tag-version --yes"
+          VERSION_COMMAND="${VERSION_COMMAND} --conventional-commits --yes"
           if [ "${DRY_RUN}" = "true" ]; then
-            VERSION_COMMAND="${VERSION_COMMAND} --no-push"
-            RELEASE_VERSIONS=$(eval "$VERSION_COMMAND")
+            VERSION_COMMAND="${VERSION_COMMAND} --no-push --no-git-tag-version"
             echo "Dry run: would publish the following versions to npm dist-tag: ${DIST_TAG}"
-            echo "${RELEASE_VERSIONS}"
+            eval "$VERSION_COMMAND"
             if [ "${DIST_TAG}" = "beta" ]; then
               echo "GitHub release would be created as prerelease."  
             fi
@@ -103,11 +101,16 @@ jobs:
             eval "$VERSION_COMMAND"
           fi
 
+      - name: Build core package
+        working-directory: packages/blockly
+        run: npm run package
+
       - name: Publish
+        if: ${{ !inputs.dry_run }}
         env:
           GH_TOKEN: ${{ github.token }}
           SKIP_VERSIONING: ${{ inputs.skip_versioning }}
-          DIST_TAG: ${{ steps.dist.output.dist_tag }}
+          DIST_TAG: ${{ steps.dist.outputs.dist_tag }}
         run: |
           if [ "${SKIP_VERSIONING}" = "true" ]; then
             npx lerna publish from-package --yes --dist-tag ${DIST_TAG} --loglevel silly
@@ -116,11 +119,12 @@ jobs:
           fi
 
       - name: Create GitHub release
+        if: ${{ !inputs.dry_run }}
         env:
           GH_TOKEN: ${{ github.token }}
-          DIST_TAG: ${{ steps.dist.output.dist_tag }}
+          DIST_TAG: ${{ steps.dist.outputs.dist_tag }}
         run: |
-          VERSION=$(node -p "require('.packages/blockly/package.json').version")
+          VERSION=$(node -p "require('./packages/blockly/package.json').version")
           TARBALL="blockly-*${VERSION}.tgz"
           if [ "${DIST_TAG}" == "beta" ]; then
             gh release create "blockly-v${VERSION}" "$TARBALL" \
