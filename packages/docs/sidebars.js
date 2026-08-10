@@ -1434,11 +1434,6 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
-                  label: 'Repository structure',
-                  id: 'guides/contribute/core/plugins/repository_structure',
-                },
-                {
-                  type: 'doc',
                   label: 'Add a plugin',
                   id: 'guides/contribute/core/plugins/add_a_plugin',
                 },

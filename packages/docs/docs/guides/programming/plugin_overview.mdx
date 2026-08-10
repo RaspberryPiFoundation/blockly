@@ -52,10 +52,9 @@ applications.
     [`keyword:blockly`](https://www.npmjs.com/search?q=keyword%3Ablockly) or
     [`blockly`](https://www.npmjs.com/search?q=blockly).
 
-*   See the [`blockly-samples/plugins`
-    directory](https://github.com/RaspberryPiFoundation/blockly-samples/tree/main/plugins) on
-    GitHub, which is the repository for first-party plugins. Each plugin has a
-    README that describes its behaviour and intended use.
+*   See the [`packages/plugins/`](https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins) 
+    directory on GitHub, which is the location of first-party plugins. 
+    Each plugin has a README that describes its behaviour and intended use.
 
 ## Install a plugin
 
@@ -84,7 +83,7 @@ makes it easy to receive updates.
       
       You can also clone the GitHub repository that contains the plugin. For
       first-party plugins, this is
-      [`blockly-samples`](https://github.com/RaspberryPiFoundation/blockly-samples/tree/main).
+      [`blockly`](https://github.com/RaspberryPiFoundation/blockly/tree/main).
       </TabItem>
     </Tabs>
 
@@ -148,8 +147,10 @@ plugin](https://www.npmjs.com/package/@blockly/field-angle):
 
 ## Plugin versions
 
-Plugins in `blockly-samples` use [semantic versioning](https://semver.org),
-which requires breaking changes to use a new major version. Any new plugin that
+Blockly uses [semantic versioning](https://semver.org), which requires breaking 
+changes to use a new major version. 
+
+Any new plugin that
 monkey patches core will have a major version of 0 to [signify initial
 development](https://semver.org/#spec-item-4).
 
@@ -157,21 +158,40 @@ Most plugins include the `blockly` package as a
 [`peerDependency`](https://docs.npmjs.com/cli/v11/configuring-npm/package-json#peerdependencies)
 rather than a `dependency`. This is because we assume that you have already
 installed Blockly. (It doesn't make sense to use a plugin without using
-Blockly.) This lets you manage the Blockly version yourself, but also requires
-you to check the plugin's `package.json` to determine the minimum version of
-Blockly it requires. If a plugin is updated to need a newer version of Blockly,
-this is considered a breaking change and its major version will be increased.
+Blockly.) Starting with Blockly v13, first-party plugins share an exact version 
+number with core Blockly. This means that in order to use a certain plugin, all
+you can simply check your Blockly version and use the same plugin version. 
+
+<details>
+<summary>What if I'm using a major version of Blockly that's older than v13? </summary>
+
+Keeping Blockly up-to-date is strongly reccomended, so that you get the newest 
+features and fixes. However, if you can't upgrade Blockly, you can use the 
+following npm command to list all of the pre-v13 versions of a plugin alongside 
+the minimum Blockly version that they support:
+
+```
+npm view '@blockly/block-plus-minus@<13' peerDependencies.blockly
+```
+
+Just replace block-plus-minus with the name of whichever plugin you'd like to 
+use.
+
+</details>
 
 When you add a plugin to your application's `package.json`, the default is to
 include a caret before the version:
 
 ```json
 "dependencies": {
-  "@blockly/field-angle": "^5.0.12"
+  "@blockly/field-angle": "^13.2.1"
 }
 ```
 
 This will let npm install any minor version at or above the listed version, so
-version `5.0.20` or `5.1.0` works, but a new major version such as `6.0.1` does
-not. When you update to a new version of Blockly, it's a good idea to check if
-any of your plugins can be updated to a new major version as well.
+version `13.3.1` or `13.2.6` works, but a new major version such as `14.0.1` would
+not. When you update to a major version of Blockly, you should update your plugins
+as well.
+
+TODO: but would npm handle the plugin updates automatically if you bump the blockly
+major version? how would that workflow look?

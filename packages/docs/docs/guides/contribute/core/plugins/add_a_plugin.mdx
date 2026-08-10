@@ -19,25 +19,6 @@ talk
 
 ## First-party vs third-party
 
-The target user for a plugin is a developer who finds and uses the plugin
-through npm.
-
-The way that plugins are maintained falls into two categories:
-
-- *First-party plugins* are supported by the Blockly team and published under the
-`@blockly` scope on npm. They are designed to be usable in a wide range of
-Blockly applications and are stable and easy to use. They are stored in the
-[blockly repository](https://github.com/RaspberryPiFoundation/blockly-samples). 
-A field for setting motor speed could be used in many robotics projects and is a
-good candidate for a first-party plugin.
-
-- *Third-party plugins* are maintained and published independently. They may be more
-complex, more experimental, or targeted to a narrower range of Blockly
-applications. A field for editing a specific object defined by your database
-schema is better as a third-party plugin.
-
-## First-party vs third-party
-
 The way that plugins are maintained falls into two categories:
 
 **First-party plugins** are:
@@ -45,43 +26,21 @@ The way that plugins are maintained falls into two categories:
 - Stored in the [blockly repository](https://github.com/RaspberryPiFoundation/blockly-samples).
 - Published under the `@blockly` scope on npm.
 - Usable in a wide range of Blockly applications.
-- Stable and well-documented. 
+- Stable, well-documented, and easy to use.
 
+:::note[Example]
 A field for setting motor speed could be used in many robotics projects and is a
 good candidate for a first-party plugin.
+::: 
 
 **Third-party plugins** are:
 - Maintained and published independently. 
 - More complex, more experimental, or targeted to a narrower range of Blockly applications. 
 
+:::note[Example]
 A field for editing a specific object defined by your database schema is better 
 as a third-party plugin.
-
-## First-party vs third-party
-
-The way that plugins are maintained falls into two categories: first-party and 
-third-party.
-
-### First-party plugins
-
-**First-party plugins** are:
-- Supported by the Blockly team.
-- Stored in the [blockly repository](https://github.com/RaspberryPiFoundation/blockly-samples).
-- Published under the `@blockly` scope on npm.
-- Usable in a wide range of Blockly applications.
-- Stable and well-documented. 
-
-A field for setting motor speed could be used in many robotics projects and is a
-good candidate for a first-party plugin.
-
-### Third-party plugins
-
-**Third-party plugins** are:
-- Maintained and published independently. 
-- More complex, more experimental, or targeted to a narrower range of Blockly applications. 
-
-A field for editing a specific object defined by your database schema is better 
-as a third-party plugin.
+:::
 
 ### First party criteria
 
@@ -127,24 +86,15 @@ or agrees that it would be a good first-party plugin.
 
 ## Discussion
 
-Next, a plugin goes into the **discussion** phase. This phase includes:
+Next, a plugin goes into the **discussion** phase. This phase generally occurs 
+on the GitHub issue, and includes:
 
-- Clarification of the desired functionality.
-- Clarification of the plugin's API.
+- Clarification of the desired functionality and the plugin's API.
 - Planning the implementation steps and tests.
 - Discussion of API changes in core Blockly.
 - Plugin naming, based on our [naming
   conventions](/guides/contribute/samples/naming).
 - Confirming all [first party criteria](#first-party-criteria) will be met.
-
-This discussion generally happens on the GitHub issue. Larger plugins may attract
-community attention and strong opinions about the Right Solution. If this
-happens on your issue, congratulations! You have found something that people
-care about.
-
-The goal is that at the end of the discussion phase, all major design decisions
-have been made and there is a clear list of implementation steps. Both should be
-documented in comments on the issue.
 
 During discussion we may decide that a plugin should be a third-party plugin,
 and not be published under the `@blockly` scope. In that case we will explain
@@ -177,26 +127,33 @@ TODO: do we want to do the above? make development branches for plugins on main
 
 Plugins should be added to the [`gh-pages/_index.html`](https://github.com/RaspberryPiFoundation/blockly-samples/blob/main/gh-pages/_index.html)
 file in the `main` branch of blockly-samples. This will cause them to appear
-on our [Plugins site](https://raspberrypifoundation.github.io/blockly-samples/). First-party
-plugins should point to their test page. Third-party plugins can also be added
-to this page, and can point to a link of their owner's choosing, such as a
-hosted demo or the npm page.
+on our [Plugins site](https://raspberrypifoundation.github.io/blockly-samples/). 
+First-party plugins should point to their test page. Third-party plugins can 
+also be added to this page, and can point to a link of their owner's choosing, 
+such as a hosted demo or the npm page.
 
 ## Publishing
 
 Finally, **publishing**. The Blockly team uses [Lerna](https://lerna.js.org/) to
-manage versioning and publishing for all plugins.
+manage versioning and publishing for all plugins. 
 
-Every Thursday, any plugins that have changed since their last release are
-published. If you need a change to be published sooner, please note it on your
-pull request.
+Starting with Blockly v13, plugin version numbers match Blockly version numbers. 
+This means that:
 
-The Plugins site is also updated whenever plugins are published.
+- You can easily know which version of a plugin is compatible with your specific
+version of Blockly. 
+- Plugin updates will be released when Blockly is released, unless the changes 
+are urgent enough to warrant a release of Blockly.  
+- Plugin version numbers may be incremented even when there are no changes to 
+the plugin's code.
+
+Note that Blockly uses [semantic versioning](https://semver.org/) to determine
+version numbers. 
 
 Plugins that are not ready for publishing should be marked `private` in their
-`package.json`. This may happen if a plugin relies on a not-yet-published change
-in [core Blockly](https://github.com/RaspberryPiFoundation/blockly). Core Blockly is published
-in the last week of each quarter (once every three months).
+`package.json`. 
 
-TODO: This whole section needs to be updated
-TODO: are we still going to use Lerna?
+
+
+The Plugins site is also updated whenever plugins are published.
+TODO: I think this isn't true 
