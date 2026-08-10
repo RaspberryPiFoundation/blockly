@@ -441,6 +441,9 @@ suite('Mirroring events', function () {
       '<!DOCTYPE html><div id="blocklyDiv"></div>',
     );
     global.SVGElement = window.SVGElement;
+    window.HTMLCanvasElement.prototype.getContext = () => ({
+      measureText: () => ({width: ''}),
+    });
     window.requestAnimationFrame = (callback) => setTimeout(callback, 0);
     window.cancelAnimationFrame = (id) => clearTimeout(id);
     this.workspace = Blockly.inject('blocklyDiv', {

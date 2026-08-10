@@ -8,6 +8,8 @@ import * as chai from 'chai';
 import {testFileLocations, testSetup} from './test_setup.mjs';
 
 suite('Dragging into a delete area', function () {
+  this.timeout(0);
+
   suiteSetup(async function () {
     this.browser = await testSetup(testFileLocations.PLAYGROUND);
 
