@@ -3,7 +3,7 @@
 A [Blockly](https://www.npmjs.com/package/blockly) plugin that highlights the
 content on the workspace.
 
-![](https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/content-highlight/readme-media/content-highlight.gif)
+![](https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/content-highlight/readme-media/content-highlight.gif)
 
 ## Installation
 

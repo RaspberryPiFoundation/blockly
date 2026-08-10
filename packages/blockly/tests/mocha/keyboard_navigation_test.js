@@ -9,6 +9,7 @@ import {assert} from 'chai';
 import {navigationTestBlocks} from './test_helpers/navigation_test_blocks.js';
 import {p5blocks} from './test_helpers/p5_blocks.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
@@ -132,6 +133,7 @@ suite('Keyboard navigation on Blocks', function () {
     sharedTestSetup.call(this);
     const toolbox = document.getElementById('toolbox-simple');
     this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
       toolbox: toolbox,
       renderer: 'zelos',
     });
@@ -407,6 +409,7 @@ suite('Keyboard navigation on Fields', function () {
     sharedTestSetup.call(this);
     const toolbox = document.getElementById('toolbox-simple');
     this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
       toolbox: toolbox,
       renderer: 'zelos',
     });
@@ -473,6 +476,7 @@ suite('Workspace comment navigation', function () {
     sharedTestSetup.call(this);
     const toolbox = document.getElementById('toolbox-simple');
     this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
       toolbox: toolbox,
       renderer: 'zelos',
     });
@@ -657,6 +661,7 @@ suite('Toolbox and flyout arrow navigation by layout', function () {
         ]);
         const toolbox = document.getElementById('toolbox-categories');
         this.workspace = Blockly.inject('blocklyDiv', {
+          ...DEFAULT_INJECT_OPTIONS,
           toolbox,
           rtl: layout.rtl,
           horizontalLayout: layout.horizontalLayout,
@@ -888,6 +893,7 @@ suite('Flyout heading navigation (H / Shift+H)', function () {
     // Build a flyout toolbox that mixes blocks and headings (labels) so we
     // can verify that the H shortcut jumps over non-heading items.
     this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
       toolbox: {
         kind: 'flyoutToolbox',
         contents: [
@@ -1037,6 +1043,7 @@ suite('Flyout heading navigation with no headings', function () {
       },
     ]);
     this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
       toolbox: {
         kind: 'flyoutToolbox',
         contents: [

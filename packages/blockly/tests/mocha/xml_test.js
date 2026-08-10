@@ -8,6 +8,7 @@ import {assert} from 'chai';
 import {
   addBlockTypeToCleanup,
   createGenUidStubWithReturns,
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
@@ -368,7 +369,10 @@ suite('XML', function () {
       suite('Rendered', function () {
         setup(function () {
           // Let the parent teardown dispose of it.
-          this.workspace = Blockly.inject('blocklyDiv', {comments: true});
+          this.workspace = Blockly.inject('blocklyDiv', {
+            ...DEFAULT_INJECT_OPTIONS,
+            comments: true,
+          });
           this.block = Blockly.Xml.domToBlock(
             Blockly.utils.xml.textToDom('<block type="empty_block"/>'),
             this.workspace,
@@ -616,7 +620,10 @@ suite('XML', function () {
       });
       suite('Rendered', function () {
         setup(function () {
-          this.workspace = Blockly.inject('blocklyDiv', {comments: true});
+          this.workspace = Blockly.inject('blocklyDiv', {
+            ...DEFAULT_INJECT_OPTIONS,
+            comments: true,
+          });
         });
         teardown(function () {
           workspaceTeardown.call(this, this.workspace);
@@ -894,9 +901,7 @@ suite('XML', function () {
   });
   suite('workspaceToDom -> domToWorkspace -> workspaceToDom', function () {
     setup(function () {
-      const options = {
-        comments: true,
-      };
+      const options = {...DEFAULT_INJECT_OPTIONS, comments: true};
       this.renderedWorkspace = Blockly.inject('blocklyDiv', options);
       this.headlessWorkspace = new Blockly.Workspace(
         new Blockly.Options(options),

@@ -6,6 +6,7 @@
 
 import {assert} from 'chai';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
@@ -37,7 +38,10 @@ suite('Tooltip', function () {
 
   suite('Custom Tooltip', function () {
     setup(function () {
-      this.renderedWorkspace = Blockly.inject('blocklyDiv', {});
+      this.renderedWorkspace = Blockly.inject(
+        'blocklyDiv',
+        DEFAULT_INJECT_OPTIONS,
+      );
     });
 
     teardown(function () {
@@ -145,7 +149,10 @@ suite('Tooltip', function () {
 
     suite('Rendered Blocks', function () {
       setup(function () {
-        this.renderedWorkspace = Blockly.inject('blocklyDiv');
+        this.renderedWorkspace = Blockly.inject(
+          'blocklyDiv',
+          DEFAULT_INJECT_OPTIONS,
+        );
         this.block = this.renderedWorkspace.newBlock('test_block');
         this.block.initSvg();
         this.block.render();
@@ -227,7 +234,10 @@ suite('Tooltip', function () {
 
     suite('Rendered Fields', function () {
       setup(function () {
-        this.renderedWorkspace = Blockly.inject('blocklyDiv');
+        this.renderedWorkspace = Blockly.inject(
+          'blocklyDiv',
+          DEFAULT_INJECT_OPTIONS,
+        );
         this.block = this.renderedWorkspace.newBlock('test_block');
         this.block.initSvg();
         this.block.render();

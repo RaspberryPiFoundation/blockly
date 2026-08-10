@@ -39,7 +39,9 @@ suite('shadowBlockConversionChangeListener', function () {
     // See https://github.com/RaspberryPiFoundation/blockly-samples/issues/2528 for context.
     global.SVGElement = window.SVGElement;
 
-    this.workspace = Blockly.inject('blocklyDiv');
+    this.workspace = Blockly.inject('blocklyDiv', {
+      media: 'media/',
+    });
     this.workspace.addChangeListener(shadowBlockConversionChangeListener);
 
     // Prevent rendering, which does not work correctly in a headless jsdom

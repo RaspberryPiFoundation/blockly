@@ -8,6 +8,7 @@ import {EventType} from '#core/events/type.js';
 import {assert} from 'chai';
 import {assertEventFired, assertEventNotFired} from './test_helpers/events.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
@@ -16,7 +17,10 @@ import {simulateClick} from './test_helpers/user_input.js';
 suite('Zoom Controls', function () {
   setup(function () {
     sharedTestSetup.call(this);
-    this.workspace = Blockly.inject('blocklyDiv', {'zoom': {'controls': true}});
+    this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
+      'zoom': {'controls': true},
+    });
     this.zoomControls = this.workspace.zoomControls_;
   });
   teardown(function () {

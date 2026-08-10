@@ -301,7 +301,6 @@ export class BlockSvg
       return;
     }
 
-    const oldXY = this.getRelativeToSurfaceXY();
     const focusedNode = getFocusManager().getFocusedNode();
     const restoreFocus = this.getSvgRoot().contains(
       focusedNode?.getFocusableElement() ?? null,
@@ -316,30 +315,17 @@ export class BlockSvg
         getFocusManager().focusNode(focusedNode);
       }
     } else if (oldParent) {
-      // If we are losing a parent, we want to move our DOM element to the
-      // root of the workspace.  Try to insert it before any top-level
-      // block being dragged, but note that blocks can have the
-      // blocklyDragging class even if they're not top blocks (especially
-      // at start and end of a drag).
-      const draggingBlockElement = this.workspace
-        .getCanvas()
-        .querySelector('.blocklyDragging');
-      const draggingParentElement = draggingBlockElement?.parentElement as
-        SVGElement | null | undefined;
-      const canvas = this.workspace.getCanvas();
-      if (draggingParentElement === canvas) {
-        canvas.insertBefore(svgRoot, draggingBlockElement);
-      } else {
-        canvas.appendChild(svgRoot);
-        // appendChild() clears focus state, so re-focus the previously focused
-        // node in case it was this block and would otherwise lose its focus. Once
-        // Element.moveBefore() has better browser support, it should be used
-        // instead.
-        if (restoreFocus && focusedNode) {
-          getFocusManager().focusNode(focusedNode);
-        }
-      }
+      const oldXY = this.getRelativeToSurfaceXY();
+      this.workspace.getCanvas().appendChild(svgRoot);
       this.translate(oldXY.x, oldXY.y);
+    }
+
+    // appendChild() clears focus state, so re-focus the previously focused
+    // node in case it was this block and would otherwise lose its focus. Once
+    // Element.moveBefore() has better browser support, it should be used
+    // instead.
+    if (restoreFocus && focusedNode) {
+      getFocusManager().focusNode(focusedNode);
     }
 
     this.applyColour();
@@ -421,7 +407,6 @@ export class BlockSvg
    */
   moveDuringDrag(newLoc: Coordinate) {
     this.translate(newLoc.x, newLoc.y);
-    this.getSvgRoot().setAttribute('transform', this.getTranslation());
     this.updateComponentLocations(newLoc);
   }
 

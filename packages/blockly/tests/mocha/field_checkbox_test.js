@@ -14,6 +14,7 @@ import {
   runSetValueTests,
 } from './test_helpers/fields.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
@@ -297,6 +298,7 @@ suite('Checkbox Fields', function () {
   suite('ARIA', function () {
     setup(function () {
       this.workspace = Blockly.inject('blocklyDiv', {
+        ...DEFAULT_INJECT_OPTIONS,
         renderer: 'geras',
       });
       this.block = this.workspace.newBlock('test_fields_checkbox');

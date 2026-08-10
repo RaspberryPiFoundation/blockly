@@ -12,6 +12,15 @@
   "keywords": [
     "blockly"
   ],
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/sample-app#readme",
+  "bugs": {
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RaspberryPiFoundation/blockly.git",
+    "directory": "packages/plugins/sample-app"
+  },
   "author": "Blockly team",
   "license": "Apache-2.0",
   "devDependencies": {

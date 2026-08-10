@@ -5,7 +5,7 @@ same block colours as the [Classic theme](https://github.com/google/blockly/blob
 but with darker borders. This theme was designed to be used with the Thrasos or
 Zelos renderer.
 
-![A Blockly workspace using the modern theme.](https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/theme-modern/readme-media/ModernTheme.png)
+![A Blockly workspace using the modern theme.](https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/theme-modern/readme-media/ModernTheme.png)
 
 ## Installation
 

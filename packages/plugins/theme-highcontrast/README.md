@@ -3,7 +3,7 @@
 A [Blockly](https://www.npmjs.com/package/blockly theme that uses darker colors
 for the blocks to create contrast between the block color and the white text.
 
-![A Blockly workspace using the high contrast theme.](https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/theme-highcontrast/readme-media/HighContrastTheme.png)
+![A Blockly workspace using the high contrast theme.](https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/theme-highcontrast/readme-media/HighContrastTheme.png)
 
 ## Installation
 

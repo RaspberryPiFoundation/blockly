@@ -7,6 +7,7 @@
 import {getInputLabelsSubset} from '#core/block_aria_composer.js';
 import {assert} from 'chai';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
@@ -28,7 +29,10 @@ suite('ARIA', function () {
       },
     ]);
     const toolbox = document.getElementById('toolbox-categories');
-    this.workspace = Blockly.inject('blocklyDiv', {toolbox});
+    this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
+      toolbox,
+    });
     this.liveRegion = document.getElementById('blocklyAriaAnnounce');
   });
 
