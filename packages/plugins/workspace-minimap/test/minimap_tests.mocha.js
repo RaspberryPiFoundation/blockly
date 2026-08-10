@@ -442,7 +442,7 @@ suite('Mirroring events', function () {
     );
     global.SVGElement = window.SVGElement;
     window.HTMLCanvasElement.prototype.getContext = () => ({
-      measureText: () => ({ width: ""}),
+      measureText: () => ({width: ''}),
     });
     window.requestAnimationFrame = (callback) => setTimeout(callback, 0);
     window.cancelAnimationFrame = (id) => clearTimeout(id);
