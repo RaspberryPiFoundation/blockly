@@ -37,7 +37,7 @@ jobs:
   publish:
     needs: ci
     runs-on: ubuntu-latest
-    # Don't try to publish from a fork of RaspberryPiFoundation/blockly-samples.
+    # Don't try to publish from a fork of RaspberryPiFoundation/blockly.
     if: ${{ github.repository_owner == 'RaspberryPiFoundation' }}
     environment: release
     steps:
@@ -118,8 +118,13 @@ jobs:
             npx lerna publish from-git --yes --dist-tag ${DIST_TAG} --loglevel silly
           fi
 
+      - name: Create tarball
+        working-directory: packages/blockly
+        run: npm pack ./dist
+        
       - name: Create GitHub release
         if: ${{ !inputs.dry_run }}
+        working-directory: packages/blockly
         env:
           GH_TOKEN: ${{ github.token }}
           DIST_TAG: ${{ steps.dist.outputs.dist_tag }}
