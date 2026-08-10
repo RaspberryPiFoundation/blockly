@@ -130,7 +130,7 @@ jobs:
           DIST_TAG: ${{ steps.dist.outputs.dist_tag }}
         run: |
           VERSION=$(node -p "require('./packages/blockly/package.json').version")
-          TARBALL="blockly-*${VERSION}.tgz"
+          TARBALL="blockly-${VERSION}.tgz"
           if [ "${DIST_TAG}" == "beta" ]; then
             gh release create "blockly-v${VERSION}" "$TARBALL" \
               --repo "$GITHUB_REPOSITORY" \
