@@ -102,6 +102,7 @@ jobs:
           fi
 
       - name: Build core package
+        if: ${{ !inputs.dry_run }}
         working-directory: packages/blockly
         run: npm run package
 
@@ -119,6 +120,7 @@ jobs:
           fi
 
       - name: Create tarball
+        if: ${{ !inputs.dry_run }}
         working-directory: packages/blockly
         run: npm pack ./dist
         
