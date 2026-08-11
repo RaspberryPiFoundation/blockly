@@ -5,6 +5,7 @@
  */
 
 import * as Css from './css.js';
+import {getFocusManager} from './focus_manager.js';
 import {Msg} from './msg.js';
 import * as aria from './utils/aria.js';
 import * as dom from './utils/dom.js';
@@ -139,8 +140,17 @@ export class Toast {
       closeIcon,
     );
     closeButton.addEventListener('click', () => {
+      const focusManager = getFocusManager();
+      const nodeToRestore = focusManager.getPreviouslyFocusedNode();
       toast.remove();
-      workspace.markFocused();
+      if (nodeToRestore?.canBeFocused()) {
+        focusManager.focusNode(nodeToRestore);
+      } else {
+        // No prior focus (e.g. a toast closed with the mouse before any
+        // Blockly node was focused). Park focus back on the workspace
+        // via FocusManager instead of dropping it on the document body.
+        focusManager.focusTree(workspace);
+      }
     });
 
     let timeout: ReturnType<typeof setTimeout>;

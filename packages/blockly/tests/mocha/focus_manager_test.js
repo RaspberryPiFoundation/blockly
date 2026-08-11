@@ -418,6 +418,25 @@ suite('FocusManager', function () {
     });
   });
 
+  suite('getPreviouslyFocusedNode()', function () {
+    test('by default returns null', function () {
+      assert.isNull(this.focusManager.getPreviouslyFocusedNode());
+    });
+
+    test('after losing focus to untracked element returns prior node', function () {
+      this.focusManager.registerTree(this.testFocusableTree1);
+      this.focusManager.focusNode(this.testFocusableTree1Node1);
+
+      document.body.focus();
+
+      assert.isNull(this.focusManager.getFocusedNode());
+      assert.strictEqual(
+        this.focusManager.getPreviouslyFocusedNode(),
+        this.testFocusableTree1Node1,
+      );
+    });
+  });
+
   suite('focusTree()', function () {
     test('for not registered tree throws', function () {
       const errorMsgRegex = /Attempted to focus unregistered tree.+?/;

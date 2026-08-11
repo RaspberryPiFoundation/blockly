@@ -139,4 +139,37 @@ suite('Toasts', function () {
     assert.isNull(toast.getAttribute('aria-live'));
     assert.notEqual(toast.getAttribute('role'), Blockly.utils.aria.Role.STATUS);
   });
+
+  suite('dismiss focus', function () {
+    function closeToast(workspace) {
+      const closeButton = workspace
+        .getInjectionDiv()
+        .querySelector('.blocklyToastCloseButton');
+      closeButton.focus();
+      closeButton.click();
+    }
+
+    test('restores previously focused node on click', function () {
+      const block = this.workspace.newBlock('text_print');
+      block.initSvg();
+      block.render();
+      Blockly.getFocusManager().focusNode(block);
+      Blockly.Toast.show(this.workspace, {message: 'texas toast'});
+
+      closeToast(this.workspace);
+      assert.isFalse(this.toastIsVisible('texas toast'));
+      assert.strictEqual(Blockly.getFocusManager().getFocusedNode(), block);
+    });
+
+    test('falls back to workspace focus when nothing was previously focused', function () {
+      Blockly.Toast.show(this.workspace, {message: 'texas toast'});
+
+      closeToast(this.workspace);
+      assert.isFalse(this.toastIsVisible('texas toast'));
+      assert.strictEqual(
+        Blockly.getFocusManager().getFocusedNode(),
+        this.workspace.getWorkspaceFocusTarget(),
+      );
+    });
+  });
 });
