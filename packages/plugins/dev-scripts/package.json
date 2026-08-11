@@ -1,6 +1,6 @@
 {
   "name": "@blockly/dev-scripts",
-  "version": "13.1.0",
+  "version": "13.2.2-beta.0",
   "description": "Configuration and scripts for Blockly plugins.",
   "bin": {
     "blockly-scripts": "./bin/blockly-scripts.js"

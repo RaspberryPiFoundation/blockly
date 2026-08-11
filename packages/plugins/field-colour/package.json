@@ -1,6 +1,6 @@
 {
   "name": "@blockly/field-colour",
-  "version": "13.1.0",
+  "version": "13.2.2-beta.0",
   "description": "A Blockly colour field.",
   "scripts": {
     "audit:fix": "blockly-scripts auditFix",
@@ -40,8 +40,8 @@
     "src"
   ],
   "devDependencies": {
-    "@blockly/dev-scripts": "^13.1.0",
-    "@blockly/dev-tools": "^13.1.0",
+    "@blockly/dev-scripts": "^13.2.2-beta.0",
+    "@blockly/dev-tools": "^13.2.2-beta.0",
     "@typescript-eslint/parser": "^8.66.0",
     "chai": "^6.2.2",
     "jsdom": "^30.0.1",
@@ -56,6 +56,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@blockly/field-grid-dropdown": "^13.1.0"
+    "@blockly/field-grid-dropdown": "^13.2.2-beta.0"
   }
 }

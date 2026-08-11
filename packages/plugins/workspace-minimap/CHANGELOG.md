@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [13.2.2-beta.0](https://github.com/RaspberryPiFoundation/blockly/compare/blockly-v13.2.1...blockly-v13.2.2-beta.0) (2026-08-11)
+
+**Note:** Version bump only for package @blockly/workspace-minimap
+
+
+
+
+
 ## [13.1.0](https://github.com/RaspberryPiFoundation/blockly-samples/compare/v13.0.0...v13.1.0) (2026-06-30)
 
 ### ⚠ BREAKING CHANGES

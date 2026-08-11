@@ -1,6 +1,6 @@
 {
   "name": "@blockly/block-test",
-  "version": "13.1.0",
+  "version": "13.2.2-beta.0",
   "description": "A group of Blockly test blocks.",
   "scripts": {
     "audit:fix": "blockly-scripts auditFix",
@@ -39,7 +39,7 @@
     "src"
   ],
   "devDependencies": {
-    "@blockly/dev-scripts": "^13.1.0"
+    "@blockly/dev-scripts": "^13.2.2-beta.0"
   },
   "peerDependencies": {
     "blockly": "^13.2.0"
