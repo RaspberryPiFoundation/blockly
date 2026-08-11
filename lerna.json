@@ -1,0 +1,18 @@
+{
+  "version": "13.2.0",
+  "npmClient": "npm",
+  "changelogPreset": {
+    "name": "conventionalcommits"
+  },
+  "ignoreChanges": ["**/package-lock.json"],
+  "command": {
+    "version": {
+      "tagVersionPrefix": "blockly-v"
+    },
+    "publish": {
+      "tagVersionPrefix": "blockly-v"
+    }
+  },
+  "packages": ["packages/blockly", "packages/plugins/*"],
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json"
+}

@@ -35,15 +35,15 @@ with the format `#rgb` if possible.
 
 #### Colour field
 
-![](https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/field-colour/readme-media/on_block.png)
+![](https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/field-colour/readme-media/on_block.png)
 
 #### Colour field with editor open
 
-![](https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/field-colour/readme-media/with_editor.png)
+![](https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/field-colour/readme-media/with_editor.png)
 
 #### Colour field on collapsed block
 
-![](https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/field-colour/readme-media/collapsed.png)
+![](https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/field-colour/readme-media/collapsed.png)
 
 ### Creation
 
@@ -207,7 +207,7 @@ Blockly.Blocks['example_colour'] = {
 };
 ```
 
-![Customized colour field editor](https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/field-colour/readme-media/customized.png)
+![Customized colour field editor](https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/field-colour/readme-media/customized.png)
 
 #### Creating a colour validator
 
@@ -229,7 +229,7 @@ function(newValue) {
 
 #### Block changing colour based on its colour field
 
-![](https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/field-colour/readme-media/validator.gif)
+![](https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/field-colour/readme-media/validator.gif)
 
 ### Blocks
 

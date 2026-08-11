@@ -179,6 +179,7 @@ export class BlockFlyoutInflater implements IFlyoutInflater {
     const element = item.getElement();
     if (!(element instanceof BlockSvg)) return;
     this.removeListeners(element.id);
+    this.permanentlyDisabledBlocks.delete(element);
     element.dispose(false, false);
   }
 

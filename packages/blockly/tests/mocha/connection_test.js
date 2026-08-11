@@ -12,6 +12,7 @@ import {
 } from './test_helpers/block_definitions.js';
 import {
   createGenUidStubWithReturns,
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
@@ -101,7 +102,7 @@ suite('Connection', function () {
       {
         title: 'Rendered',
         createWorkspace: () => {
-          return Blockly.inject('blocklyDiv');
+          return Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
         },
       },
       {

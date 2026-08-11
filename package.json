@@ -27,6 +27,8 @@
     "packages/plugins/theme-tritanopia",
     "packages/plugins/block-test",
     "packages/plugins/dev-tools",
+    "packages/plugins/sample-app",
+    "packages/plugins/sample-app-ts",
     "packages/plugins/field-grid-dropdown",
     "packages/plugins/block-dynamic-connection",
     "packages/plugins/block-plus-minus",
@@ -64,6 +66,7 @@
     "@commitlint/config-conventional": "^21.0.2",
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
     "eslint": "10.5.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^10.1.8",
@@ -72,6 +75,7 @@
     "eslint-plugin-mocha": "^11.3.0",
     "eslint-plugin-prettier": "^5.5.6",
     "globals": "^17.6.0",
+    "lerna": "^9.0.7",
     "prettier": "3.9.5",
     "prettier-plugin-organize-imports": "^4.3.0"
   },
@@ -83,5 +87,6 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "postinstall": "patch-package"
-  }
+  },
+  "dependencies": {}
 }

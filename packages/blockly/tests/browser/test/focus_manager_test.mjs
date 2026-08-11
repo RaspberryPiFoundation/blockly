@@ -55,6 +55,8 @@ async function installFocusTestHelpers(browser, fixtureHtml) {
 }
 
 suite('FocusManager', function () {
+  this.timeout(0);
+
   suiteSetup(async function () {
     this.browser = await testSetup(testFileLocations.PLAYGROUND);
     await installFocusTestHelpers(this.browser, FIXTURE_HTML);

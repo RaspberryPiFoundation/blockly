@@ -17,6 +17,7 @@ import {
 import {runSerializationTestSuite} from '../test_helpers/serialization.js';
 import {
   createGenUidStubWithReturns,
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
@@ -25,7 +26,7 @@ import {
 suite('Procedures', function () {
   setup(function () {
     sharedTestSetup.call(this, {fireEventsNow: false});
-    this.workspace = Blockly.inject('blocklyDiv', {});
+    this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
     this.workspace
       .getVariableMap()
       .createVariable('preCreatedVar', '', 'preCreatedVarId');

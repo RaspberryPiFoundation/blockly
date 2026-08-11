@@ -19,6 +19,7 @@ const blockEvents = new Set<string>([
   Blockly.Events.BLOCK_DELETE,
   Blockly.Events.BLOCK_DRAG,
   Blockly.Events.BLOCK_MOVE,
+  Blockly.Events.VAR_RENAME,
 ]);
 
 const borderRadius = 6;

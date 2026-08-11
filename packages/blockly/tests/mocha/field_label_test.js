@@ -14,6 +14,7 @@ import {
   runSetValueTests,
 } from './test_helpers/fields.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
@@ -227,6 +228,7 @@ suite('Label Fields', function () {
   suite('ARIA', function () {
     test('Is hidden', function () {
       const workspace = Blockly.inject('blocklyDiv', {
+        ...DEFAULT_INJECT_OPTIONS,
         renderer: 'geras',
       });
       const block = workspace.newBlock('text_print');

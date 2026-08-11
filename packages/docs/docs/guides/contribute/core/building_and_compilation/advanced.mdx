@@ -1,0 +1,46 @@
+---
+description: Blockly's support for advanced compilation with Closure Compiler
+title: Advanced compilation
+image: images/blockly_banner.png
+---
+
+# Advanced compilation
+
+The regular [build process](/guides/contribute/core/building_and_compilation/building) uses the 
+[Closure Compiler](https://developers.google.com/closure/compiler) to compress
+Blockly. Although the regular build uses 
+[`SIMPLE_OPTIMIZATIONS`](https://developers.google.com/closure/compiler/docs/compilation_levels#simple_optimizations)
+mode, Blockly also supports the use of 
+[`ADVANCED_OPTIMIZATIONS`](https://developers.google.com/closure/compiler/docs/compilation_levels#advanced_optimizations)
+mode.
+
+:::warning
+Unless you have a specific need to further reduce the compressed size of 
+Blockly, you should avoid `ADVANCED_OPTIMIZATIONS` mode. Instead, 
+you can use the compressed version of Blockly from [npm](https://www.npmjs.com/package/blockly). 
+:::
+
+## Advanced compilation test
+
+Blockly contains a test which builds Blockly and a small test app using 
+`ADVANCED_OPTIMIZATIONS` to ensure that new changes remain compatible with 
+`ADVANCED_OPTIMIZATIONS` mode.
+
+This `ADVANCED_OPTIMIZATIONS` test is called `compileAdvancedCompilationTest()`
+and located in `packages/blockly/scripts/gulpfiles/build_tasks.mjs`.
+The associated test app is located in `packages/blockly/tests/compile/`.
+
+If you want to run this `ADVANCED_OPTIMIZATIONS` test locally, you can use: 
+```
+npm run test:compile:advanced
+```
+
+## Use advanced compilation
+
+Since `ADVANCED_OPTIMIZATIONS` includes aggressive renaming, you must compile
+Blockly *with* your own app in order to use it.
+
+You can reference the [advanced compilation test](#advanced-compilation-test) and
+the associated test app as an example of how to use `ADVANCED_OPTIMIZATIONS` 
+mode on your own project. You can also consult the [Closure Compiler documentation](https://developers.google.com/closure/compiler/docs/api-tutorial3)
+on advanced compilation. 

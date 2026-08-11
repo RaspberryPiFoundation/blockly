@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "dist",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "module": "ES2015",
+    "moduleResolution": "bundler",
+    "target": "es6",
+    "strict": true
+  },
+  "include": ["src"]
+}

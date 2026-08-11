@@ -1,0 +1,134 @@
+---
+description: Overview of the structure and architecture of the core repository.
+title: Core Tour
+image: images/blockly_banner.png
+---
+
+# Core tour
+
+## Blockly code
+
+The code for Blockly can be found on
+[GitHub](https://github.com/RaspberryPiFoundation/blockly/tree/main). This
+page is intended as a guide so that you can explore Blockly's repository and
+determine where to start if you're working on a GitHub issue. 
+
+If you would like to learn more about Blockly's code, you can do the following: 
+- Read this document
+- Click through the code on [GitHub](https://github.com/RaspberryPiFoundation/blockly/tree/main)
+- Consult the [API documentation](/reference/blockly/)
+
+:::tip 
+Don't worry, you do **not** have to read and understand every piece of Blockly's 
+code in order to contribute to Blockly! You just need to understand the parts
+that relate to what you're working on. 
+:::
+
+### Folder structure
+
+The root folder of Blockly's repository contains many files (and some folders) 
+for the configuration of our
+[development tools](/guides/contribute/core/development_tools).
+
+Blockly's source code is located in `packages/blockly`. As an external 
+contributor, you will likely focus on the files in the `core/` and `tests/` 
+folders, but all of the folders are listed below.
+
+`packages/blockly/`
+- `blocks/` - Block definitions for built-in blocks
+- `core/`
+  - `bubbles/` - Code for creating popover bubbles, such as mutator UI
+  - `clipboard/` - [Copy/paste](/guides/configure/copy-paste/) logic
+  - `comments/` - Workspace [comments](/guides/configure/) and block comments
+  - `dragging/` - Mechanics for
+    [dragging objects](/guides/configure/dragging/draggable/) in the workspace
+  - `events/` - [Events](/guides/configure/events) class and built-in events
+  - `icons/` - [Icon](/guides/create-custom-blocks/icons/overview/) class and
+    built-in icons
+  - `inputs/` -
+    [Input](/guides/create-custom-blocks/inputs/creating-custom-inputs/) types
+    and their connections
+  - `interfaces/` - Shared interfaces implemented across core
+  - `keyboard_nav/` - [Keyboard navigation](/guides/configure/keyboard-nav/)
+    - `navigation_policies/` - Engines that decide where keyboard focus moves
+    - `navigators/` - Per-element rules telling the navigator where an element's 
+    neighbors are
+  - `renderers/` - Default
+    [renderers](/guides/create-custom-blocks/renderers/overview/)
+    - `common/` - Base classes shared by the renderers
+    - `geras/` - Built-in renderer with 3-D edges
+    - `measurables/` - Classes that represent each part of a block
+    - `thrasos/` - Built-in minimalist renderer, Blockly default
+    - `zelos/` - Built-in renderer with rounded blocks
+  - `serialization/` - [Saving and loading](/guides/configure/serialization/)
+    workspace state
+  - `theme/` - Built-in [themes](/guides/configure/appearance/themes/)
+  - `toolbox/` - The [toolbox](/guides/configure/toolboxes/toolbox/)
+  - `utils/` - Utility functions used throughout core
+- `demos/` - Some deprecated Blockly demos. Up-to-date demos and examples are in [blockly-samples](https://github.com/raspberrypifoundation/blockly-samples).
+- `generators/` -
+  [Code generators](/guides/create-custom-blocks/code-generation/overview/) for
+  the built-in languages
+- `media/` - Sound effects, cursors, etc.
+- `msg/` - Translated [message strings](/guides/configure/translations/)
+- `scripts/` - Scripts for building, packaging, and maintaining Blockly.
+- `tests/` - [Unit tests](/guides/contribute/core/testing/unit_testing)
+- `typings/` - Supplemental hand-written type declarations
+
+### Core files
+
+There are many files in `core/` that don't live in a subfolder, for various 
+reasons. If you're making a change to Blockly, you should take a look at these 
+files, as well as the subfolders in `core/`, to find the relevant code.
+
+Note that Blockly's foundational base classes, like `Block`, `Workspace`, and
+`Connection` are located in the `core/` folder, outside of any subfolders.
+
+## Blockly docs
+
+Blockly's documentation is located in `packages/docs`.
+
+As an external contributor, you will likely focus on the files in the `docs/`
+and `static/` folders, but all of the folders are listed below.
+
+`packages/docs/`
+- `docs/` - The documentation content itself, written in Markdown/MDX
+  - `codelabs/` - Step-by-step tutorials
+  - `guides/` - Topic-based how-to guides
+  - `publications/` - Academic papers and talks about Blockly
+  - `reference/` - Generated [API reference](#api-documentation)
+- `src/` - Source code for the Docusaurus site
+  - `components/` - Custom React components used in the docs
+  - `css/` - Custom styles
+  - `pages/` - Standalone pages outside the docs content
+  - `theme/` - Docusaurus theme overrides
+  - `utils/` - Utilities for website analytics
+- `static/` - Static assets (images, redirects, etc.)
+
+### API documentation
+
+Blockly also offers [API reference documentation](/reference/blockly) that
+details the public API code. The API docs are automatically generated from the
+code itself, so they are another great resource for understanding Blockly's
+code.
+
+## Model vs. view
+
+Before digging into `core/`, it's worth understanding one key part of Blockly's 
+architecture: Blockly separates data modeling from rendering. In practice, this 
+means that some parts of Blockly have two classes that represent them: one for 
+the data model, and one for the rendered version.
+
+For an example, look at the implementation of blocks. In the `core/` folder, 
+there are two files that implement blocks: `block.ts` and `block_svg.ts`.
+
+In `block.ts`, the `Block` parent class has functions to handle data associated 
+with that block and how it behaves. There are functions in the `Block` class 
+that do deal with visual aspects of a block, like `setColour`. If you look 
+closely at `setColour` in the `Block` class, you'll see that `setColour` just 
+saves the colour. It does not render or display that colour. 
+
+`block_svg.ts`, on the other hand, creates a `BlockSvg` class that extends the 
+`Block` class to add render management. The `setColour` override in BlockSvg 
+calls the super (which saves the colour) and also *applies* that colour
+to the rendered block.

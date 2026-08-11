@@ -10,6 +10,7 @@ import {
   createChangeListenerSpy,
 } from './test_helpers/events.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
@@ -17,7 +18,7 @@ import {
 suite('Clipboard', function () {
   setup(function () {
     this.clock = sharedTestSetup.call(this, {fireEventsNow: false}).clock;
-    this.workspace = Blockly.inject('blocklyDiv');
+    this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
   });
 
   teardown(function () {
@@ -159,7 +160,10 @@ suite('Clipboard', function () {
 
       test('pasted blocks are bumped to not overlap in RTL', function () {
         this.workspace.dispose();
-        this.workspace = Blockly.inject('blocklyDiv', {rtl: true});
+        this.workspace = Blockly.inject('blocklyDiv', {
+          ...DEFAULT_INJECT_OPTIONS,
+          rtl: true,
+        });
         const block = Blockly.serialization.blocks.append(
           {
             'type': 'controls_if',
@@ -182,7 +186,7 @@ suite('Clipboard', function () {
 
         // Restore an LTR workspace.
         this.workspace.dispose();
-        this.workspace = Blockly.inject('blocklyDiv');
+        this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
       });
 
       test('pasted blocks are bumped to be outside the connection snap radius', function () {
@@ -239,7 +243,10 @@ suite('Clipboard', function () {
 
     test('pasted comments are bumped to not overlap in RTL', function () {
       this.workspace.dispose();
-      this.workspace = Blockly.inject('blocklyDiv', {rtl: true});
+      this.workspace = Blockly.inject('blocklyDiv', {
+        ...DEFAULT_INJECT_OPTIONS,
+        rtl: true,
+      });
       Blockly.Xml.domToWorkspace(
         Blockly.utils.xml.textToDom(
           '<xml><comment id="test" x=10 y=10/></xml>',
@@ -257,7 +264,7 @@ suite('Clipboard', function () {
       );
       // Restore an LTR workspace.
       this.workspace.dispose();
-      this.workspace = Blockly.inject('blocklyDiv');
+      this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
     });
   });
 });

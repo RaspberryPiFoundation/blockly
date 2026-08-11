@@ -16,6 +16,7 @@ import {
 } from './test_helpers/block_definitions.js';
 import {assertEventFired, assertEventNotFired} from './test_helpers/events.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
@@ -54,6 +55,7 @@ suite('Trashcan', function () {
     defineStackBlock('stack_block2');
     defineMutatorBlocks();
     this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
       'trashcan': true,
       'maxTrashcanContents': Infinity,
     });

@@ -13,6 +13,7 @@ import {
   createChangeListenerSpy,
 } from './test_helpers/events.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
@@ -23,7 +24,10 @@ suite('WorkspaceSvg', function () {
   setup(function () {
     this.clock = sharedTestSetup.call(this, {fireEventsNow: false}).clock;
     const toolbox = document.getElementById('toolbox-categories');
-    this.workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+    this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
+      toolbox: toolbox,
+    });
     Blockly.defineBlocksWithJsonArray([
       {
         'type': 'simple_test_block',
@@ -149,7 +153,7 @@ suite('WorkspaceSvg', function () {
     );
   });
 
-  suite('getRestoredFocusableNode', function () {
+  suite('Focus Management', function () {
     test('restores focus to the workspace focus target for a non-mutator non-flyout workspace', function () {
       Blockly.getFocusManager().focusTree(this.workspace);
       assert.strictEqual(
@@ -176,6 +180,30 @@ suite('WorkspaceSvg', function () {
         Blockly.getFocusManager().getFocusedNode(),
         firstBlock,
       );
+    });
+
+    test('includes mutators in nested trees', async function () {
+      const block = this.workspace.newBlock('controls_if');
+      block.initSvg();
+      block.render();
+      const icon = block.getIcon(Blockly.icons.MutatorIcon.TYPE);
+      await icon.setBubbleVisible(true);
+      const mutatorWorkspace = icon.getWorkspace();
+
+      const nestedTrees = this.workspace.getNestedTrees();
+      assert.sameMembers(nestedTrees, [mutatorWorkspace]);
+    });
+
+    test('includes flyouts in nested trees', async function () {
+      this.workspace.dispose();
+      const toolbox = document.getElementById('toolbox-simple');
+      this.workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+
+      const nestedTrees = this.workspace.getNestedTrees();
+      assert.isNotNull(this.workspace.getFlyout());
+      assert.sameMembers(nestedTrees, [
+        this.workspace.getFlyout().getWorkspace(),
+      ]);
     });
   });
 

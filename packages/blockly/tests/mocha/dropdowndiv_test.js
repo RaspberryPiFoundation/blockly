@@ -8,6 +8,7 @@ import {Rect} from '#core/utils/rect.js';
 import * as style from '#core/utils/style.js';
 import {assert} from 'chai';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
@@ -16,7 +17,7 @@ suite('DropDownDiv', function () {
   setup(function () {
     sharedTestSetup.call(this);
     Blockly.common.setParentContainer(document.firstElementChild);
-    this.workspace = Blockly.inject('blocklyDiv');
+    this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
     this.setUpBlockWithField = function () {
       const blockJson = {
         'type': 'text',
@@ -150,7 +151,7 @@ suite('DropDownDiv', function () {
           width: 100,
           height: 100,
         });
-      this.workspace = Blockly.inject('blocklyDiv', {});
+      this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
     });
     teardown(function () {
       this.boundsStub.restore();

@@ -81,8 +81,12 @@ export abstract class Icon implements IIcon, IContextMenu {
   }
 
   dispose(): void {
-    tooltip.unbindMouseEvents(this.svgRoot);
-    dom.removeNode(this.svgRoot);
+    if (this.svgRoot) {
+      tooltip.unbindMouseEvents(this.svgRoot);
+      delete (this.svgRoot as any).tooltip;
+      dom.removeNode(this.svgRoot);
+    }
+    this.tooltip = '';
   }
 
   getWeight(): number {

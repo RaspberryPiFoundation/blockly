@@ -12,6 +12,7 @@ import {
   defineStackBlock,
 } from './test_helpers/block_definitions.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
@@ -22,7 +23,10 @@ suite('Context Menu', function () {
 
     // Creates a WorkspaceSVG
     const toolbox = document.getElementById('toolbox-categories');
-    this.workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+    this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
+      toolbox: toolbox,
+    });
   });
 
   teardown(function () {

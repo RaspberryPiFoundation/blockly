@@ -741,7 +741,7 @@ Css.register(`
     rotate: 45deg;
   }
 
-  .blocklyRTL .blocklyTrash.blocklyTrashFull.blocklyTrashOpen .blocklyTrashLid,
+  .blocklyRTL .blocklyTrash.blocklyTrashOpen .blocklyTrashLid,
   .blocklyRTL .blocklyTrash.blocklyTrashFull:hover .blocklyTrashLid,
   .blocklyRTL .blocklyTrash.blocklyTrashFull:focus .blocklyTrashLid {
     rotate: -45deg;

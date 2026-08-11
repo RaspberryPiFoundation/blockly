@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {DEFAULT_INJECT_OPTIONS} from './setup_teardown.js';
+
 /**
  * Get JSON for a toolbox that contains categories.
  * @return {Blockly.utils.toolbox.ToolboxJson} The array holding information
@@ -229,6 +231,7 @@ export function getInjectedToolbox() {
    */
   const toolboxXml = document.getElementById('toolbox-test');
   const workspace = Blockly.inject('blocklyDiv', {
+    ...DEFAULT_INJECT_OPTIONS,
     toolbox: toolboxXml,
   });
   return workspace.getToolbox();

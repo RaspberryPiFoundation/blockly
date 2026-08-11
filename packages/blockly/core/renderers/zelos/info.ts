@@ -8,8 +8,8 @@
 
 import type {BlockSvg} from '../../block_svg.js';
 import {FieldImage} from '../../field_image.js';
+import {FieldInput} from '../../field_input.js';
 import {FieldLabel} from '../../field_label.js';
-import {FieldTextInput} from '../../field_textinput.js';
 import {Align} from '../../inputs/align.js';
 import {DummyInput} from '../../inputs/dummy_input.js';
 import {EndRowInput} from '../../inputs/end_row_input.js';
@@ -30,6 +30,25 @@ import {RightConnectionShape} from './measurables/row_elements.js';
 import {TopRow} from './measurables/top_row.js';
 import type {PathObject} from './path_object.js';
 import type {Renderer} from './renderer.js';
+
+/**
+ * Horizontal inset from a round output-cap tip needed so content at the given
+ * vertical distance from the centerline stays inside the circle.
+ *
+ * @param radius Round cap radius (dynamic connection width).
+ * @param distanceFromCenter Vertical distance from the cap centerline.
+ * @returns Clearance from the tip to the content edge.
+ */
+export function roundCapClearance(
+  radius: number,
+  distanceFromCenter: number,
+): number {
+  if (radius <= 0) {
+    return 0;
+  }
+  const y = Math.min(Math.abs(distanceFromCenter), radius);
+  return radius - Math.sqrt(radius * radius - y * y);
+}
 
 /**
  * An object containing all sizing information needed to draw this block.
@@ -518,8 +537,7 @@ export class RenderInfo extends BaseRenderInfo {
           const maxWidth = this.constants_.MAX_DYNAMIC_CONNECTION_SHAPE_WIDTH;
           const width = this.height / 2 > maxWidth ? maxWidth : this.height / 2;
           const topPadding = this.constants_.SMALL_PADDING;
-          const roundPadding =
-            width * (1 - Math.sin(Math.acos((width - topPadding) / width)));
+          const roundPadding = roundCapClearance(width, width - topPadding);
           return connectionWidth - roundPadding;
         }
         default:
@@ -554,16 +572,30 @@ export class RenderInfo extends BaseRenderInfo {
         this.constants_.SHAPE_IN_SHAPE_PADDING[outerShape][innerShape]
       );
     } else if (Types.isField(elem)) {
-      // Special case for text inputs.
+      // Special case for text and number inputs.
       if (
         outerShape === constants.SHAPES.ROUND &&
-        elem.field instanceof FieldTextInput
+        elem.field instanceof FieldInput
       ) {
         return connectionWidth - 2.75 * constants.GRID_UNIT;
       }
-      return (
-        connectionWidth - this.constants_.SHAPE_IN_SHAPE_PADDING[outerShape][0]
-      );
+      const minClearance =
+        this.constants_.SHAPE_IN_SHAPE_PADDING[outerShape][0];
+      let clearance = minClearance;
+      if (outerShape === constants.SHAPES.ROUND) {
+        // Tall rectangular fields like bitmaps and images need more than the
+        // centerline minimum so their corners stay inside dynamic round caps.
+        // Pure geometry would put corners directly on the path so add a bit
+        // of padding so they don't visually touch.
+        const calculatedClearance =
+          roundCapClearance(connectionWidth, elem.height / 2) +
+          constants.SMALL_PADDING;
+        clearance = Math.min(
+          connectionWidth,
+          Math.max(minClearance, calculatedClearance),
+        );
+      }
+      return connectionWidth - clearance;
     } else if (Types.isIcon(elem)) {
       return this.constants_.SMALL_PADDING;
     }

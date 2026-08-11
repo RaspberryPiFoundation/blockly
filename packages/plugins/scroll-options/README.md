@@ -92,12 +92,12 @@ on `ScrollOptions`:
 - `updateEdgeScrollOptions`
 
 **IMPORTANT**: Currently, the options to configure the edge scroll behavior are
-provided statically due to the way a BlockDragger is initialized. Thus, each
+provided statically due to the way a `BlockDragger` is initialized. Thus, each
 instance of the plugin will share the same settings, even if you call
 `updateEdgeScrollOptions` on different instances of the plugin (i.e., on
 different workspaces). You can have some workspaces using the plugin and some
 not, but any that are using the plugin will share the settings. If this is a
-blocking issue for you, please file an issue on blockly-samples.
+blocking issue for you, please file an issue.
 
 The edge scroll options are provided in an object with the following properties
 (default values in parentheses):

@@ -6,6 +6,7 @@
 
 import {assert} from 'chai';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
@@ -17,7 +18,10 @@ suite('Context Menu Items', function () {
 
     // Creates a WorkspaceSVG
     const toolbox = document.getElementById('toolbox-categories');
-    this.workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+    this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
+      toolbox: toolbox,
+    });
 
     this.registry = Blockly.ContextMenuRegistry.registry;
     this.registry.reset();
