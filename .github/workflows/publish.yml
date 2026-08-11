@@ -141,7 +141,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           DIST_TAG: ${{ steps.dist.outputs.dist_tag }}
         run: |
-          VERSION=$(node -p "require('./packages/blockly/package.json').version")
+          VERSION=$(node -p "require('./package.json').version")
           TARBALL="blockly-${VERSION}.tgz"
           if [ "${DIST_TAG}" == "beta" ]; then
             gh release create "blockly-v${VERSION}" "$TARBALL" \
