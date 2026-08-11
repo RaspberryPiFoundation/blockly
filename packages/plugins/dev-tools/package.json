@@ -1,6 +1,6 @@
 {
   "name": "@blockly/dev-tools",
-  "version": "13.2.2-beta.0",
+  "version": "13.2.2-beta.2",
   "description": "A library of common utilities for Blockly extension development.",
   "scripts": {
     "audit:fix": "blockly-scripts auditFix",
@@ -38,11 +38,11 @@
     "src"
   ],
   "dependencies": {
-    "@blockly/block-test": "^13.2.2-beta.0",
-    "@blockly/theme-dark": "^13.2.2-beta.0",
-    "@blockly/theme-deuteranopia": "^13.2.2-beta.0",
-    "@blockly/theme-highcontrast": "^13.2.2-beta.0",
-    "@blockly/theme-tritanopia": "^13.2.2-beta.0",
+    "@blockly/block-test": "^13.2.2-beta.2",
+    "@blockly/theme-dark": "^13.2.2-beta.2",
+    "@blockly/theme-deuteranopia": "^13.2.2-beta.2",
+    "@blockly/theme-highcontrast": "^13.2.2-beta.2",
+    "@blockly/theme-tritanopia": "^13.2.2-beta.2",
     "chai": "^6.2.2",
     "dat.gui": "^0.7.9",
     "lodash.assign": "^4.2.0",
@@ -51,7 +51,7 @@
     "sinon": "^22.0.0"
   },
   "devDependencies": {
-    "@blockly/dev-scripts": "^13.2.2-beta.0",
+    "@blockly/dev-scripts": "^13.2.2-beta.2",
     "@types/dat.gui": "^0.7.13"
   },
   "peerDependencies": {

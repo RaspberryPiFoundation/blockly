@@ -1,5 +1,5 @@
 {
-  "version": "13.2.2-beta.1",
+  "version": "13.2.2-beta.2",
   "npmClient": "npm",
   "changelogPreset": {
     "name": "conventionalcommits"

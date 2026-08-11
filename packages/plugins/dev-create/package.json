@@ -1,6 +1,6 @@
 {
   "name": "@blockly/create-package",
-  "version": "13.2.2-beta.0",
+  "version": "13.2.2-beta.2",
   "description": "A tool for creating a Blockly plugin based on a template.",
   "bin": "./bin/create.js",
   "author": "Blockly Team",
