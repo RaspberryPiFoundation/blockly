@@ -1,6 +1,6 @@
 {
   "name": "sample-app-typescript",
-  "version": "13.2.2-beta.0",
+  "version": "13.2.2-beta.1",
   "description": "A sample app using Blockly",
   "main": "index.js",
   "private": true,
@@ -35,6 +35,6 @@
     "webpack-dev-server": "^5.2.5"
   },
   "dependencies": {
-    "blockly": "^13.2.2-beta.0"
+    "blockly": "^13.2.2-beta.1"
   }
 }
