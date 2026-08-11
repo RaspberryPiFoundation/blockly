@@ -50,6 +50,8 @@ import {replaceMessageReferences} from './utils/parsing.js';
 import {Size} from './utils/size.js';
 import type {Workspace} from './workspace.js';
 
+// Test comment; do not push to main
+
 /**
  * Class for one block.
  * Not normally called directly, workspace.newBlock() is preferred.
