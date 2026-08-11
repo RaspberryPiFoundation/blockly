@@ -197,7 +197,7 @@ Css.register(`
 }
 
 .${CLASS_NAME} .${MESSAGE_CLASS_NAME} {
-  maxWidth: 18rem;
+  max-width: 18rem;
 }
 
 .${CLASS_NAME} .${CLOSE_BUTTON_CLASS_NAME} {
