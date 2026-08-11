@@ -462,7 +462,7 @@ suite('Mirroring events', function () {
     this.jsdomCleanup();
   });
 
-  test('Renaming a variable updates the minimap', async function () {
+  test('Renaming a variable updates the minimap', function () {
     const variable = this.workspace.getVariableMap().createVariable('a');
     const block = this.workspace.newBlock('variables_set');
     block.getField('VAR').setValue(variable.getId());
