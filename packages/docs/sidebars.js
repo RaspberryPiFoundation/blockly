@@ -742,9 +742,20 @@ const sidebars = {
           ],
         },
         {
-          type: 'doc',
+          type: 'category',
           label: 'Save and load',
-          id: 'guides/configure/serialization',
+          items: [
+            {
+              type: 'doc',
+              label: 'Save and load',
+              id: 'guides/configure/serialization',
+            },
+            {
+              type: 'doc',
+              label: 'Migrating to JSON serialization',
+              id: 'guides/configure/json-serialization-migration',
+            },
+          ],
         },
         {
           type: 'doc',

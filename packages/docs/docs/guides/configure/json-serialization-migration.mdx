@@ -1,0 +1,415 @@
+---
+description: Migrating XML-based serialization to JSON-based serialization. 
+title: JSON Serialization Migration Guide
+image: images/blockly_banner.png
+---
+
+# JSON Serialization Migration Guide
+
+Serialization is about saving the state of your workspace so that it can be 
+loaded back into a workspace later. This includes serializing the state of any 
+blocks, variables, or plugins that you want to round-trip.
+
+Originally Blockly only provided an XML-based serialization system, but now it 
+also includes a JSON-based system. The XML  system is being iceboxed (meaning it 
+won’t receive new features) but the JSON system will continue to improve.
+
+This document outlines how to migrate your project from the old XML system to 
+the new JSON system. To learn more about how JSON serialization works, visit the
+[serialization guide](https://docs.blockly.com/guides/configure/serialization/).
+This document also outlines the migration in the *order* that you should perform
+it. For instance, you could end up with corrupted saves if you migrate your 
+workspace without migrating blocks.
+
+Note that migration is **completely optional**. The XML system is being 
+iceboxed, not deprecated, which means it will continue to work for the 
+foreseeable future. Migration is only necessary if you want to get the 
+latest-and-greatest features!
+
+## Problems
+
+There is one main problem with migrating to the new system: **backwards 
+compatibility**.
+
+If you are currently storing XML-formatted save files, you need to make sure 
+that those files can still be loaded into a workspace. Be careful **never to 
+remove** something that loads old XML data, unless you’ve converted all your old 
+XML saves to JSON.
+
+## Upgrading blocks
+
+The XML system used the `mutationToDom` and `domToMutation` functions to 
+serialize the extra state of blocks. The JSON system uses `saveExtraState` and 
+`loadExtraState` instead.
+
+Here is the block definition we will be using as an example:
+
+```js
+Blockly.Blocks['lists_create_with'] = {
+  init: function() { /* ... */ },
+
+  mutationToDom: function() {
+    var container = Blockly.utils.xml.createElement('mutation');
+    container.setAttribute('items', this.itemCount_);
+    return container;
+  },
+
+  domToMutation: function(xmlElement) {
+    this.itemCount_ = parseInt(xmlElement.getAttribute('items'), 10);
+    this.updateShape_();
+  },
+  // etc...
+};
+```
+
+1. Add default `saveExtraState` and `loadExtraState` definitions to wherever your 
+   `mutationToDom` and `domToMutation` functions are defined. In this case, this
+   is the block, but if you have a separate mutator that defines `mutationToDom`
+   and `domToMutation` you should also put the JSON serialization functions 
+   there. 
+   
+   These implementations are just wrappers of the XML serialization and 
+   reflect what Blockly already does behind the scenes. You should move on to 
+   the next step in order to fully migrate.
+
+```js
+Blockly.Blocks['lists_create_with'] = {
+  init: function() { /* ... */ },
+
+  mutationToDom: function() {
+    var container = Blockly.utils.xml.createElement('mutation');
+    container.setAttribute('items', this.itemCount_);
+    return container;
+  },
+
+  domToMutation: function(xmlElement) {
+    this.itemCount_ = parseInt(xmlElement.getAttribute('items'), 10);
+    this.updateShape_();
+  },
+
+  // Add these functions:
+  saveExtraState: function() {
+    return Blockly.Xml.domToText(this.mutationToDom());
+  },
+
+  loadExtraState: function(state) {
+    this.domToMutation(Blockly.utils.xml.textToDom(state));
+  },
+  // etc...
+};
+```
+
+2. Modify `saveExtraState` and `loadExtraState` to return the state directly.  
+   See the [Extensions and Mutators](https://developers.google.com/blockly/guides/create-custom-blocks/extensions) 
+   documentation for info on what this should look like. 
+
+```js
+Blockly.Blocks['lists_create_with'] = {
+  init: function() { /* ... */ },
+
+  mutationToDom: function() {
+    var container = Blockly.utils.xml.createElement('mutation');
+    container.setAttribute('items', this.itemCount_);
+    return container;
+  },
+
+  domToMutation: function(xmlElement) {
+    this.itemCount_ = parseInt(xmlElement.getAttribute('items'), 10);
+    this.updateShape_();
+  },
+
+  saveExtraState: function() {
+    return {'itemCount': this.itemCount_};
+  },
+
+  loadExtraState: function(state) {
+    this.itemCount_ = state['itemCount'];
+    this.updateShape_();
+  },
+  // etc...
+};
+```
+
+3. **Optional:** Remove the `mutationToDom` function, but leave `domToMutation`.
+   
+   There are some circumstances in which you should not remove `mutationToDom`.
+
+   :::warning[When to keep `mutationToDom`:]
+   - Your mutator is registered with `Blockly.Extensions.registerMutator`, which
+   requires `mutationToDom` if you have `domToMutation`.
+   - You call `Blockly.Procedures.mutateCallers` which relies on `mutationToDom`
+   to keep procedure blocks in sync.
+   - Your project still writes XML elsewhere.
+   :::
+
+   If you're not sure, just leave `mutationToDom` in your code. You should leave 
+   `domToMutation` regardless of whether or not you remove `mutationToDom` so 
+   that you can load old saves. 
+
+
+## Upgrading Fields
+
+The XML system used the `toXml` and `fromXml` functions to serialize the state 
+of fields. The JSON system uses `saveState` and `loadState` instead.
+
+Here is the code we will be using as an example:
+
+```js
+CustomFields.FieldMap.prototype.toXml = function(fieldElement) {
+  fieldElement.textContent = this.getValue();
+  fieldElement.setAttribute('zoom', this.getZoomLevel());
+  return fieldElement;
+};
+
+CustomFields.FieldMap.prototype.fromXml = function(fieldElement) {
+  this.setValue(fieldElement.textContent);
+  this.setZoomLevel(fieldElement.getAttribute('zoom'));
+}
+```
+
+1. Add default `saveState` and `loadState` definitions to your fields, which 
+   just call your `toXml` and `fromXml` functions. Again, these implementations 
+   are essentially just wrappers of the XML serialization. You should move 
+   on to the next step in order to fully migrate.
+
+```js
+CustomFields.FieldMap.prototype.toXml = function(fieldElement) {
+  fieldElement.textContent = this.getValue();
+  fieldElement.setAttribute('zoom', this.getZoomLevel());
+  return fieldElement;
+};
+
+CustomFields.FieldMap.prototype.fromXml = function(fieldElement) {
+  this.setValue(fieldElement.textContent);
+  this.setZoomLevel(fieldElement.getAttribute('zoom'));
+}
+
+// Add these functions:
+CustomFields.FieldMap.prototype.saveState = function() {
+  var elem = Blockly.utils.xml.createElement("field");
+  elem.setAttribute("name", this.name || '');
+  return Blockly.Xml.domToText(this.toXml(elem));
+};
+
+CustomFields.FieldMap.prototype.loadState = function(state) {
+  this.fromXml(Blockly.utils.xml.textToDom(state));
+};
+```
+
+2. Modify the `saveState` and `loadState` functions to return the state directly.  
+   See the [Creating a custom field](https://developers.google.com/blockly/guides/create-custom-blocks/fields/customizing-fields/creating) 
+   documentation for info on what this should look like.
+
+```js
+CustomFields.FieldMap.prototype.toXml = function(fieldElement) {
+  fieldElement.textContent = this.getValue();
+  fieldElement.setAttribute('zoom', this.getZoomLevel());
+  return fieldElement;
+};
+
+CustomFields.FieldMap.prototype.fromXml = function(fieldElement) {
+  this.setValue(fieldElement.textContent);
+  this.setZoomLevel(fieldElement.getAttribute('zoom'));
+}
+
+CustomFields.FieldMap.prototype.saveState = function() {
+  return {
+    'country': this.getValue(),
+    'zoom': this.getZoomLevel(),
+  };
+};
+
+CustomFields.FieldMap.prototype.loadState = function(state) {
+  this.setValue(state['country']);
+  this.setZoomLevel(state['zoom']);
+};
+```
+
+3. Remove the `toXml` functions, but leave `fromXml`.  
+   It is important to leave `fromXml` so that you can load old saves, but `toXml` 
+   is unnecessary if you won’t ever be saving to XML.
+
+```js
+CustomFields.FieldMap.prototype.fromXml = function(fieldElement) {
+  this.setValue(fieldElement.textContent);
+  this.setZoomLevel(fieldElement.getAttribute('zoom'));
+}
+
+CustomFields.FieldMap.prototype.saveState = function() {
+  return {
+    'country': this.getValue(),
+    'zoom': this.getZoomLevel(),
+  };
+};
+
+CustomFields.FieldMap.prototype.loadState = function(state) {
+  this.setValue(state['country']);
+  this.setZoomLevel(state['zoom']);
+};
+```
+
+## Upgrading toolboxes
+
+If you want to use the new JSON hooks for blocks and fields, you will have to 
+specify your toolbox using JSON as well.
+
+1. Read the [toolbox documentation](https://developers.google.com/blockly/guides/configure/web/toolbox) 
+   to understand how a JSON toolbox is structured.
+
+2. Run the following code in your browser’s console.  
+   This will output a JSON version of the contents of each of your categories.
+
+```js
+var toolbox = Blockly.getMainWorkspace().getToolbox();
+
+function stripIds(blockState) {
+  if (!blockState) {
+    return;
+  }
+
+  delete blockState['id'];
+  var inputs = blockState['inputs'];
+  for (var name in inputs) {
+    stripIds(inputs[name]['block']);
+    stripIds(inputs[name]['shadow']);
+  }
+  if (blockState['next']) {
+    stripIds(blockState['next']['block']);
+    stripIds(blockState['next']['shadow']);
+  }
+}
+
+var categories = [];
+var items = toolbox.getToolboxItems();
+for (var i = 0; i < items.length; i++) {
+  // Skip separators and anything else that isn't a selectable category.
+  if (!items[i].isSelectable()) {
+    continue;
+  }
+
+  toolbox.selectItemByPosition(i);
+  toolbox.refreshSelection();
+  var flyout = toolbox.getFlyout();
+  if (!flyout) {
+    continue;
+  }
+
+  var category = [];
+  categories.push(category);
+
+  var blocks = flyout.getWorkspace().getTopBlocks();
+  for (var j = 0; j < blocks.length; j++) {
+    var block = blocks[j];
+    var state = Blockly.serialization.blocks.save(
+        block, {addCoordinates: false, doFullSerialization: true});
+    stripIds(state);
+    category.push(state);
+  }
+}
+
+console.log(JSON.stringify(categories, undefined, 2));
+```
+
+3. Use the documentation and these resulting definitions to create the JSON 
+   definition of your toolbox.
+
+## Upgrading starter blocks
+
+Starter blocks are blocks that you load into the workspace by default. With the 
+old system you specified these as XML, but now you can specify them as JSON.
+
+Here is the code we will be using as an example:
+
+```js
+var xml = '<xml>' +
+    '<block type="start_block" deletable="false" movable="false" editable="false">' +
+    '</block>' +
+    '</xml>';
+Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(xml), workspace);
+```
+
+1. Get the JSON version of your blocks.  
+   You can do this by loading the blocks into your workspace, and then running 
+   `Blockly.serialization.workspaces.save`
+
+```js
+var json = {
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "start_block",
+        "deletable": false,
+        "movable": false,
+        "editable": false
+      }
+    ]
+  }
+}
+// Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(xml), workspace);
+```
+
+2. Change `Blockly.Xml.domToWorkspace` to `Blockly.serialization.workspaces.load`.
+
+```js
+var json = {
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "start_block",
+        "deletable": false,
+        "movable": false,
+        "editable": false
+      }
+    ]
+  }
+}
+Blockly.serialization.workspaces.load(json, workspace);
+```
+
+## Upgrading Event handling
+
+For [Block change events](https://developers.google.com/blockly/guides/configure/web/events#blocklyeventsblock_change), 
+if the change represents a mutation, the `oldValue`/`newValue` might be 
+stringified JSON (rather than XML). This occurs if the block being mutated has 
+JSON serialization hooks. This is true of built-in blocks.
+
+Block delete events also include `oldJson` and `wasShadow`. If your block 
+includes JSON hooks, or fields that use JSON hooks, you will want to examine 
+these properties rather than `oldXml`. This is true of built-in blocks.
+
+You should check to make sure that any [event listeners](https://developers.google.com/blockly/guides/configure/web/events#listening_to_events) 
+you’re using are set up to handle these cases.
+
+## Upgrading serialization
+
+Now you are ready to change how your application actually saves and loads state. 
+The basic idea is you change your function calls:
+
+* `Blockly.Xml.workspaceToDom` \-\> `Blockly.serialization.workspaces.save` 
+* `Blockly.Xml.domToWorkspace` \-\> `Blockly.serialization.workspaces.load`
+
+But if you do this, you won’t be able to load old XML saves, which breaks 
+existing users. How you deal with this is very dependent on your storage
+solution. Here are a few options:
+
+1. Bulk update all of your current saves.
+
+```js
+var xmlSave = getSave();  // However your application handles this.
+
+var workspace = new Blockly.Workspace();  // Create a headless workspace.
+Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(xmlSave), workspace);
+var jsonSave = Blockly.serialization.workspaces.save(workspace);
+
+saveSave(jsonSave); // However your application handles this.
+```
+
+2. Tag new saves as JSON. Load untagged saves via the old XML system, and tagged 
+saves via the new JSON system.
+
+## Testing
+
+Now that everything is upgraded, you should test that all of your custom blocks 
+and custom fields round-trip (meaning they serialize, then deserialize) properly.
