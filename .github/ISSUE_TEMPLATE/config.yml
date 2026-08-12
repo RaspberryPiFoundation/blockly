@@ -2,6 +2,6 @@ contact_links:
   - name: Ask a question ❓
     url: https://groups.google.com/forum/#!forum/blockly
     about: Go to the Blockly developer forum, where you can ask and answer questions.
-  - name: Report issues with plugins and examples 🧩
+  - name: Report issues with Blockly examples 🧩
     url: https://github.com/RaspberryPiFoundation/blockly-samples/issues/new/choose
-    about: File bugs or feature requests about plugins and samples in our blockly-samples repository.
+    about: File bugs or feature requests about samples in our blockly-samples repository.

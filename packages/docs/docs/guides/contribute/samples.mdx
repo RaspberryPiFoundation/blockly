@@ -53,10 +53,9 @@ Here is a quick overview of facts about blockly-samples you need to know in
 order to create a PR.
 
 - The working branch is **main** and all PRs should be made against main.
-- **Run `npm install` at the root level of blockly-samples,** not at the
-  individual plugin level. Blockly-samples is a monorepo, meaning it contains
-  multiple packages in the same repository, and installing at the root level
-  is part of the workflow for managing the monorepo with Lerna.
+- **Run `npm install` at the root level of blockly-samples.** Blockly-samples is 
+  a monorepo, meaning it contains multiple packages in the same repository, and 
+  installing at the root level is part of the workflow for managing the monorepo with Lerna.
 - Code must conform to either Google's [JavaScript Style Guide](https://google.github.io/styleguide/jsguide.html)
   or [TypeScript Style
   Guide](https://google.github.io/styleguide/tsguide.html) depending on the
@@ -85,7 +84,6 @@ order to create a PR.
     Otherwise, restart the server and verify that everything behaves as expected 
     and there are no errors or warnings in the console.
 1.  Run `npm run build` and ensure there are no build errors.
-1.  Write automated mocha tests in the `test/` directory.
 1.  If applicable, run `npm run test` to run the automated tests.
 1.  Run `npm run lint:fix` to fix lint errors. Address any remaining warnings or
     errors.
