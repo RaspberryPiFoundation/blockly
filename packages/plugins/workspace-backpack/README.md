@@ -28,7 +28,7 @@ The following context menu options are available for the backpack:
 - "Copy to Backpack" on a Block stack in main Workspace
 - "Empty" option when right clicking the Backpack that is disabled if the Backpack is empty
 
-![An animated picture of all the context menu options in use](https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/workspace-backpack/readme-media/context-menu.gif)
+![An animated picture of all the context menu options in use](https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/workspace-backpack/readme-media/context-menu.gif)
 
 ## Usage
 
@@ -115,7 +115,7 @@ context menu option from disabling the context menu option if the block is
 already in the Backpack. Setting this flag to `true` to disable the check can be
 beneficial for performance if you expect blocks stacks to be very large.
 
-![An animated picture of the "Copy to Backpack" context menu](https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/workspace-backpack/readme-media/context-menu-precondition.gif)
+![An animated picture of the "Copy to Backpack" context menu](https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/workspace-backpack/readme-media/context-menu-precondition.gif)
 
 Note: Currently the empty Backpack context menu is registered globally, while
 the others are registered per workspace.
@@ -198,4 +198,4 @@ This interface requires the draggable to have a method that converts it into
 Apache 2.0
 
 [flyout-info]: https://developers.google.com/blockly/reference/js/blockly.utils_namespace.toolbox_namespace.flyoutiteminfo_typealias.md
-[backpackable]: https://github.com/RaspberryPiFoundation/blockly-samples/blob/master/plugins/workspace-backpack/src/backpack.ts
+[backpackable]: https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/plugins/workspace-backpack/src/backpack.ts

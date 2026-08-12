@@ -21,7 +21,7 @@
     "field",
     "colour"
   ],
-  "homepage": "packages/plugins/field-colour/package.jsonfield-colour#readme",
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/field-colour#readme",
   "bugs": {
     "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
   },
@@ -42,9 +42,9 @@
   "devDependencies": {
     "@blockly/dev-scripts": "^13.1.0",
     "@blockly/dev-tools": "^13.1.0",
-    "@typescript-eslint/parser": "^8.61.1",
+    "@typescript-eslint/parser": "^8.66.0",
     "chai": "^6.2.2",
-    "jsdom": "^29.1.1",
+    "jsdom": "^30.0.1",
     "jsdom-global": "^3.0.2",
     "sinon": "^22.0.0",
     "typescript": "^6.0.3"

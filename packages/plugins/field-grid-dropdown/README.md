@@ -2,9 +2,9 @@
 
 A [Blockly](https://www.npmjs.com/package/blockly) dropdown field with grid layout.
 
-![](https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/field-grid-dropdown/readme-media/dropdown.png)
+![](https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/field-grid-dropdown/readme-media/dropdown.png)
 
-![](https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/field-grid-dropdown/readme-media/dropdown-images.png)
+![](https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/field-grid-dropdown/readme-media/dropdown-images.png)
 
 ## Installation
 

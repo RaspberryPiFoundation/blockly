@@ -328,6 +328,7 @@ export class Block {
    */
   dispose(healStack = false) {
     this.disposing = true;
+    this.tooltip = '';
 
     // Dispose of this change listener before unplugging.
     // Technically not necessary due to the event firing delay.

@@ -6,6 +6,7 @@
 
 import {assert} from 'chai';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
@@ -34,6 +35,7 @@ suite('Flyout', function () {
     ]);
     this.toolboxXml = document.getElementById('toolbox-simple');
     this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
       toolbox: this.toolboxXml,
     });
   });
@@ -106,6 +108,7 @@ suite('Flyout', function () {
         setup(function () {
           const toolbox = document.getElementById('toolbox-categories');
           this.workspace = Blockly.inject('blocklyDiv', {
+            ...DEFAULT_INJECT_OPTIONS,
             toolbox: toolbox,
           });
           this.flyout = this.workspace.getToolbox().getFlyout();
@@ -194,6 +197,7 @@ suite('Flyout', function () {
     suite('horizontal flyout', function () {
       setup(function () {
         this.workspace = Blockly.inject('blocklyDiv', {
+          ...DEFAULT_INJECT_OPTIONS,
           toolbox: this.toolboxXml,
           horizontalLayout: true,
         });
@@ -242,6 +246,7 @@ suite('Flyout', function () {
         setup(function () {
           const toolbox = document.getElementById('toolbox-categories');
           this.workspace = Blockly.inject('blocklyDiv', {
+            ...DEFAULT_INJECT_OPTIONS,
             toolbox: toolbox,
             horizontalLayout: true,
           });

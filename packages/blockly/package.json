@@ -1,6 +1,6 @@
 {
   "name": "blockly",
-  "version": "13.2.0",
+  "version": "13.2.1",
   "description": "Blockly is a library for building visual programming editors.",
   "keywords": [
     "blockly"
@@ -23,6 +23,9 @@
     "#core/*": "./build/src/core/*",
     "#generators/*": "./build/src/generators/*"
   },
+  "publishConfig": {
+    "directory": "dist"
+  },
   "scripts": {
     "build": "gulp build",
     "build-debug": "gulp build --verbose --debug",
@@ -40,8 +43,6 @@
     "minify": "gulp minify",
     "package": "gulp pack",
     "prepareDemos": "gulp prepareDemos",
-    "publish": "npm ci && gulp publish",
-    "publish:beta": "npm ci && gulp publishBeta",
     "start": "npm run build && concurrently -n tsc,server \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"http-server ./ -s -o /tests/playground.html -c-1\"",
     "tsc": "gulp tsc",
     "test": "gulp test",
@@ -50,7 +51,7 @@
     "test:generators": "gulp testGenerators",
     "test:mocha:interactive": "npm run build && concurrently -n tsc,server \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"gulp interactiveMocha\"",
     "test:compile:advanced": "gulp buildAdvancedCompilationTest --debug",
-    "updateGithubPages": "npm ci && cp -R ../../node_modules/@blockly node_modules/ && gulp updateGithubPages --upstream",
+    "updateGithubPages": "npm ci && gulp updateGithubPages --upstream",
     "updateGithubPages:staging": "npm ci && gulp updateGithubPages --use-local"
   },
   "exports": {
@@ -113,11 +114,9 @@
     "async-done": "^2.0.0",
     "chai": "^6.2.2",
     "concurrently": "^10.0.4",
-    "conventional-changelog-conventionalcommits": "^10.2.1",
-    "conventional-recommended-bump": "^12.0.0",
     "glob": "^13.0.6",
     "globals": "^17.7.0",
-    "google-closure-compiler": "^20260629.0.0",
+    "google-closure-compiler": "^20260803.0.0",
     "gulp": "^5.0.1",
     "gulp-concat": "^2.6.1",
     "gulp-gzip": "^1.4.2",
@@ -127,7 +126,7 @@
     "gulp-sourcemaps": "^3.0.0",
     "gulp-umd": "^2.0.0",
     "http-server": "^14.1.1",
-    "jsdom": "29.1.1",
+    "jsdom": "30.0.1",
     "json5": "^2.2.3",
     "markdown-tables-to-json": "^0.1.7",
     "mocha": "^11.7.6",
@@ -135,9 +134,9 @@
     "puppeteer-core": "^25.3.0",
     "readline-sync": "^1.4.10",
     "rimraf": "^6.1.3",
-    "sinon": "^9.2.4",
+    "sinon": "^22.1.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.62.1",
+    "typescript-eslint": "^8.66.0",
     "webdriverio": "^9.30.0",
     "yargs": "^18.0.0"
   },

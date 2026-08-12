@@ -18,7 +18,7 @@
     "templates/sample-app-ts/*"
   ],
   "scripts": {
-    "prepack": "cp -r ../../examples/sample-app ./templates && cp -r ../../examples/sample-app-ts ./templates"
+    "prepack": "cp -r ../sample-app ./templates && cp -r ../sample-app-ts ./templates"
   },
   "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/dev-create#readme",
   "bugs": {

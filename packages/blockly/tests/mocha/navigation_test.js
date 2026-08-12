@@ -6,6 +6,7 @@
 
 import {assert} from 'chai';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
@@ -87,7 +88,7 @@ suite('Navigation', function () {
         ],
       },
     ]);
-    this.workspace = Blockly.inject('blocklyDiv', {});
+    this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
     this.navigator = this.workspace.getNavigator();
     const statementInput1 = this.workspace.newBlock('input_statement');
     const statementInput2 = this.workspace.newBlock('input_statement');
@@ -703,7 +704,7 @@ suite('Navigation', function () {
       setup(function () {
         const container = document.createElement('div');
         document.body.appendChild(container);
-        this.emptyWorkspace = Blockly.inject(container, {});
+        this.emptyWorkspace = Blockly.inject(container, DEFAULT_INJECT_OPTIONS);
       });
       teardown(function () {
         workspaceTeardown.call(this, this.emptyWorkspace);

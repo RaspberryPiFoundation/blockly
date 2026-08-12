@@ -8,6 +8,7 @@ import {EventType} from '#core/events/type.js';
 import {assert} from 'chai';
 import {assertEventFired} from './test_helpers/events.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
@@ -127,7 +128,7 @@ suite('Theme', function () {
     try {
       const blockStyles = createBlockStyles();
       const theme = new Blockly.Theme('themeName', blockStyles);
-      workspace = Blockly.inject('blocklyDiv', {});
+      workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
       const blockA = workspace.newBlock('stack_block');
 
       blockA.setStyle = function () {

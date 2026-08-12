@@ -274,14 +274,12 @@ suite('Toolbox', function () {
       sinon.assert.calledOnce(hideChaffStub);
     });
     test('Category clicked -> Should select category', function () {
-      const categoryXml = document.getElementsByClassName(
-        'blocklyToolboxCategory',
-      )[0];
+      const item = this.toolbox.getToolboxItems()[0];
+      const categoryXml = item.getClickTarget();
       const evt = {
         'target': categoryXml,
         'stopPropagation': () => {},
       };
-      const item = this.toolbox.contents.get(categoryXml.getAttribute('id'));
       const setSelectedSpy = sinon.spy(this.toolbox, 'setSelectedItem');
       const onClickSpy = sinon.spy(item, 'onClick');
       this.toolbox.onClick_(evt);

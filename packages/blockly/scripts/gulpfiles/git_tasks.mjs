@@ -43,7 +43,6 @@ const remoteToUse = argv.upstream ? UPSTREAM_URL : resolveRemote(argv.remote);
 const EXTRAS = [
   'build/msg',
   'dist/*_compressed.js*',
-  'node_modules/@blockly',
   'build/*.loader.mjs',
 ];
 

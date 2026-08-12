@@ -8,6 +8,8 @@ import * as chai from 'chai';
 import {testFileLocations, testSetup} from './test_setup.mjs';
 
 suite('DropDownDiv', function () {
+  this.timeout(0);
+
   suiteSetup(async function () {
     this.browser = await testSetup(testFileLocations.PLAYGROUND);
   });

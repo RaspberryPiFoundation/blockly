@@ -94,7 +94,7 @@ const toolbox = generateFieldTestBlocks('field_template', [
 ### Test Helpers
 
 This package is also used in mocha tests, and exports a suite of useful test helpers.
-You can find the full list of helpers [here](https://github.com/RaspberryPiFoundation/blockly-samples/blob/master/plugins/dev-tools/src/test_helpers.mocha.js).
+You can find the full list of helpers [here](https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/plugins/dev-tools/src/test_helpers.mocha.js).
 
 ### Debug Renderer
 
@@ -113,27 +113,27 @@ The debug renderer can show you several different things.
     <th>Image</th>
     <th>Description</th>
   </tr>
-    <td><a href="https://developers.google.com/blocklyguides/create-custom-blocks/appearance/renderers/concepts/rows">Rows</a></td>
-    <td><img src="https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/dev-tools/readme-media/row.png"/></td>
+    <td><a href="https://docs.blockly.com/guides/create-custom-blocks/renderers/concepts/rows/">Rows</a></td>
+    <td><img src="https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/dev-tools/readme-media/row.png"/></td>
     <td>The bounds of the individual rows in a block.</td>
   <tr>
-    <td><a href="https://developers.google.com/blocklyguides/create-custom-blocks/appearance/renderers/concepts/rows#row_spacer">Row spacers</a></td>
-    <td><img src="https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/dev-tools/readme-media/row-spacer.png"/></td>
+    <td><a href="https://docs.blockly.com/guides/create-custom-blocks/renderers/concepts/rows/#row-spacer">Row spacers</a></td>
+    <td><img src="https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/dev-tools/readme-media/row-spacer.png"/></td>
     <td>The bounds of the row spacers in a block.</td>
   </tr>
   <tr>
-    <td><a href="https://developers.google.com/blocklyguides/create-custom-blocks/appearance/renderers/concepts/elements">Elements</a></td>
-    <td><img src="https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/dev-tools/readme-media/element.png"/></td>
+    <td><a href="https://docs.blockly.com/guides/create-custom-blocks/renderers/concepts/elements/">Elements</a></td>
+    <td><img src="https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/dev-tools/readme-media/element.png"/></td>
     <td>The bounds of the elements in a block.</td>
   </tr>
   <tr>
-    <td><a href="https://developers.google.com/blocklyguides/create-custom-blocks/appearance/renderers/concepts/elements#element_spacer">Element spacers</a></td>
-    <td><img src="https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/dev-tools/readme-media/element-spacer.png"/></td>
+    <td><a href="https://docs.blockly.com/guides/create-custom-blocks/renderers/concepts/elements/#element-spacer">Element spacers</a></td>
+    <td><img src="https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/dev-tools/readme-media/element-spacer.png"/></td>
     <td>The bounds of the element spacers in a block.</td>
   </tr>
   <tr>
     <td>Connections</td>
-    <td><img src="https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/dev-tools/readme-media/connection.png"/></td>
+    <td><img src="https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/dev-tools/readme-media/connection.png"/></td>
     <td>
       The locations of the connection points, with large circles for next and
       input connections (parent connections) and small circles for output and
@@ -142,14 +142,14 @@ The debug renderer can show you several different things.
   </tr>
   <tr>
     <td>Block bounds</td>
-    <td><img src="https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/dev-tools/readme-media/block-bounds.png"/></td>
+    <td><img src="https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/dev-tools/readme-media/block-bounds.png"/></td>
     <td>
       The bounds of the block, not including any child blocks.
     </td>
   </tr>
   <tr>
     <td>Connectioned block bounds</td>
-    <td><img src="https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/dev-tools/readme-media/block-bounds-with-children.png"/></td>
+    <td><img src="https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/dev-tools/readme-media/block-bounds-with-children.png"/></td>
     <td>
       The bounds of the block, including child blocks.
     </td>
@@ -195,7 +195,7 @@ DebugDrawer.config = {
 };
 ```
 
-[render-info]: https://developers.google.com/blocklyguides/create-custom-blocks/appearance/renderers/concepts/info
+[render-info]: https://docs.blockly.com/guides/create-custom-blocks/renderers/concepts/info/
 [dev-tools]: https://www.npmjs.com/package/@blockly/dev-tools
 
 ### Logger

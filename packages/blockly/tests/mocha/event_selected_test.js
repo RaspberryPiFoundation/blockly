@@ -8,6 +8,7 @@ import {assert} from 'chai';
 import {defineRowBlock} from './test_helpers/block_definitions.js';
 import {createChangeListenerSpy} from './test_helpers/events.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
@@ -16,7 +17,7 @@ suite('Selected Event', function () {
   setup(function () {
     sharedTestSetup.call(this, {fireEventsNow: false});
     defineRowBlock();
-    this.workspace = new Blockly.inject('blocklyDiv', {});
+    this.workspace = new Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
     this.eventSpy = createChangeListenerSpy(this.workspace);
   });
 

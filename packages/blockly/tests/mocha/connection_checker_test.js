@@ -7,6 +7,7 @@
 import {ConnectionType} from '#core/connection_type.js';
 import {assert} from 'chai';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
@@ -515,7 +516,7 @@ suite('Connection checker', function () {
   suite('Dragging Checks', function () {
     suite('Stacks', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv');
+        this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
         // Load in three blocks: A and B are connected (next/prev); B is unmovable.
         Blockly.Xml.domToWorkspace(
           Blockly.utils.xml
@@ -626,7 +627,7 @@ suite('Connection checker', function () {
     });
     suite('Rows', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv');
+        this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
         // Load 3 blocks: A and B are connected (input/output); B is unmovable.
         Blockly.Xml.domToWorkspace(
           Blockly.utils.xml

@@ -33,105 +33,13 @@ permissions:
 jobs:
   ci:
     uses: ./.github/workflows/build.yml
-
-  version:
+  
+  publish:
     needs: ci
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    outputs:
-      version: ${{ steps.version.outputs.version }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.ref }}
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: 24.x
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Install dependencies
-        if: ${{ !inputs.skip_versioning }}
-        run: npm ci
-
-      - name: Determine version bump
-        id: bump
-        if: ${{ !inputs.skip_versioning && inputs.version_override == '' }}
-        working-directory: packages/blockly
-        run: |
-          RELEASE_TYPE=$(npx conventional-recommended-bump --preset conventionalcommits -t blockly-)
-          echo "release_type=$RELEASE_TYPE" >> "$GITHUB_OUTPUT"
-          echo "Recommended bump: $RELEASE_TYPE"
-
-      - name: Apply version bump
-        if: ${{ !inputs.skip_versioning }}
-        working-directory: packages/blockly
-        env:
-          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-          REF_NAME: ${{ github.ref_name }}
-          RELEASE_TYPE: ${{ steps.bump.outputs.release_type }}
-          VERSION_OVERRIDE: ${{ inputs.version_override }}
-        run: |
-          set -euo pipefail
-          if [ -n "${VERSION_OVERRIDE}" ]; then
-            npm version "${VERSION_OVERRIDE}" --no-git-tag-version
-            exit 0
-          fi
-          if [ "${REF_NAME}" = "${DEFAULT_BRANCH}" ]; then
-            npm version "${RELEASE_TYPE}" --no-git-tag-version
-            exit 0
-          fi
-          VERSION=$(node -p "require('./package.json').version")
-          if [[ "${VERSION}" == *"-beta."* ]]; then
-            npm version prerelease --preid=beta --no-git-tag-version
-          else
-            case "${RELEASE_TYPE}" in
-              major) npm version premajor --preid=beta --no-git-tag-version ;;
-              minor) npm version preminor --preid=beta --no-git-tag-version ;;
-              patch) npm version prepatch --preid=beta --no-git-tag-version ;;
-              *)
-                echo "::error title=Invalid release bump::conventional-recommended-bump returned '${RELEASE_TYPE}' (expected major, minor, or patch). Fix commits/tags or set version_override." >&2
-                exit 1
-                ;;
-            esac
-          fi
-
-      - name: Read package version
-        id: version
-        working-directory: packages/blockly
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Version: $VERSION"
-
-      - name: Dry run summary
-        if: ${{ inputs.dry_run }}
-        run: |
-          DIST_TAG="${{ github.ref_name == github.event.repository.default_branch && 'latest' || 'beta' }}"
-          echo "Dry run: would publish version ${{ steps.version.outputs.version }} to npm dist-tag: ${DIST_TAG}"
-          if [ "${{ github.ref_name }}" != "${{ github.event.repository.default_branch }}" ]; then
-            echo "GitHub release would be created as prerelease."
-          fi
-
-      - name: Upload versioned files
-        if: ${{ !inputs.skip_versioning }}
-        uses: actions/upload-artifact@v7
-        with:
-          name: versioned-files
-          path: |
-            packages/blockly/package.json
-            package-lock.json
-
-  publish:
-    needs: version
-    runs-on: ubuntu-latest
-    if: ${{ !inputs.dry_run }}
+    # Don't try to publish from a fork of RaspberryPiFoundation/blockly.
+    if: ${{ github.repository_owner == 'RaspberryPiFoundation' }}
     environment: release
-    env:
-      NPM_DIST_TAG: ${{ github.ref_name == github.event.repository.default_branch && 'latest' || 'beta' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -140,23 +48,12 @@ jobs:
           fetch-depth: 0
           ssh-key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
 
-      - name: Download versioned files
-        if: ${{ !inputs.skip_versioning }}
-        uses: actions/download-artifact@v8
-        with:
-          name: versioned-files
-
-      - name: Commit and push version bump
-        if: ${{ !inputs.skip_versioning }}
+      # This uses a reverse-engineered email for the github actions bot. See
+      # https://github.com/actions/checkout/issues/13#issuecomment-724415212
+      - name: Git Identity
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add packages/blockly/package.json package-lock.json
-          git commit -m "release: v${{ needs.version.outputs.version }}"
-          git push
-          TAG="blockly-v${{ needs.version.outputs.version }}"
-          git tag "$TAG"
-          git push origin "refs/tags/$TAG"
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '<41898282+github-actions[bot]@users.noreply.github.com'
 
       - name: Setup Node.js
         uses: actions/setup-node@v7
@@ -167,33 +64,94 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build package
+      - name: Build
+        run: npm run build
+
+      - name: Determine Dist Tag
+        id: dist
+        env: 
+          VERSION_OVERRIDE: ${{ inputs.version_override }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          DIST_TAG=$([[ "${VERSION_OVERRIDE}" == *"-beta."* ||  "${REF_NAME}" != "${DEFAULT_BRANCH}" ]] && echo "beta" || echo "latest")
+          echo "dist_tag=$DIST_TAG" >> "$GITHUB_OUTPUT"
+          echo "NPM distribution tag: $DIST_TAG"
+
+      - name: Version
+        if: ${{ !inputs.skip_versioning }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION_OVERRIDE: ${{ inputs.version_override }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          DIST_TAG: ${{ steps.dist.outputs.dist_tag }}
+        run: |
+          set -euo pipefail
+          VERSION_COMMAND="npx lerna version"
+          if [ -n "${VERSION_OVERRIDE}" ]; then
+            VERSION_COMMAND="${VERSION_COMMAND} ${VERSION_OVERRIDE}"
+          fi
+          if [ "${DIST_TAG}" = "latest" ]; then
+            VERSION=$(node -p "require('./packages/blockly/package.json').version")
+            if [[ "${VERSION}" == *"-beta."* ]]; then
+              VERSION_COMMAND="${VERSION_COMMAND} --conventional-graduate"
+            fi
+          else
+            VERSION_COMMAND="${VERSION_COMMAND} --conventional-prerelease --preid beta"
+          fi
+          VERSION_COMMAND="${VERSION_COMMAND} --force-publish --conventional-commits --yes"
+          if [ "${DRY_RUN}" = "true" ]; then
+            VERSION_COMMAND="${VERSION_COMMAND} --no-push --no-git-tag-version"
+            echo "Dry run: would publish the following versions to npm dist-tag: ${DIST_TAG}"
+            eval "$VERSION_COMMAND"
+            if [ "${DIST_TAG}" = "beta" ]; then
+              echo "GitHub release would be created as prerelease."  
+            fi
+          else
+            eval "$VERSION_COMMAND"
+          fi
+
+      - name: Build core package
+        if: ${{ !inputs.dry_run }}
         working-directory: packages/blockly
         run: npm run package
 
-      - name: Publish to npm
-        working-directory: packages/blockly/dist
-        run: npm publish --tag "${NPM_DIST_TAG}" --verbose
+      - name: Publish
+        if: ${{ !inputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SKIP_VERSIONING: ${{ inputs.skip_versioning }}
+          DIST_TAG: ${{ steps.dist.outputs.dist_tag }}
+        run: |
+          if [ "${SKIP_VERSIONING}" = "true" ]; then
+            npx lerna publish from-package --yes --dist-tag ${DIST_TAG} --loglevel silly
+          else
+            npx lerna publish from-git --yes --dist-tag ${DIST_TAG} --loglevel silly
+          fi
 
       - name: Create tarball
+        if: ${{ !inputs.dry_run }}
         working-directory: packages/blockly
         run: npm pack ./dist
-
+        
       - name: Create GitHub release
+        if: ${{ !inputs.dry_run }}
         working-directory: packages/blockly
         env:
           GH_TOKEN: ${{ github.token }}
+          DIST_TAG: ${{ steps.dist.outputs.dist_tag }}
         run: |
-          TARBALL="blockly-${{ needs.version.outputs.version }}.tgz"
-          if [ "${{ github.ref_name }}" != "${{ github.event.repository.default_branch }}" ]; then
-            gh release create "blockly-v${{ needs.version.outputs.version }}" "$TARBALL" \
+          VERSION=$(node -p "require('./package.json').version")
+          TARBALL="blockly-${VERSION}.tgz"
+          if [ "${DIST_TAG}" == "beta" ]; then
+            gh release create "blockly-v${VERSION}" "$TARBALL" \
               --repo "$GITHUB_REPOSITORY" \
-              --title "blockly-v${{ needs.version.outputs.version }}" \
+              --title "blockly-v${VERSION}" \
               --generate-notes \
               --prerelease
           else
-            gh release create "blockly-v${{ needs.version.outputs.version }}" "$TARBALL" \
+            gh release create "blockly-v${VERSION}" "$TARBALL" \
               --repo "$GITHUB_REPOSITORY" \
-              --title "blockly-v${{ needs.version.outputs.version }}" \
+              --title "blockly-v${VERSION}" \
               --generate-notes
           fi

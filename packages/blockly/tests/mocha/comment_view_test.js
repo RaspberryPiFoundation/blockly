@@ -6,6 +6,7 @@
 
 import {assert} from 'chai';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
@@ -13,7 +14,7 @@ import {
 suite('Workspace comment', function () {
   setup(function () {
     sharedTestSetup.call(this);
-    this.workspace = new Blockly.inject('blocklyDiv', {});
+    this.workspace = new Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
     this.commentView = new Blockly.comments.CommentView(this.workspace);
   });
 

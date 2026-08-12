@@ -14,9 +14,12 @@ on:
   pull_request_target:
     types:
       - opened
+      - reopened
+      - synchronize
 
 jobs:
-  translatewiki:
+  retitle-translatewiki-prs:
+    name: Retitle translatewiki PRs
     runs-on: ubuntu-latest
     # Only run for the translatewiki bot's PRs, matching on both the author and
     # the source branch.
@@ -61,3 +64,43 @@ jobs:
               issue_number,
               labels: ['PR: chore'],
             });
+
+  validate-files:
+    runs-on: ubuntu-latest
+    # Only run for the translatewiki bot's PRs, matching on both the author and
+    # the source branch.
+    if: ${{ github.event.pull_request.user.login == 'translatewiki' && github.event.pull_request.head.ref == 'translatewiki' }}
+    permissions:
+      pull-requests: read
+    steps:
+      - name: Ensure translatewiki PR only touches msg/
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const {number: pull_number} = context.payload.pull_request;
+
+            // translatewiki localisation PRs must only modify message files.
+            const allowedPrefix = 'packages/blockly/msg/';
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number,
+              per_page: 100,
+            });
+
+            const offending = files
+              .map((file) => file.filename)
+              .filter((filename) => !filename.startsWith(allowedPrefix));
+
+            if (offending.length > 0) {
+              core.setFailed(
+                `translatewiki PR #${pull_number} touches files outside ` +
+                  `${allowedPrefix}:\n${offending.map((f) => `  - ${f}`).join('\n')}`,
+              );
+            } else {
+              core.info(
+                `translatewiki PR #${pull_number} only touches ${allowedPrefix} ` +
+                  `(${files.length} file(s) checked).`,
+              );
+            }

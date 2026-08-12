@@ -9,8 +9,12 @@ image: images/blockly_banner.png
 Blockly is open source and is primarily maintained by a small team. We welcome
 contributions from developers outside the core team; there is no way for us to
 build every requested feature or fix every reported bug without our community.
-This section contains general guides that may be helpful to you especially if
-you are new to open source development.
+
+:::info
+This section contains general guides on contributing to Blockly. These guides 
+are generally intended for those who are new to Blockly or new to open-source 
+development. 
+:::
 
 For information specific to Blockly that you should read before making a
 contribution, see the
@@ -30,34 +34,49 @@ the codelabs and codelab solutions.
 **Blockly samples** is the repository for samples and plugins. Use
 this repository if you want to create or modify a plugin or a sample.
 
-## Step by step
+### Pre work: Understand Git and GitHub basics
 
-These are the general steps you will follow any time you make a change.
+We use Git and GitHub for managing version control, collaboration, and distribution
+of Blockly. If you're new to Git and GitHub, work through GitHub's
+[quickstart](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/quickstart)
+tutorials to get comfortable with the basics.
 
-1.  **Install** Git and Node, following the links in the [Tools](/guides/contribute/get-started/development_tools)
-    section.
+To learn about the rest of Blockly's development tools, see the [Contribute to Core](/guides/contribute/core/) 
+documentation.  
+
+### Setup
+
+These are the one-time setup steps you'll need to get started: 
+
+1.  **Install** [Git](https://github.com/git-guides/install-git) and [Node](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 1.  **Fork and clone the repository.** GitHub has a wonderful tutorial about
     [forking a repo](https://help.github.com/en/github/getting-started-with-github/fork-a-repo#fork-an-example-repository).
     To apply it to blockly, just replace every instance of
     **octocat/Spoon-Knife** with **RaspberryPiFoundation/blockly** or
     **RaspberryPiFoundation/blockly-samples**, depending on which repository you want to work
     in.
+
+### Step by step
+
+These are the general steps you will follow any time you make a change.
+
 1.  **Sync your fork.** GitHub provides a tutorial for
-    [syncing a fork](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork)
-    as well.
-1.  **Check out the main branch.** In blockly core and blockly-samples, this branch is named `main`.
+    [syncing a fork](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork).
+1.  **Check out the `main` branch** by running `git checkout main` in a 
+    terminal.
 1.  **Install** dependencies and build tools by running `npm install` in the
     root directory.
 1.  **Create a new branch** by running `git checkout -b myBranchName` in a
-    terminal. The name should help you remember what you're working on.
+    terminal. The branch name should help you remember what you're working on.
 1.  **Make your changes.**
 1.  **Validate your changes,** following the guide for
     [core](/guides/contribute/core) or
     [samples](/guides/contribute/samples).
-1.  **Save your changes** with `git commit -am "fix: My commit message"`.
-    [Read more about commit messages](#).
+1.  **Add your changes** to a commit with `git add your/file/path`.
+1.  **Save your changes** with `git commit -m "fix: My commit message"`.
+    [Read more about commit messages](commits).
 1.  **Push your changes** to GitHub with `git push origin myBranchName`.
 1.  **Open a pull request** when your code is ready. A member of the Blockly
     team will review your changes and merge them into Blockly if they are
     approved. For more information see
-    [PR Review Process](/guides/contribute/get-started/pr_review_process).
+    [PR Review Process](/guides/contribute/get-started/write_a_good_pr#read-the-review).

@@ -8,6 +8,7 @@ import {EventType} from '#core/events/type.js';
 import {assert} from 'chai';
 import {assertEventFired} from './test_helpers/events.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
@@ -23,6 +24,7 @@ suite('Comments', function () {
       },
     ]);
     this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
       comments: true,
       scrollbars: true,
     });

@@ -9,6 +9,7 @@ import {assert} from 'chai';
 import {defineBasicBlockWithField} from './test_helpers/block_definitions.js';
 import {assertEventFired, assertEventNotFired} from './test_helpers/events.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
@@ -60,7 +61,10 @@ suite('Gesture', function () {
       'kind': 'block',
       'type': 'test_field_block',
     });
-    this.workspace = Blockly.inject('blocklyDiv', {toolbox});
+    this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
+      toolbox,
+    });
   });
 
   teardown(function () {

@@ -9,6 +9,7 @@ import {assert} from 'chai';
 import {defineEmptyBlock} from './test_helpers/block_definitions.js';
 import {MockIcon, MockSerializableIcon} from './test_helpers/icon_mocks.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
@@ -391,7 +392,7 @@ suite('Icon', function () {
   suite('Contextual menus', function () {
     setup(function () {
       Blockly.common.setParentContainer(document.firstElementChild);
-      this.workspace = Blockly.inject('blocklyDiv', {});
+      this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
       Blockly.icons.registry.register(
         new Blockly.icons.IconType('test'),
         TestIcon,

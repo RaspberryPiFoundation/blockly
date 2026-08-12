@@ -38,7 +38,6 @@ import {
   pack,
   typings,
 } from './scripts/gulpfiles/package_tasks.mjs';
-import {publish, publishBeta} from './scripts/gulpfiles/release_tasks.mjs';
 import {
   generators,
   interactiveMocha,
@@ -61,8 +60,6 @@ export {
   minify,
   build,
   pack,  // Formerly package.
-  publishBeta,
-  publish,
   prepareDemos,
   deployDemosBeta,
   deployDemos,
