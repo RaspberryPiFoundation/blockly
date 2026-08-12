@@ -308,7 +308,7 @@ export function getFastTextWidthWithSizeString(
   if (text && canvasContext) {
     // Set the desired font size and family.
     canvasContext.font = fontWeight + ' ' + fontSize + ' ' + fontFamily;
-    width = canvasContext.measureText(text).width;
+    width = Math.ceil(canvasContext.measureText(text).width);
   } else {
     width = 0;
   }
