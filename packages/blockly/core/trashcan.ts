@@ -26,8 +26,10 @@ import type {IComponent} from './interfaces/i_component';
 import type {IDraggable} from './interfaces/i_draggable.js';
 import type {IFlyout} from './interfaces/i_flyout.js';
 import type {IFocusableNode} from './interfaces/i_focusable_node.js';
+import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
 import type {IPositionable} from './interfaces/i_positionable.js';
 import {KeyboardMover} from './keyboard_nav/keyboard_mover.js';
+import {WorkspaceControlNavigator} from './keyboard_nav/navigators/workspace_control_navigator.js';
 import {keyboardNavigationController} from './keyboard_navigation_controller.js';
 import type {UiMetrics} from './metrics_manager.js';
 import {Msg} from './msg.js';
@@ -50,8 +52,14 @@ import type {WorkspaceSvg} from './workspace_svg.js';
  */
 export class Trashcan
   extends DeleteArea
-  implements IAutoHideable, IPositionable, IFocusableNode, IComponent
+  implements
+    IAutoHideable,
+    IPositionable,
+    IFocusableNode,
+    IFocusableTree,
+    IComponent
 {
+  private readonly navigator = new WorkspaceControlNavigator();
   /**
    * The id for this component that is used to register with the
    * ComponentManager.
@@ -137,17 +145,25 @@ export class Trashcan
    */
   createDom(): SVGElement {
     /* Here's the markup that will be generated:
-        <g class="blocklyTrash">
-          <clippath id="blocklyTrashBodyClipPath837493">
-            <rect width="47" height="45" y="15"></rect>
-          </clippath>
-          <image width="64" height="92" y="-32" xlink:href="media/sprites.png"
-              clip-path="url(#blocklyTrashBodyClipPath837493)"></image>
-          <clippath id="blocklyTrashLidClipPath837493">
-            <rect width="47" height="15"></rect>
-          </clippath>
-          <image width="84" height="92" y="-32" xlink:href="media/sprites.png"
-              clip-path="url(#blocklyTrashLidClipPath837493)"></image>
+        <g role="button" class="blocklyTrash" tabindex="0" id="blockly-0"
+            aria-label="Trash, currently empty" aria-disabled="true">
+          <rect width="55" height="68" x="-4" y="-4" rx="2" ry="2"
+              fill="none" class="blocklyFocusRing"></rect>
+          <clipPath id="blocklyTrashBodyClipPath837493">
+            <rect width="47" height="44" y="16"></rect>
+          </clipPath>
+          <image width="96" x="0" height="124" y="-32"
+              clip-path="url(#blocklyTrashBodyClipPath837493)"
+              xlink:href="../media/sprites.svg"></image>
+          <clipPath id="blocklyTrashLidClipPath837493">
+            <rect width="47" height="16"></rect>
+          </clipPath>
+          <g role="none" class="blocklyTrashLid">
+            <svg role="none" viewBox="0 32 47 16" width="47" height="16">
+              <image width="96" height="124"
+                  href="../media/sprites.svg"></image>
+            </svg>
+          </g>
         </g>
         */
     this.svgGroup = dom.createSvgElement(Svg.G, {
@@ -256,6 +272,7 @@ export class Trashcan
       this.blockMouseDownWhenOpenable,
     );
     browserEvents.bind(this.svgGroup, 'pointerup', this, this.click);
+    getFocusManager().registerTree(this, false);
     return this.svgGroup;
   }
 
@@ -275,7 +292,6 @@ export class Trashcan
         ComponentManager.Capability.DELETE_AREA,
         ComponentManager.Capability.DRAG_TARGET,
         ComponentManager.Capability.POSITIONABLE,
-        ComponentManager.Capability.FOCUSABLE,
       ],
     });
     this.initialized = true;
@@ -287,6 +303,9 @@ export class Trashcan
    * Unlink from all DOM elements to prevent memory leaks.
    */
   dispose() {
+    if (getFocusManager().isRegistered(this)) {
+      getFocusManager().unregisterTree(this);
+    }
     this.workspace.getComponentManager().removeComponent('trashcan');
     if (this.svgGroup) {
       dom.removeNode(this.svgGroup);
@@ -662,7 +681,7 @@ export class Trashcan
   }
 
   getFocusableTree() {
-    return this.workspace;
+    return this;
   }
 
   onNodeFocus() {}
@@ -670,6 +689,37 @@ export class Trashcan
 
   canBeFocused() {
     return !!this.svgGroup;
+  }
+
+  /** See IFocusableTree.getRootFocusableNode. */
+  getRootFocusableNode(): IFocusableNode {
+    return this;
+  }
+
+  /** See IFocusableTree.getRestoredFocusableNode. */
+  getRestoredFocusableNode(): IFocusableNode | null {
+    return this;
+  }
+
+  /** See IFocusableTree.getNestedTrees. */
+  getNestedTrees(): IFocusableTree[] {
+    return [];
+  }
+
+  /** See IFocusableTree.lookUpFocusableNode. */
+  lookUpFocusableNode(): IFocusableNode | null {
+    return null;
+  }
+
+  /** See IFocusableTree.onTreeFocus. */
+  onTreeFocus(): void {}
+
+  /** See IFocusableTree.onTreeBlur. */
+  onTreeBlur(): void {}
+
+  /** See IFocusableTree.getNavigator. */
+  getNavigator(): WorkspaceControlNavigator {
+    return this.navigator;
   }
 
   performAction() {

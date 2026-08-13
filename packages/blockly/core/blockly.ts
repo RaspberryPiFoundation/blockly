@@ -442,6 +442,7 @@ export * from './keyboard_nav/navigation_policies/workspace_comment_navigation_p
 export * from './keyboard_nav/navigation_policies/workspace_navigation_policy.js';
 export * from './keyboard_nav/navigators/flyout_navigator.js';
 export * from './keyboard_nav/navigators/navigator.js';
+export * from './keyboard_nav/navigators/workspace_control_navigator.js';
 export * from './toast.js';
 
 // Re-export submodules that no longer declareLegacyNamespace.

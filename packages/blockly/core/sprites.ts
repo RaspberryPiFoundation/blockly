@@ -5,7 +5,7 @@
  */
 
 /**
- * Contains the path to a single png tat holds the images for the trashcan
+ * Contains the path to a single svg that holds the images for the trashcan
  * as well as the zoom controls.
  */
 export const SPRITE = {

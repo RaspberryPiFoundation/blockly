@@ -953,6 +953,7 @@ export class WorkspaceSvg
     }
     if (this.zoomControls_) {
       this.zoomControls_.dispose();
+      this.zoomControls_ = null;
     }
 
     if (this.audioManager) {
@@ -1016,7 +1017,7 @@ export class WorkspaceSvg
   addTrashcan() {
     this.trashcan = WorkspaceSvg.newTrashcan(this);
     const svgTrashcan = this.trashcan.createDom();
-    this.svgGroup_.insertBefore(svgTrashcan, this.getCanvas());
+    this.svgGroup_.appendChild(svgTrashcan);
   }
 
   /**
@@ -2875,7 +2876,7 @@ export class WorkspaceSvg
 
   /** See IFocusableTree.getNestedTrees. */
   getNestedTrees(): Array<IFocusableTree> {
-    const nestedWorkspaces = common
+    const nestedTrees: IFocusableTree[] = common
       .getAllWorkspaces()
       .filter(
         (w) => w.isMutator && w.options.parentWorkspace === this,
@@ -2883,10 +2884,17 @@ export class WorkspaceSvg
 
     const ownFlyout = this.getFlyout(true);
     if (ownFlyout) {
-      nestedWorkspaces.push(ownFlyout.getWorkspace());
+      nestedTrees.push(ownFlyout.getWorkspace());
     }
 
-    return nestedWorkspaces;
+    if (this.trashcan) {
+      nestedTrees.push(this.trashcan);
+    }
+    if (this.zoomControls_) {
+      nestedTrees.push(...this.zoomControls_.getFocusableControls());
+    }
+
+    return nestedTrees;
   }
 
   /**

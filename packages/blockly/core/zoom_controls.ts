@@ -16,9 +16,11 @@ import {ComponentManager} from './component_manager.js';
 import * as Css from './css.js';
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
-import type {IComponent} from './interfaces/i_component.js';
-import {IFocusableNode} from './interfaces/i_focusable_node.js';
+import {getFocusManager} from './focus_manager.js';
+import type {IFocusableNode} from './interfaces/i_focusable_node.js';
+import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
 import type {IPositionable} from './interfaces/i_positionable.js';
+import {WorkspaceControlNavigator} from './keyboard_nav/navigators/workspace_control_navigator.js';
 import type {UiMetrics} from './metrics_manager.js';
 import {Msg} from './msg.js';
 import * as uiPosition from './positionable_helpers.js';
@@ -37,9 +39,10 @@ import type {WorkspaceSvg} from './workspace_svg.js';
  *
  * @internal
  */
-abstract class ZoomControl implements IFocusableNode, IComponent {
+abstract class ZoomControl implements IFocusableNode, IFocusableTree {
   private pointerDownHandler: browserEvents.Data;
   id: string;
+  private readonly navigator = new WorkspaceControlNavigator();
 
   constructor(
     protected workspace: WorkspaceSvg,
@@ -56,6 +59,7 @@ abstract class ZoomControl implements IFocusableNode, IComponent {
 
     this.id = getNextUniqueId();
     this.group.id = this.id;
+    getFocusManager().registerTree(this, false);
   }
 
   /**
@@ -90,7 +94,7 @@ abstract class ZoomControl implements IFocusableNode, IComponent {
   }
 
   getFocusableTree() {
-    return this.workspace;
+    return this;
   }
 
   onNodeFocus() {}
@@ -101,9 +105,43 @@ abstract class ZoomControl implements IFocusableNode, IComponent {
     return true;
   }
 
-  abstract performAction(_e: Event): void;
+  /** See IFocusableTree.getRootFocusableNode. */
+  getRootFocusableNode(): IFocusableNode {
+    return this;
+  }
+
+  /** See IFocusableTree.getRestoredFocusableNode. */
+  getRestoredFocusableNode(): IFocusableNode | null {
+    return this;
+  }
+
+  /** See IFocusableTree.getNestedTrees. */
+  getNestedTrees(): IFocusableTree[] {
+    return [];
+  }
+
+  /** See IFocusableTree.lookUpFocusableNode. */
+  lookUpFocusableNode(): IFocusableNode | null {
+    return null;
+  }
+
+  /** See IFocusableTree.onTreeFocus. */
+  onTreeFocus(): void {}
+
+  /** See IFocusableTree.onTreeBlur. */
+  onTreeBlur(): void {}
+
+  /** See IFocusableTree.getNavigator. */
+  getNavigator(): WorkspaceControlNavigator {
+    return this.navigator;
+  }
+
+  abstract performAction(e: Event): void;
 
   dispose() {
+    if (getFocusManager().isRegistered(this)) {
+      getFocusManager().unregisterTree(this);
+    }
     browserEvents.unbind(this.pointerDownHandler);
   }
 }
@@ -380,21 +418,24 @@ export class ZoomControls implements IPositionable {
       );
     }
 
-    for (const control of [
-      this.zoomOutControl,
-      this.zoomInControl,
-      this.zoomResetControl,
-    ]) {
-      if (!control) continue;
-
-      this.workspace.getComponentManager().addComponent({
-        component: control,
-        weight: ComponentManager.ComponentWeight.ZOOM_CONTROLS_WEIGHT,
-        capabilities: [ComponentManager.Capability.FOCUSABLE],
-      });
-    }
-
     return this.svgGroup;
+  }
+
+  /**
+   * Returns the individual zoom buttons as focus trees for nesting under the
+   * workspace.
+   *
+   * @internal
+   */
+  getFocusableControls(): IFocusableTree[] {
+    const controls: IFocusableTree[] = [
+      this.zoomOutControl!,
+      this.zoomInControl!,
+    ];
+    if (this.zoomResetControl) {
+      controls.push(this.zoomResetControl);
+    }
+    return controls;
   }
 
   /** Initializes the zoom controls. */
@@ -413,12 +454,12 @@ export class ZoomControls implements IPositionable {
    */
   dispose() {
     this.workspace.getComponentManager().removeComponent('zoomControls');
-    if (this.svgGroup) {
-      dom.removeNode(this.svgGroup);
-    }
     this.zoomInControl?.dispose();
     this.zoomOutControl?.dispose();
     this.zoomResetControl?.dispose();
+    if (this.svgGroup) {
+      dom.removeNode(this.svgGroup);
+    }
   }
 
   /**

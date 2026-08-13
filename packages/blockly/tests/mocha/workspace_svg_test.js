@@ -27,6 +27,8 @@ suite('WorkspaceSvg', function () {
     this.workspace = Blockly.inject('blocklyDiv', {
       ...DEFAULT_INJECT_OPTIONS,
       toolbox: toolbox,
+      trashcan: true,
+      zoom: {controls: true},
     });
     Blockly.defineBlocksWithJsonArray([
       {
@@ -191,7 +193,7 @@ suite('WorkspaceSvg', function () {
       const mutatorWorkspace = icon.getWorkspace();
 
       const nestedTrees = this.workspace.getNestedTrees();
-      assert.sameMembers(nestedTrees, [mutatorWorkspace]);
+      assert.include(nestedTrees, mutatorWorkspace);
     });
 
     test('includes flyouts in nested trees', async function () {
@@ -201,9 +203,7 @@ suite('WorkspaceSvg', function () {
 
       const nestedTrees = this.workspace.getNestedTrees();
       assert.isNotNull(this.workspace.getFlyout());
-      assert.sameMembers(nestedTrees, [
-        this.workspace.getFlyout().getWorkspace(),
-      ]);
+      assert.include(nestedTrees, this.workspace.getFlyout().getWorkspace());
     });
   });
 
@@ -999,5 +999,55 @@ suite('WorkspaceSvg', function () {
 
   suite('Workspace Base class', function () {
     testAWorkspace();
+  });
+
+  test('focusing the workspace after trashcan restores the previously focused block', function () {
+    const block = this.workspace.newBlock('simple_test_block');
+    block.initSvg();
+    block.render();
+    const trashcan = this.workspace.trashcan;
+    const focusManager = Blockly.getFocusManager();
+
+    focusManager.focusNode(block);
+    assert.strictEqual(focusManager.getFocusedNode(), block);
+
+    focusManager.focusNode(trashcan);
+    assert.strictEqual(focusManager.getFocusedNode(), trashcan);
+
+    focusManager.focusTree(this.workspace);
+    assert.strictEqual(focusManager.getFocusedNode(), block);
+  });
+
+  test('workspace root remains tabbable while a control is focused', function () {
+    const trashcan = this.workspace.trashcan;
+    const focusManager = Blockly.getFocusManager();
+
+    focusManager.focusTree(this.workspace);
+    assert.strictEqual(this.workspace.getFocusableElement().tabIndex, -1);
+
+    focusManager.focusNode(trashcan);
+    assert.strictEqual(this.workspace.getFocusableElement().tabIndex, 0);
+  });
+
+  test('canvas precedes trashcan which precedes zoom controls in DOM order', function () {
+    // Toolbox/workspace tab order is covered in toolbox_test.js
+    // This checks the order of the controls inside the workspace.
+    const children = Array.from(this.workspace.getSvgGroup().children);
+    const canvas = this.workspace.getCanvas();
+    const trashEl = this.workspace.trashcan.getFocusableElement();
+    const zoomEl = this.workspace.zoomControls_
+      .getFocusableControls()[0]
+      .getFocusableElement().parentNode;
+
+    const canvasIndex = children.indexOf(canvas);
+    const trashIndex = children.indexOf(trashEl);
+    const zoomIndex = children.indexOf(zoomEl);
+
+    assert.isAtLeast(canvasIndex, 0);
+    assert.isAtLeast(trashIndex, 0);
+    assert.isAtLeast(zoomIndex, 0);
+
+    assert.isBelow(canvasIndex, trashIndex);
+    assert.isBelow(trashIndex, zoomIndex);
   });
 });
