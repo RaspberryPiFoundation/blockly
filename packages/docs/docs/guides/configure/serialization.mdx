@@ -25,10 +25,10 @@ For information on how to migrate to JSON from XML, see the [migration
 guide].
 :::
 
-The JSON serialization system is made up of multiple serializers. There are
-built-in serializers for blocks and variables, and you can also register
-additional serializers. Each serializer is responsible for serializing and
-deserializing the state of a particular plugin or system.
+The JSON serialization system is made up of multiple serializers. It includes
+built-in serializers for blocks, variables, and workspace comments, and you can
+also register additional serializers. Each serializer is responsible for
+serializing and deserializing the state of a particular plugin or system.
 
 ### Saving and Loading
 
@@ -104,6 +104,7 @@ The order for deserialization of built-in serializers is:
         value inputs and statement inputs. Individual inputs are deserialized in
         an _arbitrary order_.
     4.  **Next blocks are deserialized.**
+6.  **Workspace comments are deserialized.**
 
 ### When to save extra state
 
@@ -142,21 +143,20 @@ documentation.
 
 The JSON system allows you to register serializers which serialize and
 deserialize some state. Blockly's built-in serializers take care of serializing
-information about blocks and variables, but if you want to serialize other
-information you'll need to add your own serializer. For example, workspace-level
-comments are not serialized by default by the JSON system. If you want to
-serialize them, you will need to register an additional serializer.
+information about blocks, variables, and workspace comments. If you want to
+serialize other information, such as the state of a plugin, you'll need to add
+your own serializer.
 
 Additional serializers are often used to serialize and deserialize the state of
 a plugin.
 
 ```js
 Blockly.serialization.registry.register(
-  'workspace-comments', // Name
+  'myPlugin', // Name
   {
-    save: saveFn, // Save function
-    load: loadFn, // Load function
-    clear: clearFn, // Clear function
+    save: savePluginState, // Save function
+    load: loadPluginState, // Load function
+    clear: clearPluginState, // Clear function
     priority: 10, // Priority
   },
 );
@@ -173,24 +173,19 @@ When you register a serializer you must provide several things:
   order](/guides/configure/serialization#deserialization-order).
 
   You can base the priority of your serializer on the [built-in
-  priorities](/reference/blockly.serialization.priorities)
+  priorities](/reference/blockly.serialization_namespace.priorities_namespace/#serializationpriorities-namespace)
 
 When `Blockly.serialization.workspaces.save` is called, each serializer's `save`
 function will be called, and its data will be added to the final JSON output:
 
 ```json
 {
-  "blocks": { ... },
-  "workspaceComments": [ // Provided by workspace-comments serializer
-    {
-      "x": 239,
-      "y": 31,
-      "text": "Add 2 + 2"
-    },
-    // etc...
-  ]
+  "blocks": {},
+  "myPlugin": {}
 }
 ```
+
+The `myPlugin` property is provided by the custom serializer.
 
 When `Blockly.serialization.workspaces.load` is called, each serializer is
 triggered in order of priority. Serializers with more positive priority values
@@ -199,9 +194,8 @@ are triggered before serializers with less positive priority values.
 When a serializer is triggered, two things happen:
 
 1.  The provided `clear` function is called. This ensures that the state of your
-    plugin/system is clean before more state is loaded. For example, the
-    workspace-comments serializer would remove all existing comments from the
-    workspace.
+    plugin/system is clean before more state is loaded. For example, a custom
+    plugin serializer would clear the plugin's existing state.
 2.  The provided `load` function is called.
 
 ## XML system
