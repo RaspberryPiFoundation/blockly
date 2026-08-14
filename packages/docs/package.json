@@ -3,6 +3,18 @@
   "version": "0.0.0",
   "private": true,
   "description": "Blockly documentation site",
+  "nx": {
+    "targets": {
+      "build": {
+        "dependsOn": [
+          {
+            "projects": "blockly",
+            "target": "docs"
+          }
+        ]
+      }
+    }
+  },
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",

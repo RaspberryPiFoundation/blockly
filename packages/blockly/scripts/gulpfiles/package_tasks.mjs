@@ -165,6 +165,7 @@ function packageMedia() {
  * with modifications:
  *
  * - The scripts section is removed.
+ * - The nx section is removed.
  *
  * Prerequisite: buildLangfiles.
  *
@@ -175,6 +176,7 @@ function packageJSON(done) {
   const json = JSON.parse(JSON.stringify(getPackageJson()));
   // Remove unwanted entries.
   delete json['scripts'];
+  delete json['nx'];
   // Update exports to match how the package will be structured
   const exports = json['exports'];
   if (exports) {

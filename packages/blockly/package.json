@@ -26,6 +26,29 @@
   "publishConfig": {
     "directory": "dist"
   },
+  "nx": {
+    "implicitDependencies": ["!@blockly/block-test"],
+    "targets": {
+      "build": {
+        "dependsOn": ["package", "^build"]
+      },
+      "test": {
+        "dependsOn": [
+          {
+            "projects": "@blockly/block-test",
+            "target": "build"
+          },
+          {
+            "projects": "@blockly/dev-tools",
+            "target": "build"
+          }
+        ] 
+      },
+      "docs": {
+        "dependsOn": ["package", "^build"]
+      }
+    }
+  },
   "scripts": {
     "build": "gulp build",
     "build-debug": "gulp build --verbose --debug",
@@ -44,6 +67,7 @@
     "package": "gulp pack",
     "prepareDemos": "gulp prepareDemos",
     "start": "npm run build && concurrently -n tsc,server \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"http-server ./ -s -o /tests/playground.html -c-1\"",
+    "start:advanced": "npm run package && npx nx run @blockly/dev-tools:build && npm run start --workspace=@blockly/dev-tools && npx nx watch --projects=@blockly/dev-tools --includeDependencies -- nx run-many -t build -p \\$NX_PROJECT_NAME --exclude=@blockly/dev-tools",
     "tsc": "gulp tsc",
     "test": "gulp test",
     "test:browser": "npx mocha --config tests/browser/.mocharc.js",
