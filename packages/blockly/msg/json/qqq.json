@@ -498,6 +498,8 @@
 	"SHORTCUTS_JUMP_BOTTOM_STACK": "shortcut display text for a shortcut that jumps focus to the bottom block of the current stack.",
 	"SHORTCUTS_JUMP_FIRST_BLOCK": "shortcut display text for a shortcut that jumps focus to the first block in the workspace.",
 	"SHORTCUTS_JUMP_LAST_BLOCK": "shortcut display text for a shortcut that jumps focus to the last block in the workspace.",
+	"SHORTCUTS_JUMP_PREVIOUS_PAGE": "shortcut display text for a shortcut that jumps focus back one page of items in the toolbox or flyout.",
+	"SHORTCUTS_JUMP_NEXT_PAGE": "shortcut display text for a shortcut that jumps focus forward one page of items in the toolbox or flyout.",
 	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "Message shown to inform users how to move blocks to arbitrary locations with the keyboard.",
 	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Message shown to inform users how to move blocks with the keyboard.",
 	"KEYBOARD_NAV_COPIED_HINT": "Message shown when an item is copied in keyboard navigation mode.",

@@ -435,6 +435,8 @@
 	"SHORTCUTS_JUMP_BOTTOM_STACK": "Prejsť na koniec zásobníka",
 	"SHORTCUTS_JUMP_FIRST_BLOCK": "Skočiť na prvý blok",
 	"SHORTCUTS_JUMP_LAST_BLOCK": "Skočiť na posledný blok",
+	"SHORTCUTS_JUMP_PREVIOUS_PAGE": "Prejsť na predchádzajúcu stránku",
+	"SHORTCUTS_JUMP_NEXT_PAGE": "Prejsť na ďalšiu stránku",
 	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "Podržte %1 a šípkami voľne posúvajte, potom stlačte %2 na potvrdenie polohy.",
 	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Posúvajte šípkami, potom stlačte %1 na potvrdenie polohy.",
 	"KEYBOARD_NAV_COPIED_HINT": "Skopírované. Stlačte %1 na prilepenie.",

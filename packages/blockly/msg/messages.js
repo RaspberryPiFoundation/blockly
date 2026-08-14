@@ -1917,6 +1917,12 @@ Blockly.Msg.SHORTCUTS_JUMP_FIRST_BLOCK = 'Jump to first block';
 /// shortcut display text for a shortcut that jumps focus to the last block in the workspace.
 Blockly.Msg.SHORTCUTS_JUMP_LAST_BLOCK = 'Jump to last block';
 /** @type {string} */
+/// shortcut display text for a shortcut that jumps focus back one page of items in the toolbox or flyout.
+Blockly.Msg.SHORTCUTS_JUMP_PREVIOUS_PAGE = 'Jump to previous page';
+/** @type {string} */
+/// shortcut display text for a shortcut that jumps focus forward one page of items in the toolbox or flyout.
+Blockly.Msg.SHORTCUTS_JUMP_NEXT_PAGE = 'Jump to next page';
+/** @type {string} */
 /// Message shown to inform users how to move blocks to arbitrary locations
 /// with the keyboard.
 Blockly.Msg.KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT = 'Hold %1 and use arrow keys to move freely, then %2 to accept the position.';

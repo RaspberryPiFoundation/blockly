@@ -338,6 +338,25 @@ export class Navigator implements INavigator {
   }
 
   /**
+   * Returns the navigable top-level items of a tree, in navigation order.
+   *
+   * For a workspace these are its stacks and comments; for a toolbox its
+   * categories; for a flyout its blocks, buttons and labels.
+   *
+   * @param root The root node of the tree to list, defaulting to the root of
+   *     the currently focused tree.
+   * @returns The navigable top-level items, or an empty list if there is no
+   *     tree to list.
+   */
+  getNavigableItems(
+    root = getFocusManager().getFocusedTree()?.getRootFocusableNode(),
+  ): IFocusableNode[] {
+    if (!root) return [];
+
+    return this.getTopLevelItems(root).filter((item) => this.isNavigable(item));
+  }
+
+  /**
    * Get the first navigable node on the workspace, or null if none exist.
    *
    * @returns The first navigable node on the workspace, or null.

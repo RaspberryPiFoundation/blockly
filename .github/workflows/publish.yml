@@ -99,7 +99,7 @@ jobs:
           else
             VERSION_COMMAND="${VERSION_COMMAND} --conventional-prerelease --preid beta"
           fi
-          VERSION_COMMAND="${VERSION_COMMAND} --conventional-commits --yes"
+          VERSION_COMMAND="${VERSION_COMMAND} --force-publish --conventional-commits --yes"
           if [ "${DRY_RUN}" = "true" ]; then
             VERSION_COMMAND="${VERSION_COMMAND} --no-push --no-git-tag-version"
             echo "Dry run: would publish the following versions to npm dist-tag: ${DIST_TAG}"

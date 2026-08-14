@@ -209,6 +209,12 @@ export function installSvgLayoutStubs(window) {
     };
   }
 
+  // JSDom performs no layout and so provides no scrollIntoView. Blockly calls
+  // it to keep a newly focused toolbox item within the toolbox's visible area.
+  if (element && !element.scrollIntoView) {
+    element.scrollIntoView = function () {};
+  }
+
   // getElementById is only defined on Document/ShadowRoot. Blockly calls it on
   // the result of getRootNode(), which can be a detached SVG element during
   // disposal. Provide a descendant search so those code paths work headless.

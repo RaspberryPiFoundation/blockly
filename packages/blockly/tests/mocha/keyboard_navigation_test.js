@@ -6,6 +6,7 @@
 
 import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
+import {defineStackBlock} from './test_helpers/block_definitions.js';
 import {navigationTestBlocks} from './test_helpers/navigation_test_blocks.js';
 import {p5blocks} from './test_helpers/p5_blocks.js';
 import {
@@ -1078,5 +1079,341 @@ suite('Flyout heading navigation with no headings', function () {
       Blockly.utils.KeyCodes.SHIFT,
     ]);
     assert.equal(Blockly.getFocusManager().getFocusedNode(), firstBlock);
+  });
+});
+
+suite('Toolbox and flyout jump shortcuts (Ctrl/Cmd + Home / End)', function () {
+  suiteSetup(function () {
+    Blockly.ShortcutItems.registerNavigationShortcuts();
+  });
+
+  suiteTeardown(function () {
+    for (const shortcut of [
+      'jump_to_top_of_stack',
+      'jump_to_bottom_of_stack',
+      'jump_to_block_start',
+      'jump_to_block_end',
+      'jump_to_first_block',
+      'jump_to_last_block',
+      'jump_to_previous_page',
+      'jump_to_next_page',
+    ]) {
+      Blockly.ShortcutRegistry.registry.unregister(shortcut);
+    }
+  });
+
+  setup(function () {
+    sharedTestSetup.call(this);
+    Blockly.defineBlocksWithJsonArray([
+      {
+        type: 'basic_block',
+        message0: '%1',
+        args0: [{type: 'field_input', name: 'TEXT', text: 'default'}],
+      },
+    ]);
+    defineStackBlock();
+  });
+
+  teardown(function () {
+    sharedTestTeardown.call(this);
+  });
+
+  /**
+   * Presses Home or End with the platform's control key held down.
+   *
+   * @param {!Blockly.WorkspaceSvg} workspace The workspace to dispatch on.
+   * @param {number} keyCode Either KeyCodes.HOME or KeyCodes.END.
+   */
+  function pressCtrlKey(workspace, keyCode) {
+    pressKey(workspace, keyCode, [Blockly.utils.KeyCodes.CTRL_CMD]);
+  }
+
+  suite('in the toolbox', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv', {
+        toolbox: document.getElementById('toolbox-test'),
+      });
+      this.toolbox = this.workspace.getToolbox();
+      // toolbox-test starts and ends with a category, with a non-focusable
+      // separator in between.
+      const allItems = this.toolbox.getToolboxItems();
+      this.firstItem = allItems[0];
+      this.lastItem = allItems[allItems.length - 1];
+    });
+
+    test('Navigable items exclude the separator', function () {
+      const navigable = this.toolbox
+        .getNavigator()
+        .getNavigableItems(this.toolbox.getRootFocusableNode());
+      assert.isAbove(this.toolbox.getToolboxItems().length, navigable.length);
+      assert.isFalse(
+        navigable.some((item) => item instanceof Blockly.ToolboxSeparator),
+      );
+    });
+
+    test('CtrlHome focuses the first toolbox item', function () {
+      Blockly.getFocusManager().focusNode(this.lastItem);
+      pressCtrlKey(this.workspace, Blockly.utils.KeyCodes.HOME);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), this.firstItem);
+    });
+
+    test('CtrlEnd focuses the last toolbox item', function () {
+      Blockly.getFocusManager().focusNode(this.firstItem);
+      pressCtrlKey(this.workspace, Blockly.utils.KeyCodes.END);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), this.lastItem);
+    });
+
+    test('CtrlHome does not move focus out of the toolbox', function () {
+      const block = this.workspace.newBlock('basic_block');
+      block.initSvg();
+      block.render();
+      Blockly.getFocusManager().focusNode(this.lastItem);
+      pressCtrlKey(this.workspace, Blockly.utils.KeyCodes.HOME);
+      assert.notEqual(Blockly.getFocusManager().getFocusedNode(), block);
+    });
+
+    test('CtrlHome still focuses the first block when the workspace has focus', function () {
+      const block = this.workspace.newBlock('basic_block');
+      block.initSvg();
+      block.render();
+      Blockly.getFocusManager().focusNode(block);
+      pressCtrlKey(this.workspace, Blockly.utils.KeyCodes.HOME);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), block);
+    });
+  });
+
+  suite('in the flyout', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv', {
+        toolbox: {
+          kind: 'flyoutToolbox',
+          contents: [
+            {kind: 'label', text: 'First heading'},
+            {kind: 'block', type: 'basic_block'},
+            {kind: 'block', type: 'basic_block'},
+            {kind: 'label', text: 'Last heading'},
+          ],
+        },
+      });
+      this.flyoutWorkspace = this.workspace.getFlyout().getWorkspace();
+      // The flyout opens and closes with a label, so the first and last
+      // navigable items are not blocks. A trailing separator is appended to
+      // the contents but cannot be focused.
+      this.labels = this.workspace
+        .getFlyout()
+        .getContents()
+        .map((item) => item.getElement())
+        .filter(
+          (element) =>
+            element instanceof Blockly.FlyoutButton && element.isLabel(),
+        );
+    });
+
+    test('CtrlHome focuses the first item, which is a label rather than a block', function () {
+      Blockly.getFocusManager().focusNode(
+        this.flyoutWorkspace.getTopBlocks()[1],
+      );
+      pressCtrlKey(this.workspace, Blockly.utils.KeyCodes.HOME);
+      const focused = Blockly.getFocusManager().getFocusedNode();
+      assert.equal(focused, this.labels[0]);
+      assert.notEqual(focused, this.flyoutWorkspace.getTopBlocks()[0]);
+    });
+
+    test('CtrlEnd focuses the last item, which is a label rather than a block', function () {
+      Blockly.getFocusManager().focusNode(
+        this.flyoutWorkspace.getTopBlocks()[0],
+      );
+      pressCtrlKey(this.workspace, Blockly.utils.KeyCodes.END);
+      const focused = Blockly.getFocusManager().getFocusedNode();
+      assert.equal(focused, this.labels[this.labels.length - 1]);
+      assert.notEqual(
+        focused,
+        this.flyoutWorkspace.getTopBlocks().slice(-1)[0],
+      );
+    });
+  });
+});
+
+suite('Toolbox and flyout paging shortcuts (Page Up / Page Down)', function () {
+  suiteSetup(function () {
+    Blockly.ShortcutItems.registerNavigationShortcuts();
+  });
+
+  suiteTeardown(function () {
+    for (const shortcut of [
+      'jump_to_top_of_stack',
+      'jump_to_bottom_of_stack',
+      'jump_to_block_start',
+      'jump_to_block_end',
+      'jump_to_first_block',
+      'jump_to_last_block',
+      'jump_to_previous_page',
+      'jump_to_next_page',
+    ]) {
+      Blockly.ShortcutRegistry.registry.unregister(shortcut);
+    }
+  });
+
+  setup(function () {
+    sharedTestSetup.call(this);
+    Blockly.defineBlocksWithJsonArray([
+      {
+        type: 'basic_block',
+        message0: '%1',
+        args0: [{type: 'field_input', name: 'TEXT', text: 'default'}],
+      },
+    ]);
+    defineStackBlock();
+  });
+
+  teardown(function () {
+    sharedTestTeardown.call(this);
+  });
+
+  // Items are laid out 30 long with a 10 gap, so item i spans [i * 40, i * 40
+  // + 30]. A 100-long viewport therefore holds three of them.
+  const ITEM_PITCH = 40;
+  const ITEM_LENGTH = 30;
+  const VIEWPORT_LENGTH = 100;
+
+  suite('in the flyout', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv', {
+        toolbox: {
+          kind: 'flyoutToolbox',
+          contents: new Array(6).fill({kind: 'block', type: 'basic_block'}),
+        },
+      });
+      this.flyoutWorkspace = this.workspace.getFlyout().getWorkspace();
+      this.blocks = this.flyoutWorkspace.getTopBlocks(true);
+      // Focusing a block scrolls it into view; stub that out so the layout set
+      // up below stays valid for the whole test.
+      sinon.stub(this.flyoutWorkspace, 'scroll');
+      sinon.stub(this.flyoutWorkspace, 'getScale').returns(1);
+
+      /**
+       * Lays the flyout's blocks out at a known pitch and puts the viewport at
+       * the given offset, so that paging can be asserted exactly.
+       *
+       * @param {number} viewportTop Offset of the top of the viewport.
+       */
+      this.layOutFlyout = (viewportTop) => {
+        this.blocks.forEach((block, i) => {
+          sinon
+            .stub(block, 'getBoundingRectangle')
+            .returns(
+              new Blockly.utils.Rect(
+                i * ITEM_PITCH,
+                i * ITEM_PITCH + ITEM_LENGTH,
+                0,
+                50,
+              ),
+            );
+        });
+        sinon
+          .stub(this.flyoutWorkspace.getMetricsManager(), 'getViewMetrics')
+          .returns({
+            top: viewportTop,
+            left: 0,
+            width: 50,
+            height: VIEWPORT_LENGTH,
+          });
+      };
+    });
+
+    test('PageDown focuses the last visible block', function () {
+      this.layOutFlyout(0);
+      Blockly.getFocusManager().focusNode(this.blocks[0]);
+      pressKey(this.workspace, Blockly.utils.KeyCodes.PAGE_DOWN);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), this.blocks[2]);
+    });
+
+    test('A second PageDown advances by another page', function () {
+      this.layOutFlyout(0);
+      Blockly.getFocusManager().focusNode(this.blocks[0]);
+      pressKey(this.workspace, Blockly.utils.KeyCodes.PAGE_DOWN);
+      pressKey(this.workspace, Blockly.utils.KeyCodes.PAGE_DOWN);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), this.blocks[4]);
+    });
+
+    test('PageUp focuses the first visible block', function () {
+      // Viewport spans [150, 250], holding blocks 4 and 5 plus the tail of 3.
+      this.layOutFlyout(150);
+      Blockly.getFocusManager().focusNode(this.blocks[5]);
+      pressKey(this.workspace, Blockly.utils.KeyCodes.PAGE_UP);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), this.blocks[3]);
+    });
+
+    test('PageDown from the last block does nothing', function () {
+      this.layOutFlyout(200);
+      const last = this.blocks[this.blocks.length - 1];
+      Blockly.getFocusManager().focusNode(last);
+      pressKey(this.workspace, Blockly.utils.KeyCodes.PAGE_DOWN);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), last);
+    });
+
+    test('PageUp from the first block does nothing', function () {
+      this.layOutFlyout(0);
+      Blockly.getFocusManager().focusNode(this.blocks[0]);
+      pressKey(this.workspace, Blockly.utils.KeyCodes.PAGE_UP);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), this.blocks[0]);
+    });
+  });
+
+  suite('in the toolbox', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv', {
+        toolbox: document.getElementById('toolbox-test'),
+      });
+      this.toolbox = this.workspace.getToolbox();
+      this.items = this.toolbox
+        .getNavigator()
+        .getNavigableItems(this.toolbox.getRootFocusableNode());
+
+      this.container = this.toolbox
+        .getRootFocusableNode()
+        .getFocusableElement();
+      sinon.stub(this.container, 'getBoundingClientRect').returns({
+        top: 0,
+        bottom: VIEWPORT_LENGTH,
+        left: 0,
+        right: 200,
+      });
+      this.items.forEach((item, i) => {
+        sinon
+          .stub(item.getFocusableElement(), 'getBoundingClientRect')
+          .returns({
+            top: i * ITEM_PITCH,
+            bottom: i * ITEM_PITCH + ITEM_LENGTH,
+            left: 0,
+            right: 200,
+          });
+      });
+    });
+
+    test('PageDown focuses the last visible category', function () {
+      Blockly.getFocusManager().focusNode(this.items[0]);
+      pressKey(this.workspace, Blockly.utils.KeyCodes.PAGE_DOWN);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), this.items[2]);
+    });
+
+    test('PageDown scrolls the newly focused category into view', function () {
+      Blockly.getFocusManager().focusNode(this.items[0]);
+      const scrollIntoView = sinon.spy(
+        this.items[2].getFocusableElement(),
+        'scrollIntoView',
+      );
+      pressKey(this.workspace, Blockly.utils.KeyCodes.PAGE_DOWN);
+      sinon.assert.calledWith(scrollIntoView, {
+        block: 'nearest',
+        inline: 'nearest',
+      });
+    });
+
+    test('PageUp focuses the first visible category', function () {
+      Blockly.getFocusManager().focusNode(this.items[2]);
+      pressKey(this.workspace, Blockly.utils.KeyCodes.PAGE_UP);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), this.items[0]);
+    });
   });
 });

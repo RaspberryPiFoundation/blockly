@@ -1933,8 +1933,8 @@ export class WorkspaceSvg
     // The scrollX and scrollY still need to have absoluteLeft and absoluteTop
     // subtracted from them, but we'll leave that for setScale so that they're
     // correctly updated for the new flyout size if we have a simple toolbox.
-    this.scrollX = matrix.e;
-    this.scrollY = matrix.f;
+    this.scrollX = Math.round(matrix.e);
+    this.scrollY = Math.round(matrix.f);
     this.setScale(newScale);
   }
 
@@ -2120,6 +2120,7 @@ export class WorkspaceSvg
    * @param newScale Zoom factor. Units: (pixels / workspaceUnit).
    */
   setScale(newScale: number) {
+    newScale = Math.round(newScale * 1000) / 1000;
     if (
       this.options.zoomOptions.maxScale &&
       newScale > this.options.zoomOptions.maxScale
@@ -2257,8 +2258,8 @@ export class WorkspaceSvg
       metrics.scrollHeight - metrics.viewHeight,
     );
     const maxYScroll = metrics.scrollTop + maxYDisplacement;
-    x = Math.max(x, -maxXScroll);
-    y = Math.max(y, -maxYScroll);
+    x = Math.round(Math.max(x, -maxXScroll));
+    y = Math.round(Math.max(y, -maxYScroll));
     this.scrollX = x;
     this.scrollY = y;
 

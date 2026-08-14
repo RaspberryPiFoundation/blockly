@@ -419,6 +419,8 @@
 	"SHORTCUTS_JUMP_BOTTOM_STACK": "Sauté al fond dël mugg",
 	"SHORTCUTS_JUMP_FIRST_BLOCK": "Sauté al prim blòch",
 	"SHORTCUTS_JUMP_LAST_BLOCK": "Sauté a l'ùltim blòch",
+	"SHORTCUTS_JUMP_PREVIOUS_PAGE": "Sauté a la pàgina prima",
+	"SHORTCUTS_JUMP_NEXT_PAGE": "Sauté a la pàgina apress",
 	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "Ch'a ten-a sgnacà %1 e ch'a deuvra ij tast ëd le flece për bogé andoa ch'a veul, peui %2 për aceté la posission.",
 	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Ch'a deuvra ij tast ëd le flece për bogé, peui %1 për aceté la posission.",
 	"KEYBOARD_NAV_COPIED_HINT": "Copià. Ch'a sgnaca %1 për ancolé.",
