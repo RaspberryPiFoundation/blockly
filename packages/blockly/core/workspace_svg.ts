@@ -1016,7 +1016,7 @@ export class WorkspaceSvg
   addTrashcan() {
     this.trashcan = WorkspaceSvg.newTrashcan(this);
     const svgTrashcan = this.trashcan.createDom();
-    this.svgGroup_.insertBefore(svgTrashcan, this.getCanvas());
+    this.svgGroup_.appendChild(svgTrashcan);
   }
 
   /**

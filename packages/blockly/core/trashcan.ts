@@ -694,13 +694,14 @@ const TRASH_FULL = 'blocklyTrashFull';
 const TRASH_OPEN = 'blocklyTrashOpen';
 
 Css.register(`
-  .blocklyTrash {
+  .blocklyTrash > image {
     opacity: 0.4;
-    transition: opacity 0.08 ease-out;
+    transition: opacity 0.08s ease-out;
   }
 
   .blocklyTrashLid {
-    transition: rotate 0.08s ease-out;
+    opacity: 0.4;
+    transition: rotate 0.08s ease-out, opacity 0.08s ease-out;
     transform-origin: 46px 12px;
     rotate: 0deg;
     pointer-events: none;
@@ -718,9 +719,12 @@ Css.register(`
     rotate: -5deg;
   }
 
-  .blocklyTrash.blocklyTrashOpen,
-  .blocklyTrash.blocklyTrashFull:hover,
-  .blocklyTrash.blocklyTrashFull:focus {
+  .blocklyTrash.blocklyTrashOpen > image,
+  .blocklyTrash.blocklyTrashOpen > .blocklyTrashLid,
+  .blocklyTrash.blocklyTrashFull:hover > image,
+  .blocklyTrash.blocklyTrashFull:hover > .blocklyTrashLid,
+  .blocklyTrash.blocklyTrashFull:focus > image,
+  .blocklyTrash.blocklyTrashFull:focus > .blocklyTrashLid {
     opacity: 0.8;
   }
 
