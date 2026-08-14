@@ -25,7 +25,6 @@ import type {IAutoHideable} from './interfaces/i_autohideable.js';
 import type {IComponent} from './interfaces/i_component';
 import type {IDraggable} from './interfaces/i_draggable.js';
 import type {IFlyout} from './interfaces/i_flyout.js';
-import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IPositionable} from './interfaces/i_positionable.js';
 import {KeyboardMover} from './keyboard_nav/keyboard_mover.js';
 import {keyboardNavigationController} from './keyboard_navigation_controller.js';
@@ -50,7 +49,7 @@ import type {WorkspaceSvg} from './workspace_svg.js';
  */
 export class Trashcan
   extends DeleteArea
-  implements IAutoHideable, IPositionable, IFocusableNode, IComponent
+  implements IAutoHideable, IPositionable, IComponent
 {
   /**
    * The id for this component that is used to register with the
@@ -256,6 +255,7 @@ export class Trashcan
       this.blockMouseDownWhenOpenable,
     );
     browserEvents.bind(this.svgGroup, 'pointerup', this, this.click);
+    browserEvents.bind(this.svgGroup, 'keydown', this, this.onKeyDown);
     return this.svgGroup;
   }
 
@@ -275,7 +275,6 @@ export class Trashcan
         ComponentManager.Capability.DELETE_AREA,
         ComponentManager.Capability.DRAG_TARGET,
         ComponentManager.Capability.POSITIONABLE,
-        ComponentManager.Capability.FOCUSABLE,
       ],
     });
     this.initialized = true;
@@ -531,6 +530,18 @@ export class Trashcan
   }
 
   /**
+   * Activates the trashcan when Enter or Space is pressed.
+   *
+   * @param e A keydown event.
+   */
+  private onKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.click();
+    }
+  }
+
+  /**
    * Fires a UI event for trashcan flyout open or close.
    *
    * @param trashcanOpen Whether the flyout is opening.
@@ -652,28 +663,6 @@ export class Trashcan
       ...json,
     };
     return blockInfo;
-  }
-
-  getFocusableElement() {
-    if (!this.svgGroup) {
-      throw new Error('Tried to focus uninitialized trashcan');
-    }
-    return this.svgGroup;
-  }
-
-  getFocusableTree() {
-    return this.workspace;
-  }
-
-  onNodeFocus() {}
-  onNodeBlur() {}
-
-  canBeFocused() {
-    return !!this.svgGroup;
-  }
-
-  performAction() {
-    this.click();
   }
 }
 

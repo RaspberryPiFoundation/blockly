@@ -535,9 +535,9 @@ input[type=number] {
   .blocklyBubble,
   .blocklyIconGroup,
   .blocklyTextarea,
-  .blocklyZoom,
-  .blocklyTrash,
-) {
+),
+.blocklyZoom:focus,
+.blocklyTrash:focus {
   outline: none;
 }
 .hiddenForAria {
@@ -568,7 +568,9 @@ input[type=number] {
   > .blocklyIconShape:first-child,
 .blocklyKeyboardNavigation
   .blocklyActiveFocus
-  > .blocklyFocusRing {
+  > .blocklyFocusRing,
+.blocklyTrash:focus-visible > .blocklyFocusRing,
+.blocklyZoom:focus-visible > .blocklyFocusRing {
   stroke: var(--blockly-active-node-color);
   stroke-width: var(--blockly-selection-width);
 }

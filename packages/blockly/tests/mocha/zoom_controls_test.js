@@ -82,4 +82,20 @@ suite('Zoom Controls', function () {
       assert.equal(this.workspace.getScale(), 1);
     });
   });
+
+  suite('Focus', function () {
+    test('is not claimed as a workspace focus node', function () {
+      const zoomIn = this.workspace
+        .getParentSvg()
+        .querySelector('.blocklyZoomIn');
+      assert.isNotNull(zoomIn);
+      assert.strictEqual(zoomIn.getAttribute('tabindex'), '0');
+      assert.isNull(
+        Blockly.FocusableTreeTraverser.findFocusableNodeFor(
+          zoomIn,
+          this.workspace,
+        ),
+      );
+    });
+  });
 });

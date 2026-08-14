@@ -431,6 +431,36 @@ suite('FocusableTreeTraverser', function () {
       assert.strictEqual(finding, this.testFocusableTree1Node2);
     });
 
+    test('for unregistered tab stop in tree returns null', function () {
+      const tree = this.testFocusableTree1;
+      const unregElem = document.getElementById(
+        'testFocusableTree1.node2.unregisteredChild1',
+      );
+      unregElem.setAttribute('tabindex', '0');
+
+      const finding = FocusableTreeTraverser.findFocusableNodeFor(
+        unregElem,
+        tree,
+      );
+
+      assert.isNull(finding);
+    });
+
+    test('for unregistered tabindex -1 element in tree returns closest node', function () {
+      const tree = this.testFocusableTree1;
+      const unregElem = document.getElementById(
+        'testFocusableTree1.node2.unregisteredChild1',
+      );
+      unregElem.setAttribute('tabindex', '-1');
+
+      const finding = FocusableTreeTraverser.findFocusableNodeFor(
+        unregElem,
+        tree,
+      );
+
+      assert.strictEqual(finding, this.testFocusableTree1Node2);
+    });
+
     test('for nested node element in tree returns node', function () {
       const tree = this.testFocusableTree1;
       const nodeElem = this.testFocusableTree1Node1Child1.getFocusableElement();

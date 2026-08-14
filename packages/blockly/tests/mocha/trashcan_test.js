@@ -398,4 +398,19 @@ suite('Trashcan', function () {
       }
     });
   });
+  suite('Focus', function () {
+    test('is not claimed as a workspace focus node', function () {
+      const trashElement = this.workspace
+        .getParentSvg()
+        .querySelector('.blocklyTrash');
+      assert.isNotNull(trashElement);
+      assert.strictEqual(trashElement.getAttribute('tabindex'), '0');
+      assert.isNull(
+        Blockly.FocusableTreeTraverser.findFocusableNodeFor(
+          trashElement,
+          this.workspace,
+        ),
+      );
+    });
+  });
 });
