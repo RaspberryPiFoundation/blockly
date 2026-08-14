@@ -61,6 +61,10 @@ export class WorkspaceControlNavigator implements INavigator {
     return null;
   }
 
+  getNavigableItems(_root?: IFocusableNode | null): IFocusableNode[] {
+    return [];
+  }
+
   navigateStacks() {
     return null;
   }

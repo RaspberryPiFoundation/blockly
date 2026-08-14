@@ -55,6 +55,14 @@ export interface INavigator {
   getLastNode(): IFocusableNode | null;
 
   /**
+   * Returns the navigable top-level items of a tree, in navigation order.
+   *
+   * @param root The root node of the tree to list.
+   * @returns The navigable top-level items under the root.
+   */
+  getNavigableItems(root?: IFocusableNode | null): IFocusableNode[];
+
+  /**
    * Moves between top-level stacks by the given delta.
    *
    * @returns The stack root to focus, or null if none.
