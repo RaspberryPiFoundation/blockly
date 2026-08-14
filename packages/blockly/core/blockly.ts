@@ -428,6 +428,7 @@ Names.prototype.populateProcedures = function (
 
 export * from './interfaces/i_json_block_definition.js';
 export * from './interfaces/i_navigation_policy.js';
+export * from './interfaces/i_navigator.js';
 export * from './keyboard_nav/navigation_policies/block_navigation_policy.js';
 export * from './keyboard_nav/navigation_policies/bubble_navigation_policy.js';
 export * from './keyboard_nav/navigation_policies/comment_bar_button_navigation_policy.js';

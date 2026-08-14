@@ -11,6 +11,7 @@ import {getFocusManager} from '../../focus_manager.js';
 import {Icon} from '../../icons/icon.js';
 import type {IFocusableNode} from '../../interfaces/i_focusable_node.js';
 import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
+import type {INavigator} from '../../interfaces/i_navigator.js';
 import {RenderedConnection} from '../../rendered_connection.js';
 import {BlockNavigationPolicy} from '../navigation_policies/block_navigation_policy.js';
 import {BubbleNavigationPolicy} from '../navigation_policies/bubble_navigation_policy.js';
@@ -38,7 +39,7 @@ export enum NavigationDirection {
  * Class responsible for determining where focus should move in response to
  * keyboard navigation commands.
  */
-export class Navigator {
+export class Navigator implements INavigator {
   /**
    * Map from classes to a corresponding ruleset to handle navigation from
    * instances of that class.

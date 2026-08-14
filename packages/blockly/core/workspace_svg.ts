@@ -52,6 +52,7 @@ import {
 import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
 import {hasBubble} from './interfaces/i_has_bubble.js';
 import type {IMetricsManager} from './interfaces/i_metrics_manager.js';
+import type {INavigator} from './interfaces/i_navigator.js';
 import type {IToolbox} from './interfaces/i_toolbox.js';
 import {KeyboardMover} from './keyboard_nav/keyboard_mover.js';
 import {Navigator} from './keyboard_nav/navigators/navigator.js';
@@ -356,7 +357,7 @@ export class WorkspaceSvg
    * Navigator that handles moving focus between items in this workspace in
    * response to keyboard navigation commands.
    */
-  private navigator = new Navigator();
+  private navigator: INavigator = new Navigator();
 
   /**
    * Whether this workspace has ever been focused. Used to announce usage hints
@@ -3080,7 +3081,7 @@ export class WorkspaceSvg
    *
    * @returns This workspace's Navigator instance.
    */
-  getNavigator(): Navigator {
+  getNavigator(): INavigator {
     return this.navigator;
   }
 
@@ -3090,7 +3091,7 @@ export class WorkspaceSvg
    * @param newNavigator A Navigator object to coordinate movement between
    *     elements on the workspace.
    */
-  setNavigator(newNavigator: Navigator) {
+  setNavigator(newNavigator: INavigator) {
     this.navigator = newNavigator;
   }
 }
