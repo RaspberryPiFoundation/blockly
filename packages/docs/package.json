@@ -5,6 +5,15 @@
   "description": "Blockly documentation site",
   "nx": {
     "targets": {
+      "start": {
+        "dependsOn": [
+          "^build",
+          {
+            "projects": "blockly",
+            "target": "docs"
+          }
+        ]
+      },
       "build": {
         "dependsOn": [
           {
