@@ -64,7 +64,7 @@ enum MoveMode {
 }
 
 export class BlockDragStrategy implements IDragStrategy {
-  private workspace: WorkspaceSvg;
+  protected workspace: WorkspaceSvg;
 
   /** The parent block at the start of the drag. */
   private startParentConn: RenderedConnection | null = null;
@@ -75,11 +75,11 @@ export class BlockDragStrategy implements IDragStrategy {
    */
   private startChildConn: RenderedConnection | null = null;
 
-  private startLoc: Coordinate | null = null;
+  protected startLoc: Coordinate | null = null;
 
   private connectionCandidate: ConnectionCandidate | null = null;
 
-  private connectionPreviewer: IConnectionPreviewer | null = null;
+  protected connectionPreviewer: IConnectionPreviewer | null = null;
 
   private dragging = false;
 
@@ -87,7 +87,7 @@ export class BlockDragStrategy implements IDragStrategy {
   private allConnectionPairs: ConnectionPair[] = [];
 
   /** The current movement mode. */
-  private moveMode = MoveMode.UNCONSTRAINED;
+  protected moveMode = MoveMode.UNCONSTRAINED;
 
   /** Used to persist an event group when snapping is done async. */
   private originalEventGroup = '';
@@ -105,7 +105,7 @@ export class BlockDragStrategy implements IDragStrategy {
    */
   protected readonly WORKSPACE_MARGIN = 10;
 
-  constructor(private block: BlockSvg) {
+  constructor(protected block: BlockSvg) {
     this.workspace = block.workspace;
   }
 
@@ -127,7 +127,7 @@ export class BlockDragStrategy implements IDragStrategy {
    * @param oldBlock The flyout block that was cloned.
    * @param newBlock The new block to position.
    */
-  private positionNewBlock(oldBlock: BlockSvg, newBlock: BlockSvg) {
+  protected positionNewBlock(oldBlock: BlockSvg, newBlock: BlockSvg) {
     const screenCoordinate = svgMath.wsToScreenCoordinates(
       oldBlock.workspace,
       oldBlock.getRelativeToSurfaceXY(),
@@ -469,7 +469,7 @@ export class BlockDragStrategy implements IDragStrategy {
    * @param healStack Whether or not to heal the stack after disconnecting.
    * @returns True to disconnect the block, false otherwise.
    */
-  private shouldDisconnect(healStack: boolean): boolean {
+  protected shouldDisconnect(healStack: boolean): boolean {
     return !!(
       this.block.getParent() ||
       (healStack &&
