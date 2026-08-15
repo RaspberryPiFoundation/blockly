@@ -44,7 +44,7 @@
     "jsdom": "^30.0.1",
     "jsdom-global": "3.0.2",
     "mocha": "^11.7.6",
-    "sinon": "^22.0.0"
+    "sinon": "^22.1.0"
   },
   "peerDependencies": {
     "blockly": "^13.2.0"

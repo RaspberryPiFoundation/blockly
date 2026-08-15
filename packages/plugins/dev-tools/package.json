@@ -48,7 +48,7 @@
     "lodash.assign": "^4.2.0",
     "lodash.merge": "^4.6.2",
     "monaco-editor": "^0.56.0",
-    "sinon": "^22.0.0"
+    "sinon": "^22.1.0"
   },
   "devDependencies": {
     "@blockly/dev-scripts": "^13.1.0",
