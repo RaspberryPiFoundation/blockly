@@ -42,7 +42,7 @@
   "devDependencies": {
     "@blockly/dev-scripts": "^13.1.0",
     "@blockly/dev-tools": "^13.1.0",
-    "@typescript-eslint/parser": "^8.66.0",
+    "@typescript-eslint/parser": "^8.67.0",
     "chai": "^6.2.2",
     "jsdom": "^30.0.1",
     "jsdom-global": "^3.0.2",
