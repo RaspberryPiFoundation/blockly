@@ -67,6 +67,7 @@ import {Rect} from './utils/rect.js';
 import {Svg} from './utils/svg.js';
 import * as svgMath from './utils/svg_math.js';
 import {FlyoutItemInfo} from './utils/toolbox.js';
+import * as userAgent from './utils/useragent.js';
 import type {Workspace} from './workspace.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 
@@ -2020,11 +2021,13 @@ export class BlockSvg
       fullBlockField.recomputeAriaContext();
       return;
     }
-    aria.setState(
-      this.getFocusableElement(),
-      aria.State.LABEL,
-      this.getAriaLabel(aria.Verbosity.STANDARD),
-    );
+    let label = this.getAriaLabel(aria.Verbosity.STANDARD);
+    // VoiceOver inserts a comma between aria-label and aria-roledescription.
+    // Specific screen readers are not detectable, so OS is used as a proxy.
+    if (label && !userAgent.APPLE && !label.endsWith(',')) {
+      label += ',';
+    }
+    aria.setState(this.getFocusableElement(), aria.State.LABEL, label);
     configureAriaRole(this);
   }
 
