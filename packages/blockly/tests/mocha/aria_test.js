@@ -555,7 +555,7 @@ suite('ARIA', function () {
         block.getFocusableElement(),
         Blockly.utils.aria.State.LABEL,
       );
-      assert.isTrue(label.endsWith('has input'));
+      assert.isTrue(label.replace(/,$/, '').endsWith('has input'));
     });
 
     test('Blocks with multiple inputs are properly labeled', function () {
@@ -564,7 +564,7 @@ suite('ARIA', function () {
         block.getFocusableElement(),
         Blockly.utils.aria.State.LABEL,
       );
-      assert.isTrue(label.endsWith('has inputs'));
+      assert.isTrue(label.replace(/,$/, '').endsWith('has inputs'));
     });
     test('Blocks with multiple statement inputs are properly labeled', function () {
       const json = {
@@ -592,7 +592,7 @@ suite('ARIA', function () {
       );
       assert.isFalse(label.includes('else if, do'));
       assert.isFalse(label.includes('else,'));
-      assert.isTrue(label.endsWith('has 4 branches'));
+      assert.isTrue(label.replace(/,$/, '').endsWith('has 4 branches'));
     });
   });
 
