@@ -452,6 +452,8 @@
 	"SHORTCUTS_JUMP_BOTTOM_STACK": "Naar onderkant stapel",
 	"SHORTCUTS_JUMP_FIRST_BLOCK": "Naar eerste blok",
 	"SHORTCUTS_JUMP_LAST_BLOCK": "Naar laatste blok",
+	"SHORTCUTS_JUMP_PREVIOUS_PAGE": "Naar vorige pagina",
+	"SHORTCUTS_JUMP_NEXT_PAGE": "Naar volgende pagina",
 	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "Houd %1 ingedrukt en gebruik de pijltjestoetsen om vrij te bewegen, druk dan op %2 om de positie te accepteren.",
 	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Gebruik de pijltjestoetsen om te bewegen, druk dan op %1 om de positie te accepteren.",
 	"KEYBOARD_NAV_COPIED_HINT": "Gekopieerd. Druk op %1 om te plakken.",

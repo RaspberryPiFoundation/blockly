@@ -167,6 +167,8 @@
 	"SHORTCUTS_EDITING": "Änneren",
 	"SHORTCUTS_CODE_NAVIGATION": "Code-Navigatioun",
 	"SHORTCUTS_DELETE": "Läschen",
+	"SHORTCUTS_JUMP_PREVIOUS_PAGE": "Op déi vireg Säit sprangen",
+	"SHORTCUTS_JUMP_NEXT_PAGE": "Op déi nächst Säit sprangen",
 	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Benotzt d'Feiltaste fir ze réckelen an dann %1 fir d'Positioun ze validéieren",
 	"WORKSPACE_LABEL_FLYOUT_WORKSPACE": "%1 Bléck",
 	"BLOCK_LABEL_TOOLBOX_CATEGORY": "%1-Kategorie",
