@@ -41,19 +41,24 @@ export class CollapseCommentBarButton extends CommentBarButton {
    * @param container An SVG group that this button should be a child of.
    */
   constructor(
-    protected readonly id: string,
-    protected readonly workspace: WorkspaceSvg,
-    protected readonly container: SVGGElement,
-    protected readonly commentView: CommentView,
+    id: string,
+    workspace: WorkspaceSvg,
+    container: SVGGElement,
+    commentView: CommentView,
   ) {
-    super(id, workspace, container, commentView);
+    super(
+      `${id}${COMMENT_COLLAPSE_BAR_BUTTON_FOCUS_IDENTIFIER}`,
+      workspace,
+      container,
+      commentView,
+    );
 
     this.icon = dom.createSvgElement(
       Svg.IMAGE,
       {
         'class': 'blocklyFoldoutIcon',
         'href': `${this.workspace.options.pathToMedia}foldout-icon.svg`,
-        'id': `${this.id}${COMMENT_COLLAPSE_BAR_BUTTON_FOCUS_IDENTIFIER}`,
+        'id': this.id,
       },
       this.container,
     );

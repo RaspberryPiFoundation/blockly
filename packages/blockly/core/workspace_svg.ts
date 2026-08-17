@@ -254,7 +254,8 @@ export class WorkspaceSvg
    * @param e The right-click event that triggered the context menu.
    */
   configureContextMenu:
-    ((menuOptions: ContextMenuOption[], e: Event) => void) | null = null;
+    | ((menuOptions: ContextMenuOption[], e: Event) => void)
+    | null = null;
 
   /**
    * A dummy wheel event listener used as a workaround for a Safari scrolling issue.
@@ -2977,8 +2978,7 @@ export class WorkspaceSvg
           return (
             comment.view
               .getCommentBarButtons()
-              .find((button) => button.getFocusableElement().id.includes(id)) ??
-            null
+              .find((button) => button.id.includes(id)) ?? null
           );
         }
       }

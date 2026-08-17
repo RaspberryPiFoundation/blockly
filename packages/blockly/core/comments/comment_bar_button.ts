@@ -28,7 +28,7 @@ export abstract class CommentBarButton implements IFocusableNode {
    * @param container An SVG group that this button should be a child of.
    */
   constructor(
-    protected readonly id: string,
+    readonly id: string,
     protected readonly workspace: WorkspaceSvg,
     protected readonly container: SVGGElement,
     protected readonly commentView: CommentView,
