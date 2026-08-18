@@ -241,6 +241,7 @@ export class BlockDragStrategy implements IDragStrategy {
             recordUndo: true,
           },
         ) as BlockSvg;
+        newBlock.setDragging(true);
         eventUtils.setRecordUndo(false);
         newBlock.render();
         this.positionNewBlock(this.block, newBlock);
