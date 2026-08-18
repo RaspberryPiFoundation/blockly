@@ -902,7 +902,11 @@ export class BlockDragStrategy implements IDragStrategy {
     blockAnimation.disconnectUiStop();
     this.connectionPreviewer?.hidePreview();
 
-    if (!this.block.isDeadOrDying() && this.dragging) {
+    if (
+      !this.block.isDeadOrDying() &&
+      this.dragging &&
+      disposition !== DragDisposition.DELETE
+    ) {
       // These are expensive and don't need to be done if we're deleting, or
       // if we've already stopped dragging because we moved back to the start.
       this.workspace
@@ -921,7 +925,7 @@ export class BlockDragStrategy implements IDragStrategy {
       this.redisableAllDraggedBlocks(this.block);
     }
 
-    if (this.connectionCandidate) {
+    if (this.connectionCandidate && disposition !== DragDisposition.DELETE) {
       // Applying connections also rerenders the relevant blocks.
       this.applyConnections(this.connectionCandidate);
       this.disposeStep();

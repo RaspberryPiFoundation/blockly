@@ -372,4 +372,51 @@ suite('Dragging into a delete area', function () {
       });
     });
   });
+
+  test('does not delete blocks already on the workspace within the connection radius of a dragged block dropped on a delete area', async function () {
+    const {blockHasDeleteStyle, blockIsDeadOrDying, existingBlockDeleted} =
+      await this.browser.execute(() => {
+        const workspace = Blockly.getMainWorkspace();
+
+        const existingBlock = workspace.newBlock('controls_repeat');
+        existingBlock.initSvg();
+        existingBlock.render();
+
+        const draggingBlock = workspace.newBlock('controls_if');
+        draggingBlock.initSvg();
+        draggingBlock.render();
+
+        const deleteRect = workspace.trashcan.getClientRect();
+        const deleteRectCenter = rectCenterClient(deleteRect);
+
+        // Move the existing block near the trash so that the dragged block will
+        // attempt to connect on top of it.
+        existingBlock.moveTo(new Blockly.utils.Coordinate(0, 0));
+        existingBlock.moveTo(
+          new Blockly.utils.Coordinate(
+            deleteRectCenter.x - workspace.toolbox.getClientRect().right - 30,
+            deleteRectCenter.y + existingBlock.height / 2,
+          ),
+        );
+
+        const state = getAssertionState(
+          draggingBlock,
+          deleteRectCenter,
+          deleteRect,
+        );
+
+        return {
+          ...state,
+          existingBlockDeleted: existingBlock.isDeadOrDying(),
+        };
+      });
+
+    chai.assert.isFalse(
+      existingBlockDeleted,
+      'Expected existing block to not be deleted',
+    );
+
+    chai.assert.isTrue(blockHasDeleteStyle);
+    chai.assert.isTrue(blockIsDeadOrDying);
+  });
 });
