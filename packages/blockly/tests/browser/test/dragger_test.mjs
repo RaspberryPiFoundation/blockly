@@ -391,7 +391,6 @@ suite('Dragging into a delete area', function () {
 
         // Move the existing block near the trash so that the dragged block will
         // attempt to connect on top of it.
-        existingBlock.moveTo(new Blockly.utils.Coordinate(0, 0));
         existingBlock.moveTo(
           new Blockly.utils.Coordinate(
             deleteRectCenter.x - workspace.toolbox.getClientRect().right - 30,
