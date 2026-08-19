@@ -1097,6 +1097,10 @@ suite('Toolbox and flyout jump shortcuts (Ctrl/Cmd + Home / End)', function () {
       'jump_to_last_block',
       'jump_to_previous_page',
       'jump_to_next_page',
+      'scroll_left',
+      'scroll_right',
+      'scroll_up',
+      'scroll_down',
     ]) {
       Blockly.ShortcutRegistry.registry.unregister(shortcut);
     }
@@ -1249,6 +1253,10 @@ suite('Toolbox and flyout paging shortcuts (Page Up / Page Down)', function () {
       'jump_to_last_block',
       'jump_to_previous_page',
       'jump_to_next_page',
+      'scroll_left',
+      'scroll_right',
+      'scroll_up',
+      'scroll_down',
     ]) {
       Blockly.ShortcutRegistry.registry.unregister(shortcut);
     }

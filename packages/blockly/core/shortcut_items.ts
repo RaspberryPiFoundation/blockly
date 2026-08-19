@@ -94,6 +94,10 @@ export enum names {
   JUMP_LAST_BLOCK = 'jump_to_last_block',
   JUMP_PREVIOUS_PAGE = 'jump_to_previous_page',
   JUMP_NEXT_PAGE = 'jump_to_next_page',
+  SCROLL_LEFT = 'scroll_left',
+  SCROLL_RIGHT = 'scroll_right',
+  SCROLL_UP = 'scroll_up',
+  SCROLL_DOWN = 'scroll_down',
 }
 
 /**
@@ -479,6 +483,27 @@ export function registerRedo() {
 }
 
 /**
+ * Ctrl/Cmd + arrow keys. Shared by unconstrained keyboard move (`MOVE_*`) and
+ * workspace scroll (`SCROLL_*`). Scroll shortcuts are safely registered after move
+ * shortcuts because scroll shortcuts do not work when a keyboard move is in progress.
+ */
+const CTRL_CMD_LEFT = ShortcutRegistry.registry.createSerializedKey(
+  KeyCodes.LEFT,
+  [KeyCodes.CTRL_CMD],
+);
+const CTRL_CMD_RIGHT = ShortcutRegistry.registry.createSerializedKey(
+  KeyCodes.RIGHT,
+  [KeyCodes.CTRL_CMD],
+);
+const CTRL_CMD_UP = ShortcutRegistry.registry.createSerializedKey(KeyCodes.UP, [
+  KeyCodes.CTRL_CMD,
+]);
+const CTRL_CMD_DOWN = ShortcutRegistry.registry.createSerializedKey(
+  KeyCodes.DOWN,
+  [KeyCodes.CTRL_CMD],
+);
+
+/**
  * Registers keyboard shortcuts for keyboard-driven movement of workspace
  * elements.
  */
@@ -554,12 +579,7 @@ export function registerMovementShortcuts() {
         e.preventDefault();
         return KeyboardMover.mover.move(Direction.LEFT, e as KeyboardEvent);
       },
-      keyCodes: [
-        KeyCodes.LEFT,
-        ShortcutRegistry.registry.createSerializedKey(KeyCodes.LEFT, [
-          KeyCodes.CTRL_CMD,
-        ]),
-      ],
+      keyCodes: [KeyCodes.LEFT, CTRL_CMD_LEFT],
       allowCollision: true,
       displayText: () => Msg['SHORTCUTS_MOVE_LEFT'],
     },
@@ -570,12 +590,7 @@ export function registerMovementShortcuts() {
         e.preventDefault();
         return KeyboardMover.mover.move(Direction.RIGHT, e as KeyboardEvent);
       },
-      keyCodes: [
-        KeyCodes.RIGHT,
-        ShortcutRegistry.registry.createSerializedKey(KeyCodes.RIGHT, [
-          KeyCodes.CTRL_CMD,
-        ]),
-      ],
+      keyCodes: [KeyCodes.RIGHT, CTRL_CMD_RIGHT],
       allowCollision: true,
       displayText: () => Msg['SHORTCUTS_MOVE_RIGHT'],
     },
@@ -586,12 +601,7 @@ export function registerMovementShortcuts() {
         e.preventDefault();
         return KeyboardMover.mover.move(Direction.UP, e as KeyboardEvent);
       },
-      keyCodes: [
-        KeyCodes.UP,
-        ShortcutRegistry.registry.createSerializedKey(KeyCodes.UP, [
-          KeyCodes.CTRL_CMD,
-        ]),
-      ],
+      keyCodes: [KeyCodes.UP, CTRL_CMD_UP],
       allowCollision: true,
       displayText: () => Msg['SHORTCUTS_MOVE_UP'],
     },
@@ -602,12 +612,7 @@ export function registerMovementShortcuts() {
         e.preventDefault();
         return KeyboardMover.mover.move(Direction.DOWN, e as KeyboardEvent);
       },
-      keyCodes: [
-        KeyCodes.DOWN,
-        ShortcutRegistry.registry.createSerializedKey(KeyCodes.DOWN, [
-          KeyCodes.CTRL_CMD,
-        ]),
-      ],
+      keyCodes: [KeyCodes.DOWN, CTRL_CMD_DOWN],
       allowCollision: true,
       displayText: () => Msg['SHORTCUTS_MOVE_DOWN'],
     },
@@ -1809,6 +1814,153 @@ export function registerJumpNextPage() {
 }
 
 /**
+ * Pixels to scroll with each workspace shortcut.
+ */
+const SCROLL_PIXELS = 50;
+
+/** Cardinal directions in which the workspace can be scrolled. */
+enum ScrollDirection {
+  LEFT,
+  RIGHT,
+  UP,
+  DOWN,
+}
+
+/**
+ * Maps scroll directions to the message keys used to announce them to the ARIA live region.
+ */
+const SCROLL_ANNOUNCEMENT_KEYS: Record<ScrollDirection, string> = {
+  [ScrollDirection.LEFT]: 'ANNOUNCE_SCROLLED_LEFT',
+  [ScrollDirection.RIGHT]: 'ANNOUNCE_SCROLLED_RIGHT',
+  [ScrollDirection.UP]: 'ANNOUNCE_SCROLLED_UP',
+  [ScrollDirection.DOWN]: 'ANNOUNCE_SCROLLED_DOWN',
+};
+
+/**
+ * Returns true if the workspace can be scrolled by a shortcut.
+ * Workspaces inside mutator bubbles are never scrollable.
+ */
+const canScrollWorkspace = (workspace: WorkspaceSvg) => {
+  return (
+    !workspace.isDragging() &&
+    workspace.isMovable() &&
+    !workspace.targetWorkspace?.isMutator &&
+    !KeyboardMover.mover.isMoving() &&
+    !dropDownDiv.isVisible() &&
+    !widgetDiv.isVisible()
+  );
+};
+
+/**
+ * Beeps and announces that the workspace cannot scroll further.
+ */
+const scrollFailure = (workspace: WorkspaceSvg) => {
+  workspace.getAudioManager().playErrorBeep();
+  aria.announceDynamicAriaState(Msg['ANNOUNCE_CANT_SCROLL_FURTHER']);
+};
+
+/**
+ * Scrolls the workspace in the given direction.
+ *
+ * @param workspace The workspace to scroll.
+ * @param e The key event that triggered the shortcut.
+ * @param direction The direction to scroll.
+ * @returns True so the key is consumed.
+ */
+const scrollWorkspace = (
+  workspace: WorkspaceSvg,
+  e: Event,
+  direction: ScrollDirection,
+): boolean => {
+  e.preventDefault();
+
+  const horizontal =
+    direction === ScrollDirection.LEFT || direction === ScrollDirection.RIGHT;
+  const canScroll = horizontal
+    ? workspace.isMovableHorizontally()
+    : workspace.isMovableVertically();
+  if (!canScroll) {
+    scrollFailure(workspace);
+    return true;
+  }
+
+  let deltaX = 0;
+  let deltaY = 0;
+  switch (direction) {
+    case ScrollDirection.LEFT:
+      deltaX = SCROLL_PIXELS;
+      break;
+    case ScrollDirection.RIGHT:
+      deltaX = -SCROLL_PIXELS;
+      break;
+    case ScrollDirection.UP:
+      deltaY = SCROLL_PIXELS;
+      break;
+    case ScrollDirection.DOWN:
+      deltaY = -SCROLL_PIXELS;
+      break;
+  }
+  const oldX = workspace.scrollX;
+  const oldY = workspace.scrollY;
+  workspace.scroll(oldX + deltaX, oldY + deltaY);
+  if (workspace.scrollX === oldX && workspace.scrollY === oldY) {
+    scrollFailure(workspace);
+    return true;
+  }
+  aria.announceDynamicAriaState(Msg[SCROLL_ANNOUNCEMENT_KEYS[direction]]);
+  return true;
+};
+
+/**
+ * Registers keyboard shortcuts to scroll the focused workspace or flyout with
+ * Ctrl/Cmd + arrow keys.
+ */
+export function registerWorkspaceScrollShortcuts() {
+  const shortcuts: KeyboardShortcut[] = [
+    {
+      name: names.SCROLL_LEFT,
+      preconditionFn: canScrollWorkspace,
+      callback: (workspace, e) =>
+        scrollWorkspace(workspace, e, ScrollDirection.LEFT),
+      keyCodes: [CTRL_CMD_LEFT],
+      allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_SCROLL_LEFT'],
+    },
+    {
+      name: names.SCROLL_RIGHT,
+      preconditionFn: canScrollWorkspace,
+      callback: (workspace, e) =>
+        scrollWorkspace(workspace, e, ScrollDirection.RIGHT),
+      keyCodes: [CTRL_CMD_RIGHT],
+      allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_SCROLL_RIGHT'],
+    },
+    {
+      name: names.SCROLL_UP,
+      preconditionFn: canScrollWorkspace,
+      callback: (workspace, e) =>
+        scrollWorkspace(workspace, e, ScrollDirection.UP),
+      keyCodes: [CTRL_CMD_UP],
+      allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_SCROLL_UP'],
+    },
+    {
+      name: names.SCROLL_DOWN,
+      preconditionFn: canScrollWorkspace,
+      callback: (workspace, e) =>
+        scrollWorkspace(workspace, e, ScrollDirection.DOWN),
+      keyCodes: [CTRL_CMD_DOWN],
+      allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_SCROLL_DOWN'],
+    },
+  ];
+
+  for (const shortcut of shortcuts) {
+    ShortcutRegistry.registry.register(shortcut);
+  }
+}
+
+/**
  * Registers all default keyboard shortcut item. This should be called once per
  * instance of KeyboardShortcutRegistry.
  *
@@ -1853,8 +2005,9 @@ export function registerScreenReaderShortcuts() {
 }
 
 /**
- * Registers keyboard shortcuts used to jump between blocks and stacks in the workspace,
- * and between items in the toolbox and flyout.
+ * Registers keyboard shortcuts used to jump between blocks and stacks in the
+ * workspace, between items in the toolbox and flyout, and to scroll the
+ * workspace or flyout.
  * Note these are not registered by default, so call this function to enable them if desired.
  */
 export function registerNavigationShortcuts() {
@@ -1866,6 +2019,7 @@ export function registerNavigationShortcuts() {
   registerJumpLastBlock();
   registerJumpPreviousPage();
   registerJumpNextPage();
+  registerWorkspaceScrollShortcuts();
 }
 
 registerDefaultShortcuts();

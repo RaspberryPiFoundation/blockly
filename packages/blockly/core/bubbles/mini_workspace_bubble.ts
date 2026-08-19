@@ -135,7 +135,7 @@ export class MiniWorkspaceBubble extends Bubble {
       options.moveOptions.drag
     ) {
       throw new Error(
-        'The miniworkspace bubble does not scrolling/moving the workspace',
+        'The miniworkspace bubble does not allow scrolling/moving the workspace',
       );
     }
     if (options.horizontalLayout) {

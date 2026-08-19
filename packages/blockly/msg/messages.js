@@ -1923,6 +1923,33 @@ Blockly.Msg.SHORTCUTS_JUMP_PREVIOUS_PAGE = 'Jump to previous page';
 /// shortcut display text for a shortcut that jumps focus forward one page of items in the toolbox or flyout.
 Blockly.Msg.SHORTCUTS_JUMP_NEXT_PAGE = 'Jump to next page';
 /** @type {string} */
+/// shortcut display text for a shortcut that scrolls the workspace or flyout to the left.
+Blockly.Msg.SHORTCUTS_SCROLL_LEFT = 'Scroll left';
+/** @type {string} */
+/// shortcut display text for a shortcut that scrolls the workspace or flyout to the right.
+Blockly.Msg.SHORTCUTS_SCROLL_RIGHT = 'Scroll right';
+/** @type {string} */
+/// shortcut display text for a shortcut that scrolls the workspace or flyout up.
+Blockly.Msg.SHORTCUTS_SCROLL_UP = 'Scroll up';
+/** @type {string} */
+/// shortcut display text for a shortcut that scrolls the workspace or flyout down.
+Blockly.Msg.SHORTCUTS_SCROLL_DOWN = 'Scroll down';
+/** @type {string} */
+/// ARIA live region message announcing that the workspace or flyout scrolled left.
+Blockly.Msg.ANNOUNCE_SCROLLED_LEFT = 'Scrolled left.';
+/** @type {string} */
+/// ARIA live region message announcing that the workspace or flyout scrolled right.
+Blockly.Msg.ANNOUNCE_SCROLLED_RIGHT = 'Scrolled right.';
+/** @type {string} */
+/// ARIA live region message announcing that the workspace or flyout scrolled up.
+Blockly.Msg.ANNOUNCE_SCROLLED_UP = 'Scrolled up.';
+/** @type {string} */
+/// ARIA live region message announcing that the workspace or flyout scrolled down.
+Blockly.Msg.ANNOUNCE_SCROLLED_DOWN = 'Scrolled down.';
+/** @type {string} */
+/// ARIA live region message announcing that the workspace or flyout cannot scroll further in the requested direction.
+Blockly.Msg.ANNOUNCE_CANT_SCROLL_FURTHER = 'Can\'t scroll further.';
+/** @type {string} */
 /// Message shown to inform users how to move blocks to arbitrary locations
 /// with the keyboard.
 Blockly.Msg.KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT = 'Hold %1 and use arrow keys to move freely, then %2 to accept the position.';

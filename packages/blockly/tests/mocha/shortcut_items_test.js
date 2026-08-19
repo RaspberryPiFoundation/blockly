@@ -2220,6 +2220,10 @@ suite('Keyboard Shortcut Items', function () {
         'jump_to_last_block',
         'jump_to_previous_page',
         'jump_to_next_page',
+        'scroll_left',
+        'scroll_right',
+        'scroll_up',
+        'scroll_down',
       ]) {
         Blockly.ShortcutRegistry.registry.unregister(shortcut);
       }
@@ -2433,5 +2437,115 @@ suite('Keyboard Shortcut Items', function () {
         sinon.assert.notCalled(this.focusNodeSpy);
       });
     });
+  });
+});
+
+suite('Workspace scroll shortcuts', function () {
+  suiteSetup(function () {
+    Blockly.ShortcutItems.registerNavigationShortcuts();
+  });
+
+  suiteTeardown(function () {
+    for (const shortcut of [
+      'jump_to_top_of_stack',
+      'jump_to_bottom_of_stack',
+      'jump_to_block_start',
+      'jump_to_block_end',
+      'jump_to_first_block',
+      'jump_to_last_block',
+      'jump_to_previous_page',
+      'jump_to_next_page',
+      'scroll_left',
+      'scroll_right',
+      'scroll_up',
+      'scroll_down',
+    ]) {
+      Blockly.ShortcutRegistry.registry.unregister(shortcut);
+    }
+  });
+
+  /**
+   * Dispatches Ctrl/Cmd + the given arrow key and flushes timers.
+   *
+   * @param {!Blockly.WorkspaceSvg} workspace The workspace whose injection
+   *     div receives the event.
+   * @param {number} keyCode Arrow key code.
+   */
+  function pressScroll(workspace, keyCode) {
+    workspace
+      .getInjectionDiv()
+      .dispatchEvent(
+        createKeyDownEvent(keyCode, [Blockly.utils.KeyCodes.CTRL_CMD]),
+      );
+    this.clock.runAll();
+  }
+  setup(function () {
+    sharedTestSetup.call(this);
+    this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
+      move: {scrollbars: true},
+    });
+    this.liveRegion = document.getElementById('blocklyAriaAnnounce');
+    this.workspace.scrollCenter();
+    Blockly.getFocusManager().focusNode(this.workspace);
+  });
+
+  teardown(function () {
+    sharedTestTeardown.call(this);
+  });
+
+  test('Cmd+Right scrolls the workspace to the right', function () {
+    const startX = this.workspace.scrollX;
+    pressScroll.call(this, this.workspace, Blockly.utils.KeyCodes.RIGHT);
+    assert.isBelow(this.workspace.scrollX, startX);
+  });
+
+  test('Cmd+Left scrolls the workspace to the left', function () {
+    const startX = this.workspace.scrollX;
+    pressScroll.call(this, this.workspace, Blockly.utils.KeyCodes.LEFT);
+    assert.isAbove(this.workspace.scrollX, startX);
+  });
+
+  test('Cmd+Down scrolls the workspace down', function () {
+    const startY = this.workspace.scrollY;
+    pressScroll.call(this, this.workspace, Blockly.utils.KeyCodes.DOWN);
+    assert.isBelow(this.workspace.scrollY, startY);
+  });
+
+  test('Cmd+Up scrolls the workspace up', function () {
+    const startY = this.workspace.scrollY;
+    pressScroll.call(this, this.workspace, Blockly.utils.KeyCodes.UP);
+    assert.isAbove(this.workspace.scrollY, startY);
+  });
+
+  test('Announces when the workspace is scrolled', function () {
+    const startX = this.workspace.scrollX;
+    pressScroll.call(this, this.workspace, Blockly.utils.KeyCodes.RIGHT);
+    assert.include(this.liveRegion.textContent, 'Scrolled right.');
+    assert.isBelow(this.workspace.scrollX, startX);
+  });
+
+  test('Does not scroll past the edge', function () {
+    const metrics = this.workspace.getMetrics();
+    this.workspace.scroll(-metrics.scrollLeft, this.workspace.scrollY);
+    const startX = this.workspace.scrollX;
+    pressScroll.call(this, this.workspace, Blockly.utils.KeyCodes.LEFT);
+    assert.equal(this.workspace.scrollX, startX);
+    assert.include(this.liveRegion.textContent, "Can't scroll further.");
+  });
+
+  test('Does not scroll while a keyboard move is in progress', function () {
+    const block = this.workspace.newBlock('logic_boolean');
+    block.initSvg();
+    block.render();
+    Blockly.getFocusManager().focusNode(block);
+    this.workspace
+      .getInjectionDiv()
+      .dispatchEvent(createKeyDownEvent(Blockly.utils.KeyCodes.M));
+    assert.isTrue(Blockly.KeyboardMover.mover.isMoving());
+    const startX = this.workspace.scrollX;
+    pressScroll.call(this, this.workspace, Blockly.utils.KeyCodes.RIGHT);
+    assert.equal(this.workspace.scrollX, startX);
+    Blockly.KeyboardMover.mover.abortMove();
   });
 });
