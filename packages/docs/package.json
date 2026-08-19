@@ -15,7 +15,11 @@
         ]
       },
       "build": {
-        "outputs": ["build", ".docusaurus", "node_modules/.cache"],
+        "outputs": [
+          "{projectRoot}/build", 
+          "{projectRoot}/.docusaurus", 
+          "{projectRoot}/node_modules/.cache"
+        ],
         "dependsOn": [
           {
             "projects": "blockly",
