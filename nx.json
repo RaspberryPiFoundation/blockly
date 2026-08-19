@@ -26,10 +26,6 @@
       "outputs": ["{projectRoot}/dist"],
       "cache": true
     },
-    "docusaurus": {
-      "dependsOn": ["^docusaurus"],
-      "cache": true
-    },
     "docs": {
       "outputs": ["{projectRoot}/../docs/docs/reference"],
       "cache": true
@@ -111,6 +107,9 @@
     },
     "prepack": {
       "cache": true
+    },
+    "start": {
+      "continuous": true
     }
   },
   "neverConnectToCloud": true,

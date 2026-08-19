@@ -15,6 +15,7 @@
         ]
       },
       "build": {
+        "outputs": ["build", ".docusaurus", "node_modules/.cache"],
         "dependsOn": [
           {
             "projects": "blockly",
@@ -26,7 +27,7 @@
   },
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "docusaurus start",
+    "start": "npx nx run docusaurus start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
