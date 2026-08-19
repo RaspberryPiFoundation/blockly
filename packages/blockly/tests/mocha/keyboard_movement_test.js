@@ -547,6 +547,23 @@ suite('Keyboard-driven movement', function () {
       this.modifiers = [Blockly.utils.KeyCodes.CTRL_CMD];
     });
 
+    test('deletes blocks dragged from the flyout when a drag is reverted', function () {
+      // One block is on the workspace to start.
+      let blocks = this.workspace.getTopBlocks();
+      assert.equal(blocks.length, 1);
+
+      // Starting a move from the toolbox creates a new block on the main workspace.
+      focusToolbox(this.workspace);
+      startMove(this.workspace);
+      blocks = this.workspace.getTopBlocks();
+      assert.equal(blocks.length, 2);
+
+      // Canceling the move originating from the toolbox deletes the new block.
+      cancelMove(this.workspace);
+      blocks = this.workspace.getTopBlocks();
+      assert.equal(blocks.length, 1);
+    });
+
     suite('in unconstrained mode', function () {
       testMovingUp();
       testMovingDown();
