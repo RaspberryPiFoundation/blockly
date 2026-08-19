@@ -25,16 +25,16 @@ jobs:
           script: |
             try {
               if (context.payload.pull_request === undefined) {
-              throw new Error("Can't get pull_request payload. " +
-                              'Check a request reviewer event was triggered.');
+                throw new Error("Can't get pull_request payload. Check that " +
+                                "a request reviewer event was triggered.");
+              }
+              const {number: issue_number} = context.payload.pull_request;
+              await github.rest.issues.addAssignees({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue_number,
+                assignees: [context.payload.requested_reviewer.login]
+              });
+            } catch (error) {
+              core.setFailed(error.message);
             }
-            const {number:issue_number} = context.payload.pull_request;
-            await github.rest.issues.addAssignees({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue_number,
-              assignees: [context.payload.requested_reviewer.login]
-            });
-          } catch (error) {
-            core.setFailed(error.message);
-          }
