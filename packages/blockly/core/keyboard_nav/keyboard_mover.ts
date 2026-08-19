@@ -75,6 +75,9 @@ export class KeyboardMover {
 
   static mover = new KeyboardMover();
 
+  /** Whether or not something is currently being moved. */
+  private moving = false;
+
   // Constructor is private to keep this class a singleton.
   private constructor() {}
 
@@ -94,7 +97,7 @@ export class KeyboardMover {
    * @returns True iff a workspace element is being moved.
    */
   isMoving() {
-    return !!this.draggable;
+    return this.moving;
   }
 
   /**
@@ -106,7 +109,7 @@ export class KeyboardMover {
    */
   startMove(draggable: IDraggable, event?: KeyboardEvent) {
     if (!this.canMove(draggable) || this.isMoving()) return false;
-
+    this.moving = true;
     const DraggerClass = registry.getClassFromOptions(
       registry.Type.BLOCK_DRAGGER,
       draggable.workspace.options,
@@ -354,6 +357,7 @@ export class KeyboardMover {
     this.dragger = undefined;
     this.startLocation = undefined;
     this.totalDelta = new Coordinate(0, 0);
+    this.moving = false;
   }
 
   /**
