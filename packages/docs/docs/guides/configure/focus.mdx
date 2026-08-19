@@ -271,8 +271,8 @@ in an exception.
 
 If you write a custom component from scratch, you'll need to implement the focus
 interfaces yourself. See the reference documentation for
-[`IFocusableTree`](/reference/blockly.ifocusabletree) and
-[`IFocusableNode`](/reference/blockly.ifocusablenode) more
+[`IFocusableTree`](/reference/blockly.ifocusabletree_interface) and
+[`IFocusableNode`](/reference/blockly.ifocusablenode_interface) more
 information.
 
 After you have implemented your class, test it against the keyboard navigation
@@ -367,7 +367,7 @@ manager just changes the actively focused node to passive focus.)
 
 Positionables are components that are positioned on top of the workspace and
 implement
-[`IPositionable`](/reference/blockly.ipositionable).
+[`IPositionable`](/reference/blockly.ipositionable_interface).
 Examples are the trashcan and the backpack in the [backpack
 plugin](https://www.npmjs.com/package/@blockly/workspace-backpack).
 Built-in positionables are integrated with the focus system, but if you create

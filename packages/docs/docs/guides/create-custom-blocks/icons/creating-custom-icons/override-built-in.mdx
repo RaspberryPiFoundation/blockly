@@ -41,7 +41,7 @@ class MyCommentIcon extends Blockly.icons.CommentIcon {
 
 To customize your icon, you can override methods in `ICommentIcon` (described in
 the following sections) and
-[`Blockly.icons.Icon`](/reference/blockly.icons.icon)
+[`Blockly.icons.Icon`](/reference/blockly.icons_namespace.icon_class)
 (described in [Create custom
 icons](/guides/create-custom-blocks/icons/creating-custom-icons/basic-implementation)).
 Do not override `getType`, which must return `Blockly.icons.IconType.COMMENT`.
@@ -157,9 +157,9 @@ comment icon, such as when the user clicks "Add Comment" on the context menu or
 you call `myBlock.setCommentText()`.
 
 [ICommentIcon]: /reference/blockly.icommenticon_interface
-[IHasBubble]: /reference/blockly.ihasbubble
+[IHasBubble]: /reference/blockly.ihasbubble_interface
 [use-bubbles]: /guides/create-custom-blocks/icons/creating-custom-icons/use-bubbles
-[ISerializable]: /reference/blockly.iserializable
-[CommentState]: /reference/blockly.icons.commentstate
+[ISerializable]: /reference/blockly.iserializable_interface
+[CommentState]: /reference/blockly.icons_namespace.commentstate_interface
 [icon-serialization]: /guides/create-custom-blocks/icons/creating-custom-icons/save-and-load
 [comment-icon-image]: /images/block-icons/comment-icon-outline.png
