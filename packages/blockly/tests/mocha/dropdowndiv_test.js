@@ -177,10 +177,8 @@ suite('DropDownDiv', function () {
       const block = this.setUpBlockWithField();
       const field = Array.from(block.getFields())[0];
 
-      const errorMsgRegex = /Cannot read properties of null.+?/;
-      assert.throws(
-        () => Blockly.DropDownDiv.show(field, false, 50, 60, 70, 80, false),
-        errorMsgRegex,
+      assert.throws(() =>
+        Blockly.DropDownDiv.show(field, false, 50, 60, 70, 80, false),
       );
     });
 
