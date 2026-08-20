@@ -14,7 +14,7 @@
 
 module.exports = {
   ui: 'tdd',
-  reporter: 'spec',
+  reporter: './tests/mocha/quiet_reporter.cjs',
   parallel: true,
   require: ['./tests/mocha/node-setup.mjs'],
   timeout: 10000,
