@@ -10,6 +10,14 @@
           "^build",
           {
             "projects": "blockly",
+            "target": "build"
+          },
+          {
+            "projects": "blockly",
+            "target": "package"
+          },
+          {
+            "projects": "blockly",
             "target": "docs"
           }
         ]
@@ -31,7 +39,7 @@
   },
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "npx nx run docusaurus start",
+    "start": "npx nx run build && docusaurus start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
