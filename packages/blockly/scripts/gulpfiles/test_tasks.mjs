@@ -173,11 +173,6 @@ function mocha() {
 }
 
 /**
- * Run Mocha tests inside a browser and keep the browser open upon completion.
- * @return {Promise} Asynchronous result.
- */
-
-/**
  * Helper method for comparison file.
  * @param {string} file1 First target file.
  * @param {string} file2 Second target file.
