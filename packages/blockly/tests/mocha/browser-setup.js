@@ -22,6 +22,7 @@ import {config as chaiConfig} from 'chai';
 import sinon from 'sinon';
 import 'mocha/mocha.css';
 import {installFixtures} from './test_helpers/dom_fixtures.js';
+import '@blockly/block-test';
 
 chaiConfig.showDiff = false;
 

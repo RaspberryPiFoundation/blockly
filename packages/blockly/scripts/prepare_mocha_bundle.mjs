@@ -34,17 +34,10 @@ async function writeEntryPoint() {
 }
 
 await fs.mkdir(OUT_DIR, {recursive: true});
+// Resolve and copy Mocha's prebuilt browser distribution.
+await fs.copyFile(
+  require.resolve('mocha/mocha.js'),
+  path.join(OUT_DIR, 'mocha.js'),
+);
+// Write out the esbuild entrypoint that imports the test files.
 await writeEntryPoint();
-
-// Copy files loaded directly by index.html into the build/test directory,
-// resolving their paths in the process.
-const VENDORED_SCRIPTS = [
-  // Prebuilt browser bundle.
-  {from: 'mocha/mocha.js', to: 'mocha.js'},
-  // Loaded directly to avoid the two-Blockly problem.
-  {from: '@blockly/block-test/dist/index.js', to: 'block-test.js'},
-];
-
-for (const {from, to} of VENDORED_SCRIPTS) {
-  await fs.copyFile(require.resolve(from), path.join(OUT_DIR, to));
-}
