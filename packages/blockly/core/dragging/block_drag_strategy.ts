@@ -93,6 +93,15 @@ export class BlockDragStrategy implements IDragStrategy {
   private originalEventGroup = '';
 
   /**
+   * Half of the connection of the last announced candidate, or null if that
+   * announcement was for the workspace. Undefined if nothing has been
+   * announced yet this drag.
+   */
+  private lastAnnouncedLocal: RenderedConnection | null | undefined = undefined;
+  private lastAnnouncedNeighbour: RenderedConnection | null | undefined =
+    undefined;
+
+  /**
    * Map from block IDs to reason(s) why it was disabled, used to restore
    * disabled state post-drag.
    */
@@ -277,6 +286,21 @@ export class BlockDragStrategy implements IDragStrategy {
       announcementTemplate = Msg['ANNOUNCE_MOVE_WORKSPACE'];
       announcement = announcementTemplate.replace('%1', blockLabel);
     }
+
+    // Skip only when the connection target is unchanged, so identically
+    // worded moves to different inputs (e.g. empty else-if slots) still get read.
+    const local = this.connectionCandidate?.local ?? null;
+    const neighbour = this.connectionCandidate?.neighbour ?? null;
+    if (
+      this.lastAnnouncedLocal !== undefined &&
+      local === this.lastAnnouncedLocal &&
+      neighbour === this.lastAnnouncedNeighbour
+    ) {
+      return;
+    }
+    this.lastAnnouncedLocal = local;
+    this.lastAnnouncedNeighbour = neighbour;
+
     // Collapse whitespace from unused template substitutions.
     aria.announceDynamicAriaState(announcement.replace(/\s+/g, ' '));
   }
@@ -319,6 +343,8 @@ export class BlockDragStrategy implements IDragStrategy {
     this.block.workspace.recordDragTargets();
 
     this.dragging = true;
+    this.lastAnnouncedLocal = undefined;
+    this.lastAnnouncedNeighbour = undefined;
     this.fireDragStartEvent();
 
     this.startLoc = this.block.getRelativeToSurfaceXY();

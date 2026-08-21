@@ -121,6 +121,30 @@ suite('ARIA', function () {
       );
     });
 
+    test('repeated drags with unchanged state are not re-announced', function () {
+      const block = this.workspace.newBlock('basic_block');
+      block.initSvg();
+      block.render();
+
+      const startLoc = block.getRelativeToSurfaceXY();
+      block.startDrag();
+      this.clock.tick(11);
+      const initialAnnouncementText = this.liveRegion.textContent;
+      assert.equal(initialAnnouncementText, 'Moving default on workspace.');
+
+      block.drag(new Blockly.utils.Coordinate(startLoc.x + 20, startLoc.y));
+      block.drag(new Blockly.utils.Coordinate(startLoc.x + 40, startLoc.y));
+      block.drag(new Blockly.utils.Coordinate(startLoc.x + 60, startLoc.y));
+      this.clock.tick(11);
+
+      // Subsequent announcements during a move will drop the getStackBlocksCountLabel()
+      // and toggle a non-breaking space at the end. If the move candidate hasn't
+      // changed, the live region shouldn't be udpated.
+      assert.equal(this.liveRegion.textContent, initialAnnouncementText);
+
+      block.endDrag(undefined, Blockly.DragDisposition.COMMIT);
+    });
+
     test('Uses maximal assertiveness when coalescing', function () {
       Blockly.utils.aria.announceDynamicAriaState('First message', {
         assertiveness: Blockly.utils.aria.LiveRegionAssertiveness.OFF,
