@@ -67,7 +67,6 @@
     "package": "gulp pack",
     "prepareDemos": "gulp prepareDemos",
     "start": "npm run package && npx nx run @blockly/dev-tools:build && concurrently -n watch,devtools-server,core-server \"npx nx watch --projects=@blockly/dev-tools --includeDependencies -- npm run build\" \"npx nx run @blockly/dev-tools:start --no-open\" \"http-server ./ -p 8081 -s -o /tests/playground.html -c-1\"",
-    "start:advanced": "npm run package && npx nx run @blockly/dev-tools:build && concurrently -n server,watch \"npx nx run @blockly/dev-tools:start\" \"npx nx watch --projects=@blockly/dev-tools --includeDependencies -- npm run build\"",
     "tsc": "gulp tsc",
     "test": "gulp test",
     "test:browser": "npx mocha --config tests/browser/.mocharc.js",
