@@ -13,11 +13,10 @@ import asyncDone from 'async-done';
 import {spawnSync} from 'child_process';
 import * as fs from 'fs';
 import * as gulp from 'gulp';
-import gzip from 'gulp-gzip';
 import * as path from 'path';
 import {rimraf} from 'rimraf';
 
-import {RELEASE_DIR, TEST_TSC_OUTPUT_DIR} from './config.mjs';
+import {TEST_TSC_OUTPUT_DIR} from './config.mjs';
 
 const OUTPUT_DIR = 'build/generators';
 const GOLDEN_DIR = 'tests/generators/golden';
