@@ -1165,7 +1165,7 @@ export class ConstantProvider {
 
       // Fields.
       `${selector} .blocklyText {`,
-        `fill: #ff0;`,
+        `fill: #fff;`,
       `}`,
       `${selector} .blocklyNonEditableField>rect,`,
       `${selector} .blocklyEditableField>rect {`,
