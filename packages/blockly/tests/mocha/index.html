@@ -20,7 +20,15 @@
     <script src="../../build/msg/en.js"></script>
     <script src="../../build/tests/block-test.js"></script>
     <script>
-      mocha.run();
+      // Hot reload with a 1 second debounce.
+      let pending;
+      new EventSource('/esbuild').addEventListener('change', (event) => {
+        const {updated} = JSON.parse(event.data);
+        // Ignore sourcemap changes.
+        if (!updated.some((path) => path.endsWith('.js'))) return;
+        clearTimeout(pending);
+        pending = setTimeout(() => location.reload(), 1000);
+      });
     </script>
   </body>
 </html>
