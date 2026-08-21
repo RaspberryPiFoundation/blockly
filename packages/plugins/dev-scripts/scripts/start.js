@@ -34,6 +34,7 @@ const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
 
 const packageJson = require(resolveApp('package.json'));
 const isTypescript = fs.existsSync(resolveApp('tsconfig.json'));
+const options = process.argv.slice(2);
 
 console.log(`Running start for ${packageJson.name}`);
 
@@ -177,6 +178,11 @@ compiler.hooks.done.tap('done', async (stats) => {
 
 // Read the webpack devServer configuration.
 const serverConfig = webpackDevServerConfig();
+
+// If the --no-open option was passed in, respect it.
+if(options.includes('--no-open')) {
+  serverConfig.open = false;
+}
 
 // Start the dev server.
 const devServer = new WebpackDevServer(serverConfig, compiler);
