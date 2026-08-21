@@ -180,7 +180,7 @@ compiler.hooks.done.tap('done', async (stats) => {
 const serverConfig = webpackDevServerConfig();
 
 // If the --no-open option was passed in, respect it.
-if(options.includes('--no-open')) {
+if (options.includes('--no-open')) {
   serverConfig.open = false;
 }
 
