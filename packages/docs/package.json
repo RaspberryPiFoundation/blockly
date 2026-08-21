@@ -24,8 +24,8 @@
       },
       "build": {
         "outputs": [
-          "{projectRoot}/build", 
-          "{projectRoot}/.docusaurus", 
+          "{projectRoot}/build",
+          "{projectRoot}/.docusaurus",
           "{projectRoot}/node_modules/.cache"
         ],
         "dependsOn": [
@@ -52,7 +52,6 @@
   },
   "dependencies": {
     "@docusaurus/core": "3.10.2",
-    "@docusaurus/plugin-client-redirects": "3.10.2",
     "@docusaurus/preset-classic": "3.10.2",
     "@mdx-js/react": "^3.1.1",
     "clsx": "^2.1.1",
