@@ -27,10 +27,15 @@
     "directory": "dist"
   },
   "nx": {
-    "implicitDependencies": ["!@blockly/block-test"],
+    "implicitDependencies": [
+      "!@blockly/block-test"
+    ],
     "targets": {
       "build": {
-        "dependsOn": ["package", "^build"]
+        "dependsOn": [
+          "package",
+          "^build"
+        ]
       },
       "test": {
         "dependsOn": [
@@ -42,10 +47,13 @@
             "projects": "@blockly/dev-tools",
             "target": "build"
           }
-        ] 
+        ]
       },
       "docs": {
-        "dependsOn": ["package", "^build"]
+        "dependsOn": [
+          "package",
+          "^build"
+        ]
       }
     }
   },
@@ -155,7 +163,7 @@
     "markdown-tables-to-json": "^0.1.7",
     "mocha": "^11.7.6",
     "patch-package": "^8.0.1",
-    "puppeteer-core": "^25.3.0",
+    "puppeteer-core": "^25.8.0",
     "readline-sync": "^1.4.10",
     "rimraf": "^6.1.3",
     "sinon": "^22.1.0",
