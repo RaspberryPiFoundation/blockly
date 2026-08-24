@@ -149,8 +149,12 @@ export class BlockDragStrategy implements IDragStrategy {
 
     if (this.moveMode !== MoveMode.CONSTRAINED) return;
     const workspace = newBlock.workspace;
-    const initialY = this.WORKSPACE_MARGIN;
-    const initialX = this.WORKSPACE_MARGIN;
+    const metrics = workspace.getMetricsManager().getViewMetrics(true);
+    const initialY = metrics.top + this.WORKSPACE_MARGIN;
+    const initialX = workspace.RTL
+      ? metrics.left + metrics.width - this.WORKSPACE_MARGIN
+      : metrics.left + this.WORKSPACE_MARGIN;
+
     // How far apart the new block should be placed horizontally from an
     // existing one.
     const xSpacing = 80;
@@ -172,10 +176,8 @@ export class BlockDragStrategy implements IDragStrategy {
       );
     });
 
-    const toolboxWidth = workspace.getToolbox()?.getWidth();
-    const workspaceWidth =
-      workspace.getParentSvg().clientWidth - (toolboxWidth ?? 0);
-    const workspaceHeight = workspace.getParentSvg().clientHeight;
+    const workspaceWidth = metrics.width;
+    const workspaceHeight = metrics.height;
     const {height: newBlockHeight, width: newBlockWidth} =
       newBlock.getHeightWidth();
 
@@ -198,31 +200,39 @@ export class BlockDragStrategy implements IDragStrategy {
     // Make the initial movement of shifting the block to its best possible
     // position.
     let boundingRect = newBlock.getBoundingRectangle();
-    newBlock.moveBy(cursorX - boundingRect.left, cursorY - boundingRect.top, [
-      'cleanup',
-    ]);
+    newBlock.moveBy(
+      workspace.RTL
+        ? cursorX - boundingRect.right
+        : cursorX - boundingRect.left,
+      cursorY - boundingRect.top,
+      ['cleanup'],
+    );
 
     boundingRect = newBlock.getBoundingRectangle();
     let conflictingRect = getNextIntersectingBlock(boundingRect);
     while (conflictingRect != null) {
-      const newCursorX =
-        conflictingRect.left + conflictingRect.getWidth() + xSpacing;
+      const newCursorX = workspace.RTL
+        ? conflictingRect.left - xSpacing
+        : conflictingRect.right + xSpacing;
       const newCursorY =
         conflictingRect.top + conflictingRect.getHeight() + minBlockHeight;
-      if (newCursorX + newBlockWidth <= workspaceWidth) {
+      if (
+        workspace.RTL
+          ? newCursorX - newBlockWidth >= metrics.left
+          : newCursorX + newBlockWidth <= metrics.left + metrics.width
+      ) {
         cursorX = newCursorX;
-      } else if (newCursorY + newBlockHeight <= workspaceHeight) {
-        cursorY = newCursorY;
-        cursorX = initialX;
       } else {
-        // Off screen, but new blocks will be selected which will scroll them
-        // into view.
         cursorY = newCursorY;
         cursorX = initialX;
       }
-      newBlock.moveBy(cursorX - boundingRect.left, cursorY - boundingRect.top, [
-        'cleanup',
-      ]);
+      newBlock.moveBy(
+        workspace.RTL
+          ? cursorX - boundingRect.right
+          : cursorX - boundingRect.left,
+        cursorY - boundingRect.top,
+        ['cleanup'],
+      );
       boundingRect = newBlock.getBoundingRectangle();
       conflictingRect = getNextIntersectingBlock(boundingRect);
     }
