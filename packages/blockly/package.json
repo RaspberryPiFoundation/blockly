@@ -27,10 +27,15 @@
     "directory": "dist"
   },
   "nx": {
-    "implicitDependencies": ["!@blockly/block-test"],
+    "implicitDependencies": [
+      "!@blockly/block-test"
+    ],
     "targets": {
       "build": {
-        "dependsOn": ["package", "^build"]
+        "dependsOn": [
+          "package",
+          "^build"
+        ]
       },
       "test": {
         "dependsOn": [
@@ -42,10 +47,13 @@
             "projects": "@blockly/dev-tools",
             "target": "build"
           }
-        ] 
+        ]
       },
       "docs": {
-        "dependsOn": ["package", "^build"]
+        "dependsOn": [
+          "package",
+          "^build"
+        ]
       }
     }
   },
@@ -66,8 +74,7 @@
     "minify": "gulp minify",
     "package": "gulp pack",
     "prepareDemos": "gulp prepareDemos",
-    "start": "npm run build && concurrently -n tsc,server \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"http-server ./ -s -o /tests/playground.html -c-1\"",
-    "start:advanced": "npm run package && npx nx run @blockly/dev-tools:build && concurrently  -n server,watch \"npx nx run @blockly/dev-tools:start\" \"npx nx watch --projects=@blockly/dev-tools --includeDependencies -- npm run build\"",
+    "start": "npm run package && npx nx run @blockly/dev-tools:build && concurrently -n watch,devtools-server,core-server \"npx nx watch --projects=@blockly/dev-tools --includeDependencies -- npm run build\" \"npx nx run @blockly/dev-tools:start --no-open\" \"http-server ./ -p 8081 -s -o /tests/playground.html -c-1\"",
     "tsc": "gulp tsc",
     "test": "gulp test",
     "test:browser": "npx mocha --config tests/browser/.mocharc.js",
@@ -150,7 +157,7 @@
     "jsdom": "30.0.1",
     "json5": "^2.2.3",
     "mocha": "^11.7.6",
-    "puppeteer-core": "^25.3.0",
+    "puppeteer-core": "^25.8.0",
     "rimraf": "^6.1.3",
     "sinon": "^22.1.0",
     "typescript": "^6.0.3",
