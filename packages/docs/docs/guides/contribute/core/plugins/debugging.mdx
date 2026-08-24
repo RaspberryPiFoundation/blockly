@@ -1,50 +1,37 @@
 ---
-description: How to test changes in blockly-samples that depend on changes in Blockly core.
+description: How to test changes in plugins that depend on changes in Blockly core.
 title: Debug plugins
 image: images/blockly_banner.png
 ---
 
 # Debug plugins
 
-TODO: This should be able to be deleted once NX is fully set up. Leaving here for now, because there could still maybe be special instructions after nx is set up 
+When debugging a plugin, you will need to follow a slightly different set of steps
+depending on where you have made changes.
 
-Sometimes when developing a plugin in blockly-samples, you'll need to make
-corresponding changes in Blockly itself. Most plugins are set up to fetch
-Blockly from the npm registry, so you'd only be able to use code that has
-already been released on npm. This would make debugging your Blockly changes
-difficult. When you want to make and test changes in both blockly and blockly-
-samples, you can use `npm link` to test your unreleased changes together.
+1. [You have only made changes to a plugin.](#making-changes-to-a-plugin)
+2. [You have made changes to a plugin which depend on corresponding changes to 
+Blockly core.](#making-changes-to-a-plugin-and-to-blockly-core)
 
-## npm link
+## Making changes to a plugin
 
-You can tell npm to use a package from your machine instead of fetching the
-package from the npm registry. Using this method, you should have access to
-sourcemaps that make debugging blockly easier. You can use this method with
-changes in core that haven't yet been pushed to GitHub.
+1. Run `npm install` from the root of the [blockly repo](https://github.com/RaspberryPiFoundation/blockly).
+1. Navigate to your plugin's directory (e.g. `cd /packages/plugins/my-favorite-plugin).
+1. Run `npm start` in the plugin's directory.
 
-1.  In your fork of blockly:
+## Making changes to a plugin and to blockly core
 
-    ```shell
-    $ npm run package
-    $ cd dist
-    $ npm link
-    ```
+Sometimes when developing a plugin for blockly, you'll need to make 
+corresponding changes in Blockly core (`/packages/blockly/`). To ensure that 
+your plugin is able to use the changes you've made in core Blockly, you should 
+first build blockly.
 
-    These steps build core Blockly, package it, then create a symlink to the
-    packaged files.
+1. Run `npm ci` from the root of the [blockly repo](https://github.com/RaspberryPiFoundation/blockly).
+1. Run `npm run build` from the root of the [blockly repo](https://github.com/RaspberryPiFoundation/blockly).
+1. Navigate to your plugin's directory (e.g. `cd /packages/plugins/my-favorite-plugin).
+1. Run `npm start` in the plugin's directory.
 
-1.  In your fork of blockly-samples, at root:
-
-    ```shell
-    $ npm link blockly
-    ```
-
-    This step tells npm to look for the symlink you created earlier instead of
-    fetching the package from npm.
-
-1.  `npm run start` from the plugin's directory to test your plugin.
-
-When you make changes in core, you'll have to rebuild and repackage it.
-
-When you're finished testing, run `npm ci` at the root level of blockly-samples
-to reset the state of your repository.
+:::tip
+If you make additional changes to Blockly core, you'll need to repeat all of 
+these steps.
+:::
