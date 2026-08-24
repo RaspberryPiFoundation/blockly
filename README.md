@@ -37,7 +37,7 @@ npm install blockly
 
 We have a number of [examples](https://github.com/raspberrypifoundation/blockly-samples/tree/main/examples) which demonstrate various techniques to include and extend the Blockly library. These examples can be found in another repository called [blockly-samples](https://github.com/raspberrypifoundation/blockly-samples).
 
-### Plugins 
+### Plugins
 
 A plugin is a self-contained piece of code that adds functionality to Blockly. Plugins can add fields, define themes, create renderers, and much more. For more information, see the [Plugins documentation](https://docs.blockly.com/guides/programming/plugin_overview/).
 
