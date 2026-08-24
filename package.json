@@ -23,7 +23,6 @@
   "devDependencies": {
     "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.0.2",
-    "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
     "@nx/js": "^23.1.0",
     "conventional-changelog-conventionalcommits": "^9.3.1",
@@ -37,8 +36,10 @@
     "globals": "^17.6.0",
     "lerna": "^9.0.7",
     "nx": "23.1.1",
+    "patch-package": "^8.0.1",
     "prettier": "3.9.5",
-    "prettier-plugin-organize-imports": "^4.3.0"
+    "prettier-plugin-organize-imports": "^4.3.0",
+    "typescript-eslint": "^8.66.0"
   },
   "scripts": {
     "test": "npx nx run-many -t test --exclude=blockly && npx nx run blockly:test",
