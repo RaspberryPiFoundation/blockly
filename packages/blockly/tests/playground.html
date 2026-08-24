@@ -95,6 +95,11 @@
         addEventHandlers();
 
         document.querySelector('#version').innerText = Blockly.VERSION;
+
+        // If we're running locally, display the Advanced Playground link
+        if (window.location.href.includes('127.0.0.1') || window.location.href.includes('localhost')) {
+          document.querySelector('.advancedPlayground').style.display = 'inline';
+        }
       }
 
       /**
@@ -506,6 +511,10 @@
         font-family: monospace;
       }
 
+      .advancedPlayground {
+        display: none;
+      }
+
       .ioLabel > .blocklyFlyoutLabelText {
         font-style: italic;
       }
@@ -535,7 +544,7 @@
     <p>
       <input id="show" type="button" value="Show" /> -
       <input id="hide" type="button" value="Hide" /> -
-      <a href="http://localhost:8080/">Advanced</a> -
+      <span class="advancedPlayground"><a href="http://localhost:8080/">Advanced</a> -</span>
       <a href="playgrounds/web_component.html">Web Component</a> -
       <a href="multi_playground.html">Multi Playground</a>
     </p>
