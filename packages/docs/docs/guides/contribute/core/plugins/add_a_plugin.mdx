@@ -56,13 +56,12 @@ First party plugins **must** meet these requirements:
   an exemption by the Blockly team.
   - Overriding package functions on a subclass that you define is allowed.
   - If you want an exemption, ask us in an issue on blockly.
-- Have tests.
-TODO 
+- Have tests. 
 
 ## The process
 
-Plugins go through four stages: [suggestion](#suggestion),
-[discussion](#discussion), [implementation](#implementation), and
+Plugins go through three stages: [suggestion](#suggestion),
+ [implementation](#implementation), and
 [publishing](#publishing).
 
 ## Suggestion
@@ -82,37 +81,27 @@ include:
 - An explanation of why it should be a first-party plugin rather than a
   third-party plugin.
 
-The Blockly team reviews suggestions as they come in and either closes the issue
-or agrees that it would be a good first-party plugin.
-
-## Discussion
-
-Next, a plugin goes into the **discussion** phase. This phase generally occurs 
-on the GitHub issue, and includes:
-
-- Clarification of the desired functionality and the plugin's API.
-- Planning the implementation steps and tests.
-- Discussion of API changes in core Blockly.
-- Plugin naming, based on our [naming
-  conventions](/guides/contribute/samples/naming).
-- Confirming all [first party criteria](#first-party-criteria) will be met.
+The Blockly team reviews suggestions as they come in. On the GitHub issue, the 
+Blockly team will: 
+- Clarify the desired functionality of the plugin
+- Plan implementation steps and tests
+- Discuss API changes in core Blockly
 
 During discussion we may decide that a plugin should be a third-party plugin,
 and not be published under the `@blockly` scope. In that case we will explain
 why and close the issue.
 
-When discussion is complete a Blockly team member notes that it is ready to be
-implemented.
-
 ## Implementation
+
+Once a Blockly team member notes that the plugin is ready, implementation will 
+begin. 
 
 **Implementation** steps include:
 
 - Running `npx @blockly/create-package` to set up the plugin and its directory
   from a template. [Learn
   more...](https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/dev-create)
-- Implementing core logic for the plugin.
-- Implementing a UI, if needed.
+- Implementing the plugin.
 - Testing the plugin, using Mocha.
 - Documenting the plugin, including the `README`.
 
@@ -120,9 +109,9 @@ If a suggested plugin has been approved for implementation and you would like to
 work on it, comment on the issue and ask if it's still open for contributions.
 
 Implementation may be done by multiple contributors in parallel. You may
-implement a plugin collaboratively on your own fork, or through pull requests
-against this repository. If you want to collaborate on a plugin in this
-repository, ask the Blockly team to create a feature branch for you.
+implement a plugin collaboratively on your own fork, or through pull requests. 
+If you want to collaborate on a plugin, ask the Blockly team to create a feature 
+branch for you.
 
 Plugins should be added to the [`gh-pages/_index.html`](https://github.com/RaspberryPiFoundation/blockly-samples/blob/main/gh-pages/_index.html)
 file in the `main` branch of blockly-samples. This will cause them to appear
@@ -152,4 +141,5 @@ version numbers.
 Plugins that are not ready for publishing should be marked `private` in their
 `package.json`. 
 
-The Plugins site is also updated whenever plugins are published.
+The [plugins site](https://raspberrypifoundation.github.io/blockly-samples/index.html)
+will be updated whenever plugins are published.
