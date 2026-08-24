@@ -471,11 +471,12 @@ export class WorkspaceSearch implements Blockly.IPositionable {
    */
   open() {
     this.setVisible(true);
-    this.inputElement?.focus();
-    this.inputElement?.select();
-    if (this.searchText) {
-      this.searchAndHighlight(this.searchText);
+    if (this.inputElement) {
+      this.inputElement.value = this.searchText;
+      this.inputElement.focus();
+      this.inputElement.select();
     }
+    this.searchAndHighlight(this.searchText);
   }
 
   /**

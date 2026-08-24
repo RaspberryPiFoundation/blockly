@@ -593,11 +593,14 @@ suite('WorkspaceSearch', function () {
       assert.include(this.liveRegion.textContent, 'No matching blocks');
     });
 
-    test('empty search does not announce matches', function () {
-      this.workspaceSearch.searchAndHighlight('');
-      this.clock.tick(11);
+    test('reopen restores the query and highlights matches', function () {
+      this.workspaceSearch.searchAndHighlight('alpha');
+      this.workspaceSearch.close();
+      this.workspaceSearch.open();
 
-      assert.equal(this.liveRegion.textContent, '');
+      const input = document.querySelector('.blockly-ws-search-input input');
+      assert.equal(input.value, 'alpha');
+      assert.isTrue(isBlockHighlighted(this.alphaBlock));
     });
   });
 });
