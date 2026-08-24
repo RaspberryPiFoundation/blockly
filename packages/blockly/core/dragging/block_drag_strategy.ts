@@ -176,10 +176,7 @@ export class BlockDragStrategy implements IDragStrategy {
       );
     });
 
-    const workspaceWidth = metrics.width;
-    const workspaceHeight = metrics.height;
-    const {height: newBlockHeight, width: newBlockWidth} =
-      newBlock.getHeightWidth();
+    const newBlockWidth = newBlock.getHeightWidth().width;
 
     const getNextIntersectingBlock = function (
       newBlockRect: Rect,
