@@ -2511,3 +2511,26 @@ Blockly.Msg.MINIMAP_ARIA_LABEL = 'Workspace minimap. Use the arrow keys to pan t
 /** @type {string} */
 /// ARIA label for the trashcan when it contains no blocks and cannot be interacted with.
 Blockly.Msg.ARIA_LABEL_TRASH_EMPTY = 'Trash, currently empty';
+/** @type {string} */
+/// Placeholder text shown in the workspace search input.
+Blockly.Msg.WORKSPACE_SEARCH_PLACEHOLDER = 'Search';
+/** @type {string} */
+/// ARIA label for the workspace search text input, including keyboard usage.
+Blockly.Msg.WORKSPACE_SEARCH_INPUT_LABEL = 'Search workspace. Press Enter for the next match, Shift+Enter for the previous match. Press Escape to close search and focus the current match.';
+/** @type {string} */
+/// ARIA label for the workspace search button that selects the next matching block.
+Blockly.Msg.WORKSPACE_SEARCH_FIND_NEXT = 'Find next';
+/** @type {string} */
+/// ARIA label for the workspace search button that selects the previous matching block.
+Blockly.Msg.WORKSPACE_SEARCH_FIND_PREVIOUS = 'Find previous';
+/** @type {string} */
+/// ARIA label for the button that closes the workspace search bar.
+Blockly.Msg.WORKSPACE_SEARCH_CLOSE = 'Close search bar';
+/** @type {string} */
+/// ARIA live region message announced when workspace search finds no matching blocks.
+Blockly.Msg.WORKSPACE_SEARCH_NO_MATCHES = 'No matching blocks';
+/** @type {string} */
+/// ARIA live region message announcing the currently highlighted workspace search match.
+/// \n\nParameters:\n* %1 - 1-based index of the current match\n* %2 - total number of matches\n* %3 - accessible label of the current block
+/// \n\nExamples:\n* "Match 1 of 3: print, hello"
+Blockly.Msg.WORKSPACE_SEARCH_MATCH = 'Match %1 of %2: %3';
