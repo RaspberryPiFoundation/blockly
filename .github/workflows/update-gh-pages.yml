@@ -1,5 +1,5 @@
 # Manual workflow to update GitHub Pages from a chosen source branch.
-# The gulp updateGithubPages task builds the repo and force-pushes to gh-pages.
+# scripts/update_github_pages.mjs builds the repo and force-pushes to gh-pages.
 
 name: Update GitHub Pages
 
@@ -25,6 +25,13 @@ jobs:
         with:
           ref: ${{ inputs.source_branch }}
           fetch-depth: 0
+
+      # This uses a reverse-engineered email for the github actions bot. See
+      # https://github.com/actions/checkout/issues/13#issuecomment-724415212
+      - name: Git Identity
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
       - name: Use Node.js
         uses: actions/setup-node@v7

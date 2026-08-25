@@ -147,7 +147,10 @@ export function createDom() {
     content,
     'keydown',
     null,
-    common.globalShortcutHandler,
+    (e: KeyboardEvent) => {
+      common.globalShortcutHandler(e);
+      e.stopPropagation();
+    },
   );
 
   arrow = document.createElement('div');

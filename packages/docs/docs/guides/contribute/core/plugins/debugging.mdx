@@ -1,0 +1,37 @@
+---
+description: How to test changes in plugins that depend on changes in Blockly core.
+title: Debug plugins
+image: images/blockly_banner.png
+---
+
+# Debug plugins
+
+When debugging a plugin, you will need to follow a slightly different set of steps
+depending on where you have made changes.
+
+1. [You have only made changes to a plugin.](#making-changes-to-a-plugin)
+2. [You have made changes to a plugin which depend on corresponding changes to 
+Blockly core.](#making-changes-to-a-plugin-and-to-blockly-core)
+
+## Making changes to a plugin
+
+1. Run `npm install` from the root of the [blockly repo](https://github.com/RaspberryPiFoundation/blockly).
+1. Navigate to your plugin's directory (e.g. `cd /packages/plugins/my-favorite-plugin).
+1. Run `npm start` in the plugin's directory.
+
+## Making changes to a plugin and to blockly core
+
+Sometimes when developing a plugin for blockly, you'll need to make 
+corresponding changes in Blockly core (`/packages/blockly/`). To ensure that 
+your plugin is able to use the changes you've made in core Blockly, you should 
+first build blockly.
+
+1. Run `npm ci` from the root of the [blockly repo](https://github.com/RaspberryPiFoundation/blockly).
+1. Run `npm run build` from the root of the [blockly repo](https://github.com/RaspberryPiFoundation/blockly).
+1. Navigate to your plugin's directory (e.g. `cd /packages/plugins/my-favorite-plugin).
+1. Run `npm start` in the plugin's directory.
+
+:::tip
+If you make additional changes to Blockly core, you'll need to redo steps 2, 3, 
+and 4.
+:::

@@ -32,7 +32,6 @@ import {
   tsc,
 } from './scripts/gulpfiles/build_tasks.mjs';
 import {docs} from './scripts/gulpfiles/docs_tasks.mjs';
-import {updateGithubPages} from './scripts/gulpfiles/git_tasks.mjs';
 import {
   cleanReleaseDir,
   pack,
@@ -59,7 +58,6 @@ export {
   prepareDemos,
   deployDemosBeta,
   deployDemos,
-  updateGithubPages,
 }
 
 // Manually-invokable targets that also invoke prerequisites where

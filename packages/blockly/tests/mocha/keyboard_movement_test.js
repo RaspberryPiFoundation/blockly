@@ -1599,6 +1599,52 @@ suite('Keyboard-driven movement', function () {
 
         cancelMove(this.workspace);
       });
+      test('re-announces when moving between identically labeled inputs', function () {
+        const json = {
+          'blocks': {
+            'languageVersion': 0,
+            'blocks': [
+              {
+                'type': 'controls_if',
+                'id': 'ifBlock',
+                'x': 0,
+                'y': 100,
+                'extraState': {
+                  'elseIfCount': 2,
+                },
+              },
+            ],
+          },
+        };
+        Blockly.serialization.workspaces.load(json, this.workspace);
+        const boolean = this.workspace.newBlock('logic_boolean');
+        boolean.initSvg();
+        boolean.render();
+        this.workspace.cleanUp();
+
+        Blockly.getFocusManager().focusNode(boolean);
+        startMove(this.workspace);
+        // Skip the first `if` value input.
+        moveRight(this.workspace);
+
+        this.moveAndAssert(
+          moveRight,
+          ['Moving', 'to', 'else if'],
+          [this.getBlockLabel(boolean)],
+        );
+        const afterFirstElseIf = this.liveRegion.textContent;
+
+        this.moveAndAssert(
+          moveRight,
+          ['Moving', 'to', 'else if'],
+          [this.getBlockLabel(boolean)],
+        );
+
+        const afterSecondElseIf = this.liveRegion.textContent;
+        assert.notEqual(afterSecondElseIf, afterFirstElseIf);
+
+        cancelMove(this.workspace);
+      });
       test('disambiguates between unlabeled value inputs', function () {
         const textJoin = this.workspace.newBlock('text_join');
         textJoin.itemCount_ = 3;

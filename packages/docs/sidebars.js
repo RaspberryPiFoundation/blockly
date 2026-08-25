@@ -1439,22 +1439,6 @@ const sidebars = {
               label: 'Write a codelab',
               id: 'guides/contribute/core/write_a_codelab',
             },
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Contribute to samples',
-          items: [
-            {
-              type: 'doc',
-              label: 'Overview',
-              id: 'guides/contribute/samples/index',
-            },
-            {
-              type: 'doc',
-              label: 'Repository structure',
-              id: 'guides/contribute/samples/repository_structure',
-            },
             {
               type: 'category',
               label: 'Plugins',
@@ -1462,31 +1446,36 @@ const sidebars = {
                 {
                   type: 'doc',
                   label: 'Add a plugin',
-                  id: 'guides/contribute/samples/add_a_plugin',
+                  id: 'guides/contribute/core/plugins/add_a_plugin',
                 },
                 {
                   type: 'doc',
                   label: 'Plugin naming conventions',
-                  id: 'guides/contribute/samples/naming',
+                  id: 'guides/contribute/core/plugins/naming',
                 },
                 {
                   type: 'doc',
                   label: 'Debug plugins',
-                  id: 'guides/contribute/samples/debugging',
+                  id: 'guides/contribute/core/plugins/debugging',
                 },
                 {
                   type: 'doc',
                   label: 'Publish block libraries',
-                  id: 'guides/contribute/samples/block_libraries',
+                  id: 'guides/contribute/core/plugins/block_libraries',
                 },
                 {
                   type: 'doc',
                   label: 'Add a plugin field to Block Factory',
-                  id: 'guides/contribute/samples/block_factory',
+                  id: 'guides/contribute/core/plugins/block_factory',
                 },
               ],
             },
           ],
+        },
+        {
+          type: 'doc',
+          label: 'Contribute to samples',
+          id: 'guides/contribute/samples',
         },
       ],
     },

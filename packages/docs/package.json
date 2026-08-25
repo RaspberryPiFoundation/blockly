@@ -10,14 +10,22 @@
           "^build",
           {
             "projects": "blockly",
+            "target": "build"
+          },
+          {
+            "projects": "blockly",
+            "target": "package"
+          },
+          {
+            "projects": "blockly",
             "target": "docs"
           }
         ]
       },
       "build": {
         "outputs": [
-          "{projectRoot}/build", 
-          "{projectRoot}/.docusaurus", 
+          "{projectRoot}/build",
+          "{projectRoot}/.docusaurus",
           "{projectRoot}/node_modules/.cache"
         ],
         "dependsOn": [
@@ -31,7 +39,7 @@
   },
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "npx nx run docusaurus start",
+    "start": "npx nx run build && docusaurus start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
@@ -44,18 +52,14 @@
   },
   "dependencies": {
     "@docusaurus/core": "3.10.2",
-    "@docusaurus/plugin-client-redirects": "3.10.2",
     "@docusaurus/preset-classic": "3.10.2",
     "@mdx-js/react": "^3.1.1",
     "clsx": "^2.1.1",
-    "js-yaml": "^5.2.3",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "remark-directive": "^4.0.0"
+    "react-dom": "^19.2.7"
   },
   "devDependencies": {
-    "@docsearch/core": "^4.5.2",
     "@docusaurus/faster": "^3.10.2",
     "@docusaurus/module-type-aliases": "^3.10.2",
     "@docusaurus/types": "^3.10.2"

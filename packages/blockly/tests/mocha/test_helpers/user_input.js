@@ -39,6 +39,7 @@ export function dispatchPointerEvent(target, type, properties) {
 export function createKeyDownEvent(keyCode, modifiers) {
   const event = {
     keyCode: keyCode,
+    bubbles: true,
   };
   if (modifiers && modifiers.length > 0) {
     event.altKey = modifiers.includes(KeyCodes.ALT);

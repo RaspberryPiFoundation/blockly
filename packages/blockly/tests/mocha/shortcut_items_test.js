@@ -1885,6 +1885,22 @@ suite('Keyboard Shortcut Items', function () {
       this.workspace.getInjectionDiv().dispatchEvent(event);
       assert.equal(this.workspace.getTopComments().length, 1);
     });
+
+    test('Is idempotent when a contextual menu is open', function () {
+      const comment = this.workspace.newComment();
+      comment.setText('Hello');
+      Blockly.getFocusManager().focusNode(comment);
+      comment.showContextMenu();
+      assert.equal(this.workspace.getTopComments().length, 1);
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.D);
+      // The WidgetDiv (used by the dropdown menu) registers the global shortcut
+      // handler for its own div, since it may live outside of the injection
+      // div. Ensure that it also prevents event bubbling to the main shortcut
+      // handler, which could cause shortcuts like Duplicate to be invoked
+      // multiple times from one keypress. See #10250.
+      Blockly.WidgetDiv.getDiv().dispatchEvent(event);
+      assert.equal(this.workspace.getTopComments().length, 2);
+    });
   });
 
   suite('Clean up workspace (C)', function () {

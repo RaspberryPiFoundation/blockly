@@ -196,6 +196,7 @@ export default defineConfig(
       'packages/blockly/.prettierrc.js',
       'packages/blockly/gulpfile.mjs',
       'packages/blockly/scripts/helpers.js',
+      'packages/blockly/scripts/update_github_pages.mjs',
       'packages/blockly/tests/mocha/.mocharc.js',
       'packages/blockly/tests/migration/validate-renamings.mjs',
       'packages/blockly/tests/scripts/magic_symlink.js',

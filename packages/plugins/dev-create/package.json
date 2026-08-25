@@ -33,8 +33,7 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "commander": "^15.0.0",
-    "fs-extra": "^11.3.5",
-    "install": "^0.13.0"
+    "fs-extra": "^11.3.5"
   },
   "publishConfig": {
     "access": "public"
