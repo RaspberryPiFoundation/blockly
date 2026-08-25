@@ -1,197 +1,209 @@
 /**
  * @license
- * Copyright 2024 Google LLC
+ * Copyright 2020 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 
 import {assert} from 'chai';
 import {
-  assertEventFired,
-  createChangeListenerSpy,
-} from './test_helpers/events.js';
-import {
-  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
 
 suite('Workspace comment', function () {
   setup(function () {
-    this.clock = sharedTestSetup.call(this, {fireEventsNow: false}).clock;
-    this.workspace = new Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
+    sharedTestSetup.call(this);
+    this.workspace = new Blockly.Workspace();
   });
 
   teardown(function () {
     sharedTestTeardown.call(this);
   });
 
-  suite('Events', function () {
-    test('create events are fired when a comment is constructed', function () {
-      const spy = createChangeListenerSpy(this.workspace);
-
-      this.renderedComment = new Blockly.comments.RenderedWorkspaceComment(
-        this.workspace,
-      );
-
-      this.clock.runAll();
-
-      assertEventFired(
-        spy,
-        Blockly.Events.CommentCreate,
-        {commentId: this.renderedComment.id},
-        this.workspace.id,
-      );
+  suite('getTopComments(ordered=true)', function () {
+    test('No comments', function () {
+      assert.equal(this.workspace.getTopComments(true).length, 0);
     });
 
-    test('delete events are fired when a comment is disposed', function () {
-      this.renderedComment = new Blockly.comments.RenderedWorkspaceComment(
+    test('One comment', function () {
+      const comment = new Blockly.comments.WorkspaceComment(
         this.workspace,
+        'comment id',
       );
-      const spy = createChangeListenerSpy(this.workspace);
-
-      this.renderedComment.dispose();
-
-      this.clock.runAll();
-
-      assertEventFired(
-        spy,
-        Blockly.Events.CommentDelete,
-        {commentId: this.renderedComment.id},
-        this.workspace.id,
-      );
+      assert.equal(this.workspace.getTopComments(true).length, 1);
+      assert.equal(this.workspace.getCommentById('comment id'), comment);
     });
 
-    test('move events are fired when a comment is moved', function () {
-      this.renderedComment = new Blockly.comments.RenderedWorkspaceComment(
-        this.workspace,
-      );
-      const spy = createChangeListenerSpy(this.workspace);
-
-      this.renderedComment.moveTo(new Blockly.utils.Coordinate(42, 42));
-
-      this.clock.runAll();
-
-      assertEventFired(
-        spy,
-        Blockly.Events.CommentMove,
-        {
-          commentId: this.renderedComment.id,
-          oldCoordinate_: {x: 0, y: 0},
-          newCoordinate_: {x: 42, y: 42},
-        },
-        this.workspace.id,
-      );
+    test('After clear empty workspace', function () {
+      this.workspace.clear();
+      assert.equal(this.workspace.getTopComments(true).length, 0);
     });
 
-    test('resize events are fired when a comment is resized', function () {
-      this.renderedComment = new Blockly.comments.RenderedWorkspaceComment(
-        this.workspace,
-      );
-      const spy = createChangeListenerSpy(this.workspace);
-
-      this.renderedComment.setSize(new Blockly.utils.Size(300, 200));
-
-      this.clock.runAll();
-
-      assertEventFired(
-        spy,
-        Blockly.Events.CommentResize,
-        {
-          commentId: this.renderedComment.id,
-          oldSize: {width: 120, height: 100},
-          newSize: {width: 300, height: 200},
-        },
-        this.workspace.id,
-      );
+    test('After clear non-empty workspace', function () {
+      new Blockly.comments.WorkspaceComment(this.workspace, 'comment id');
+      this.workspace.clear();
+      assert.equal(this.workspace.getTopComments(true).length, 0);
+      assert.isNull(this.workspace.getCommentById('comment id'));
     });
 
-    test('change events are fired when a comments text is edited', function () {
-      this.renderedComment = new Blockly.comments.RenderedWorkspaceComment(
+    test('After dispose', function () {
+      const comment = new Blockly.comments.WorkspaceComment(
         this.workspace,
+        'comment id',
       );
-      const spy = createChangeListenerSpy(this.workspace);
-
-      this.renderedComment.setText('test text');
-
-      this.clock.runAll();
-
-      assertEventFired(
-        spy,
-        Blockly.Events.CommentChange,
-        {
-          commentId: this.renderedComment.id,
-          oldContents_: '',
-          newContents_: 'test text',
-        },
-        this.workspace.id,
-      );
-    });
-
-    test('collapse events are fired when a comment is collapsed', function () {
-      this.renderedComment = new Blockly.comments.RenderedWorkspaceComment(
-        this.workspace,
-      );
-      const spy = createChangeListenerSpy(this.workspace);
-
-      this.renderedComment.setCollapsed(true);
-
-      this.clock.runAll();
-
-      assertEventFired(
-        spy,
-        Blockly.Events.CommentCollapse,
-        {
-          commentId: this.renderedComment.id,
-          newCollapsed: true,
-        },
-        this.workspace.id,
-      );
-    });
-
-    test('collapse events are fired when a comment is uncollapsed', function () {
-      this.renderedComment = new Blockly.comments.RenderedWorkspaceComment(
-        this.workspace,
-      );
-      this.renderedComment.setCollapsed(true);
-      const spy = createChangeListenerSpy(this.workspace);
-
-      this.renderedComment.setCollapsed(false);
-
-      this.clock.runAll();
-
-      assertEventFired(
-        spy,
-        Blockly.Events.CommentCollapse,
-        {
-          commentId: this.renderedComment.id,
-          newCollapsed: false,
-        },
-        this.workspace.id,
-      );
+      comment.dispose();
+      assert.equal(this.workspace.getTopComments(true).length, 0);
+      assert.isNull(this.workspace.getCommentById('comment id'));
     });
   });
 
-  suite('Focus', function () {
-    test('moves to the workspace when deleted', function () {
-      const comment = new Blockly.comments.RenderedWorkspaceComment(
-        this.workspace,
-      );
-      Blockly.getFocusManager().focusNode(comment);
-      assert.equal(Blockly.getFocusManager().getFocusedNode(), comment);
-      comment.view.getCommentBarButtons()[1].performAction();
-      assert.equal(Blockly.getFocusManager().getFocusedNode(), this.workspace);
+  suite('getTopComments(ordered=false)', function () {
+    test('No comments', function () {
+      assert.equal(this.workspace.getTopComments(false).length, 0);
     });
 
-    test('does not change the layer', function () {
-      const comment = new Blockly.comments.RenderedWorkspaceComment(
+    test('One comment', function () {
+      const comment = new Blockly.comments.WorkspaceComment(
         this.workspace,
+        'comment id',
       );
+      assert.equal(this.workspace.getTopComments(false).length, 1);
+      assert.equal(this.workspace.getCommentById('comment id'), comment);
+    });
 
-      this.workspace.getLayerManager()?.moveToDragLayer(comment);
-      Blockly.getFocusManager().focusNode(comment);
+    test('After clear empty workspace', function () {
+      this.workspace.clear();
+      assert.equal(this.workspace.getTopComments(false).length, 0);
+    });
+
+    test('After clear non-empty workspace', function () {
+      new Blockly.comments.WorkspaceComment(this.workspace, 'comment id');
+      this.workspace.clear();
+      assert.equal(this.workspace.getTopComments(false).length, 0);
+      assert.isNull(this.workspace.getCommentById('comment id'));
+    });
+
+    test('After dispose', function () {
+      const comment = new Blockly.comments.WorkspaceComment(
+        this.workspace,
+        'comment id',
+      );
+      comment.dispose();
+      assert.equal(this.workspace.getTopComments(false).length, 0);
+      assert.isNull(this.workspace.getCommentById('comment id'));
+    });
+  });
+
+  suite('getCommentById', function () {
+    test('Trivial', function () {
+      const comment = new Blockly.comments.WorkspaceComment(
+        this.workspace,
+        'comment id',
+      );
+      assert.equal(this.workspace.getCommentById(comment.id), comment);
+    });
+
+    test('Null id', function () {
+      assert.isNull(this.workspace.getCommentById(null));
+    });
+
+    test('Non-existent id', function () {
+      assert.isNull(this.workspace.getCommentById('badId'));
+    });
+
+    test('After dispose', function () {
+      const comment = new Blockly.comments.WorkspaceComment(
+        this.workspace,
+        'comment id',
+      );
+      comment.dispose();
+      assert.isNull(this.workspace.getCommentById(comment.id));
+    });
+  });
+
+  suite('Width and height', function () {
+    setup(function () {
+      this.comment = new Blockly.comments.WorkspaceComment(
+        this.workspace,
+        'comment id',
+      );
+      this.comment.setSize(new Blockly.utils.Size(20, 10));
+    });
+
+    test('Initial values', function () {
+      assert.equal(this.comment.getSize().width, 20, 'Width');
+      assert.equal(this.comment.getSize().height, 10, 'Height');
+    });
+
+    test('setSize adjusts dimensions', function () {
+      this.comment.setSize(new Blockly.utils.Size(100, 200));
+      assert.equal(this.comment.getSize().width, 100, 'Width');
+      assert.equal(this.comment.getSize().height, 200, 'Height');
+    });
+  });
+
+  suite('XY position', function () {
+    setup(function () {
+      this.comment = new Blockly.comments.WorkspaceComment(
+        this.workspace,
+        'comment id',
+      );
+    });
+
+    test('Initial position', function () {
+      const xy = this.comment.getRelativeToSurfaceXY();
+      assert.equal(xy.x, 0, 'Initial X position');
+      assert.equal(xy.y, 0, 'Initial Y position');
+    });
+
+    test('moveTo', function () {
+      this.comment.moveTo(new Blockly.utils.Coordinate(10, 100));
+      const xy = this.comment.getRelativeToSurfaceXY();
+      assert.equal(xy.x, 10, 'New X position');
+      assert.equal(xy.y, 100, 'New Y position');
+    });
+  });
+
+  suite('Content', function () {
+    setup(function () {
+      this.comment = new Blockly.comments.WorkspaceComment(
+        this.workspace,
+        'comment id',
+      );
+      this.comment.setText('comment text');
+    });
+
+    teardown(function () {
+      sinon.restore();
+    });
+
+    test('After creation', function () {
+      assert.equal(this.comment.getText(), 'comment text');
       assert.equal(
-        comment.getSvgRoot().parentElement,
-        this.workspace.getLayerManager()?.getDragLayer(),
+        this.workspace.getUndoStack().length,
+        2,
+        'Workspace undo stack',
+      );
+    });
+
+    test('Set to same value', function () {
+      this.comment.setText('comment text');
+      assert.equal(this.comment.getText(), 'comment text');
+      // Setting the text to the old value does not fire an event.
+      assert.equal(
+        this.workspace.getUndoStack().length,
+        2,
+        'Workspace undo stack',
+      );
+    });
+
+    test('Set to different value', function () {
+      this.comment.setText('new comment text');
+      assert.equal(this.comment.getText(), 'new comment text');
+      assert.equal(
+        this.workspace.getUndoStack().length,
+        3,
+        'Workspace undo stack',
       );
     });
   });

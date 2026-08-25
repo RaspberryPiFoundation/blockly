@@ -38,6 +38,7 @@ suite('shadowBlockConversionChangeListener', function () {
     );
     // See https://github.com/RaspberryPiFoundation/blockly-samples/issues/2528 for context.
     global.SVGElement = window.SVGElement;
+    global.FocusEvent = window.FocusEvent;
 
     this.workspace = Blockly.inject('blocklyDiv', {
       media: 'media/',
@@ -93,8 +94,7 @@ suite('shadowBlockConversionChangeListener', function () {
     assert.isTrue(connection.targetBlock().isShadow());
   });
 
-  // TODO(#2535): This test requires the focus manager to work correctly
-  test.skip('undo shadow change', function () {
+  test('undo shadow change', function () {
     const connection = makeEmptyConnection(this.workspace);
     const shadowBlock = attachShadowBlock(connection, {
       type: 'text',
@@ -118,8 +118,7 @@ suite('shadowBlockConversionChangeListener', function () {
     );
   });
 
-  // TODO(#2535): This test requires the focus manager to work correctly
-  test.skip('redo shadow change', function () {
+  test('redo shadow change', function () {
     const connection = makeEmptyConnection(this.workspace);
     const shadowBlock = attachShadowBlock(connection, {
       type: 'text',
@@ -156,8 +155,7 @@ suite('shadowBlockConversionChangeListener', function () {
     );
   });
 
-  // TODO(#2535): This test requires the focus manager to work correctly
-  test.skip('preserves original shadow state after undo and redo', function () {
+  test('preserves original shadow state after undo and redo', function () {
     const connection = makeEmptyConnection(this.workspace);
     const shadowState = {type: 'text', id: '123', fields: {TEXT: 'abc'}};
     const shadowBlock = attachShadowBlock(connection, shadowState);
@@ -228,9 +226,8 @@ suite('shadowBlockConversionChangeListener', function () {
     );
   });
 
-  // TODO(#2535): These tests require the focus manager to work correctly
-  suite.skip('Selection', function () {
-    test('Transfers selection to new block', function () {
+  suite('Selection', function () {
+    test('Transfers selection to new block', async function () {
       const connection =
         this.workspace.newBlock('text_reverse').inputList[0].connection;
       const shadowBlock = attachShadowBlock(connection, {type: 'text'});
@@ -249,6 +246,8 @@ suite('shadowBlockConversionChangeListener', function () {
         connection.targetBlock().isShadow(),
         'Expected modifed block to no longer be a shadow',
       );
+
+      await Blockly.renderManagement.finishQueuedRenders();
 
       // The replacement block should now be selected.
       assert.isTrue(
