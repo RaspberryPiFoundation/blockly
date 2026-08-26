@@ -16,6 +16,7 @@ import {
   DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
+  workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
 suite('Image Fields', function () {
@@ -364,6 +365,11 @@ suite('Image Fields', function () {
         renderer: 'geras',
       });
     });
+
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
+    });
+
     suite('Image without click handler', function () {
       setup(function () {
         this.block = this.workspace.newBlock('text');

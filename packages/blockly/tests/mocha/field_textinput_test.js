@@ -636,6 +636,11 @@ suite('Text Input Fields', function () {
 
       this.focusableElement = this.field.getClickTarget_();
     });
+
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
+    });
+
     test('Field has field type name in ARIA label', function () {
       const fieldLabel = this.focusableElement.getAttribute('aria-label');
       assert.include(fieldLabel, 'text:');

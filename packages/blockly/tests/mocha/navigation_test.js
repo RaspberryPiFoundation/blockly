@@ -702,9 +702,10 @@ suite('Navigation', function () {
 
     suite('In', function () {
       setup(function () {
-        const container = document.createElement('div');
-        document.body.appendChild(container);
-        this.emptyWorkspace = Blockly.inject(container, DEFAULT_INJECT_OPTIONS);
+        this.emptyWorkspace = Blockly.inject(
+          'blocklyDiv',
+          DEFAULT_INJECT_OPTIONS,
+        );
       });
       teardown(function () {
         workspaceTeardown.call(this, this.emptyWorkspace);

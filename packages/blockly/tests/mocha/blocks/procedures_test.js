@@ -1930,14 +1930,23 @@ suite('Procedures', function () {
               const statementField = containerBlock.getField('STATEMENTS');
               statementField.setValue(value);
               defBlock.compose(containerBlock);
+              workspaceTeardown.call(this, mutatorWorkspace);
             }
             if (testSuite.defType === 'procedures_defreturn') {
               test('Has Statements', function () {
-                setStatementValue(this.workspace, this.defBlock, true);
+                setStatementValue.apply(this, [
+                  this.workspace,
+                  this.defBlock,
+                  true,
+                ]);
                 assert.isTrue(this.defBlock.hasStatements_);
               });
               test('Has No Statements', function () {
-                setStatementValue(this.workspace, this.defBlock, false);
+                setStatementValue.apply(this, [
+                  this.workspace,
+                  this.defBlock,
+                  false,
+                ]);
                 assert.isFalse(this.defBlock.hasStatements_);
               });
               test('Saving Statements', function () {
@@ -1952,9 +1961,13 @@ suite('Procedures', function () {
                   blockXml,
                   this.workspace,
                 );
-                setStatementValue(this.workspace, defBlock, false);
+                setStatementValue.apply(this, [
+                  this.workspace,
+                  defBlock,
+                  false,
+                ]);
                 assert.isNull(defBlock.getInput('STACK'));
-                setStatementValue(this.workspace, defBlock, true);
+                setStatementValue.apply(this, [this.workspace, defBlock, true]);
                 assert.isNotNull(defBlock.getInput('STACK'));
                 const statementBlocks = defBlock.getChildren();
                 assert.equal(statementBlocks.length, 1);
@@ -2064,6 +2077,7 @@ suite('Procedures', function () {
                   .getTopBlocks()[0]
                   .getInput('STATEMENT_INPUT');
                 assert.isNotNull(statementInput);
+                workspaceTeardown.call(this, mutatorWorkspace);
               });
               test('Has Statements', function () {
                 this.defBlock.hasStatements_ = true;
@@ -2078,6 +2092,7 @@ suite('Procedures', function () {
                   .getField('STATEMENTS')
                   .getValueBoolean();
                 assert.isTrue(statementValue);
+                workspaceTeardown.call(this, mutatorWorkspace);
               });
               test('No Has Statements', function () {
                 this.defBlock.hasStatements_ = false;
@@ -2092,6 +2107,7 @@ suite('Procedures', function () {
                   .getField('STATEMENTS')
                   .getValueBoolean();
                 assert.isFalse(statementValue);
+                workspaceTeardown.call(this, mutatorWorkspace);
               });
             } else {
               test('Has no Statement Input', function () {
@@ -2105,6 +2121,7 @@ suite('Procedures', function () {
                   .getTopBlocks()[0]
                   .getInput('STATEMENT_INPUT');
                 assert.isNull(statementInput);
+                workspaceTeardown.call(this, mutatorWorkspace);
               });
             }
           });

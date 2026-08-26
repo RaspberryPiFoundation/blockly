@@ -16,6 +16,7 @@ import {
   DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
+  workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 import {dispatchPointerEvent} from './test_helpers/user_input.js';
 import {testAWorkspace} from './test_helpers/workspace.js';
@@ -195,15 +196,15 @@ suite('WorkspaceSvg', function () {
     });
 
     test('includes flyouts in nested trees', async function () {
-      this.workspace.dispose();
-      const toolbox = document.getElementById('toolbox-simple');
-      this.workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+      const workspace = Blockly.inject('blocklyDiv', {
+        ...DEFAULT_INJECT_OPTIONS,
+        toolbox: document.getElementById('toolbox-simple'),
+      });
 
-      const nestedTrees = this.workspace.getNestedTrees();
-      assert.isNotNull(this.workspace.getFlyout());
-      assert.sameMembers(nestedTrees, [
-        this.workspace.getFlyout().getWorkspace(),
-      ]);
+      const nestedTrees = workspace.getNestedTrees();
+      assert.isNotNull(workspace.getFlyout());
+      assert.sameMembers(nestedTrees, [workspace.getFlyout().getWorkspace()]);
+      workspaceTeardown.call(this, workspace);
     });
   });
 
@@ -229,6 +230,7 @@ suite('WorkspaceSvg', function () {
       sinon
         .stub(Blockly.utils.toolbox.TEST_ONLY, 'hasCategoriesInternal')
         .returns(true);
+      const originalToolbox = this.workspace.toolbox;
       this.workspace.toolbox = null;
       assert.throws(
         function () {
@@ -236,6 +238,7 @@ suite('WorkspaceSvg', function () {
         }.bind(this),
         "Existing toolbox has no categories.  Can't change mode.",
       );
+      this.workspace.toolbox = originalToolbox;
     });
     test('Existing toolbox has categories', function () {
       sinon

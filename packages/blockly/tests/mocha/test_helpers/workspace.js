@@ -644,7 +644,9 @@ export function testAWorkspace() {
     });
 
     teardown(function () {
-      workspaceTeardown.call(this, this.workspaceB);
+      if (this.workspaceB) {
+        workspaceTeardown.call(this, this.workspaceB);
+      }
     });
 
     test('Trivial', function () {
@@ -671,6 +673,7 @@ export function testAWorkspace() {
     test('After dispose', function () {
       this.workspaceB.dispose();
       assert.isNull(Blockly.Workspace.getById(this.workspaceB.id));
+      this.workspaceB = null;
     });
   });
 

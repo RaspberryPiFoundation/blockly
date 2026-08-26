@@ -12,6 +12,7 @@ import {
   DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
+  workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 import {simulateClick} from './test_helpers/user_input.js';
 
@@ -89,6 +90,8 @@ suite('Icon', function () {
           initViewSpy.called,
           'Expected initView to not be called',
         );
+
+        workspaceTeardown.call(this, workspace);
       });
 
       test(
@@ -106,6 +109,7 @@ suite('Icon', function () {
             initViewSpy.calledOnce,
             'Expected initView to be called',
           );
+          workspaceTeardown.call(this, workspace);
         },
       );
     });
@@ -123,6 +127,7 @@ suite('Icon', function () {
           applyColourSpy.called,
           'Expected applyColour to not be called',
         );
+        workspaceTeardown.call(this, workspace);
       });
 
       test(
@@ -139,6 +144,7 @@ suite('Icon', function () {
             applyColourSpy.calledOnce,
             'Expected applyColour to be called',
           );
+          workspaceTeardown.call(this, workspace);
         },
       );
 
@@ -155,6 +161,7 @@ suite('Icon', function () {
           applyColourSpy.calledOnce,
           'Expected applyColour to be called',
         );
+        workspaceTeardown.call(this, workspace);
       });
 
       test("applyColour is called when the block's style changes", function () {
@@ -170,6 +177,7 @@ suite('Icon', function () {
           applyColourSpy.calledOnce,
           'Expected applyColour to be called',
         );
+        workspaceTeardown.call(this, workspace);
       });
 
       test('applyColour is called when the block is disabled', function () {
@@ -185,6 +193,7 @@ suite('Icon', function () {
           applyColourSpy.calledOnce,
           'Expected applyColour to be called',
         );
+        workspaceTeardown.call(this, workspace);
       });
 
       test('applyColour is called when the block becomes a shadow', function () {
@@ -200,6 +209,7 @@ suite('Icon', function () {
           applyColourSpy.calledOnce,
           'Expected applyColour to be called',
         );
+        workspaceTeardown.call(this, workspace);
       });
     });
 
@@ -216,6 +226,7 @@ suite('Icon', function () {
           updateEditableSpy.called,
           'Expected updateEditable to not be called',
         );
+        workspaceTeardown.call(this, workspace);
       });
 
       test(
@@ -232,6 +243,7 @@ suite('Icon', function () {
             updateEditableSpy.calledOnce,
             'Expected updateEditable to be called',
           );
+          workspaceTeardown.call(this, workspace);
         },
       );
 
@@ -248,6 +260,7 @@ suite('Icon', function () {
           updateEditableSpy.calledOnce,
           'Expected updateEditable to be called',
         );
+        workspaceTeardown.call(this, workspace);
       });
 
       test('updateEditable is called when the block is made editable', function () {
@@ -264,6 +277,7 @@ suite('Icon', function () {
           updateEditableSpy.calledOnce,
           'Expected updateEditable to be called',
         );
+        workspaceTeardown.call(this, workspace);
       });
     });
 
@@ -282,6 +296,7 @@ suite('Icon', function () {
           updateCollapsedSpy.called,
           'Expected updateCollapsed to not be called',
         );
+        workspaceTeardown.call(this, workspace);
       });
 
       test('updateCollapsed is called when the block is collapsed', function () {
@@ -299,6 +314,7 @@ suite('Icon', function () {
           updateCollapsedSpy.called,
           'Expected updateCollapsed to be called',
         );
+        workspaceTeardown.call(this, workspace);
       });
 
       test('updateCollapsed is called when the block is expanded', function () {
@@ -316,13 +332,15 @@ suite('Icon', function () {
           updateCollapsedSpy.called,
           'Expected updateCollapsed to be called',
         );
+        workspaceTeardown.call(this, workspace);
       });
     });
   });
 
   suite('Serialization', function () {
     test('serializable icons are saved', function () {
-      const block = createHeadlessBlock(createHeadlessWorkspace());
+      const workspace = createHeadlessWorkspace();
+      const block = createHeadlessBlock(workspace);
       block.addIcon(new MockSerializableIcon());
       const json = Blockly.serialization.blocks.save(block);
       assert.deepNestedInclude(
@@ -331,10 +349,12 @@ suite('Icon', function () {
         'Expected the JSON to include the saved state of the ' +
           'serializable icon.',
       );
+      workspaceTeardown.call(this, workspace);
     });
 
     test('non-serializable icons are not saved', function () {
-      const block = createHeadlessBlock(createHeadlessWorkspace());
+      const workspace = createHeadlessWorkspace();
+      const block = createHeadlessBlock(workspace);
       block.addIcon(new MockNonSerializableIcon());
       const json = Blockly.serialization.blocks.save(block);
       assert.notProperty(
@@ -342,6 +362,7 @@ suite('Icon', function () {
         'icons',
         'Expected the JSON to not include any saved state for icons',
       );
+      workspaceTeardown.call(this, workspace);
     });
   });
 
@@ -368,6 +389,7 @@ suite('Icon', function () {
       );
 
       Blockly.icons.registry.unregister('serializable icon');
+      workspaceTeardown.call(this, workspace);
     });
 
     test('trying to deserialize an unregistered icon throws an error', function () {
@@ -386,6 +408,7 @@ suite('Icon', function () {
         '',
         'Expected deserializing an unregistered icon to throw',
       );
+      workspaceTeardown.call(this, workspace);
     });
   });
 
@@ -437,11 +460,14 @@ suite('Icon', function () {
   });
   suite('ARIA', function () {
     setup(function () {
-      const workspace = createWorkspaceSvg();
-      const block = createInitializedBlock(workspace);
+      this.workspace = createWorkspaceSvg();
+      const block = createInitializedBlock(this.workspace);
       const icon = new TestIcon(block);
       block.addIcon(icon);
       this.element = icon.getFocusableElement();
+    });
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
     });
     test('Generic icons use button role', function () {
       const role = this.element.getAttribute('role');

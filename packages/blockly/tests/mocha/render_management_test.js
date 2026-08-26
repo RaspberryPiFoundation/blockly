@@ -8,6 +8,7 @@ import {assert} from 'chai';
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
 suite('Render Management', function () {
@@ -145,6 +146,10 @@ suite('Render Management', function () {
         block2.nextConnection.y - this.block.previousConnection.y,
         ['test'],
       );
+    });
+
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
     });
 
     test('does not record undo event when the render was queued with recordUndo disabled', function () {

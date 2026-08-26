@@ -334,6 +334,11 @@ suite('Dropdown Fields', function () {
         renderer: 'geras',
       });
     });
+
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
+    });
+
     suite('Simple Dropdown', function () {
       setup(function () {
         this.block = this.workspace.newBlock('logic_boolean');

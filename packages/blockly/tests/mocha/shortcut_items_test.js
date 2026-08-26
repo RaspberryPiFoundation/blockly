@@ -57,9 +57,9 @@ suite('Keyboard Shortcut Items', function () {
    */
   function setSelectedConnection(workspace) {
     const block = workspace.newBlock('stack_block');
-    sinon
-      .stub(Blockly.getFocusManager(), 'getFocusedNode')
-      .returns(block.nextConnection);
+    block.initSvg();
+    block.render();
+    Blockly.getFocusManager().focusNode(block.nextConnection);
   }
 
   /**
@@ -68,7 +68,7 @@ suite('Keyboard Shortcut Items', function () {
    */
   function setSelectedComment(workspace) {
     const comment = workspace.newComment();
-    sinon.stub(Blockly.getFocusManager(), 'getFocusedNode').returns(comment);
+    Blockly.getFocusManager().focusNode(comment);
     return comment;
   }
 
@@ -117,6 +117,7 @@ suite('Keyboard Shortcut Items', function () {
 
     test('Called when connection is focused', function () {
       setSelectedConnection(this.workspace);
+      this.hideChaffSpy.resetHistory();
       this.injectionDiv.dispatchEvent(this.event);
       sinon.assert.calledOnce(this.hideChaffSpy);
     });
@@ -217,6 +218,7 @@ suite('Keyboard Shortcut Items', function () {
     // Do not delete anything if a connection is focused.
     test('Not called when connection is focused', function () {
       setSelectedConnection(this.workspace);
+      this.hideChaffSpy.resetHistory();
       const event = createKeyDownEvent(Blockly.utils.KeyCodes.DELETE);
       this.injectionDiv.dispatchEvent(event);
       sinon.assert.notCalled(this.hideChaffSpy);
@@ -271,6 +273,7 @@ suite('Keyboard Shortcut Items', function () {
     });
     test('Not called when connection is focused', function () {
       setSelectedConnection(this.workspace);
+      this.hideChaffSpy.resetHistory();
       const event = createKeyDownEvent(Blockly.utils.KeyCodes.C, [
         Blockly.utils.KeyCodes.CTRL,
       ]);
@@ -282,6 +285,7 @@ suite('Keyboard Shortcut Items', function () {
     test('Workspace comment', function () {
       this.comment = setSelectedComment(this.workspace);
       this.copySpy = sinon.spy(this.comment, 'toCopyData');
+      this.hideChaffSpy.resetHistory();
 
       this.injectionDiv.dispatchEvent(keyEvent);
       sinon.assert.calledOnce(this.copySpy);
@@ -360,6 +364,7 @@ suite('Keyboard Shortcut Items', function () {
     });
     test('Not called when connection is focused', function () {
       setSelectedConnection(this.workspace);
+      this.hideChaffSpy.resetHistory();
       const event = createKeyDownEvent(Blockly.utils.KeyCodes.C, [
         Blockly.utils.KeyCodes.CTRL,
       ]);

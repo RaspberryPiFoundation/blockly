@@ -2990,6 +2990,10 @@ suite('Connection', function () {
       };
     });
 
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
+    });
+
     suite('Disconnect from old parent', function () {
       test('Value', function () {
         const oldParent = this.workspace.newBlock('row_block');

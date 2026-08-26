@@ -11,6 +11,7 @@ import {
   DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
+  workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
 suite('DropDownDiv', function () {
@@ -155,6 +156,7 @@ suite('DropDownDiv', function () {
     });
     teardown(function () {
       this.boundsStub.restore();
+      workspaceTeardown.call(this, this.workspace);
     });
     test('Escape dismisses DropDownDiv', function () {
       let hidden = false;
