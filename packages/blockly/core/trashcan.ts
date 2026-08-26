@@ -287,6 +287,8 @@ export class Trashcan
    */
   dispose() {
     this.workspace.getComponentManager().removeComponent('trashcan');
+    this.flyout?.dispose();
+    this.flyout = null;
     if (this.svgGroup) {
       dom.removeNode(this.svgGroup);
     }
