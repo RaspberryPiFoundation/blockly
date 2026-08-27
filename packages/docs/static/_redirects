@@ -45,11 +45,13 @@
 /guides/modify/web/playground   /guides/contribute/core/testing/playground/   301
 
 # Contributing to Samples section
-/guides/modify/contribute/add_a_plugin   /guides/contribute/samples/add_a_plugin/   301
-/guides/plugins/debugging   /guides/contribute/samples/debugging/   301
-/guides/plugins/naming   /guides/contribute/samples/naming/   301
+# Targets updated for the 2026 monorepo move (Cloudflare does not chain redirects,
+# so these must point at the final destination, not at the old samples/ URLs).
+/guides/modify/contribute/add_a_plugin   /guides/contribute/core/plugins/add_a_plugin/   301
+/guides/plugins/debugging   /guides/contribute/core/plugins/debugging/   301
+/guides/plugins/naming   /guides/contribute/core/plugins/naming/   301
 /guides/plugins/overview   /guides/programming/plugin_overview/   301
-/guides/modify/contribute/samples_repository_structure   /guides/contribute/samples/repository_structure/   301
+/guides/modify/contribute/samples_repository_structure   /guides/contribute/samples/   301
 /guides/modify/contribute/write_a_codelab   /guides/contribute/core/write_a_codelab/   301
 
 # Contributing to Core section
@@ -133,6 +135,16 @@
 /guides/contribute/samples/plugin_overview   /guides/programming/plugin_overview/   301
 
 # End - Site refactoring - 2025
+
+# Monorepo move - 2026
+# Plugin contribution docs moved from Contribute > Samples to Contribute > Core > Plugins.
+# repository_structure was folded into the samples overview page.
+/guides/contribute/samples/add_a_plugin   /guides/contribute/core/plugins/add_a_plugin/   301
+/guides/contribute/samples/block_factory   /guides/contribute/core/plugins/block_factory/   301
+/guides/contribute/samples/block_libraries   /guides/contribute/core/plugins/block_libraries/   301
+/guides/contribute/samples/debugging   /guides/contribute/core/plugins/debugging/   301
+/guides/contribute/samples/naming   /guides/contribute/core/plugins/naming/   301
+/guides/contribute/samples/repository_structure   /guides/contribute/samples/   301
 
 # Legacy developers.google.com/blockly marketing pages
 /summits/summits   https://www.blockly.com/summit/home   301
