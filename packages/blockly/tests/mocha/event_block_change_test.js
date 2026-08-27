@@ -118,7 +118,7 @@ suite('Block Change Event', function () {
       );
 
       const json = origEvent.toJson();
-      const newEvent = new Blockly.Events.fromJson(json, this.workspace);
+      const newEvent = Blockly.Events.fromJson(json, this.workspace);
 
       assert.deepEqual(newEvent, origEvent);
     });

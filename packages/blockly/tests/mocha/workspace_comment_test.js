@@ -18,7 +18,7 @@ import {
 suite('Workspace comment', function () {
   setup(function () {
     this.clock = sharedTestSetup.call(this, {fireEventsNow: false}).clock;
-    this.workspace = new Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
+    this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
   });
 
   teardown(function () {
