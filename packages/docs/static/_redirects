@@ -45,8 +45,7 @@
 /guides/modify/web/playground   /guides/contribute/core/testing/playground/   301
 
 # Contributing to Samples section
-# Targets updated for the 2026 monorepo move (Cloudflare does not chain redirects,
-# so these must point at the final destination, not at the old samples/ URLs).
+# Monorepo move plugins into core 
 /guides/modify/contribute/add_a_plugin   /guides/contribute/core/plugins/add_a_plugin/   301
 /guides/plugins/debugging   /guides/contribute/core/plugins/debugging/   301
 /guides/plugins/naming   /guides/contribute/core/plugins/naming/   301
@@ -136,9 +135,7 @@
 
 # End - Site refactoring - 2025
 
-# Monorepo move - 2026
-# Plugin contribution docs moved from Contribute > Samples to Contribute > Core > Plugins.
-# repository_structure was folded into the samples overview page.
+# Monorepo move plugins into core
 /guides/contribute/samples/add_a_plugin   /guides/contribute/core/plugins/add_a_plugin/   301
 /guides/contribute/samples/block_factory   /guides/contribute/core/plugins/block_factory/   301
 /guides/contribute/samples/block_libraries   /guides/contribute/core/plugins/block_libraries/   301
