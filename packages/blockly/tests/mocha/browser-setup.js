@@ -26,9 +26,21 @@ import '@blockly/block-test';
 
 chaiConfig.showDiff = false;
 
-globalThis.Blockly = Blockly;
-globalThis.javascriptGenerator = javascriptGenerator;
-globalThis.sinon = sinon;
+// Load globals used by the JS tests. This uses Object.defineProperty to avoid
+// Typescript inferring typings for these objects and allowing TS tests to
+// typecheck without explicitly importing them. When all tests are converted to
+// TS, this should be removed.
+for (const [name, value] of Object.entries({
+  Blockly,
+  javascriptGenerator,
+  sinon,
+})) {
+  Object.defineProperty(globalThis, name, {
+    value,
+    configurable: true,
+    writable: true,
+  });
+}
 
 // The focusable trees, toolbox definitions and #blocklyDiv the tests expect.
 // Shared with the Node harness so both run against identical markup.
