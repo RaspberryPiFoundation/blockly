@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
 import {
   sharedTestSetup,
@@ -11,26 +12,26 @@ import {
 } from './test_helpers/setup_teardown.js';
 
 suite('Comment Create Event', function () {
-  setup(function () {
+  let workspace: Blockly.Workspace;
+
+  setup(function (this: Mocha.Context) {
     sharedTestSetup.call(this);
-    this.workspace = new Blockly.Workspace();
+    workspace = new Blockly.Workspace();
   });
 
-  teardown(function () {
-    sharedTestTeardown.call(this);
+  teardown(function (this: Mocha.Context) {
+    sharedTestTeardown.call(this, workspace);
   });
 
   suite('Serialization', function () {
     test('events round-trip through JSON', function () {
-      const comment = new Blockly.comments.WorkspaceComment(this.workspace);
+      const comment = new Blockly.comments.WorkspaceComment(workspace);
       comment.setText('test text');
       comment.moveTo(new Blockly.utils.Coordinate(10, 10));
       const origEvent = new Blockly.Events.CommentCreate(comment);
 
       const json = origEvent.toJson();
-      const newEvent = new Blockly.Events.fromJson(json, this.workspace);
-      delete origEvent.xml; // xml fails deep equals for some reason.
-      delete newEvent.xml; // xml fails deep equals for some reason.
+      const newEvent = Blockly.Events.fromJson(json, workspace);
 
       assert.deepEqual(newEvent, origEvent);
     });

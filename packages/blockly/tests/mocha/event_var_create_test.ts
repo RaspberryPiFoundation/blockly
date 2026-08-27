@@ -4,49 +4,47 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
 import {
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
 
-suite('Var Delete Event', function () {
-  setup(function () {
+suite('Var Create Event', function () {
+  let workspace: Blockly.Workspace;
+
+  setup(function (this: Mocha.Context) {
     sharedTestSetup.call(this);
-    this.workspace = new Blockly.Workspace();
+    workspace = new Blockly.Workspace();
   });
 
-  teardown(function () {
-    sharedTestTeardown.call(this);
+  teardown(function (this: Mocha.Context) {
+    sharedTestTeardown.call(this, workspace);
   });
 
   suite('Serialization', function () {
     test('untyped variable events round-trip through JSON', function () {
-      const varModel = new Blockly.VariableModel(
-        this.workspace,
-        'name',
-        '',
-        'id',
-      );
-      const origEvent = new Blockly.Events.VarDelete(varModel);
+      const varModel = new Blockly.VariableModel(workspace, 'name', '', 'id');
+      const origEvent = new Blockly.Events.VarCreate(varModel);
 
       const json = origEvent.toJson();
-      const newEvent = new Blockly.Events.fromJson(json, this.workspace);
+      const newEvent = Blockly.Events.fromJson(json, workspace);
 
       assert.deepEqual(newEvent, origEvent);
     });
 
     test('typed variable events round-trip through JSON', function () {
       const varModel = new Blockly.VariableModel(
-        this.workspace,
+        workspace,
         'name',
         'type',
         'id',
       );
-      const origEvent = new Blockly.Events.VarDelete(varModel);
+      const origEvent = new Blockly.Events.VarCreate(varModel);
 
       const json = origEvent.toJson();
-      const newEvent = new Blockly.Events.fromJson(json, this.workspace);
+      const newEvent = Blockly.Events.fromJson(json, workspace);
 
       assert.deepEqual(newEvent, origEvent);
     });
