@@ -5,6 +5,7 @@
 			"Andibing",
 			"Bjh21",
 			"Codynguyen1116",
+			"Piano1forte2",
 			"Shirayuki"
 		]
 	},
@@ -29,7 +30,7 @@
 	"UNDO": "Undo",
 	"REDO": "Redo",
 	"CHANGE_VALUE_TITLE": "Change value:",
-	"RENAME_VARIABLE": "Rename variable...",
+	"RENAME_VARIABLE": "Rename the '%1' variable",
 	"RENAME_VARIABLE_TITLE": "Rename all '%1' variables to:",
 	"NEW_VARIABLE": "Create variable...",
 	"NEW_VARIABLE_TITLE": "New variable name:",
@@ -195,5 +196,7 @@
 	"TEXT_CHANGECASE_OPERATOR_LOWERCASE": "to lower case",
 	"TEXT_CHANGECASE_OPERATOR_TITLECASE": "to Title Case",
 	"TEXT_TRIM_TOOLTIP": "Return a copy of the text with spaces removed from one or both ends.",
-	"LISTS_SORT_ORDER_DESCENDING": "descendente"
+	"LISTS_SORT_ORDER_DESCENDING": "descendente",
+	"ARIA_TYPE_FIELD_COLOUR": "colour",
+	"FIELD_BITMAP_BUTTON_LABEL_RANDOMIZE": "Randomise"
 }
