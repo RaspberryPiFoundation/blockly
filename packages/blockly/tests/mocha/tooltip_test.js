@@ -45,6 +45,7 @@ suite('Tooltip', function () {
     });
 
     teardown(function () {
+      Blockly.Tooltip.setCustomTooltip(undefined);
       workspaceTeardown.call(this, this.renderedWorkspace);
     });
 

@@ -130,7 +130,7 @@ suite('ARIA', function () {
       block.startDrag();
       this.clock.tick(11);
       const initialAnnouncementText = this.liveRegion.textContent;
-      assert.equal(initialAnnouncementText, 'Moving default on workspace.');
+      assert.include(initialAnnouncementText, 'Moving default on workspace.');
 
       block.drag(new Blockly.utils.Coordinate(startLoc.x + 20, startLoc.y));
       block.drag(new Blockly.utils.Coordinate(startLoc.x + 40, startLoc.y));

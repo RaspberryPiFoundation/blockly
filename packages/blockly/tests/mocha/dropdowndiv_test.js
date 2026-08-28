@@ -176,6 +176,7 @@ suite('DropDownDiv', function () {
 
   suite('show()', function () {
     test('without bounds set throws error', function () {
+      Blockly.DropDownDiv.setBoundsElement(null);
       const block = this.setUpBlockWithField();
       const field = Array.from(block.getFields())[0];
 

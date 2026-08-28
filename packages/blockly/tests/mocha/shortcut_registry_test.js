@@ -24,6 +24,7 @@ suite('Keyboard Shortcut Registry Test', function () {
     this.registry.reset();
     Blockly.ShortcutItems.registerDefaultShortcuts();
     Blockly.ShortcutItems.registerKeyboardNavigationShortcuts();
+    Blockly.ShortcutItems.registerScreenReaderShortcuts();
   });
 
   suite('Registering', function () {

@@ -695,6 +695,8 @@ suite('Procedures', function () {
         .connection.connect(paramBlock1.previousConnection);
       paramBlock1.nextConnection.connect(paramBlock2.previousConnection);
       this.clock.runAll();
+      await Blockly.renderManagement.finishQueuedRenders();
+      this.clock.runAll();
 
       // Reorder the parameters.
       paramBlock2.previousConnection.disconnect();
@@ -704,13 +706,16 @@ suite('Procedures', function () {
         .connection.connect(paramBlock2.previousConnection);
       paramBlock2.nextConnection.connect(paramBlock1.previousConnection);
       this.clock.runAll();
+      await Blockly.renderManagement.finishQueuedRenders();
+      this.clock.runAll();
 
       assert.isNotNull(
         defBlock.getField('PARAMS'),
         'Expected the params field to exist',
       );
-      assert.isTrue(
-        defBlock.getFieldValue('PARAMS').includes('param2, param1'),
+      assert.include(
+        defBlock.getFieldValue('PARAMS'),
+        'param2, param1',
         'Expected the params field order to match the parameter order',
       );
     });
@@ -732,6 +737,8 @@ suite('Procedures', function () {
         .connection.connect(paramBlock1.previousConnection);
       paramBlock1.nextConnection.connect(paramBlock2.previousConnection);
       this.clock.runAll();
+      await Blockly.renderManagement.finishQueuedRenders();
+      this.clock.runAll();
 
       // Reorder the parameters.
       paramBlock2.previousConnection.disconnect();
@@ -740,6 +747,8 @@ suite('Procedures', function () {
         .getInput('STACK')
         .connection.connect(paramBlock2.previousConnection);
       paramBlock2.nextConnection.connect(paramBlock1.previousConnection);
+      this.clock.runAll();
+      await Blockly.renderManagement.finishQueuedRenders();
       this.clock.runAll();
 
       assert.isNotNull(
