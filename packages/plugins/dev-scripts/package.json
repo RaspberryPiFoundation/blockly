@@ -23,7 +23,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@babel/code-frame": "^8.0.0",
-    "chalk": "^4.1.2",
+    "chalk": "^6.0.0",
     "fork-ts-checker-webpack-plugin": "^9.1.0",
     "mocha": "^11.7.6",
     "rimraf": "^6.1.3",
