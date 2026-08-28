@@ -896,8 +896,14 @@ export class BlockSvg
     }
 
     const focusManager = getFocusManager();
-    const focusedElement =
-      focusManager.getFocusedNode()?.getFocusableElement() ?? null;
+    let focusedElement: Element | null;
+    try {
+      // This can throw for a focused connection.
+      focusedElement =
+        focusManager.getFocusedNode()?.getFocusableElement() ?? null;
+    } catch {
+      focusedElement = null;
+    }
 
     super.dispose(!!healStack);
     dom.removeNode(this.svgGroup);
