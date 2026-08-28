@@ -543,5 +543,9 @@ export default defineConfig(
       files: ['packages/blockly/tests/typescript/**/*.ts', 'packages/blockly/tests/typescript/**/*.tsx'],
       tsconfig: './tests/typescript/tsconfig.json',
     }),
+    buildTSOverride({
+      files: ['packages/blockly/tests/mocha/**/*.ts'],
+      tsconfig: './tests/mocha/tsconfig.json',
+    }),
   ),
 );

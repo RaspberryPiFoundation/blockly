@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
 import {
   sharedTestSetup,
@@ -11,11 +12,11 @@ import {
 } from './test_helpers/setup_teardown.js';
 
 suite('Touch', function () {
-  setup(function () {
+  setup(function (this: Mocha.Context) {
     sharedTestSetup.call(this);
   });
 
-  teardown(function () {
+  teardown(function (this: Mocha.Context) {
     Blockly.Touch.clearTouchIdentifier();
     sharedTestTeardown.call(this);
   });
@@ -95,7 +96,7 @@ suite('Touch', function () {
         pointerId: 7,
         pointerType: 'mouse',
       });
-      assert.equal(Blockly.Touch.getTouchIdentifierFromEvent(pointerdown), 7);
+      assert.equal(Blockly.Touch.getTouchIdentifierFromEvent(pointerdown), '7');
     });
 
     test('is pointerId for touch PointerEvents', function () {
@@ -103,7 +104,10 @@ suite('Touch', function () {
         pointerId: 42,
         pointerType: 'touch',
       });
-      assert.equal(Blockly.Touch.getTouchIdentifierFromEvent(pointerdown), 42);
+      assert.equal(
+        Blockly.Touch.getTouchIdentifierFromEvent(pointerdown),
+        '42',
+      );
     });
   });
 });

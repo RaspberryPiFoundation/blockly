@@ -4,7 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
+import sinon from 'sinon';
 import {defineRowBlock} from './test_helpers/block_definitions.js';
 import {
   sharedTestSetup,
@@ -12,28 +14,31 @@ import {
 } from './test_helpers/setup_teardown.js';
 
 suite('Block Delete Event', function () {
-  setup(function () {
-    this.clock = sharedTestSetup.call(this, {fireEventsNow: false}).clock;
+  let clock: sinon.SinonFakeTimers;
+  let workspace: Blockly.Workspace;
+
+  setup(function (this: Mocha.Context) {
+    ({clock} = sharedTestSetup.call(this, {fireEventsNow: false}));
     defineRowBlock();
-    this.workspace = new Blockly.Workspace();
+    workspace = new Blockly.Workspace();
   });
 
-  teardown(function () {
-    sharedTestTeardown.call(this);
+  teardown(function (this: Mocha.Context) {
+    sharedTestTeardown.call(this, workspace);
   });
 
   suite('Receiving', function () {
     test('blocks do not receive their own delete events', function () {
       Blockly.Blocks['test'] = {
-        onchange: function (e) {},
+        onchange: function (_e: Blockly.Events.Abstract) {},
       };
       // Need to stub the definition, because the property on the definition is
       // what gets registered as an event listener.
       const spy = sinon.spy(Blockly.Blocks['test'], 'onchange');
-      const testBlock = this.workspace.newBlock('test');
+      const testBlock = workspace.newBlock('test');
 
       testBlock.dispose();
-      this.clock.runAll();
+      clock.runAll();
 
       assert.isFalse(spy.called);
     });
@@ -41,13 +46,11 @@ suite('Block Delete Event', function () {
 
   suite('Serialization', function () {
     test('events round-trip through JSON', function () {
-      const block = this.workspace.newBlock('row_block', 'block_id');
+      const block = workspace.newBlock('row_block', 'block_id');
       const origEvent = new Blockly.Events.BlockDelete(block);
 
       const json = origEvent.toJson();
-      const newEvent = new Blockly.Events.fromJson(json, this.workspace);
-      delete origEvent.oldXml; // xml fails deep equals for some reason.
-      delete newEvent.oldXml; // xml fails deep equals for some reason.
+      const newEvent = Blockly.Events.fromJson(json, workspace);
 
       assert.deepEqual(newEvent, origEvent);
     });

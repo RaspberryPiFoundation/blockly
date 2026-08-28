@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
 import {
   sharedTestSetup,
@@ -11,13 +12,15 @@ import {
 } from './test_helpers/setup_teardown.js';
 
 suite('Viewport Change Event', function () {
-  setup(function () {
+  let workspace: Blockly.Workspace;
+
+  setup(function (this: Mocha.Context) {
     sharedTestSetup.call(this);
-    this.workspace = new Blockly.Workspace();
+    workspace = new Blockly.Workspace();
   });
 
-  teardown(function () {
-    sharedTestTeardown.call(this);
+  teardown(function (this: Mocha.Context) {
+    sharedTestTeardown.call(this, workspace);
   });
 
   suite('Serialization', function () {
@@ -26,12 +29,12 @@ suite('Viewport Change Event', function () {
         10,
         10,
         1,
-        this.workspace.id,
+        workspace.id,
         0.8,
       );
 
       const json = origEvent.toJson();
-      const newEvent = new Blockly.Events.fromJson(json, this.workspace);
+      const newEvent = Blockly.Events.fromJson(json, workspace);
 
       assert.deepEqual(newEvent, origEvent);
     });

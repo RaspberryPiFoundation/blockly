@@ -2963,6 +2963,11 @@ suite('Blocks', function () {
         block.render();
       }
     });
+
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
+    });
+
     test('Bubbles are moved to drag layer along with their blocks', async function () {
       this.blocks.A.setCommentText('a');
       this.blocks.B.setCommentText('b');
@@ -3005,6 +3010,12 @@ suite('Blocks', function () {
       this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
       const firstBlock = this.workspace.newBlock('stack_block');
       firstBlock.moveBy(-500, -500);
+    });
+
+    teardown(function () {
+      if (this.workspace) {
+        workspaceTeardown.call(this, this.workspace);
+      }
     });
 
     test('Deleting the sole block on the workspace focuses the workspace', function () {
@@ -3111,6 +3122,7 @@ suite('Blocks', function () {
         this.workspace.getTopBlocks(false)[0],
       );
       this.workspace.dispose();
+      this.workspace = null;
       this.clock.runAll();
 
       // No assert, this just shouldn't throw.

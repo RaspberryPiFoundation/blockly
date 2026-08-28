@@ -57,9 +57,9 @@ suite('Keyboard Shortcut Items', function () {
    */
   function setSelectedConnection(workspace) {
     const block = workspace.newBlock('stack_block');
-    sinon
-      .stub(Blockly.getFocusManager(), 'getFocusedNode')
-      .returns(block.nextConnection);
+    block.initSvg();
+    block.render();
+    Blockly.getFocusManager().focusNode(block.nextConnection);
   }
 
   /**
@@ -68,7 +68,7 @@ suite('Keyboard Shortcut Items', function () {
    */
   function setSelectedComment(workspace) {
     const comment = workspace.newComment();
-    sinon.stub(Blockly.getFocusManager(), 'getFocusedNode').returns(comment);
+    Blockly.getFocusManager().focusNode(comment);
     return comment;
   }
 
@@ -117,6 +117,7 @@ suite('Keyboard Shortcut Items', function () {
 
     test('Called when connection is focused', function () {
       setSelectedConnection(this.workspace);
+      this.hideChaffSpy.resetHistory();
       this.injectionDiv.dispatchEvent(this.event);
       sinon.assert.calledOnce(this.hideChaffSpy);
     });
@@ -217,6 +218,7 @@ suite('Keyboard Shortcut Items', function () {
     // Do not delete anything if a connection is focused.
     test('Not called when connection is focused', function () {
       setSelectedConnection(this.workspace);
+      this.hideChaffSpy.resetHistory();
       const event = createKeyDownEvent(Blockly.utils.KeyCodes.DELETE);
       this.injectionDiv.dispatchEvent(event);
       sinon.assert.notCalled(this.hideChaffSpy);
@@ -271,6 +273,7 @@ suite('Keyboard Shortcut Items', function () {
     });
     test('Not called when connection is focused', function () {
       setSelectedConnection(this.workspace);
+      this.hideChaffSpy.resetHistory();
       const event = createKeyDownEvent(Blockly.utils.KeyCodes.C, [
         Blockly.utils.KeyCodes.CTRL,
       ]);
@@ -282,6 +285,7 @@ suite('Keyboard Shortcut Items', function () {
     test('Workspace comment', function () {
       this.comment = setSelectedComment(this.workspace);
       this.copySpy = sinon.spy(this.comment, 'toCopyData');
+      this.hideChaffSpy.resetHistory();
 
       this.injectionDiv.dispatchEvent(keyEvent);
       sinon.assert.calledOnce(this.copySpy);
@@ -360,6 +364,7 @@ suite('Keyboard Shortcut Items', function () {
     });
     test('Not called when connection is focused', function () {
       setSelectedConnection(this.workspace);
+      this.hideChaffSpy.resetHistory();
       const event = createKeyDownEvent(Blockly.utils.KeyCodes.C, [
         Blockly.utils.KeyCodes.CTRL,
       ]);
@@ -1884,6 +1889,22 @@ suite('Keyboard Shortcut Items', function () {
       const event = createKeyDownEvent(Blockly.utils.KeyCodes.D);
       this.workspace.getInjectionDiv().dispatchEvent(event);
       assert.equal(this.workspace.getTopComments().length, 1);
+    });
+
+    test('Is idempotent when a contextual menu is open', function () {
+      const comment = this.workspace.newComment();
+      comment.setText('Hello');
+      Blockly.getFocusManager().focusNode(comment);
+      comment.showContextMenu();
+      assert.equal(this.workspace.getTopComments().length, 1);
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.D);
+      // The WidgetDiv (used by the dropdown menu) registers the global shortcut
+      // handler for its own div, since it may live outside of the injection
+      // div. Ensure that it also prevents event bubbling to the main shortcut
+      // handler, which could cause shortcuts like Duplicate to be invoked
+      // multiple times from one keypress. See #10250.
+      Blockly.WidgetDiv.getDiv().dispatchEvent(event);
+      assert.equal(this.workspace.getTopComments().length, 2);
     });
   });
 

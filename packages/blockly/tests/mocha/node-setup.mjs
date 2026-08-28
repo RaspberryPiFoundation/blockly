@@ -130,8 +130,9 @@ for (const name of [...domInterfaceNames(window), ...WINDOW_MEMBERS]) {
   }
 }
 
-// Tests use sinon and chai's config as ambient globals (sinon) / shared config.
-globalThis.sinon = sinon;
+// JS tests use sinon and chai's config as ambient globals (sinon) / shared
+// config.
+defineGlobal('sinon', sinon);
 chaiConfig.showDiff = false;
 
 // Silence console output from the tests and from Blockly itself.
@@ -174,14 +175,13 @@ sinon.createSandbox = function (...args) {
 // text measurement) that JSDom does not implement.
 installSvgLayoutStubs(window);
 
-// Load Blockly, the standard blocks and the JavaScript generator, and expose
-// them as globals, mirroring what tests/mocha/index.html does in the browser.
-const Blockly = await import('../../build/blockly.loader.mjs');
+// Load Blockly, the standard blocks and the JavaScript generator, mirroring
+// what tests/mocha/index.html does in the browser.
+await import('../../build/blockly.loader.mjs');
 await import('../../build/blocks.loader.mjs');
 const {javascriptGenerator} = await import('../../build/javascript.loader.mjs');
 
-globalThis.Blockly = Blockly;
-globalThis.javascriptGenerator = javascriptGenerator;
+defineGlobal('javascriptGenerator', javascriptGenerator);
 
 // Load English messages. build/msg/en.js is a classic script (not a module)
 // that augments the global Blockly.Msg, exactly as the browser harness loads it

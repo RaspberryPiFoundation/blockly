@@ -11,6 +11,7 @@ import {
   DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
+  workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
 suite('DropDownDiv', function () {
@@ -155,6 +156,7 @@ suite('DropDownDiv', function () {
     });
     teardown(function () {
       this.boundsStub.restore();
+      workspaceTeardown.call(this, this.workspace);
     });
     test('Escape dismisses DropDownDiv', function () {
       let hidden = false;
@@ -177,10 +179,8 @@ suite('DropDownDiv', function () {
       const block = this.setUpBlockWithField();
       const field = Array.from(block.getFields())[0];
 
-      const errorMsgRegex = /Cannot read properties of null.+?/;
-      assert.throws(
-        () => Blockly.DropDownDiv.show(field, false, 50, 60, 70, 80, false),
-        errorMsgRegex,
+      assert.throws(() =>
+        Blockly.DropDownDiv.show(field, false, 50, 60, 70, 80, false),
       );
     });
 

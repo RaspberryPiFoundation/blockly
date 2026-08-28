@@ -308,6 +308,11 @@ suite('Checkbox Fields', function () {
 
       this.focusableElement = this.field.getClickTarget_();
     });
+
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
+    });
+
     test('Block has field type name in ARIA label', function () {
       const blockLabel = this.block.getAriaLabel();
       assert.include(blockLabel, 'checkbox');

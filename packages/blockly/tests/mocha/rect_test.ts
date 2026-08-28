@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
 import {
   sharedTestSetup,
@@ -11,13 +12,10 @@ import {
 } from './test_helpers/setup_teardown.js';
 
 suite('Rect', function () {
-  setup(function () {
+  setup(function (this: Mocha.Context) {
     sharedTestSetup.call(this);
-    this.createCoord = function (x, y) {
-      return new Blockly.utils.Coordinate(x, y);
-    };
   });
-  teardown(function () {
+  teardown(function (this: Mocha.Context) {
     sharedTestTeardown.call(this);
   });
 
@@ -35,7 +33,7 @@ suite('Rect', function () {
   suite('createFromPoint()', function () {
     test('initializes properties correctly', function () {
       const rect = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         23,
         45,
       );
@@ -50,7 +48,7 @@ suite('Rect', function () {
   suite('clone()', function () {
     test('copies properties correctly', function () {
       const rect = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         23,
         45,
       );
@@ -67,7 +65,7 @@ suite('Rect', function () {
   suite('equals()', function () {
     test('same object instance should equal itself', function () {
       const rect = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         23,
         45,
       );
@@ -85,7 +83,7 @@ suite('Rect', function () {
 
     test('an object and null should not be equal', function () {
       const rect = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         23,
         45,
       );
@@ -97,7 +95,7 @@ suite('Rect', function () {
 
     test('null and an object should not be equal', function () {
       const rect = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         23,
         45,
       );
@@ -109,7 +107,7 @@ suite('Rect', function () {
 
     test('object should equal its clone', function () {
       const rect = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         23,
         45,
       );
@@ -121,12 +119,12 @@ suite('Rect', function () {
 
     test('object should equal an exact explicit copy', function () {
       const rect1 = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         23,
         45,
       );
       const rect2 = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         23,
         45,
       );
@@ -141,12 +139,12 @@ suite('Rect', function () {
 
     test('object should not equal object with different x position', function () {
       const rect1 = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         23,
         45,
       );
       const rect2 = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(3, 2),
+        new Blockly.utils.Coordinate(3, 2),
         23,
         45,
       );
@@ -161,12 +159,12 @@ suite('Rect', function () {
 
     test('object should not equal object with different y position', function () {
       const rect1 = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         23,
         45,
       );
       const rect2 = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 4),
+        new Blockly.utils.Coordinate(1, 4),
         23,
         45,
       );
@@ -181,12 +179,12 @@ suite('Rect', function () {
 
     test('object should not equal object with different x and y positions', function () {
       const rect1 = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         23,
         45,
       );
       const rect2 = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(3, 4),
+        new Blockly.utils.Coordinate(3, 4),
         23,
         45,
       );
@@ -201,12 +199,12 @@ suite('Rect', function () {
 
     test('object should not equal object with different width', function () {
       const rect1 = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         23,
         45,
       );
       const rect2 = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         46,
         45,
       );
@@ -221,12 +219,12 @@ suite('Rect', function () {
 
     test('object should not equal object with different height', function () {
       const rect1 = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         23,
         45,
       );
       const rect2 = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         23,
         89,
       );
@@ -241,12 +239,12 @@ suite('Rect', function () {
 
     test('object should not equal object with all different properties', function () {
       const rect1 = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         23,
         45,
       );
       const rect2 = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(3, 4),
+        new Blockly.utils.Coordinate(3, 4),
         46,
         89,
       );
@@ -263,7 +261,7 @@ suite('Rect', function () {
   suite('getHeight()', function () {
     test('computes zero height for empty rectangle', function () {
       const rect = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(0, 0),
+        new Blockly.utils.Coordinate(0, 0),
         0,
         0,
       );
@@ -273,7 +271,7 @@ suite('Rect', function () {
 
     test('computes height of 1 for unit square rectangle', function () {
       const rect = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(0, 0),
+        new Blockly.utils.Coordinate(0, 0),
         1,
         1,
       );
@@ -283,7 +281,7 @@ suite('Rect', function () {
 
     test('computes height of 1 for unit square rectangle not at origin', function () {
       const rect = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         1,
         1,
       );
@@ -293,7 +291,7 @@ suite('Rect', function () {
 
     test('computes height of 1 for unit square rectangle with negative position', function () {
       const rect = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(-1, -2),
+        new Blockly.utils.Coordinate(-1, -2),
         1,
         1,
       );
@@ -303,7 +301,7 @@ suite('Rect', function () {
 
     test('computes decimal height for non-square rectangle not at origin', function () {
       const rect = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1.1, 2.2),
+        new Blockly.utils.Coordinate(1.1, 2.2),
         3.3,
         4.4,
       );
@@ -315,7 +313,7 @@ suite('Rect', function () {
   suite('getWidth()', function () {
     test('computes zero width for empty rectangle', function () {
       const rect = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(0, 0),
+        new Blockly.utils.Coordinate(0, 0),
         0,
         0,
       );
@@ -325,7 +323,7 @@ suite('Rect', function () {
 
     test('computes width of 1 for unit square rectangle', function () {
       const rect = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(0, 0),
+        new Blockly.utils.Coordinate(0, 0),
         1,
         1,
       );
@@ -335,7 +333,7 @@ suite('Rect', function () {
 
     test('computes width of 1 for unit square rectangle not at origin', function () {
       const rect = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1, 2),
+        new Blockly.utils.Coordinate(1, 2),
         1,
         1,
       );
@@ -345,7 +343,7 @@ suite('Rect', function () {
 
     test('computes width of 1 for unit square rectangle with negative position', function () {
       const rect = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(-1, -2),
+        new Blockly.utils.Coordinate(-1, -2),
         1,
         1,
       );
@@ -355,7 +353,7 @@ suite('Rect', function () {
 
     test('computes decimal width for non-square rectangle not at origin', function () {
       const rect = Blockly.utils.Rect.createFromPoint(
-        this.createCoord(1.1, 2.2),
+        new Blockly.utils.Coordinate(1.1, 2.2),
         3.3,
         4.4,
       );
@@ -368,7 +366,7 @@ suite('Rect', function () {
     suite('point contained within rect', function () {
       test('origin for zero-sized square', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(0, 0),
+          new Blockly.utils.Coordinate(0, 0),
           0,
           0,
         );
@@ -380,7 +378,7 @@ suite('Rect', function () {
 
       test('whole number centroid for square at origin', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(0, 0),
+          new Blockly.utils.Coordinate(0, 0),
           2,
           2,
         );
@@ -392,7 +390,7 @@ suite('Rect', function () {
 
       test('decimal number centroid for square at origin', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(0, 0),
+          new Blockly.utils.Coordinate(0, 0),
           1,
           1,
         );
@@ -404,7 +402,7 @@ suite('Rect', function () {
 
       test('centroid for non-square not at origin', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -416,7 +414,7 @@ suite('Rect', function () {
 
       test('negative centroid for non-square not at origin', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(-10, -20),
+          new Blockly.utils.Coordinate(-10, -20),
           3,
           5,
         );
@@ -428,7 +426,7 @@ suite('Rect', function () {
 
       test('NW corner', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -440,7 +438,7 @@ suite('Rect', function () {
 
       test('NE corner', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -452,7 +450,7 @@ suite('Rect', function () {
 
       test('SW corner', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -464,7 +462,7 @@ suite('Rect', function () {
 
       test('SE corner', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -476,7 +474,7 @@ suite('Rect', function () {
 
       test('left edge midpoint', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -488,7 +486,7 @@ suite('Rect', function () {
 
       test('right edge midpoint', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -500,7 +498,7 @@ suite('Rect', function () {
 
       test('top edge midpoint', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -512,7 +510,7 @@ suite('Rect', function () {
 
       test('bottom edge midpoint', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -525,7 +523,7 @@ suite('Rect', function () {
     suite('point not contained within rect', function () {
       test('non-origin for zero-sized square', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(0, 0),
+          new Blockly.utils.Coordinate(0, 0),
           0,
           0,
         );
@@ -537,7 +535,7 @@ suite('Rect', function () {
 
       test('point at midpoint x but above unit square', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
@@ -549,7 +547,7 @@ suite('Rect', function () {
 
       test('point at midpoint x but below unit square', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
@@ -561,7 +559,7 @@ suite('Rect', function () {
 
       test('point at midpoint y but left of unit square', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
@@ -573,7 +571,7 @@ suite('Rect', function () {
 
       test('point at midpoint y but right of unit square', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
@@ -585,7 +583,7 @@ suite('Rect', function () {
 
       test('positive point far outside positive rectangle', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -597,7 +595,7 @@ suite('Rect', function () {
 
       test('negative point far outside positive rectangle', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -609,7 +607,7 @@ suite('Rect', function () {
 
       test('positive point far outside negative rectangle', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(-10, -20),
+          new Blockly.utils.Coordinate(-10, -20),
           3,
           5,
         );
@@ -621,7 +619,7 @@ suite('Rect', function () {
 
       test('negative point far outside negative rectangle', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(-10, -20),
+          new Blockly.utils.Coordinate(-10, -20),
           3,
           5,
         );
@@ -633,7 +631,7 @@ suite('Rect', function () {
 
       test('Point just outside NW corner', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -645,7 +643,7 @@ suite('Rect', function () {
 
       test('Point just outside NE corner', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -657,7 +655,7 @@ suite('Rect', function () {
 
       test('Point just outside SW corner', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -669,7 +667,7 @@ suite('Rect', function () {
 
       test('Point just outside SE corner', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -681,7 +679,7 @@ suite('Rect', function () {
 
       test('Point just outside left edge midpoint', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -693,7 +691,7 @@ suite('Rect', function () {
 
       test('Point just outside right edge midpoint', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -705,7 +703,7 @@ suite('Rect', function () {
 
       test('Point just outside top edge midpoint', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -717,7 +715,7 @@ suite('Rect', function () {
 
       test('Point just outside bottom edge midpoint', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           3,
           4,
         );
@@ -737,7 +735,7 @@ suite('Rect', function () {
     suite('does intersect', function () {
       test('rect and itself', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           23,
           45,
         );
@@ -749,7 +747,7 @@ suite('Rect', function () {
 
       test('rect and its clone', function () {
         const rect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           23,
           45,
         );
@@ -761,12 +759,12 @@ suite('Rect', function () {
 
       test('two rects of the same positions and dimensions', function () {
         const rect1 = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           23,
           45,
         );
         const rect2 = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           23,
           45,
         );
@@ -785,12 +783,12 @@ suite('Rect', function () {
         // └─│─┘2│
         //   └───┘
         const nwRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const seRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(2, 2),
+          new Blockly.utils.Coordinate(2, 2),
           2,
           2,
         );
@@ -814,12 +812,12 @@ suite('Rect', function () {
         // │2└─│─┘
         // └───┘
         const neRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(2, 1),
+          new Blockly.utils.Coordinate(2, 1),
           2,
           2,
         );
         const swRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           2,
           2,
         );
@@ -843,12 +841,12 @@ suite('Rect', function () {
         // └───┘  │
         //   └────┘
         const bigRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const smallRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(0.5, 1.5),
+          new Blockly.utils.Coordinate(0.5, 1.5),
           1,
           1,
         );
@@ -872,12 +870,12 @@ suite('Rect', function () {
         // │  └───┘
         // └────┘
         const bigRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const smallRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(2.5, 1.5),
+          new Blockly.utils.Coordinate(2.5, 1.5),
           1,
           1,
         );
@@ -901,12 +899,12 @@ suite('Rect', function () {
         // │└─┘│
         // └───┘
         const bigRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const smallRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1.5, 0.5),
+          new Blockly.utils.Coordinate(1.5, 0.5),
           1,
           1,
         );
@@ -930,12 +928,12 @@ suite('Rect', function () {
         // └│─│┘
         //  └─┘
         const bigRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const smallRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1.5, 2.5),
+          new Blockly.utils.Coordinate(1.5, 2.5),
           1,
           1,
         );
@@ -961,12 +959,12 @@ suite('Rect', function () {
         //   │ │
         //   └─┘
         const tallRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(2, 1),
+          new Blockly.utils.Coordinate(2, 1),
           1,
           2,
         );
         const wideRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           2,
           1,
         );
@@ -990,12 +988,12 @@ suite('Rect', function () {
         // │ └─┘ │
         // └─────┘
         const bigRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const smallRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1.5, 1.5),
+          new Blockly.utils.Coordinate(1.5, 1.5),
           1,
           1,
         );
@@ -1018,12 +1016,12 @@ suite('Rect', function () {
         // │ 2│ │2 │
         // └──└────┘
         const leftRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const rightRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(2, 1),
+          new Blockly.utils.Coordinate(2, 1),
           2,
           2,
         );
@@ -1047,12 +1045,12 @@ suite('Rect', function () {
         // │───│
         // └───┘
         const topRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const bottomRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2),
+          new Blockly.utils.Coordinate(1, 2),
           2,
           2,
         );
@@ -1075,12 +1073,12 @@ suite('Rect', function () {
         // │ 2 │ 2 │
         // └───┴───┘
         const leftRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const rightRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(3, 1),
+          new Blockly.utils.Coordinate(3, 1),
           2,
           2,
         );
@@ -1105,12 +1103,12 @@ suite('Rect', function () {
         // │ 2 │
         // └───┘
         const topRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const bottomRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 3),
+          new Blockly.utils.Coordinate(1, 3),
           2,
           2,
         );
@@ -1134,12 +1132,12 @@ suite('Rect', function () {
         // └─┘   │
         //   └───┘
         const bigRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(2, 1),
+          new Blockly.utils.Coordinate(2, 1),
           2,
           2,
         );
         const smallRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1.5),
+          new Blockly.utils.Coordinate(1, 1.5),
           1,
           1,
         );
@@ -1163,12 +1161,12 @@ suite('Rect', function () {
         // │   └─┘
         // └───┘
         const bigRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const smallRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(3, 1.5),
+          new Blockly.utils.Coordinate(3, 1.5),
           1,
           1,
         );
@@ -1192,12 +1190,12 @@ suite('Rect', function () {
         // │ 2 │
         // └───┘
         const bigRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const smallRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1.5, 0),
+          new Blockly.utils.Coordinate(1.5, 0),
           1,
           1,
         );
@@ -1221,12 +1219,12 @@ suite('Rect', function () {
         // └┌─┐┘
         //  └─┘
         const bigRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const smallRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1.5, 3),
+          new Blockly.utils.Coordinate(1.5, 3),
           1,
           1,
         );
@@ -1251,12 +1249,12 @@ suite('Rect', function () {
         // │ 2 │
         // └───┘
         const swRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 3),
+          new Blockly.utils.Coordinate(1, 3),
           2,
           2,
         );
         const neRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(3, 1),
+          new Blockly.utils.Coordinate(3, 1),
           2,
           2,
         );
@@ -1281,12 +1279,12 @@ suite('Rect', function () {
         //     │ 2 │
         //     └───┘
         const nwRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const seRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(3, 3),
+          new Blockly.utils.Coordinate(3, 3),
           2,
           2,
         );
@@ -1310,12 +1308,12 @@ suite('Rect', function () {
         // │ 2 │ │ 2 │
         // └───┘ └───┘
         const westRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const eastRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(3.5, 1),
+          new Blockly.utils.Coordinate(3.5, 1),
           2,
           2,
         );
@@ -1341,12 +1339,12 @@ suite('Rect', function () {
         // │ 2 │
         // └───┘
         const northRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const southRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 3.5),
+          new Blockly.utils.Coordinate(1, 3.5),
           2,
           2,
         );
@@ -1370,12 +1368,12 @@ suite('Rect', function () {
         // └─┘│   │
         //    └───┘
         const westRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           1,
           1,
         );
         const eastRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(2.5, 1),
+          new Blockly.utils.Coordinate(2.5, 1),
           2,
           2,
         );
@@ -1399,12 +1397,12 @@ suite('Rect', function () {
         // │   │└─┘
         // └───┘
         const westRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const eastRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(3.5, 1),
+          new Blockly.utils.Coordinate(3.5, 1),
           1,
           1,
         );
@@ -1429,12 +1427,12 @@ suite('Rect', function () {
         // │ 2 │
         // └───┘
         const northRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           1,
           1,
         );
         const southRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2.5),
+          new Blockly.utils.Coordinate(1, 2.5),
           2,
           2,
         );
@@ -1459,12 +1457,12 @@ suite('Rect', function () {
         //  ┌─┐
         //  └─┘
         const northRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const southRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 3.5),
+          new Blockly.utils.Coordinate(1, 3.5),
           1,
           1,
         );
@@ -1490,12 +1488,12 @@ suite('Rect', function () {
         // │ 2 │
         // └───┘
         const neRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(3.5, 1),
+          new Blockly.utils.Coordinate(3.5, 1),
           2,
           2,
         );
         const swRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 3.5),
+          new Blockly.utils.Coordinate(1, 3.5),
           2,
           2,
         );
@@ -1521,12 +1519,12 @@ suite('Rect', function () {
         //      │ 2 │
         //      └───┘
         const nwRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const seRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(3.5, 3.5),
+          new Blockly.utils.Coordinate(3.5, 3.5),
           2,
           2,
         );
@@ -1551,12 +1549,12 @@ suite('Rect', function () {
         // │ 2 │
         // └───┘
         const neRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(3.5, 1),
+          new Blockly.utils.Coordinate(3.5, 1),
           1,
           1,
         );
         const swRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 2.5),
+          new Blockly.utils.Coordinate(1, 2.5),
           2,
           2,
         );
@@ -1581,12 +1579,12 @@ suite('Rect', function () {
         //      │ 2 │
         //      └───┘
         const nwRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           1,
           1,
         );
         const seRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(2.5, 2.5),
+          new Blockly.utils.Coordinate(2.5, 2.5),
           2,
           2,
         );
@@ -1611,12 +1609,12 @@ suite('Rect', function () {
         // ┌─┐
         // └─┘
         const neRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(2.5, 1),
+          new Blockly.utils.Coordinate(2.5, 1),
           2,
           2,
         );
         const swRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 3.5),
+          new Blockly.utils.Coordinate(1, 3.5),
           1,
           1,
         );
@@ -1641,12 +1639,12 @@ suite('Rect', function () {
         //      ┌─┐
         //      └─┘
         const nwRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(1, 1),
+          new Blockly.utils.Coordinate(1, 1),
           2,
           2,
         );
         const seRect = Blockly.utils.Rect.createFromPoint(
-          this.createCoord(3.5, 3.5),
+          new Blockly.utils.Coordinate(3.5, 3.5),
           1,
           1,
         );

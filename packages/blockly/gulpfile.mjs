@@ -37,11 +37,7 @@ import {
   pack,
   typings,
 } from './scripts/gulpfiles/package_tasks.mjs';
-import {
-  generators,
-  interactiveMocha,
-  test,
-} from './scripts/gulpfiles/test_tasks.mjs';
+import {generators, test} from './scripts/gulpfiles/test_tasks.mjs';
 
 const clean = parallel(cleanBuildDir, cleanReleaseDir);
 
@@ -73,7 +69,6 @@ export {
   clean,
   test,
   generators as testGenerators,
-  interactiveMocha,
   buildAdvancedCompilationTest,
   docs,
   typings,

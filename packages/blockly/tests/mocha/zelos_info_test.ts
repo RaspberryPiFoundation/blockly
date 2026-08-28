@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
 import {
   sharedTestSetup,
@@ -11,9 +12,11 @@ import {
 } from './test_helpers/setup_teardown.js';
 
 suite('Zelos RenderInfo', function () {
-  setup(function () {
+  let workspace: Blockly.WorkspaceSvg;
+
+  setup(function (this: Mocha.Context) {
     sharedTestSetup.call(this);
-    this.workspace = Blockly.inject('blocklyDiv', {renderer: 'zelos'});
+    workspace = Blockly.inject('blocklyDiv', {renderer: 'zelos'});
     Blockly.defineBlocksWithJsonArray([
       {
         'type': 'tall_round_reporter',
@@ -34,17 +37,17 @@ suite('Zelos RenderInfo', function () {
     ]);
   });
 
-  teardown(function () {
-    sharedTestTeardown.call(this);
+  teardown(function (this: Mocha.Context) {
+    sharedTestTeardown.call(this, workspace);
   });
 
   test('tall image on round reporter keeps corners inside the caps', function () {
-    const block = this.workspace.newBlock('tall_round_reporter');
+    const block = workspace.newBlock('tall_round_reporter');
     block.initSvg();
     block.render();
 
     const size = block.getHeightWidth();
-    const fieldSize = block.getField('IMG').getSize();
+    const fieldSize = block.getField('IMG')!.getSize();
     const horizontalPad = size.width - fieldSize.width;
 
     // Height-aware round-cap clearance for a 75px field (radius 42) needs

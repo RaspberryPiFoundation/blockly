@@ -13,6 +13,7 @@ import {
   DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
+  workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 import {createKeyDownEvent} from './test_helpers/user_input.js';
 
@@ -1145,6 +1146,10 @@ suite('Toolbox and flyout jump shortcuts (Ctrl/Cmd + Home / End)', function () {
       this.lastItem = allItems[allItems.length - 1];
     });
 
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
+    });
+
     test('Navigable items exclude the separator', function () {
       const navigable = this.toolbox
         .getNavigator()
@@ -1211,6 +1216,10 @@ suite('Toolbox and flyout jump shortcuts (Ctrl/Cmd + Home / End)', function () {
           (element) =>
             element instanceof Blockly.FlyoutButton && element.isLabel(),
         );
+    });
+
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
     });
 
     test('CtrlHome focuses the first item, which is a label rather than a block', function () {
@@ -1329,6 +1338,10 @@ suite('Toolbox and flyout paging shortcuts (Page Up / Page Down)', function () {
       };
     });
 
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
+    });
+
     test('PageDown focuses the last visible block', function () {
       this.layOutFlyout(0);
       Blockly.getFocusManager().focusNode(this.blocks[0]);
@@ -1397,6 +1410,10 @@ suite('Toolbox and flyout paging shortcuts (Page Up / Page Down)', function () {
             right: 200,
           });
       });
+    });
+
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
     });
 
     test('PageDown focuses the last visible category', function () {

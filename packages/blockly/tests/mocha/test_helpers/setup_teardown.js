@@ -109,6 +109,14 @@ function wrapDefineBlocksWithJsonArrayWithCleanup_(sharedCleanupObj) {
 }
 
 /**
+ * The state sharedTestSetup() installs.
+ * @typedef {{
+ *   clock: import('sinon').SinonFakeTimers,
+ *   eventsFireStub: (import('sinon').SinonStub|undefined),
+ * }} SharedTestState
+ */
+
+/**
  * Shared setup method that sets up fake timer for clock so that pending
  * setTimeout calls can be cleared in test teardown along with other common
  * stubs. Should be called in setup of outermost suite using
@@ -123,10 +131,10 @@ function wrapDefineBlocksWithJsonArrayWithCleanup_(sharedCleanupObj) {
  *      track of block types defined so that they can be undefined in
  *      sharedTestTeardown and calls original method.
  *
+ * @this {Mocha.Context}
  * @param {Object<string, boolean>} options Options to enable/disable setup
  *    of certain stubs.
- * @return {{clock: *}} The fake clock (as part of an object to make refactoring
- *     easier).
+ * @return {SharedTestState} The state this setup created.
  */
 export function sharedTestSetup(options = {}) {
   this.sharedSetupCalled_ = true;
@@ -158,23 +166,29 @@ export function sharedTestSetup(options = {}) {
   wrapDefineBlocksWithJsonArrayWithCleanup_(this.sharedCleanup);
   return {
     clock: this.clock,
+    eventsFireStub: this.eventsFireStub,
   };
 }
 
 /**
  * Shared cleanup method that clears up pending setTimeout calls, disposes of
- * workspace, and resets global variables. Should be called in setup of
- * outermost suite using sharedTestTeardown.call(this).
+ * workspace, and resets global variables. Should be called in the teardown of
+ * the same suite that called sharedTestSetup, using
+ * sharedTestTeardown.call(this, workspace).
+ * @this {Mocha.Context}
+ * @param {?import('#core/blockly.js').Workspace} [workspace] The workspace to
+ *     dispose, defaulting to whatever is on the Mocha context. Should be
+ *     explicitly passed by TS tests.
  */
-export function sharedTestTeardown() {
+export function sharedTestTeardown(workspace = this.workspace) {
   const testRef = this.currentTest || this.test;
   if (!this.sharedSetupCalled_) {
     console.error('"' + testRef.fullTitle() + '" did not call sharedTestSetup');
   }
 
   try {
-    if (this.workspace) {
-      workspaceTeardown.call(this, this.workspace);
+    if (workspace) {
+      workspaceTeardown.call(this, workspace);
       this.workspace = null;
     } else {
       this.clock.runAll(); // Run all queued setTimeout calls.

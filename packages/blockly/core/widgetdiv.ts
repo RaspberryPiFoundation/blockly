@@ -102,7 +102,10 @@ export function createDom() {
     containerDiv,
     'keydown',
     null,
-    common.globalShortcutHandler,
+    (e: KeyboardEvent) => {
+      common.globalShortcutHandler(e);
+      e.stopPropagation();
+    },
   );
 
   container.appendChild(containerDiv);

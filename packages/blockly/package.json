@@ -20,8 +20,18 @@
     "jsdom": false
   },
   "imports": {
-    "#core/*": "./build/src/core/*",
-    "#generators/*": "./build/src/generators/*"
+    "#core/*": {
+      "types": "./build/declarations/core/*",
+      "default": "./build/src/core/*"
+    },
+    "#blocks/*": {
+      "types": "./build/declarations/blocks/*",
+      "default": "./build/src/blocks/*"
+    },
+    "#generators/*": {
+      "types": "./build/declarations/generators/*",
+      "default": "./build/src/generators/*"
+    }
   },
   "publishConfig": {
     "directory": "dist"
@@ -78,9 +88,10 @@
     "tsc": "gulp tsc",
     "test": "gulp test",
     "test:browser": "npx mocha --config tests/browser/.mocharc.js",
-    "test:mocha:node": "npx mocha --config tests/mocha/.mocharc.node.cjs \"tests/mocha/**/*_test.js\"",
+    "test:mocha:node": "npm run test:mocha:typecheck && npx mocha --config tests/mocha/.mocharc.node.cjs \"tests/mocha/**/*_test.{js,ts}\"",
+    "test:mocha:typecheck": "tsc -p tests/mocha/tsconfig.json",
     "test:generators": "gulp testGenerators",
-    "test:mocha:interactive": "npm run build && concurrently -n tsc,server \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"gulp interactiveMocha\"",
+    "test:mocha:interactive": "npm run build && node scripts/prepare_mocha_bundle.mjs && concurrently -n tsc,tsc:tests,esbuild,python3 \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"npm run test:mocha:typecheck -- --watch --preserveWatchOutput\" \"esbuild build/tests/bundle-entry.js --bundle --sourcemap --alias:blockly/core=./build/src/core/blockly.js --alias:blockly/blocks=./build/src/blocks/blocks.js --alias:blockly=./build/src/core/blockly.js --outfile=build/tests/mocha-bundle.js --servedir=. --serve=127.0.0.1:8080 --watch=forever --log-level=warning\" \"python3 -m webbrowser 'http://localhost:8080/tests/mocha/index.html'\"",
     "test:compile:advanced": "gulp buildAdvancedCompilationTest --debug",
     "updateGithubPages": "npm ci && node scripts/update_github_pages.mjs --upstream",
     "updateGithubPages:staging": "npm ci && node scripts/update_github_pages.mjs --use-local"
@@ -139,16 +150,19 @@
     "@blockly/block-test": "^13.1.0",
     "@hyperjump/browser": "^1.3.1",
     "@hyperjump/json-schema": "^1.17.6",
-    "@microsoft/api-documenter": "7.30.7",
+    "@microsoft/api-documenter": "7.30.13",
     "@microsoft/api-extractor": "^7.58.9",
+    "@types/chai": "^5.2.3",
+    "@types/mocha": "^10.0.10",
+    "@types/sinon": "^22.0.0",
     "async-done": "^2.0.0",
     "chai": "^6.2.2",
     "concurrently": "^10.0.4",
+    "esbuild": "^0.28.2",
     "glob": "^13.0.6",
-    "google-closure-compiler": "^20260803.0.0",
+    "google-closure-compiler": "^20260819.0.0",
     "gulp": "^5.0.1",
     "gulp-concat": "^2.6.1",
-    "gulp-gzip": "^1.4.2",
     "gulp-rename": "^2.1.0",
     "gulp-replace": "^1.1.4",
     "gulp-sourcemaps": "^3.0.0",
@@ -161,7 +175,7 @@
     "rimraf": "^6.1.3",
     "sinon": "^22.1.0",
     "typescript": "^6.0.3",
-    "webdriverio": "^9.30.0",
+    "webdriverio": "^9.31.2",
     "yargs": "^18.0.0"
   },
   "engines": {

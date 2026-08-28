@@ -12,15 +12,11 @@
 import asyncDone from 'async-done';
 import {spawnSync} from 'child_process';
 import * as fs from 'fs';
-import {globSync} from 'glob';
 import * as gulp from 'gulp';
-import gzip from 'gulp-gzip';
 import * as path from 'path';
 import {rimraf} from 'rimraf';
 
-import {RELEASE_DIR, TEST_TSC_OUTPUT_DIR} from './config.mjs';
-
-import {runMochaTestsInBrowser} from '../../tests/mocha/webdriver.js';
+import {TEST_TSC_OUTPUT_DIR} from './config.mjs';
 
 const OUTPUT_DIR = 'build/generators';
 const GOLDEN_DIR = 'tests/generators/golden';
@@ -168,145 +164,12 @@ function renamings() {
 }
 
 /**
- * Helper method for gzipping file.
- * @param {string} file Target file.
- * @return {Promise} Asynchronous result.
- */
-function gzipFile(file) {
-  return new Promise((resolve) => {
-    const name = path.posix.join(RELEASE_DIR, file);
-
-    const stream = gulp.src(name)
-        .pipe(gzip())
-        .pipe(gulp.dest(RELEASE_DIR));
-
-    stream.on('end', () => {
-      resolve();
-    });
-  });
-}
-
-/**
- * Helper method for comparing file size.
- * @param {string} file Target file.
- * @param {number} expected Expected size.
- * @return {number} 0: success / 1: failed.
- */
-function compareSize(file, expected) {
-  const name = path.posix.join(RELEASE_DIR, file);
-  const compare = Math.floor(expected * 1.1);
-  const stat = fs.statSync(name);
-  const size = stat.size;
-
-  if (!compare) {
-    const message = `Failed: Previous size of ${name} is undefined.`;
-    console.log(`${BOLD_RED}${message}${ANSI_RESET}`);
-    return 1;
-  }
-
-  if (size > compare) {
-    const message = `Failed: ` +
-        `Size of ${name} has grown more than 10%. ${size} vs ${expected}`;
-    console.log(`${BOLD_RED}${message}${ANSI_RESET}`);
-    return 1;
-  }
-
-  const message =
-      `Size of ${name} at ${size} compared to previous ${expected}`;
-  console.log(`${BOLD_GREEN}${message}${ANSI_RESET}`);
-  return 0;
-}
-
-/**
- * Helper method for zipping the compressed files.
- * @return {Promise} Asynchronous result.
- */
-function zippingFiles() {
-  // GZip them for additional size comparisons (keep originals, force
-  // overwite previously-gzipped copies).
-  console.log('Zipping the compressed files');
-  const gzip1 = gzipFile('blockly_compressed.js');
-  const gzip2 = gzipFile('blocks_compressed.js');
-  return Promise.all([gzip1, gzip2]);
-}
-
-/**
- * Check the sizes of built files for unexpected growth.
- * @return {Promise} Asynchronous result.
- */
-async function metadata() {
-  return runTestTask('metadata', async () => {
-    // Zipping the compressed files.
-    await zippingFiles();
-    // Read expected size from script.
-    const contents = fs.readFileSync('tests/scripts/check_metadata.sh')
-        .toString();
-    const pattern = /^readonly (?<key>[A-Z_]+)=(?<value>\d+)$/gm;
-    const matches = contents.matchAll(pattern);
-    const expected = {};
-    for (const match of matches) {
-      expected[match.groups.key] = match.groups.value;
-    }
-
-    // Check the sizes of the files.
-    let failed = 0;
-    failed += compareSize('blockly_compressed.js',
-                          expected.BLOCKLY_SIZE_EXPECTED);
-    failed += compareSize('blocks_compressed.js',
-                          expected.BLOCKS_SIZE_EXPECTED);
-    failed += compareSize('blockly_compressed.js.gz',
-                          expected.BLOCKLY_GZ_SIZE_EXPECTED);
-    failed += compareSize('blocks_compressed.js.gz',
-                          expected.BLOCKS_GZ_SIZE_EXPECTED);
-    if (failed > 0) {
-      throw new Error('Unexpected growth was detected.');
-    }
-  });
-}
-
-/**
- * Generates tests/mocha/test-modules.generated.mjs,
- * the list of tests imported by the browser harness (tests/mocha/index.html).
- * Keeping it generated from a glob means new *_test.js files are picked up
- * automatically and the browser and Node runners stay in sync.
- * @return {Promise} Asynchronous result.
- */
-function generateMochaIndex() {
-  return runTestTask('generateMochaIndex', async () => {
-    const files = globSync('**/*_test.js', {cwd: 'tests/mocha'}).sort();
-
-    const body = files.map((f) => `import './${f}';`).join('\n') + '\n';
-    fs.writeFileSync('tests/mocha/test-modules.generated.mjs', body);
-  });
-}
-
-/**
- * Run Mocha tests inside a browser.
+ * Run Mocha tests under Node.
  * @return {Promise} Asynchronous result.
  */
 function mocha() {
-  // Run in a subprocess so webdriverio is not loaded inside gulp's asyncDone
-  // domain (which has been observed to exit the process on CI after ~2s).
-  return runTestCommand('mocha', 'node tests/mocha/webdriver.js');
+  return runTestCommand('mocha', 'npm run test:mocha:node');
 }
-
-/**
- * Run Mocha tests inside a browser and keep the browser open upon completion.
- * @return {Promise} Asynchronous result.
- */
-export const interactiveMocha = gulp.series(
-  generateMochaIndex,
-  function interactiveMochaRun() {
-    return runTestTask('interactiveMocha', () => {
-      return runMochaTestsInBrowser(false).then((result) => {
-        if (result) {
-          throw new Error('Mocha tests failed');
-        }
-        console.log('Mocha tests passed');
-      });
-    });
-  },
-);
 
 /**
  * Helper method for comparison file.
@@ -429,7 +292,6 @@ const tasks = [
   // Build must run before the remaining tasks
   build,
   renamings,
-  generateMochaIndex,
   mocha,
   generators,
   typeDefinitions,

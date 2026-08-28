@@ -19,6 +19,12 @@ updates:
       docusaurus:
         patterns:
           - '@docusaurus/*'
+      # nx requires every @nx/* package to be on exactly the same version as
+      # nx itself, so they are pinned exactly and must be updated together.
+      nx:
+        patterns:
+          - 'nx'
+          - '@nx/*'
   - package-ecosystem: 'github-actions' # See documentation for possible values
     directory: '/'
     target-branch: 'main'

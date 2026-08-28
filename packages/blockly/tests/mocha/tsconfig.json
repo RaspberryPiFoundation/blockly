@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["**/*", "../../build/declarations/core/any_aliases.d.ts"],
+  "compilerOptions": {
+    "checkJs": false,
+    "noEmit": true,
+    // Keep the incremental cache the parent config enables out of the source
+    // tree, alongside the other build artifacts.
+    "tsBuildInfoFile": "../../build/tests/mocha-tsconfig.tsbuildinfo",
+    // Disallow TS language features requiring codegen.
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "types": ["mocha"]
+  }
+}

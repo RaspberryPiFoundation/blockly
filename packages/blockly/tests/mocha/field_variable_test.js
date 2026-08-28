@@ -663,6 +663,11 @@ suite('Variable Fields', function () {
 
       this.focusableElement = this.field.getFocusableElement();
     });
+
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
+    });
+
     test('Block has "Variable" qualifier in ARIA label', function () {
       const blockLabel = this.block.getAriaLabel();
       assert.include(blockLabel, 'Variable');

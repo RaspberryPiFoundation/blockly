@@ -15,6 +15,7 @@ import {
   DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
+  workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 import {createKeyDownEvent} from './test_helpers/user_input.js';
 
@@ -1146,6 +1147,10 @@ suite('Keyboard-driven movement', function () {
                 moveValueTestBlocks,
                 this.workspace,
               );
+            });
+
+            teardown(function () {
+              workspaceTeardown.call(this, this.workspace);
             });
 
             suite('Constrained moves of a simple reporter block', function () {

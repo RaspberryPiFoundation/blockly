@@ -12,6 +12,7 @@ import {
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 import {
   getBasicToolbox,
@@ -29,11 +30,11 @@ suite('Toolbox', function () {
   setup(function () {
     sharedTestSetup.call(this);
     this.toolbox = getInjectedToolbox();
+    this.workspace = this.toolbox.getWorkspace();
     defineStackBlock();
   });
 
   teardown(function () {
-    this.toolbox.dispose();
     sharedTestTeardown.call(this);
   });
 
@@ -698,6 +699,10 @@ suite('Toolbox', function () {
       this.toolbox = getBasicToolbox();
       const metricsStub = sinon.stub(this.toolbox.workspace_, 'getMetrics');
       metricsStub.returns({});
+    });
+
+    teardown(function () {
+      workspaceTeardown.call(this, this.toolbox.getWorkspace());
     });
 
     function checkHorizontalToolbox(toolbox) {

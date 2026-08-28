@@ -15,7 +15,7 @@ import {assertNoWarnings, assertWarnings} from './test_helpers/warnings.js';
 suite('JSON Block Definitions', function () {
   setup(function () {
     sharedTestSetup.call(this);
-    this.workspace_ = new Blockly.Workspace();
+    this.workspace = new Blockly.Workspace();
   });
 
   teardown(function () {
@@ -33,7 +33,7 @@ suite('JSON Block Definitions', function () {
             'type': BLOCK_TYPE,
           },
         ]);
-        block = new Blockly.Block(this.workspace_, BLOCK_TYPE);
+        block = new Blockly.Block(this.workspace, BLOCK_TYPE);
       });
 
       assert.isNotNull(block);
@@ -140,7 +140,7 @@ suite('JSON Block Definitions', function () {
         },
       ]);
 
-      const block = new Blockly.Block(this.workspace_, BLOCK_TYPE);
+      const block = new Blockly.Block(this.workspace, BLOCK_TYPE);
       assert.equal(block.inputList.length, 1);
       assert.equal(block.inputList[0].fieldRow.length, 1);
       const textField = block.inputList[0].fieldRow[0];
@@ -161,7 +161,7 @@ suite('JSON Block Definitions', function () {
         },
       ]);
 
-      const block = new Blockly.Block(this.workspace_, BLOCK_TYPE);
+      const block = new Blockly.Block(this.workspace, BLOCK_TYPE);
       assert.equal(block.inputList.length, 2);
 
       assert.equal(block.inputList[0].fieldRow.length, 1);
@@ -189,7 +189,7 @@ suite('JSON Block Definitions', function () {
         },
       ]);
 
-      const block = new Blockly.Block(this.workspace_, BLOCK_TYPE);
+      const block = new Blockly.Block(this.workspace, BLOCK_TYPE);
       assert.equal(block.inputList.length, 1);
       assert.equal(block.inputList[0].fieldRow.length, 1);
       const textField = block.inputList[0].fieldRow[0];
@@ -221,7 +221,7 @@ suite('JSON Block Definitions', function () {
         },
       ]);
 
-      const block = new Blockly.Block(this.workspace_, BLOCK_TYPE);
+      const block = new Blockly.Block(this.workspace, BLOCK_TYPE);
       assert.equal(block.inputList.length, 1);
       assert.equal(block.inputList[0].fieldRow.length, 1);
       const dropdown = block.inputList[0].fieldRow[0];
@@ -274,7 +274,7 @@ suite('JSON Block Definitions', function () {
         },
       ]);
 
-      const block = new Blockly.Block(this.workspace_, BLOCK_TYPE);
+      const block = new Blockly.Block(this.workspace, BLOCK_TYPE);
       assert.equal(block.inputList.length, 1);
       assert.equal(block.inputList[0].fieldRow.length, 1);
       const dropdown = block.inputList[0].fieldRow[0];

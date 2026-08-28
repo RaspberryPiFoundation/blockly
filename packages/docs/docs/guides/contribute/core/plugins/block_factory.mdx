@@ -11,7 +11,7 @@ Tools](https://raspberrypifoundation.github.io/blockly-samples/examples/develope
 lets you create custom blocks using blocks! It has support for fields that are
 published as plugins in addition to the fields that come with core Blockly. If
 you've created a custom field, you can add support for it to the Block Factory
-by following this guide. The custom field must be published on npm before you
+by following this guide. The custom field must be **published on npm** before you
 can add support for it. You also need to commit to updating your field to keep
 up with changes in Blockly, otherwise we may need to remove it from Block
 Factory in the future.
@@ -22,17 +22,17 @@ The source code for the Block Factory is located in the blockly-samples
 repository in the [`examples/developer-tools`][source-developer-tools]
 directory.
 
-To submit a change to the Developer Tools in blockly-samples, you'll need to
+To submit a change to the Developer Tools, you'll need to
 follow the [typical steps][blockly-samples-development] for developing in
-blockly-samples. Unlike working with plugins however, you'll need to run `npm
-install` from the `examples/developer-tools` directory directly, rather than at
-the root level of blockly-samples.
+blockly-samples. Recall that you'll need to run `npm install` from the 
+`examples/developer-tools` directory directly, rather than at the root level of 
+blockly-samples
 
 ## Install the plugin
 
 In order for the Block Factory to show your custom field in the preview, it
 needs to install the custom field. Add your field as an npm dependency of
-developer-tools. Then, register it or do any other setup work necessary in
+developer-tools by including `package.json` for developer-tools. Then, register it or do any other setup work necessary in
 [`developer-tools/src/blocks/index.ts`][source-blocks-index].
 
 ## Create a block for the field

@@ -17,6 +17,7 @@ import {
   DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
+  workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
 suite('Label Fields', function () {
@@ -239,6 +240,7 @@ suite('Label Fields', function () {
       const focusableElement = field.getFocusableElement();
       const ariaHidden = focusableElement.getAttribute('aria-hidden');
       assert.equal(ariaHidden, 'true');
+      workspaceTeardown.call(this, workspace);
     });
   });
 });

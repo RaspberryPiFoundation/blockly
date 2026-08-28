@@ -439,13 +439,27 @@ This is a global property, so it will modify all dropdown fields when set.
 
 ### Menu height
 
-The `Blockly.FieldDropdown.MAX_MENU_HEIGHT_VH` property can be used to change
-the maximum height of the menu. It is defined as a percentage of the viewport
-height, the viewport being the window.
+To change the maximum height of the dropdown menu, you can override Blockly's 
+CSS. 
 
-The `MAX_MENU_HEIGHT_VH` property defaults to 0.45.
+```CSS
+.blocklyDropDownContent {
+  max-height: 50; /* Set your desired height. Blockly uses 300px by default. */
+}
+```
 
-This is a global property, so it will modify all dropdown fields when set.
+Changing the `max-height` of `blocklyDropDownContent` will modify all dropdown 
+fields. This would include plugin fields like [`FieldColour`](https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/field-colour). 
+
+If you would like to only override the `max-height` for `FieldDropdown` objects, 
+then you can use the `:has()` CSS selector to match the menu element that 
+`FieldDropdown` renders:
+
+```CSS
+.blocklyDropDownContent:has(.blocklyDropdownMenu) {
+  max-height: 50;
+}
+```
 
 ## Prefix/suffix matching
 
