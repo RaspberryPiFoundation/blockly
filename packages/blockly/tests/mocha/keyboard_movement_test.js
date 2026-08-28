@@ -51,6 +51,7 @@ suite('Keyboard-driven movement', function () {
   });
 
   teardown(function () {
+    Blockly.KeyboardMover.mover.setMoveDistance(20);
     sharedTestTeardown.call(this);
   });
 
@@ -1217,7 +1218,6 @@ suite('Keyboard-driven movement', function () {
                   this.strategy.cacheAllConnectionPairs();
 
                   moveRight(this.workspace);
-                  console.log(getConnectionCandidate());
                   assert.deepEqual(getConnectionCandidate(), {
                     id: 'join0',
                     index: 2,
@@ -1225,7 +1225,6 @@ suite('Keyboard-driven movement', function () {
                   });
 
                   moveRight(this.workspace);
-                  console.log(getConnectionCandidate());
                   assert.deepEqual(getConnectionCandidate(), {
                     id: 'join0',
                     index: 3,
