@@ -29,8 +29,8 @@ export class ShortcutRegistry {
   /** Registry of all keyboard shortcuts, keyed by name of shortcut. */
   private shortcuts = new Map<string, KeyboardShortcut>();
 
-  /** Map of key codes to an array of shortcut names. */
-  private keyMap = new Map<string, string[]>();
+  /** Map of key codes to a set of shortcut names. */
+  private keyMap = new Map<string, Set<string>>();
 
   /** Resets the existing ShortcutRegistry singleton. */
   private constructor() {
@@ -115,12 +115,14 @@ export class ShortcutRegistry {
     const shortcutNames = this.keyMap.get(keyCode);
     if (shortcutNames && !allowCollision) {
       throw new Error(
-        `Shortcut named "${shortcutName}" collides with shortcuts "${shortcutNames}"`,
+        `Shortcut named "${shortcutName}" collides with shortcuts "${[
+          ...shortcutNames,
+        ]}"`,
       );
     } else if (shortcutNames && allowCollision) {
-      shortcutNames.unshift(shortcutName);
+      this.keyMap.set(keyCode, new Set([shortcutName, ...shortcutNames]));
     } else {
-      this.keyMap.set(keyCode, [shortcutName]);
+      this.keyMap.set(keyCode, new Set([shortcutName]));
     }
   }
 
@@ -152,10 +154,8 @@ export class ShortcutRegistry {
       return false;
     }
 
-    const shortcutIdx = shortcutNames.indexOf(shortcutName);
-    if (shortcutIdx > -1) {
-      shortcutNames.splice(shortcutIdx, 1);
-      if (shortcutNames.length === 0) {
+    if (shortcutNames.delete(shortcutName)) {
+      if (shortcutNames.size === 0) {
         this.keyMap.delete(keyCode);
       }
       return true;
@@ -190,7 +190,7 @@ export class ShortcutRegistry {
   setKeyMap(newKeyMap: {[key: string]: string[]}) {
     this.keyMap.clear();
     for (const key in newKeyMap) {
-      this.keyMap.set(key, newKeyMap[key]);
+      this.keyMap.set(key, new Set(newKeyMap[key]));
     }
   }
 
@@ -202,7 +202,7 @@ export class ShortcutRegistry {
   getKeyMap(): {[key: string]: string[]} {
     const legacyKeyMap: {[key: string]: string[]} = Object.create(null);
     for (const [key, value] of this.keyMap) {
-      legacyKeyMap[key] = value;
+      legacyKeyMap[key] = [...value];
     }
     return legacyKeyMap;
   }
@@ -280,7 +280,8 @@ export class ShortcutRegistry {
   getShortcutNamesByKeyCode(keyCode: string): string[] | undefined {
     // Copy the list of shortcuts in case one of them unregisters itself
     // in its callback.
-    return this.keyMap.get(keyCode)?.slice() || [];
+    const shortcutNames = this.keyMap.get(keyCode);
+    return shortcutNames ? [...shortcutNames] : [];
   }
 
   /**
@@ -293,8 +294,7 @@ export class ShortcutRegistry {
   getKeyCodesByShortcutName(shortcutName: string): string[] {
     const keys = [];
     for (const [keyCode, shortcuts] of this.keyMap) {
-      const shortcutIdx = shortcuts.indexOf(shortcutName);
-      if (shortcutIdx > -1) {
+      if (shortcuts.has(shortcutName)) {
         keys.push(keyCode);
       }
     }
