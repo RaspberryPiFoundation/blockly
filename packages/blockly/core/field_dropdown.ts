@@ -13,8 +13,10 @@
  */
 // Former goog.module ID: Blockly.FieldDropdown
 
+import type {Block} from './block.js';
 import type {BlockSvg} from './block_svg.js';
 import * as dropDownDiv from './dropdowndiv.js';
+import * as Extensions from './extensions.js';
 import {
   Field,
   FieldConfig,
@@ -1073,4 +1075,37 @@ export interface FieldDropdownFromJsonConfig extends FieldDropdownConfig {
  */
 export type FieldDropdownValidator = FieldValidator<string>;
 
+/**
+ * Checks all options keys are present in the provided string lookup table.
+ * Emits console warnings when they are not.
+ *
+ * @param block The block containing the dropdown
+ * @param dropdownName The name of the dropdown
+ * @param lookupTable The string lookup table
+ */
+function checkOptionsInTable(
+  block: Block,
+  dropdownName: string,
+  lookupTable: {[key: string]: string},
+) {
+  const dropdown = block.getField(dropdownName);
+  if (!(dropdown instanceof FieldDropdown) || dropdown.isOptionListDynamic()) {
+    return;
+  }
+
+  const options = dropdown.getOptions();
+  for (const option of options) {
+    if (option === FieldDropdown.SEPARATOR) continue;
+
+    const [, key] = option;
+    if (lookupTable[key] === undefined) {
+      console.warn(
+        `No tooltip mapping for value ${key} of field ` +
+          `${dropdownName} of block type ${block.type}.`,
+      );
+    }
+  }
+}
+
 fieldRegistry.register('field_dropdown', FieldDropdown);
+Extensions.setDropdownOptionsChecker(checkOptionsInTable);
