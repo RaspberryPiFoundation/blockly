@@ -615,12 +615,6 @@ suite('Procedures', function () {
       );
     });
 
-    test.skip(
-      'renaming a variable such that you get a parameter ' +
-        'conflict does... something!',
-      function () {},
-    );
-
     test('undoing renaming a procedure parameter reverts the change', async function () {
       // Create a stack of container, parameter.
       const defBlock = createProcDefBlock(this.workspace);
@@ -1046,10 +1040,13 @@ suite('Procedures', function () {
         );
       });
 
-      test.skip('callers whose defs are deserialized later do not create defs', function () {
+      test('callers whose defs are deserialized later do not create defs', function () {
         Blockly.Xml.domToWorkspace(
           Blockly.utils.xml.textToDom(`
                 <xml>
+                  <variables>
+                    <variable id="arg">x</variable>
+                  </variables>
                   <block type="procedures_callreturn">
                     <mutation name="do something">
                       <arg name="x"></arg>
@@ -1072,8 +1069,6 @@ suite('Procedures', function () {
         const callBlock = this.workspace.getBlocksByType(
           'procedures_callreturn',
         )[0];
-        // TODO: Currently the callers are creating variables with different
-        //   IDs than those serialized to XML, so these assertions fail.
         assertDefBlockStructure(defBlock, true, ['x'], ['arg']);
         assertCallBlockStructure(callBlock, ['x'], ['arg'], 'do something');
       });
@@ -1188,7 +1183,7 @@ suite('Procedures', function () {
         );
       });
 
-      test.skip('callers whose defs are deserialized later do not create defs', function () {
+      test('callers whose defs are deserialized later do not create defs', function () {
         Blockly.serialization.workspaces.load(
           {
             'blocks': {
@@ -1197,6 +1192,7 @@ suite('Procedures', function () {
                 {
                   'type': 'procedures_callreturn',
                   'extraState': {
+                    'name': 'do something',
                     'params': ['x'],
                   },
                 },
@@ -1216,6 +1212,12 @@ suite('Procedures', function () {
                 },
               ],
             },
+            'variables': [
+              {
+                'name': 'x',
+                'id': 'arg',
+              },
+            ],
           },
           this.workspace,
         );
@@ -1226,8 +1228,6 @@ suite('Procedures', function () {
         const callBlock = this.workspace.getBlocksByType(
           'procedures_callreturn',
         )[0];
-        // TODO: Currently the callers are creating variables with different
-        //   IDs than those serialized to JSON, so these assertions fail.
         assertDefBlockStructure(defBlock, true, ['x'], ['arg']);
         assertCallBlockStructure(callBlock, ['x'], ['arg'], 'do something');
       });

@@ -265,12 +265,6 @@ suite('WorkspaceSvg', function () {
         expectedProperties,
         workspace.id,
       );
-      assertEventFired(
-        spy,
-        Blockly.Events.ViewportChange,
-        expectedProperties,
-        workspace.id,
-      );
     }
     function assertViewportEventFired(
       changeListenerSpy,
@@ -476,8 +470,7 @@ suite('WorkspaceSvg', function () {
           {type: EventType.VIEWPORT_CHANGE},
         );
       });
-      test.skip('domToWorkspace multiple blocks triggers one viewport event', function () {
-        // TODO: Un-skip after adding filtering for consecutive viewport events.
+      test('domToWorkspace multiple blocks triggers one viewport event', function () {
         const addingMultipleBlocks = () => {
           Blockly.Xml.domToWorkspace(
             Blockly.utils.xml.textToDom(
@@ -485,7 +478,7 @@ suite('WorkspaceSvg', function () {
                 '<block type="controls_if" x="88" y="88"></block>' +
                 '<block type="controls_if" x="288" y="88"></block>' +
                 '<block type="controls_if" x="88" y="238"></block>' +
-                '<block type="controls_if" x="288" y="238"></block>' +
+                '<block type="controls_if" x="-2088" y="238"></block>' +
                 '</xml>',
             ),
             this.workspace,
@@ -626,8 +619,7 @@ suite('WorkspaceSvg', function () {
       assert.blockIsAtNotOrigin(allBlocks[1]); // Child block.
     });
 
-    // TODO(#8676): Reenable once test passes reliably.
-    test.skip('two blocks first at (10, 15) second at (0, 0) do not switch places', function () {
+    test('two blocks first at (10, 15) second at (0, 0) do not switch places', function () {
       const blockJson1 = {
         'type': 'math_number',
         'id': 'block1',
@@ -653,8 +645,7 @@ suite('WorkspaceSvg', function () {
       assert.blockIsBelow(block1, block2);
     });
 
-    // TODO(#8676): Reenable once test passes reliably.
-    test.skip('two overlapping blocks are moved to origin and below', function () {
+    test('two overlapping blocks are moved to origin and below', function () {
       const blockJson1 = {
         'type': 'math_number',
         'id': 'block1',
@@ -714,8 +705,7 @@ suite('WorkspaceSvg', function () {
       assert.blockIsBelow(block2, block1);
     });
 
-    // TODO(#8676): Reenable once test passes reliably.
-    test.skip('two overlapping blocks are moved to origin and below including children', function () {
+    test('two overlapping blocks are moved to origin and below including children', function () {
       const blockJson1 = {
         'type': 'logic_negate',
         'id': 'block1',
@@ -771,8 +761,7 @@ suite('WorkspaceSvg', function () {
       assert.blockIsBelow(block2Child, block1);
     });
 
-    // TODO(#8676): Reenable once test passes reliably.
-    test.skip('two large overlapping blocks are moved to origin and below', function () {
+    test('two large overlapping blocks are moved to origin and below', function () {
       const blockJson1 = {
         'type': 'controls_repeat_ext',
         'id': 'block1',

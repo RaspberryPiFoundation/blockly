@@ -163,9 +163,7 @@ suite('Inputs', function () {
         setBlockSpy.restore();
         initSpy.restore();
       });
-      // TODO: InsertFieldAt does not properly handle initialization in
-      //  headless mode.
-      test.skip('Headless', function () {
+      test('Headless', function () {
         const field = new Blockly.FieldLabel('field');
         const setBlockSpy = sinon.spy(field, 'setSourceBlock');
         const initModelSpy = sinon.spy(field, 'initModel');
@@ -351,7 +349,7 @@ suite('Inputs', function () {
 
       assert.include(label, customLabel);
     });
-    test.skip('Set input ARIA Label Provider to null', function () {
+    test('Set input ARIA Label Provider to null', function () {
       const blockA = createRenderedBlock(this.workspace, 'row_block');
       const blockB = createRenderedBlock(this.workspace, 'row_block');
 

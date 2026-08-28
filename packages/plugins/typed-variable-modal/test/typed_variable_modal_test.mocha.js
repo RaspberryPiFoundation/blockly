@@ -96,7 +96,7 @@ suite('TypedVariableModal', function () {
     // plugins each getting separate copies of Blockly due to updates
     // to dev-tool's webpack.config.js in RaspberryPiFoundation/blockly-samples#2228
     // to support having an exports stanza in Blockly's package.json.
-    test.skip('Elements focused', function () {
+    test('Elements focused', function () {
       this.typedVarModal.init();
       this.typedVarModal.show();
       assert.equal(
