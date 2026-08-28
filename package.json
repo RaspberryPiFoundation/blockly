@@ -34,7 +34,7 @@
     "eslint-plugin-mocha": "^11.3.0",
     "eslint-plugin-prettier": "^5.5.6",
     "globals": "^17.6.0",
-    "lerna": "^9.0.7",
+    "lerna": "^10.0.1",
     "nx": "23.1.1",
     "patch-package": "^8.0.1",
     "prettier": "3.9.6",
