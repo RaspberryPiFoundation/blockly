@@ -29,7 +29,7 @@
     "eslint": "10.5.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-jsdoc": "^63.2.2",
+    "eslint-plugin-jsdoc": "^64.2.1",
     "eslint-plugin-mdx": "^3.7.0",
     "eslint-plugin-mocha": "^12.0.2",
     "eslint-plugin-prettier": "^5.5.6",
