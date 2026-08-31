@@ -669,5 +669,12 @@
 	"FIELD_MULTILINEINPUT_NEW_LINE": "Label for the hint shown in the multiline input field editor indicating the key to insert a new line. Keep this message brief.",
 	"ZOOM_TO_FIT_ARIA_LABEL": "ARIA label for the zoom-to-fit button that zooms the workspace to fit all blocks.",
 	"MINIMAP_ARIA_LABEL": "ARIA label for the workspace minimap with instructions on keyboard use.",
-	"ARIA_LABEL_TRASH_EMPTY": "ARIA label for the trashcan when it contains no blocks and cannot be interacted with."
+	"ARIA_LABEL_TRASH_EMPTY": "ARIA label for the trashcan when it contains no blocks and cannot be interacted with.",
+	"WORKSPACE_SEARCH_PLACEHOLDER": "Placeholder text shown in the workspace search input.",
+	"WORKSPACE_SEARCH_INPUT_LABEL": "ARIA label for the workspace search text input, including keyboard usage.",
+	"WORKSPACE_SEARCH_FIND_NEXT": "ARIA label for the workspace search button that selects the next matching block.",
+	"WORKSPACE_SEARCH_FIND_PREVIOUS": "ARIA label for the workspace search button that selects the previous matching block.",
+	"WORKSPACE_SEARCH_CLOSE": "ARIA label for the button that closes the workspace search bar.",
+	"WORKSPACE_SEARCH_NO_MATCHES": "ARIA live region message announced when workspace search finds no matching blocks.",
+	"WORKSPACE_SEARCH_MATCH": "ARIA live region message announcing the currently highlighted workspace search match. \n\nParameters:\n* %1 - 1-based index of the current match\n* %2 - total number of matches\n* %3 - accessible label of the current block \n\nExamples:\n* 'Match 1 of 3: print, hello'"
 }

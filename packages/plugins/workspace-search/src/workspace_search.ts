@@ -35,7 +35,7 @@ export class WorkspaceSearch implements Blockly.IPositionable {
   /**
    * The placeholder text for the search bar input.
    */
-  private textInputPlaceholder = 'Search';
+  private textInputPlaceholder = Blockly.Msg['WORKSPACE_SEARCH_PLACEHOLDER'];
 
   /**
    * A list of blocks that came up in the search.
@@ -148,6 +148,7 @@ export class WorkspaceSearch implements Blockly.IPositionable {
 
     this.htmlDiv = document.createElement('div');
     Blockly.utils.dom.addClass(this.htmlDiv, 'blockly-ws-search');
+    Blockly.utils.aria.setRole(this.htmlDiv, Blockly.utils.aria.Role.SEARCH);
 
     const searchContainer = document.createElement('div');
     Blockly.utils.dom.addClass(searchContainer, 'blockly-ws-search-container');
@@ -239,8 +240,14 @@ export class WorkspaceSearch implements Blockly.IPositionable {
    */
   protected createTextInput(): HTMLInputElement {
     const textInput = document.createElement('input');
-    textInput.type = 'text';
+    textInput.type = 'search';
+    textInput.autocomplete = 'off';
     textInput.setAttribute('placeholder', this.textInputPlaceholder);
+    Blockly.utils.aria.setState(
+      textInput,
+      Blockly.utils.aria.State.LABEL,
+      Blockly.Msg['WORKSPACE_SEARCH_INPUT_LABEL'],
+    );
     return textInput;
   }
 
@@ -250,7 +257,10 @@ export class WorkspaceSearch implements Blockly.IPositionable {
    * @returns The next button.
    */
   protected createNextBtn(): HTMLButtonElement {
-    return this.createBtn('blockly-ws-search-next-btn', 'Find next');
+    return this.createBtn(
+      'blockly-ws-search-next-btn',
+      Blockly.Msg['WORKSPACE_SEARCH_FIND_NEXT'],
+    );
   }
 
   /**
@@ -259,7 +269,10 @@ export class WorkspaceSearch implements Blockly.IPositionable {
    * @returns The previous button.
    */
   protected createPreviousBtn(): HTMLButtonElement {
-    return this.createBtn('blockly-ws-search-previous-btn', 'Find previous');
+    return this.createBtn(
+      'blockly-ws-search-previous-btn',
+      Blockly.Msg['WORKSPACE_SEARCH_FIND_PREVIOUS'],
+    );
   }
 
   /**
@@ -268,7 +281,10 @@ export class WorkspaceSearch implements Blockly.IPositionable {
    * @returns A button for closing the search bar.
    */
   protected createCloseBtn(): HTMLButtonElement {
-    return this.createBtn('blockly-ws-search-close-btn', 'Close search bar');
+    return this.createBtn(
+      'blockly-ws-search-close-btn',
+      Blockly.Msg['WORKSPACE_SEARCH_CLOSE'],
+    );
   }
 
   /**
@@ -283,7 +299,7 @@ export class WorkspaceSearch implements Blockly.IPositionable {
     const btn = document.createElement('button');
     Blockly.utils.dom.addClass(btn, className);
     btn.type = 'button';
-    btn.setAttribute('aria-label', text);
+    Blockly.utils.aria.setState(btn, Blockly.utils.aria.State.LABEL, text);
     return btn;
   }
 
@@ -447,6 +463,7 @@ export class WorkspaceSearch implements Blockly.IPositionable {
     this.highlightCurrentSelection(currentBlock);
     this.workspace.centerOnBlock(currentBlock.id, false);
     this.lastHighlighted = currentBlock;
+    this.announceCurrentMatch();
   }
 
   /**
@@ -454,11 +471,12 @@ export class WorkspaceSearch implements Blockly.IPositionable {
    */
   open() {
     this.setVisible(true);
-    this.inputElement?.focus();
-    this.inputElement?.select();
-    if (this.searchText) {
-      this.searchAndHighlight(this.searchText);
+    if (this.inputElement) {
+      this.inputElement.value = this.searchText;
+      this.inputElement.focus();
+      this.inputElement.select();
     }
+    this.searchAndHighlight(this.searchText);
   }
 
   /**
@@ -511,6 +529,9 @@ export class WorkspaceSearch implements Blockly.IPositionable {
       currentIdx = currentIdx > -1 ? currentIdx : 0;
     }
     this.setCurrentBlock(currentIdx);
+    if (this.searchText && !this.blocks.length) {
+      this.announceNoMatches();
+    }
   }
 
   /**
@@ -598,6 +619,37 @@ export class WorkspaceSearch implements Blockly.IPositionable {
     }
     this.currentBlockIndex = -1;
     this.blocks = [];
+  }
+
+  /**
+   * Announces the currently highlighted match to screen readers.
+   *
+   * Focus stays in the search input while browsing results, so the highlighted
+   * block is announced via the live region rather than by moving focus.
+   */
+  private announceCurrentMatch() {
+    const currentBlock = this.blocks[this.currentBlockIndex];
+    if (!currentBlock) {
+      return;
+    }
+    Blockly.utils.aria.announceDynamicAriaState(
+      Blockly.Msg['WORKSPACE_SEARCH_MATCH']
+        .replace('%1', String(this.currentBlockIndex + 1))
+        .replace('%2', String(this.blocks.length))
+        .replace(
+          '%3',
+          currentBlock.getAriaLabel(Blockly.utils.aria.Verbosity.TERSE),
+        ),
+    );
+  }
+
+  /**
+   * Announces that the current search term matched no blocks.
+   */
+  private announceNoMatches() {
+    Blockly.utils.aria.announceDynamicAriaState(
+      Blockly.Msg['WORKSPACE_SEARCH_NO_MATCHES'],
+    );
   }
 
   /**

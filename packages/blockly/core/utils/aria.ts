@@ -95,6 +95,8 @@ export enum Role {
   REGION = 'region',
   /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/row_role. */
   ROW = 'row',
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/search_role. */
+  SEARCH = 'search',
   /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/separator_role. */
   SEPARATOR = 'separator',
   /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/status_role. */

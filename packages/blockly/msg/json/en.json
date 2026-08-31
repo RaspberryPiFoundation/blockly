@@ -664,5 +664,12 @@
 	"FIELD_MULTILINEINPUT_NEW_LINE": "New line",
 	"ZOOM_TO_FIT_ARIA_LABEL": "Zoom to fit",
 	"MINIMAP_ARIA_LABEL": "Workspace minimap. Use the arrow keys to pan the workspace.",
-	"ARIA_LABEL_TRASH_EMPTY": "Trash, currently empty"
+	"ARIA_LABEL_TRASH_EMPTY": "Trash, currently empty",
+	"WORKSPACE_SEARCH_PLACEHOLDER": "Search",
+	"WORKSPACE_SEARCH_INPUT_LABEL": "Search workspace. Press Enter for the next match, Shift+Enter for the previous match. Press Escape to close search and focus the current match.",
+	"WORKSPACE_SEARCH_FIND_NEXT": "Find next",
+	"WORKSPACE_SEARCH_FIND_PREVIOUS": "Find previous",
+	"WORKSPACE_SEARCH_CLOSE": "Close search bar",
+	"WORKSPACE_SEARCH_NO_MATCHES": "No matching blocks",
+	"WORKSPACE_SEARCH_MATCH": "Match %1 of %2: %3"
 }

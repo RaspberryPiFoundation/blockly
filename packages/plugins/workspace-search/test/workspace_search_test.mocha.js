@@ -9,8 +9,8 @@
  * @author kozbial@google.com (Monica Kozbial)
  */
 
-const assert = require('assert');
 const Blockly = require('blockly');
+const {assert} = require('chai');
 const sinon = require('sinon');
 
 const {WorkspaceSearch} = require('../src/index');
@@ -62,6 +62,24 @@ suite('WorkspaceSearch', function () {
       }
     }
   }
+
+  suiteSetup(function () {
+    Blockly.defineBlocksWithJsonArray([
+      {
+        type: 'alpha_block',
+        message0: 'alpha',
+      },
+      {
+        type: 'beta_block',
+        message0: 'beta',
+      },
+    ]);
+  });
+
+  suiteTeardown(function () {
+    delete Blockly.Blocks['alpha_block'];
+    delete Blockly.Blocks['beta_block'];
+  });
 
   setup(function () {
     this.jsdomCleanup = require('jsdom-global')(
@@ -118,6 +136,22 @@ suite('WorkspaceSearch', function () {
       assert.equal(nextBtn.type, 'button');
       assert.equal(previousBtn.type, 'button');
       assert.equal(closeBtn.type, 'button');
+    });
+
+    test('Buttons have accessible names', function () {
+      this.workspaceSearch.init();
+      const nextBtn = document.querySelector(
+        'button.blockly-ws-search-next-btn',
+      );
+      const previousBtn = document.querySelector(
+        'button.blockly-ws-search-previous-btn',
+      );
+      const closeBtn = document.querySelector(
+        'button.blockly-ws-search-close-btn',
+      );
+      assert.equal(nextBtn.getAttribute('aria-label'), 'Find next');
+      assert.equal(previousBtn.getAttribute('aria-label'), 'Find previous');
+      assert.equal(closeBtn.getAttribute('aria-label'), 'Close search bar');
     });
   });
 
@@ -466,19 +500,6 @@ suite('WorkspaceSearch', function () {
   });
 
   suite('focus', function () {
-    suiteSetup(function () {
-      Blockly.defineBlocksWithJsonArray([
-        {
-          type: 'alpha_block',
-          message0: 'alpha',
-        },
-        {
-          type: 'beta_block',
-          message0: 'beta',
-        },
-      ]);
-    });
-
     setup(function () {
       this.alphaBlock = this.workspace.newBlock('alpha_block');
       this.betaBlock = this.workspace.newBlock('beta_block');
@@ -528,6 +549,58 @@ suite('WorkspaceSearch', function () {
       this.workspaceSearch.close();
 
       assertFocusedNodeType('beta_block');
+    });
+  });
+
+  suite('screen reader support', function () {
+    setup(function () {
+      this.alphaBlock = this.workspace.newBlock('alpha_block');
+      this.betaBlock = this.workspace.newBlock('beta_block');
+      this.workspaceSearch.init();
+      this.liveRegion = document.getElementById('blocklyAriaAnnounce');
+    });
+
+    test('search container is a search landmark', function () {
+      const search = document.querySelector('div.blockly-ws-search');
+      assert.equal(search.getAttribute('role'), 'search');
+    });
+
+    test('search input aria-label describes keyboard usage', function () {
+      const input = document.querySelector('.blockly-ws-search-input input');
+      const label = input.getAttribute('aria-label');
+      assert.include(label, 'Enter');
+      assert.include(label, 'Escape');
+    });
+
+    test('matching blocks are announced with the current match', function () {
+      this.workspaceSearch.searchAndHighlight('a');
+      this.clock.tick(11);
+
+      assert.include(this.liveRegion.textContent, 'Match 1 of 2');
+      assert.include(this.liveRegion.textContent, 'alpha');
+
+      this.workspaceSearch.next();
+      this.clock.tick(11);
+
+      assert.include(this.liveRegion.textContent, 'Match 2 of 2');
+      assert.include(this.liveRegion.textContent, 'beta');
+    });
+
+    test('no matches are announced', function () {
+      this.workspaceSearch.searchAndHighlight('c');
+      this.clock.tick(11);
+
+      assert.include(this.liveRegion.textContent, 'No matching blocks');
+    });
+
+    test('reopen restores the query and highlights matches', function () {
+      this.workspaceSearch.searchAndHighlight('alpha');
+      this.workspaceSearch.close();
+      this.workspaceSearch.open();
+
+      const input = document.querySelector('.blockly-ws-search-input input');
+      assert.equal(input.value, 'alpha');
+      assert.isTrue(isBlockHighlighted(this.alphaBlock));
     });
   });
 });
