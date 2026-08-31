@@ -11,7 +11,9 @@ import {injectSearchCss} from './css';
 /**
  * Class for workspace search.
  */
-export class WorkspaceSearch implements Blockly.IPositionable {
+export class WorkspaceSearch
+  implements Blockly.IPositionable, Blockly.IAutoHideable
+{
   /**
    * The unique id for this component.
    */
@@ -50,6 +52,11 @@ export class WorkspaceSearch implements Blockly.IPositionable {
    * the scroll position.
    */
   private lastHighlighted: Blockly.BlockSvg | null = null;
+
+  /**
+   * Callback to FocusManager to return ephemeral focus when search closes.
+   */
+  private returnEphemeralFocus: Blockly.ReturnEphemeralFocus | null = null;
 
   /**
    * Index of the currently "selected" block in the blocks array.
@@ -96,7 +103,10 @@ export class WorkspaceSearch implements Blockly.IPositionable {
     this.workspace.getComponentManager().addComponent({
       component: this,
       weight: 0,
-      capabilities: [Blockly.ComponentManager.Capability.POSITIONABLE],
+      capabilities: [
+        Blockly.ComponentManager.Capability.POSITIONABLE,
+        Blockly.ComponentManager.Capability.AUTOHIDEABLE,
+      ],
     });
     injectSearchCss();
     this.createDom();
@@ -111,6 +121,7 @@ export class WorkspaceSearch implements Blockly.IPositionable {
    * to prevent memory leaks.
    */
   dispose() {
+    this.releaseEphemeralFocus(false);
     for (const event of this.boundEvents) {
       Blockly.browserEvents.unbind(event);
     }
@@ -463,6 +474,7 @@ export class WorkspaceSearch implements Blockly.IPositionable {
     this.highlightCurrentSelection(currentBlock);
     this.workspace.centerOnBlock(currentBlock.id, false);
     this.lastHighlighted = currentBlock;
+    Blockly.FocusManager.getFocusManager().focusNode(currentBlock);
     this.announceCurrentMatch();
   }
 
@@ -473,25 +485,62 @@ export class WorkspaceSearch implements Blockly.IPositionable {
     this.setVisible(true);
     if (this.inputElement) {
       this.inputElement.value = this.searchText;
-      this.inputElement.focus();
+      const focusManager = Blockly.FocusManager.getFocusManager();
+      if (!this.returnEphemeralFocus && !focusManager.ephemeralFocusTaken()) {
+        this.returnEphemeralFocus = focusManager.takeEphemeralFocus(
+          this.inputElement,
+        );
+      } else {
+        this.inputElement.focus();
+      }
       this.inputElement.select();
     }
-    this.searchAndHighlight(this.searchText);
+    this.searchAndHighlight(this.searchText, this.preserveSelected);
   }
 
   /**
-   * Closes the search bar.
+   * Closes the search bar and releases ephemeral focus.
    */
   close() {
     this.setVisible(false);
     const focusManager = Blockly.FocusManager.getFocusManager();
-    if (this.lastHighlighted && !this.lastHighlighted.isDisposed()) {
-      focusManager.focusNode(this.lastHighlighted);
+    const lastHighlighted = this.lastHighlighted;
+    if (lastHighlighted && !lastHighlighted.isDisposed()) {
+      focusManager.focusNode(lastHighlighted);
+      this.releaseEphemeralFocus(true);
     } else {
+      this.releaseEphemeralFocus(false);
       focusManager.focusTree(this.workspace);
     }
     this.clearBlocks();
-    this.lastHighlighted = null;
+  }
+
+  /**
+   * Hides the search bar. Called from WorkspaceSvg.hideChaff, for example
+   * when the user clicks a block.
+   *
+   * @param onlyClosePopups Whether only popups should be closed.
+   */
+  autoHide(onlyClosePopups: boolean) {
+    if (onlyClosePopups || !this.isVisible()) {
+      return;
+    }
+    this.setVisible(false);
+    this.releaseEphemeralFocus(true);
+    this.clearBlocks();
+  }
+
+  /**
+   * Ends ephemeral focus if this search bar currently holds it.
+   *
+   * @param restoreFocus True to restore the FocusManager's focused node.
+   */
+  private releaseEphemeralFocus(restoreFocus = true) {
+    if (!this.returnEphemeralFocus) {
+      return;
+    }
+    this.returnEphemeralFocus(restoreFocus);
+    this.returnEphemeralFocus = null;
   }
 
   /**
@@ -505,6 +554,14 @@ export class WorkspaceSearch implements Blockly.IPositionable {
     }
   }
 
+  /** 
+   * Checks whether the search bar is currently visible.
+   * @returns true if the search bar is visible, false otherwise.
+   */
+  private isVisible(): boolean {
+    return !!this.htmlDiv && this.htmlDiv.style.display !== 'none';
+  }
+
   /**
    * Searches the workspace for the current search term and highlights matching
    * blocks.
@@ -514,7 +571,13 @@ export class WorkspaceSearch implements Blockly.IPositionable {
    *    if it is included in the new matching blocks.
    */
   searchAndHighlight(searchText: string, preserveCurrent?: boolean) {
-    const oldCurrentBlock = this.blocks[this.currentBlockIndex];
+    const currentBlock = this.blocks[this.currentBlockIndex];
+    let bookmarkId: string | undefined;
+    if (currentBlock) {
+      bookmarkId = currentBlock.id;
+    } else if (this.lastHighlighted) {
+      bookmarkId = this.lastHighlighted.id;
+    }
     this.searchText = searchText.trim();
     this.clearBlocks();
     this.blocks = this.getMatchingBlocks(
@@ -523,12 +586,19 @@ export class WorkspaceSearch implements Blockly.IPositionable {
       this.caseSensitive,
     );
     this.highlightSearchGroup(this.blocks);
-    let currentIdx = 0;
-    if (preserveCurrent) {
-      currentIdx = this.blocks.indexOf(oldCurrentBlock);
-      currentIdx = currentIdx > -1 ? currentIdx : 0;
+    // If the current block is still in the new list of matching blocks, preserve
+    // it as the current block. Otherwise, select the first block in the list.
+    let currentIndex = 0;
+    if (preserveCurrent && bookmarkId) {
+      const bookmarkedBlock = this.workspace.getBlockById(bookmarkId);
+      if (bookmarkedBlock) {
+        const bookmarkedIndex = this.blocks.indexOf(bookmarkedBlock);
+        if (bookmarkedIndex > -1) {
+          currentIndex = bookmarkedIndex;
+        }
+      }
     }
-    this.setCurrentBlock(currentIdx);
+    this.setCurrentBlock(currentIndex);
     if (this.searchText && !this.blocks.length) {
       this.announceNoMatches();
     }

@@ -3047,14 +3047,24 @@ export class WorkspaceSvg
   /** See IFocusableTree.onTreeBlur. */
   onTreeBlur(nextTree: IFocusableTree | null): void {
     // If the flyout loses focus, make sure to close it unless focus is being
-    // lost to the toolbox or ephemeral focus.
-    if (this.isFlyout && this.targetWorkspace) {
-      // Only hide the flyout if the flyout's workspace is losing focus and that
-      // focus isn't returning to the flyout itself, the toolbox, or ephemeral.
-      if (getFocusManager().ephemeralFocusTaken()) return;
-      const toolbox = this.targetWorkspace.getToolbox();
-      if (toolbox && nextTree === toolbox) return;
-      if (isAutoHideable(toolbox)) toolbox.autoHide(false);
+    // lost to the toolbox or ephemeral focus (within the same tree).
+    if (!this.isFlyout || !this.targetWorkspace) return;
+
+    const toolbox = this.targetWorkspace.getToolbox();
+
+    // Keep the flyout open when focus moves to the toolbox.
+    if (toolbox && nextTree === toolbox) return;
+
+    // Keep the flyout open for ephemeral inside the same tree.
+    if (
+      getFocusManager().ephemeralFocusTaken() &&
+      nextTree !== this.targetWorkspace
+    ) {
+      return;
+    }
+
+    if (isAutoHideable(toolbox)) {
+      toolbox.autoHide(false);
     }
   }
 

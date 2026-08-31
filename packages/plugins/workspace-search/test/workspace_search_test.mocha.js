@@ -38,6 +38,17 @@ suite('WorkspaceSearch', function () {
     const classes = path.getAttribute('class');
     return (' ' + classes + ' ').indexOf(' blockly-ws-search-current ') !== -1;
   }
+
+  /**
+   * @param {string} expected The expected block type.
+   */
+  function assertFocusedNodeType(expected) {
+    const block = /** @type {Blockly.BlockSvg} */ (
+      Blockly.FocusManager.getFocusManager().getFocusedNode()
+    );
+    assert.equal(expected, block.type);
+  }
+
   /**
    * Assert that no extra styling is currently added to these blocks.
    * @param {Array.<Blockly.BlockSvg>} blocks The blocks to test.
@@ -513,16 +524,6 @@ suite('WorkspaceSearch', function () {
       assert.equal('alpha_block', originalBlock.type);
     });
 
-    /**
-     * @param {string} expected The expected block type.
-     */
-    function assertFocusedNodeType(expected) {
-      const block = /** @type {Blockly.BlockSvg} */ (
-        Blockly.FocusManager.getFocusManager().getFocusedNode()
-      );
-      assert.equal(expected, block.type);
-    }
-
     test('close with match focuses found block', function () {
       this.workspaceSearch.searchAndHighlight('beta', false);
       this.workspaceSearch.close();
@@ -549,6 +550,88 @@ suite('WorkspaceSearch', function () {
       this.workspaceSearch.close();
 
       assertFocusedNodeType('beta_block');
+    });
+
+    test('current match has passive focus while the search input is focused', function () {
+      this.workspaceSearch.open();
+      this.workspaceSearch.searchAndHighlight(
+        'a',
+        this.workspaceSearch.preserveSelected,
+      );
+      const input = document.querySelector('.blockly-ws-search-input input');
+      const alphaPath = this.alphaBlock.pathObject.svgPath;
+
+      // Caret stays in the field; the match gets the dotted keyboard-nav outline.
+      assert.equal(document.activeElement, input);
+      assert.isTrue(
+        alphaPath.classList.contains(
+          Blockly.FocusManager.PASSIVE_FOCUS_NODE_CSS_CLASS_NAME,
+        ),
+      );
+      assert.isFalse(
+        alphaPath.classList.contains(
+          Blockly.FocusManager.ACTIVE_FOCUS_NODE_CSS_CLASS_NAME,
+        ),
+      );
+    });
+  });
+
+  suite('finding matches', function () {
+    setup(function () {
+      this.alphaBlock = this.workspace.newBlock('alpha_block');
+      this.betaBlock = this.workspace.newBlock('beta_block');
+      this.workspaceSearch.init();
+      this.workspaceSearch.open();
+      this.workspaceSearch.searchAndHighlight(
+        'a',
+        this.workspaceSearch.preserveSelected,
+      );
+    });
+
+    test('searching a term with multiple matches highlights them', function () {
+
+      assert.isTrue(isBlockHighlighted(this.alphaBlock));
+      assert.isTrue(isBlockHighlighted(this.betaBlock));
+      assert.isTrue(isBlockCurrentStyled(this.alphaBlock));
+      assert.isFalse(isBlockCurrentStyled(this.betaBlock));
+    });
+
+    test('cycling moves the current match to the next result', function () {
+      this.workspaceSearch.next();
+
+      assert.isTrue(isBlockCurrentStyled(this.betaBlock));
+      assert.isFalse(isBlockCurrentStyled(this.alphaBlock));
+    });
+
+    test('closing focuses the matched block', function () {
+      this.workspaceSearch.next();
+      this.workspaceSearch.close();
+
+      assertFocusedNodeType('beta_block');
+    });
+
+    test('reopening after changing focus restores the query and previous match', function () {
+      this.workspaceSearch.next();
+      this.workspaceSearch.close();
+      Blockly.FocusManager.getFocusManager().focusNode(this.alphaBlock);
+      this.workspaceSearch.open();
+
+      const input = document.querySelector('.blockly-ws-search-input input');
+      assert.equal(input.value, 'a');
+      assert.equal(document.activeElement, input);
+      assert.isTrue(isBlockHighlighted(this.alphaBlock));
+      assert.isTrue(isBlockHighlighted(this.betaBlock));
+      assert.isTrue(isBlockCurrentStyled(this.betaBlock));
+      assert.isFalse(isBlockCurrentStyled(this.alphaBlock));
+      assertFocusedNodeType('beta_block');
+    });
+
+    test('falls back to the first match if the current match was deleted', function () {
+      this.workspaceSearch.close();
+      this.alphaBlock.dispose();
+      this.workspaceSearch.open();
+
+      assert.isTrue(isBlockCurrentStyled(this.betaBlock));
     });
   });
 
@@ -591,16 +674,6 @@ suite('WorkspaceSearch', function () {
       this.clock.tick(11);
 
       assert.include(this.liveRegion.textContent, 'No matching blocks');
-    });
-
-    test('reopen restores the query and highlights matches', function () {
-      this.workspaceSearch.searchAndHighlight('alpha');
-      this.workspaceSearch.close();
-      this.workspaceSearch.open();
-
-      const input = document.querySelector('.blockly-ws-search-input input');
-      assert.equal(input.value, 'alpha');
-      assert.isTrue(isBlockHighlighted(this.alphaBlock));
     });
   });
 });
