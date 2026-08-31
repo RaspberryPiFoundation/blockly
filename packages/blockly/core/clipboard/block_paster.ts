@@ -61,9 +61,10 @@ export class BlockPaster implements IPaster<BlockCopyData, BlockSvg> {
     // Sometimes there's a delay before the block is fully created and ready for
     // focusing, so wait slightly before focusing the newly pasted block.
     const nodeToFocus: IFocusableNode = block;
-    renderManagement
-      .finishQueuedRenders()
-      .then(() => getFocusManager().focusNode(nodeToFocus));
+    renderManagement.finishQueuedRenders().then(() => {
+      if (block.isDeadOrDying()) return;
+      getFocusManager().focusNode(nodeToFocus);
+    });
     return block;
   }
 }

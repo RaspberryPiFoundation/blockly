@@ -6,6 +6,7 @@
 
 import {assert} from 'chai';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
@@ -130,7 +131,7 @@ suite('Render Management', function () {
 
   suite('Post-render bumpNeighbours', function () {
     setup(function () {
-      this.workspace = Blockly.inject('blocklyDiv', {});
+      this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
 
       this.block = this.workspace.newBlock('controls_if');
       this.block.initSvg();

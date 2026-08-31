@@ -139,7 +139,9 @@ suite('Keyboard navigation on Blocks', function () {
       toolbox: toolbox,
       renderer: 'zelos',
     });
-    Blockly.common.defineBlocks(p5blocks);
+    if (!('p5_setup' in Blockly.Blocks)) {
+      Blockly.common.defineBlocks(p5blocks);
+    }
     Blockly.serialization.workspaces.load(navigationTestBlocks, this.workspace);
     for (const block of this.workspace.getAllBlocks()) {
       block.initSvg();
@@ -415,7 +417,9 @@ suite('Keyboard navigation on Fields', function () {
       toolbox: toolbox,
       renderer: 'zelos',
     });
-    Blockly.common.defineBlocks(p5blocks);
+    if (!('p5_setup' in Blockly.Blocks)) {
+      Blockly.common.defineBlocks(p5blocks);
+    }
     Blockly.serialization.workspaces.load(navigationTestBlocks, this.workspace);
   });
 
@@ -482,7 +486,9 @@ suite('Workspace comment navigation', function () {
       toolbox: toolbox,
       renderer: 'zelos',
     });
-    Blockly.common.defineBlocks(p5blocks);
+    if (!('p5_setup' in Blockly.Blocks)) {
+      Blockly.common.defineBlocks(p5blocks);
+    }
     Blockly.serialization.workspaces.load(navigationTestBlocks, this.workspace);
     this.workspace.getTopBlocks(false).forEach((b) => b.queueRender());
     Blockly.renderManagement.triggerQueuedRenders(this.workspace);

@@ -819,9 +819,10 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
       const block = this.getSourceBlock();
       if (!block) throw new UnattachedFieldError();
       const div = WidgetDiv.getDiv();
+      if (!div) return;
       const bBox = this.getScaledBBox();
-      div!.style.width = bBox.right - bBox.left + 'px';
-      div!.style.height = bBox.bottom - bBox.top + 'px';
+      div.style.width = bBox.right - bBox.left + 'px';
+      div.style.height = bBox.bottom - bBox.top + 'px';
 
       // In RTL mode block fields and LTR input fields the left edge moves,
       // whereas the right edge is fixed.  Reposition the editor.
@@ -835,8 +836,8 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
         y -= bounds.top + window.scrollY;
       }
 
-      div!.style.left = `${x}px`;
-      div!.style.top = `${y}px`;
+      div.style.left = `${x}px`;
+      div.style.top = `${y}px`;
     });
   }
 

@@ -23,6 +23,7 @@ const TEST_MEDIA_PATH = '../../media/';
  */
 export const DEFAULT_INJECT_OPTIONS = Object.freeze({
   media: TEST_MEDIA_PATH,
+  scrollbars: true,
 });
 
 /**
@@ -186,6 +187,16 @@ export function sharedTestTeardown(workspace = this.workspace) {
     console.error('"' + testRef.fullTitle() + '" did not call sharedTestSetup');
   }
 
+  // Remove the globally registered listener from FocusManager to avoid state
+  // being shared across test boundaries.
+  for (const registeredListener of this.globalDocumentEventListeners) {
+    document.removeEventListener(
+      registeredListener.type,
+      registeredListener.listener,
+    );
+  }
+  this.globalDocumentEventListeners = [];
+
   try {
     if (workspace) {
       workspaceTeardown.call(this, workspace);
@@ -230,14 +241,6 @@ export function sharedTestTeardown(workspace = this.workspace) {
 
     Blockly.WidgetDiv.testOnly_setDiv(null);
 
-    // Remove the globally registered listener from FocusManager to avoid state
-    // being shared across test boundaries.
-    for (const registeredListener of this.globalDocumentEventListeners) {
-      const eventType = registeredListener.type;
-      const eventListener = registeredListener.listener;
-      document.removeEventListener(eventType, eventListener);
-    }
-    this.globalDocumentEventListeners = [];
     FocusManager.getFocusManager = this.oldGetFocusManager;
   }
 }
