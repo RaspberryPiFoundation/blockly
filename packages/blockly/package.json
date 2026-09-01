@@ -87,7 +87,7 @@
     "start": "npm run package && npx nx run @blockly/dev-tools:build && concurrently -n watch,devtools-server,core-server \"npx nx watch --projects=@blockly/dev-tools --includeDependencies -- npm run build\" \"npx nx run @blockly/dev-tools:start --no-open\" \"http-server ./ -p 8081 -s -o /tests/playground.html -c-1\"",
     "tsc": "gulp tsc",
     "test": "gulp test",
-    "test:browser": "npx mocha --config tests/browser/.mocharc.js",
+    "test:browser": "npx nx run @blockly/block-test:build && npx mocha --config tests/browser/.mocharc.js",
     "test:mocha:node": "npm run test:mocha:typecheck && npx mocha --config tests/mocha/.mocharc.node.cjs \"tests/mocha/**/*_test.{js,ts}\"",
     "test:mocha:typecheck": "tsc -p tests/mocha/tsconfig.json",
     "test:generators": "gulp testGenerators",

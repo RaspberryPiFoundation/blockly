@@ -9,6 +9,8 @@
  */
 
 import * as chai from 'chai';
+import {readFileSync} from 'fs';
+import {createRequire} from 'module';
 import {Key} from 'webdriverio';
 import {
   getBlockTypeFromCategory,
@@ -18,6 +20,29 @@ import {
   testFileLocations,
   testSetup,
 } from './test_setup.mjs';
+
+const require = createRequire(import.meta.url);
+
+const blockTestSource = readFileSync(
+  require.resolve('@blockly/block-test'),
+  'utf8',
+);
+
+/**
+ * Load the test blocks into the playground page and swap in their toolbox.
+ * @param browser The active WebdriverIO Browser object.
+ */
+async function loadTestBlocks(browser) {
+  await browser.execute((source) => {
+    const script = document.createElement('script');
+    script.textContent = source;
+    document.head.appendChild(script);
+
+    const workspace = Blockly.getMainWorkspace();
+    workspace.updateToolbox(window.toolboxTestBlocks);
+    window.toolboxTestBlocksInit(workspace);
+  }, blockTestSource);
+}
 
 // Categories in the basic toolbox.
 const basicCategories = [
@@ -194,17 +219,15 @@ suite('Open toolbox categories', function () {
     await openCategories(this.browser, basicCategories, screenDirection.RTL);
   });
 
-  test.skip('opening every toolbox category in the test toolbox in LTR', async function () {
-    this.browser = await testSetup(
-      testFileLocations.PLAYGROUND + '?toolbox=test-blocks',
-    );
+  test('opening every toolbox category in the test toolbox in LTR', async function () {
+    this.browser = await testSetup(testFileLocations.PLAYGROUND);
+    await loadTestBlocks(this.browser);
     await openCategories(this.browser, testCategories, screenDirection.LTR);
   });
 
-  test.skip('opening every toolbox category in the test toolbox in RTL', async function () {
-    this.browser = await testSetup(
-      testFileLocations.PLAYGROUND + '?toolbox=test-blocks&dir=rtl',
-    );
+  test('opening every toolbox category in the test toolbox in RTL', async function () {
+    this.browser = await testSetup(testFileLocations.PLAYGROUND_RTL);
+    await loadTestBlocks(this.browser);
     await openCategories(this.browser, testCategories, screenDirection.RTL);
   });
 
