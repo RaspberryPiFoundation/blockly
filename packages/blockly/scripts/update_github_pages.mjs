@@ -28,7 +28,13 @@ const UPSTREAM_URL = 'git@github.com:RaspberryPiFoundation/blockly.git';
  * Extra paths to include in the gh-pages branch (beyond the normal
  * contents of main).  Passed to shell unquoted, so can include globs.
  */
-const EXTRAS = ['build/msg', 'dist/*_compressed.js*', 'build/*.loader.mjs'];
+const EXTRAS = [
+  'build/msg',
+  'build/playgrounds',
+  'dist/*_compressed.js*',
+  'node_modules/@blockly',
+  'build/*.loader.mjs',
+];
 
 const USAGE = `Usage: node scripts/update_github_pages.mjs [options]
 
@@ -129,6 +135,9 @@ function updateGithubPages({remote, upstream, useLocal}) {
 
   run('npm run clean');
   run('npm run build');
+  // Build the advanced playground with its dependencies. This is not part of
+  // the regular build process as it's only used for ghpages and development.
+  run('node \"scripts/prepare_advanced_playground.mjs\"');
 
   // Extra paths (e.g. build/, dist/ etc.) are normally gitignored,
   // so we have to force add.
