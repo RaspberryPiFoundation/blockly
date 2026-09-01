@@ -49,7 +49,6 @@
     "build:all": "npx nx run-many -t build",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "postinstall": "patch-package",
     "clean": "npx nx reset && npm run clean --ws --if-present"
   },
   "dependencies": {}

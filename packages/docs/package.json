@@ -5,20 +5,9 @@
   "description": "Blockly documentation site",
   "nx": {
     "targets": {
-      "start": {
-        "dependsOn": [
-          "^build",
-          {
-            "projects": "blockly",
-            "target": "build"
-          },
-          {
-            "projects": "blockly",
-            "target": "package"
-          }
-        ]
-      },
+      "start": {},
       "build": {
+        "dependsOn": [],
         "outputs": [
           "{projectRoot}/build",
           "{projectRoot}/.docusaurus",
@@ -29,7 +18,7 @@
   },
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "npx nx run build && docusaurus start",
+    "start": "docusaurus start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
