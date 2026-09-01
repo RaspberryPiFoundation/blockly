@@ -36,7 +36,6 @@
     "globals": "^17.6.0",
     "lerna": "^10.0.1",
     "nx": "23.1.1",
-    "patch-package": "^8.0.1",
     "prettier": "3.9.6",
     "prettier-plugin-organize-imports": "^4.3.0",
     "typescript-eslint": "^8.66.0"

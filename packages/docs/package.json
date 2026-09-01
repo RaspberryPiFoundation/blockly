@@ -15,10 +15,6 @@
           {
             "projects": "blockly",
             "target": "package"
-          },
-          {
-            "projects": "blockly",
-            "target": "docs"
           }
         ]
       },
@@ -27,12 +23,6 @@
           "{projectRoot}/build",
           "{projectRoot}/.docusaurus",
           "{projectRoot}/node_modules/.cache"
-        ],
-        "dependsOn": [
-          {
-            "projects": "blockly",
-            "target": "docs"
-          }
         ]
       }
     }

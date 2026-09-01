@@ -54,12 +54,6 @@ ESlint is used for linting `.md` and `.mdx` files due to poor support for these 
 
 ## Generating reference docs
 
-The API reference pages are auto-generated from the Blockly TypeScript source using `@microsoft/api-extractor` and `@microsoft/api-documenter`. This is a separate step from the Docusaurus build and must be run from the `packages/blockly` directory:
-
-```bash
-cd packages/blockly
-npm run build && npm run package
-npm run docs
-```
-
-This generates MDX files into `packages/docs/docs/reference/`. These files are gitignored, so this needs to be run locally (and / or in CI).
+The API reference pages are auto-generated from the Blockly TypeScript source 
+using [TypeDoc](https://www.npmjs.com/package/typedoc). Typedoc automatically 
+generates MDX files into `/docs/reference/` when Docusaurus starts.
