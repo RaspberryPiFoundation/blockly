@@ -589,7 +589,6 @@ suite('WorkspaceSearch', function () {
     });
 
     test('searching a term with multiple matches highlights them', function () {
-
       assert.isTrue(isBlockHighlighted(this.alphaBlock));
       assert.isTrue(isBlockHighlighted(this.betaBlock));
       assert.isTrue(isBlockCurrentStyled(this.alphaBlock));

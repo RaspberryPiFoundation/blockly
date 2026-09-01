@@ -554,7 +554,7 @@ export class WorkspaceSearch
     }
   }
 
-  /** 
+  /**
    * Checks whether the search bar is currently visible.
    *
    * @returns true if the search bar is visible, false otherwise.
