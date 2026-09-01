@@ -1,14 +1,5 @@
 // @ts-nocheck
 
-let referenceSidebar = [];
-try {
-  referenceSidebar = require('./docs/reference/_reference.js').referenceSidebar;
-} catch {
-  console.warn(
-    'Reference sidebar not found — run "npm run docs" in packages/blockly to generate it.',
-  );
-}
-
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 /**
@@ -23,6 +14,22 @@ Create as many sidebars as you want.
 
 @type {import('@docusaurus/plugin-content-docs').SidebarsConfig}
 */
+let referenceSidebar = [];
+try {
+  referenceSidebar = [
+    {
+      type: 'doc',
+      id: 'reference/index',
+      label: 'Overview',
+    },
+    ...require('./docs/reference/typedoc-sidebar.cjs'),
+  ];
+} catch {
+  console.warn(
+    'Reference sidebar not found.',
+  );
+}
+
 const sidebars = {
   codelabsSidebar: [
     {
