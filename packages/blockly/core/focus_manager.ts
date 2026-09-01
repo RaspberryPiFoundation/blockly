@@ -442,8 +442,8 @@ export class FocusManager {
     } else {
       // Leave DOM focus on the ephemeral UI. Clear the previous node's highlight
       // and show a passive outline on the node being tracked.
-      // Ex. workspace-search is open and the user clicks on a block in the workspace;
-      // the block should be passively highlighted, but search should still have focus.
+      // Ex. workspace search is open and the user moves to the next match; the
+      // match is passively outlined and the caret stays in the search field.
       if (prevNode) {
         this.removeHighlight(prevNode);
       }
