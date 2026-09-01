@@ -3046,8 +3046,8 @@ export class WorkspaceSvg
 
   /** See IFocusableTree.onTreeBlur. */
   onTreeBlur(nextTree: IFocusableTree | null): void {
-    // If the flyout loses focus, make sure to close it unless focus is being
-    // lost to the toolbox or ephemeral focus (within the same tree).
+    // Close the flyout when it loses focus, except for the toolbox or while
+    // overlay UI is open (dropdowns, dialogs).
     if (!this.isFlyout || !this.targetWorkspace) return;
 
     const toolbox = this.targetWorkspace.getToolbox();
@@ -3055,7 +3055,8 @@ export class WorkspaceSvg
     // Keep the flyout open when focus moves to the toolbox.
     if (toolbox && nextTree === toolbox) return;
 
-    // Keep the flyout open for ephemeral inside the same tree.
+    // Keep it open for overlay UI, but not when the user is going to the
+    // workspace (for example dragging a block from the flyout).
     if (
       getFocusManager().ephemeralFocusTaken() &&
       nextTree !== this.targetWorkspace

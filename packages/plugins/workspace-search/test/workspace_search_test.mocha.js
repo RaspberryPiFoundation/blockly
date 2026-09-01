@@ -561,7 +561,7 @@ suite('WorkspaceSearch', function () {
       const input = document.querySelector('.blockly-ws-search-input input');
       const alphaPath = this.alphaBlock.pathObject.svgPath;
 
-      // Caret stays in the field; the match gets the dotted keyboard-nav outline.
+      // Caret stays in the field; the match is marked as passively focused.
       assert.equal(document.activeElement, input);
       assert.isTrue(
         alphaPath.classList.contains(
