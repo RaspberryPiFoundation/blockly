@@ -32,6 +32,17 @@
     </tr>
     <tr>
       <td colspan=2>
+        <div id="deprecationBanner">
+          <strong>This service will be shut down on December 1, 2026.</strong>
+          Saving and sharing via App Engine will no longer be available after
+          that date. Please use the "Export" button to download your work
+          before then. You can load the exported file into the
+          <a target="_blank" href="https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/playground.html">Blockly Playground</a>.
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td colspan=2>
         <table width="100%">
           <tr id="tabRow" height="1em">
             <td id="tab_blocks" class="tabon">...</td>
@@ -54,6 +65,7 @@
               <select id="code_menu"></select>
             </td>
             <td class="tabmax">
+              <button id="exportButton" title="Download your workspace as a JSON file.">Export</button>
               <button id="trashButton" class="notext" title="...">
                 <img src='../../media/1x1.gif' class="trash icon21">
               </button>
