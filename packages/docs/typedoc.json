@@ -32,6 +32,7 @@
     "./typedoc-member-index.mjs"
   ],
   "theme": "member-index",
+  "router": "namespace-dirs",
 
   "frontmatterNamingConvention": "snakeCase",
   "indexFrontmatter": {

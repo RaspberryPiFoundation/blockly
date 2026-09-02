@@ -1,14 +1,18 @@
-// Adds Properties and Methods index tables to each generated reference page.
-//
-// This needs a custom theme because the plugin will only insert an index if we
-// make every child have its own document, and we'd rather keep them all on the
-// same page but still have an index.
+// Typedoc theme & router overrides
 
-import { MarkdownTheme, MarkdownThemeContext } from 'typedoc-plugin-markdown';
+import { MarkdownTheme, MarkdownThemeContext, MemberRouter } from 'typedoc-plugin-markdown';
+import { ReflectionKind } from 'typedoc';
 
 /** Sections that get an index table, in the order the tables appear. */
 const INDEXED_SECTIONS = ['Properties', 'Methods'];
 
+/** 
+ * Adds Properties and Methods index tables to each generated reference page.
+ *
+ * This needs a custom theme because the plugin will only insert an index if we
+ * make every child have its own document, and we'd rather keep them all on the
+ * same page but still have an index.
+ */
 class MemberIndexContext extends MarkdownThemeContext {
   constructor(theme, page, options) {
     super(theme, page, options);
@@ -57,6 +61,20 @@ class MemberIndexTheme extends MarkdownTheme {
   }
 }
 
+/** 
+ * Overrides the default namespace directory structure to ensure that TypeDoc
+ * does not prepend 'blockly' to namespace URLs
+ */
+class NamespaceDirRouter extends MemberRouter {
+  getNamespaceDirectory(reflection) {
+    if (reflection.parent?.kind !== ReflectionKind.Project) {
+      return super.getNamespaceDirectory(reflection);
+    }
+    return `${this.directories.get(reflection.kind)}/${this.getReflectionAlias(reflection)}`;
+  }
+}
+
 export function load(app) {
   app.renderer.defineTheme('member-index', MemberIndexTheme);
+  app.renderer.defineRouter('namespace-dirs', NamespaceDirRouter);
 }
