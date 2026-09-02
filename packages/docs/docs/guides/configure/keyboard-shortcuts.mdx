@@ -33,14 +33,14 @@ user presses a key (or combination of keys), Blockly:
 ## Scope
 
 A
-[`Scope`](/reference/blockly.contextmenuregistry_namespace.scope_interface)
+[`Scope`](/reference/namespaces/ContextMenuRegistry/interfaces/Scope)
 object identifies the Blockly component that currently has focus. Scope objects
 are passed to `preconditionFn` and `callback`, which use them to decide whether
 a shortcut applies to a particular component and, if so, how to apply it.
 
 To use a `Scope` object, use its `focusedNode` property. This is an object that
 implements
-[`IFocusableNode`](/reference/blockly.ifocusablenode_interface). This
+[`IFocusableNode`](/reference/interfaces/IFocusableNode). This
 interface is implemented by all Blockly components that the user can focus on,
 including workspaces, blocks, fields, comments, and your own custom components;
 for more information, see the documentation on the
@@ -58,7 +58,7 @@ preconditionFn(workspace, scope) {
 ## The KeyboardShortcut interface
 
 Objects in the shortcut registry implement the
-[`KeyboardShortcut`](/reference/blockly.shortcutregistry_namespace.keyboardshortcut_interface)
+[`KeyboardShortcut`](/reference/namespaces/ShortcutRegistry/interfaces/KeyboardShortcut)
 interface. This contains the following properties.
 
 ### name (required)
@@ -138,7 +138,7 @@ not do anything.
 
 An array of keys (or combinations of keys) that activate this shortcut. To
 identify keys, use the keycodes in
-[`Blockly.utils.KeyCodes`](/reference/blockly.utils_namespace.keycodes_enum).
+[`Blockly.utils.KeyCodes`](/reference/namespaces/utils/enumerations/KeyCodes).
 For example:
 
 ```js
@@ -151,7 +151,7 @@ const logFieldsShortcut = {
 
 If you want map additional keys to an existing shortcut -- for example, you want
 to add keys to a [default shortcut](#default-shortcuts) -- you can call
-[`Blockly.ShortcutRegistry.registry.addKeyMapping`](/reference/blockly.shortcutregistry_class.addkeymapping_method).
+[`Blockly.ShortcutRegistry.registry.addKeyMapping`](/reference/classes/ShortcutRegistry#addkeymapping).
 This is not common.
 
 #### Key combinations
