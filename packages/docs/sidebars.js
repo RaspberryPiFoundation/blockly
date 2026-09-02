@@ -25,9 +25,7 @@ try {
     ...require('./docs/reference/typedoc-sidebar.cjs'),
   ];
 } catch {
-  console.warn(
-    'Reference sidebar not found.',
-  );
+  console.warn('Reference sidebar not found.');
 }
 
 const sidebars = {
