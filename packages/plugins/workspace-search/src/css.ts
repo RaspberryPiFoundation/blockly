@@ -41,11 +41,14 @@ const arrowUpSvgDataUri =
 /**
  * CSS for workspace search.
  */
-const cssContent = `path.blocklyPath.blockly-ws-search-highlight {
-    fill: #000;
-  }
+const cssContent = `path.blocklyPath.blockly-ws-search-highlight {}
   path.blocklyPath.blockly-ws-search-highlight.blockly-ws-search-current {
-    fill: grey;
+    filter: saturate(3)
+    drop-shadow(0 0 8px var(--blockly-active-node-color));
+  }
+  path.blocklyPath.blockly-ws-search-greyed {
+    fill: lightgrey;
+    stroke: dimgrey;
   }
   .blockly-ws-search-close-btn {
     background: url(${closeSvgDataUri}) no-repeat top left;

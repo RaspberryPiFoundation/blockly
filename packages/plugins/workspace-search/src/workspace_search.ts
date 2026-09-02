@@ -40,9 +40,14 @@ export class WorkspaceSearch
   private textInputPlaceholder = Blockly.Msg['WORKSPACE_SEARCH_PLACEHOLDER'];
 
   /**
-   * A list of blocks that came up in the search.
+   * A list of matching blocks that came up in the search.
    */
   protected blocks: Blockly.BlockSvg[] = [];
+
+  /**
+   * A list of blocks that are not matches. These blocks are greyed out.
+   */
+  private nonMatchingBlocks: Blockly.BlockSvg[] = [];
 
   /**
    * The last highlighted block, which we focus on close.
@@ -121,6 +126,7 @@ export class WorkspaceSearch
    * to prevent memory leaks.
    */
   dispose() {
+    this.clearBlocks();
     this.releaseEphemeralFocus(false);
     for (const event of this.boundEvents) {
       Blockly.browserEvents.unbind(event);
@@ -460,19 +466,22 @@ export class WorkspaceSearch
    * @param index Index of block to set as current. Number is wrapped.
    */
   protected setCurrentBlock(index: number) {
-    if (!this.blocks.length) {
+    const blocks = this.blocks;
+    if (!blocks.length) {
       return;
     }
-    let currentBlock = this.blocks[this.currentBlockIndex];
+    let currentBlock = blocks[this.currentBlockIndex];
     if (currentBlock) {
       this.unhighlightCurrentSelection(currentBlock);
     }
     this.currentBlockIndex =
-      ((index % this.blocks.length) + this.blocks.length) % this.blocks.length;
-    currentBlock = this.blocks[this.currentBlockIndex];
+      ((index % blocks.length) + blocks.length) % blocks.length;
+    currentBlock = blocks[this.currentBlockIndex];
 
     this.highlightCurrentSelection(currentBlock);
-    this.workspace.centerOnBlock(currentBlock.id, false);
+    if (this.workspace.isMovable()) {
+      this.workspace.centerOnBlock(currentBlock.id, false);
+    }
     this.lastHighlighted = currentBlock;
     Blockly.FocusManager.getFocusManager().focusNode(currentBlock);
     this.announceCurrentMatch();
@@ -564,8 +573,8 @@ export class WorkspaceSearch
   }
 
   /**
-   * Searches the workspace for the current search term and highlights matching
-   * blocks.
+   * Searches the workspace for the current search term, highlights matching
+   * blocks, and greys non-matching blocks.
    *
    * @param searchText The search text.
    * @param preserveCurrent Whether to preserve the current block
@@ -581,12 +590,9 @@ export class WorkspaceSearch
     }
     this.searchText = searchText.trim();
     this.clearBlocks();
-    this.blocks = this.getMatchingBlocks(
-      this.workspace,
-      this.searchText,
-      this.caseSensitive,
-    );
-    this.highlightSearchGroup(this.blocks);
+    this.blocks = this.getMatchingBlocks();
+    this.nonMatchingBlocks = this.getNonMatchingBlocks();
+    this.applyBlockStyles();
     // If the current block is still in the new list of matching blocks, preserve
     // it as the current block. Otherwise, select the first block in the list.
     let currentIndex = 0;
@@ -626,13 +632,14 @@ export class WorkspaceSearch
    * @param block The block to check.
    * @param searchText The search text. Note if the search is case
    *    insensitive, this will be passed already converted to lowercase letters.
-   * @param caseSensitive Whether the search is caseSensitive.
+   * @param caseSensitive Whether the search is case sensitive. Defaults to
+   *    this.caseSensitive.
    * @returns True if the block is a match, false otherwise.
    */
   protected isBlockMatch(
     block: Blockly.BlockSvg,
     searchText: string,
-    caseSensitive: boolean,
+    caseSensitive: boolean = this.caseSensitive,
   ): boolean {
     let blockText;
     if (block.isCollapsed()) {
@@ -663,14 +670,14 @@ export class WorkspaceSearch
    *    text.
    */
   protected getMatchingBlocks(
-    workspace: Blockly.WorkspaceSvg,
-    searchText: string,
-    caseSensitive: boolean,
+    workspace: Blockly.WorkspaceSvg = this.workspace,
+    searchText: string = this.searchText,
+    caseSensitive: boolean = this.caseSensitive,
   ): Blockly.BlockSvg[] {
     if (!searchText) {
       return [];
     }
-    if (!this.caseSensitive) {
+    if (!caseSensitive) {
       searchText = searchText.toLowerCase();
     }
     const searchGroup = this.getSearchPool(workspace);
@@ -680,16 +687,30 @@ export class WorkspaceSearch
   }
 
   /**
+   * Returns non-matching blocks in the search pool.
+   *
+   * @returns The blocks that do not match the search text.
+   */
+  protected getNonMatchingBlocks(): Blockly.BlockSvg[] {
+    const matchingBlocks = new Set(this.blocks);
+    return this.getSearchPool(this.workspace).filter(
+      (block) => !matchingBlocks.has(block),
+    );
+  }
+
+  /**
    * Clears the selection group and current block.
    */
   clearBlocks() {
-    this.unhighlightSearchGroup(this.blocks);
+    this.unhighlightSearchGroup();
+    this.ungreyNonMatchingBlocks();
     const currentBlock = this.blocks[this.currentBlockIndex];
     if (currentBlock) {
       this.unhighlightCurrentSelection(currentBlock);
     }
     this.currentBlockIndex = -1;
     this.blocks = [];
+    this.nonMatchingBlocks = [];
   }
 
   /**
@@ -749,7 +770,7 @@ export class WorkspaceSearch
    *
    * @param blocks The blocks to highlight.
    */
-  protected highlightSearchGroup(blocks: Blockly.BlockSvg[]) {
+  protected highlightSearchGroup(blocks = this.blocks) {
     blocks.forEach((block) => {
       const blockPath = block.pathObject.svgPath;
       Blockly.utils.dom.addClass(blockPath, 'blockly-ws-search-highlight');
@@ -761,10 +782,42 @@ export class WorkspaceSearch
    *
    * @param blocks The blocks to unhighlight.
    */
-  protected unhighlightSearchGroup(blocks: Blockly.BlockSvg[]) {
+  protected unhighlightSearchGroup(blocks = this.blocks) {
     blocks.forEach((block) => {
       const blockPath = block.pathObject.svgPath;
       Blockly.utils.dom.removeClass(blockPath, 'blockly-ws-search-highlight');
+    });
+  }
+
+  /**
+   * Highlights matching blocks and greys non-matching blocks.
+   */
+  private applyBlockStyles() {
+    this.highlightSearchGroup();
+    this.greyNonMatchingBlocks();
+  }
+
+  /**
+   * Greys each non-matching block.
+   */
+  private greyNonMatchingBlocks() {
+    this.nonMatchingBlocks.forEach((block) => {
+      Blockly.utils.dom.addClass(
+        block.pathObject.svgPath,
+        'blockly-ws-search-greyed',
+      );
+    });
+  }
+
+  /**
+   * Removes the greyed class from each non-matching block.
+   */
+  private ungreyNonMatchingBlocks() {
+    this.nonMatchingBlocks.forEach((block) => {
+      Blockly.utils.dom.removeClass(
+        block.pathObject.svgPath,
+        'blockly-ws-search-greyed',
+      );
     });
   }
 }

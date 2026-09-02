@@ -40,6 +40,16 @@ suite('WorkspaceSearch', function () {
   }
 
   /**
+   * Check if a block's path is greyed as a non-match.
+   * @param {Blockly.BlockSvg} block The block to test.
+   * @returns {boolean} True if the block is greyed.
+   */
+  function isBlockGreyed(block) {
+    const classes = block.pathObject.svgPath.getAttribute('class');
+    return (' ' + classes + ' ').indexOf(' blockly-ws-search-greyed ') !== -1;
+  }
+
+  /**
    * @param {string} expected The expected block type.
    */
   function assertFocusedNodeType(expected) {
@@ -319,6 +329,9 @@ suite('WorkspaceSearch', function () {
       this.workspaceSearch.searchAndHighlight('none', false);
       assertEqualsSearchGroup(this.blocks, this.workspaceSearch.blocks, []);
       assertNoExtraCurrentStyling(this.blocks);
+      this.workspace.getTopBlocks().forEach((block) => {
+        assert.isTrue(isBlockGreyed(block));
+      });
     });
 
     test('Match all non-fields', function () {
@@ -593,6 +606,8 @@ suite('WorkspaceSearch', function () {
       assert.isTrue(isBlockHighlighted(this.betaBlock));
       assert.isTrue(isBlockCurrentStyled(this.alphaBlock));
       assert.isFalse(isBlockCurrentStyled(this.betaBlock));
+      assert.isFalse(isBlockGreyed(this.alphaBlock));
+      assert.isFalse(isBlockGreyed(this.betaBlock));
     });
 
     test('cycling moves the current match to the next result', function () {
