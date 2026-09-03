@@ -58,7 +58,7 @@ jobs:
       - name: Generate reference docs
         working-directory: ./packages/blockly
         run: |
-          npx gulp typings
+          npm run typings
           npm run docs
 
       - name: Build the Docusaurus site

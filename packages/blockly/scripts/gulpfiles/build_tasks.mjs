@@ -31,9 +31,9 @@ import {
   TSC_OUTPUT_DIR,
   TYPINGS_BUILD_DIR,
 } from './config.mjs';
-import {getPackageJson} from './helper_tasks.mjs';
 
 import {posixPath, quote} from '../helpers.js';
+import {getPackageJson} from '../lib/package_json.mjs';
 
 const argv = yargs(hideBin(process.argv)).parse();
 

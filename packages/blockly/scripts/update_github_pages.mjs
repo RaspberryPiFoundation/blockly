@@ -19,8 +19,8 @@
  *       # build the current branch instead of syncing main
  */
 
-import {execSync} from 'node:child_process';
 import {parseArgs} from 'node:util';
+import {capture, run} from './lib/exec.mjs';
 
 const UPSTREAM_URL = 'git@github.com:RaspberryPiFoundation/blockly.git';
 
@@ -39,26 +39,6 @@ Options:
   --upstream         Push to RaspberryPiFoundation/blockly instead of origin
   --use-local        Build and push the current branch instead of syncing main
   --help             Show this message`;
-
-/**
- * Runs a command, forwarding its output to this process's stdio.
- *
- * @param {string} command The command to run.
- */
-function run(command) {
-  execSync(command, {stdio: 'inherit'});
-}
-
-/**
- * Runs a command and returns its trimmed stdout.
- * Used when the output of a command is needed as a value.
- *
- * @param {string} command The command to run.
- * @returns {string} The command's output.
- */
-function capture(command) {
-  return execSync(command, {encoding: 'utf8'}).trim();
-}
 
 /**
  * Resolves which remote to use for pushing gh-pages.

@@ -32,12 +32,8 @@ import {
   tsc,
 } from './scripts/gulpfiles/build_tasks.mjs';
 import {docs} from './scripts/gulpfiles/docs_tasks.mjs';
-import {
-  cleanReleaseDir,
-  pack,
-  typings,
-} from './scripts/gulpfiles/package_tasks.mjs';
 import {generators, test} from './scripts/gulpfiles/test_tasks.mjs';
+import {cleanReleaseDir} from './scripts/lib/release_dir.mjs';
 
 const clean = parallel(cleanBuildDir, cleanReleaseDir);
 
@@ -54,7 +50,6 @@ export {
   tsc,
   minify,
   build,
-  pack,  // Formerly package.
   prepareDemos,
   deployDemosBeta,
   deployDemos,
@@ -66,10 +61,10 @@ export {
 // prettier-ignore
 export {
   messages, // Generate msg/json/en.json et al.
+  cleanBuildDir,
   clean,
   test,
   generators as testGenerators,
   buildAdvancedCompilationTest,
   docs,
-  typings,
 }
