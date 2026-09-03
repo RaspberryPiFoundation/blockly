@@ -5,9 +5,7 @@
   "description": "Blockly documentation site",
   "nx": {
     "targets": {
-      "start": {},
       "build": {
-        "dependsOn": [],
         "outputs": [
           "{projectRoot}/build",
           "{projectRoot}/.docusaurus",
