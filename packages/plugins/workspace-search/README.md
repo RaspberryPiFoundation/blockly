@@ -41,7 +41,7 @@ To open workspace search use either command + f or control + f. To close the sea
 - `setSearchPlaceholder`: Sets the placeholder text for the search bar text input.
 - `addActionBtn`: Add a button to the action div. This must be called after the init function has been called.
 - `clearBlocks`: Clears the selection group and current block.
-- `searchAndHighlight`: Searches the workspace for the current search term and highlights matching blocks.
+- `searchAndHighlight`: Searches the workspace for the current search term, highlights matching blocks, and greys non-matching blocks.
 
 ## Styling
 
@@ -80,8 +80,9 @@ Here are additional CSS classes to style your search bar:
 - `blockly-ws-search-content`: Applies to the search content.
 - `blockly-ws-search-input`: Applies to the input wrapper. (Default: `border: none;`)
 - `blockly-ws-search-actions`: Applies to the action div.
-- `blockly-ws-search-current`: Highlights the provided block as the "current selection". (Default: `fill: grey;`)
-- `blockly-ws-search-highlight`: Adds highlight to the provided blocks. (Default: `fill: black;`)
+- `blockly-ws-search-current`: Highlights the provided block as the "current selection". (Default: `filter: saturate(3) drop-shadow(0 0 8px var(--blockly-active-node-color));`)
+- `blockly-ws-search-highlight`: Optionally adds highlight to the provided blocks. (Default: none.)
+- `blockly-ws-search-greyed`: Applied to each non-matching block's `.blocklyPath`. (Default: `fill: lightgrey; stroke: dimgrey;`)
 
 ## License
 

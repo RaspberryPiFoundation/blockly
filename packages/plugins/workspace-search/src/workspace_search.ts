@@ -11,7 +11,9 @@ import {injectSearchCss} from './css';
 /**
  * Class for workspace search.
  */
-export class WorkspaceSearch implements Blockly.IPositionable {
+export class WorkspaceSearch
+  implements Blockly.IPositionable, Blockly.IAutoHideable
+{
   /**
    * The unique id for this component.
    */
@@ -38,9 +40,14 @@ export class WorkspaceSearch implements Blockly.IPositionable {
   private textInputPlaceholder = Blockly.Msg['WORKSPACE_SEARCH_PLACEHOLDER'];
 
   /**
-   * A list of blocks that came up in the search.
+   * A list of matching blocks that came up in the search.
    */
   protected blocks: Blockly.BlockSvg[] = [];
+
+  /**
+   * A list of blocks that are not matches. These blocks are greyed out.
+   */
+  private nonMatchingBlocks: Blockly.BlockSvg[] = [];
 
   /**
    * The last highlighted block, which we focus on close.
@@ -50,6 +57,11 @@ export class WorkspaceSearch implements Blockly.IPositionable {
    * the scroll position.
    */
   private lastHighlighted: Blockly.BlockSvg | null = null;
+
+  /**
+   * Callback to FocusManager to return ephemeral focus when search closes.
+   */
+  private returnEphemeralFocus: Blockly.ReturnEphemeralFocus | null = null;
 
   /**
    * Index of the currently "selected" block in the blocks array.
@@ -96,7 +108,10 @@ export class WorkspaceSearch implements Blockly.IPositionable {
     this.workspace.getComponentManager().addComponent({
       component: this,
       weight: 0,
-      capabilities: [Blockly.ComponentManager.Capability.POSITIONABLE],
+      capabilities: [
+        Blockly.ComponentManager.Capability.POSITIONABLE,
+        Blockly.ComponentManager.Capability.AUTOHIDEABLE,
+      ],
     });
     injectSearchCss();
     this.createDom();
@@ -111,6 +126,8 @@ export class WorkspaceSearch implements Blockly.IPositionable {
    * to prevent memory leaks.
    */
   dispose() {
+    this.clearBlocks();
+    this.releaseEphemeralFocus(false);
     for (const event of this.boundEvents) {
       Blockly.browserEvents.unbind(event);
     }
@@ -449,20 +466,24 @@ export class WorkspaceSearch implements Blockly.IPositionable {
    * @param index Index of block to set as current. Number is wrapped.
    */
   protected setCurrentBlock(index: number) {
-    if (!this.blocks.length) {
+    const blocks = this.blocks;
+    if (!blocks.length) {
       return;
     }
-    let currentBlock = this.blocks[this.currentBlockIndex];
+    let currentBlock = blocks[this.currentBlockIndex];
     if (currentBlock) {
       this.unhighlightCurrentSelection(currentBlock);
     }
     this.currentBlockIndex =
-      ((index % this.blocks.length) + this.blocks.length) % this.blocks.length;
-    currentBlock = this.blocks[this.currentBlockIndex];
+      ((index % blocks.length) + blocks.length) % blocks.length;
+    currentBlock = blocks[this.currentBlockIndex];
 
     this.highlightCurrentSelection(currentBlock);
-    this.workspace.centerOnBlock(currentBlock.id, false);
+    if (this.workspace.isMovable()) {
+      this.workspace.centerOnBlock(currentBlock.id, false);
+    }
     this.lastHighlighted = currentBlock;
+    Blockly.FocusManager.getFocusManager().focusNode(currentBlock);
     this.announceCurrentMatch();
   }
 
@@ -473,25 +494,62 @@ export class WorkspaceSearch implements Blockly.IPositionable {
     this.setVisible(true);
     if (this.inputElement) {
       this.inputElement.value = this.searchText;
-      this.inputElement.focus();
+      const focusManager = Blockly.FocusManager.getFocusManager();
+      if (!this.returnEphemeralFocus && !focusManager.ephemeralFocusTaken()) {
+        this.returnEphemeralFocus = focusManager.takeEphemeralFocus(
+          this.inputElement,
+        );
+      } else {
+        this.inputElement.focus();
+      }
       this.inputElement.select();
     }
-    this.searchAndHighlight(this.searchText);
+    this.searchAndHighlight(this.searchText, this.preserveSelected);
   }
 
   /**
-   * Closes the search bar.
+   * Closes the search bar and releases ephemeral focus.
    */
   close() {
     this.setVisible(false);
     const focusManager = Blockly.FocusManager.getFocusManager();
-    if (this.lastHighlighted && !this.lastHighlighted.isDisposed()) {
-      focusManager.focusNode(this.lastHighlighted);
+    const lastHighlighted = this.lastHighlighted;
+    if (lastHighlighted && !lastHighlighted.isDisposed()) {
+      focusManager.focusNode(lastHighlighted);
+      this.releaseEphemeralFocus(true);
     } else {
+      this.releaseEphemeralFocus(false);
       focusManager.focusTree(this.workspace);
     }
     this.clearBlocks();
-    this.lastHighlighted = null;
+  }
+
+  /**
+   * Hides the search bar. Called from WorkspaceSvg.hideChaff, for example
+   * when the user clicks a block.
+   *
+   * @param onlyClosePopups Whether only popups should be closed.
+   */
+  autoHide(onlyClosePopups: boolean) {
+    if (onlyClosePopups || !this.isVisible()) {
+      return;
+    }
+    this.setVisible(false);
+    this.releaseEphemeralFocus(true);
+    this.clearBlocks();
+  }
+
+  /**
+   * Ends ephemeral focus if this search bar currently holds it.
+   *
+   * @param restoreFocus True to restore the FocusManager's focused node.
+   */
+  private releaseEphemeralFocus(restoreFocus = true) {
+    if (!this.returnEphemeralFocus) {
+      return;
+    }
+    this.returnEphemeralFocus(restoreFocus);
+    this.returnEphemeralFocus = null;
   }
 
   /**
@@ -506,29 +564,48 @@ export class WorkspaceSearch implements Blockly.IPositionable {
   }
 
   /**
-   * Searches the workspace for the current search term and highlights matching
-   * blocks.
+   * Checks whether the search bar is currently visible.
+   *
+   * @returns true if the search bar is visible, false otherwise.
+   */
+  private isVisible(): boolean {
+    return !!this.htmlDiv && this.htmlDiv.style.display !== 'none';
+  }
+
+  /**
+   * Searches the workspace for the current search term, highlights matching
+   * blocks, and greys non-matching blocks.
    *
    * @param searchText The search text.
    * @param preserveCurrent Whether to preserve the current block
    *    if it is included in the new matching blocks.
    */
   searchAndHighlight(searchText: string, preserveCurrent?: boolean) {
-    const oldCurrentBlock = this.blocks[this.currentBlockIndex];
+    const currentBlock = this.blocks[this.currentBlockIndex];
+    let bookmarkId: string | undefined;
+    if (currentBlock) {
+      bookmarkId = currentBlock.id;
+    } else if (this.lastHighlighted) {
+      bookmarkId = this.lastHighlighted.id;
+    }
     this.searchText = searchText.trim();
     this.clearBlocks();
-    this.blocks = this.getMatchingBlocks(
-      this.workspace,
-      this.searchText,
-      this.caseSensitive,
-    );
-    this.highlightSearchGroup(this.blocks);
-    let currentIdx = 0;
-    if (preserveCurrent) {
-      currentIdx = this.blocks.indexOf(oldCurrentBlock);
-      currentIdx = currentIdx > -1 ? currentIdx : 0;
+    this.blocks = this.getMatchingBlocks();
+    this.nonMatchingBlocks = this.getNonMatchingBlocks();
+    this.applyBlockStyles();
+    // If the current block is still in the new list of matching blocks, preserve
+    // it as the current block. Otherwise, select the first block in the list.
+    let currentIndex = 0;
+    if (preserveCurrent && bookmarkId) {
+      const bookmarkedBlock = this.workspace.getBlockById(bookmarkId);
+      if (bookmarkedBlock) {
+        const bookmarkedIndex = this.blocks.indexOf(bookmarkedBlock);
+        if (bookmarkedIndex > -1) {
+          currentIndex = bookmarkedIndex;
+        }
+      }
     }
-    this.setCurrentBlock(currentIdx);
+    this.setCurrentBlock(currentIndex);
     if (this.searchText && !this.blocks.length) {
       this.announceNoMatches();
     }
@@ -555,13 +632,13 @@ export class WorkspaceSearch implements Blockly.IPositionable {
    * @param block The block to check.
    * @param searchText The search text. Note if the search is case
    *    insensitive, this will be passed already converted to lowercase letters.
-   * @param caseSensitive Whether the search is caseSensitive.
+   * @param caseSensitive Whether the search is case sensitive.
    * @returns True if the block is a match, false otherwise.
    */
   protected isBlockMatch(
     block: Blockly.BlockSvg,
     searchText: string,
-    caseSensitive: boolean,
+    caseSensitive: boolean = this.caseSensitive,
   ): boolean {
     let blockText;
     if (block.isCollapsed()) {
@@ -592,14 +669,14 @@ export class WorkspaceSearch implements Blockly.IPositionable {
    *    text.
    */
   protected getMatchingBlocks(
-    workspace: Blockly.WorkspaceSvg,
-    searchText: string,
-    caseSensitive: boolean,
+    workspace: Blockly.WorkspaceSvg = this.workspace,
+    searchText: string = this.searchText,
+    caseSensitive: boolean = this.caseSensitive,
   ): Blockly.BlockSvg[] {
     if (!searchText) {
       return [];
     }
-    if (!this.caseSensitive) {
+    if (!caseSensitive) {
       searchText = searchText.toLowerCase();
     }
     const searchGroup = this.getSearchPool(workspace);
@@ -609,16 +686,30 @@ export class WorkspaceSearch implements Blockly.IPositionable {
   }
 
   /**
+   * Returns non-matching blocks in the search pool.
+   *
+   * @returns The blocks that do not match the search text.
+   */
+  protected getNonMatchingBlocks(): Blockly.BlockSvg[] {
+    const matchingBlocks = new Set(this.blocks);
+    return this.getSearchPool(this.workspace).filter(
+      (block) => !matchingBlocks.has(block),
+    );
+  }
+
+  /**
    * Clears the selection group and current block.
    */
   clearBlocks() {
-    this.unhighlightSearchGroup(this.blocks);
+    this.unhighlightSearchGroup();
+    this.ungreyNonMatchingBlocks();
     const currentBlock = this.blocks[this.currentBlockIndex];
     if (currentBlock) {
       this.unhighlightCurrentSelection(currentBlock);
     }
     this.currentBlockIndex = -1;
     this.blocks = [];
+    this.nonMatchingBlocks = [];
   }
 
   /**
@@ -678,7 +769,7 @@ export class WorkspaceSearch implements Blockly.IPositionable {
    *
    * @param blocks The blocks to highlight.
    */
-  protected highlightSearchGroup(blocks: Blockly.BlockSvg[]) {
+  protected highlightSearchGroup(blocks = this.blocks) {
     blocks.forEach((block) => {
       const blockPath = block.pathObject.svgPath;
       Blockly.utils.dom.addClass(blockPath, 'blockly-ws-search-highlight');
@@ -690,10 +781,42 @@ export class WorkspaceSearch implements Blockly.IPositionable {
    *
    * @param blocks The blocks to unhighlight.
    */
-  protected unhighlightSearchGroup(blocks: Blockly.BlockSvg[]) {
+  protected unhighlightSearchGroup(blocks = this.blocks) {
     blocks.forEach((block) => {
       const blockPath = block.pathObject.svgPath;
       Blockly.utils.dom.removeClass(blockPath, 'blockly-ws-search-highlight');
+    });
+  }
+
+  /**
+   * Highlights matching blocks and greys non-matching blocks.
+   */
+  private applyBlockStyles() {
+    this.highlightSearchGroup();
+    this.greyNonMatchingBlocks();
+  }
+
+  /**
+   * Greys each non-matching block.
+   */
+  private greyNonMatchingBlocks() {
+    this.nonMatchingBlocks.forEach((block) => {
+      Blockly.utils.dom.addClass(
+        block.pathObject.svgPath,
+        'blockly-ws-search-greyed',
+      );
+    });
+  }
+
+  /**
+   * Removes the greyed class from each non-matching block.
+   */
+  private ungreyNonMatchingBlocks() {
+    this.nonMatchingBlocks.forEach((block) => {
+      Blockly.utils.dom.removeClass(
+        block.pathObject.svgPath,
+        'blockly-ws-search-greyed',
+      );
     });
   }
 }
