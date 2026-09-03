@@ -1,12 +1,16 @@
 // Typedoc theme & router overrides
 
-import { MarkdownTheme, MarkdownThemeContext, MemberRouter } from 'typedoc-plugin-markdown';
+import {
+  MarkdownTheme,
+  MarkdownThemeContext,
+  MemberRouter,
+} from 'typedoc-plugin-markdown';
 import { ReflectionKind } from 'typedoc';
 
 /** Sections that get an index table, in the order the tables appear. */
 const INDEXED_SECTIONS = ['Properties', 'Methods'];
 
-/** 
+/**
  * Adds Properties and Methods index tables to each generated reference page.
  *
  * This needs a custom theme because the plugin will only insert an index if we
@@ -61,7 +65,7 @@ class MemberIndexTheme extends MarkdownTheme {
   }
 }
 
-/** 
+/**
  * Overrides the default namespace directory structure to ensure that TypeDoc
  * does not prepend 'blockly' to namespace URLs
  */
