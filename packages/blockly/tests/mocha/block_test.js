@@ -1500,9 +1500,16 @@ suite('Blocks', function () {
       teardown(function () {
         workspaceTeardown.call(this, this.workspace);
 
-        Blockly.icons.registry.unregister(
-          Blockly.icons.IconType.COMMENT.toString(),
-        );
+        if (
+          Blockly.registry.hasItem(
+            Blockly.registry.Type.ICON,
+            Blockly.icons.IconType.COMMENT.toString(),
+          )
+        ) {
+          Blockly.icons.registry.unregister(
+            Blockly.icons.IconType.COMMENT.toString(),
+          );
+        }
         Blockly.icons.registry.register(
           Blockly.icons.IconType.COMMENT,
           Blockly.icons.CommentIcon,

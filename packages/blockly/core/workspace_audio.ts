@@ -90,6 +90,7 @@ export class WorkspaceAudio {
     const sound = this.sounds.get(name);
     if (sound) {
       await this.prepareToPlay();
+      if (this.context.state !== 'running') return;
 
       const source = this.context.createBufferSource();
       const gainNode = this.context.createGain();
@@ -122,6 +123,7 @@ export class WorkspaceAudio {
   async beep(tone: number, duration = 0.2) {
     if (!this.isPlayingAllowed()) return;
     await this.prepareToPlay();
+    if (this.context.state !== 'running') return;
 
     const oscillator = this.context.createOscillator();
     oscillator.type = 'sine';
@@ -209,7 +211,10 @@ export class WorkspaceAudio {
   ) {
     this.lastSound = new Date();
 
-    if (this.context.state === 'suspended') {
+    if (
+      this.context.state === 'suspended' &&
+      navigator.userActivation.hasBeenActive
+    ) {
       await this.context.resume();
     }
   }

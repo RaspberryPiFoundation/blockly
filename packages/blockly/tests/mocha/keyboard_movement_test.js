@@ -46,7 +46,9 @@ suite('Keyboard-driven movement', function () {
       ...DEFAULT_INJECT_OPTIONS,
       toolbox: toolbox,
     });
-    Blockly.common.defineBlocks(p5blocks);
+    if (!('p5_setup' in Blockly.Blocks)) {
+      Blockly.common.defineBlocks(p5blocks);
+    }
     Blockly.KeyboardMover.mover.setMoveDistance(20);
   });
 
