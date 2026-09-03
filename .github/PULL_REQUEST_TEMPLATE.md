@@ -7,7 +7,7 @@
 
 <!-- TODO: Verify the following, checking each box with an 'x' between the brackets: [x] -->
 
-- [ ] I [validated my changes](https://developers.google.com/blockly/guides/contribute/core#making_and_verifying_a_change)
+- [ ] I [validated my changes](https://docs.blockly.com/guides/contribute/core/#make-and-verify-a-change)
 
 ## The details
 ### Resolves

@@ -22,7 +22,7 @@ npm install @blockly/field-grid-dropdown --save
 
 ## Usage
 
-This field accepts the same parameters as the [Blockly.FieldDropdown](https://developers.google.com/blockly/guides/create-custom-blocks/fields/built-in-fields/dropdown#creation)
+This field accepts the same parameters as the [Blockly.FieldDropdown](https://docs.blockly.com/guides/create-custom-blocks/fields/built-in-fields/dropdown/#creation)
 in Blockly core. The config object bag passed into this field accepts additional optional parameters:
 
 - `"columns"` to specify the number of columns in the dropdown field (must be an integer greater than 0).

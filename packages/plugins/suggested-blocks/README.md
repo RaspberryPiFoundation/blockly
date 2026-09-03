@@ -63,7 +63,7 @@ SuggestedBlocks.init(workspace);
   - `numBlocksPerCategory` (optional): The maximum number of blocks to show in
     each category. Defaults to 10.
   - `waitForFinishedLoading` (optional): Whether to wait for the
-    [`Blockly.Events.FinishedLoading` event](https://developers.google.com/blockly/reference/js/blockly.events_namespace.finishedloading_class.md)
+    [`Blockly.Events.FinishedLoading` event](https://docs.blockly.com/reference/blockly.events_namespace.finishedloading_class/)
     before taking action on any new `BlockCreate` events. If you disable event
     firing while you load the initial state of the workspace, you'll need to set
     this to `false`, or the plugin will never place blocks in either category.

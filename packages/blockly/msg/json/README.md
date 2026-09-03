@@ -11,12 +11,12 @@ containing human-translated strings that are needed by Blockly.
 Instead, we use [Translatewiki](https://translatewiki.net/) to manage
 translations for Blockly.  Please refer to [the detailed instructions
 on how to help us translate Blockly](
-https://developers.google.com/blockly/guides/contribute/core/translating)
+https://docs.blockly.com/guides/contribute/core/localization_and_translation/#translate-text)
 on the Blockly Developers site.
 
 There is one notable exception: because the language is not supported
 by Translatewiki, contributors to the [Klingon translation](
-https://developers.google.com/blockly/guides/contribute/core/klingon)
+https://docs.blockly.com/guides/contribute/core/localization_and_translation/#klingon-translations)
 may submit PRs making changes to [`tlh.json`](tlh.json) directly.
 
 ### Building

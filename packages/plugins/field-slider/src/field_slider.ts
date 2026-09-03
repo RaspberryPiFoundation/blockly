@@ -54,7 +54,7 @@ export class FieldSlider extends Blockly.FieldNumber {
    *    number, or null to abort the change.
    * @param config A map of options used to configure the field.
    *    See the [field creation documentation]{@link
-   * https://developers.google.com/blockly/guides/create-custom-blocks/fields/built-in-fields/number#creation}
+   * https://docs.blockly.com/guides/create-custom-blocks/fields/built-in-fields/number/#creation}
    *    for a list of properties this parameter supports.
    */
   constructor(

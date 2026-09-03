@@ -2,7 +2,7 @@
 
 A [Blockly](https://www.npmjs.com/package/blockly) plugin that adds a toolbox category for searching
 blocks. The category displays a search field in the toolbox, and filters the available blocks as you
-type. The Blockly docs have [more information about toolbox definitions and categories](https://developers.google.com/blockly/guides/configure/web/toolboxes/category).
+type. The Blockly docs have [more information about toolbox definitions and categories](https://docs.blockly.com/guides/configure/toolboxes/category/).
 
 ## Installation
 

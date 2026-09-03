@@ -61,7 +61,7 @@ export class FieldGridDropdown extends Blockly.FieldDropdown {
    *  to abort the change.
    * @param config A map of options used to configure the field.
    *  See the [field creation documentation]{@link
-   * https://developers.google.com/blockly/guides/create-custom-blocks/fields/built-in-fields/dropdown#creation}
+   * https://docs.blockly.com/guides/create-custom-blocks/fields/built-in-fields/dropdown/#creation}
    *  for a list of properties this parameter supports.
    * @extends {Blockly.Field}
    * @constructor

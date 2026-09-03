@@ -50,7 +50,7 @@ Blockly.Blocks['factory_base'] = {
     this.setTooltip('Build a custom block by plugging\n' +
         'fields, inputs and other blocks here.');
     this.setHelpUrl(
-        'https://developers.google.com/blockly/guides/create-custom-blocks/block-factory');
+        'https://docs.blockly.com/guides/create-custom-blocks/legacy-blockly-developer-tools/');
   },
   mutationToDom: function() {
     var container = Blockly.utils.xml.createElement('mutation');
@@ -242,7 +242,7 @@ Blockly.Blocks['input_end_row'] = {
                  "be rendered on a separate row from any following inputs. " +
                  "Alignment options (left, right, centre) only affect " +
                  "multi-row blocks.",
-      "helpUrl": "https://developers.google.com/blockly/guides/create-custom-blocks/define-blocks#block_inputs"
+      "helpUrl": "https://docs.blockly.com/guides/create-custom-blocks/define/block-anatomy/#inputs"
     });
   }
 };

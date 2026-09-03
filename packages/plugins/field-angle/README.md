@@ -109,4 +109,4 @@ Blockly.defineBlocksWithJsonArray([
 
 Apache 2.0
 
-[number-field]: https://developers.google.com/blockly/guides/create-custom-blocks/fields/built-in-fields/number#creation
+[number-field]: https://docs.blockly.com/guides/create-custom-blocks/fields/built-in-fields/number/#creation

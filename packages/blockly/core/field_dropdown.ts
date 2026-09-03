@@ -117,7 +117,7 @@ export class FieldDropdown extends Field<string> {
    *     change.
    * @param config A map of options used to configure the field.
    *     See the [field creation documentation]{@link
-   * https://developers.google.com/blockly/guides/create-custom-blocks/fields/built-in-fields/dropdown#creation}
+   * https://docs.blockly.com/guides/create-custom-blocks/fields/built-in-fields/dropdown/#creation}
    * for a list of properties this parameter supports.
    * @throws {TypeError} If `menuGenerator` options are incorrectly structured.
    */
@@ -1060,7 +1060,7 @@ export interface FieldDropdownFromJsonConfig extends FieldDropdownConfig {
  * A function that is called to validate changes to the field's value before
  * they are set.
  *
- * @see {@link https://developers.google.com/blockly/guides/create-custom-blocks/fields/validators#return_values}
+ * @see {@link https://docs.blockly.com/guides/create-custom-blocks/fields/validators/#return-values}
  * @param newValue The value to be validated.
  * @returns One of three instructions for setting the new value: `T`, `null`,
  * or `undefined`.

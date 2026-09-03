@@ -22,7 +22,7 @@ import type {Workspace} from './workspace.js';
  * functions.
  *
  * @deprecated
- * @see {@link https://developers.google.com/blockly/guides/create-custom-blocks/generating-code}
+ * @see {@link https://docs.blockly.com/guides/create-custom-blocks/code-generation/overview/#block-code-generators}
  * @param block The Block instance to generate code for.
  * @param generator The CodeGenerator calling the function.
  * @returns A string containing the generated code (for statement blocks),
@@ -318,7 +318,7 @@ export class CodeGenerator {
     if (!Array.isArray(tuple)) {
       throw TypeError(
         `Expecting tuple from value block: ${targetBlock.type} See ` +
-          `developers.google.com/blockly/guides/create-custom-blocks/generating-code ` +
+          `docs.blockly.com/guides/create-custom-blocks/code-generation/overview/ ` +
           `for more information`,
       );
     }

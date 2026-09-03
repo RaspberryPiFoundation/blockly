@@ -7,7 +7,7 @@ A tool for creating a Blockly plugin or application based on a pre-existing temp
 A plugin is a library designed to add functionality to Blockly. It is reusable
 and can be added to an application that uses Blockly. For more information about
 creating plugins in Blockly, see
-[the developer documentation](https://developers.google.com/blockly/guides/contribute/samples/add_a_plugin).
+[the developer documentation](https://docs.blockly.com/guides/contribute/core/plugins/add_a_plugin/).
 
 This script can be used to create a new Blockly plugin based on a template.
 

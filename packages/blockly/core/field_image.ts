@@ -69,7 +69,7 @@ export class FieldImage extends Field<string> {
    * @param flipRtl Whether to flip the icon in RTL.
    * @param config A map of options used to configure the field.
    *     See the [field creation documentation]{@link
-   * https://developers.google.com/blockly/guides/create-custom-blocks/fields/built-in-fields/image#creation}
+   * https://docs.blockly.com/guides/create-custom-blocks/fields/built-in-fields/image/#creation}
    * for a list of properties this parameter supports.
    */
   constructor(

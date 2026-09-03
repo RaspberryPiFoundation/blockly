@@ -197,5 +197,5 @@ This interface requires the draggable to have a method that converts it into
 
 Apache 2.0
 
-[flyout-info]: https://developers.google.com/blockly/reference/js/blockly.utils_namespace.toolbox_namespace.flyoutiteminfo_typealias.md
+[flyout-info]: https://docs.blockly.com/reference/blockly.utils_namespace.toolbox_namespace.flyoutiteminfo_typealias/
 [backpackable]: https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/plugins/workspace-backpack/src/backpack.ts

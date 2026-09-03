@@ -14,7 +14,7 @@ npm install @blockly/plugin-typed-variable-modal --save
 To add a Typed Variable Modal to your application you will have to create a
 custom dynamically populated flyout category. More information on custom flyouts
 can be
-found [here](https://developers.google.com/blockly/guides/configure/web/toolbox?hl=en#dynamic_categories).
+found [here](https://docs.blockly.com/guides/configure/toolboxes/dynamic/).
 
 #### Import
 

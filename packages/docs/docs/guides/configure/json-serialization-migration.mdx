@@ -16,7 +16,7 @@ won’t receive new features) but the JSON system will continue to improve.
 
 This document outlines how to migrate your project from the old XML system to 
 the new JSON system. To learn more about how JSON serialization works, visit the
-[serialization guide](https://docs.blockly.com/guides/configure/serialization/).
+[serialization guide](/guides/configure/serialization).
 This document also outlines the migration in the *order* that you should perform
 it. For instance, you could end up with corrupted saves if you migrate your 
 workspace without migrating blocks.
@@ -100,7 +100,7 @@ Blockly.Blocks['lists_create_with'] = {
 ```
 
 2. Modify `saveExtraState` and `loadExtraState` to return the state directly.  
-   See the [Extensions and Mutators](https://developers.google.com/blockly/guides/create-custom-blocks/extensions) 
+   See the [Extensions and Mutators](/guides/create-custom-blocks/define/extensions) 
    documentation for info on what this should look like. 
 
 ```js
@@ -197,7 +197,7 @@ CustomFields.FieldMap.prototype.loadState = function(state) {
 ```
 
 2. Modify the `saveState` and `loadState` functions to return the state directly.  
-   See the [Creating a custom field](https://developers.google.com/blockly/guides/create-custom-blocks/fields/customizing-fields/creating) 
+   See the [Creating a custom field](/guides/create-custom-blocks/fields/customizing-fields/creating) 
    documentation for info on what this should look like.
 
 ```js
@@ -253,7 +253,7 @@ CustomFields.FieldMap.prototype.loadState = function(state) {
 If you want to use the new JSON hooks for blocks and fields, you will have to 
 specify your toolbox using JSON as well.
 
-1. Read the [toolbox documentation](https://developers.google.com/blockly/guides/configure/web/toolbox) 
+1. Read the [toolbox documentation](/guides/configure/toolboxes/toolbox) 
    to understand how a JSON toolbox is structured.
 
 2. Run the following code in your browser’s console.  
@@ -370,7 +370,7 @@ Blockly.serialization.workspaces.load(json, workspace);
 
 ## Upgrading Event handling
 
-For [Block change events](https://developers.google.com/blockly/guides/configure/web/events#blocklyeventsblock_change), 
+For [Block change events](/reference/blockly.events_namespace.blockchange_class), 
 if the change represents a mutation, the `oldValue`/`newValue` might be 
 stringified JSON (rather than XML). This occurs if the block being mutated has 
 JSON serialization hooks. This is true of built-in blocks.
@@ -379,7 +379,7 @@ Block delete events also include `oldJson` and `wasShadow`. If your block
 includes JSON hooks, or fields that use JSON hooks, you will want to examine 
 these properties rather than `oldXml`. This is true of built-in blocks.
 
-You should check to make sure that any [event listeners](https://developers.google.com/blockly/guides/configure/web/events#listening_to_events) 
+You should check to make sure that any [event listeners](/guides/configure/events#listen-to-events-from-the-workspace) 
 you’re using are set up to handle these cases.
 
 ## Upgrading serialization

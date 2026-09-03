@@ -8,7 +8,7 @@ body:
       value: >
         Thanks for helping us improve our developer site documentation!
         Use this template to describe issues with the content on our
-        [developer site](https://developers.google.com/blockly/guides).
+        [developer site](https://docs.blockly.com/).
   - type: input
     id: link
     attributes:

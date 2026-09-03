@@ -78,7 +78,7 @@ export class Options {
   /**
    * @param options Dictionary of options.
    *     Specification:
-   * https://developers.google.com/blockly/guides/get-started/web#configuration
+   * https://docs.blockly.com/guides/configure/configuration_struct/#the-options-dictionary
    */
   constructor(options: BlocklyOptions) {
     let toolboxJsonDef = null;
@@ -255,7 +255,7 @@ export class Options {
   /**
    * Parse the user-specified zoom options, using reasonable defaults where
    * behaviour is unspecified.  See zoom documentation:
-   *   https://developers.google.com/blockly/guides/configure/zoom
+   *   https://docs.blockly.com/guides/configure/zoom/
    *
    * @param options Dictionary of options.
    * @returns Normalized zoom options.
@@ -304,7 +304,7 @@ export class Options {
   /**
    * Parse the user-specified grid options, using reasonable defaults where
    * behaviour is unspecified. See grid documentation:
-   *   https://developers.google.com/blockly/guides/configure/grid
+   *   https://docs.blockly.com/guides/configure/grid/
    *
    * @param options Dictionary of options.
    * @returns Normalized grid options.
@@ -322,7 +322,7 @@ export class Options {
 
   /**
    * Parse the user-specified theme options, using the classic theme as a
-   * default. https://developers.google.com/blockly/guides/configure/appearance/themes
+   * default. https://docs.blockly.com/guides/configure/appearance/themes/
    *
    * @param options Dictionary of options.
    * @returns A Blockly Theme.

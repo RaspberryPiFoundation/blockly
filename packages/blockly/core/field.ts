@@ -48,7 +48,7 @@ import {WorkspaceSvg} from './workspace_svg.js';
  * A function that is called to validate changes to the field's value before
  * they are set.
  *
- * @see {@link https://developers.google.com/blockly/guides/create-custom-blocks/fields/validators#return_values}
+ * @see {@link https://docs.blockly.com/guides/create-custom-blocks/fields/validators/#return-values}
  * @param newValue The value to be validated.
  * @returns One of three instructions for setting the new value: `T`, `null`,
  * or `undefined`.
@@ -888,7 +888,7 @@ export abstract class Field<T = any>
    * at relevant times, such as when the parent block or renderer changes.
    *
    * See {@link
-   * https://developers.google.com/blockly/guides/create-custom-blocks/fields/customizing-fields/creating#matching_block_colours
+   * https://docs.blockly.com/guides/create-custom-blocks/fields/customizing-fields/creating/#matching-block-colours
    * | the field documentation} for more information, or FieldDropdown for an
    * example.
    */
@@ -1307,7 +1307,7 @@ export abstract class Field<T = any>
    * it is valid for a subclass to return `undefined` if the new value is
    * compatible with `T`.
    *
-   * @see {@link https://developers.google.com/blockly/guides/create-custom-blocks/fields/validators#return_values}
+   * @see {@link https://docs.blockly.com/guides/create-custom-blocks/fields/validators/#return-values}
    * @param newValue - The value to be validated.
    * @returns One of three instructions for setting the new value: `T`, `null`,
    * or `undefined`.

@@ -189,7 +189,7 @@ Blockly.Extensions.register('set_colours_extension', function () {
 ```
 
 This is done using a JSON
-[extension](https://developers.google.com/blockly/guides/create-custom-blocks/define/extensions).
+[extension](https://docs.blockly.com/guides/create-custom-blocks/define/extensions/).
 
 #### JavaScript
 
@@ -211,7 +211,7 @@ Blockly.Blocks['example_colour'] = {
 
 #### Creating a colour validator
 
-Note: For information on validators in general see [Validators](https://developers.google.com/blockly/guides/create-custom-blocks/fields/validators).
+Note: For information on validators in general see [Validators](https://docs.blockly.com/guides/create-custom-blocks/fields/validators/).
 
 A colour field's value is a `#rrggbb` format string, so any validators must
 accept a `#rrggbb` format string, and return a `#rrggbb` format string, `null`,
@@ -285,7 +285,7 @@ colourBlend.installBlock({
 The blocks in this package contain text that can be localized into multiple
 languages. As of August 2024, the relevant messages are included in the core
 Blockly language files. For information on Blockly's approach to localization,
-see [Localization](https://developers.google.com/blockly/guides/configure/web/translations)
+see [Localization](https://docs.blockly.com/guides/configure/translations/)
 in the developer's guide.
 
 If your blocks show `%{BKY_COLOUR_BLEND_TITLE}` or similar text instead
@@ -295,7 +295,7 @@ of the expected text, make sure that you either:
 - Explicitly import a language and call `setLocale` before using these blocks.
 
 For more information, see [Load a Blockly localization
-table](https://developers.google.com/blockly/guides/configure/web/translations#load-blockly).
+table](https://docs.blockly.com/guides/configure/translations/#load-blockly).
 
 ### API Reference
 
