@@ -439,15 +439,6 @@ export class FocusManager {
     if (!this.currentlyHoldsEphemeralFocus) {
       // Only change the actively focused node if ephemeral state isn't held.
       this.activelyFocusNode(nodeToFocus, prevTree ?? null);
-    } else {
-      // Leave DOM focus on the ephemeral UI. Clear the previous node's highlight
-      // and show a passive outline on the node being tracked.
-      // Ex. workspace search is open and the user moves to the next match; the
-      // match is passively outlined while the search bar retains DOM focus.
-      if (prevNode) {
-        this.removeHighlight(prevNode);
-      }
-      this.setNodeToVisualPassiveFocus(nodeToFocus);
     }
     this.updateFocusedNode(nodeToFocus);
     if (mustRestoreUpdatingNode) {

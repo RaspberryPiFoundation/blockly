@@ -632,8 +632,7 @@ export class WorkspaceSearch
    * @param block The block to check.
    * @param searchText The search text. Note if the search is case
    *    insensitive, this will be passed already converted to lowercase letters.
-   * @param caseSensitive Whether the search is case sensitive. Defaults to
-   *    this.caseSensitive.
+   * @param caseSensitive Whether the search is case sensitive.
    * @returns True if the block is a match, false otherwise.
    */
   protected isBlockMatch(

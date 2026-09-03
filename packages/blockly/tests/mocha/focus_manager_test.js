@@ -5753,29 +5753,6 @@ suite('FocusManager', function () {
       assert.strictEqual(document.activeElement, rootElem);
     });
 
-    test('then focusNode() applies passive visual while ephemeral is held', function () {
-      this.focusManager.registerTree(this.testFocusableTree2);
-      this.focusManager.registerTree(this.testFocusableGroup2);
-      this.focusManager.focusNode(this.testFocusableTree2Node1);
-      const ephemeralElement = document.getElementById(
-        'nonTreeGroupForEphemeralFocus',
-      );
-      this.focusManager.takeEphemeralFocus(ephemeralElement);
-
-      this.focusManager.focusNode(this.testFocusableGroup2Node1);
-
-      const nodeElem = this.testFocusableGroup2Node1.getFocusableElement();
-      assert.includesClass(
-        nodeElem.classList,
-        FocusManager.PASSIVE_FOCUS_NODE_CSS_CLASS_NAME,
-      );
-      assert.notIncludesClass(
-        nodeElem.classList,
-        FocusManager.ACTIVE_FOCUS_NODE_CSS_CLASS_NAME,
-      );
-      assert.strictEqual(document.activeElement, ephemeralElement);
-    });
-
     test('then focusNode() and finish ephemeral callback correctly sets new active state', function () {
       this.focusManager.registerTree(this.testFocusableTree2);
       this.focusManager.registerTree(this.testFocusableGroup2);
