@@ -192,3 +192,39 @@ This will let npm install any minor version at or above the listed version, so
 version `13.3.1` or `13.2.6` works, but a new major version such as `14.0.1` would
 not. When you update to a major version of Blockly, you should update your plugins
 as well.
+
+### Keeping plugins up to date with Dependabot
+
+[Dependabot](https://github.com/dependabot) is a popular GitHub tool for 
+automatically managing dependencies. If your project is hosted on GitHub, you 
+can use Dependabot to ensure that Blockly and its plugis are updated together.
+
+To start with, your project's `dependabot.yml` file might look something like 
+this:
+
+```
+updates:
+  - package-ecosystem: 'npm' 
+    directory: '/' 
+    target-branch: 'main'
+    schedule:
+      interval: 'weekly'
+```
+
+In `dependabot.yml`, you can group Blockly and its plugins together using 
+Dependabot's [groups option](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#groups--). 
+For example:
+
+```
+updates:
+  - package-ecosystem: 'npm' 
+    directory: '/' 
+    target-branch: 'main'
+    schedule:
+      interval: 'weekly'
+    groups:
+      blockly: # You can give this group a different name if you'd like
+        patterns:
+          - 'blockly'
+          - '@blockly/*' # You can use the wildcard (*) notation to specify any plugin
+```
