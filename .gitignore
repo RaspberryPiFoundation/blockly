@@ -11,6 +11,7 @@ build-debug.log
 /nbproject/private/
 tsdoc-metadata.json
 .vscode
+.claude/
 
 # All packages
 build/

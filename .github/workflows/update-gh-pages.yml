@@ -38,6 +38,9 @@ jobs:
         with:
           node-version: 24.x
 
+      - name: Npm Clean Install
+        run: npm ci
+
       - name: Update GitHub Pages
         working-directory: ./packages/blockly
         run: npm run updateGithubPages:staging

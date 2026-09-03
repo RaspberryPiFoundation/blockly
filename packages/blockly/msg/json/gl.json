@@ -605,5 +605,12 @@
 	"FIELD_MULTILINEINPUT_NEW_LINE": "Liña nova",
 	"ZOOM_TO_FIT_ARIA_LABEL": "Axustar o zoom",
 	"MINIMAP_ARIA_LABEL": "Minimapa do espazo de traballo. Utiliza as frechas para desprazarte polo espazo de traballo.",
-	"ARIA_LABEL_TRASH_EMPTY": "Lixo, actualmente baleiro"
+	"ARIA_LABEL_TRASH_EMPTY": "Lixo, actualmente baleiro",
+	"WORKSPACE_SEARCH_PLACEHOLDER": "Procurar",
+	"WORKSPACE_SEARCH_INPUT_LABEL": "Procurar no espazo de traballo. Preme Intro para atopar a seguinte coincidencia, Maiús. + Intro para atopar a coincidencia anterior. Preme Esc para pechar a busca e centrarse na coincidencia actual.",
+	"WORKSPACE_SEARCH_FIND_NEXT": "Atopar o seguinte",
+	"WORKSPACE_SEARCH_FIND_PREVIOUS": "Atopar o anterior",
+	"WORKSPACE_SEARCH_CLOSE": "Pechar a barra de procura",
+	"WORKSPACE_SEARCH_NO_MATCHES": "Non hai ningún bloque coincidente",
+	"WORKSPACE_SEARCH_MATCH": "Coincidencia %1 de %2: %3"
 }

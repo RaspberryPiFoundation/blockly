@@ -590,5 +590,12 @@
 	"FIELD_MULTILINEINPUT_NEW_LINE": "A cap",
 	"ZOOM_TO_FIT_ARIA_LABEL": "Modifiché l'angrandiment për ch'a staga bin",
 	"MINIMAP_ARIA_LABEL": "Cita carta dlë spassi ëd travaj. Dovré ij tast con le flece për na panoràmica dlê spassi ëd travaj.",
-	"ARIA_LABEL_TRASH_EMPTY": "Sëstin, për adess veuid"
+	"ARIA_LABEL_TRASH_EMPTY": "Sëstin, për adess veuid",
+	"WORKSPACE_SEARCH_PLACEHOLDER": "Arserché",
+	"WORKSPACE_SEARCH_INPUT_LABEL": "Arserché ant lë spassi ëd travaj. Ch'a sgnaca A cap për la vos apress, Majùscole+A cap për la vos prima. Ch'a sgnaca Scapé për saré l'arserca e consentresse an sla vos corenta.",
+	"WORKSPACE_SEARCH_FIND_NEXT": "Trové col ch'a-i ven dòp",
+	"WORKSPACE_SEARCH_FIND_PREVIOUS": "Trové col ch'a-i ven prima",
+	"WORKSPACE_SEARCH_CLOSE": "Saré la bara d'arserca",
+	"WORKSPACE_SEARCH_NO_MATCHES": "Gnun blòch rëspondent",
+	"WORKSPACE_SEARCH_MATCH": "Rëspondensa %1 ëd %2: %3"
 }

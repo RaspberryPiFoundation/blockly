@@ -71,6 +71,17 @@ const config = {
     ],
   ],
 
+  // Generates the API reference with TypeDoc as part of the Docusaurus build.
+  plugins: [
+    [
+      'docusaurus-plugin-typedoc',
+      {
+        options: './typedoc.json',
+        out: 'docs/reference',
+      },
+    ],
+  ],
+
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({

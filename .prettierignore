@@ -3,6 +3,11 @@
 .prettierrc.js
 eslint.config.mjs
 package.json
+.claude/
+
+# Symlinks to AGENTS.md. Formatting these in place would replace the symlink
+# with a regular file.
+**/CLAUDE.md
 
 # Package build aritifacts, etc.
 **/dist/*
