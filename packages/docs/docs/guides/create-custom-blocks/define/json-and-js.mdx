@@ -156,7 +156,7 @@ This section summarizes the objects and functions used to define custom blocks.
 
 ### Blockly.Blocks
 
-[`Blockly.Blocks`](/reference/blockly.blocks_variable) is an object
+[`Blockly.Blocks`](/reference/variables/Blocks) is an object
 that stores block definitions. Its keys are block type names and its values are
 block definition objects. Use `Blockly.Blocks` when defining blocks with
 JavaScript:
@@ -184,7 +184,7 @@ Blockly.Blocks['my_block'].setColour(150);
 
 ### defineBlocksWithJsonArray
 
-[`defineBlocksWithJsonArray`](/reference/blockly.common_namespace.defineblockswithjsonarray_function)
+[`defineBlocksWithJsonArray`](/reference/namespaces/common/functions/defineBlocksWithJsonArray)
 accepts an array of JSON objects, creates block definitions from them, and adds
 them to `Blockly.Blocks`.
 
@@ -207,7 +207,7 @@ Blockly.common.defineBlocksWithJsonArray([
 
 ### createBlockDefinitionsFromJsonArray and defineBlocks
 
-[`createBlockDefinitionsFromJsonArray`](/reference/blockly.common_namespace.createblockdefinitionsfromjsonarray_function)
+[`createBlockDefinitionsFromJsonArray`](/reference/namespaces/common/functions/createBlockDefinitionsFromJsonArray)
 accepts an array of JSON objects and returns an object that maps block type
 names to block definitions. This is generally used with `defineBlocks`, which
 adds the block definitions to `Blockly.Blocks`.
@@ -233,7 +233,7 @@ Blockly.common.defineBlocks(myBlockDefinitions);
 
 ### Block.jsonInit
 
-[`jsonInit`](/reference/blockly.block_class.jsoninit_method)
+[`jsonInit`](/reference/classes/Block#jsoninit)
 accepts a JSON object and calls the corresponding methods on `Block`. For
 example, a JSON object with the key-value pair `colour: 150` results in a call
 to `this.setColour(150)`. Use `jsonInit` in an `init` function to load a JSON

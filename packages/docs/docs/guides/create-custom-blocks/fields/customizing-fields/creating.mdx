@@ -107,7 +107,7 @@ You also need to define your `fromJson` function. Your implementation should
 first dereference any [references to localization
 tokens](/guides/configure/translations#use-localization-tokens-in-json)
 using
-[`replaceMessageReferences`](/reference/blockly.utils_namespace.parsing_namespace.replacemessagereferences_function),
+[`replaceMessageReferences`](/reference/namespaces/utils/namespaces/parsing/functions/replaceMessageReferences),
 and then pass the values to the constructor.
 
 ```js
@@ -246,11 +246,11 @@ When overriding `bindEvents_` you should always call the base function.
 :::
 
 To bind to an event you should generally use the
-[`Blockly.utils.browserEvents.conditionalBind`](/reference/blockly.utils_namespace.browserevents_namespace.conditionalbind_function)
+[`Blockly.utils.browserEvents.conditionalBind`](/reference/namespaces/browserEvents/functions/conditionalBind)
 function. This method of binding events filters out secondary touches during
 drags. If you want your handler to run even in the middle of an in-progress drag
 you can use the
-[`Blockly.browserEvents.bind`](/reference/blockly.utils_namespace.browserevents_namespace.bind_function)
+[`Blockly.browserEvents.bind`](/reference/namespaces/browserEvents/functions/bind)
 function.
 
 ## Disposing
@@ -419,7 +419,7 @@ currently there is no way to enforce this pattern.
 ### isDirty\_
 
 `isDirty_` is a flag used in the
-[`setValue`](/reference/blockly.field_class.setvalue_method)
+[`setValue`](/reference/classes/Field#setvalue)
 function, as well as other parts of the field, to tell if the field needs to be
 re-rendered. If the field's display value has changed, `isDirty_` should usually
 be set to `true`.
@@ -432,7 +432,7 @@ field](/guides/create-custom-blocks/fields/anatomy-of-a-field).
 
 If the text of your field is different than the value of your field, you should
 override the
-[`getText`](/reference/blockly.field_class.gettext_method)function
+[`getText`](/reference/classes/Field#gettext)function
 to provide the correct text.
 
 ```js
@@ -492,7 +492,7 @@ the `DropDownDiv`.
 
 ![Image of angle picker](/images/angle-picker.png)
 
-The [`WidgetDiv`](/reference/blockly.widgetdiv_namespace) is used to
+The [`WidgetDiv`](/reference/namespaces/WidgetDiv) is used to
 provide editors that do not live inside of a box. Number fields use the
 `WidgetDiv` to cover the field with an HTML text input box. While the
 `DropDownDiv` handles positioning for you, the `WidgetDiv` does not. Elements
@@ -605,7 +605,7 @@ property to `true`.
 ### Defaults
 
 The default `render_` function sets the display text to the result of the
-[`getDisplayText_`](/reference/blockly.field_class.getdisplaytext__method)
+[`getDisplayText_`](/reference/classes/Field#getdisplaytext_)
 function. The `getDisplayText_` function returns the field's `value_` property
 cast to a string, after it has been truncated to respect the maximum text
 length.

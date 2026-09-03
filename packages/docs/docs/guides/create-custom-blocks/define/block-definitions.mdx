@@ -70,15 +70,15 @@ Because the definition functions are mixed in to the block object:
 
 - The `this` keyword in definition functions refers to the block object. That
   is, it can be used to access the public methods and properties in the
-  [`Block`](/reference/blockly.block_class) (or
-  [`BlockSvg`](/reference/blockly.blocksvg_class)) class.
+  [`Block`](/reference/classes/Block) (or
+  [`BlockSvg`](/reference/classes/BlockSvg)) class.
 
 Blockly defines a small number of functions you can use to customize blocks. The
 most common of these is `init`, which Blockly calls to initialize a block and
 which is used to define the block's look and feel. For a complete list, see the
 function-valued properties in the
-[`Block`](/reference/blockly.block_class#properties) and
-[`BlockSvg`](/reference/blockly.blocksvg_class#properties) classes.
+[`Block`](/reference/classes/Block#properties-index) and
+[`BlockSvg`](/reference/classes/BlockSvg#properties-index) classes.
 These properties effectively form an interface for block definitions to
 implement; all of them are optional.
 
