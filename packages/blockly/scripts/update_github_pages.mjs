@@ -135,6 +135,8 @@ function updateGithubPages({remote, upstream, useLocal}) {
 
   run('npm run clean');
   run('npm run build');
+  run('npx nx run @blockly/dev-tools:build');
+  run('npx nx run @blockly/theme-modern:build');
   // Build the advanced playground with its dependencies. This is not part of
   // the regular build process as it's only used for ghpages and development.
   run('node \"scripts/prepare_advanced_playground.mjs\"');
