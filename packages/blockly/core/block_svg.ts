@@ -1814,6 +1814,36 @@ export class BlockSvg
     return this.dragStrategy.isMovable();
   }
 
+  /** Returns whether the block fully fits within the boundaries of the workspace */
+  isBlockFullyInBounds(): boolean {
+    let blockLeft;
+    let blockRight;
+    const {left, top, width, height} = this.workspace
+      .getMetricsManager()
+      .getViewMetrics(true);
+
+    const xy = this.getRelativeToSurfaceXY();
+    const {width: blockWidth, height: blockHeight} = this.getHeightWidth();
+
+    if (this.RTL) {
+      blockLeft = xy.x - blockWidth;
+      blockRight = xy.x;
+    } else {
+      blockLeft = xy.x;
+      blockRight = xy.x + blockWidth;
+    }
+
+    const blockTop = xy.y;
+    const blockBottom = xy.y + blockHeight;
+
+    return (
+      blockLeft >= left &&
+      blockRight <= left + width &&
+      blockTop >= top &&
+      blockBottom <= top + height
+    );
+  }
+
   /** Starts a drag on the block. */
   startDrag(e?: PointerEvent | KeyboardEvent) {
     return this.dragStrategy.startDrag(e);

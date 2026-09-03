@@ -392,6 +392,21 @@ suite('WorkspaceSvg', function () {
           this.clock,
         );
       });
+      test('centerOnBlock when block partially out of bounds', function () {
+        const block = this.workspace.newBlock('stack_block');
+        block.initSvg();
+        block.render();
+
+        sinon.stub(block, 'getRelativeToSurfaceXY').returns({x: 10, y: 80});
+        sinon.stub(block, 'getHeightWidth').returns({width: 40, height: 40});
+
+        runViewportEventTest(
+          () => this.workspace.centerOnBlock(block.id),
+          this.changeListenerSpy,
+          this.workspace,
+          this.clock,
+        );
+      });
     });
     suite('Blocks triggering viewport changes', function () {
       test('block move that triggers scroll', function () {

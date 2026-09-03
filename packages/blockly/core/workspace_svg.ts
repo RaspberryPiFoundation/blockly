@@ -2080,7 +2080,9 @@ export class WorkspaceSvg
       : block.getHeightWidth();
 
     // Find the enter of the block in workspace units.
-    const blockCenterY = xy.y + heightWidth.height / 2;
+    const blockCenterY = block.isBlockFullyInBounds()
+      ? xy.y + heightWidth.height / 2
+      : xy.y;
 
     // In RTL the block's position is the top right of the block, not top left.
     const multiplier = this.RTL ? -1 : 1;
