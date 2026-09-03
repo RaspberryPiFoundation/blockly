@@ -396,5 +396,11 @@
 	"ARIA_TYPE_FIELD_COLOUR": "colore",
 	"FIELD_BITMAP_BUTTON_LABEL_CLEAR": "Pulisci",
 	"FIELD_MULTILINEINPUT_NEW_LINE": "Nuova riga",
-	"ARIA_LABEL_TRASH_EMPTY": "Cestino, attualmente vuoto"
+	"ARIA_LABEL_TRASH_EMPTY": "Cestino, attualmente vuoto",
+	"WORKSPACE_SEARCH_PLACEHOLDER": "Cerca",
+	"WORKSPACE_SEARCH_FIND_NEXT": "Trova successivo",
+	"WORKSPACE_SEARCH_FIND_PREVIOUS": "Trova precedente",
+	"WORKSPACE_SEARCH_CLOSE": "Chiudi la barra di ricerca",
+	"WORKSPACE_SEARCH_NO_MATCHES": "Nessun blocco corrispondente",
+	"WORKSPACE_SEARCH_MATCH": "Corrispondenza %1 di %2: %3"
 }

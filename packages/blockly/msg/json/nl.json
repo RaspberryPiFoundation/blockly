@@ -623,5 +623,12 @@
 	"FIELD_MULTILINEINPUT_NEW_LINE": "Nieuwe regel",
 	"ZOOM_TO_FIT_ARIA_LABEL": "Op scherm inpassen",
 	"MINIMAP_ARIA_LABEL": "Minikaart van de werkruimte. Gebruik de pijltjestoetsen om door de werkruimte te schuiven.",
-	"ARIA_LABEL_TRASH_EMPTY": "Vuilnisbak, momenteel leeg"
+	"ARIA_LABEL_TRASH_EMPTY": "Vuilnisbak, momenteel leeg",
+	"WORKSPACE_SEARCH_PLACEHOLDER": "Zoeken",
+	"WORKSPACE_SEARCH_INPUT_LABEL": "Zoeken in de werkruimte. Druk op Enter voor de volgende overeenkomst, Shift+Enter voor de vorige overeenkomst. Druk op Escape om de zoekopdracht te sluiten en de focus op de huidige overeenkomst te leggen.",
+	"WORKSPACE_SEARCH_FIND_NEXT": "Volgende zoeken",
+	"WORKSPACE_SEARCH_FIND_PREVIOUS": "Vorige zoeken",
+	"WORKSPACE_SEARCH_CLOSE": "Zoekbalk sluiten",
+	"WORKSPACE_SEARCH_NO_MATCHES": "Geen overeenkomende blokken",
+	"WORKSPACE_SEARCH_MATCH": "Overeenkomst %1 van %2: %3"
 }
