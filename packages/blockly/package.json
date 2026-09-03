@@ -38,7 +38,9 @@
   },
   "nx": {
     "implicitDependencies": [
-      "!@blockly/block-test"
+      "!@blockly/block-test",
+      "!@blockly/dev-tools",
+      "!@blockly/theme-modern"
     ],
     "targets": {
       "build": {
@@ -64,6 +66,18 @@
           "package",
           "^build"
         ]
+      },
+      "start": {
+        "dependsOn": [
+          {
+            "projects": "@blockly/dev-tools",
+            "target": "build"
+          },
+          {
+            "projects": "@blockly/theme-modern",
+            "target": "build"
+          }
+        ]      
       }
     }
   },
@@ -84,7 +98,9 @@
     "minify": "gulp minify",
     "package": "gulp pack",
     "prepareDemos": "gulp prepareDemos",
-    "start": "npm run package && npx nx run @blockly/dev-tools:build && concurrently -n watch,devtools-server,core-server \"npx nx watch --projects=@blockly/dev-tools --includeDependencies -- npm run build\" \"npx nx run @blockly/dev-tools:start --no-open\" \"http-server ./ -p 8081 -s -o /tests/playground.html -c-1\"",
+    "start": "npm run package && nx run @blockly/dev-tools:build && node \"scripts/prepare_advanced_playground.mjs\" && concurrently -n devtools-watch,blockly-watch,server \"nx watch --projects=@blockly/dev-tools --includeDependencies -- nx run rebuildAdvancedPlayground\" \"nx watch --projects=blockly -- nx run rebuildBlockly\" \"http-server ./ -s -o /tests/playground.html -c-1\"",
+    "rebuildAdvancedPlayground": "npm run build --workspace=@blockly/dev-tools && node \"scripts/prepare_advanced_playground.mjs\"",
+    "rebuildBlockly": "npm run build && node \"scripts/prepare_advanced_playground.mjs\"",
     "tsc": "gulp tsc",
     "test": "gulp test",
     "test:browser": "npx mocha --config tests/browser/.mocharc.js",
@@ -93,8 +109,8 @@
     "test:generators": "gulp testGenerators",
     "test:mocha:interactive": "npm run build && node scripts/prepare_mocha_bundle.mjs && concurrently -n tsc,tsc:tests,esbuild,python3 \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"npm run test:mocha:typecheck -- --watch --preserveWatchOutput\" \"esbuild build/tests/bundle-entry.js --bundle --sourcemap --alias:blockly/core=./build/src/core/blockly.js --alias:blockly/blocks=./build/src/blocks/blocks.js --alias:blockly=./build/src/core/blockly.js --outfile=build/tests/mocha-bundle.js --servedir=. --serve=127.0.0.1:8080 --watch=forever --log-level=warning\" \"python3 -m webbrowser 'http://localhost:8080/tests/mocha/index.html'\"",
     "test:compile:advanced": "gulp buildAdvancedCompilationTest --debug",
-    "updateGithubPages": "npm ci && node scripts/update_github_pages.mjs --upstream",
-    "updateGithubPages:staging": "npm ci && node scripts/update_github_pages.mjs --use-local"
+    "updateGithubPages": "node scripts/update_github_pages.mjs --upstream",
+    "updateGithubPages:staging": "node scripts/update_github_pages.mjs --use-local"
   },
   "exports": {
     ".": {
@@ -148,6 +164,8 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@blockly/block-test": "^13.1.0",
+    "@blockly/dev-tools": "^13.1.0",
+    "@blockly/theme-modern": "^13.1.0",
     "@hyperjump/browser": "^1.3.1",
     "@hyperjump/json-schema": "^1.17.6",
     "@microsoft/api-documenter": "7.30.13",
