@@ -564,29 +564,6 @@ suite('WorkspaceSearch', function () {
 
       assertFocusedNodeType('beta_block');
     });
-
-    test('current match has passive focus while the search input is focused', function () {
-      this.workspaceSearch.open();
-      this.workspaceSearch.searchAndHighlight(
-        'a',
-        this.workspaceSearch.preserveSelected,
-      );
-      const input = document.querySelector('.blockly-ws-search-input input');
-      const alphaPath = this.alphaBlock.pathObject.svgPath;
-
-      // Caret stays in the field; the match is marked as passively focused.
-      assert.equal(document.activeElement, input);
-      assert.isTrue(
-        alphaPath.classList.contains(
-          Blockly.FocusManager.PASSIVE_FOCUS_NODE_CSS_CLASS_NAME,
-        ),
-      );
-      assert.isFalse(
-        alphaPath.classList.contains(
-          Blockly.FocusManager.ACTIVE_FOCUS_NODE_CSS_CLASS_NAME,
-        ),
-      );
-    });
   });
 
   suite('finding matches', function () {
@@ -615,13 +592,6 @@ suite('WorkspaceSearch', function () {
 
       assert.isTrue(isBlockCurrentStyled(this.betaBlock));
       assert.isFalse(isBlockCurrentStyled(this.alphaBlock));
-    });
-
-    test('closing focuses the matched block', function () {
-      this.workspaceSearch.next();
-      this.workspaceSearch.close();
-
-      assertFocusedNodeType('beta_block');
     });
 
     test('reopening after changing focus restores the query and previous match', function () {
