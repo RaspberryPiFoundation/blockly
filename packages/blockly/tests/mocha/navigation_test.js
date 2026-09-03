@@ -898,5 +898,49 @@ suite('Navigation', function () {
         assert.equal(outNode, this.blocks.dummyInput);
       });
     });
+
+    suite('Row and stack jump helpers', function () {
+      test('getFirstNodeInBlock from a field returns the owning block', function () {
+        const field = this.blocks.statementInput1.getField('NAME1');
+        const dest = this.navigator.getFirstNodeInBlock(field);
+        assert.equal(dest, this.blocks.statementInput1);
+      });
+
+      test('getFirstNodeInBlock from the owning block returns the block', function () {
+        const dest = this.navigator.getFirstNodeInBlock(
+          this.blocks.statementInput1,
+        );
+        assert.equal(dest, this.blocks.statementInput1);
+      });
+
+      test('getLastNodeInBlock from a field stays on the header row', function () {
+        const field = this.blocks.statementInput1.getField('NAME1');
+        const dest = this.navigator.getLastNodeInBlock(field);
+        const statementConnection =
+          this.blocks.statementInput1.getInput('NAME4').connection;
+        assert.notEqual(dest, field);
+        assert.notEqual(dest, statementConnection);
+        assert.equal(
+          dest,
+          this.navigator.getLastNodeInBlock(this.blocks.statementInput1),
+        );
+      });
+
+      test('getLastNodeInBlock on a container does not focus the statement input', function () {
+        const dest = this.navigator.getLastNodeInBlock(
+          this.blocks.statementInput2,
+        );
+        const statementConnection =
+          this.blocks.statementInput2.getInput('NAME4').connection;
+        assert.notEqual(dest, statementConnection);
+      });
+
+      test('getLastNodeInStack does not enter inline value inputs', function () {
+        const dest = this.navigator.getLastNodeInStack(
+          this.blocks.statementInput1,
+        );
+        assert.notEqual(dest, this.blocks.fieldWithOutput);
+      });
+    });
   });
 });

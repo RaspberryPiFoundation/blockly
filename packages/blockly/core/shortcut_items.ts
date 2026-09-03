@@ -32,7 +32,6 @@ import {isSelectable} from './interfaces/i_selectable.js';
 import {Direction, KeyboardMover} from './keyboard_nav/keyboard_mover.js';
 import {keyboardNavigationController} from './keyboard_navigation_controller.js';
 import {Msg} from './msg.js';
-import {RenderedConnection} from './rendered_connection.js';
 import {KeyboardShortcut, ShortcutRegistry} from './shortcut_registry.js';
 import * as Tooltip from './tooltip.js';
 import {aria} from './utils.js';
@@ -1354,8 +1353,28 @@ const shouldDoBlockNavigation = (workspace: WorkspaceSvg, scope: Scope) => {
 };
 
 /**
- * Registers a keyboard shortcut that sets the focus to the block
- * that owns the current focused node.
+ * Moves focus to `dest` if it differs from the currently focused node.
+ * Always prevents the browser default (e.g. scrolling on Home/End).
+ *
+ * @param e The keyboard event that triggered the shortcut.
+ * @param current The currently focused node, if any.
+ * @param dest The node to focus, if any.
+ * @returns True if focus moved, otherwise false.
+ */
+function jumpFocus(
+  e: Event,
+  current: IFocusableNode | undefined,
+  dest: IFocusableNode | null | undefined,
+): boolean {
+  e.preventDefault();
+  if (!dest || dest === current) return false;
+  getFocusManager().focusNode(dest);
+  return true;
+}
+
+/**
+ * Registers a keyboard shortcut that sets the focus to the first
+ * focusable node in the current block, typically the owning block.
  */
 export function registerJumpBlockStart() {
   const jumpBlockStartShortcut: KeyboardShortcut = {
@@ -1363,18 +1382,11 @@ export function registerJumpBlockStart() {
     preconditionFn: shouldDoBlockNavigation,
     callback(workspace, e, shortcut, scope) {
       if (!scope.focusedNode) return false;
-      let selectedBlock = workspace
-        .getNavigator()
-        .getSourceBlockFromNode(scope.focusedNode);
-      if (selectedBlock?.getFullBlockField() && !!selectedBlock.getParent()) {
-        // Act on the parent block if the current block is a full-block field block.
-        // Because full-block field blocks look like fields, so treat them that way.
-        selectedBlock = selectedBlock.getParent();
-      }
-      if (!selectedBlock) return false;
-
-      getFocusManager().focusNode(selectedBlock);
-      return true;
+      return jumpFocus(
+        e,
+        scope.focusedNode,
+        workspace.getNavigator().getFirstNodeInBlock(scope.focusedNode),
+      );
     },
     keyCodes: [KeyCodes.HOME],
     displayText: () => Msg['SHORTCUTS_JUMP_BLOCK_START'],
@@ -1383,8 +1395,8 @@ export function registerJumpBlockStart() {
 }
 
 /**
- * Registers a keyboard shortcut that sets the focus to the
- * last input of the block that owns the current focused node.
+ * Registers a keyboard shortcut that sets the focus to the last
+ * focusable node on the current block's row.
  */
 export function registerJumpBlockEnd() {
   const jumpBlockEndShortcut: KeyboardShortcut = {
@@ -1392,22 +1404,11 @@ export function registerJumpBlockEnd() {
     preconditionFn: shouldDoBlockNavigation,
     callback(workspace, e, shortcut, scope) {
       if (!scope.focusedNode) return false;
-      let selectedBlock = workspace
-        .getNavigator()
-        .getSourceBlockFromNode(scope.focusedNode);
-      if (selectedBlock?.getFullBlockField() && !!selectedBlock.getParent()) {
-        // Act on the parent block if the current block is a full-block field block.
-        // Because full-block field blocks look like fields, so treat them that way.
-        selectedBlock = selectedBlock.getParent();
-      }
-      if (!selectedBlock) return false;
-      const inputs = selectedBlock.inputList;
-      if (!inputs.length) return false;
-      const connection = inputs[inputs.length - 1].connection;
-      if (!connection || !(connection instanceof RenderedConnection))
-        return false;
-      getFocusManager().focusNode(connection);
-      return true;
+      return jumpFocus(
+        e,
+        scope.focusedNode,
+        workspace.getNavigator().getLastNodeInBlock(scope.focusedNode),
+      );
     },
     keyCodes: [KeyCodes.END],
     displayText: () => Msg['SHORTCUTS_JUMP_BLOCK_END'],
@@ -1429,9 +1430,7 @@ export function registerJumpTopStack() {
         .getNavigator()
         .getSourceBlockFromNode(scope.focusedNode);
       if (!selectedBlock) return false;
-      const topOfStack = selectedBlock.getRootBlock();
-      getFocusManager().focusNode(topOfStack);
-      return true;
+      return jumpFocus(e, scope.focusedNode, selectedBlock.getRootBlock());
     },
     keyCodes: [KeyCodes.PAGE_UP],
     displayText: () => Msg['SHORTCUTS_JUMP_TOP_STACK'],
@@ -1440,8 +1439,8 @@ export function registerJumpTopStack() {
 }
 
 /**
- * Registers a keyboard shortcut that sets the focus to the bottom block
- * in the current stack.
+ * Registers a keyboard shortcut that sets the focus to the last node
+ * in the current stack reachable by repeatedly pressing Down.
  */
 export function registerJumpBottomStack() {
   const jumpBottomStackShortcut: KeyboardShortcut = {
@@ -1449,22 +1448,11 @@ export function registerJumpBottomStack() {
     preconditionFn: shouldDoBlockNavigation,
     callback(workspace, e, shortcut, scope) {
       if (!scope.focusedNode) return false;
-      const selectedBlock = workspace
-        .getNavigator()
-        .getSourceBlockFromNode(scope.focusedNode);
-      if (!selectedBlock) return false;
-      // To get the bottom block in a stack, first go to the top of the stack
-      // Then get the last next connection
-      // Then get the last descendant of that block
-      const lastBlock = selectedBlock
-        .getRootBlock()
-        .lastConnectionInStack(false)
-        ?.getSourceBlock();
-      if (!lastBlock) return false;
-      const descendants = lastBlock.getDescendants(true);
-      const bottomOfStack = descendants[descendants.length - 1];
-      getFocusManager().focusNode(bottomOfStack);
-      return true;
+      return jumpFocus(
+        e,
+        scope.focusedNode,
+        workspace.getNavigator().getLastNodeInStack(scope.focusedNode),
+      );
     },
     keyCodes: [KeyCodes.PAGE_DOWN],
     displayText: () => Msg['SHORTCUTS_JUMP_BOTTOM_STACK'],
@@ -1488,11 +1476,10 @@ export function registerJumpFirstBlock() {
         !workspace.isDragging() && !getFocusManager().ephemeralFocusTaken()
       );
     },
-    callback(workspace) {
+    callback(workspace, e, shortcut, scope) {
       const topBlocks = workspace.getTopBlocks(true);
       if (!topBlocks.length) return false;
-      getFocusManager().focusNode(topBlocks[0]);
-      return true;
+      return jumpFocus(e, scope.focusedNode, topBlocks[0]);
     },
     keyCodes: [ctrlCmdHome],
     displayText: () => Msg['SHORTCUTS_JUMP_FIRST_BLOCK'],
@@ -1502,7 +1489,7 @@ export function registerJumpFirstBlock() {
 
 /**
  * Registers a keyboard shortcut that sets the focus to the last
- * block in the workspace.
+ * focusable node on the workspace.
  */
 export function registerJumpLastBlock() {
   const ctrlCmdEnd = ShortcutRegistry.registry.createSerializedKey(
@@ -1516,11 +1503,12 @@ export function registerJumpLastBlock() {
         !workspace.isDragging() && !getFocusManager().ephemeralFocusTaken()
       );
     },
-    callback(workspace) {
-      const allBlocks = workspace.getAllBlocks(true);
-      if (!allBlocks.length) return false;
-      getFocusManager().focusNode(allBlocks[allBlocks.length - 1]);
-      return true;
+    callback(workspace, e, shortcut, scope) {
+      return jumpFocus(
+        e,
+        scope.focusedNode,
+        workspace.getNavigator().getLastFocusableNode(workspace),
+      );
     },
     keyCodes: [ctrlCmdEnd],
     displayText: () => Msg['SHORTCUTS_JUMP_LAST_BLOCK'],
