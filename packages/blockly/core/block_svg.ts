@@ -1455,7 +1455,6 @@ export class BlockSvg
     this.queueRender();
   }
 
-  /** @override */
   override appendInput(input: Input): Input {
     super.appendInput(input);
     this.queueRender();
