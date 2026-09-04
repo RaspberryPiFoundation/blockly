@@ -55,12 +55,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate reference docs
-        working-directory: ./packages/blockly
-        run: |
-          npx gulp typings
-          npm run docs
-
       - name: Build the Docusaurus site
         working-directory: ./packages/docs
         run: npm run build
