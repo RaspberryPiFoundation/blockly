@@ -235,9 +235,9 @@ function init(mainWorkspace: WorkspaceSvg) {
       // possible.
       Tooltip.hide();
       mainWorkspace.hideComponents(true);
+      common.svgResize(mainWorkspace);
       dropDownDiv.repositionForWindowResize();
       WidgetDiv.repositionForWindowResize();
-      common.svgResize(mainWorkspace);
       bumpObjects.bumpTopObjectsIntoBounds(mainWorkspace);
     },
   );

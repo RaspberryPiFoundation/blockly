@@ -14,7 +14,6 @@
 import {computeAriaLabel, getBeginStackLabel} from './block_aria_composer.js';
 import {BlockSvg} from './block_svg.js';
 import * as browserEvents from './browser_events.js';
-import * as bumpObjects from './bump_objects.js';
 import * as css from './css.js';
 import * as dialog from './dialog.js';
 import * as dropDownDiv from './dropdowndiv.js';
@@ -33,8 +32,10 @@ import * as renderManagement from './render_management.js';
 import * as aria from './utils/aria.js';
 import {Verbosity} from './utils/aria.js';
 import * as dom from './utils/dom.js';
+import {Rect} from './utils/rect.js';
 import {Size} from './utils/size.js';
 import {Svg} from './utils/svg.js';
+import * as svgMath from './utils/svg_math.js';
 import * as userAgent from './utils/useragent.js';
 import * as WidgetDiv from './widgetdiv.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
@@ -842,26 +843,34 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
 
   /**
    * Handles repositioning the WidgetDiv used for input fields when the
-   * workspace is resized. Will bump the block into the viewport and update the
-   * position of the text input if necessary.
+   * workspace is resized. Scrolls this field into view, then updates the
+   * position of the text input.
    *
    * @returns True for rendered workspaces, as we never want to hide the widget
    *     div.
    */
   override repositionForWindowResize(): boolean {
-    const block = this.getSourceBlock()?.getRootBlock();
+    const block = this.getSourceBlock();
+    const workspace = this.workspace_;
     // This shouldn't be possible. We should never have a WidgetDiv if not using
     // rendered blocks.
     if (!(block instanceof BlockSvg)) return false;
 
-    const bumped = bumpObjects.bumpIntoBounds(
-      this.workspace_!,
-      this.workspace_!.getMetricsManager().getViewMetrics(true),
-      block,
+    this.resizeEditor_();
+
+    const element = this.getClickTarget_();
+    if (!element || !workspace) return true;
+
+    const bbox = Rect.from(element.getBoundingClientRect());
+    const origin = svgMath.screenToWsCoordinates(workspace, bbox.getOrigin());
+    const scale = workspace.scale;
+    workspace.scrollBoundsIntoView(
+      Rect.createFromPoint(
+        origin,
+        bbox.getWidth() / scale,
+        bbox.getHeight() / scale,
+      ),
     );
-
-    if (!bumped) this.resizeEditor_();
-
     return true;
   }
 

@@ -2236,9 +2236,12 @@ export class WorkspaceSvg
    *
    * @param x Target X to scroll to.
    * @param y Target Y to scroll to.
+   * @param shouldHidePopups Whether to hide popups. Defaults to true.
    */
-  scroll(x: number, y: number) {
-    this.hideChaff(/* opt_onlyClosePopups= */ true);
+  scroll(x: number, y: number, shouldHidePopups = true) {
+    if (shouldHidePopups) {
+      this.hideChaff(/* opt_onlyClosePopups= */ true);
+    }
 
     // Keep scrolling within the bounds of the content.
     const metrics = this.getMetrics();
@@ -2770,7 +2773,7 @@ export class WorkspaceSvg
 
     deltaX *= scale;
     deltaY *= scale;
-    this.scroll(this.scrollX + deltaX, this.scrollY + deltaY);
+    this.scroll(this.scrollX + deltaX, this.scrollY + deltaY, false);
   }
 
   /** See IFocusableNode.getFocusableElement. */
