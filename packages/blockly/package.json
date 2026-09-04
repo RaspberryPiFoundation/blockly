@@ -102,7 +102,7 @@
     "rebuildBlockly": "npm run build && node \"scripts/prepare_advanced_playground.mjs\"",
     "tsc": "gulp tsc",
     "test": "gulp test",
-    "test:browser": "npx mocha --config tests/browser/.mocharc.js",
+    "test:browser": "npx nx run @blockly/block-test:build && npx mocha --config tests/browser/.mocharc.js",
     "test:mocha:node": "npm run test:mocha:typecheck && npx mocha --config tests/mocha/.mocharc.node.cjs \"tests/mocha/**/*_test.{js,ts}\"",
     "test:mocha:typecheck": "tsc -p tests/mocha/tsconfig.json",
     "test:generators": "gulp testGenerators",
