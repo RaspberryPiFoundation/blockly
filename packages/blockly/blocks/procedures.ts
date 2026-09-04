@@ -709,14 +709,32 @@ const PROCEDURES_MUTATORARGUMENT = {
       sourceBlock.workspace;
     const blocks = workspace.getAllBlocks(false);
     const caselessName = varName.toLowerCase();
+    const usedNames = [];
+    let isDuplicate = false;
     for (let i = 0; i < blocks.length; i++) {
       if (blocks[i].id === this.getSourceBlock()!.id) {
         continue;
       }
       // Other blocks values may not be set yet when this is loaded.
       const otherVar = blocks[i].getFieldValue('NAME');
-      if (otherVar && otherVar.toLowerCase() === caselessName) {
+      if (otherVar) {
+        if (!this.editingInteractively) {
+          usedNames.push(otherVar);
+        }
+        if (otherVar.toLowerCase() === caselessName) {
+          isDuplicate = true;
+        }
+      }
+    }
+
+    if (isDuplicate) {
+      if (this.editingInteractively) {
         return null;
+      } else {
+        varName = Variables.generateUniqueNameFromOptions(
+          Procedures.DEFAULT_ARG,
+          usedNames,
+        );
       }
     }
 
