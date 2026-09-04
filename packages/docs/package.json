@@ -48,7 +48,7 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "lint": "eslint 'docs/**/*.mdx'",
-    "lint:fix": "eslint 'docs/**/*.mdx' --fix"
+    "lint-fix": "eslint 'docs/**/*.mdx' --fix"
   },
   "dependencies": {
     "@docusaurus/core": "3.10.2",

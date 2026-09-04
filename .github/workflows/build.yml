@@ -53,7 +53,7 @@ jobs:
         working-directory: ./packages/blockly
 
       - name: Run Build
-        run: npm run build:all
+        run: npm run build-all
 
       - name: Run Test
         run: npm run test

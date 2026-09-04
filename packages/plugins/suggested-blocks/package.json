@@ -3,7 +3,7 @@
   "version": "13.1.0",
   "description": "A plugin that adds toolbox panes with suggested blocks based on the user's past usage of blocks.",
   "scripts": {
-    "audit:fix": "blockly-scripts auditFix",
+    "audit-fix": "blockly-scripts auditFix",
     "build": "blockly-scripts build",
     "clean": "blockly-scripts clean",
     "lint": "eslint .",

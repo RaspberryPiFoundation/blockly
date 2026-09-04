@@ -50,13 +50,13 @@ Run these from the repo root. Root scripts fan out across workspaces via Nx.
 npm ci                 # Install. Re-run after any pull that changes package-lock.json.
 
 npm run build          # Build every package except the docs site
-npm run build:all      # Build everything, including the docs site
-npm run build:docs     # Docs site only
+npm run build-all      # Build everything, including the docs site
+npm run build-docs     # Docs site only
 
 npm run test           # Full test suite across all packages. Slow.
 
 npm run lint           # ESLint across all workspaces
-npm run lint:fix
+npm run lint-fix
 npm run format         # Prettier write, whole repo
 npm run format:check
 

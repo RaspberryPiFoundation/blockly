@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "A Blockly theme with an all black theme and green text to mimic a hacking page",
   "scripts": {
-    "audit:fix": "blockly-scripts auditFix",
+    "audit-fix": "blockly-scripts auditFix",
     "build": "blockly-scripts build",
     "clean": "blockly-scripts clean",
     "predeploy": "blockly-scripts predeploy",

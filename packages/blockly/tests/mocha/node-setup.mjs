@@ -12,7 +12,7 @@
  * expect, installs the geometry stubs JSDom lacks, exposes sinon as a global,
  * loads Blockly + the standard blocks + the JavaScript generator, and installs
  * the shared DOM fixtures. The same fixtures and tests run in the browser via
- * `npm run test:mocha:interactive`.
+ * `npm run test-mocha-interactive`.
  */
 
 import {config as chaiConfig} from 'chai';

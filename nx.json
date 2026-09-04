@@ -68,26 +68,29 @@
     "lint": {
       "cache": true
     },
-    "lint:fix": {
+    "lint-fix": {
       "cache": true
     },
     "test": {
       "dependsOn": ["^build"],
       "cache": true
     },
-    "test:browser": {
+    "test-browser": {
       "cache": true
     },
-    "test:mocha:node": {
+    "test-mocha-node": {
       "cache": true
     },
-    "test:generators": {
+    "test-generators": {
       "cache": true
     },
-    "test:mocha:interactive": {
+    "test-mocha-interactive": {
       "cache": true
     },
-    "test:compile:advanced": {
+    "test-compile-advanced": {
+      "cache": true
+    },
+    "test-mocha-typecheck": {
       "cache": true
     },
     "swizzle": {
@@ -102,7 +105,7 @@
     "write-heading-ids": {
       "cache": true
     },
-    "audit:fix": {
+    "audit-fix": {
       "cache": true
     },
     "prepack": {

@@ -45,7 +45,7 @@ npm run format
 # check linting:
 npm run lint
 # fix linting:
-npm run lint:fix
+npm run lint-fix
 ```
 
 Prettier is used for formatting JavaScript files (the `format` script).
