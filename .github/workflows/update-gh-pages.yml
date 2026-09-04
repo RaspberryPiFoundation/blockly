@@ -43,4 +43,4 @@ jobs:
 
       - name: Update GitHub Pages
         working-directory: ./packages/blockly
-        run: npm run updateGithubPages:staging
+        run: npm run updateGithubPages-staging

@@ -39,13 +39,13 @@ The build folder is now served at http://localhost:3000/
 
 ```bash
 # check formatting:
-npm run format:check
+npm run format-check
 # fix formatting:
 npm run format
 # check linting:
 npm run lint
 # fix linting:
-npm run lint:fix
+npm run lint-fix
 ```
 
 Prettier is used for formatting JavaScript files (the `format` script).

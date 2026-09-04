@@ -19,20 +19,20 @@ npm run start          # Dev server, watches for changes and serves the playgrou
                        # at /tests/playground.html
 
 npm run test                   # The full CI suite. Slow — see below.
-npm run test:mocha:node        # Unit tests headless under Node + jsdom. The fast inner loop.
-npm run test:mocha:interactive # Unit tests in a real browser, hot reloads on change
-npm run test:browser           # Webdriver tests in a real browser
-npm run test:generators        # Code generator golden-file tests
+npm run test-mocha-node        # Unit tests headless under Node + jsdom. The fast inner loop.
+npm run test-mocha-interactive # Unit tests in a real browser, hot reloads on change
+npm run test-browser           # Webdriver tests in a real browser
+npm run test-generators        # Code generator golden-file tests
 
 npm run lint           # ESLint check
-npm run lint:fix       # ESLint auto-fix
+npm run lint-fix       # ESLint auto-fix
 ```
 
 Prettier is configured at the repo root only — run `npm run format` from there.
 
 `npm run test` runs the entire CI suite in series: eslint, build, renamings, mocha,
 generators, type definitions, and two advanced-compilation passes. Prefer
-`test:mocha:node` while iterating and save the full suite for a final check.
+`test-mocha-node` while iterating and save the full suite for a final check.
 
 ### Running a single test
 
@@ -52,7 +52,7 @@ Mocha tests use the `tdd` UI (`suite` / `test`), not BDD.
 not need converting as a drive-by.
 
 TypeScript tests run under Node's native type stripping, with type checking as a
-separate `npm run test:mocha:typecheck` pass. So
+separate `npm run test-mocha-typecheck` pass. So
 [`tests/mocha/tsconfig.json`](tests/mocha/tsconfig.json) sets `erasableSyntaxOnly`, and
 anything requiring codegen is unavailable: no `enum`, no parameter properties, no
 `namespace`. `verbatimModuleSyntax` is also on, so type-only imports must be written as

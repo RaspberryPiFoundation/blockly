@@ -55,7 +55,7 @@ jobs:
         run: npm run build
 
       - name: Run Test
-        run: npm run test:browser
+        run: npm run test-browser
 
         env:
           CI: true

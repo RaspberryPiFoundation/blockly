@@ -168,7 +168,7 @@ function renamings() {
  * @return {Promise} Asynchronous result.
  */
 function mocha() {
-  return runTestCommand('mocha', 'npm run test:mocha:node');
+  return runTestCommand('mocha', 'npm run test-mocha-node');
 }
 
 /**
@@ -261,7 +261,7 @@ export async function generators() {
  * @returns {Promise} Async result.
  */
 function advancedCompile() {
-  return runTestCommand('advanced_compile', 'npm run test:compile:advanced');
+  return runTestCommand('advanced_compile', 'npm run test-compile-advanced');
 }
 
 /**

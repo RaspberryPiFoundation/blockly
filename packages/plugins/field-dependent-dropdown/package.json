@@ -3,7 +3,7 @@
   "version": "13.1.0",
   "description": "A Blockly dropdown field that automatically updates its available options depending on the value of another field.",
   "scripts": {
-    "audit:fix": "blockly-scripts auditFix",
+    "audit-fix": "blockly-scripts auditFix",
     "build": "blockly-scripts build",
     "clean": "blockly-scripts clean",
     "lint": "eslint .",

@@ -10,7 +10,7 @@ can exist in more than one package.
 
 ## General principles
 
-- **Style:** Suggest `npm run format` (from the repo root) or `npm run lint:fix` for
+- **Style:** Suggest `npm run format` (from the repo root) or `npm run lint-fix` for
   formatting issues; do not comment on individual style nits.
 - **Patterns:** Prefer established Blockly patterns and the official docs over newly
   invented conventions. This covers conventions — naming, API shape, file layout — not

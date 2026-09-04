@@ -6,7 +6,7 @@ Repo-wide conventions are in the [root `AGENTS.md`](../../AGENTS.md).
 
 ## Commands
 
-Run from `packages/docs/`, or from the repo root as `npm run build:docs`.
+Run from `packages/docs/`, or from the repo root as `npm run build-docs`.
 
 ```bash
 npm start          # build the API reference, then serve the site locally
@@ -14,7 +14,7 @@ npm run build      # production build
 npm run serve      # serve an already-built site
 npm run clear      # clear the Docusaurus cache
 npm run lint       # ESLint over docs/**/*.mdx
-npm run lint:fix
+npm run lint-fix
 ```
 
 ## Things to know

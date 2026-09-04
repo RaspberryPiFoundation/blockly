@@ -3,7 +3,7 @@
   "version": "13.1.0",
   "description": "A Blockly plugin that adds advanced scroll options such as scroll-on-drag and scroll while holding a block.",
   "scripts": {
-    "audit:fix": "blockly-scripts auditFix",
+    "audit-fix": "blockly-scripts auditFix",
     "build": "blockly-scripts build",
     "clean": "blockly-scripts clean",
     "lint": "eslint .",

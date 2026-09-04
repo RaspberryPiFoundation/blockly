@@ -3,7 +3,7 @@
   "version": "13.1.0",
   "description": "A group of blocks that replace the built-in mutator UI with a +/- based UI.",
   "scripts": {
-    "audit:fix": "blockly-scripts auditFix",
+    "audit-fix": "blockly-scripts auditFix",
     "build": "blockly-scripts build",
     "clean": "blockly-scripts clean",
     "lint": "eslint .",

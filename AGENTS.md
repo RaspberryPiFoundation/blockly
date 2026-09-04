@@ -50,15 +50,15 @@ Run these from the repo root. Root scripts fan out across workspaces via Nx.
 npm ci                 # Install. Re-run after any pull that changes package-lock.json.
 
 npm run build          # Build every package except the docs site
-npm run build:all      # Build everything, including the docs site
-npm run build:docs     # Docs site only
+npm run build-all      # Build everything, including the docs site
+npm run build-docs     # Docs site only
 
 npm run test           # Full test suite across all packages. Slow.
 
 npm run lint           # ESLint across all workspaces
-npm run lint:fix
+npm run lint-fix
 npm run format         # Prettier write, whole repo
-npm run format:check
+npm run format-check
 
 npm run clean          # Reset the Nx cache and clean every package
 ```
@@ -77,7 +77,7 @@ npx nx run-many -t build --projects=@blockly/field-slider
 
 Two things to watch out for:
 
-- `format` and `format:check` exist **only** at the root. Prettier is configured once
+- `format` and `format-check` exist **only** at the root. Prettier is configured once
   for the whole repo, so there is no per-package equivalent.
 - `build`, `test`, `clean`, `lint`, and `start` exist at both levels and mean different
   things. At the root they fan out through Nx; inside a package they run that package's

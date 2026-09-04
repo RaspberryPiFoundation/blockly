@@ -43,12 +43,12 @@
   "scripts": {
     "test": "npx nx run-many -t test --exclude=blockly && npx nx run blockly:test",
     "lint": "npm run lint --ws --if-present",
-    "lint:fix": "npm run lint:fix --ws --if-present",
+    "lint-fix": "npm run lint-fix --ws --if-present",
     "build": "npx nx run-many -t build --exclude=blockly-docs",
-    "build:docs": "npx nx run blockly-docs:build",
-    "build:all": "npx nx run-many -t build",
+    "build-docs": "npx nx run blockly-docs:build",
+    "build-all": "npx nx run-many -t build",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format-check": "prettier --check .",
     "clean": "npx nx reset && npm run clean --ws --if-present"
   },
   "dependencies": {}
