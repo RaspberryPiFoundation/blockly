@@ -114,7 +114,7 @@ Annotations for functions should include
   will return a value, with a description of the returned value.
 
 Descriptions may omitted for functions, parameters, or return values if they are
-self-explanatory.
+self-explanatory. 
 
 For example:
 
@@ -129,3 +129,6 @@ export function getWorkspaceById(id: string): Workspace | null {
   return WorkspaceDB_[id] || null;
 }
 ```
+
+If you are overriding a function and would like it to inherit the parent's 
+TSDoc in the documentation, you should not include a TSDoc at all. 

@@ -11,6 +11,16 @@ import { ReflectionKind } from 'typedoc';
 const INDEXED_SECTIONS = ['Properties', 'Methods'];
 
 /**
+ * Lowercases the first letter, leaving text that opens with an acronym (JSON,
+ * SVG, DOM) alone.
+ */
+function decapitalize(text) {
+  return /^[A-Z](?![A-Z])/.test(text)
+    ? text[0].toLowerCase() + text.slice(1)
+    : text;
+}
+
+/**
  * Adds Properties and Methods index tables to each generated reference page.
  *
  * This needs a custom theme because the plugin will only insert an index if we
@@ -21,6 +31,26 @@ class MemberIndexContext extends MarkdownThemeContext {
   constructor(theme, page, options) {
     super(theme, page, options);
     const base = { ...this.partials };
+    const baseHelpers = { ...this.helpers };
+
+    this.helpers = {
+      ...baseHelpers,
+      // Fall back to @returns text for index tables, if there is no description
+      getDescriptionForComment: (comment) => {
+        const description = baseHelpers.getDescriptionForComment(comment);
+        if (description) return description;
+
+        const returns = comment?.getTag('@returns');
+        if (!returns) return null;
+
+        const text = baseHelpers
+          .getCommentParts(returns.content)
+          .replace(/\r?\n/g, ' ')
+          .trim();
+
+        return text ? `Returns ${decapitalize(text)}` : null;
+      },
+    };
 
     this.partials = {
       ...base,
