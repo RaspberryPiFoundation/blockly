@@ -97,4 +97,4 @@ jobs:
         run: npm install
 
       - name: Check Format
-        run: npm run format:check
+        run: npm run format-check
