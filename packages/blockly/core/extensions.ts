@@ -8,7 +8,6 @@
 
 import type {Block} from './block.js';
 import type {BlockSvg} from './block_svg.js';
-import {FieldDropdown} from './field_dropdown.js';
 import {MutatorIcon} from './icons/mutator_icon.js';
 import * as parsing from './utils/parsing.js';
 
@@ -395,6 +394,7 @@ export function runAfterPageLoad(fn: () => void) {
  *     lookup table.
  * @param lookupTable The table of field values to tooltip text.
  * @returns The extension function.
+ * @throws {Error} if the dropdown options checker has not been installed.
  */
 export function buildTooltipForDropdown(
   dropdownName: string,
@@ -405,6 +405,12 @@ export function buildTooltipForDropdown(
 
   return function (this: Block) {
     if (!blockTypesChecked.includes(this.type)) {
+      // FieldDropdown registers the checker at module load. Blockly's own
+      // blocks already import field_dropdown.js, so this only throws if that
+      // import was skipped and a custom checker wasn't installed.
+      if (!checkDropdownOptionsInTable) {
+        throw Error('Dropdown options checker has not been installed.');
+      }
       checkDropdownOptionsInTable(this, dropdownName, lookupTable);
       blockTypesChecked.push(this.type);
     }
@@ -419,35 +425,31 @@ export function buildTooltipForDropdown(
 }
 
 /**
- * Checks all options keys are present in the provided string lookup table.
- * Emits console warnings when they are not.
+ * Checker that validates dropdown tooltip lookup tables.
  *
  * @param block The block containing the dropdown
  * @param dropdownName The name of the dropdown
  * @param lookupTable The string lookup table
  */
-function checkDropdownOptionsInTable(
-  block: Block,
-  dropdownName: string,
-  lookupTable: {[key: string]: string},
+let checkDropdownOptionsInTable:
+  | ((
+      block: Block,
+      dropdownName: string,
+      lookupTable: {[key: string]: string},
+    ) => void)
+  | undefined;
+
+/**
+ * Sets the checker used to validate dropdown tooltip lookup tables.
+ *
+ * @see {@link buildTooltipForDropdown}
+ * @param fn The checker to install.
+ * @internal
+ */
+export function setDropdownOptionsChecker(
+  fn: NonNullable<typeof checkDropdownOptionsInTable>,
 ) {
-  const dropdown = block.getField(dropdownName);
-  if (!(dropdown instanceof FieldDropdown) || dropdown.isOptionListDynamic()) {
-    return;
-  }
-
-  const options = dropdown.getOptions();
-  for (const option of options) {
-    if (option === FieldDropdown.SEPARATOR) continue;
-
-    const [, key] = option;
-    if (lookupTable[key] === undefined) {
-      console.warn(
-        `No tooltip mapping for value ${key} of field ` +
-          `${dropdownName} of block type ${block.type}.`,
-      );
-    }
-  }
+  checkDropdownOptionsInTable = fn;
 }
 
 /**
