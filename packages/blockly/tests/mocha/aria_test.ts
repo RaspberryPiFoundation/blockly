@@ -7,7 +7,7 @@
 import {getInputLabelsSubset} from '#core/block_aria_composer.js';
 import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
-import sinon from 'sinon';
+import type sinon from 'sinon';
 import {
   DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,

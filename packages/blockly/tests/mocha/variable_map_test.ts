@@ -6,7 +6,7 @@
 
 import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
-import sinon from 'sinon';
+import type sinon from 'sinon';
 import {
   assertEventFired,
   assertEventNotFired,
