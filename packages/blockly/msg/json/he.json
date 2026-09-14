@@ -495,7 +495,14 @@
 	"ARIA_TYPE_FIELD_DATE": "תאריך",
 	"ARIA_TYPE_FIELD_COLOUR": "צבע",
 	"FIELD_BITMAP_BUTTON_LABEL_RANDOMIZE": "הגרלה",
+	"FIELD_BITMAP_PIXEL_LABEL": "%1, שורה %2, עמודה %3",
+	"FIELD_BITMAP_ARIA_VALUE": "%1 על %2, %3 פיקסלים על",
 	"FIELD_MULTILINEINPUT_FINISH_EDITING": "סיום עריכה",
 	"FIELD_MULTILINEINPUT_NEW_LINE": "שורה חדשה",
-	"ARIA_LABEL_TRASH_EMPTY": "אשפה, ריקה כרגע"
+	"ARIA_LABEL_TRASH_EMPTY": "אשפה, ריקה כרגע",
+	"WORKSPACE_SEARCH_PLACEHOLDER": "חיפוש",
+	"WORKSPACE_SEARCH_FIND_NEXT": "איתור הבא",
+	"WORKSPACE_SEARCH_FIND_PREVIOUS": "איתור הקודם",
+	"WORKSPACE_SEARCH_CLOSE": "סגירת סרגל החיפוש",
+	"WORKSPACE_SEARCH_MATCH": "תוצאה %1 מתוך %2: %3"
 }
