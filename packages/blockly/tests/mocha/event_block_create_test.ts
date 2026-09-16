@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {EventType} from '#core/events/type.js';
+import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
 import {defineRowBlock} from './test_helpers/block_definitions.js';
 import {assertEventFired} from './test_helpers/events.js';
@@ -14,14 +14,16 @@ import {
 } from './test_helpers/setup_teardown.js';
 
 suite('Block Create Event', function () {
-  setup(function () {
+  let workspace: Blockly.Workspace;
+
+  setup(function (this: Mocha.Context) {
     sharedTestSetup.call(this);
     defineRowBlock();
-    this.workspace = new Blockly.Workspace();
+    workspace = new Blockly.Workspace();
   });
 
-  teardown(function () {
-    sharedTestTeardown.call(this);
+  teardown(function (this: Mocha.Context) {
+    sharedTestTeardown.call(this, workspace);
   });
 
   test('Create shadow on disconnect', function () {
@@ -41,15 +43,15 @@ suite('Block Create Event', function () {
           },
         },
       },
-      this.workspace,
+      workspace,
     );
     Blockly.Events.enable();
-    block.getInput('INPUT').connection.disconnect();
+    block.getInput('INPUT')?.connection?.disconnect();
     assertEventFired(
       this.eventsFireStub,
       Blockly.Events.BlockCreate,
-      {'recordUndo': false, 'type': EventType.BLOCK_CREATE},
-      this.workspace.id,
+      {'recordUndo': false, 'type': Blockly.Events.BLOCK_CREATE},
+      workspace.id,
       'shadowId',
     );
   });
@@ -75,14 +77,14 @@ suite('Block Create Event', function () {
     // a block create event with the same ID as the shadow block,
     // this represents a block that had been covering a shadow block
     // being removed.
-    Blockly.serialization.blocks.append(blockJson, this.workspace);
-    const shadowBlock = this.workspace.getBlockById(shadowId);
-    const blocksBefore = this.workspace.getAllBlocks();
-
+    Blockly.serialization.blocks.append(blockJson, workspace);
+    const shadowBlock = workspace.getBlockById(shadowId);
+    const blocksBefore = workspace.getAllBlocks();
+    assert.isNotNull(shadowBlock);
     const event = new Blockly.Events.BlockCreate(shadowBlock);
     event.run(true);
 
-    const blocksAfter = this.workspace.getAllBlocks();
+    const blocksAfter = workspace.getAllBlocks();
     assert.deepEqual(
       blocksAfter,
       blocksBefore,
@@ -92,11 +94,11 @@ suite('Block Create Event', function () {
 
   suite('Serialization', function () {
     test('events round-trip through JSON', function () {
-      const block = this.workspace.newBlock('row_block', 'block_id');
+      const block = workspace.newBlock('row_block', 'block_id');
       const origEvent = new Blockly.Events.BlockCreate(block);
 
       const json = origEvent.toJson();
-      const newEvent = Blockly.Events.fromJson(json, this.workspace);
+      const newEvent = Blockly.Events.fromJson(json, workspace);
 
       assert.deepEqual(newEvent, origEvent);
     });

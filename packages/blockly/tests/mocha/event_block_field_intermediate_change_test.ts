@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
 import {
   sharedTestSetup,
@@ -11,18 +12,20 @@ import {
 } from './test_helpers/setup_teardown.js';
 
 suite('Field Intermediate Change Event', function () {
-  setup(function () {
+  let workspace: Blockly.Workspace;
+
+  setup(function (this: Mocha.Context) {
     sharedTestSetup.call(this);
-    this.workspace = new Blockly.Workspace();
+    workspace = new Blockly.Workspace();
   });
 
-  teardown(function () {
-    sharedTestTeardown.call(this);
+  teardown(function (this: Mocha.Context) {
+    sharedTestTeardown.call(this, workspace);
   });
 
   suite('Serialization', function () {
     test('events round-trip through JSON', function () {
-      const block = this.workspace.newBlock('text', 'block_id');
+      const block = workspace.newBlock('text', 'block_id');
       const origEvent = new Blockly.Events.BlockFieldIntermediateChange(
         block,
         'TEXT',
@@ -31,7 +34,7 @@ suite('Field Intermediate Change Event', function () {
       );
 
       const json = origEvent.toJson();
-      const newEvent = new Blockly.Events.fromJson(json, this.workspace);
+      const newEvent = Blockly.Events.fromJson(json, workspace);
 
       assert.deepEqual(newEvent, origEvent);
     });
@@ -39,7 +42,7 @@ suite('Field Intermediate Change Event', function () {
 
   suite('Change Value', function () {
     test("running forward changes the block's value to new value", function () {
-      const block = this.workspace.newBlock('text', 'block_id');
+      const block = workspace.newBlock('text', 'block_id');
       const origEvent = new Blockly.Events.BlockFieldIntermediateChange(
         block,
         'TEXT',
@@ -48,11 +51,12 @@ suite('Field Intermediate Change Event', function () {
       );
       origEvent.run(true);
 
-      assert.deepEqual(block.getField(origEvent.name).getValue(), 'new value');
+      assert.isDefined(origEvent.name);
+      assert.deepEqual(block.getField(origEvent.name)?.getValue(), 'new value');
     });
 
     test("running backward changes the block's value to old value", function () {
-      const block = this.workspace.newBlock('text', 'block_id');
+      const block = workspace.newBlock('text', 'block_id');
       const origEvent = new Blockly.Events.BlockFieldIntermediateChange(
         block,
         'TEXT',
@@ -61,7 +65,8 @@ suite('Field Intermediate Change Event', function () {
       );
       origEvent.run(false);
 
-      assert.deepEqual(block.getField(origEvent.name).getValue(), 'old value');
+      assert.isDefined(origEvent.name);
+      assert.deepEqual(block.getField(origEvent.name)?.getValue(), 'old value');
     });
   });
 });

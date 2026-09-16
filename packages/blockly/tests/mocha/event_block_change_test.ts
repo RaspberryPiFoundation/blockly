@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
 import {defineMutatorBlocks} from './test_helpers/block_definitions.js';
 import {
@@ -12,13 +13,15 @@ import {
 } from './test_helpers/setup_teardown.js';
 
 suite('Block Change Event', function () {
-  setup(function () {
+  let workspace: Blockly.Workspace;
+
+  setup(function (this: Mocha.Context) {
     sharedTestSetup.call(this);
-    this.workspace = new Blockly.Workspace();
+    workspace = new Blockly.Workspace();
   });
 
-  teardown(function () {
-    sharedTestTeardown.call(this);
+  teardown(function (this: Mocha.Context) {
+    sharedTestTeardown.call(this, workspace);
   });
 
   suite('Undo and Redo', function () {
@@ -34,8 +37,8 @@ suite('Block Change Event', function () {
 
       suite('XML', function () {
         test('Undo', function () {
-          const block = this.workspace.newBlock('xml_block', 'block_id');
-          block.domToMutation(
+          const block = workspace.newBlock('xml_block', 'block_id');
+          block.domToMutation?.(
             Blockly.utils.xml.textToDom('<mutation hasInput="true"/>'),
           );
           const blockChange = new Blockly.Events.BlockChange(
@@ -46,11 +49,11 @@ suite('Block Change Event', function () {
             '<mutation hasInput="true"/>',
           );
           blockChange.run(false);
-          assert.isFalse(block.hasInput);
+          assert.isFalse((block as any).hasInput);
         });
 
         test('Redo', function () {
-          const block = this.workspace.newBlock('xml_block', 'block_id');
+          const block = workspace.newBlock('xml_block', 'block_id');
           const blockChange = new Blockly.Events.BlockChange(
             block,
             'mutation',
@@ -59,14 +62,14 @@ suite('Block Change Event', function () {
             '<mutation hasInput="true"/>',
           );
           blockChange.run(true);
-          assert.isTrue(block.hasInput);
+          assert.isTrue((block as any).hasInput);
         });
       });
 
       suite('JSO', function () {
         test('Undo', function () {
-          const block = this.workspace.newBlock('jso_block', 'block_id');
-          block.loadExtraState({hasInput: true});
+          const block = workspace.newBlock('jso_block', 'block_id');
+          block.loadExtraState?.({hasInput: true});
           const blockChange = new Blockly.Events.BlockChange(
             block,
             'mutation',
@@ -75,11 +78,11 @@ suite('Block Change Event', function () {
             '{"hasInput":true}',
           );
           blockChange.run(false);
-          assert.isFalse(block.hasInput);
+          assert.isFalse((block as any).hasInput);
         });
 
         test('Redo', function () {
-          const block = this.workspace.newBlock('jso_block', 'block_id');
+          const block = workspace.newBlock('jso_block', 'block_id');
           const blockChange = new Blockly.Events.BlockChange(
             block,
             'mutation',
@@ -88,7 +91,7 @@ suite('Block Change Event', function () {
             '{"hasInput":true}',
           );
           blockChange.run(true);
-          assert.isTrue(block.hasInput);
+          assert.isTrue((block as any).hasInput);
         });
       });
     });
@@ -105,8 +108,8 @@ suite('Block Change Event', function () {
     });
 
     test('events round-trip through JSON', function () {
-      const block = this.workspace.newBlock('xml_block', 'block_id');
-      block.domToMutation(
+      const block = workspace.newBlock('xml_block', 'block_id');
+      block.domToMutation?.(
         Blockly.utils.xml.textToDom('<mutation hasInput="true"/>'),
       );
       const origEvent = new Blockly.Events.BlockChange(
@@ -118,7 +121,7 @@ suite('Block Change Event', function () {
       );
 
       const json = origEvent.toJson();
-      const newEvent = Blockly.Events.fromJson(json, this.workspace);
+      const newEvent = Blockly.Events.fromJson(json, workspace);
 
       assert.deepEqual(newEvent, origEvent);
     });
