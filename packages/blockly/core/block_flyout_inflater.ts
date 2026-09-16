@@ -65,22 +65,33 @@ export class BlockFlyoutInflater implements IFlyoutInflater {
       this.updateStateBasedOnCapacity(block);
     }
 
-    // Mark blocks as being inside a flyout.  This is used to detect and
+    // Mark blocks as being inside a flyout. This is used to detect and
     // prevent the closure of the flyout if the user right-clicks on such
     // a block.
     block.getDescendants(false).forEach((b) => {
       b.isInFlyout = true;
       const focusableElement = b.getFocusableElement();
-      // blocks can't be focused if they're in a flyout and not top-level
-      // nonfocusable blocks should be hidden from the aria tree
-      aria.setState(focusableElement, aria.State.HIDDEN, true);
-      aria.setRole(focusableElement, aria.Role.NONE);
+      const path = b.pathObject.svgPath;
+
+      // Normally the path and focusable element are the same, but for blocks
+      // with full block fields, the block's focusable element is actually the
+      // field's focusable element. In that case, ensure that the block's path
+      // is hidden from screenreaders to prevent an inaccurate count of blocks
+      // in the flyout, particularly in Safari + VoiceOver.
+      if (path !== focusableElement) {
+        aria.setState(path, aria.State.HIDDEN, true);
+        aria.setRole(path, aria.Role.NONE);
+      }
+
+      if (b === block) {
+        aria.setRole(focusableElement, aria.Role.OPTION);
+      } else {
+        // blocks can't be focused if they're in a flyout and not top-level
+        // nonfocusable blocks should be hidden from the aria tree
+        aria.setState(focusableElement, aria.State.HIDDEN, true);
+        aria.setRole(focusableElement, aria.Role.NONE);
+      }
     });
-    // Since getDescencdants includes the root block, we need
-    // to correct the role and hidden state for it.
-    const focusableElement = block.getFocusableElement();
-    aria.clearState(focusableElement, aria.State.HIDDEN);
-    aria.setRole(focusableElement, aria.Role.OPTION);
 
     // Clickable icons in the flyout are owned by their parent block.
     // This ensures that clickable icons are not included in the option
@@ -95,7 +106,11 @@ export class BlockFlyoutInflater implements IFlyoutInflater {
     const ownedConnectionIds = block.getConnections_(true).map((c) => c.id);
     const ownedChildIds = [...ownedIconIds, ...ownedConnectionIds];
     if (ownedChildIds.length) {
-      aria.setState(focusableElement, aria.State.OWNS, ownedChildIds);
+      aria.setState(
+        block.getFocusableElement(),
+        aria.State.OWNS,
+        ownedChildIds,
+      );
     }
 
     this.addBlockListeners(block);

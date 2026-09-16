@@ -262,6 +262,7 @@ export class FieldDropdown extends Field<string> {
       },
       this.fieldGroup_,
     );
+    aria.setState(this.svgArrow, aria.State.HIDDEN, true);
     this.svgArrow!.setAttributeNS(
       dom.XLINK_NS,
       'xlink:href',
@@ -1026,7 +1027,8 @@ export interface ImageProperties {
  * the language-neutral value.
  */
 export type MenuOption =
-  [string | ImageProperties | HTMLElement, string, string?] | 'separator';
+  | [string | ImageProperties | HTMLElement, string, string?]
+  | 'separator';
 
 /**
  * A function that generates an array of menu options for FieldDropdown
