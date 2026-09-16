@@ -352,7 +352,7 @@ export class FieldImage extends Field<string> {
    *     the returned label, if available.
    */
   override computeAriaLabel(includeTypeInfo: boolean): string {
-    let ariaValue = this.getAriaValue();
+    const ariaValue = this.getAriaValue();
     if (this.isClickable() || !ariaValue) return '';
 
     const ariaTypeName = includeTypeInfo ? this.getAriaTypeName() : null;
