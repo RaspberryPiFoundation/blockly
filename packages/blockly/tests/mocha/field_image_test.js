@@ -393,6 +393,24 @@ suite('Image Fields', function () {
         const ariaHidden = this.focusableElement.getAttribute('aria-hidden');
         assert.equal(ariaHidden, 'true');
       });
+      test('Empty label when no alt text provided', function () {
+        this.field.setAlt(null);
+        assert.equal(this.field.computeAriaLabel(false), '');
+      });
+      test('Empty label when no alt text provided and type requested', function () {
+        this.field.setAlt(null);
+        assert.equal(this.field.computeAriaLabel(true), '');
+      });
+      test('Label includes type when set, requested, and alt text present', function () {
+        this.field.setAlt('altered');
+        this.field.setAriaTypeName('demo');
+        assert.equal(this.field.computeAriaLabel(true), 'demo: altered');
+      });
+      test('Label does not include type when set, not requested, and alt text present', function () {
+        this.field.setAlt('altered');
+        this.field.setAriaTypeName('demo');
+        assert.equal(this.field.computeAriaLabel(false), 'altered');
+      });
     });
     suite('Image with click handler', function () {
       test('Field has alt text ARIA label', function () {
@@ -425,6 +443,32 @@ suite('Image Fields', function () {
         const blockLabel = blockFocusableElement.getAttribute('aria-label');
         assert.notInclude(blockLabel, 'Image:');
         assert.notInclude(blockLabel, 'image with click handler');
+      });
+      test('Empty label when no alt text provided', function () {
+        const block = this.workspace.newBlock('test_images_clickhandler');
+        const field = block.getField('IMAGE');
+        field.setAlt(null);
+        assert.equal(field.computeAriaLabel(false), '');
+      });
+      test('Empty label when no alt text provided and type requested', function () {
+        const block = this.workspace.newBlock('test_images_clickhandler');
+        const field = block.getField('IMAGE');
+        field.setAlt(null);
+        assert.equal(field.computeAriaLabel(true), '');
+      });
+      test('Empty label when type set, requested, and alt text present', function () {
+        const block = this.workspace.newBlock('test_images_clickhandler');
+        const field = block.getField('IMAGE');
+        field.setAlt('altered');
+        field.setAriaTypeName('demo');
+        assert.equal(field.computeAriaLabel(true), '');
+      });
+      test('Empty label when type set, not requested, and alt text present', function () {
+        const block = this.workspace.newBlock('test_images_clickhandler');
+        const field = block.getField('IMAGE');
+        field.setAlt('altered');
+        field.setAriaTypeName('demo');
+        assert.equal(field.computeAriaLabel(false), '');
       });
     });
   });
