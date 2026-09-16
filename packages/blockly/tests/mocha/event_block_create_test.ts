@@ -6,6 +6,7 @@
 
 import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
+import type sinon from 'sinon';
 import {defineRowBlock} from './test_helpers/block_definitions.js';
 import {assertEventFired} from './test_helpers/events.js';
 import {
@@ -15,9 +16,10 @@ import {
 
 suite('Block Create Event', function () {
   let workspace: Blockly.Workspace;
+  let eventsFireStub: sinon.SinonStub;
 
   setup(function (this: Mocha.Context) {
-    sharedTestSetup.call(this);
+    ({eventsFireStub} = sharedTestSetup.call(this));
     defineRowBlock();
     workspace = new Blockly.Workspace();
   });
@@ -48,7 +50,7 @@ suite('Block Create Event', function () {
     Blockly.Events.enable();
     block.getInput('INPUT')?.connection?.disconnect();
     assertEventFired(
-      this.eventsFireStub,
+      eventsFireStub,
       Blockly.Events.BlockCreate,
       {'recordUndo': false, 'type': Blockly.Events.BLOCK_CREATE},
       workspace.id,
