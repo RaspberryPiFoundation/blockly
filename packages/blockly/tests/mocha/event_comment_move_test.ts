@@ -20,7 +20,7 @@ suite('Comment Move Event', function () {
   });
 
   teardown(function (this: Mocha.Context) {
-    sharedTestTeardown.call(this);
+    sharedTestTeardown.call(this, workspace);
   });
 
   suite('Serialization', function () {
