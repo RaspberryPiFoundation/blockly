@@ -1825,8 +1825,15 @@ export class WorkspaceSvg
     if (e instanceof PointerEvent) {
       location = new Coordinate(e.clientX, e.clientY);
     } else {
-      const x = this.RTL ? this.getWidth() - 5 : 5;
-      location = svgMath.wsToScreenCoordinates(this, new Coordinate(x, 5));
+      const viewportBounds = this.getMetricsManager().getViewMetrics(true);
+
+      const x = this.RTL
+        ? viewportBounds.left + viewportBounds.width - 5
+        : viewportBounds.left + 5;
+      location = svgMath.wsToScreenCoordinates(
+        this,
+        new Coordinate(x, viewportBounds.top + 5),
+      );
     }
 
     ContextMenu.show(e, menuOptions, this.RTL, this, location);
