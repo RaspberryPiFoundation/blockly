@@ -3067,6 +3067,11 @@ export class WorkspaceSvg
 
     if (isAutoHideable(toolbox)) {
       toolbox.autoHide(false);
+    } else {
+      const flyout = this.targetWorkspace.getFlyout();
+      if (isAutoHideable(flyout)) {
+        flyout.autoHide(false);
+      }
     }
   }
 
