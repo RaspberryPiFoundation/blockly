@@ -806,11 +806,16 @@ function positionInternal(
 
   const parentElement = div.parentElement;
   if (parentElement) {
-    const bounds = parentElement.getBoundingClientRect();
-    initialX -= bounds.left + window.scrollX;
-    finalX -= bounds.left + window.scrollX;
-    initialY -= bounds.top + window.scrollY;
-    finalY -= bounds.top + window.scrollY;
+    ({x: initialX, y: initialY} = style.pageToContainerOffset(
+      initialX,
+      initialY,
+      parentElement,
+    ));
+    ({x: finalX, y: finalY} = style.pageToContainerOffset(
+      finalX,
+      finalY,
+      parentElement,
+    ));
   }
 
   // First apply initial translation.

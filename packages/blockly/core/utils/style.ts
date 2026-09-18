@@ -139,6 +139,32 @@ export function getBorderBox(element: Element): Rect {
 }
 
 /**
+ * Converts a point in page coordinates into the equivalent CSS `left`/`top`
+ * for an absolutely positioned child of `container`.
+ *
+ * Those properties are resolved against the container's padding box, so the
+ * container's border widths have to be subtracted along with its position.
+ *
+ * @param x Horizontal page coordinate.
+ * @param y Vertical page coordinate.
+ * @param container The relatively positioned parent element.
+ * @returns The equivalent point relative to the container's padding box.
+ * @internal
+ */
+export function pageToContainerOffset(
+  x: number,
+  y: number,
+  container: Element,
+): Coordinate {
+  const bounds = container.getBoundingClientRect();
+  const border = getBorderBox(container);
+  return new Coordinate(
+    x - (bounds.left + window.scrollX + border.left),
+    y - (bounds.top + window.scrollY + border.top),
+  );
+}
+
+/**
  * Changes the scroll position of `container` with the minimum amount so
  * that the content and the borders of the given `element` become visible.
  * If the element is bigger than the container, its top left corner will be

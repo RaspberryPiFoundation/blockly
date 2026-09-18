@@ -195,7 +195,7 @@
     "gulp-replace": "^1.1.4",
     "gulp-sourcemaps": "^3.0.0",
     "http-server": "^14.1.1",
-    "jsdom": "30.0.1",
+    "jsdom": "30.1.0",
     "json5": "^2.2.3",
     "mocha": "^12.0.0",
     "puppeteer-core": "^25.8.0",
@@ -209,6 +209,6 @@
     "node": ">=22"
   },
   "peerDependencies": {
-    "jsdom": ">=27.4.0 <30.0.0"
+    "jsdom": ">=27.4.0 <31.0.0"
   }
 }
