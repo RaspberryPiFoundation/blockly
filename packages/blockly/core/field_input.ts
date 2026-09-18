@@ -30,6 +30,7 @@ import {Verbosity} from './utils/aria.js';
 import * as dom from './utils/dom.js';
 import {Rect} from './utils/rect.js';
 import type {Size} from './utils/size.js';
+import * as style from './utils/style.js';
 import {Svg} from './utils/svg.js';
 import * as svgMath from './utils/svg_math.js';
 import * as userAgent from './utils/useragent.js';
@@ -828,9 +829,7 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
 
       const parentElement = div?.parentElement;
       if (parentElement) {
-        const bounds = parentElement.getBoundingClientRect();
-        x -= bounds.left + window.scrollX;
-        y -= bounds.top + window.scrollY;
+        ({x, y} = style.pageToContainerOffset(x, y, parentElement));
       }
 
       div.style.left = `${x}px`;
