@@ -676,5 +676,10 @@
 	"WORKSPACE_SEARCH_FIND_PREVIOUS": "ARIA label for the workspace search button that selects the previous matching block.",
 	"WORKSPACE_SEARCH_CLOSE": "ARIA label for the button that closes the workspace search bar.",
 	"WORKSPACE_SEARCH_NO_MATCHES": "ARIA live region message announced when workspace search finds no matching blocks.",
-	"WORKSPACE_SEARCH_MATCH": "ARIA live region message announcing the currently highlighted workspace search match. \n\nParameters:\n* %1 - 1-based index of the current match\n* %2 - total number of matches\n* %3 - accessible label of the current block \n\nExamples:\n* 'Match 1 of 3: print, hello'"
+	"WORKSPACE_SEARCH_MATCH": "ARIA live region message announcing the currently highlighted workspace search match. \n\nParameters:\n* %1 - 1-based index of the current match\n* %2 - total number of matches\n* %3 - accessible label of the current block \n\nExamples:\n* 'Match 1 of 3: print, hello'",
+	"TOOLBOX_SEARCH_PLACEHOLDER": "Placeholder text in the toolbox search category's input field.",
+	"TOOLBOX_SEARCH_PROMPT": "Message shown in the toolbox search flyout before a query has been entered.",
+	"TOOLBOX_SEARCH_NO_RESULTS": "Message shown in the toolbox search flyout when a query matches no blocks.",
+	"TOOLBOX_SEARCH_RESULT_COUNT_ONE": "Screen reader announcement when a toolbox search matches exactly one block.",
+	"TOOLBOX_SEARCH_RESULT_COUNT": "Screen reader announcement of how many blocks a toolbox search matched. \n\nParameters:\n* %1 - a number of blocks, which may be zero or greater than one."
 }

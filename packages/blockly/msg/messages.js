@@ -2534,3 +2534,19 @@ Blockly.Msg.WORKSPACE_SEARCH_NO_MATCHES = 'No matching blocks';
 /// \n\nParameters:\n* %1 - 1-based index of the current match\n* %2 - total number of matches\n* %3 - accessible label of the current block
 /// \n\nExamples:\n* "Match 1 of 3: print, hello"
 Blockly.Msg.WORKSPACE_SEARCH_MATCH = 'Match %1 of %2: %3';
+/** @type {string} */
+/// Placeholder text in the toolbox search category's input field.
+Blockly.Msg.TOOLBOX_SEARCH_PLACEHOLDER = 'Search for blocks';
+/** @type {string} */
+/// Message shown in the toolbox search flyout before a query has been entered.
+Blockly.Msg.TOOLBOX_SEARCH_PROMPT = 'Type to search for blocks';
+/** @type {string} */
+/// Message shown in the toolbox search flyout when a query matches no blocks.
+Blockly.Msg.TOOLBOX_SEARCH_NO_RESULTS = 'No matching blocks found';
+/** @type {string} */
+/// Screen reader announcement when a toolbox search matches exactly one block.
+Blockly.Msg.TOOLBOX_SEARCH_RESULT_COUNT_ONE = '1 matching block';
+/** @type {string} */
+/// Screen reader announcement of how many blocks a toolbox search matched.
+/// \n\nParameters:\n* %1 - a number of blocks, which may be zero or greater than one.
+Blockly.Msg.TOOLBOX_SEARCH_RESULT_COUNT = '%1 matching blocks';

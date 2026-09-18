@@ -23,6 +23,9 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
   private readonly SEARCH_INPUT_ID = 'toolbox-search-input';
   private searchField?: HTMLInputElement;
   private blockSearcher = new BlockSearcher();
+  private onChangeWrapper?: (event: Blockly.Events.Abstract) => void;
+  private indexedBlocks = '';
+  private boundEvents: Blockly.browserEvents.Data[] = [];
 
   /**
    * Initializes a ToolboxSearchCategory.
@@ -41,6 +44,8 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
     super(categoryDef, parentToolbox, opt_parent);
     this.initBlockSearcher();
     this.registerShortcut();
+    this.onChangeWrapper = this.handleWorkspaceChange.bind(this);
+    this.workspace_.addChangeListener(this.onChangeWrapper);
   }
 
   /**
@@ -53,44 +58,63 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
     this.searchField = document.createElement('input');
     this.searchField.id = this.SEARCH_INPUT_ID;
     this.searchField.type = 'search';
-    this.searchField.placeholder = 'Search for blocks';
+    this.searchField.placeholder = Blockly.Msg['TOOLBOX_SEARCH_PLACEHOLDER'];
     this.workspace_.RTL
       ? (this.searchField.style.marginRight = '8px')
       : (this.searchField.style.marginLeft = '8px');
-    this.searchField.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowUp' && this.searchField?.selectionStart === 0) {
-        const previous = this.parentToolbox_.getNavigator().getPreviousNode();
-        if (previous) {
-          Blockly.getFocusManager().focusNode(previous);
-        }
-        return;
-      } else if (
-        event.key === 'ArrowRight' &&
-        this.searchField?.selectionStart === this.searchField?.value.length
-      ) {
-        const previous = this.parentToolbox_.getNavigator().getInNode();
-        if (previous) {
-          Blockly.getFocusManager().focusNode(previous);
-        }
-        return;
-      } else if (
-        event.key === 'ArrowDown' &&
-        this.searchField?.selectionStart === this.searchField?.value.length
-      ) {
-        const next = this.parentToolbox_.getNavigator().getNextNode();
-        if (next) {
-          Blockly.getFocusManager().focusNode(next);
-        }
-        return;
-      } else if (event.key === 'Escape' && this.searchField) {
-        if (this.searchField.value !== '') {
-          this.searchField.value = '';
-          event.stopPropagation();
-        }
-      }
-
-      this.matchBlocks();
-    });
+    this.boundEvents.push(
+      Blockly.browserEvents.conditionalBind(
+        this.searchField,
+        'keydown',
+        this,
+        (event: KeyboardEvent) => {
+          if (
+            event.key === 'ArrowUp' &&
+            this.searchField?.selectionStart === 0
+          ) {
+            const previous = this.parentToolbox_
+              .getNavigator()
+              .getPreviousNode();
+            if (previous) {
+              Blockly.getFocusManager().focusNode(previous);
+            }
+            return;
+          } else if (
+            event.key === 'ArrowRight' &&
+            this.searchField?.selectionStart === this.searchField?.value.length
+          ) {
+            const previous = this.parentToolbox_.getNavigator().getInNode();
+            if (previous) {
+              Blockly.getFocusManager().focusNode(previous);
+            }
+            return;
+          } else if (
+            event.key === 'ArrowDown' &&
+            this.searchField?.selectionStart === this.searchField?.value.length
+          ) {
+            const next = this.parentToolbox_.getNavigator().getNextNode();
+            if (next) {
+              Blockly.getFocusManager().focusNode(next);
+            }
+            return;
+          } else if (event.key === 'Escape' && this.searchField) {
+            if (this.searchField.value !== '') {
+              this.searchField.value = '';
+              event.stopPropagation();
+              // Removes matches from the flyout after programmatically clearing the search field.
+              this.matchBlocks();
+            }
+          }
+        },
+      ),
+      // When the user types in the search field, update the flyout to show matching blocks.
+      Blockly.browserEvents.conditionalBind(
+        this.searchField,
+        'input',
+        this,
+        () => this.matchBlocks(),
+      ),
+    );
     this.rowContents_?.replaceChildren(this.searchField);
     return dom;
   }
@@ -106,7 +130,7 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
   private registerShortcut() {
     const shortcut = Blockly.ShortcutRegistry.registry.createSerializedKey(
       Blockly.utils.KeyCodes.B,
-      [Blockly.utils.KeyCodes.CTRL],
+      [Blockly.utils.KeyCodes.CTRL_CMD],
     );
     Blockly.ShortcutRegistry.registry.register({
       name: ToolboxSearchCategory.START_SEARCH_SHORTCUT,
@@ -129,7 +153,20 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
     schema: Blockly.utils.toolbox.ToolboxItemInfo,
     allBlocks: Set<Blockly.utils.toolbox.BlockInfo>,
   ) {
-    if ('contents' in schema) {
+    if ('custom' in schema && schema.custom) {
+      const flyoutCallback = this.workspace_.getToolboxCategoryCallback(
+        schema.custom,
+      );
+      if (!flyoutCallback) {
+        return;
+      }
+      const flyoutDef = flyoutCallback(this.workspace_);
+      Blockly.utils.toolbox
+        .convertFlyoutDefToJsonArray(flyoutDef)
+        .forEach((item) => {
+          this.getAvailableBlocks(item, allBlocks);
+        });
+    } else if ('contents' in schema) {
       schema.contents.forEach((contents) => {
         this.getAvailableBlocks(contents, allBlocks);
       });
@@ -148,7 +185,7 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
     this.workspace_.options.languageTree?.contents?.forEach((item) =>
       this.getAvailableBlocks(item, availableBlocks),
     );
-    this.blockSearcher.indexBlocks([...availableBlocks]);
+    this.blockSearcher.indexBlocks([...availableBlocks], this.workspace_);
   }
 
   /** See IFocusableNode.getFocusableElement. */
@@ -181,21 +218,32 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
       : [];
 
     const newCount = this.flyoutItems_.length;
-    if (oldCount !== newCount) {
-      Blockly.utils.aria.announceDynamicAriaState(
-        `${newCount} matching blocks`,
-      );
-    }
 
     if (!this.flyoutItems_.length) {
       this.flyoutItems_.push({
         kind: 'label',
         text:
           query.length < 3
-            ? 'Type to search for blocks'
-            : 'No matching blocks found',
+            ? Blockly.Msg['TOOLBOX_SEARCH_PROMPT']
+            : Blockly.Msg['TOOLBOX_SEARCH_NO_RESULTS'],
       });
     }
+
+    if (this.parentToolbox_.getSelectedItem() !== this) {
+      return;
+    }
+
+    if (oldCount !== newCount) {
+      Blockly.utils.aria.announceDynamicAriaState(
+        newCount === 1
+          ? Blockly.Msg['TOOLBOX_SEARCH_RESULT_COUNT_ONE']
+          : Blockly.Msg['TOOLBOX_SEARCH_RESULT_COUNT'].replace(
+              '%1',
+              String(newCount),
+            ),
+      );
+    }
+
     this.parentToolbox_.refreshSelection();
   }
 
@@ -204,9 +252,64 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
    */
   override dispose() {
     super.dispose();
+    for (const event of this.boundEvents) {
+      Blockly.browserEvents.unbind(event);
+    }
+    this.boundEvents.length = 0;
+    if (this.onChangeWrapper) {
+      this.workspace_.removeChangeListener(this.onChangeWrapper);
+      this.onChangeWrapper = undefined;
+    }
     Blockly.ShortcutRegistry.registry.unregister(
       ToolboxSearchCategory.START_SEARCH_SHORTCUT,
     );
+  }
+
+  /**
+   * Rebuilds the search index when the workspace changes in a way that alters
+   * what a dynamic toolbox category offers, such as creating or renaming a
+   * variable or a procedure.
+   *
+   * @param event The change that occurred on the workspace.
+   */
+  private handleWorkspaceChange(event: Blockly.Events.Abstract) {
+    if (event.isUiEvent) return;
+    // This works off of the assumption that these events don't typically change
+    // what a dynamic category contains. Apps that need to rebuild the index
+    // manually can do so by firing a different workspace event.
+    if (
+      event.type === Blockly.Events.BLOCK_MOVE ||
+      event.type === Blockly.Events.BLOCK_FIELD_INTERMEDIATE_CHANGE ||
+      event.type.startsWith('comment_')
+    ) {
+      return;
+    }
+    if (this.refreshBlockSearcher()) this.matchBlocks();
+  }
+
+  /**
+   * Rebuilds the BlockSearcher index if the available blocks have changed.
+   *
+   * @returns True if the index was rebuilt.
+   */
+  private refreshBlockSearcher(): boolean {
+    const availableBlocks = new Set<Blockly.utils.toolbox.BlockInfo>();
+    this.workspace_.options.languageTree?.contents?.forEach((item) =>
+      this.getAvailableBlocks(item, availableBlocks),
+    );
+
+    const blocks = [...availableBlocks];
+    const snapshot = JSON.stringify([
+      blocks,
+      this.workspace_
+        .getVariableMap()
+        .getAllVariables()
+        .map((v) => v.getName()),
+    ]);
+    if (snapshot === this.indexedBlocks) return false;
+    this.indexedBlocks = snapshot;
+    this.blockSearcher.indexBlocks(blocks, this.workspace_);
+    return true;
   }
 }
 
