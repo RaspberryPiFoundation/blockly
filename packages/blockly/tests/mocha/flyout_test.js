@@ -45,6 +45,41 @@ suite('Flyout', function () {
     sharedTestTeardown.call(this);
   });
 
+  suite('focus management', function () {
+    setup(function () {
+      this.flyout = this.workspace.getFlyout();
+      assert.isNull(this.workspace.getToolbox());
+    });
+
+    test('Losing focus hides autoclosing flyout', function () {
+      this.flyout.setAutoClose(true);
+
+      // Focus a block in the standalone flyout.
+      Blockly.getFocusManager().focusNode(
+        this.flyout.getWorkspace().getTopBlocks(false)[0],
+      );
+      assert.isTrue(this.flyout.isVisible());
+
+      // Focus the workspace to trigger the flyout to close.
+      Blockly.getFocusManager().focusNode(this.workspace);
+      assert.isFalse(this.flyout.isVisible());
+    });
+
+    test('Losing focus does not hide non-autoclosing flyout', function () {
+      this.flyout.setAutoClose(false);
+
+      // Focus a block in the standalone flyout.
+      Blockly.getFocusManager().focusNode(
+        this.flyout.getWorkspace().getTopBlocks(false)[0],
+      );
+      assert.isTrue(this.flyout.isVisible());
+
+      // Focus the workspace; the flyout should remain visible.
+      Blockly.getFocusManager().focusNode(this.workspace);
+      assert.isTrue(this.flyout.isVisible());
+    });
+  });
+
   suite('workspace change listeners', function () {
     test('are triggered when a child block changes', function () {
       let listenerTriggered = false;
