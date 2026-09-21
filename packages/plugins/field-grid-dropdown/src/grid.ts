@@ -4,12 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import type {ImageProperties, MenuOption} from 'blockly/core';
 import {
   browserEvents,
   common,
   FieldDropdown,
-  ImageProperties,
-  MenuOption,
   utils,
   WorkspaceSvg,
 } from 'blockly/core';

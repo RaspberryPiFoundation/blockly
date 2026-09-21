@@ -4,13 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from 'blockly-test/core';
+import type * as Blockly from 'blockly-test/core';
 
 /**
  * Test: should be able to import a generator instance, class, and
  * Order enum.
  */
-import {luaGenerator, LuaGenerator, Order} from 'blockly-test/lua';
+import type {LuaGenerator} from 'blockly-test/lua';
+import {luaGenerator, Order} from 'blockly-test/lua';
 
 /**
  * Test: should be able to create a simple block generator function,

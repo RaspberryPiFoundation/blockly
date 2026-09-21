@@ -7,13 +7,15 @@
 // Former goog.module ID: Blockly.common
 
 import type {Block} from './block.js';
-import {BlockDefinition, Blocks} from './blocks.js';
+import type {BlockDefinition} from './blocks.js';
+import {Blocks} from './blocks.js';
 import * as browserEvents from './browser_events.js';
 import type {Connection} from './connection.js';
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
 import {getFocusManager} from './focus_manager.js';
-import {ISelectable, isSelectable} from './interfaces/i_selectable.js';
+import type {ISelectable} from './interfaces/i_selectable.js';
+import {isSelectable} from './interfaces/i_selectable.js';
 import {ShortcutRegistry} from './shortcut_registry.js';
 import * as deprecation from './utils/deprecation.js';
 import type {Workspace} from './workspace.js';

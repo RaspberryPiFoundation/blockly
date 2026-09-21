@@ -7,7 +7,7 @@
 import type {Block} from '../block.js';
 import type {IIcon} from '../interfaces/i_icon.js';
 import * as registry from '../registry.js';
-import {IconType} from './icon_types.js';
+import type {IconType} from './icon_types.js';
 
 /**
  * Registers the given icon so that it can be deserialized.

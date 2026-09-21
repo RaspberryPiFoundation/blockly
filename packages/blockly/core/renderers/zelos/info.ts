@@ -13,7 +13,7 @@ import {FieldLabel} from '../../field_label.js';
 import {Align} from '../../inputs/align.js';
 import {DummyInput} from '../../inputs/dummy_input.js';
 import {EndRowInput} from '../../inputs/end_row_input.js';
-import {Input} from '../../inputs/input.js';
+import type {Input} from '../../inputs/input.js';
 import {StatementInput} from '../../inputs/statement_input.js';
 import {ValueInput} from '../../inputs/value_input.js';
 import {RenderInfo as BaseRenderInfo} from '../common/info.js';

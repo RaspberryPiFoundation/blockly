@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {ICommentIcon} from '../interfaces/i_comment_icon.js';
-import {IIcon} from '../interfaces/i_icon.js';
-import {MutatorIcon} from './mutator_icon.js';
-import {WarningIcon} from './warning_icon.js';
+import type {ICommentIcon} from '../interfaces/i_comment_icon.js';
+import type {IIcon} from '../interfaces/i_icon.js';
+import type {MutatorIcon} from './mutator_icon.js';
+import type {WarningIcon} from './warning_icon.js';
 
 /**
  * Defines the type of an icon, so that it can be retrieved from block.getIcon

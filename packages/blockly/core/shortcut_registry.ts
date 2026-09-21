@@ -12,11 +12,11 @@
  */
 // Former goog.module ID: Blockly.ShortcutRegistry
 
-import {Scope} from './contextmenu_registry.js';
+import type {Scope} from './contextmenu_registry.js';
 import {getFocusManager} from './focus_manager.js';
 import {KeyCodes} from './utils/keycodes.js';
 import * as object from './utils/object.js';
-import {WorkspaceSvg} from './workspace_svg.js';
+import type {WorkspaceSvg} from './workspace_svg.js';
 
 /**
  * Class for the registry of keyboard shortcuts. This is intended to be a

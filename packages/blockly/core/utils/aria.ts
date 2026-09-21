@@ -347,7 +347,7 @@ let liveRegionElement: HTMLElement | null = null;
  *
  * @param parent The container element to which the live region will be appended.
  */
-export function initializeGlobalAriaLiveRegion(parent: HTMLDivElement) {
+export function initializeGlobalAriaLiveRegion(parent: HTMLElement) {
   if (liveRegionElement && document.contains(liveRegionElement)) {
     return;
   }

@@ -9,7 +9,7 @@ import {assert} from 'chai';
 import {
   MockParameterModelWithVar,
   MockProcedureModel,
-} from '../test_helpers/procedures.js';
+} from '../test_helpers/procedures.ts';
 import {
   sharedTestSetup,
   sharedTestTeardown,

@@ -6,7 +6,7 @@
 
 // Former goog.module ID: Blockly.bumpObjects
 
-import {RenderedWorkspaceComment} from './comments/rendered_workspace_comment.js';
+import type {RenderedWorkspaceComment} from './comments/rendered_workspace_comment.js';
 import type {Abstract} from './events/events_abstract.js';
 import type {BlockCreate} from './events/events_block_create.js';
 import type {BlockMove} from './events/events_block_move.js';

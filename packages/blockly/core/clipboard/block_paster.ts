@@ -4,18 +4,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {BlockSvg} from '../block_svg.js';
+import type {BlockSvg} from '../block_svg.js';
 import {config} from '../config.js';
 import {EventType} from '../events/type.js';
 import * as eventUtils from '../events/utils.js';
 import {getFocusManager} from '../focus_manager.js';
-import {ICopyData} from '../interfaces/i_copyable.js';
+import type {ICopyData} from '../interfaces/i_copyable.js';
 import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
-import {IPaster} from '../interfaces/i_paster.js';
+import type {IPaster} from '../interfaces/i_paster.js';
 import * as renderManagement from '../render_management.js';
-import {State, append} from '../serialization/blocks.js';
+import type {State} from '../serialization/blocks.js';
+import {append} from '../serialization/blocks.js';
 import {Coordinate} from '../utils/coordinate.js';
-import {WorkspaceSvg} from '../workspace_svg.js';
+import type {WorkspaceSvg} from '../workspace_svg.js';
 import * as registry from './registry.js';
 
 export class BlockPaster implements IPaster<BlockCopyData, BlockSvg> {

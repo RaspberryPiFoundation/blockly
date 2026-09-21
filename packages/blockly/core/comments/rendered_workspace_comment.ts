@@ -5,31 +5,29 @@
  */
 
 import * as browserEvents from '../browser_events.js';
-import {
-  WorkspaceCommentCopyData,
-  WorkspaceCommentPaster,
-} from '../clipboard/workspace_comment_paster.js';
+import type {WorkspaceCommentCopyData} from '../clipboard/workspace_comment_paster.js';
+import {WorkspaceCommentPaster} from '../clipboard/workspace_comment_paster.js';
 import * as common from '../common.js';
 import * as contextMenu from '../contextmenu.js';
 import {ContextMenuRegistry} from '../contextmenu_registry.js';
 import {CommentDragStrategy} from '../dragging/comment_drag_strategy.js';
 import {getFocusManager} from '../focus_manager.js';
-import {IBoundedElement} from '../interfaces/i_bounded_element.js';
-import {IContextMenu} from '../interfaces/i_contextmenu.js';
-import {ICopyable} from '../interfaces/i_copyable.js';
-import {IDeletable} from '../interfaces/i_deletable.js';
-import {IDraggable} from '../interfaces/i_draggable.js';
-import {IFocusableNode} from '../interfaces/i_focusable_node.js';
+import type {IBoundedElement} from '../interfaces/i_bounded_element.js';
+import type {IContextMenu} from '../interfaces/i_contextmenu.js';
+import type {ICopyable} from '../interfaces/i_copyable.js';
+import type {IDeletable} from '../interfaces/i_deletable.js';
+import type {IDraggable} from '../interfaces/i_draggable.js';
+import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
 import type {IFocusableTree} from '../interfaces/i_focusable_tree.js';
-import {IRenderedElement} from '../interfaces/i_rendered_element.js';
-import {ISelectable} from '../interfaces/i_selectable.js';
+import type {IRenderedElement} from '../interfaces/i_rendered_element.js';
+import type {ISelectable} from '../interfaces/i_selectable.js';
 import * as commentSerialization from '../serialization/workspace_comments.js';
 import {Coordinate} from '../utils/coordinate.js';
 import * as dom from '../utils/dom.js';
 import {Rect} from '../utils/rect.js';
-import {Size} from '../utils/size.js';
+import type {Size} from '../utils/size.js';
 import * as svgMath from '../utils/svg_math.js';
-import {WorkspaceSvg} from '../workspace_svg.js';
+import type {WorkspaceSvg} from '../workspace_svg.js';
 import {CommentView} from './comment_view.js';
 import {WorkspaceComment} from './workspace_comment.js';
 

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [13.3.0](https://github.com/RaspberryPiFoundation/blockly/compare/blockly-v13.2.1...blockly-v13.3.0) (2026-09-10)
+
+### Features
+
+* **workspace-search:** Add screen reader support ([#10316](https://github.com/RaspberryPiFoundation/blockly/issues/10316)) ([1aa51c0](https://github.com/RaspberryPiFoundation/blockly/commit/1aa51c0ec48f73ca1214397fa70d141ac47a57fe))
+* **workspace-search:** UI Improvements ([#10391](https://github.com/RaspberryPiFoundation/blockly/issues/10391)) ([93856f8](https://github.com/RaspberryPiFoundation/blockly/commit/93856f86b93406a2bbcc5220372ccee4ed727069))
+
+
 ## [13.1.0](https://github.com/RaspberryPiFoundation/blockly-samples/compare/v13.0.0...v13.1.0) (2026-06-30)
 
 ### ⚠ BREAKING CHANGES

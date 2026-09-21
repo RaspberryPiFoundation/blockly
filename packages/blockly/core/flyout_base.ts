@@ -21,7 +21,7 @@ import {FlyoutItem} from './flyout_item.js';
 import {FlyoutMetricsManager} from './flyout_metrics_manager.js';
 import {FlyoutSeparator, SeparatorAxis} from './flyout_separator.js';
 import {getFocusManager} from './focus_manager.js';
-import {IAutoHideable} from './interfaces/i_autohideable.js';
+import type {IAutoHideable} from './interfaces/i_autohideable.js';
 import type {IFlyout} from './interfaces/i_flyout.js';
 import type {IFlyoutInflater} from './interfaces/i_flyout_inflater.js';
 import {isSelectableToolboxItem} from './interfaces/i_selectable_toolbox_item.js';

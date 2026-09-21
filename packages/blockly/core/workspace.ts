@@ -13,14 +13,14 @@
 
 import type {Block} from './block.js';
 import type {BlocklyOptions} from './blockly_options.js';
-import {WorkspaceComment} from './comments/workspace_comment.js';
+import type {WorkspaceComment} from './comments/workspace_comment.js';
 import * as common from './common.js';
 import type {ConnectionDB} from './connection_db.js';
 import type {Abstract} from './events/events_abstract.js';
 import * as eventUtils from './events/utils.js';
 import type {IBoundedElement} from './interfaces/i_bounded_element.js';
 import type {IConnectionChecker} from './interfaces/i_connection_checker.js';
-import {IProcedureMap} from './interfaces/i_procedure_map.js';
+import type {IProcedureMap} from './interfaces/i_procedure_map.js';
 import type {IVariableMap} from './interfaces/i_variable_map.js';
 import type {
   IVariableModel,

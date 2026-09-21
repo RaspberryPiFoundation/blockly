@@ -24,10 +24,10 @@ import '../core/field_dropdown.js';
 import '../core/field_label.js';
 import '../core/field_number.js';
 import '../core/field_variable.js';
-import {FieldVariable} from '../core/field_variable.js';
+import type {FieldVariable} from '../core/field_variable.js';
 import '../core/icons/warning_icon.js';
 import {Msg} from '../core/msg.js';
-import {WorkspaceSvg} from '../core/workspace_svg.js';
+import type {WorkspaceSvg} from '../core/workspace_svg.js';
 
 /**
  * A dictionary of the block definitions provided by this module.

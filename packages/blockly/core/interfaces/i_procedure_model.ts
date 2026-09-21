@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {State} from '../serialization/procedures.js';
-import {IParameterModel} from './i_parameter_model.js';
+import type {State} from '../serialization/procedures.js';
+import type {IParameterModel} from './i_parameter_model.js';
 
 /**
  * A data model for a procedure.

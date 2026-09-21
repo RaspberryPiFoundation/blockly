@@ -502,7 +502,7 @@ const sidebars = {
             {
               type: 'link',
               label: 'Blockly Playground',
-              href: 'https://blockly-demo.appspot.com/static/tests/playground.html',
+              href: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/playground.html',
             },
             {
               type: 'link',

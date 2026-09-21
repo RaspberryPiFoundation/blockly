@@ -30,7 +30,7 @@ import type {MutatorIcon} from './icons/mutator_icon.js';
 import {Align} from './inputs/align.js';
 import {DummyInput} from './inputs/dummy_input.js';
 import {EndRowInput} from './inputs/end_row_input.js';
-import {Input} from './inputs/input.js';
+import type {Input} from './inputs/input.js';
 import {StatementInput} from './inputs/statement_input.js';
 import {ValueInput} from './inputs/value_input.js';
 import {isCommentIcon} from './interfaces/i_comment_icon.js';
@@ -47,7 +47,7 @@ import {Coordinate} from './utils/coordinate.js';
 import * as idGenerator from './utils/idgenerator.js';
 import * as parsing from './utils/parsing.js';
 import {replaceMessageReferences} from './utils/parsing.js';
-import {Size} from './utils/size.js';
+import type {Size} from './utils/size.js';
 import type {Workspace} from './workspace.js';
 
 /**

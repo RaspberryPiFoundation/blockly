@@ -7,7 +7,7 @@
 import * as Blockly from 'blockly/core';
 import {isCacheable} from './ScrollMetricsManager';
 import {getTranslation} from './utils';
-import {ScrollBlockDragger} from './ScrollBlockDragger';
+import type {ScrollBlockDragger} from './ScrollBlockDragger';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 

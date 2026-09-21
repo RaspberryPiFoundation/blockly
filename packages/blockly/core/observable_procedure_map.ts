@@ -5,7 +5,7 @@
  */
 
 import {isObservable} from './interfaces/i_observable.js';
-import {IProcedureMap} from './interfaces/i_procedure_map.js';
+import type {IProcedureMap} from './interfaces/i_procedure_map.js';
 import type {IProcedureModel} from './interfaces/i_procedure_model.js';
 
 export class ObservableProcedureMap

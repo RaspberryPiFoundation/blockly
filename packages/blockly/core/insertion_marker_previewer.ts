@@ -4,19 +4,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {BlockSvg} from './block_svg.js';
+import type {BlockSvg} from './block_svg.js';
 import {ConnectionType} from './connection_type.js';
 import * as eventUtils from './events/utils.js';
 import {InsertionMarker} from './insertion_marker.js';
-import {IConnectionPreviewer} from './interfaces/i_connection_previewer.js';
+import type {IConnectionPreviewer} from './interfaces/i_connection_previewer.js';
 import * as registry from './registry.js';
 import * as renderManagement from './render_management.js';
-import {RenderedConnection} from './rendered_connection.js';
+import type {RenderedConnection} from './rendered_connection.js';
 import {Renderer as GerasRenderer} from './renderers/geras/renderer.js';
 import {Renderer as ThrasosRenderer} from './renderers/thrasos/renderer.js';
 import {Renderer as ZelosRenderer} from './renderers/zelos/renderer.js';
 import * as blocks from './serialization/blocks.js';
-import {WorkspaceSvg} from './workspace_svg.js';
+import type {WorkspaceSvg} from './workspace_svg.js';
 
 export class InsertionMarkerPreviewer implements IConnectionPreviewer {
   private readonly workspace: WorkspaceSvg;

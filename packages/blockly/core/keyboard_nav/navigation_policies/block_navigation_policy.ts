@@ -8,7 +8,7 @@ import {BlockSvg} from '../../block_svg.js';
 import type {IFocusableNode} from '../../interfaces/i_focusable_node.js';
 import {hasBubble} from '../../interfaces/i_has_bubble.js';
 import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';
-import {RenderedConnection} from '../../rendered_connection.js';
+import type {RenderedConnection} from '../../rendered_connection.js';
 
 /**
  * Set of rules controlling keyboard navigation from a block.

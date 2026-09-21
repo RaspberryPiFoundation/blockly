@@ -9,8 +9,8 @@ import {assert} from 'chai';
 import {
   moveStatementTestBlocks,
   moveValueTestBlocks,
-} from './test_helpers/move_test_blocks.js';
-import {p5blocks} from './test_helpers/p5_blocks.js';
+} from './test_helpers/move_test_blocks.ts';
+import {p5blocks} from './test_helpers/p5_blocks.ts';
 import {
   DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,

@@ -19,7 +19,7 @@ import {
   sharedTestTeardown,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
-import {assertVariableValues} from './test_helpers/variables.js';
+import {assertVariableValues} from './test_helpers/variables.ts';
 
 suite('Events', function () {
   setup(function () {

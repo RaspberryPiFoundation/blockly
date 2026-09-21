@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from 'blockly/core';
+import type * as Blockly from 'blockly/core';
 
 /** Defines if an object can be added to the backpack. */
 export interface Backpackable {

@@ -5,7 +5,8 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {EdgeScrollOptions, ScrollBlockDragger} from './ScrollBlockDragger';
+import type {EdgeScrollOptions} from './ScrollBlockDragger';
+import {ScrollBlockDragger} from './ScrollBlockDragger';
 import {getTranslation} from './utils';
 import {isCacheable} from './ScrollMetricsManager';
 

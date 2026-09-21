@@ -12,15 +12,19 @@
 // Former goog.module ID: Blockly.FieldVariable
 
 import type {Block} from './block.js';
-import {Field, FieldConfig, UnattachedFieldError} from './field.js';
-import {
-  FieldDropdown,
+import type {FieldConfig} from './field.js';
+import {Field, UnattachedFieldError} from './field.js';
+import type {
   FieldDropdownValidator,
   MenuGenerator,
   MenuOption,
 } from './field_dropdown.js';
+import {FieldDropdown} from './field_dropdown.js';
 import * as fieldRegistry from './field_registry.js';
-import {IVariableModel, IVariableState} from './interfaces/i_variable_model.js';
+import type {
+  IVariableModel,
+  IVariableState,
+} from './interfaces/i_variable_model.js';
 import * as internalConstants from './internal_constants.js';
 import type {Menu} from './menu.js';
 import type {MenuItem} from './menuitem.js';

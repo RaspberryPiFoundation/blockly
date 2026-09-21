@@ -14,7 +14,8 @@
 
 import type {Block} from './block.js';
 import * as common from './common.js';
-import {Names, NameType} from './names.js';
+import type {Names} from './names.js';
+import {NameType} from './names.js';
 import type {Workspace} from './workspace.js';
 
 /**

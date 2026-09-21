@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {BlockSvg} from '../../block_svg.js';
+import type {BlockSvg} from '../../block_svg.js';
 import {Icon} from '../../icons/icon.js';
 import type {IFocusableNode} from '../../interfaces/i_focusable_node.js';
 import type {INavigationPolicy} from '../../interfaces/i_navigation_policy.js';

@@ -10,11 +10,8 @@ import type {BlockSvg} from './block_svg.js';
 import * as clipboard from './clipboard.js';
 import {RenderedWorkspaceComment} from './comments/rendered_workspace_comment.js';
 import {MANUALLY_DISABLED} from './constants.js';
-import {
-  ContextMenuRegistry,
-  RegistryItem,
-  Scope,
-} from './contextmenu_registry.js';
+import type {RegistryItem, Scope} from './contextmenu_registry.js';
+import {ContextMenuRegistry} from './contextmenu_registry.js';
 import * as dialog from './dialog.js';
 import * as Events from './events/events.js';
 import * as eventUtils from './events/utils.js';

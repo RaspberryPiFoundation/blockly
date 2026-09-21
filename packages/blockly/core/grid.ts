@@ -12,7 +12,7 @@
  */
 // Former goog.module ID: Blockly.Grid
 
-import {GridOptions} from './options.js';
+import type {GridOptions} from './options.js';
 import {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
 import {Svg} from './utils/svg.js';

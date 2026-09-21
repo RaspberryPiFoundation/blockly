@@ -22,8 +22,8 @@ import type {Abstract as AbstractEvent} from '../core/events/events_abstract.js'
 import type {BlockChange} from '../core/events/events_block_change.js';
 import type {BlockCreate} from '../core/events/events_block_create.js';
 import * as eventUtils from '../core/events/utils.js';
-import {FieldCheckbox} from '../core/field_checkbox.js';
-import {FieldLabel} from '../core/field_label.js';
+import type {FieldCheckbox} from '../core/field_checkbox.js';
+import type {FieldLabel} from '../core/field_label.js';
 import * as fieldRegistry from '../core/field_registry.js';
 import {FieldTextInput} from '../core/field_textinput.js';
 import {getFocusManager} from '../core/focus_manager.js';

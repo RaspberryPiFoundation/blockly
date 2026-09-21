@@ -14,10 +14,8 @@
 import type {WorkspaceComment} from '../comments/workspace_comment.js';
 import * as comments from '../serialization/workspace_comments.js';
 import type {Workspace} from '../workspace.js';
-import {
-  Abstract as AbstractEvent,
-  AbstractEventJson,
-} from './events_abstract.js';
+import type {AbstractEventJson} from './events_abstract.js';
+import {Abstract as AbstractEvent} from './events_abstract.js';
 import type {CommentCreate} from './events_comment_create.js';
 import type {CommentDelete} from './events_comment_delete.js';
 import {getGroup, getRecordUndo} from './utils.js';

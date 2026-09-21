@@ -9,11 +9,11 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {
-  FieldGridDropdown,
+import type {
   FieldGridDropdownConfig,
   FieldGridDropdownFromJsonConfig,
 } from '@blockly/field-grid-dropdown';
+import {FieldGridDropdown} from '@blockly/field-grid-dropdown';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 /**

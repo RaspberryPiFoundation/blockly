@@ -146,7 +146,7 @@ category.](/images/category_menu.png)
 
 :::note
 The standard categories and toolbox include all the blocks in the
-[Playground](https://blockly-demo.appspot.com/static/tests/playground.html).
+[Playground](https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/playground.html).
 This set of blocks is not appropriate for most apps and should be pruned as
 needed. Also, some blocks are not supported on mobile yet.
 :::

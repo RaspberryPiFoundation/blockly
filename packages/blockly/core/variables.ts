@@ -15,7 +15,10 @@ import * as Events from './events/events.js';
 import {getFocusManager} from './focus_manager.js';
 import {isLegacyProcedureDefBlock} from './interfaces/i_legacy_procedure_blocks.js';
 import {isVariableBackedParameterModel} from './interfaces/i_variable_backed_parameter_model.js';
-import {IVariableModel, IVariableState} from './interfaces/i_variable_model.js';
+import type {
+  IVariableModel,
+  IVariableState,
+} from './interfaces/i_variable_model.js';
 import {keyboardNavigationController} from './keyboard_navigation_controller.js';
 import {Msg} from './msg.js';
 import type {BlockInfo, FlyoutItemInfo} from './utils/toolbox.js';

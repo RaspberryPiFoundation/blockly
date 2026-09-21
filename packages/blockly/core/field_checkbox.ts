@@ -10,7 +10,8 @@
  * @class
  */
 // Former goog.module ID: Blockly.FieldCheckbox
-import {Field, FieldConfig, FieldValidator} from './field.js';
+import type {FieldConfig, FieldValidator} from './field.js';
+import {Field} from './field.js';
 import * as fieldRegistry from './field_registry.js';
 import {Msg} from './msg.js';
 import {aria} from './utils.js';

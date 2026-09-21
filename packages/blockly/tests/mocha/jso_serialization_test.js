@@ -14,7 +14,7 @@ import {
 import {
   MockParameterModel,
   MockProcedureModel,
-} from './test_helpers/procedures.js';
+} from './test_helpers/procedures.ts';
 import {
   createGenUidStubWithReturns,
   sharedTestSetup,

@@ -13,11 +13,11 @@
  */
 // Former goog.module ID: Blockly.FieldLabelSerializable
 
-import {
-  FieldLabel,
+import type {
   FieldLabelConfig,
   FieldLabelFromJsonConfig,
 } from './field_label.js';
+import {FieldLabel} from './field_label.js';
 import * as fieldRegistry from './field_registry.js';
 import * as parsing from './utils/parsing.js';
 

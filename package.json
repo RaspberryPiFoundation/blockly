@@ -22,10 +22,10 @@
   ],
   "devDependencies": {
     "@commitlint/cli": "^21.2.1",
-    "@commitlint/config-conventional": "^21.0.2",
+    "@commitlint/config-conventional": "21.0.0",
     "@eslint/js": "^10.0.1",
     "@nx/js": "23.2.0",
-    "conventional-changelog-conventionalcommits": "^10.4.0",
+    "conventional-changelog-conventionalcommits": "9.3.1",
     "eslint": "10.10.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^10.1.8",
@@ -40,8 +40,11 @@
     "prettier-plugin-organize-imports": "^4.3.0",
     "typescript-eslint": "^8.66.0"
   },
+  "overrides": {
+    "conventional-changelog-conventionalcommits": "9.3.1"
+  },
   "scripts": {
-    "test": "npx nx run-many -t test --exclude=blockly && npx nx run blockly:test",
+    "test": "npx nx run-many -t test",
     "lint": "npm run lint --ws --if-present",
     "lint-fix": "npm run lint-fix --ws --if-present",
     "build": "npx nx run-many -t build --exclude=blockly-docs",
@@ -51,6 +54,5 @@
     "format-check": "prettier --check .",
     "clean": "npx nx reset && npm run clean --ws --if-present",
     "version": "npm run reference-refresh --workspace=blockly-docs && git add packages/docs/blockly_api.json"
-  },
-  "dependencies": {}
+  }
 }

@@ -8,7 +8,7 @@
 import * as Blockly from 'blockly/core';
 import {ObservableProcedureModel} from './observable_procedure_model';
 import {ObservableParameterModel} from './observable_parameter_model';
-import {IProcedureBlock} from './i_procedure_block';
+import type {IProcedureBlock} from './i_procedure_block';
 import {ProcedureCreate} from './events_procedure_create';
 
 /* eslint-disable @typescript-eslint/naming-convention */

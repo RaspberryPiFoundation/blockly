@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from 'blockly/core';
+import type * as Blockly from 'blockly/core';
 
 /** A Draggable that can be autoscrolled. */
 export interface AutoScrollable extends Blockly.IDraggable {

@@ -12,7 +12,8 @@
  */
 // Former goog.module ID: Blockly.FieldLabel
 
-import {Field, FieldConfig} from './field.js';
+import type {FieldConfig} from './field.js';
+import {Field} from './field.js';
 import * as fieldRegistry from './field_registry.js';
 import {aria} from './utils.js';
 import * as dom from './utils/dom.js';

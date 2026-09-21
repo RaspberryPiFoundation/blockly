@@ -12,11 +12,8 @@
 // Former goog.module ID: Blockly.FieldNumber
 
 import {Field} from './field.js';
-import {
-  FieldInput,
-  FieldInputConfig,
-  FieldInputValidator,
-} from './field_input.js';
+import type {FieldInputConfig, FieldInputValidator} from './field_input.js';
+import {FieldInput} from './field_input.js';
 import * as fieldRegistry from './field_registry.js';
 import {Msg} from './msg.js';
 import * as dom from './utils/dom.js';

@@ -6,12 +6,12 @@
 
 import {getFocusManager} from './focus_manager.js';
 import type {IFocusableNode} from './interfaces/i_focusable_node.js';
-import {IRenderedElement} from './interfaces/i_rendered_element.js';
+import type {IRenderedElement} from './interfaces/i_rendered_element.js';
 import * as layerNums from './layers.js';
-import {Coordinate} from './utils/coordinate.js';
+import type {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
 import {Svg} from './utils/svg.js';
-import {WorkspaceSvg} from './workspace_svg.js';
+import type {WorkspaceSvg} from './workspace_svg.js';
 
 /** @internal */
 export class LayerManager {

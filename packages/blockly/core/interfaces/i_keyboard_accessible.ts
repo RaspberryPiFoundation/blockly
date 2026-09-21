@@ -6,7 +6,7 @@
 
 // Former goog.module ID: Blockly.IKeyboardAccessible
 
-import {KeyboardShortcut} from '../shortcut_registry.js';
+import type {KeyboardShortcut} from '../shortcut_registry.js';
 
 /**
  * An interface for an object that handles keyboard shortcuts.

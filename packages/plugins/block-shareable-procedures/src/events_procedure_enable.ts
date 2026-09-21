@@ -5,7 +5,8 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {ProcedureBase, ProcedureBaseJson} from './events_procedure_base';
+import type {ProcedureBaseJson} from './events_procedure_base';
+import {ProcedureBase} from './events_procedure_base';
 
 /**
  * Notifies listeners that the procedure data model has been enabled or

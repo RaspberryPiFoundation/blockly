@@ -20,17 +20,15 @@ import {COMMENT_COLLAPSE_BAR_BUTTON_FOCUS_IDENTIFIER} from './comments/collapse_
 import {COMMENT_EDITOR_FOCUS_IDENTIFIER} from './comments/comment_editor.js';
 import {COMMENT_DELETE_BAR_BUTTON_FOCUS_IDENTIFIER} from './comments/delete_comment_bar_button.js';
 import {RenderedWorkspaceComment} from './comments/rendered_workspace_comment.js';
-import {WorkspaceComment} from './comments/workspace_comment.js';
+import type {WorkspaceComment} from './comments/workspace_comment.js';
 import * as common from './common.js';
 import {ComponentManager} from './component_manager.js';
 import {ConnectionDB} from './connection_db.js';
 import * as ContextMenu from './contextmenu.js';
-import {
-  ContextMenuOption,
-  ContextMenuRegistry,
-} from './contextmenu_registry.js';
+import type {ContextMenuOption} from './contextmenu_registry.js';
+import {ContextMenuRegistry} from './contextmenu_registry.js';
 import * as dropDownDiv from './dropdowndiv.js';
-import {Abstract as AbstractEvent} from './events/events.js';
+import type {Abstract as AbstractEvent} from './events/events.js';
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
 import {Flyout} from './flyout_base.js';
@@ -42,7 +40,7 @@ import * as hints from './hints.js';
 import {isAutoHideable} from './interfaces/i_autohideable.js';
 import type {IBoundedElement} from './interfaces/i_bounded_element.js';
 import type {IComponent} from './interfaces/i_component.js';
-import {IContextMenu} from './interfaces/i_contextmenu.js';
+import type {IContextMenu} from './interfaces/i_contextmenu.js';
 import type {IDragTarget} from './interfaces/i_drag_target.js';
 import type {IFlyout} from './interfaces/i_flyout.js';
 import {
@@ -1827,8 +1825,15 @@ export class WorkspaceSvg
     if (e instanceof PointerEvent) {
       location = new Coordinate(e.clientX, e.clientY);
     } else {
-      const x = this.RTL ? this.getWidth() - 5 : 5;
-      location = svgMath.wsToScreenCoordinates(this, new Coordinate(x, 5));
+      const viewportBounds = this.getMetricsManager().getViewMetrics(true);
+
+      const x = this.RTL
+        ? viewportBounds.left + viewportBounds.width - 5
+        : viewportBounds.left + 5;
+      location = svgMath.wsToScreenCoordinates(
+        this,
+        new Coordinate(x, viewportBounds.top + 5),
+      );
     }
 
     ContextMenu.show(e, menuOptions, this.RTL, this, location);

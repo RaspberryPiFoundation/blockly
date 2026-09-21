@@ -6,7 +6,7 @@
 
 import * as browserEvents from '../browser_events.js';
 import * as css from '../css.js';
-import {IRenderedElement} from '../interfaces/i_rendered_element.js';
+import type {IRenderedElement} from '../interfaces/i_rendered_element.js';
 import * as layers from '../layers.js';
 import {Msg} from '../msg.js';
 import * as touch from '../touch.js';
@@ -16,9 +16,9 @@ import * as dom from '../utils/dom.js';
 import * as drag from '../utils/drag.js';
 import {Size} from '../utils/size.js';
 import {Svg} from '../utils/svg.js';
-import {WorkspaceSvg} from '../workspace_svg.js';
+import type {WorkspaceSvg} from '../workspace_svg.js';
 import {CollapseCommentBarButton} from './collapse_comment_bar_button.js';
-import {CommentBarButton} from './comment_bar_button.js';
+import type {CommentBarButton} from './comment_bar_button.js';
 import {CommentEditor} from './comment_editor.js';
 import {DeleteCommentBarButton} from './delete_comment_bar_button.js';
 

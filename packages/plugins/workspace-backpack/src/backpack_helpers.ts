@@ -11,8 +11,8 @@
 
 import * as Blockly from 'blockly/core';
 
-import {Backpack} from './backpack';
-import {BackpackContextMenuOptions} from './options';
+import type {Backpack} from './backpack';
+import type {BackpackContextMenuOptions} from './options';
 
 /**
  * Registers a context menu option to remove a block from a backpack flyout.

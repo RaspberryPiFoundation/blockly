@@ -16,7 +16,8 @@ import type {BlockSvg} from './block_svg.js';
 import * as browserEvents from './browser_events.js';
 import * as common from './common.js';
 import type {Field} from './field.js';
-import {ReturnEphemeralFocus, getFocusManager} from './focus_manager.js';
+import type {ReturnEphemeralFocus} from './focus_manager.js';
+import {getFocusManager} from './focus_manager.js';
 import * as aria from './utils/aria.js';
 import * as dom from './utils/dom.js';
 import * as idGenerator from './utils/idgenerator.js';
@@ -805,11 +806,16 @@ function positionInternal(
 
   const parentElement = div.parentElement;
   if (parentElement) {
-    const bounds = parentElement.getBoundingClientRect();
-    initialX -= bounds.left + window.scrollX;
-    finalX -= bounds.left + window.scrollX;
-    initialY -= bounds.top + window.scrollY;
-    finalY -= bounds.top + window.scrollY;
+    ({x: initialX, y: initialY} = style.pageToContainerOffset(
+      initialX,
+      initialY,
+      parentElement,
+    ));
+    ({x: finalX, y: finalY} = style.pageToContainerOffset(
+      finalX,
+      finalY,
+      parentElement,
+    ));
   }
 
   // First apply initial translation.

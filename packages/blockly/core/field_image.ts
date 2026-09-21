@@ -11,7 +11,8 @@
  */
 // Former goog.module ID: Blockly.FieldImage
 
-import {Field, FieldConfig} from './field.js';
+import type {FieldConfig} from './field.js';
+import {Field} from './field.js';
 import * as fieldRegistry from './field_registry.js';
 import {Msg} from './msg.js';
 import {aria} from './utils.js';
@@ -351,7 +352,14 @@ export class FieldImage extends Field<string> {
    *     the returned label, if available.
    */
   override computeAriaLabel(includeTypeInfo: boolean): string {
-    return this.isClickable() ? '' : super.computeAriaLabel(includeTypeInfo);
+    const ariaValue = this.getAriaValue();
+    if (this.isClickable() || !ariaValue) return '';
+
+    const ariaTypeName = includeTypeInfo ? this.getAriaTypeName() : null;
+    if (ariaTypeName) {
+      return `${ariaTypeName}: ${ariaValue}`;
+    }
+    return ariaValue;
   }
 
   /**

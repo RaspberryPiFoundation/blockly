@@ -6,7 +6,7 @@
 
 import type {BlockSvg} from './block_svg.js';
 import * as renderManagement from './render_management.js';
-import {RenderedConnection} from './rendered_connection.js';
+import type {RenderedConnection} from './rendered_connection.js';
 import {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
 import {Size} from './utils/size.js';

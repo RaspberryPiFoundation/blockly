@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {IParameterModel} from '../interfaces/i_parameter_model.js';
-import {IProcedureModel} from '../interfaces/i_procedure_model.js';
+import type {IParameterModel} from '../interfaces/i_parameter_model.js';
+import type {IProcedureModel} from '../interfaces/i_procedure_model.js';
 import type {ISerializer} from '../interfaces/i_serializer.js';
 import type {Workspace} from '../workspace.js';
 import * as priorities from './priorities.js';

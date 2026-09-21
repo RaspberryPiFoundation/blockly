@@ -5,7 +5,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {ContinuousToolbox} from './ContinuousToolbox';
+import type {ContinuousToolbox} from './ContinuousToolbox';
 import {ContinuousCategory} from './ContinuousCategory';
 
 /**

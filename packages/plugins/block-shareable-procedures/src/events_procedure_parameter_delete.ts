@@ -5,10 +5,8 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {
-  ProcedureParameterBase,
-  ProcedureParameterBaseJson,
-} from './events_procedure_parameter_base';
+import type {ProcedureParameterBaseJson} from './events_procedure_parameter_base';
+import {ProcedureParameterBase} from './events_procedure_parameter_base';
 
 /**
  * Notifies listeners that a parameter has been removed from a procedure.

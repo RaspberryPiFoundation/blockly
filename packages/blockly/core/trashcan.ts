@@ -40,8 +40,8 @@ import {getNextUniqueId} from './utils/idgenerator.js';
 import {Rect} from './utils/rect.js';
 import {Size} from './utils/size.js';
 import {Svg} from './utils/svg.js';
+import type {BlockInfo} from './utils/toolbox.js';
 import * as toolbox from './utils/toolbox.js';
-import {BlockInfo} from './utils/toolbox.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 
 /**

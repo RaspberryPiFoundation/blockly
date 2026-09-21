@@ -8,13 +8,13 @@ import * as browserEvents from '../browser_events.js';
 import * as common from '../common.js';
 import {BubbleDragStrategy} from '../dragging/bubble_drag_strategy.js';
 import {getFocusManager} from '../focus_manager.js';
-import {IBoundedElement} from '../interfaces/i_bounded_element.js';
-import {IBubble} from '../interfaces/i_bubble.js';
+import type {IBoundedElement} from '../interfaces/i_bounded_element.js';
+import type {IBubble} from '../interfaces/i_bubble.js';
 import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
 import type {IFocusableTree} from '../interfaces/i_focusable_tree.js';
 import type {IHasBubble} from '../interfaces/i_has_bubble.js';
-import {ISelectable} from '../interfaces/i_selectable.js';
-import {ContainerRegion} from '../metrics_manager.js';
+import type {ISelectable} from '../interfaces/i_selectable.js';
+import type {ContainerRegion} from '../metrics_manager.js';
 import {Msg} from '../msg.js';
 import {Scrollbar} from '../scrollbar.js';
 import {aria} from '../utils.js';
@@ -25,7 +25,7 @@ import * as math from '../utils/math.js';
 import {Rect} from '../utils/rect.js';
 import {Size} from '../utils/size.js';
 import {Svg} from '../utils/svg.js';
-import {WorkspaceSvg} from '../workspace_svg.js';
+import type {WorkspaceSvg} from '../workspace_svg.js';
 
 /**
  * Represents a either a string or a function that, when called, can provide a

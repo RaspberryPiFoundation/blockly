@@ -10,7 +10,7 @@ import {assertEventFired} from './test_helpers/events.js';
 import {
   MockParameterModel,
   MockProcedureModel,
-} from './test_helpers/procedures.js';
+} from './test_helpers/procedures.ts';
 import {
   sharedTestSetup,
   sharedTestTeardown,

@@ -21,7 +21,7 @@ import * as ContextMenu from './contextmenu.js';
 import {ContextMenuRegistry} from './contextmenu_registry.js';
 import * as eventUtils from './events/utils.js';
 import type {InsertionMarker} from './insertion_marker.js';
-import {IContextMenu} from './interfaces/i_contextmenu.js';
+import type {IContextMenu} from './interfaces/i_contextmenu.js';
 import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
 import {hasBubble} from './interfaces/i_has_bubble.js';
@@ -31,7 +31,7 @@ import * as aria from './utils/aria.js';
 import {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
 import * as svgMath from './utils/svg_math.js';
-import {WorkspaceSvg} from './workspace_svg.js';
+import type {WorkspaceSvg} from './workspace_svg.js';
 
 /** Maximum randomness in workspace units for bumping a block. */
 const BUMP_RANDOMNESS = 10;

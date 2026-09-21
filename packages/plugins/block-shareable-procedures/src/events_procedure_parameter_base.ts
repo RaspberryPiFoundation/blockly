@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from 'blockly/core';
-import {ProcedureBase, ProcedureBaseJson} from './events_procedure_base';
+import type * as Blockly from 'blockly/core';
+import type {ProcedureBaseJson} from './events_procedure_base';
+import {ProcedureBase} from './events_procedure_base';
 
 /**
  * The base event for an event associated with a procedure parameter.

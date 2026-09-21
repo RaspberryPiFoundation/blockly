@@ -113,7 +113,7 @@ function wrapDefineBlocksWithJsonArrayWithCleanup_(sharedCleanupObj) {
  * The state sharedTestSetup() installs.
  * @typedef {{
  *   clock: import('sinon').SinonFakeTimers,
- *   eventsFireStub: (import('sinon').SinonStub|undefined),
+ *   eventsFireStub: (import('sinon').SinonStub),
  * }} SharedTestState
  */
 

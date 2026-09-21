@@ -5,11 +5,9 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {
-  ProcedureParameterBase,
-  ProcedureParameterBaseJson,
-} from './events_procedure_parameter_base';
-import {ObservableParameterModel} from './observable_parameter_model';
+import type {ProcedureParameterBaseJson} from './events_procedure_parameter_base';
+import {ProcedureParameterBase} from './events_procedure_parameter_base';
+import type {ObservableParameterModel} from './observable_parameter_model';
 
 /**
  * Notifies listeners that a procedure parameter was renamed.

@@ -6,7 +6,7 @@
 
 import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
-import sinon from 'sinon';
+import type sinon from 'sinon';
 import {defineRowBlock} from './test_helpers/block_definitions.js';
 import {createChangeListenerSpy} from './test_helpers/events.js';
 import {

@@ -5,7 +5,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {ObservableParameterModel} from './observable_parameter_model';
+import type {ObservableParameterModel} from './observable_parameter_model';
 import {ProcedureChangeReturn} from './events_procedure_change_return';
 import {ProcedureCreate} from './events_procedure_create';
 import {ProcedureDelete} from './events_procedure_delete';

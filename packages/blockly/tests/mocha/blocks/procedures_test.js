@@ -13,7 +13,7 @@ import {
   createProcCallBlock,
   createProcDefBlock,
   MockProcedureModel,
-} from '../test_helpers/procedures.js';
+} from '../test_helpers/procedures.ts';
 import {runSerializationTestSuite} from '../test_helpers/serialization.js';
 import {
   createGenUidStubWithReturns,

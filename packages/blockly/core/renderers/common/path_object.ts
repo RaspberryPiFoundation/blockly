@@ -7,9 +7,9 @@
 // Former goog.module ID: Blockly.blockRendering.PathObject
 
 import type {BlockSvg} from '../../block_svg.js';
-import {RenderedConnection} from '../../rendered_connection.js';
+import type {RenderedConnection} from '../../rendered_connection.js';
 import type {BlockStyle} from '../../theme.js';
-import {Coordinate} from '../../utils/coordinate.js';
+import type {Coordinate} from '../../utils/coordinate.js';
 import * as dom from '../../utils/dom.js';
 import {Svg} from '../../utils/svg.js';
 import type {ConstantProvider} from './constants.js';

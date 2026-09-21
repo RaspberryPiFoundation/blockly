@@ -15,18 +15,19 @@ import {Block} from './block.js';
 import * as blockAnimations from './block_animations.js';
 import {computeAriaLabel, configureAriaRole} from './block_aria_composer.js';
 import * as browserEvents from './browser_events.js';
-import {BlockCopyData, BlockPaster} from './clipboard/block_paster.js';
+import type {BlockCopyData} from './clipboard/block_paster.js';
+import {BlockPaster} from './clipboard/block_paster.js';
 import * as common from './common.js';
 import {config} from './config.js';
 import type {Connection} from './connection.js';
 import {ConnectionType} from './connection_type.js';
 import * as constants from './constants.js';
 import * as ContextMenu from './contextmenu.js';
-import {
+import type {
   ContextMenuOption,
-  ContextMenuRegistry,
   LegacyContextMenuOption,
 } from './contextmenu_registry.js';
+import {ContextMenuRegistry} from './contextmenu_registry.js';
 import {BlockDragStrategy} from './dragging/block_drag_strategy.js';
 import type {BlockMove} from './events/events_block_move.js';
 import {EventType} from './events/type.js';
@@ -34,14 +35,14 @@ import * as eventUtils from './events/utils.js';
 import {FieldLabel} from './field_label.js';
 import {getFocusManager} from './focus_manager.js';
 import * as hints from './hints.js';
-import {IconType} from './icons/icon_types.js';
+import type {IconType} from './icons/icon_types.js';
 import {MutatorIcon} from './icons/mutator_icon.js';
 import {WarningIcon} from './icons/warning_icon.js';
 import type {Input} from './inputs/input.js';
 import type {IBoundedElement} from './interfaces/i_bounded_element.js';
-import {IContextMenu} from './interfaces/i_contextmenu.js';
+import type {IContextMenu} from './interfaces/i_contextmenu.js';
 import type {ICopyable} from './interfaces/i_copyable.js';
-import {IDeletable} from './interfaces/i_deletable.js';
+import type {IDeletable} from './interfaces/i_deletable.js';
 import type {
   DragDisposition,
   IDragStrategy,
@@ -49,7 +50,7 @@ import type {
 } from './interfaces/i_draggable.js';
 import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
-import {IIcon} from './interfaces/i_icon.js';
+import type {IIcon} from './interfaces/i_icon.js';
 import * as internalConstants from './internal_constants.js';
 import {KeyboardMover} from './keyboard_nav/keyboard_mover.js';
 import {Msg} from './msg.js';
@@ -66,7 +67,7 @@ import * as dom from './utils/dom.js';
 import {Rect} from './utils/rect.js';
 import {Svg} from './utils/svg.js';
 import * as svgMath from './utils/svg_math.js';
-import {FlyoutItemInfo} from './utils/toolbox.js';
+import type {FlyoutItemInfo} from './utils/toolbox.js';
 import * as userAgent from './utils/useragent.js';
 import type {Workspace} from './workspace.js';
 import type {WorkspaceSvg} from './workspace_svg.js';

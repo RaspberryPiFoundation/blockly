@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {CommentMove} from '../events/events_comment_move.js';
-import {CommentResize} from '../events/events_comment_resize.js';
+import type {CommentMove} from '../events/events_comment_move.js';
+import type {CommentResize} from '../events/events_comment_resize.js';
 import {EventType} from '../events/type.js';
 import * as eventUtils from '../events/utils.js';
 import {Coordinate} from '../utils/coordinate.js';
 import * as idGenerator from '../utils/idgenerator.js';
-import {Size} from '../utils/size.js';
-import {Workspace} from '../workspace.js';
+import type {Size} from '../utils/size.js';
+import type {Workspace} from '../workspace.js';
 import {CommentView} from './comment_view.js';
 
 export class WorkspaceComment {

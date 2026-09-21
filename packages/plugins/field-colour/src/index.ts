@@ -10,7 +10,7 @@ import * as colourPicker from './blocks/colourPicker';
 import * as colourRandom from './blocks/colourRandom';
 import * as colourRgb from './blocks/colourRgb';
 import * as colourBlend from './blocks/colourBlend';
-import {Generators} from './blocks/generatorsType';
+import type {Generators} from './blocks/generatorsType';
 
 // Re-export all parts of the definition.
 export * as colourPicker from './blocks/colourPicker';

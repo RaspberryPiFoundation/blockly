@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {BlockSvg} from './block_svg.js';
+import type {BlockSvg} from './block_svg.js';
 import * as eventUtils from './events/utils.js';
 import * as userAgent from './utils/useragent.js';
 import type {WorkspaceSvg} from './workspace_svg.js';

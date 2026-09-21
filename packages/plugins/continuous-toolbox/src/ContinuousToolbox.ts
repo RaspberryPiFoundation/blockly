@@ -9,7 +9,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {ContinuousFlyout} from './ContinuousFlyout';
+import type {ContinuousFlyout} from './ContinuousFlyout';
 import {ContinuousToolboxNavigator} from './ContinuousToolboxNavigator';
 
 /**

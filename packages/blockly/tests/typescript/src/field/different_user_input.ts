@@ -9,7 +9,8 @@
  * constructor input type than the type that is stored.
  */
 
-import {Field, FieldValidator, fieldRegistry} from 'blockly-test/core';
+import type {FieldValidator} from 'blockly-test/core';
+import {Field, fieldRegistry} from 'blockly-test/core';
 
 interface Cell {
   cellId: string;

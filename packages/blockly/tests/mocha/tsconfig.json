@@ -4,6 +4,7 @@
   "compilerOptions": {
     "checkJs": false,
     "noEmit": true,
+    "allowImportingTsExtensions": true,
     // Keep the incremental cache the parent config enables out of the source
     // tree, alongside the other build artifacts.
     "tsBuildInfoFile": "../../build/tests/mocha-tsconfig.tsbuildinfo",

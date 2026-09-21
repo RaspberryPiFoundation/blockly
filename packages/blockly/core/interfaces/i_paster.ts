@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {Coordinate} from '../utils/coordinate.js';
-import {WorkspaceSvg} from '../workspace_svg.js';
-import {ICopyable, ICopyData} from './i_copyable.js';
+import type {Coordinate} from '../utils/coordinate.js';
+import type {WorkspaceSvg} from '../workspace_svg.js';
+import type {ICopyable, ICopyData} from './i_copyable.js';
 
 /** An object that can paste data into a workspace. */
 export interface IPaster<U extends ICopyData, T extends ICopyable<U>> {

@@ -12,12 +12,12 @@ import {
   createBlockDefinitionsFromJsonArray,
   defineBlocks,
 } from '../core/common.js';
-import {Connection} from '../core/connection.js';
+import type {Connection} from '../core/connection.js';
 import * as Extensions from '../core/extensions.js';
-import {FieldDropdown} from '../core/field_dropdown.js';
-import {FieldImage} from '../core/field_image.js';
+import type {FieldDropdown} from '../core/field_dropdown.js';
+import type {FieldImage} from '../core/field_image.js';
 import * as fieldRegistry from '../core/field_registry.js';
-import {FieldTextInput} from '../core/field_textinput.js';
+import type {FieldTextInput} from '../core/field_textinput.js';
 import '../core/field_variable.js';
 import {MutatorIcon} from '../core/icons/mutator_icon.js';
 import {Align} from '../core/inputs/align.js';
