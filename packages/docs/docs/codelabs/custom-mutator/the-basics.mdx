@@ -1,20 +1,202 @@
 ---
-description:  What a mutator is and when to use one.
+description:  What a mutator is, and how to set up a custom block to use one.
 ---
+
+import Image from '@site/src/components/Image';
 
 # Build a custom mutator
 
-## 3. Mutator overview
+## 3. Mutator overview and block creation
 
-Define mutators, link to guides, maybe note default UI vs custom UI
-Might need to add making the block to this step
+When a block has extra state that can't be represented by the fields or other
+attributes of a block, it needs a mutator. Common examples are if/else and list 
+blocks, which need to keep track of how many inputs they have. For more on 
+mutators and the default mutator UI, visit the [mutators guide](https://docs.blockly.com/guides/create-custom-blocks/mutators/).
 
-### Heading 
+Mutators are a type of [mixin](https://docs.blockly.com/guides/create-custom-blocks/define/extensions/#mixins),
+meaning that they add custom functions to a block. The functions that a mutator 
+includes depends on the desired behavior of the mutator. At the very least, 
+mutators all need [serialization hooks](https://docs.blockly.com/guides/create-custom-blocks/mutators/#serialization-hooks) 
+in order to save and load the extra state. This codelab uses a custom mutator UI, 
+but mutators that implement the default UI must also include `compose` and 
+`decompose` functions.
 
-### Heading 
+In this codelab, you will be making custom list block mutator. This starts with 
+creating the block.
 
-### Heading 
+### Create the custom block 
 
-### Heading 
+In the `blocks` folder, create a new file called `list.js`. Add the following
+code to create the custom block definition:
 
+```js
+import * as Blockly from 'blockly/core';
 
+const resizableListBlock = {
+  type: 'resizable_list',
+  message0: 'resizable list with %1',
+  args0: [
+    {
+      type: 'input_value',
+      name: 'ADD0',
+    }
+  ],
+  output: null,
+  style: "list_blocks",
+  tooltip: '',
+  helpUrl: '',
+};
+
+// Create the block definitions
+export const mutatorBlocks = Blockly.common.createBlockDefinitionsFromJsonArray([
+  resizableListBlock
+]);
+```
+
+For more on block definitions, review the [block definition guides](https://docs.blockly.com/guides/create-custom-blocks/define/block-definitions/).
+
+### Use the new block
+
+Now, register the new block and add it to the toolbox in order to use it in the 
+workspace. In `index.js`, import the block definition, then register the block where the other
+custom block and generator are registered:
+
+```js {1,7}
+import {mutatorBlocks} from './blocks/list'; // Add this import to index.js
+
+...
+
+// Register the blocks and generator with Blockly
+Blockly.common.defineBlocks(blocks);
+Blockly.common.defineBlocks(mutatorBlocks); // Add this line to index.js
+Object.assign(javascriptGenerator.forBlock, forBlock);
+```
+
+The toolbox should also contain the new block, so that it can be dragged into 
+the workspace and used. Find the 'Lists' category in `toolbox.js`, then add an 
+entry for the new block:
+
+```js {6-9}
+{
+    kind: 'category',
+    name: 'Lists',
+    categorystyle: 'list_category',
+    contents: [
+    {
+        kind: 'block', 
+        type: 'resizable_list', 
+    },
+    {
+        kind: 'block',
+        type: 'lists_create_with',
+    },
+    ...
+}
+```
+### Create and register the mutator
+
+Create a new folder called `mutators`, then create a file in that folder called 
+`list_mutator.js`. In `list_mutator.js`, import Blockly, then create an empty object:
+
+```js
+import * as Blockly from 'blockly/core';
+
+// The mutator mixin
+export const LIST_MUTATOR = { 
+    // Add mutator functions here 
+};
+```
+
+The `LIST_MUTATOR` will be the mixin object for the custom mutator. In 
+the next step, you'll add functions to this mixin object in order to make the
+mutator work. 
+
+Now, register the mutator with [`Blockly.Extensions.registerMutator`](https://docs.blockly.com/reference/namespaces/Extensions/functions/registerMutator/). 
+This function requires a string name and a mixin object. It also takes optional 
+parameters: 
+- A function which runs after the mixin functions are added to the block.
+- A list of blocks to include in the mutator flyout, if you are using the default 
+mutator UI. This parameter is not applicable in this codelab, since you will be 
+creating a custom UI. 
+
+In this case, the optional function is a great way to initialize the number of 
+list items in the mutator. Since the block starts with one input (see the 
+[block definition](#create-the-custom-block)), you'll set a variable on the block
+called `itemCount` to 1.
+
+Add the following import and registration to `index.js`: 
+
+```js {1,9-13}
+import {LIST_MUTATOR} from './mutators/list_mutator';
+
+...
+
+// Register the blocks and generator with Blockly
+Blockly.common.defineBlocks(blocks);
+Blockly.common.defineBlocks(mutatorBlocks); 
+Object.assign(javascriptGenerator.forBlock, forBlock);
+Blockly.Extensions.registerMutator(
+  'list_mutator',
+  LIST_MUTATOR,
+  function() { this.itemCount = 1; },
+);
+```
+
+### Add the mutator to the block
+
+Now that the block is registered, add it to the block definition in `list.js`:
+
+```js {14}
+const resizableListBlock = {
+  type: 'resizable_list',
+  message0: 'resizable list with %1',
+  args0: [
+    {
+      type: 'input_value',
+      name: 'ADD0',
+    }
+  ],
+  output: null,
+  style: "list_blocks",
+  tooltip: '',
+  helpUrl: '',
+  mutator: 'list_mutator',
+};
+```
+
+### Add a stand-in generator
+
+If you start the app now by running `npm run start` in the codelab folder, then
+attempt to drag the new block into the workspace, you'll likely get an error:
+`JavaScript generator does not know how to generate code for block type "resizable_list".`
+
+This error occurs because sample app's code window displays the code for all 
+blocks on the workspace, but this new block does not yet have a 
+[block-code generator](https://docs.blockly.com/guides/create-custom-blocks/code-generation/block-code/). 
+Without the block-code generator, Blocky's JavaScript generator can't generate 
+the code for the new block.
+
+For now, insert a placeholder generator to avoid this error. After you add the 
+mutator functions in the next few steps, you will circle back and implement this 
+generator code. 
+
+Add the following code to `javascript.js`, which is in the `generators` folder:
+
+```js
+forBlock['resizable_list'] = function (block, generator) {
+    // `resizable_list` has an output, so its generator must return a [code, order] tuple
+    return ['', Order.ATOMIC];
+}
+```
+
+### Test it
+
+Start the app by first navigating to the codelab folder in the terminal, then 
+run `npm run start`. Open the list category to see the new block. It now can be 
+dragged into the workspace, but there is not a way to add or remove inputs yet. 
+
+<Image
+  src="/images/codelabs/custom-mutator/block_in_flyout.png"
+  alt="The new list block seen in the 'List' category of the toolbox flyout"
+  className="codelabImage"
+/>

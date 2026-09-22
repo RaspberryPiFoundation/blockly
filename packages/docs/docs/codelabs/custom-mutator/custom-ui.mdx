@@ -1,19 +1,164 @@
 ---
-description:  What a mutator is and when to use one.
+description:  Choosing and implementing a UI for the mutator. 
 ---
+
+import Image from '@site/src/components/Image';
 
 # Build a custom mutator
 
-## 6. Create a custom UI
+## 6. Create a UI
 
-### Consider your options
+The best UI for your mutator is highly dependent on what the mutator does, and 
+who the audience of your Blockly app is. There are a few options for your
+mutator UI: 
+- Blockly default (gear icon)
+- Plus-minus plugin
+- Dynamic connections plugin
+- Custom UI
 
-Explain that the best UI for your mutator is highly context dependent
-Blockly gives a few options (default, link plus minus plugin, link the other plugin)
+1. Blockly default: Blockly mutators use a gear icon which opens up a mini workspace 
+in which users can drag blocks to form their desired mutator shape. See the 
+[mutators guide](https://docs.blockly.com/guides/create-custom-blocks/mutators/#compose-and-decompose)
+for more information on how to implement the default UI. 
 
-### Context menus
+<Image
+  src="/images/codelabs/custom-mutator/if_else_default.png"
+  alt="Screenshot of the block built in this codelab. There are multiple inputs to the block, with a context menu open that shows options for 'Add Item' and 'Remove Item'"
+  className="codelabImage"
+/>
 
-Just a quick blurb, link to context menu codelab
+2. Plus-minus: The [plus-minus plugin](https://raspberrypifoundation.github.io/blockly-samples/plugins/block-plus-minus/test/index.html)
+adds + and - icons that the user can click to add or remove inputs.
 
+<Image
+  src="/images/codelabs/custom-mutator/if_else_plus_minus.png"
+  alt="Screenshot of the block built in this codelab. There are multiple inputs to the block, with a context menu open that shows options for 'Add Item' and 'Remove Item'"
+  className="codelabImage"
+/>
 
-### Add a context menu option
+3. Dynamic connections: The [dynamic connections plugin](https://raspberrypifoundation.github.io/blockly-samples/plugins/block-dynamic-connection/test/index.html)
+automatically adds and removes inputs based on user interaction.
+
+/* TODO: gif??? */
+
+4. Custom UI: In addition to the above options, you can also implement your own 
+custom ways of interacting with the mutator. 
+
+### Custom UI with context menus
+
+This codelab will implement a custom UI using Blockly's context menus. 
+
+See the [context menu guide](https://docs.blockly.com/guides/configure/context-menus/) 
+for general information about context menus in Blockly. For a walkthrough of 
+adding custom context menu items, see the [context menu codelab](https://docs.blockly.com/codelabs/context-menu-option/codelab-overview/).
+
+Any mutator UI option has benefits and drawbacks. Using context menus
+to define mutator behavior is a helpful example to see how custom UI behavior
+can work. Howevever, options in the context menu are not very discoverable to 
+users, so this approach is generally *not* recommended unless you have a 
+specific reason to use context menus.
+
+### Add callbacks
+
+Two more functions complete the `LIST_MUTATOR` object: `addConnection()` 
+and `removeConnection()`. These functions can be called to add or remove an input.
+They simply update the `itemCount` and call `updateShape()` to update the block.
+
+Add the following code to the `LIST_MUTATOR` object:
+
+```js
+export const LIST_MUTATOR = {
+    ...
+
+    addConnection: function() {
+        this.itemCount++;
+        this.updateShape();
+    },
+    removeConnection: function() {
+        if (this.itemCount > 1) {
+            this.itemCount--;
+            this.updateShape();
+        }
+    },
+};
+```
+
+### Create the "Add Item" context menu option
+
+For the precondition, check if this is the right type of block to determine
+whether the "Add Item" option should be enabled or hidden.
+
+Since the mutator is "mixed in" to the block definition, you can call 
+`addConnection()` directly on the block for the callback function. 
+
+Add the following code to `index.js`:
+
+```js
+function registerAddItem() {
+  const addItem = {
+    displayText: 'Add Item',
+    preconditionFn: function (scope) {
+      if(scope.focusedNode instanceof Blockly.BlockSvg && scope.focusedNode.type === 'resizable_list') {
+        return 'enabled';
+      }
+      return 'hidden';
+    }, 
+    callback: (scope) => { scope.focusedNode.addConnection(); },
+    id: 'add_item',
+    weight: 100,
+  };
+  Blockly.ContextMenuRegistry.registry.register(addItem);
+}
+```
+
+### Create the "Remove Item" context menu option
+
+The "Remove Item" option is largely the same as the "Add Item" option. However, 
+it also includes a guard to ensure that the total number if items will not be 
+less than one. If there is only one input, the "Remove Item" option will be
+greyed out:
+
+<Image
+  src="/images/codelabs/custom-mutator/greyed_out_context_option.png"
+  alt="Custom list block with one input and an open context menu that shows a greyed out 'Remove Item' option"
+  className="codelabImage"
+/>
+
+Add the following code to `index.js`:
+
+```js
+function registerRemoveItem() {
+  const removeItem = {
+    displayText: 'Remove Item',
+    preconditionFn: function (scope) {
+      if(scope.focusedNode instanceof Blockly.BlockSvg && scope.focusedNode.type === 'resizable_list') {
+        if(scope.focusedNode.itemCount <= 1) {
+          return 'disabled';
+        }
+        return 'enabled';
+      }
+      return 'hidden';
+    }, 
+    callback: (scope) => { scope.focusedNode.removeConnection(); },
+    id: 'remove_item',
+    weight: 110,
+  };
+  Blockly.ContextMenuRegistry.registry.register(removeItem);
+}
+```
+
+### Call the register functions
+
+Finally, call both `registerAddItem()` and `registerRemoveItem()` in `index.js`
+so that the context menu items actually get registered. 
+
+```js {6-7}
+// Register the blocks and generator with Blockly
+Blockly.common.defineBlocks(blocks);
+Blockly.common.defineBlocks(mutatorBlocks);
+Object.assign(javascriptGenerator.forBlock, forBlock);
+
+registerAddItem();
+registerRemoveItem();
+```
+

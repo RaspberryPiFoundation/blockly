@@ -1,16 +1,50 @@
 ---
-description:  What a mutator is and when to use one.
+description:  How to add serialization and deserialization to a mutator.
 ---
-/* TODO: Fix *all* descriptions */
+
 # Build a custom mutator
 
-## 4. Create the mutator
+## 4. Saving and loading the extra state
 
-Note that this is heavily based on blockly's list_create_with
+Since mutators contain extra state, this extra state needs to be serialized and 
+deserialized with the rest of the state of the block. Although mutators can 
+vary greatly, any mutator requires [serialization hooks](https://docs.blockly.com/guides/create-custom-blocks/mutators/#serialization-hooks). 
 
-### Implement init
+### Serialize
 
-### Implement saveExtraState
+The mutator must serialize the extra state of the block. This is accomplished by 
+implementing the function `saveExtraState()`. Since this codelab implements a 
+list mutator, you can use the same `saveExtraState()` code as the default 
+`list_create_with` block. This function should return a JSON serializable value.
 
-### Implement loadExtrastate
+Add the following code to the `LIST_MUTATOR` object:
+
+```js
+export const LIST_MUTATOR = {
+    saveExtraState: function() {
+        return {
+            'itemCount': this.itemCount,
+        };
+    },
+};
+```
+
+### Deserialize
+
+The mutator mixin must also load, or deserialize, the extra state of the block. 
+To deserialize, `loadExtraState()` reads in the `itemCount` value from the 
+`state` of the block. Since this list block will add or remove inputs based on 
+the value of `itemCount`, it is also important to update the physical shape after
+loading. 
+
+Add the following code to the `LIST_MUTATOR`, just after `saveExtraState()`:
+
+```js
+loadExtraState: function(state) {
+    this.itemCount = state['itemCount'];
+    // This is a helper function which adds or removes inputs from the block.
+    this.updateShape();
+},
+```
+
 
