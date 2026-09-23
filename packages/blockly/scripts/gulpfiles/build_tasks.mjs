@@ -28,7 +28,6 @@ import {
   LANG_BUILD_DIR,
   RELEASE_DIR,
   TSC_OUTPUT_DIR,
-  TYPINGS_BUILD_DIR,
 } from './config.mjs';
 
 import {posixPath, quote} from '../helpers.js';
