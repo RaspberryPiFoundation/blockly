@@ -6,12 +6,23 @@
 
 import * as Blockly from 'blockly/core';
 
-interface DropdownOption {
+/** A value a field could be rewritten to, in order to make a query visible. */
+interface FieldCandidate {
+  // The id, in the saved state, of the block owning the field.
+  blockId: string;
   fieldName: string;
+  // Lowercase text that would be visible if this value were set.
   label: string;
-  value: string;
+  // The value to write into the block's serialized fields, either an option value
+  // for dropdown options, or an object with name and type for variable fields.
+  value: string | {name: string; type: string};
+  // Whether the field already holds this value.
   selected: boolean;
 }
+
+/** A block in a toolbox definition, or in a serialized block state. */
+type BlockNode =
+  Blockly.utils.toolbox.BlockInfo | Blockly.serialization.blocks.State;
 
 /**
  * A class that provides methods for indexing and searching blocks.
@@ -25,20 +36,25 @@ export class BlockSearcher {
   // A map of blocks to the text that was indexed for them, used to filter
   // the results of a search to only those blocks that contain the search term.
   private blockText = new Map<Blockly.utils.toolbox.BlockInfo, string[]>();
-  // A map of blocks to the options of their dropdown fields, used to generate
-  // variants of blocks with different dropdown values.
-  private dropdownOptions = new Map<
+  // A map of blocks to the field values they could be rewritten to, used to
+  // show a block with the searched text visible on it.
+  private fieldCandidates = new Map<
     Blockly.utils.toolbox.BlockInfo,
-    DropdownOption[]
+    FieldCandidate[]
   >();
-  // A map of blocks to the names of their variable fields, used to generate
-  // variants of blocks with different variable values.
-  private variableFields = new Map<Blockly.utils.toolbox.BlockInfo, string[]>();
-  // All workspace variables, sorted by name, updated when blocks are indexed.
-  private workspaceVariables: Array<
-    Blockly.IVariableModel<Blockly.IVariableState>
-  > = [];
+  // The workspace whose variables searches are matched against.
+  private workspace: Blockly.Workspace;
+  // A map of blocks to the serialized state of the block built while indexing.
+  // Rewrites go through this rather than the toolbox definition, because it
+  // carries an id for every block in the tree and the definition does not.
+  private blockStates = new Map<
+    Blockly.utils.toolbox.BlockInfo,
+    Blockly.utils.toolbox.BlockInfo
+  >();
 
+  constructor(workspace: Blockly.Workspace) {
+    this.workspace = workspace;
+  }
   /**
    * Populates the cached map of trigrams to the blocks they correspond to.
    *
@@ -48,28 +64,23 @@ export class BlockSearcher {
    * itself.
    *
    * @param blockInfos A list of blocks to index.
-   * @param workspace The workspace source of truth for variables. This is
-   *   used to index variable names and update variable fields.
    */
-  indexBlocks(
-    blockInfos: Blockly.utils.toolbox.BlockInfo[],
-    workspace: Blockly.Workspace,
-  ) {
+  indexBlocks(blockInfos: Blockly.utils.toolbox.BlockInfo[]) {
     this.blockText.clear();
-    this.dropdownOptions.clear();
+    this.fieldCandidates.clear();
     this.trigramsToBlocks.clear();
-    this.variableFields.clear();
-    this.workspaceVariables = workspace
+    this.blockStates.clear();
+    const workspaceVariables = this.workspace
       .getVariableMap()
       .getAllVariables()
       .sort(Blockly.Variables.compareByName);
-
+    Blockly.Events.disable();
     const blockCreationWorkspace = new Blockly.Workspace();
     blockInfos.forEach((blockInfo) => {
       const type = blockInfo.type;
       if (!type || type === '') return;
       blockCreationWorkspace.clear();
-      this.workspaceVariables.forEach((variable) =>
+      workspaceVariables.forEach((variable) =>
         blockCreationWorkspace
           .getVariableMap()
           .createVariable(variable.getName(), variable.getType()),
@@ -78,56 +89,50 @@ export class BlockSearcher {
         blockInfo as Blockly.serialization.blocks.State,
         blockCreationWorkspace,
       );
+      const state = Blockly.serialization.blocks.save(block);
+      if (state)
+        // Merged with the original block info to preserve the kind and other props.
+        this.blockStates.set(blockInfo, {...blockInfo, ...state});
       this.indexBlockText(type.replaceAll('_', ' '), blockInfo);
-      const variableFieldNames: string[] = [];
-
-      // Index the text of every field on the block and its descendants, and record
-      // the names of any variable fields for later use in generating variants.
+      // Index the text of every field on the block and its descendants, and
+      // record the values each field could be rewritten to.
       block.getDescendants(false).forEach((descendantBlock) => {
         descendantBlock.inputList.forEach((input) => {
           input.fieldRow.forEach((field) => {
+            this.indexBlockText(field.getText(), blockInfo);
             if (field instanceof Blockly.FieldVariable) {
-              this.indexBlockText(field.getText(), blockInfo);
-              // If the current variable is one of the workspace variables, record
-              // the field name for later use in generating variants.
-              if (
-                descendantBlock === block &&
-                field.name &&
-                this.workspaceVariables.some(
-                  (v) => v.getName() === field.getText(),
-                )
-              ) {
-                variableFieldNames.push(field.name);
-              }
+              this.indexVariableCandidates(
+                field,
+                descendantBlock.id,
+                blockInfo,
+                workspaceVariables,
+              );
             } else {
-              // Index the text of the dropdown option and the block.
-              this.indexDropdownOption(field, blockInfo);
-              this.indexBlockText(field.getText(), blockInfo);
+              this.indexDropdownCandidates(
+                field,
+                descendantBlock.id,
+                blockInfo,
+              );
             }
           });
         });
       });
-      if (variableFieldNames.length) {
-        // Index all workspace variable names for the block, so that a search for any of them
-        // will return the block, and record the names of the variable fields for later use
-        // in generating variants.
-        this.variableFields.set(blockInfo, variableFieldNames);
-        this.workspaceVariables.forEach((variable) => {
-          this.indexBlockText(variable.getName(), blockInfo);
-        });
-      }
     });
     blockCreationWorkspace.dispose();
+    Blockly.Events.enable();
   }
 
   /**
-   * Check if the field is a dropdown, and index every text in the option
+   * Indexes a dropdown field's option labels and records each option
+   * as a value the field could be rewritten to.
    *
-   * @param field We need to check the type of field
+   * @param field The field to index.
+   * @param blockId The id of the block containing the field.
    * @param block The block to associate the trigrams with.
    */
-  private indexDropdownOption(
+  private indexDropdownCandidates(
     field: Blockly.Field,
+    blockId: string,
     block: Blockly.utils.toolbox.BlockInfo,
   ) {
     if (!(field instanceof Blockly.FieldDropdown)) {
@@ -143,36 +148,60 @@ export class BlockSearcher {
       if (!text) return;
       this.indexBlockText(text, block);
       if (!field.name || typeof value !== 'string') return;
-      const options = this.dropdownOptions.get(block) ?? [];
-      options.push({
+      this.addCandidate(block, {
+        blockId,
         fieldName: field.name,
         label: text.toLowerCase(),
         value,
         selected: value === field.getValue(),
       });
-      this.dropdownOptions.set(block, options);
     });
   }
 
   /**
-   * Returns a list of variants of the given block with different dropdown values
+   * Indexes every workspace variable name against the block and records each
+   * as a value the field could be rewritten to.
    *
-   * @param info The block to vary.
-   * @param options The options whose labels matched the query.
-   * @returns One block per matching option.
+   * A field set to a variable that exists only in the flyout is left alone.
+   *
+   * @param field The variable field to index.
+   * @param blockId The id of the block containing the field.
+   * @param block The block to associate the trigrams with.
+   * @param variables The workspace's variables, sorted by name.
    */
-  private createMatchingBlockVariants(
-    info: Blockly.utils.toolbox.BlockInfo,
-    options: Array<{fieldName: string; value: string; selected: boolean}>,
-  ): Blockly.utils.toolbox.BlockInfo[] {
-    if (!options.length) return [info];
-    // One variant per matching option, each differing in a single field, so
-    // two matching dropdowns give two results rather than four.
-    return options.map((option) =>
-      option.selected
-        ? info
-        : {...info, fields: {...info.fields, [option.fieldName]: option.value}},
-    );
+  private indexVariableCandidates(
+    field: Blockly.FieldVariable,
+    blockId: string,
+    block: Blockly.utils.toolbox.BlockInfo,
+    variables: Array<Blockly.IVariableModel<Blockly.IVariableState>>,
+  ) {
+    const current = field.getText();
+    if (!field.name || !variables.some((v) => v.getName() === current)) return;
+    variables.forEach((variable) => {
+      this.indexBlockText(variable.getName(), block);
+      this.addCandidate(block, {
+        blockId,
+        fieldName: field.name as string,
+        label: variable.getName().toLowerCase(),
+        value: {name: variable.getName(), type: variable.getType()},
+        selected: variable.getName() === current,
+      });
+    });
+  }
+
+  /**
+   * Records a value a field could be rewritten to.
+   *
+   * @param block The block the field belongs to.
+   * @param candidate The value and the text it would make visible.
+   */
+  private addCandidate(
+    block: Blockly.utils.toolbox.BlockInfo,
+    candidate: FieldCandidate,
+  ) {
+    const candidates = this.fieldCandidates.get(block) ?? [];
+    candidates.push(candidate);
+    this.fieldCandidates.set(block, candidates);
   }
 
   /**
@@ -200,39 +229,32 @@ export class BlockSearcher {
     const matches = candidates.filter((block) =>
       this.blockText.get(block)?.some((text) => text.includes(searchTerm)),
     );
-
-    const matchedVariables = this.workspaceVariables.filter((v) =>
-      v.getName().toLowerCase().includes(searchTerm),
-    );
     // The flyout creates one getter per variable, and they all collapse onto
     // the same block once bound, so results are keyed by content.
     const results = new Map<string, Blockly.utils.toolbox.BlockInfo>();
     for (const match of matches) {
-      const variableFieldNames = this.variableFields.get(match);
-      const bound =
-        variableFieldNames && matchedVariables.length
-          ? matchedVariables.map((variable) => ({
-              ...match,
-              fields: {
-                ...match.fields,
-                ...Object.fromEntries(
-                  variableFieldNames.map((name) => [
-                    name,
-                    {name: variable.getName(), type: variable.getType()},
-                  ]),
-                ),
-              },
-            }))
-          : [match];
-
-      const options = (this.dropdownOptions.get(match) ?? []).filter((option) =>
-        option.label.includes(searchTerm),
+      const candidates = (this.fieldCandidates.get(match) ?? []).filter(
+        (candidate) => candidate.label.includes(searchTerm),
       );
-
-      for (const info of bound) {
-        for (const variant of this.createMatchingBlockVariants(info, options)) {
-          results.set(JSON.stringify(variant), variant);
-        }
+      // If the value is already showing, the block doesn't need to be updated.
+      const hasUnselectedCandidates =
+        candidates.length > 0 &&
+        !candidates.some((candidate) => candidate.selected);
+      const variants = hasUnselectedCandidates
+        ? candidates.map((candidate) =>
+            this.updateBlockField(
+              this.blockStates.get(match) ?? match,
+              candidate,
+            ),
+          )
+        : [match];
+      for (const variant of variants) {
+        // Ignore the id when comparing, so that we don't end up with two
+        // copies of the same block.
+        const key = JSON.stringify(variant, (property, value) =>
+          property === 'id' ? undefined : value,
+        );
+        results.set(key, hasUnselectedCandidates ? JSON.parse(key) : variant);
       }
     }
     return [...results.values()];
@@ -288,5 +310,44 @@ export class BlockSearcher {
     b: Set<Blockly.utils.toolbox.BlockInfo>,
   ): Set<Blockly.utils.toolbox.BlockInfo> {
     return new Set([...a].filter((value) => b.has(value)));
+  }
+
+  /**
+   * Returns the block with the given id, searched depth-first.
+   *
+   * @param node The block to search, along with its descendants.
+   * @param id The block id to find.
+   * @returns The matching block, or null if it isn't there.
+   */
+  private getNodeById(node: BlockNode, id: string): BlockNode | null {
+    if (node.id === id) return node;
+    for (const connection of [...Object.values(node.inputs ?? {}), node.next]) {
+      for (const childBlock of [connection?.block, connection?.shadow]) {
+        const found = childBlock && this.getNodeById(childBlock, id);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns a copy of a block's state with one of its fields set.
+   *
+   * @param info The state to copy.
+   * @param candidate The field to set, which may be on any block in the tree,
+   *     and the value to set it to.
+   * @returns A copy with the field set, or info itself if the block is gone.
+   */
+  private updateBlockField(
+    info: Blockly.utils.toolbox.BlockInfo,
+    candidate: FieldCandidate,
+  ): Blockly.utils.toolbox.BlockInfo {
+    const copy = JSON.parse(
+      JSON.stringify(info),
+    ) as Blockly.utils.toolbox.BlockInfo;
+    const target = this.getNodeById(copy, candidate.blockId);
+    if (!target) return info;
+    target.fields = {...target.fields, [candidate.fieldName]: candidate.value};
+    return copy;
   }
 }

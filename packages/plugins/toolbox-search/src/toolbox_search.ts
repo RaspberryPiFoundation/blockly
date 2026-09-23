@@ -22,7 +22,7 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
   static readonly SEARCH_CATEGORY_KIND = 'search';
   private readonly SEARCH_INPUT_ID = 'toolbox-search-input';
   private searchField?: HTMLInputElement;
-  private blockSearcher = new BlockSearcher();
+  private blockSearcher: BlockSearcher;
   private onChangeWrapper?: (event: Blockly.Events.Abstract) => void;
   private indexedBlocks = '';
   private boundEvents: Blockly.browserEvents.Data[] = [];
@@ -42,6 +42,7 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
     opt_parent?: Blockly.ICollapsibleToolboxItem,
   ) {
     super(categoryDef, parentToolbox, opt_parent);
+    this.blockSearcher = new BlockSearcher(this.workspace_);
     this.initBlockSearcher();
     this.registerShortcut();
     this.onChangeWrapper = this.handleWorkspaceChange.bind(this);
@@ -185,7 +186,7 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
     this.workspace_.options.languageTree?.contents?.forEach((item) =>
       this.getAvailableBlocks(item, availableBlocks),
     );
-    this.blockSearcher.indexBlocks([...availableBlocks], this.workspace_);
+    this.blockSearcher.indexBlocks([...availableBlocks]);
   }
 
   /** See IFocusableNode.getFocusableElement. */
@@ -308,7 +309,7 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
     ]);
     if (snapshot === this.indexedBlocks) return false;
     this.indexedBlocks = snapshot;
-    this.blockSearcher.indexBlocks(blocks, this.workspace_);
+    this.blockSearcher.indexBlocks(blocks);
     return true;
   }
 }

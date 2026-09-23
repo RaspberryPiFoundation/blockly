@@ -195,6 +195,48 @@ const toolbox = {
             },
           },
         },
+        {
+          kind: 'block',
+          type: 'text_print',
+          inputs: {
+            TEXT: {
+              block: {
+                type: 'lists_getSublist',
+                fields: {WHERE1: 'FROM_END'},
+                inputs: {
+                  LIST: {
+                    block: {
+                      type: 'variables_get',
+                      fields: {VAR: {name: 'beta'}},
+                    },
+                  },
+                  AT1: {shadow: {type: 'math_number'}},
+                  AT2: {shadow: {type: 'math_number', fields: {NUM: 3}}},
+                },
+              },
+            },
+          },
+        },
+        {
+          kind: 'block',
+          type: 'text_print',
+          inputs: {
+            TEXT: {
+              block: {
+                type: 'lists_sort',
+                fields: {TYPE: 'NUMERIC', DIRECTION: '1'},
+                inputs: {
+                  LIST: {
+                    block: {
+                      type: 'variables_get',
+                      fields: {VAR: {name: 'beta'}},
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       ],
     },
     {kind: 'search', name: 'Search', contents: []},

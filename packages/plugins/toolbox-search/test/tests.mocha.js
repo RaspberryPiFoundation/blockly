@@ -142,7 +142,7 @@ suite('BlockSearcher', () => {
   }
 
   test('generateTrigrams handles empty and short input', () => {
-    const searcher = new BlockSearcher();
+    const searcher = new BlockSearcher(workspace);
     const generateTrigrams = searcher.generateTrigrams.bind(searcher);
 
     assert.deepEqual(generateTrigrams(''), []);
@@ -151,7 +151,7 @@ suite('BlockSearcher', () => {
   });
 
   test('indexes the default value of dropdown fields', () => {
-    const searcher = new BlockSearcher();
+    const searcher = new BlockSearcher(workspace);
     const blocks = [
       {
         kind: 'block',
@@ -165,7 +165,7 @@ suite('BlockSearcher', () => {
     // Text on these:
     // lists_sort: sort <numeric> <ascending>
     // lists_split: make <list from text> with delimiter ,
-    searcher.indexBlocks(blocks, workspace);
+    searcher.indexBlocks(blocks);
 
     const numericMatches = searcher.blockTypesMatching('numeric');
     assert.sameMembers(numericMatches, [blocks[0]]);
@@ -175,12 +175,12 @@ suite('BlockSearcher', () => {
   });
 
   test('is not case-sensitive', () => {
-    const searcher = new BlockSearcher();
+    const searcher = new BlockSearcher(workspace);
     const listCreateWithBlock = {
       kind: 'block',
       type: 'lists_create_with',
     };
-    searcher.indexBlocks([listCreateWithBlock], workspace);
+    searcher.indexBlocks([listCreateWithBlock]);
 
     const lowercaseMatches = searcher.blockTypesMatching('create list');
     assert.sameMembers(lowercaseMatches, [listCreateWithBlock]);
@@ -193,12 +193,12 @@ suite('BlockSearcher', () => {
   });
 
   test('requires the final trigram when matching longer queries', () => {
-    const searcher = new BlockSearcher();
+    const searcher = new BlockSearcher(workspace);
     const mathConstrainBlock = {
       kind: 'block',
       type: 'math_constrain',
     };
-    searcher.indexBlocks([mathConstrainBlock], workspace);
+    searcher.indexBlocks([mathConstrainBlock]);
 
     const matches = searcher.blockTypesMatching('conso');
 
@@ -219,12 +219,12 @@ suite('BlockSearcher', () => {
       ]);
     }
 
-    const searcher = new BlockSearcher();
+    const searcher = new BlockSearcher(workspace);
     const blockInfo = {
       kind: 'block',
       type: 'searcher_underscore_block',
     };
-    searcher.indexBlocks([blockInfo], workspace);
+    searcher.indexBlocks([blockInfo]);
 
     assert.sameMembers(
       searcher.blockTypesMatching('searcher underscore block'),
@@ -247,11 +247,11 @@ suite('BlockSearcher', () => {
       ]);
     }
 
-    const searcher = new BlockSearcher();
+    const searcher = new BlockSearcher(workspace);
     const blockA = {kind: 'block', type: 'searcher_charlie'};
     const blockB = {kind: 'block', type: 'searcher_delta'};
 
-    searcher.indexBlocks([blockA, blockB], workspace);
+    searcher.indexBlocks([blockA, blockB]);
 
     const broadQueryMatches = searcher.blockTypesMatching('alpha bravo');
     assert.sameMembers(broadQueryMatches, [blockA, blockB]);
@@ -298,9 +298,9 @@ suite('BlockSearcher', () => {
       ]);
     }
 
-    const searcher = new BlockSearcher();
+    const searcher = new BlockSearcher(workspace);
     const blockInfo = {kind: 'block', type: 'searcher_dropdown_alt'};
-    searcher.indexBlocks([blockInfo], workspace);
+    searcher.indexBlocks([blockInfo]);
 
     assert.sameMembers(searcher.blockTypesMatching('sunny'), [blockInfo]);
     // 'cloudy' wasn't the selected option, but it should be set with the matching option if found.
@@ -313,12 +313,12 @@ suite('BlockSearcher', () => {
   });
 
   test('returns an empty list when no matches are found', () => {
-    const searcher = new BlockSearcher();
+    const searcher = new BlockSearcher(workspace);
     assert.isEmpty(searcher.blockTypesMatching('abc123'));
   });
 
   test('returns preset blocks', () => {
-    const searcher = new BlockSearcher();
+    const searcher = new BlockSearcher(workspace);
     const blocks = [
       {
         kind: 'block',
@@ -343,14 +343,14 @@ suite('BlockSearcher', () => {
       },
     ];
 
-    searcher.indexBlocks(blocks, workspace);
+    searcher.indexBlocks(blocks);
 
     const matches = searcher.blockTypesMatching('replace');
     assert.sameMembers(matches, [blocks[0]]);
   });
 
   test('indexes field values from the block definition', () => {
-    const searcher = new BlockSearcher();
+    const searcher = new BlockSearcher(workspace);
     const numberBlock = {
       kind: 'block',
       type: 'math_number',
@@ -361,7 +361,7 @@ suite('BlockSearcher', () => {
       type: 'text_print',
       inputs: {TEXT: {shadow: {type: 'text', fields: {TEXT: 'abc'}}}},
     };
-    searcher.indexBlocks([numberBlock, printBlock], workspace);
+    searcher.indexBlocks([numberBlock, printBlock]);
 
     assert.sameMembers(searcher.blockTypesMatching('250'), [numberBlock]);
     // The value lives on a shadow block, not on the block itself.
@@ -369,11 +369,8 @@ suite('BlockSearcher', () => {
   });
 
   test('binds variable blocks to every matching variable', () => {
-    const searcher = new BlockSearcher();
-    searcher.indexBlocks(
-      createVariableBlocks(['alpha', 'alphabet', 'beta']),
-      workspace,
-    );
+    const searcher = new BlockSearcher(workspace);
+    searcher.indexBlocks(createVariableBlocks(['alpha', 'alphabet', 'beta']));
 
     const matches = searcher.blockTypesMatching('alpha');
     assert.sameMembers(
@@ -389,58 +386,52 @@ suite('BlockSearcher', () => {
     );
   });
 
-  test("leaves matches unchanged when the query doesn't name a variable", () => {
-    const searcher = new BlockSearcher();
-    const blocks = createVariableBlocks(['alpha']);
-    searcher.indexBlocks(blocks, workspace);
-
-    const setter = blocks.find((block) => block.type === 'variables_set');
-    assert.include(searcher.blockTypesMatching('set'), setter);
-  });
-
   test('does not index variable rename and delete options', () => {
-    const searcher = new BlockSearcher();
-    searcher.indexBlocks(createVariableBlocks(['alpha']), workspace);
+    const searcher = new BlockSearcher(workspace);
+    searcher.indexBlocks(createVariableBlocks(['alpha']));
 
     assert.isEmpty(searcher.blockTypesMatching('rename'));
     assert.isEmpty(searcher.blockTypesMatching('delete the'));
   });
 
   test('sets dropdowns to the option that matched', () => {
-    const searcher = new BlockSearcher();
+    const searcher = new BlockSearcher(workspace);
     const sortBlock = {kind: 'block', type: 'lists_sort'};
-    searcher.indexBlocks([sortBlock], workspace);
+    searcher.indexBlocks([sortBlock]);
 
     // 'numeric' is already selected, so the indexed block is returned as-is.
     assert.sameMembers(searcher.blockTypesMatching('numeric'), [sortBlock]);
     assert.sameDeepMembers(
       searcher.blockTypesMatching('alphabetic').map((match) => match.fields),
-      [{TYPE: 'TEXT'}, {TYPE: 'IGNORE_CASE'}],
+      [
+        {TYPE: 'TEXT', DIRECTION: '1'},
+        {TYPE: 'IGNORE_CASE', DIRECTION: '1'},
+      ],
     );
   });
 
   test('varies one dropdown at a time', () => {
-    const searcher = new BlockSearcher();
+    const searcher = new BlockSearcher(workspace);
     // Both WHERE1 and WHERE2 offer '# from end'.
-    searcher.indexBlocks(
-      [{kind: 'block', type: 'lists_getSublist'}],
-      workspace,
-    );
+    searcher.indexBlocks([{kind: 'block', type: 'lists_getSublist'}]);
 
     assert.sameDeepMembers(
       searcher.blockTypesMatching('from end').map((match) => match.fields),
-      [{WHERE1: 'FROM_END'}, {WHERE2: 'FROM_END'}],
+      [
+        {WHERE1: 'FROM_END', WHERE2: 'FROM_START'},
+        {WHERE1: 'FROM_START', WHERE2: 'FROM_END'},
+      ],
     );
   });
 
   test('indexes procedure names from extra state', () => {
-    const searcher = new BlockSearcher();
+    const searcher = new BlockSearcher(workspace);
     const callBlock = {
       kind: 'block',
       type: 'procedures_callnoreturn',
       extraState: {name: 'draw sprites', params: []},
     };
-    searcher.indexBlocks([callBlock], workspace);
+    searcher.indexBlocks([callBlock]);
 
     assert.sameMembers(searcher.blockTypesMatching('draw sprites'), [
       callBlock,
@@ -448,26 +439,91 @@ suite('BlockSearcher', () => {
   });
 
   test('does not match trigrams pooled from different strings', () => {
-    const searcher = new BlockSearcher();
+    const searcher = new BlockSearcher(workspace);
     // 'controls flow statements' supplies 'tem' and 'next iteration' supplies
     // 'ite', but the block never says 'item'.
-    searcher.indexBlocks(
-      [{kind: 'block', type: 'controls_flow_statements'}],
-      workspace,
-    );
+    searcher.indexBlocks([{kind: 'block', type: 'controls_flow_statements'}]);
 
     assert.isEmpty(searcher.blockTypesMatching('item'));
   });
 
   test('replaces the previous index when reindexing', () => {
-    const searcher = new BlockSearcher();
-    searcher.indexBlocks([{kind: 'block', type: 'text_print'}], workspace);
+    const searcher = new BlockSearcher(workspace);
+    searcher.indexBlocks([{kind: 'block', type: 'text_print'}]);
 
     // Reindexing should forget the previous pass entirely, not add to it.
     const negate = {kind: 'block', type: 'logic_negate'};
-    searcher.indexBlocks([negate], workspace);
+    searcher.indexBlocks([negate]);
 
     assert.isEmpty(searcher.blockTypesMatching('print'));
     assert.sameMembers(searcher.blockTypesMatching('not'), [negate]);
+  });
+
+  test('sets a dropdown on a child block without touching the root', () => {
+    const searcher = new BlockSearcher(workspace);
+    searcher.indexBlocks([
+      {
+        kind: 'block',
+        type: 'controls_if',
+        inputs: {IF0: {block: {type: 'logic_compare', fields: {OP: 'GT'}}}},
+      },
+    ]);
+
+    const matches = searcher.blockTypesMatching('≠');
+    assert.lengthOf(matches, 1);
+    assert.equal(matches[0].inputs.IF0.block.fields.OP, 'NEQ');
+  });
+
+  test('updates a variable field on a child block', () => {
+    ['item', 'score'].forEach((name) =>
+      workspace.getVariableMap().createVariable(name),
+    );
+    const searcher = new BlockSearcher(workspace);
+    searcher.indexBlocks([
+      {
+        kind: 'block',
+        type: 'text_print',
+        inputs: {TEXT: {block: {type: 'variables_get'}}},
+      },
+    ]);
+
+    const matches = searcher.blockTypesMatching('score');
+    assert.deepEqual(
+      matches.map((match) => match.inputs.TEXT.block.fields.VAR.name),
+      ['score'],
+    );
+  });
+
+  test('does not rewrite a sibling dropdown to text already showing', () => {
+    const searcher = new BlockSearcher(workspace);
+    const sublist = {
+      kind: 'block',
+      type: 'lists_getSublist',
+      fields: {WHERE1: 'FROM_END', WHERE2: 'LAST'},
+    };
+    searcher.indexBlocks([sublist]);
+
+    // WHERE1 already reads '# from end', so WHERE2 is left alone.
+    assert.sameMembers(searcher.blockTypesMatching('from end'), [sublist]);
+  });
+
+  test('leaves a block alone when the query is already visible', () => {
+    ['alpha', 'beta'].forEach((name) =>
+      workspace.getVariableMap().createVariable(name),
+    );
+    const searcher = new BlockSearcher(workspace);
+    const forEach = {
+      kind: 'block',
+      type: 'controls_forEach',
+      fields: {VAR: {name: 'alpha'}},
+      inputs: {
+        LIST: {block: {type: 'variables_get', fields: {VAR: {name: 'beta'}}}},
+      },
+    };
+    searcher.indexBlocks([forEach]);
+
+    // 'alpha' is already on one of the two variable fields, so neither is
+    // updated.
+    assert.sameMembers(searcher.blockTypesMatching('alpha'), [forEach]);
   });
 });
