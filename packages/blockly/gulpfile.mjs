@@ -28,7 +28,6 @@ import {
   langfiles,
   messages,
   minify,
-  tsc,
 } from './scripts/gulpfiles/build_tasks.mjs';
 import {cleanBuildDir, cleanReleaseDir} from './scripts/lib/fs_utils.mjs';
 
@@ -44,7 +43,6 @@ export default build;
 // prettier-ignore
 export {
   langfiles,
-  tsc,
   minify,
   build,
   prepareDemos,
