@@ -1441,6 +1441,11 @@ const sidebars = {
             },
             {
               type: 'doc',
+              label: 'AI policy',
+              id: 'guides/contribute/core/ai_policy',
+            },
+            {
+              type: 'doc',
               label: 'Write a codelab',
               id: 'guides/contribute/core/write_a_codelab',
             },

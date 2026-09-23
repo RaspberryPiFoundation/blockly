@@ -146,24 +146,35 @@ Breaking changes must append `!` to the type (for example `feat!:`) **and** be c
 in the pull request description. See [`packages/blockly/AGENTS.md`](packages/blockly/AGENTS.md)
 for what counts as a breaking change.
 
-## Pull request descriptions
+## AI policy
 
-Keep them short. A reviewer should be able to read the description in well under a
-minute. The template in `.github/PULL_REQUEST_TEMPLATE.md` asks for the right things —
-fill it in briefly rather than expanding it.
+Contributions to Blockly are governed by the
+[AI policy](packages/docs/docs/guides/contribute/core/ai_policy.mdx). Read it before
+helping with anything that will become a pull request. What it means for you:
 
-Cover:
+- **Do not write pull request descriptions or GitHub comments.** They must be written by
+  the human contributor. You may translate text they have written, and you may review a
+  draft they have written, but do not draft one or rewrite theirs wholesale. If asked to
+  write one, decline, point to the policy, and offer to review their draft instead.
+- **Do not work on `good first issue`s.** If the task is an issue with that label, do not
+  write code or PR text for it. Those issues exist so new contributors learn Blockly by
+  solving them themselves. Explain this, and suggest they ask questions on the issue.
+- **Remind the contributor to disclose AI use.** If you helped produce anything that
+  will be submitted — code, documentation, configuration — tell them the PR description
+  needs a sentence or two saying how, and to what extent, AI was used.
+
+When reviewing a human-written PR description, check it against the template in
+`.github/PULL_REQUEST_TEMPLATE.md`. A reviewer should be able to read it in well under a
+minute. It should cover:
 
 - **What changed** — a short summary of the change.
-- **Why** — the problem it solves. Link the issue rather than restating it.
+- **Why** — the problem it solves, linking the issue rather than restating it.
 - Anything a reviewer genuinely needs: breaking changes, migration notes, or how to
   verify behavior that isn't obvious from the diff.
 
-Do not write a narrative. Leave out the story of how you arrived at the solution, the
-approaches you tried and rejected, a file-by-file walkthrough of the diff, and any
-restatement of what the code already says. Where the reasoning behind a non-obvious
-decision matters, a sentence or two is enough — and it often belongs in a code comment
-instead, where it will still be there in a year.
+Flag narrative: the story of how the solution was reached, rejected approaches, a
+file-by-file walkthrough of the diff, or restatement of what the code already says.
+Reasoning behind a non-obvious decision often belongs in a code comment instead.
 
 ## Versioning and publishing
 
@@ -243,6 +254,7 @@ The contributor documentation is in this repository under
 [`packages/docs/docs/guides/contribute/`](packages/docs/docs/guides/contribute/). Read
 those files directly rather than following links out to the published site. Most useful:
 
+- [AI policy](packages/docs/docs/guides/contribute/core/ai_policy.mdx)
 - [Style guide](packages/docs/docs/guides/contribute/core/style_guide.mdx)
 - [Commit messages](packages/docs/docs/guides/contribute/get-started/commits.mdx)
 - [Writing a good PR](packages/docs/docs/guides/contribute/get-started/write_a_good_pr.mdx)
