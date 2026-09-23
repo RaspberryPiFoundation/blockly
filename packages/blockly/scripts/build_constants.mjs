@@ -28,3 +28,10 @@ export const TEST_TSC_OUTPUT_DIR = path.join(BUILD_DIR, 'tests');
 // Directory in which to assemble (and from which to publish) the
 // blockly npm package.
 export const RELEASE_DIR = 'dist';
+
+/**
+ * Path to the python runtime.
+ * This will normalize the command across platforms (e.g. python3 on Linux and
+ * Mac, python on Windows).
+ */
+export const PYTHON = process.platform === 'win32' ? 'python' : 'python3';

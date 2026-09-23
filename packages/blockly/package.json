@@ -94,7 +94,7 @@
     }
   },
   "scripts": {
-    "build": "npm run tsc && gulp build",
+    "build": "npm run tsc && gulp build && npm run langfiles",
     "build-debug": "gulp build --verbose --debug",
     "build-debug-log": "npm run build:debug > build-debug.log 2>&1 && tail -3 build-debug.log",
     "build-strict": "gulp build --verbose --strict",
@@ -102,10 +102,10 @@
     "clean": "gulp clean",
     "deployDemos": "npm ci && gulp deployDemos",
     "deployDemos:beta": "npm ci && gulp deployDemosBeta",
-    "messages": "gulp messages",
+    "messages": "node \"scripts/messages.mjs\"",
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
-    "langfiles": "gulp langfiles",
+    "langfiles": "node \"scripts/langfiles.mjs\"",
     "minify": "gulp minify",
     "package": "node scripts/package.mjs",
     "prepareDemos": "gulp prepareDemos",
