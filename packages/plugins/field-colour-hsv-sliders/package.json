@@ -41,7 +41,7 @@
     "src"
   ],
   "dependencies": {
-    "@blockly/field-colour": "^6.0.12"
+    "@blockly/field-colour": "^13.3.0"
   },
   "devDependencies": {
     "@blockly/dev-scripts": "^13.3.0",
