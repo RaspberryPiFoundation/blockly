@@ -671,5 +671,10 @@
 	"WORKSPACE_SEARCH_FIND_PREVIOUS": "Find previous",
 	"WORKSPACE_SEARCH_CLOSE": "Close search bar",
 	"WORKSPACE_SEARCH_NO_MATCHES": "No matching blocks",
-	"WORKSPACE_SEARCH_MATCH": "Match %1 of %2: %3"
+	"WORKSPACE_SEARCH_MATCH": "Match %1 of %2: %3",
+	"TOOLBOX_SEARCH_PLACEHOLDER": "Search for blocks",
+	"TOOLBOX_SEARCH_PROMPT": "Type to search for blocks",
+	"TOOLBOX_SEARCH_NO_RESULTS": "No matching blocks found",
+	"TOOLBOX_SEARCH_RESULT_COUNT_ONE": "1 matching block",
+	"TOOLBOX_SEARCH_RESULT_COUNT": "%1 matching blocks"
 }
