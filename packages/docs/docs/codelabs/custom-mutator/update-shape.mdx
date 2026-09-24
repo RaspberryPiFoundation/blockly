@@ -89,6 +89,18 @@ export const LIST_MUTATOR = {
 };
 ```
 
+### Updating after load 
+Since this list block will add or remove inputs based on the value of 
+`itemCount`, it is important to update the physical shape after deserialization. 
+Add a call to `updateShape()` in `loadExtraState()`:
+
+```js {3}
+loadExtraState: function(state) {
+    this.itemCount = state['itemCount'];
+    this.updateShape();
+},
+```
+
 ### Next steps
 
 Although `updateShape()` is complete, only the deserializer calls it. The next 

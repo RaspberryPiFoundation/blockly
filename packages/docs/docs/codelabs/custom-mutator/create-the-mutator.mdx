@@ -1,21 +1,37 @@
 ---
-description:  How to add serialization and deserialization to a mutator.
+description:  How to create and register a mutator that saves and loads extra state.
 ---
 
 # Build a custom mutator
 
-## 4. Saving and loading the extra state
+## 4. Create the mutator
 
 Since mutators contain extra state, this extra state needs to be serialized and 
 deserialized with the rest of the state of the block. Although mutators can 
 vary greatly, any mutator requires [serialization hooks](https://docs.blockly.com/guides/create-custom-blocks/mutators/#serialization-hooks). 
+
+### Create the mutator mixin object
+
+Create a new folder called `mutators`, then create a file in that folder called 
+`list_mutator.js`. In `list_mutator.js`, import Blockly, then create an empty object:
+
+```js
+import * as Blockly from 'blockly/core';
+
+// The mutator mixin
+export const LIST_MUTATOR = { 
+    // Add mutator functions here 
+};
+```
+
+The `LIST_MUTATOR` will be the mixin object for the custom mutator. 
 
 ### Serialize
 
 The mutator must serialize the extra state of the block. This is accomplished by 
 implementing the function `saveExtraState()`. Since this codelab implements a 
 list mutator, you can use the same `saveExtraState()` code as the default 
-`list_create_with` block. This function should return a JSON serializable value.
+`lists_create_with` block. This function should return a JSON serializable value.
 
 Add the following code to the `LIST_MUTATOR` object:
 
@@ -33,18 +49,67 @@ export const LIST_MUTATOR = {
 
 The mutator mixin must also load, or deserialize, the extra state of the block. 
 To deserialize, `loadExtraState()` reads in the `itemCount` value from the 
-`state` of the block. Since this list block will add or remove inputs based on 
-the value of `itemCount`, it is also important to update the physical shape after
-loading. 
+`state` of the block. 
 
 Add the following code to the `LIST_MUTATOR`, just after `saveExtraState()`:
 
 ```js
 loadExtraState: function(state) {
     this.itemCount = state['itemCount'];
-    // This is a helper function which adds or removes inputs from the block.
-    this.updateShape();
 },
 ```
 
+### Register the mutator
 
+Now, register the mutator with [`Blockly.Extensions.registerMutator`](https://docs.blockly.com/reference/namespaces/Extensions/functions/registerMutator/). 
+This function requires a string name and a mixin object as parameters. It also 
+takes two optional parameters: 
+- A function which runs after the mixin functions are added to the block.
+- A list of blocks to include in the mutator flyout, if you are using the default 
+mutator UI. This parameter is not applicable in this codelab, since you will be 
+creating a custom UI. 
+
+In this case, the optional function is a great way to initialize the number of 
+list items in the mutator. Since the block starts with one input (see the 
+[block definition](/codelabs/custom-mutator/the-basics#create-the-custom-block)), you'll set a variable on the block
+called `itemCount` to 1.
+
+Add the following import and registration to `index.js`: 
+
+```js {1,9-13}
+import {LIST_MUTATOR} from './mutators/list_mutator';
+
+...
+
+// Register the blocks and generator with Blockly
+Blockly.common.defineBlocks(blocks);
+Blockly.common.defineBlocks(mutatorBlocks); 
+Object.assign(javascriptGenerator.forBlock, forBlock);
+Blockly.Extensions.registerMutator(
+  'list_mutator', 
+  LIST_MUTATOR, 
+  function() { this.itemCount = 1; }
+);
+```
+
+### Add the mutator to the block
+
+Now that the mutator is registered, add it to the block definition in `list.js`:
+
+```js {14}
+const resizableListBlock = {
+  type: 'resizable_list',
+  message0: 'resizable list with %1',
+  args0: [
+    {
+      type: 'input_value',
+      name: 'ADD0',
+    }
+  ],
+  output: null,
+  style: "list_blocks",
+  tooltip: '',
+  helpUrl: '',
+  mutator: 'list_mutator',
+};
+```

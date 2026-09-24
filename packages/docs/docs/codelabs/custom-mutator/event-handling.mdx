@@ -123,7 +123,7 @@ setItemCount: function(newCount) {
 
     const newCountState = JSON.stringify(this.saveExtraState());
 
-    // If the state has changed, create fire a BLOCK_CHANGE event
+    // If the state has changed, create and fire a BLOCK_CHANGE event
     if (newCountState !== oldCountState) {
         const blockChangeEvent = new (Blockly.Events.BlockChange)(
             this,

@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2023 Google LLC
+ * Copyright 2026 Raspberry Pi Foundation
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -37,6 +37,7 @@ function registerAddItem() {
     preconditionFn: function (scope) {
       if (
         scope.focusedNode instanceof Blockly.BlockSvg &&
+        !scope.focusedNode.isInFlyout &&
         scope.focusedNode.type === 'resizable_list'
       ) {
         return 'enabled';
@@ -58,6 +59,7 @@ function registerRemoveItem() {
     preconditionFn: function (scope) {
       if (
         scope.focusedNode instanceof Blockly.BlockSvg &&
+        !scope.focusedNode.isInFlyout &&
         scope.focusedNode.type === 'resizable_list'
       ) {
         if (scope.focusedNode.itemCount <= 1) {

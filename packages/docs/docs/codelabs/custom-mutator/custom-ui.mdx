@@ -8,6 +8,11 @@ import Image from '@site/src/components/Image';
 
 ## 6. Create a UI
 
+Now that you've created, registered, and set up the mutator, it's time to 
+consider how the user should add and remove inputs. 
+
+### UI options
+
 The best UI for your mutator is highly dependent on what the mutator does, and 
 who the audience of your Blockly app is. There are a few options for your
 mutator UI: 
@@ -55,7 +60,7 @@ adding custom context menu items, see the [context menu codelab](https://docs.bl
 
 Any mutator UI option has benefits and drawbacks. Using context menus
 to define mutator behavior is a helpful example to see how custom UI behavior
-can work. Howevever, options in the context menu are not very discoverable to 
+can work. However, options in the context menu are not very discoverable to 
 users, so this approach is generally *not* recommended unless you have a 
 specific reason to use context menus.
 
@@ -86,7 +91,8 @@ export const LIST_MUTATOR = {
 
 ### Create the "Add Item" context menu option
 
-For the precondition, check if this is the right type of block to determine
+First, create the context menu option that adds an input to the list. For the 
+precondition, check if this is the right type of block. This will determine 
 whether the "Add Item" option should be enabled or hidden.
 
 Since the mutator is "mixed in" to the block definition, you can call 
@@ -99,17 +105,16 @@ function registerAddItem() {
   const addItem = {
     displayText: 'Add Item',
     preconditionFn: function (scope) {
-      if(
-        scope.focusedNode instanceof Blockly.BlockSvg &&
+      if (
+        scope.focusedNode instanceof Blockly.BlockSvg && 
+        !scope.focusedNode.isInFlyout &&
         scope.focusedNode.type === 'resizable_list'
       ) {
         return 'enabled';
       }
       return 'hidden';
     }, 
-    callback: (scope) => {
-      scope.focusedNode.addConnection();
-    },
+    callback: (scope) => { scope.focusedNode.addConnection(); },
     id: 'add_item',
     weight: 100,
   };
@@ -120,7 +125,7 @@ function registerAddItem() {
 ### Create the "Remove Item" context menu option
 
 The "Remove Item" option is largely the same as the "Add Item" option. However, 
-it also includes a guard to ensure that the total number if items will not be 
+it also includes a guard to ensure that the total number of items will not be 
 less than one. If there is only one input, the "Remove Item" option will be
 greyed out:
 
@@ -138,8 +143,9 @@ function registerRemoveItem() {
   const removeItem = {
     displayText: 'Remove Item',
     preconditionFn: function (scope) {
-      if(
-        scope.focusedNode instanceof Blockly.BlockSvg &&
+      if (
+        scope.focusedNode instanceof Blockly.BlockSvg && 
+        !scope.focusedNode.isInFlyout &&
         scope.focusedNode.type === 'resizable_list'
       ) {
         if(scope.focusedNode.itemCount <= 1) {
@@ -149,9 +155,7 @@ function registerRemoveItem() {
       }
       return 'hidden';
     }, 
-    callback: (scope) => {
-      scope.focusedNode.removeConnection();
-    },
+    callback: (scope) => { scope.focusedNode.removeConnection(); },
     id: 'remove_item',
     weight: 110,
   };
@@ -161,15 +165,10 @@ function registerRemoveItem() {
 
 ### Call the register functions
 
-Finally, call both `registerAddItem()` and `registerRemoveItem()` in `index.js`
-so that the context menu items actually get registered. 
+Finally, call both `registerAddItem()` and `registerRemoveItem()` in `index.js`,  
+just after the block and mutator registrations:
 
-```js {6-7}
-// Register the blocks and generator with Blockly
-Blockly.common.defineBlocks(blocks);
-Blockly.common.defineBlocks(mutatorBlocks);
-Object.assign(javascriptGenerator.forBlock, forBlock);
-
+```js {}
 registerAddItem();
 registerRemoveItem();
 ```

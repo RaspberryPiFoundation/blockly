@@ -1,6 +1,6 @@
 {
   "name": "walkthrough-mutator-codelab",
-  "version": "13.3.0",
+  "version": "1.0.0",
   "description": "A sample app using Blockly",
   "main": "index.js",
   "private": true,
@@ -12,15 +12,6 @@
   "keywords": [
     "blockly"
   ],
-  "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/sample-app#readme",
-  "bugs": {
-    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/RaspberryPiFoundation/blockly.git",
-    "directory": "packages/plugins/sample-app"
-  },
   "author": "",
   "license": "Apache-2.0",
   "devDependencies": {

@@ -1,3 +1,9 @@
+/**
+ * @license
+ * Copyright 2026 Raspberry Pi Foundation
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import * as Blockly from 'blockly/core';
 
 // The mutator mixin

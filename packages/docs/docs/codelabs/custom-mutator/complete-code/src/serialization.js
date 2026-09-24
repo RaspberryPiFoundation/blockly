@@ -1,12 +1,12 @@
 /**
  * @license
- * Copyright 2023 Google LLC
+ * Copyright 2026 Raspberry Pi Foundation
  * SPDX-License-Identifier: Apache-2.0
  */
 
 import * as Blockly from 'blockly/core';
 
-const storageKey = 'mutatorCodelabWorkspace';
+const storageKey = 'customMutatorWorkspace';
 
 /**
  * Saves the state of the workspace to browser's local storage.
