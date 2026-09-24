@@ -25,35 +25,30 @@ an event when necessary. Add the following function to the
 `LIST_MUTATOR` object.
 
 ```js
-export const LIST_MUTATOR = {
-    ...
+setItemCount: function(newCount) {
+    // Keep track of the old state for creating the event
+    const oldCountState = JSON.stringify(this.saveExtraState());
 
-    setItemCount: function(newCount) {
-        // Keep track of the old state for creating the event
-        const oldCountState = JSON.stringify(this.saveExtraState());
+    // Update the count and shape
+    this.itemCount = newCount;
+    this.updateShape();
 
-        // Update the count and shape
-        this.itemCount = newCount;
-        this.updateShape();
+    // Keep track of the new state for creating the event
+    const newCountState = JSON.stringify(this.saveExtraState());
 
-        // Keep track of the new state for creating the event
-        const newCountState = JSON.stringify(this.saveExtraState());
-
-        // If the state has changed, create and fire a BLOCK_CHANGE event
-        if (newCountState !== oldCountState) {
-            const blockChangeEvent = new (Blockly.Events.BlockChange)(
-                this,
-                'mutation',
-                null,
-                oldCountState,
-                newCountState
-            );
-            Blockly.Events.fire(blockChangeEvent);
-        }
-    },
-
-    ...
-};
+    // If the state has changed, create and fire a BLOCK_CHANGE event
+    if (newCountState !== oldCountState) {
+        const BlockChangeClass = Blockly.Events.get(Blockly.Events.BLOCK_CHANGE);
+        const blockChangeEvent = new BlockChangeClass(
+            this,
+            'mutation',
+            null,
+            oldCountState,
+            newCountState
+        );
+        Blockly.Events.fire(blockChangeEvent);
+    }
+},
 ```
 
 Note that this function keeps track of the JSON state of both the old and new 
@@ -110,7 +105,7 @@ means that the whole mutation will be one action in the undo/redo stream.
 
 Update `setItemCount()` by adding the highlighted lines of code:
 
-```js {2,3,4,25}
+```js {2,3,4,26}
 setItemCount: function(newCount) {
     // If there's no event group, start one so the whole mutation is one event
     const existingGroup = Blockly.Events.getGroup();
@@ -125,7 +120,8 @@ setItemCount: function(newCount) {
 
     // If the state has changed, create and fire a BLOCK_CHANGE event
     if (newCountState !== oldCountState) {
-        const blockChangeEvent = new (Blockly.Events.BlockChange)(
+        const BlockChangeClass = Blockly.Events.get(Blockly.Events.BLOCK_CHANGE);
+        const blockChangeEvent = new BlockChangeClass(
             this,
             'mutation',
             null,

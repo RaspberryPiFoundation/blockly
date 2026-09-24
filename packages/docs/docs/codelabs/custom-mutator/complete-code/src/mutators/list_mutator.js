@@ -33,14 +33,17 @@ export const LIST_MUTATOR = {
       this.removeInput('ADD' + i);
     }
   },
+
   addConnection: function () {
     this.setItemCount(this.itemCount + 1);
   },
+
   removeConnection: function () {
     if (this.itemCount > 1) {
       this.setItemCount(this.itemCount - 1);
     }
   },
+
   setItemCount: function (newCount) {
     // If there's no event group, start one so that the whole mutation is one event
     const existingGroup = Blockly.Events.getGroup();
@@ -55,7 +58,8 @@ export const LIST_MUTATOR = {
 
     // If the state has changed, create and fire a BLOCK_CHANGE event
     if (newCountState !== oldCountState) {
-      const blockChangeEvent = new Blockly.Events.BlockChange(
+      const BlockChangeClass = Blockly.Events.get(Blockly.Events.BLOCK_CHANGE);
+      const blockChangeEvent = new BlockChangeClass(
         this,
         'mutation',
         null,
