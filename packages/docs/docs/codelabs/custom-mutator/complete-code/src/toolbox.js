@@ -513,8 +513,8 @@ export const toolbox = {
       categorystyle: 'list_category',
       contents: [
         {
-          kind: 'block', 
-          type: 'resizable_list', 
+          kind: 'block',
+          type: 'resizable_list',
         },
         {
           kind: 'block',

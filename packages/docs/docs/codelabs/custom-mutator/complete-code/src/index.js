@@ -5,23 +5,21 @@
  */
 
 import * as Blockly from 'blockly';
-import {blocks} from './blocks/text';
-import {mutatorBlocks} from './blocks/list';
-import {LIST_MUTATOR} from './mutators/list_mutator';
-import {forBlock} from './generators/javascript';
-import {javascriptGenerator} from 'blockly/javascript';
-import {save, load} from './serialization';
-import {toolbox} from './toolbox';
+import { blocks } from './blocks/text';
+import { mutatorBlocks } from './blocks/list';
+import { LIST_MUTATOR } from './mutators/list_mutator';
+import { forBlock } from './generators/javascript';
+import { javascriptGenerator } from 'blockly/javascript';
+import { save, load } from './serialization';
+import { toolbox } from './toolbox';
 import './index.css';
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(blocks);
 Blockly.common.defineBlocks(mutatorBlocks);
-Blockly.Extensions.registerMutator(
-  'list_mutator',
-  LIST_MUTATOR,
-  function() { this.itemCount = 1; },
-);
+Blockly.Extensions.registerMutator('list_mutator', LIST_MUTATOR, function () {
+  this.itemCount = 1;
+});
 
 Object.assign(javascriptGenerator.forBlock, forBlock);
 registerAddItem();
@@ -31,18 +29,23 @@ registerRemoveItem();
 const codeDiv = document.getElementById('generatedCode').firstChild;
 const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
-const ws = Blockly.inject(blocklyDiv, {toolbox});
+const ws = Blockly.inject(blocklyDiv, { toolbox });
 
 function registerAddItem() {
   const addItem = {
     displayText: 'Add Item',
     preconditionFn: function (scope) {
-      if(scope.focusedNode instanceof Blockly.BlockSvg && scope.focusedNode.type === 'resizable_list') {
+      if (
+        scope.focusedNode instanceof Blockly.BlockSvg &&
+        scope.focusedNode.type === 'resizable_list'
+      ) {
         return 'enabled';
       }
       return 'hidden';
-    }, 
-    callback: (scope) => { scope.focusedNode.addConnection(); },
+    },
+    callback: (scope) => {
+      scope.focusedNode.addConnection();
+    },
     id: 'add_item',
     weight: 100,
   };
@@ -53,15 +56,20 @@ function registerRemoveItem() {
   const removeItem = {
     displayText: 'Remove Item',
     preconditionFn: function (scope) {
-      if(scope.focusedNode instanceof Blockly.BlockSvg && scope.focusedNode.type === 'resizable_list') {
-        if(scope.focusedNode.itemCount <= 1) {
+      if (
+        scope.focusedNode instanceof Blockly.BlockSvg &&
+        scope.focusedNode.type === 'resizable_list'
+      ) {
+        if (scope.focusedNode.itemCount <= 1) {
           return 'disabled';
         }
         return 'enabled';
       }
       return 'hidden';
-    }, 
-    callback: (scope) => { scope.focusedNode.removeConnection(); },
+    },
+    callback: (scope) => {
+      scope.focusedNode.removeConnection();
+    },
     id: 'remove_item',
     weight: 110,
   };

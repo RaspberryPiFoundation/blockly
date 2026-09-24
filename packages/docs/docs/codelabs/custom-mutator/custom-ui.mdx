@@ -11,10 +11,6 @@ import Image from '@site/src/components/Image';
 The best UI for your mutator is highly dependent on what the mutator does, and 
 who the audience of your Blockly app is. There are a few options for your
 mutator UI: 
-- Blockly default (gear icon)
-- Plus-minus plugin
-- Dynamic connections plugin
-- Custom UI
 
 1. Blockly default: Blockly mutators use a gear icon which opens up a mini workspace 
 in which users can drag blocks to form their desired mutator shape. See the 
@@ -40,7 +36,11 @@ adds + and - icons that the user can click to add or remove inputs.
 3. Dynamic connections: The [dynamic connections plugin](https://raspberrypifoundation.github.io/blockly-samples/plugins/block-dynamic-connection/test/index.html)
 automatically adds and removes inputs based on user interaction.
 
-/* TODO: gif??? */
+<Image
+  src="/images/codelabs/custom-mutator/if_else_dynamic.gif"
+  alt=""
+  className="codelabImage"
+/>
 
 4. Custom UI: In addition to the above options, you can also implement your own 
 custom ways of interacting with the mutator. 
@@ -99,12 +99,17 @@ function registerAddItem() {
   const addItem = {
     displayText: 'Add Item',
     preconditionFn: function (scope) {
-      if(scope.focusedNode instanceof Blockly.BlockSvg && scope.focusedNode.type === 'resizable_list') {
+      if(
+        scope.focusedNode instanceof Blockly.BlockSvg &&
+        scope.focusedNode.type === 'resizable_list'
+      ) {
         return 'enabled';
       }
       return 'hidden';
     }, 
-    callback: (scope) => { scope.focusedNode.addConnection(); },
+    callback: (scope) => {
+      scope.focusedNode.addConnection();
+    },
     id: 'add_item',
     weight: 100,
   };
@@ -133,7 +138,10 @@ function registerRemoveItem() {
   const removeItem = {
     displayText: 'Remove Item',
     preconditionFn: function (scope) {
-      if(scope.focusedNode instanceof Blockly.BlockSvg && scope.focusedNode.type === 'resizable_list') {
+      if(
+        scope.focusedNode instanceof Blockly.BlockSvg &&
+        scope.focusedNode.type === 'resizable_list'
+      ) {
         if(scope.focusedNode.itemCount <= 1) {
           return 'disabled';
         }
@@ -141,7 +149,9 @@ function registerRemoveItem() {
       }
       return 'hidden';
     }, 
-    callback: (scope) => { scope.focusedNode.removeConnection(); },
+    callback: (scope) => {
+      scope.focusedNode.removeConnection();
+    },
     id: 'remove_item',
     weight: 110,
   };

@@ -438,7 +438,7 @@ const sidebars = {
           id: 'codelabs/custom-mutator/codelab-overview',
         },
         {
-          type: 'doc', 
+          type: 'doc',
           label: '2. Setup',
           id: 'codelabs/custom-mutator/setup',
         },
@@ -476,9 +476,9 @@ const sidebars = {
           type: 'doc',
           label: '9. Summary',
           id: 'codelabs/custom-mutator/summary',
-        }
-      ]
-    }
+        },
+      ],
+    },
   ],
   guidesSidebar: [
     {

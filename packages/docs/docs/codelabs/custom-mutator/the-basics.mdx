@@ -8,10 +8,9 @@ import Image from '@site/src/components/Image';
 
 ## 3. Mutator overview and block creation
 
-When a block has extra state that can't be represented by the fields or other
-attributes of a block, it needs a mutator. Common examples are if/else and list 
-blocks, which need to keep track of how many inputs they have. For more on 
-mutators and the default mutator UI, visit the [mutators guide](https://docs.blockly.com/guides/create-custom-blocks/mutators/).
+When a block has extra state that can't be captured its fields, it needs a 
+mutator. Common examples are if/else and list blocks, which need to keep 
+track of how many inputs they have.
 
 Mutators are a type of [mixin](https://docs.blockly.com/guides/create-custom-blocks/define/extensions/#mixins),
 meaning that they add custom functions to a block. The functions that a mutator 
@@ -19,7 +18,8 @@ includes depends on the desired behavior of the mutator. At the very least,
 mutators all need [serialization hooks](https://docs.blockly.com/guides/create-custom-blocks/mutators/#serialization-hooks) 
 in order to save and load the extra state. This codelab uses a custom mutator UI, 
 but mutators that implement the default UI must also include `compose` and 
-`decompose` functions.
+`decompose` functions. For more on mutators and the default mutator UI, visit 
+the [mutators guide](https://docs.blockly.com/guides/create-custom-blocks/mutators/).
 
 In this codelab, you will be making custom list block mutator. This starts with 
 creating the block.
@@ -48,9 +48,9 @@ const resizableListBlock = {
 };
 
 // Create the block definitions
-export const mutatorBlocks = Blockly.common.createBlockDefinitionsFromJsonArray([
-  resizableListBlock
-]);
+export const mutatorBlocks = Blockly.common.createBlockDefinitionsFromJsonArray(
+  [resizableListBlock]
+);
 ```
 
 For more on block definitions, review the [block definition guides](https://docs.blockly.com/guides/create-custom-blocks/define/block-definitions/).
@@ -112,8 +112,8 @@ the next step, you'll add functions to this mixin object in order to make the
 mutator work. 
 
 Now, register the mutator with [`Blockly.Extensions.registerMutator`](https://docs.blockly.com/reference/namespaces/Extensions/functions/registerMutator/). 
-This function requires a string name and a mixin object. It also takes optional 
-parameters: 
+This function requires a string name and a mixin object as parameters. It also 
+takes two optional parameters: 
 - A function which runs after the mixin functions are added to the block.
 - A list of blocks to include in the mutator flyout, if you are using the default 
 mutator UI. This parameter is not applicable in this codelab, since you will be 
@@ -126,7 +126,7 @@ called `itemCount` to 1.
 
 Add the following import and registration to `index.js`: 
 
-```js {1,9-13}
+```js {1,9-11}
 import {LIST_MUTATOR} from './mutators/list_mutator';
 
 ...
@@ -135,11 +135,9 @@ import {LIST_MUTATOR} from './mutators/list_mutator';
 Blockly.common.defineBlocks(blocks);
 Blockly.common.defineBlocks(mutatorBlocks); 
 Object.assign(javascriptGenerator.forBlock, forBlock);
-Blockly.Extensions.registerMutator(
-  'list_mutator',
-  LIST_MUTATOR,
-  function() { this.itemCount = 1; },
-);
+Blockly.Extensions.registerMutator('list_mutator', LIST_MUTATOR, function() {
+  this.itemCount = 1;
+});
 ```
 
 ### Add the mutator to the block

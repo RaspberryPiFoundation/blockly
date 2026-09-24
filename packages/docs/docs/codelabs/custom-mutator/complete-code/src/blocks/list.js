@@ -7,7 +7,7 @@ const resizableListBlock = {
     {
       type: 'input_value',
       name: 'ADD0',
-    }
+    },
   ],
   output: null,
   style: 'list_blocks',
@@ -17,6 +17,6 @@ const resizableListBlock = {
 };
 
 // Create the block definitions
-export const mutatorBlocks = Blockly.common.createBlockDefinitionsFromJsonArray([
-  resizableListBlock
-]);
+export const mutatorBlocks = Blockly.common.createBlockDefinitionsFromJsonArray(
+  [resizableListBlock],
+);

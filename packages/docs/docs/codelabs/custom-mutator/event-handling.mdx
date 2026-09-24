@@ -72,7 +72,9 @@ export const LIST_MUTATOR = {
         this.setItemCount(this.itemCount + 1);
     },
     removeConnection: function() {
-        if (this.itemCount > 1) { this.setItemCount(this.itemCount - 1); }
+        if (this.itemCount > 1) {
+            this.setItemCount(this.itemCount - 1);
+        }
     },
 
     ...
@@ -96,19 +98,21 @@ blocks were in before removing the last input.
 ### Set the event group
 
 The reason for this issue is that there are multiple events involved in removing 
-an input. There's the event you just fired in `setItemCount()`, but also other 
-events that Blockly fires as part of the mutation process. For instance, the 
-block that was previously attached to the last input is moved away from the list 
-block, which fires `BlockMove` events. 
+an input. The mutation includes the event you fire in `setItemCount()` *and* 
+other events that Blockly fires as part of the mutation process. For instance, 
+after the last input is removed, the block that was attached to that input is 
+moved away from the list block. This fires a `BlockMove` event.
 
-Effectively, all of these events are part of the same process: the block mutation. 
-The solution for grouping related events is event groups.
+Effectively, all of these events are part of the same process: the block 
+mutation. The solution for this is grouping all of the mutation events together 
+in one event group. Setting an event group at the beginning of the mutation 
+means that the whole mutation will be one action in the undo/redo stream. 
 
 Update `setItemCount()` by adding the highlighted lines of code:
 
 ```js {2,3,4,25}
 setItemCount: function(newCount) {
-    // If there's no event group, start one so that the whole mutation is one event
+    // If there's no event group, start one so the whole mutation is one event
     const existingGroup = Blockly.Events.getGroup();
     if (!existingGroup) Blockly.Events.setGroup(true);
 
@@ -134,6 +138,10 @@ setItemCount: function(newCount) {
     Blockly.Events.setGroup(existingGroup);
 },
 ``` 
+
+If something else outside of the mutation has already grouped this mutation into 
+an event group, respect that group. In code, this means that if `getGroup()` 
+returns a value, do not set a new group. 
 
 ### Test it (again)
 
