@@ -16,7 +16,6 @@
 //
 // organize-imports-ignore
 
-import {parallel} from 'gulp';
 import {
   deployDemos,
   deployDemosBeta,
@@ -27,9 +26,6 @@ import {
   buildAdvancedCompilationTest,
   minify,
 } from './scripts/gulpfiles/build_tasks.mjs';
-import {cleanBuildDir, cleanReleaseDir} from './scripts/lib/fs_utils.mjs';
-
-const clean = parallel(cleanBuildDir, cleanReleaseDir);
 
 // Default target if gulp invoked without specifying.
 export default build;
@@ -52,6 +48,5 @@ export {
 //
 // prettier-ignore
 export {
-  clean,
   buildAdvancedCompilationTest,
 }
