@@ -28,7 +28,6 @@ import {
   LANG_BUILD_DIR,
   RELEASE_DIR,
   TSC_OUTPUT_DIR,
-  TYPINGS_BUILD_DIR,
 } from './config.mjs';
 
 import {posixPath, quote} from '../helpers.js';
@@ -330,19 +329,6 @@ const JSCOMP_OFF = [
    */
   'visibility',
 ];
-
-/**
- * Builds Blockly as a JS program, by running tsc on all the files in
- * the core directory.
- */
-export function tsc(done) {
-  execSync(
-    `tsc -outDir "${TSC_OUTPUT_DIR}" -declarationDir "${TYPINGS_BUILD_DIR}"`,
-    {stdio: 'inherit'},
-  );
-  execSync(`node scripts/tsick.js "${TSC_OUTPUT_DIR}"`, {stdio: 'inherit'});
-  done();
-}
 
 /**
  * This task regenerates msg/json/en.js and msg/json/qqq.js from
@@ -880,7 +866,6 @@ function compileAdvancedCompilationTest() {
 export const langfiles = gulp.parallel(buildLangfiles, buildLangfileShims);
 // function tsc, above
 export const minify = gulp.series(
-  tsc,
   buildChunkExporters,
   buildCompiled,
   buildShims,
@@ -890,6 +875,5 @@ export const build = gulp.parallel(minify, langfiles);
 // Manually-invokable targets, with prerequisites where required.
 // function messages, above
 export const buildAdvancedCompilationTest = gulp.series(
-  tsc,
   compileAdvancedCompilationTest,
 );
