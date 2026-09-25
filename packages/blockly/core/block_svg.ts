@@ -490,6 +490,12 @@ export class BlockSvg
     }
     super.setCollapsed(collapsed);
     this.updateCollapsed();
+    // Bump while connection positions still match the collapsed layout.
+    // Uncollapsing queues a render that moves those connections, and a bump
+    // after that render misses neighbours that were beside the collapsed block.
+    if (!collapsed) {
+      this.bumpNeighbours();
+    }
   }
 
   /**
