@@ -748,7 +748,7 @@ export const minify = gulp.series(
   buildCompiled,
   buildShims,
 );
-export const build = gulp.parallel(minify);
+export const build = minify;
 
 // Manually-invokable targets, with prerequisites where required.
 // function messages, above

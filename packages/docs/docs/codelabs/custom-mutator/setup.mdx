@@ -1,0 +1,37 @@
+---
+description: Setting up the "Build a custom mutator" codelab.
+---
+
+import Image from '@site/src/components/Image';
+
+# Build a custom mutator
+
+## 2. Setup
+
+This codelab will demonstrate how to add code to the Blockly sample app to create a custom mutator.
+
+### The application
+
+Use the [`npx @blockly/create-package app`](https://www.npmjs.com/package/@blockly/create-package) command to create a standalone application that contains a sample setup of Blockly, including custom blocks and a display of the generated code and output.
+
+1. Run `npx @blockly/create-package app custom-mutator-codelab`. This will create a blockly application in the folder `custom-mutator-codelab`.
+1. `cd` into the new directory: `cd custom-mutator-codelab`.
+1. Run `npm start` to start the server and run the sample application.
+1. The sample app will automatically run in the browser window that opens.
+
+### Change the storage key
+
+Before setting up the rest of the application, change the storage key used for this codelab application. This will ensure that the workspace is saved in its own storage, separate from the regular sample app, so that it doesn't interfere with other demos. 
+
+In `serialization.js`, change the value of `storageKey` to some unique string. `customMutatorWorkspace` will work:
+
+```js
+// Use a unique storage key for this codelab
+const storageKey = 'customMutatorWorkspace';
+```
+
+### Explore the starter code
+
+Take a moment to explore the code you just created in the `custom-mutator-codelab` folder. If you'd like a more in-depth explanation of all of the code in the sample app, check out the [getting started codelab](/codelabs/getting-started/codelab-overview) which goes through creating this sample app from scratch.
+
+For a briefer outline of the code, visit the [sample app overview](/guides/get-started/sample-app-overview/) page for an overview of the included files and tooling.

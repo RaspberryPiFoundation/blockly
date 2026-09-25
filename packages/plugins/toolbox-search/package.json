@@ -43,6 +43,9 @@
     "@blockly/dev-scripts": "^13.3.0",
     "@blockly/dev-tools": "^13.3.0",
     "chai": "^6.2.2",
+    "jsdom": "^30.0.1",
+    "jsdom-global": "^3.0.2",
+    "sinon": "^22.1.0",
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
