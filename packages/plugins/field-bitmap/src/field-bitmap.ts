@@ -321,7 +321,7 @@ export class FieldBitmap extends Blockly.Field<number[][]> {
    *
    * @returns The newly created dropdown menu.
    */
-  private dropdownCreate() {
+  protected dropdownCreate() {
     const dropdownEditor = this.createElementWithClassname(
       'div',
       'dropdownEditor',
@@ -689,7 +689,7 @@ export class FieldBitmap extends Blockly.Field<number[][]> {
   /**
    * Disposes of events belonging to the bitmap editor.
    */
-  private dropdownDispose() {
+  protected dropdownDispose() {
     if (
       this.getSourceBlock() &&
       this.initialValue !== null &&
@@ -927,7 +927,7 @@ export class FieldBitmap extends Blockly.Field<number[][]> {
     );
   }
 
-  private fireIntermediateChangeEvent(newValue: number[][]) {
+  protected fireIntermediateChangeEvent(newValue: number[][]) {
     if (this.getSourceBlock()) {
       Blockly.Events.fire(
         new (Blockly.Events.get(

@@ -428,6 +428,57 @@ const sidebars = {
         },
       ],
     },
+    {
+      type: 'category',
+      label: 'Build a custom mutator',
+      items: [
+        {
+          type: 'doc',
+          label: '1. Codelab-overview',
+          id: 'codelabs/custom-mutator/codelab-overview',
+        },
+        {
+          type: 'doc',
+          label: '2. Setup',
+          id: 'codelabs/custom-mutator/setup',
+        },
+        {
+          type: 'doc',
+          label: '3. Mutator overview',
+          id: 'codelabs/custom-mutator/the-basics',
+        },
+        {
+          type: 'doc',
+          label: '4. Create the mutator',
+          id: 'codelabs/custom-mutator/create-the-mutator',
+        },
+        {
+          type: 'doc',
+          label: '5. Update the block shape',
+          id: 'codelabs/custom-mutator/update-shape',
+        },
+        {
+          type: 'doc',
+          label: '6. Create a UI',
+          id: 'codelabs/custom-mutator/custom-ui',
+        },
+        {
+          type: 'doc',
+          label: '7. Generate code',
+          id: 'codelabs/custom-mutator/code-generation',
+        },
+        {
+          type: 'doc',
+          label: '8. Event handling',
+          id: 'codelabs/custom-mutator/event-handling',
+        },
+        {
+          type: 'doc',
+          label: '9. Summary',
+          id: 'codelabs/custom-mutator/summary',
+        },
+      ],
+    },
   ],
   guidesSidebar: [
     {
