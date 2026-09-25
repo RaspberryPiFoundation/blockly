@@ -1,0 +1,150 @@
+---
+description: Adding event firing and event groups to the mutator. 
+---
+
+# Build a custom mutator
+
+## 8. Add event handling
+
+Currently, the code window of the app does not update when an input is added or 
+removed. 
+
+The best way to fix this issue is to fire an event when the block is mutated. 
+There are many [Blockly event options](https://docs.blockly.com/reference/namespaces/Events/#classes) 
+to choose from. In this scenario, [`BlockChange`](https://docs.blockly.com/reference/namespaces/Events/classes/BlockChange/) 
+is the best choice.
+
+### Add a wrapper function 
+
+Since `updateShape()` is called from `loadExtraState()`, it is not the ideal 
+location for your new event. Adding the event to `updateShape()` would mean that 
+a `BlockChange` event is (incorrectly) fired every time the workspace is loaded. 
+
+Instead, build a wrapper function to update the `itemCount`, the shape, and fire
+an event when necessary. Add the following function to the 
+`LIST_MUTATOR` object.
+
+```js
+setItemCount: function(newCount) {
+    // Keep track of the old state for creating the event
+    const oldCountState = JSON.stringify(this.saveExtraState());
+
+    // Update the count and shape
+    this.itemCount = newCount;
+    this.updateShape();
+
+    // Keep track of the new state for creating the event
+    const newCountState = JSON.stringify(this.saveExtraState());
+
+    // If the state has changed, create and fire a BLOCK_CHANGE event
+    if (newCountState !== oldCountState) {
+        const BlockChangeClass = Blockly.Events.get(Blockly.Events.BLOCK_CHANGE);
+        const blockChangeEvent = new BlockChangeClass(
+            this,
+            'mutation',
+            null,
+            oldCountState,
+            newCountState
+        );
+        Blockly.Events.fire(blockChangeEvent);
+    }
+},
+```
+
+Note that this function keeps track of the JSON state of both the old and new 
+state, so that the event can fire with information from both states.
+
+### Update `addConnection` and `removeConnection`
+
+Update the implementation of the `addConnection()` and `removeConnection()` 
+functions in the `LIST_MUTATOR` to use the new `setItemCount()` helper:
+
+```js
+export const LIST_MUTATOR = {
+    ...
+
+    addConnection: function() {
+        this.setItemCount(this.itemCount + 1);
+    },
+    removeConnection: function() {
+        if (this.itemCount > 1) {
+            this.setItemCount(this.itemCount - 1);
+        }
+    },
+
+    ...
+};
+```
+
+### Test it
+
+Test the new behavior. Run `npm run start` in your app's folder or refresh the 
+running app. When you add or remove connections to the list, your code window 
+now should update accordingly.
+
+However, there's still a problem. Try the following sequence:
+1. Add a block to the last input in the list.
+1. Remove an input.
+1. Press Ctrl+z (or Cmd+z on Mac) to undo the input removal. 
+
+You'll notice that it takes multiple undo actions to get back to the state the 
+blocks were in before removing the last input.  
+
+### Set the event group
+
+The reason for this issue is that there are multiple events involved in removing 
+an input. The mutation includes the event you fire in `setItemCount()` *and* 
+other events that Blockly fires as part of the mutation process. For instance, 
+after the last input is removed, the block that was attached to that input is 
+moved away from the list block. This fires a `BlockMove` event.
+
+Effectively, all of these events are part of the same process: the block 
+mutation. The solution for this is grouping all of the mutation events together 
+in one event group. Setting an event group at the beginning of the mutation 
+means that the whole mutation will be one action in the undo/redo stream. 
+
+Update `setItemCount()` by adding the highlighted lines of code:
+
+```js {2,3,4,26}
+setItemCount: function(newCount) {
+    // If there's no event group, start one so the whole mutation is one event
+    const existingGroup = Blockly.Events.getGroup();
+    if (!existingGroup) Blockly.Events.setGroup(true);
+
+    const oldCountState = JSON.stringify(this.saveExtraState());
+
+    this.itemCount = newCount;
+    this.updateShape();
+
+    const newCountState = JSON.stringify(this.saveExtraState());
+
+    // If the state has changed, create and fire a BLOCK_CHANGE event
+    if (newCountState !== oldCountState) {
+        const BlockChangeClass = Blockly.Events.get(Blockly.Events.BLOCK_CHANGE);
+        const blockChangeEvent = new BlockChangeClass(
+            this,
+            'mutation',
+            null,
+            oldCountState,
+            newCountState
+        );
+        Blockly.Events.fire(blockChangeEvent);
+    }
+
+    Blockly.Events.setGroup(existingGroup);
+},
+``` 
+
+If something else outside of the mutation has already grouped this mutation into 
+an event group, respect that group. In code, this means that if `getGroup()` 
+returns a value, do not set a new group. 
+
+### Test it (again)
+
+Test the event group by running `npm run start` or refreshing the app. Follow 
+the same sequence as before: 
+1. Add a block to the last input in the list.
+1. Remove an input.
+1. Press Ctrl+z (or Cmd+z on Mac) to undo the input removal. 
+
+The undo should now fully undo the entire action. 
