@@ -764,22 +764,26 @@ css.register(`
   fill: none;
 }
 
+.blocklyComment.blocklyActiveFocus .blocklyCommentHighlight {
+  stroke: var(--blockly-active-node-color);
+  stroke-width: calc(2 * var(--blockly-selection-width));
+}
+
+.blocklyCollapsed.blocklyComment.blocklyActiveFocus .blocklyCommentTopbarBackground {
+  stroke: var(--blockly-active-node-color);
+  stroke-width: var(--blockly-selection-width);
+}
+
 .blocklyCommentText.blocklyActiveFocus {
-  border-color: #fc3;
-  border-width: 2px;
+  border-color: var(--blockly-active-node-color);
+  border-width: var(--blockly-selection-width);
 }
 
-.blocklySelected .blocklyCommentHighlight {
-  stroke: #fc3;
-  stroke-width: 3px;
+.blocklyCommentTopbar image.blocklyActiveFocus {
+  outline: var(--blockly-selection-width) solid var(--blockly-active-node-color);
 }
 
-.blocklyCollapsed.blocklySelected .blocklyCommentHighlight {
+.blocklyCollapsed.blocklyComment.blocklyActiveFocus .blocklyCommentHighlight {
   stroke: none;
-}
-
-.blocklyCollapsed.blocklySelected .blocklyCommentTopbarBackground {
-  stroke: #fc3;
-  stroke-width: 3px;
 }
 `);
