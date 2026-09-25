@@ -25,8 +25,6 @@ import {
 import {
   build,
   buildAdvancedCompilationTest,
-  langfiles,
-  messages,
   minify,
 } from './scripts/gulpfiles/build_tasks.mjs';
 import {cleanBuildDir, cleanReleaseDir} from './scripts/lib/fs_utils.mjs';
@@ -42,7 +40,6 @@ export default build;
 //
 // prettier-ignore
 export {
-  langfiles,
   minify,
   build,
   prepareDemos,
@@ -55,7 +52,6 @@ export {
 //
 // prettier-ignore
 export {
-  messages, // Generate msg/json/en.json et al.
   clean,
   buildAdvancedCompilationTest,
 }
