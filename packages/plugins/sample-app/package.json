@@ -28,7 +28,7 @@
     "html-webpack-plugin": "^5.6.7",
     "source-map-loader": "^5.0.0",
     "style-loader": "^4.0.0",
-    "webpack": "^5.107.2",
+    "webpack": "^5.111.1",
     "webpack-cli": "^7.2.3",
     "webpack-dev-server": "^6.0.0"
   },

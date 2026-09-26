@@ -30,7 +30,7 @@
     "style-loader": "^4.0.0",
     "ts-loader": "^9.6.1",
     "typescript": "^6.0.3",
-    "webpack": "^5.107.2",
+    "webpack": "^5.111.1",
     "webpack-cli": "^7.2.3",
     "webpack-dev-server": "^6.0.0"
   },
