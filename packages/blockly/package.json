@@ -203,7 +203,7 @@
     "sinon": "^22.1.0",
     "typescript": "^6.0.3",
     "webdriverio": "^9.31.9",
-    "yargs": "^18.0.0"
+    "yargs": "^18.2.0"
   },
   "engines": {
     "node": ">=22"
