@@ -41,7 +41,7 @@
     "@docusaurus/faster": "^3.10.2",
     "@docusaurus/module-type-aliases": "^3.10.2",
     "@docusaurus/types": "^3.10.2",
-    "docusaurus-plugin-typedoc": "^1.4.2",
+    "docusaurus-plugin-typedoc": "^1.4.3",
     "typedoc": "^0.28.20",
     "typedoc-docusaurus-theme": "^1.4.3",
     "typedoc-plugin-frontmatter": "^1.3.2",
