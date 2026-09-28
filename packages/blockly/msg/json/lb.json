@@ -200,5 +200,9 @@
 	"ARIA_TYPE_FIELD_DATE": "Datum",
 	"ARIA_TYPE_FIELD_COLOUR": "Faarf",
 	"FIELD_BITMAP_PIXEL_ON": "un",
-	"FIELD_BITMAP_PIXEL_OFF": "aus"
+	"FIELD_BITMAP_PIXEL_OFF": "aus",
+	"TOOLBOX_SEARCH_PLACEHOLDER": "No Bléck sichen",
+	"TOOLBOX_SEARCH_NO_RESULTS": "Keng passend Bléck fonnt",
+	"TOOLBOX_SEARCH_RESULT_COUNT_ONE": "1 passende Block",
+	"TOOLBOX_SEARCH_RESULT_COUNT": "%1 passend Bléck"
 }

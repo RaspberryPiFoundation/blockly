@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"A.jalate",
 			"Ajeje Brazorf",
 			"Atzerritik",
 			"Codynguyen1116",
@@ -381,5 +382,8 @@
 	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "Mantenga presionado %1 y use las teclas de flecha para moverse libremente, despues el %2 para aceptar la posición",
 	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Use las teclas de flecha para moverse, luego %1 para aceptar la posición",
 	"KEYBOARD_NAV_COPIED_HINT": "Copiado. Presione %1 para pegar",
-	"KEYBOARD_NAV_CUT_HINT": "Cortado. Presione %1 para pegar"
+	"KEYBOARD_NAV_CUT_HINT": "Cortado. Presione %1 para pegar",
+	"TOOLBOX_SEARCH_NO_RESULTS": "No se han encontrado registros que coincidan",
+	"TOOLBOX_SEARCH_RESULT_COUNT_ONE": "1 bloque de coincidencia",
+	"TOOLBOX_SEARCH_RESULT_COUNT": "%1 bloques de coincidencia"
 }

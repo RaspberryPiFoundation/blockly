@@ -13,6 +13,7 @@
 			"Liuxinyu970226",
 			"Mateon1",
 			"Mazab IZW",
+			"PanWor",
 			"Pbz",
 			"Pio387",
 			"Rail",
@@ -377,5 +378,6 @@
 	"KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT": "Przytrzymaj %1 i użyj klawiszy strzałek, aby swobodnie się poruszać, następnie %2, aby zaakceptować pozycję",
 	"KEYBOARD_NAV_CONSTRAINED_MOVE_HINT": "Użyj klawiszy strzałek, aby się poruszać, następnie %1, aby zaakceptować pozycję",
 	"KEYBOARD_NAV_COPIED_HINT": "Copied. Press %1 to paste.",
-	"KEYBOARD_NAV_CUT_HINT": "Wytnij. Naciśnij %1, aby wkleić."
+	"KEYBOARD_NAV_CUT_HINT": "Wytnij. Naciśnij %1, aby wkleić.",
+	"TOOLBOX_SEARCH_PLACEHOLDER": "Szukaj blokad"
 }

@@ -612,5 +612,10 @@
 	"WORKSPACE_SEARCH_FIND_PREVIOUS": "Atopar o anterior",
 	"WORKSPACE_SEARCH_CLOSE": "Pechar a barra de procura",
 	"WORKSPACE_SEARCH_NO_MATCHES": "Non hai ningún bloque coincidente",
-	"WORKSPACE_SEARCH_MATCH": "Coincidencia %1 de %2: %3"
+	"WORKSPACE_SEARCH_MATCH": "Coincidencia %1 de %2: %3",
+	"TOOLBOX_SEARCH_PLACEHOLDER": "Procurar bloques",
+	"TOOLBOX_SEARCH_PROMPT": "Escribe para procurar bloques",
+	"TOOLBOX_SEARCH_NO_RESULTS": "Non se atoparon bloques que coincidisen",
+	"TOOLBOX_SEARCH_RESULT_COUNT_ONE": "Hai un bloque coincidente",
+	"TOOLBOX_SEARCH_RESULT_COUNT": "Hai %1 bloques coincidentes"
 }

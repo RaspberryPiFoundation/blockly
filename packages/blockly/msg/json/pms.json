@@ -597,5 +597,10 @@
 	"WORKSPACE_SEARCH_FIND_PREVIOUS": "Trové col ch'a-i ven prima",
 	"WORKSPACE_SEARCH_CLOSE": "Saré la bara d'arserca",
 	"WORKSPACE_SEARCH_NO_MATCHES": "Gnun blòch rëspondent",
-	"WORKSPACE_SEARCH_MATCH": "Rëspondensa %1 ëd %2: %3"
+	"WORKSPACE_SEARCH_MATCH": "Rëspondensa %1 ëd %2: %3",
+	"TOOLBOX_SEARCH_PLACEHOLDER": "Sërché dij blochet",
+	"TOOLBOX_SEARCH_PROMPT": "Scrive për sërché dij blochet",
+	"TOOLBOX_SEARCH_NO_RESULTS": "Gnun blòch rëspondent trovà",
+	"TOOLBOX_SEARCH_RESULT_COUNT_ONE": "1 blòch rëspondent",
+	"TOOLBOX_SEARCH_RESULT_COUNT": "%1 blòch rëspondent"
 }

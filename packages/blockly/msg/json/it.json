@@ -402,5 +402,9 @@
 	"WORKSPACE_SEARCH_FIND_PREVIOUS": "Trova precedente",
 	"WORKSPACE_SEARCH_CLOSE": "Chiudi la barra di ricerca",
 	"WORKSPACE_SEARCH_NO_MATCHES": "Nessun blocco corrispondente",
-	"WORKSPACE_SEARCH_MATCH": "Corrispondenza %1 di %2: %3"
+	"WORKSPACE_SEARCH_MATCH": "Corrispondenza %1 di %2: %3",
+	"TOOLBOX_SEARCH_PLACEHOLDER": "Cerca blocchi",
+	"TOOLBOX_SEARCH_NO_RESULTS": "Nessun blocco corrispondente trovato",
+	"TOOLBOX_SEARCH_RESULT_COUNT_ONE": "1 blocco corrispondente",
+	"TOOLBOX_SEARCH_RESULT_COUNT": "%1 blocchi corrispondenti"
 }
