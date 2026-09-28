@@ -108,27 +108,7 @@ class NamespaceDirRouter extends MemberRouter {
   }
 }
 
-// The markdown plugin's locale files. Needed to register translations due to
-// https://github.com/typedoc2md/typedoc-plugin-markdown/issues/900.
-// Remove once that issue is fixed.
-const pluginLocales = await import(
-  new URL(
-    './internationalization/locales/index.js',
-    import.meta.resolve('typedoc-plugin-markdown'),
-  )
-);
-// Remove once
-// https://github.com/typedoc2md/typedoc-plugin-markdown/issues/900 is fixed.
-function registerPluginTranslations(app) {
-  const lang = app.options.getValue('lang');
-  app.internationalization.addTranslations(lang, {
-    ...pluginLocales.en,
-    ...pluginLocales[lang],
-  });
-}
-
 export function load(app) {
-  registerPluginTranslations(app);
   app.renderer.defineTheme('member-index', MemberIndexTheme);
   app.renderer.defineRouter('namespace-dirs', NamespaceDirRouter);
 }
