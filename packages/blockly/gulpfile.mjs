@@ -21,14 +21,6 @@ import {
   deployDemosBeta,
   prepareDemos,
 } from './scripts/gulpfiles/appengine_tasks.mjs';
-import {
-  build,
-  buildAdvancedCompilationTest,
-  minify,
-} from './scripts/gulpfiles/build_tasks.mjs';
-
-// Default target if gulp invoked without specifying.
-export default build;
 
 // Main sequence targets.  They already invoke prerequisites.  Listed
 // in typical order of invocation, and strictly listing prerequisites
@@ -36,17 +28,7 @@ export default build;
 //
 // prettier-ignore
 export {
-  minify,
-  build,
   prepareDemos,
   deployDemosBeta,
   deployDemos,
-}
-
-// Manually-invokable targets that also invoke prerequisites where
-// required.
-//
-// prettier-ignore
-export {
-  buildAdvancedCompilationTest,
 }

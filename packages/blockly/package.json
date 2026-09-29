@@ -73,12 +73,6 @@
           }
         ]
       },
-      "docs": {
-        "dependsOn": [
-          "package",
-          "^build"
-        ]
-      },
       "start": {
         "dependsOn": [
           {
@@ -94,11 +88,11 @@
     }
   },
   "scripts": {
-    "build": "npm run tsc && gulp build && npm run langfiles",
-    "build-debug": "gulp build --verbose --debug",
-    "build-debug-log": "npm run build:debug > build-debug.log 2>&1 && tail -3 build-debug.log",
-    "build-strict": "gulp build --verbose --strict",
-    "build-strict-log": "npm run build:strict > build-debug.log 2>&1 && tail -3 build-debug.log",
+    "build": "npm run tsc && node \"scripts/build.mjs\" && npm run langfiles",
+    "build-debug": "npm run build --verbose --debug",
+    "build-debug-log": "npm run build-debug > build-debug.log 2>&1 && tail -3 build-debug.log",
+    "build-strict": "npm run build --verbose --strict",
+    "build-strict-log": "npm run build-strict > build-debug.log 2>&1 && tail -3 build-debug.log",
     "clean": "node \"scripts/clean.mjs\"",
     "deployDemos": "npm ci && gulp deployDemos",
     "deployDemos:beta": "npm ci && gulp deployDemosBeta",
@@ -106,7 +100,6 @@
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
     "langfiles": "node \"scripts/langfiles.mjs\"",
-    "minify": "gulp minify",
     "package": "node scripts/package.mjs",
     "prepareDemos": "gulp prepareDemos",
     "start": "npm run package && nx run @blockly/dev-tools:build && node \"scripts/prepare_advanced_playground.mjs\" && concurrently -n devtools-watch,blockly-watch,server \"nx watch --projects=@blockly/dev-tools --includeDependencies -- nx run rebuildAdvancedPlayground\" \"nx watch --projects=blockly -- nx run rebuildBlockly\" \"http-server ./ -s -o /tests/playground.html -c-1\"",
@@ -119,10 +112,10 @@
     "test-mocha-typecheck": "tsc -p tests/mocha/tsconfig.json",
     "test-generators": "node \"tests/generators/test_generators.mjs\"",
     "test-mocha-interactive": "npm run build && node scripts/prepare_mocha_bundle.mjs && concurrently -n tsc,tsc:tests,esbuild,python3 \"tsc --watch --preserveWatchOutput --outDir \"build/src\" --declarationDir \"build/declarations\"\" \"npm run test-mocha-typecheck -- --watch --preserveWatchOutput\" \"esbuild build/tests/bundle-entry.js --bundle --sourcemap --alias:blockly/core=./build/src/core/blockly.js --alias:blockly/blocks=./build/src/blocks/blocks.js --alias:blockly=./build/src/core/blockly.js --outfile=build/tests/mocha-bundle.js --servedir=. --serve=127.0.0.1:8080 --watch=forever --log-level=warning\" \"python3 -m webbrowser 'http://localhost:8080/tests/mocha/index.html'\"",
-    "test-compile-advanced": "npm run tsc && gulp buildAdvancedCompilationTest --debug",
+    "test-compile-advanced": "npm run tsc && node \"tests/compile/test_compile_advanced.mjs\" --debug",
     "test-compile-advanced-browser": "node \"tests/compile/webdriver.js\"",
     "test-renamings": "node \"tests/migration/validate-renamings.mjs\"",
-    "test-type-definitions": "tsc -p ./tests/typescript/tsconfig.json -outDir \"build/src\"",
+    "test-type-definitions": "tsc -p ./tests/typescript/tsconfig.json -outDir \"build/test-types\"",
     "updateGithubPages": "node scripts/update_github_pages.mjs --upstream",
     "updateGithubPages-staging": "node scripts/update_github_pages.mjs --use-local"
   },
@@ -189,6 +182,7 @@
     "concurrently": "^10.0.4",
     "esbuild": "^0.28.2",
     "glob": "^13.0.6",
+    "glob-stream": "8.0.3",
     "google-closure-compiler": "^20260920.0.0",
     "gulp": "^5.0.1",
     "gulp-rename": "^2.1.0",
