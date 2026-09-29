@@ -122,7 +122,7 @@
     "test-compile-advanced": "npm run tsc && gulp buildAdvancedCompilationTest --debug",
     "test-compile-advanced-browser": "node \"tests/compile/webdriver.js\"",
     "test-renamings": "node \"tests/migration/validate-renamings.mjs\"",
-    "test-type-definitions": "tsc -p ./tests/typescript/tsconfig.json -outDir \"build/src\"",
+    "test-type-definitions": "tsc -p ./tests/typescript/tsconfig.json -outDir \"build/test-types\"",
     "updateGithubPages": "node scripts/update_github_pages.mjs --upstream",
     "updateGithubPages-staging": "node scripts/update_github_pages.mjs --use-local"
   },

@@ -62,9 +62,6 @@
       "outputs": ["{projectRoot}/dist"],
       "cache": true
     },
-    "clean": {
-      "cache": true
-    },
     "lint": {
       "cache": true
     },
@@ -79,9 +76,11 @@
       "cache": true
     },
     "test-mocha-node": {
+      "dependsOn": ["tsc"],
       "cache": true
     },
     "test-generators": {
+      "dependsOn": ["package"],
       "cache": true
     },
     "test-mocha-interactive": {
