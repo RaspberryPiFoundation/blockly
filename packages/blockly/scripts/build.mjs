@@ -682,6 +682,11 @@ export function compile(options) {
  * blockly_compressed.js, blocks_compressed.js, etc.
  */
 async function buildCompiled() {
+  // Closure writes each chunk's bare output here rather than straight into
+  // RELEASE_DIR, so it can't overwrite files already in dist/ (package.mjs
+  // writes legacy shims named blocks.js, dart.js, etc., which collide with
+  // Closure's bare chunk output).
+  const compiledDir = path.join(BUILD_DIR, 'compiled');
   // Get chunking.
   const chunkOptions = getChunkOptions();
   // Closure Compiler options.
@@ -701,20 +706,22 @@ async function buildCompiled() {
     chunk: chunkOptions.chunk,
     chunk_wrapper: chunkOptions.chunk_wrapper,
     // Closure writes one file per chunk, named after the chunk, so
-    // this produces e.g. dist/blockly.js; the COMPILED_SUFFIX is added
-    // below.
-    chunk_output_path_prefix: `${RELEASE_DIR}/`,
+    // this produces e.g. build/compiled/blockly.js; the file is then
+    // renamed with COMPILED_SUFFIX and moved into RELEASE_DIR below.
+    chunk_output_path_prefix: `${compiledDir}/`,
     create_source_map: '%outname%.map',
     rename_prefix_namespace: NAMESPACE_VARIABLE,
     assume_function_wrapper: true,
   };
 
   await stripApacheLicenses(chunkOptions.js);
-  // Ensure the destination directory exists
+  // Start from an empty scratch directory and ensure the destination exists.
+  await rm(compiledDir, {recursive: true, force: true});
+  await mkdir(compiledDir, {recursive: true});
   await mkdir(RELEASE_DIR, {recursive: true});
   await compile(options);
   for (const chunk of chunks) {
-    const compiledPath = path.join(RELEASE_DIR, `${chunk.name}.js`);
+    const compiledPath = path.join(compiledDir, `${chunk.name}.js`);
     const outputName = `${chunk.name}${COMPILED_SUFFIX}.js`;
     const outputPath = path.join(RELEASE_DIR, outputName);
 
