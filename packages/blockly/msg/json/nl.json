@@ -630,5 +630,10 @@
 	"WORKSPACE_SEARCH_FIND_PREVIOUS": "Vorige zoeken",
 	"WORKSPACE_SEARCH_CLOSE": "Zoekbalk sluiten",
 	"WORKSPACE_SEARCH_NO_MATCHES": "Geen overeenkomende blokken",
-	"WORKSPACE_SEARCH_MATCH": "Overeenkomst %1 van %2: %3"
+	"WORKSPACE_SEARCH_MATCH": "Overeenkomst %1 van %2: %3",
+	"TOOLBOX_SEARCH_PLACEHOLDER": "Zoeken naar blokken",
+	"TOOLBOX_SEARCH_PROMPT": "Typ om naar blokken te zoeken",
+	"TOOLBOX_SEARCH_NO_RESULTS": "Geen overeenkomende blokken gevonden",
+	"TOOLBOX_SEARCH_RESULT_COUNT_ONE": "1 overeenkomend blok",
+	"TOOLBOX_SEARCH_RESULT_COUNT": "%1 overeenkomende blokken"
 }
