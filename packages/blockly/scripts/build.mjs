@@ -1,41 +1,39 @@
-/**
- * @license
- * Copyright 2018 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
-
-/**
- * @fileoverview Gulp script to build Blockly for Node & NPM.
- */
-
-import * as gulp from 'gulp';
-import rename from 'gulp-rename';
-import replace from 'gulp-replace';
-import sourcemaps from 'gulp-sourcemaps';
-
-import * as fs from 'fs';
-import * as fsPromises from 'fs/promises';
-import * as path from 'path';
+import {execSync} from 'child_process';
+import {mkdirSync, readdirSync} from 'node:fs';
+import {
+  appendFile,
+  mkdir,
+  readFile,
+  rename,
+  rm,
+  unlink,
+  writeFile,
+} from 'node:fs/promises';
 
 import {globSync} from 'glob';
-import {gulp as closureCompiler} from 'google-closure-compiler';
+import {compiler as ClosureCompiler} from 'google-closure-compiler';
+import {getNativeImagePath} from 'google-closure-compiler/lib/utils.js';
+import * as path from 'path';
 import yargs from 'yargs';
 import {hideBin} from 'yargs/helpers';
 
 import {
   BUILD_DIR,
+  LANG_BUILD_DIR,
   RELEASE_DIR,
   TSC_OUTPUT_DIR,
-} from './config.mjs';
-
-import {posixPath, quote} from '../helpers.js';
-import {getPackageJson} from '../lib/package_json.mjs';
+} from './build_constants.mjs';
+import {posixPath, quote} from './helpers.js';
+import {getPackageJson} from './lib/package_json.mjs';
 
 const argv = yargs(hideBin(process.argv)).parse();
 
-////////////////////////////////////////////////////////////
-//                        Build                           //
-////////////////////////////////////////////////////////////
+/**
+ * Path to the python runtime.
+ * This will normalize the command across platforms (e.g. python3 on Linux and
+ * Mac, python on Windows).
+ */
+const PYTHON = process.platform === 'win32' ? 'python' : 'python3';
 
 /**
  * Posix version of TSC_OUTPUT_DIR
@@ -182,9 +180,10 @@ for (let i = 1; i < chunks.length; i++) {
  * with an arbitrary, very short name.
  *
  * Nevertheless, this function can still be used to compute the
- * location of @defined variables, because --define directives are
+ * location of `@define`d variables, because --define directives are
  * processed before the final renaming occurs.
- */ 
+ * @param {{entry: string}} chunk The chunk whose module path to compute.
+ */
 function modulePath(chunk) {
   const entryPath = path.posix.join(TSC_OUTPUT_DIR_POSIX, chunk.entry);
   return 'module$' + entryPath.replace(/\.js$/, '').replaceAll('/', '$');
@@ -199,14 +198,26 @@ const licenseRegex = `\\/\\*\\*
 
 /**
  * Helper method for stripping the Google's and MIT's Apache Licenses.
+ *
+ * @param {!Array<string>} filePaths Files to rewrite.
  */
-function stripApacheLicense() {
-  // Strip out Google's and MIT's Apache licences.
-  // Closure Compiler preserves dozens of Apache licences in the Blockly code.
-  // Remove these if they belong to Google or MIT.
-  // MIT's permission to do this is logged in Blockly issue #2412.
-  return replace(new RegExp(licenseRegex, 'g'), '\n\n\n\n');
-  // Replace with the same number of lines so that source-maps are not affected.
+async function stripApacheLicenses(filePaths) {
+  await Promise.all(
+    filePaths.map(async (filePath) => {
+      const source = await readFile(filePath, 'utf8');
+      // Strip out Google's and MIT's Apache licences.
+      // Closure Compiler preserves dozens of Apache licences in the Blockly code.
+      // Remove these if they belong to Google or MIT.
+      // MIT's permission to do this is logged in Blockly issue #2412.
+      const stripped = source.replace(
+        new RegExp(licenseRegex, 'g'),
+        '\n\n\n\n',
+      );
+      // Replace with the same number of lines so that source-maps are
+      // not affected.
+      if (stripped !== source) await writeFile(filePath, stripped);
+    }),
+  );
 }
 
 /**
@@ -321,13 +332,54 @@ const JSCOMP_OFF = [
   'visibility',
 ];
 
+var languages = null;
+
+/**
+ * Get list of languages to build langfiles and/or shims for, based on .json
+ * files in msg/json/, skipping certain entries that do not correspond to an
+ * actual language).  Results are cached as this is called from both
+ * buildLangfiles and buildLangfileShims.
+ */
+function getLanguages() {
+  if (!languages) {
+    const skip = /^(keys|synonyms|qqq|constants)\.json$/;
+    languages = readdirSync(path.join('msg', 'json'))
+      .filter((file) => file.endsWith('json') && !skip.test(file))
+      .map((file) => file.replace(/\.json$/, ''));
+  }
+  return languages;
+}
+
+/**
+ * This task builds Blockly's lang files.
+ *     msg/*.js
+ */
+function buildLangfiles() {
+  // Create output directory.
+  mkdirSync(LANG_BUILD_DIR, {recursive: true});
+
+  // Run create_messages.py.
+  const inputFiles = getLanguages().map((lang) =>
+    path.join('msg', 'json', `${lang}.json`),
+  );
+
+  const createMessagesCmd = `${PYTHON} ./scripts/i18n/create_messages.py \
+  --source_lang_file ${path.join('msg', 'json', 'en.json')} \
+  --source_synonym_file ${path.join('msg', 'json', 'synonyms.json')} \
+  --source_constants_file ${path.join('msg', 'json', 'constants.json')} \
+  --key_file ${path.join('msg', 'json', 'keys.json')} \
+  --output_dir ${LANG_BUILD_DIR} \
+  --quiet ${inputFiles.join(' ')}`;
+  execSync(createMessagesCmd, {stdio: 'inherit'});
+}
+
 /**
  * Return the path to the generated chunk exporter for the given
  * chunk, relative to TSC_OUTPUT_DIR.
  *
  * See buildChunkExporters for additional information.
  *
- * @param {{name: string}} chunk
+ * @param {{name: string}} chunk The chunk whose exporter path to compute.
  * @return {string}
  */
 function chunkExporterPath(chunk) {
@@ -393,7 +445,7 @@ function chunkExporterPath(chunk) {
  */
 async function buildChunkExporters() {
   const outDir = path.join(TSC_OUTPUT_DIR, CHUNK_EXPORTERS_DIR);
-  await fsPromises.mkdir(outDir, {recursive: true});
+  await mkdir(outDir, {recursive: true});
 
   await Promise.all(
     chunks.map(async (chunk) => {
@@ -401,7 +453,7 @@ async function buildChunkExporters() {
       const importPath = posixPath(
         path.posix.relative(path.posix.dirname(filename), chunk.entry),
       );
-      await fsPromises.writeFile(
+      await writeFile(
         path.join(TSC_OUTPUT_DIR, filename),
         // Suppress undefined-variable diagnostics, since Closure
         // Compiler can't see the declaration of NAMESPACE_VARIABLE
@@ -420,6 +472,9 @@ ${NAMESPACE_VARIABLE}['${CHUNK_EXPORTS_PREFIX}${chunk.name}'] = exports;
  * A helper method to return an Closure Compiler chunk wrapper that
  * wraps the compiler output for the given chunk in a Universal Module
  * Definition.
+ * @param {{name: string, parent: ?object, scriptExport: string,
+ *     scriptNamedExports: ({[key: string]: string}|undefined)}} chunk
+ *     The chunk to generate a UMD wrapper for.
  */
 function chunkWrapper(chunk) {
   // Each chunk can have only a single dependency, which is its parent
@@ -551,12 +606,9 @@ function getChunkOptions() {
 }
 
 /**
- * Helper method for calling the Closure Compiler, establishing
- * default options (that can be overridden by the caller).
- * @param {*} options Caller-supplied options that will override the
- *     defaultOptions.
+ * Helper method for fetching the default closure compiler options.
  */
-function compile(options) {
+function getDefaultCompileOptions() {
   const defaultOptions = {
     compilation_level: 'SIMPLE_OPTIMIZATIONS',
     warning_level: argv.verbose ? 'VERBOSE' : 'DEFAULT',
@@ -574,17 +626,67 @@ function compile(options) {
       defaultOptions.jscomp_error.push('strictCheckTypes');
     }
   }
-  // Extra options for Closure Compiler gulp plugin.
-  const platform = ['native'];
+  return defaultOptions;
+}
 
-  return closureCompiler({...defaultOptions, ...options}, {platform});
+/**
+ * Helper method for calling the Closure Compiler, establishing
+ * default options (that can be overridden by the caller).
+ *
+ * The compiler reads its inputs from and writes its outputs to disk,
+ * so the caller is expected to supply --js and either --js_output_file
+ * or --chunk_output_path_prefix.
+ *
+ * @param {{[flag: string]: string|boolean|!Array<string>}} options
+ *     Caller-supplied options that will override the defaultOptions.
+ * @return {!Promise<string>} Resolves with the compiler's stdout once
+ *     it exits successfully; rejects if it exits non-zero.
+ */
+export function compile(options) {
+  const compilerInstance = new ClosureCompiler({
+    ...getDefaultCompileOptions(),
+    ...options,
+  });
+
+  // google-closure-compiler's node API always shells out to `java`
+  // unless JAR_PATH is cleared; only its gulp and grunt plugins know
+  // about the platform-native binaries.  Do what those plugins do, so
+  // that a JRE isn't needed on platforms we ship a binary for.  See
+  // getFirstSupportedPlatform() in google-closure-compiler/lib/utils.js.
+  const nativeImagePath = getNativeImagePath();
+  if (nativeImagePath) {
+    compilerInstance.JAR_PATH = null;
+    compilerInstance.javaPath = nativeImagePath;
+  } else if (!process.env.JAVA_HOME) {
+    throw new Error(
+      'No native Closure Compiler binary for this platform and no JRE ' +
+        'found; set JAVA_HOME or install google-closure-compiler-<platform>.',
+    );
+  }
+
+  return new Promise((resolve, reject) => {
+    compilerInstance.run((exitCode, stdout, stderr) => {
+      // Diagnostics go to stderr even when compilation succeeds.
+      if (stderr) process.stderr.write(stderr);
+      if (exitCode === 0) {
+        resolve(stdout);
+      } else {
+        reject(new Error(`Closure Compiler exited with code ${exitCode}.`));
+      }
+    });
+  });
 }
 
 /**
  * This task compiles the core library, blocks and generators, creating
  * blockly_compressed.js, blocks_compressed.js, etc.
  */
-function buildCompiled() {
+async function buildCompiled() {
+  // Closure writes each chunk's bare output here rather than straight into
+  // RELEASE_DIR, so it can't overwrite files already in dist/ (package.mjs
+  // writes legacy shims named blocks.js, dart.js, etc., which collide with
+  // Closure's bare chunk output).
+  const compiledDir = path.join(BUILD_DIR, 'compiled');
   // Get chunking.
   const chunkOptions = getChunkOptions();
   // Closure Compiler options.
@@ -600,23 +702,70 @@ function buildCompiled() {
     // by the time --define is processed.)  See
     // https://github.com/google/closure-compiler/issues/1601#issuecomment-483452226
     define: `VERSION$$${modulePath(chunks[0])}='${packageJson.version}'`,
+    js: chunkOptions.js,
     chunk: chunkOptions.chunk,
     chunk_wrapper: chunkOptions.chunk_wrapper,
-    // Don't supply the list of source files in chunkOptions.js as an
-    // option to Closure Compiler; instead feed them as input via gulp.src.
+    // Closure writes one file per chunk, named after the chunk, so
+    // this produces e.g. build/compiled/blockly.js; the file is then
+    // renamed with COMPILED_SUFFIX and moved into RELEASE_DIR below.
+    chunk_output_path_prefix: `${compiledDir}/`,
+    create_source_map: '%outname%.map',
     rename_prefix_namespace: NAMESPACE_VARIABLE,
     assume_function_wrapper: true,
   };
 
-  // Fire up compilation pipline.
-  return gulp
-    .src(chunkOptions.js, {base: './'})
-    .pipe(stripApacheLicense())
-    .pipe(sourcemaps.init())
-    .pipe(compile(options))
-    .pipe(rename({suffix: COMPILED_SUFFIX}))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(RELEASE_DIR));
+  await stripApacheLicenses(chunkOptions.js);
+  // Start from an empty scratch directory and ensure the destination exists.
+  await rm(compiledDir, {recursive: true, force: true});
+  await mkdir(compiledDir, {recursive: true});
+  await mkdir(RELEASE_DIR, {recursive: true});
+  await compile(options);
+  for (const chunk of chunks) {
+    const compiledPath = path.join(compiledDir, `${chunk.name}.js`);
+    const outputName = `${chunk.name}${COMPILED_SUFFIX}.js`;
+    const outputPath = path.join(RELEASE_DIR, outputName);
+
+    // Closure's --chunk_output_path_prefix write path appends one extra
+    // trailing blank line beyond what's in chunk_wrapper; the JSON-streams
+    // protocol gulp used didn't do this. Trim it here so the .js and its
+    // .map stay consistent with each other and match the old gulp output.
+    let code = await readFile(compiledPath, 'utf8');
+    if (code.endsWith('\n\n')) {
+      code = code.slice(0, -1);
+      await writeFile(compiledPath, code);
+    }
+
+    const sourceMap = JSON.parse(await readFile(`${compiledPath}.map`, 'utf8'));
+    sourceMap.file = outputName;
+    if (sourceMap.mappings.endsWith(';')) {
+      sourceMap.mappings = sourceMap.mappings.slice(0, -1);
+    }
+    if (typeof sourceMap.lineCount === 'number') {
+      delete sourceMap.lineCount;
+    }
+    sourceMap.sourcesContent = await Promise.all(
+      sourceMap.sources.map((source) =>
+        readFile(source, 'utf8').catch(() => null),
+      ),
+    );
+
+    const ordered = {
+      version: sourceMap.version,
+      sources: sourceMap.sources,
+      names: sourceMap.names,
+      mappings: sourceMap.mappings,
+      file: sourceMap.file,
+      sourcesContent: sourceMap.sourcesContent,
+    };
+    await writeFile(`${outputPath}.map`, JSON.stringify(ordered));
+    await unlink(`${compiledPath}.map`);
+
+    await rename(compiledPath, outputPath);
+    await appendFile(
+      outputPath,
+      `\n\n//# sourceMappingURL=${outputName}.map\n`,
+    );
+  }
 }
 
 /**
@@ -635,13 +784,13 @@ async function buildShims() {
   // .js files therein are ESM not CJS, so we can import the
   // entrypoints to enumerate their exported names.
   const TMP_PACKAGE_JSON = path.join(BUILD_DIR, 'package.json');
-  await fsPromises.writeFile(TMP_PACKAGE_JSON, '{"type": "module"}');
+  await writeFile(TMP_PACKAGE_JSON, '{"type": "module"}');
 
   await Promise.all(
     chunks.map(async (chunk) => {
       // Import chunk entrypoint to get names of exports for chunk.
       const entryPath = path.posix.join(TSC_OUTPUT_DIR_POSIX, chunk.entry);
-      const exportedNames = Object.keys(await import(`../../${entryPath}`));
+      const exportedNames = Object.keys(await import(`../${entryPath}`));
 
       // Write an ESM wrapper that imports the CJS module and re-exports
       // its named exports.
@@ -649,7 +798,7 @@ async function buildShims() {
       const wrapperPath = path.join(RELEASE_DIR, `${chunk.name}.mjs`);
       const importName = chunk.scriptExport.replace(/.*\./, '');
 
-      await fsPromises.writeFile(
+      await writeFile(
         wrapperPath,
         `import ${importName} from '${cjsPath}';
 export const {
@@ -661,7 +810,7 @@ ${exportedNames.map((name) => `  ${name},`).join('\n')}
       // For first chunk, write an additional ESM wrapper for 'blockly'
       // entrypoint since it has the same exports as 'blockly/core'.
       if (chunk.name === 'blockly') {
-        await fsPromises.writeFile(
+        await writeFile(
           path.join(RELEASE_DIR, `index.mjs`),
           `import Blockly from './index.js';
 export const {
@@ -683,7 +832,7 @@ ${exportedNames.map((name) => `  ${name},`).join('\n')}
         ? `import ${quote(`./${chunk.parent.name}.loader.mjs`)};`
         : '';
 
-      await fsPromises.writeFile(
+      await writeFile(
         shimPath,
         `import {loadChunk} from '../tests/scripts/load.mjs';
 ${parentImport}
@@ -700,58 +849,57 @@ ${exportedNames.map((name) => `  ${name},`).join('\n')}
     }),
   );
 
-  await fsPromises.rm(TMP_PACKAGE_JSON);
+  await rm(TMP_PACKAGE_JSON);
 }
 
 /**
- * This task uses Closure Compiler's ADVANCED_OPTIMIZATIONS mode to
- * compile together Blockly core, blocks and generators with a simple
- * test app; the purpose is to verify that Blockly is compatible with
- * the ADVANCED_OPTIMIZATIONS mode.
- *
- * Prerequisite: tsc.
+ * This task builds the ESM wrappers used by the langfiles "import"
+ * entrypoints declared in package.json.
  */
-function compileAdvancedCompilationTest() {
-  // If main_compressed.js exists (from a previous run) delete it so that
-  // a later browser-based test won't check it should the compile fail.
-  try {
-    fs.unlinkSync('./tests/compile/main_compressed.js');
-  } catch {
-    // Probably it didn't exist.
-  }
+async function buildLangfileShims() {
+  // Create output directory.
+  mkdirSync(path.join(RELEASE_DIR, 'msg'), {recursive: true});
 
-  const srcs = [
-    TSC_OUTPUT_DIR + '/**/*.js',
-    'tests/compile/main.js',
-    'tests/compile/test_blocks.js',
-  ];
+  // Get the names of the exports from the langfile by importing
+  // msg/messages.js and letting it mutate the (global) Blockly.Msg.
+  // (We have to do it this way because messages.js is a script and
+  // not a CJS module with exports.)
+  globalThis.Blockly = {Msg: {}};
+  await import('../msg/messages.js');
+  const exportedNames = Object.keys(globalThis.Blockly.Msg);
+  delete globalThis.Blockly;
 
-  // Closure Compiler options.
-  const options = {
-    dependency_mode: 'PRUNE',
-    compilation_level: 'ADVANCED_OPTIMIZATIONS',
-    entry_point: './tests/compile/main.js',
-    js_output_file: 'main_compressed.js',
-  };
-  return gulp
-    .src(srcs, {base: './'})
-    .pipe(stripApacheLicense())
-    .pipe(sourcemaps.init())
-    .pipe(compile(options))
-    .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: '../../'}))
-    .pipe(gulp.dest('./tests/compile/'));
+  await Promise.all(
+    getLanguages().map(async (lang) => {
+      // Write an ESM wrapper that imports the CJS module and re-exports
+      // its named exports.
+      const cjsPath = `./${lang}.js`;
+      const wrapperPath = path.join(RELEASE_DIR, 'msg', `${lang}.mjs`);
+      const safeLang = lang.replace(/-/g, '_');
+
+      await writeFile(
+        wrapperPath,
+        `import ${safeLang} from '${cjsPath}';
+export const {
+${exportedNames.map((name) => `  ${name},`).join('\n')}
+} = ${safeLang};
+`,
+      );
+    }),
+  );
 }
 
-// function tsc, above
-export const minify = gulp.series(
-  buildChunkExporters,
-  buildCompiled,
-  buildShims,
-);
-export const build = minify;
+/**
+ * Build all chunks, compressed files, sourcemaps, shims, and langfiles.
+ *
+ * Prerequisite: tsc (handled by nx).
+ */
+async function build() {
+  await buildChunkExporters();
+  await buildCompiled();
+  await buildShims();
+  buildLangfiles();
+  await buildLangfileShims();
+}
 
-// Manually-invokable targets, with prerequisites where required.
-// function messages, above
-export const buildAdvancedCompilationTest = gulp.series(
-  compileAdvancedCompilationTest,
-);
+build();
