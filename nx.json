@@ -13,8 +13,7 @@
     },
     "build-debug-log": {
       "dependsOn": ["^build-debug-log"],
-      "outputs": ["{projectRoot}/dist"],
-      "cache": true
+      "outputs": ["{projectRoot}/dist"]
     },
     "build-strict": {
       "dependsOn": ["^build-strict"],
@@ -43,7 +42,7 @@
       "cache": true
     },
     "package": {
-      "outputs": ["{projectRoot}/dist"],
+      "outputs": ["{projectRoot}/dist", "{projectRoot}/build"],
       "cache": true
     },
     "prepareDemos": {
@@ -51,21 +50,19 @@
       "cache": true
     },
     "tsc": {
-      "outputs": ["{projectRoot}/build"],
+      "outputs": [
+        "{projectRoot}/build/src",
+        "{projectRoot}/build/declarations"
+      ],
       "cache": true
     },
     "prepublishOnly": {
-      "outputs": ["{projectRoot}/dist"],
-      "cache": true
+      "outputs": ["{projectRoot}/dist"]
     },
     "predeploy": {
-      "outputs": ["{projectRoot}/dist"],
-      "cache": true
+      "outputs": ["{projectRoot}/dist"]
     },
     "lint": {
-      "cache": true
-    },
-    "lint-fix": {
       "cache": true
     },
     "test": {
@@ -80,34 +77,18 @@
       "cache": true
     },
     "test-generators": {
-      "dependsOn": ["package"],
+      "dependsOn": ["tsc"],
       "cache": true
     },
-    "test-mocha-interactive": {
-      "cache": true
-    },
-    "test-compile-advanced": {
+    "test-build-compile-advanced": {
+      "outputs": ["{projectRoot}/tests/compile/main_compressed*"],
       "cache": true
     },
     "test-mocha-typecheck": {
       "cache": true
     },
-    "swizzle": {
-      "cache": true
-    },
-    "clear": {
-      "cache": true
-    },
     "write-translations": {
-      "cache": true
-    },
-    "write-heading-ids": {
-      "cache": true
-    },
-    "audit-fix": {
-      "cache": true
-    },
-    "prepack": {
+      "outputs": ["{projectRoot}/i18n"],
       "cache": true
     },
     "start": {
