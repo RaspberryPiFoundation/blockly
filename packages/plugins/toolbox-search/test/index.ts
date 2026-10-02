@@ -239,7 +239,7 @@ const toolbox = {
         },
       ],
     },
-    {kind: 'search', name: 'Search', contents: []},
+    {kind: 'search', name: 'Search', colour: '#000', contents: []},
   ],
 };
 

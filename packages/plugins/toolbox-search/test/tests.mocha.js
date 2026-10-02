@@ -113,6 +113,79 @@ suite('ToolboxSearchCategory', () => {
 
     assert.include(flyoutBlockTypes(this.workspace), 'variables_get');
   });
+
+  test('reserves room for the search field above the results', function () {
+    this.search('controls if');
+
+    const contents = this.searchCategory.getContents();
+    assert.equal(contents[0].kind, 'sep');
+    assert.deepEqual(
+      contents.slice(1).map((item) => item.type),
+      ['controls_if'],
+    );
+  });
+
+  test('explains itself in the flyout when nothing matches', function () {
+    const label = () => this.searchCategory.getContents().slice(1);
+
+    // Too short to have matched anything yet, so it still asks for a query.
+    this.search('ab');
+    assert.deepEqual(label(), [
+      {kind: 'label', text: Blockly.Msg['TOOLBOX_SEARCH_PROMPT']},
+    ]);
+
+    this.search('zzz');
+
+    assert.deepEqual(label(), [
+      {kind: 'label', text: Blockly.Msg['TOOLBOX_SEARCH_NO_RESULTS']},
+    ]);
+  });
+
+  test('shows and hides the search field with the flyout', function () {
+    const isSearchFieldVisible = () =>
+      this.searchCategory.searchField.parentElement.style.display !== 'none';
+    const toolbox = this.workspace.getToolbox();
+
+    assert.isFalse(isSearchFieldVisible());
+
+    toolbox.setSelectedItem(this.searchCategory);
+    assert.isTrue(isSearchFieldVisible());
+
+    toolbox.clearSelection();
+    assert.isFalse(isSearchFieldVisible());
+
+    const firstCategory = toolbox.contents.get(
+      toolbox.contents.keys().next().value,
+    );
+    toolbox.setSelectedItem(firstCategory);
+    assert.isFalse(isSearchFieldVisible());
+  });
+
+  test('builds the same row as an ordinary category', function () {
+    const [logic] = this.workspace.getToolbox().getToolboxItems();
+    const rowClasses = (category) =>
+      [...category.getDiv().querySelectorAll('*')].map((el) => el.className);
+
+    assert.deepEqual(rowClasses(this.searchCategory), rowClasses(logic));
+    assert.equal(
+      this.searchCategory.getDiv().querySelector('.blocklyToolboxCategoryLabel')
+        .textContent,
+      'Search',
+    );
+  });
+
+  test('remembers its query while the flyout is hidden', function () {
+    const toolbox = this.workspace.getToolbox();
+    this.search('controls if');
+
+    toolbox.clearSelection();
+    this.clock.runAll();
+    toolbox.setSelectedItem(this.searchCategory);
+    this.clock.runAll();
+
+    assert.equal(this.searchCategory.searchField.value, 'controls if');
+    assert.deepEqual(flyoutBlockTypes(this.workspace), ['controls_if']);
+  });
 });
 
 suite('BlockSearcher', () => {
