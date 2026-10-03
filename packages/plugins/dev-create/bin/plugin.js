@@ -22,6 +22,40 @@ const pluginTypes = ['plugin', 'field', 'block', 'theme'];
 
 const root = process.cwd();
 
+/**
+ * Highest published version for a package.
+ * TypeScript stays on 6.x: 7.x changes the compiler API ts-loader uses, and
+ * @blockly/dev-scripts accepts TypeScript 4.3, 5, and 6.
+ * @param {string} dep Package name.
+ * @returns {string} Version, without a range prefix.
+ */
+function latestInstallableVersion(dep) {
+  if (dep !== 'typescript') {
+    return execSync(`npm show ${dep} version`).toString().trim();
+  }
+  const published = JSON.parse(
+    execSync('npm view typescript@6 version --json').toString(),
+  );
+  const versions = Array.isArray(published) ? published : [published];
+  return versions.sort(compareNumericVersions).pop();
+}
+
+/**
+ * @param {string} left Dotted numeric version.
+ * @param {string} right Dotted numeric version.
+ * @returns {number} Negative when left is older.
+ */
+function compareNumericVersions(left, right) {
+  const leftParts = left.split('.').map((part) => parseInt(part, 10) || 0);
+  const rightParts = right.split('.').map((part) => parseInt(part, 10) || 0);
+  const length = Math.max(leftParts.length, rightParts.length);
+  for (let i = 0; i < length; i++) {
+    const difference = (leftParts[i] || 0) - (rightParts[i] || 0);
+    if (difference) return difference;
+  }
+  return 0;
+}
+
 exports.createPlugin = function (pluginName, options) {
   let gitRoot = '';
   let gitURL = '';
@@ -158,7 +192,7 @@ exports.createPlugin = function (pluginName, options) {
     devDependencies.push('typescript');
   }
   devDependencies.forEach((dep) => {
-    const latestVersion = execSync(`npm show ${dep} version`).toString().trim();
+    const latestVersion = latestInstallableVersion(dep);
     packageJson.devDependencies[dep] = `^${latestVersion}`;
   });
 
