@@ -238,7 +238,7 @@ const content = `
 
 .blocklyFlyout {
   position: absolute;
-  z-index: 20;
+  z-index: 25;
 }
 
 .blocklyText text {
