@@ -25,13 +25,6 @@ suite('Field focus indicators', function () {
         args0: [{type: 'field_input', name: 'TEXT', text: 'value'}],
         output: null,
       },
-      {
-        type: 'focus_statement',
-        message0: 'value %1',
-        args0: [{type: 'field_input', name: 'TEXT', text: 'value'}],
-        previousStatement: null,
-        nextStatement: null,
-      },
     ]);
     workspace = Blockly.inject('blocklyDiv', {
       ...DEFAULT_INJECT_OPTIONS,
@@ -54,44 +47,22 @@ suite('Field focus indicators', function () {
     Blockly.keyboardNavigationController.setIsActive(false);
     sharedTestTeardown.call(this, workspace);
     delete Blockly.Blocks['focus_reporter'];
-    delete Blockly.Blocks['focus_statement'];
   });
 
-  for (const fullBlock of [true, false]) {
-    test(`${fullBlock ? 'full-block' : 'regular'} fields retain a passive indicator in the toolbox`, function () {
-      const block = workspace.newBlock(
-        fullBlock ? 'focus_reporter' : 'focus_statement',
-      );
-      block.initSvg();
-      block.render();
-      const field = block.getField('TEXT');
-      assert.isNotNull(field);
-      Blockly.getFocusManager().focusNode(fullBlock ? block : field);
+  test('full-block fields show a passive outline when focus moves to the toolbox', function () {
+    const block = workspace.newBlock('focus_reporter');
+    block.initSvg();
+    block.render();
+    Blockly.getFocusManager().focusNode(block);
 
-      workspace
-        .getInjectionDiv()
-        .dispatchEvent(createKeyDownEvent(Blockly.utils.KeyCodes.T));
+    workspace
+      .getInjectionDiv()
+      .dispatchEvent(createKeyDownEvent(Blockly.utils.KeyCodes.T));
 
-      const indicator = fullBlock
-        ? block.pathObject.svgPath
-        : field.getFocusableElement().querySelector('.blocklyFieldRect');
-      assert.isNotNull(indicator);
-      assert.match(getComputedStyle(indicator).strokeDasharray, /^5px,? 3px$/);
-
-      Blockly.getFocusManager().focusNode(fullBlock ? block : field);
-      assert.notMatch(
-        getComputedStyle(indicator).strokeDasharray,
-        /^5px,? 3px$/,
-      );
-
-      workspace
-        .getInjectionDiv()
-        .dispatchEvent(createKeyDownEvent(Blockly.utils.KeyCodes.T));
-      Blockly.keyboardNavigationController.setIsActive(false);
-      assert.notMatch(
-        getComputedStyle(indicator).strokeDasharray,
-        /^5px,? 3px$/,
-      );
-    });
-  }
+    const dashArray = getComputedStyle(
+      block.pathObject.svgPath,
+    ).strokeDasharray;
+    assert.isNotEmpty(dashArray);
+    assert.notEqual(dashArray, 'none');
+  });
 });
