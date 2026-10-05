@@ -16,7 +16,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const chalk = require('chalk');
+const chalk = require('chalk').default;
 const {Mocha} = require('mocha');
 const webpack = require('webpack');
 const webpackConfig = require('../config/webpack.config');

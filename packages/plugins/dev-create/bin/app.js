@@ -1,4 +1,4 @@
-const chalk = require('chalk');
+const chalk = require('chalk').default;
 const fs = require('fs-extra');
 const path = require('path');
 const execSync = require('child_process').execSync;
