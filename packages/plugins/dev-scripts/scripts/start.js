@@ -25,7 +25,7 @@ const WebpackDevServer = require('webpack-dev-server');
 const webpackConfig = require('../config/webpack.config');
 const webpackDevServerConfig = require('../config/webpackDevServer.config');
 
-const chalk = require('chalk');
+const chalk = require('chalk').default;
 const codeFrame = require('@babel/code-frame').codeFrameColumns;
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 

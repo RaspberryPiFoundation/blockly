@@ -19,7 +19,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const chalk = require('chalk');
+const chalk = require('chalk').default;
 const webpack = require('webpack');
 const webpackConfig = require('../config/webpack.config');
 
