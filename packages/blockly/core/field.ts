@@ -429,6 +429,7 @@ export abstract class Field<T = any>
     // Since full-block fields can be focused from the workspace's tree,
     // they need IDs in the format that the workspace is expecting.
     if (this.isFullBlockField()) {
+      dom.addClass(this.fieldGroup_, 'blocklyFullBlockField');
       this.id_ = idGenerator.getNextUniqueId();
     } else {
       this.id_ = `${sourceBlockSvg.id}_field_${idGenerator.getNextUniqueId()}`;
