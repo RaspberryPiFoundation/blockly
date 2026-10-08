@@ -35,7 +35,7 @@
     "clsx": "^2.1.1",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.3.0",
-    "react-dom": "^19.2.7"
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
     "@docusaurus/faster": "^3.10.2",
