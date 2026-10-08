@@ -43,7 +43,7 @@
     "@blockly/theme-deuteranopia": "^13.3.0",
     "@blockly/theme-highcontrast": "^13.3.0",
     "@blockly/theme-tritanopia": "^13.3.0",
-    "chai": "^6.2.2",
+    "chai": "^6.3.0",
     "dat.gui": "^0.7.9",
     "lodash.assign": "^4.2.0",
     "lodash.merge": "^4.6.2",

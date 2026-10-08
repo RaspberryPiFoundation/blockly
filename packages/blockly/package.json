@@ -193,7 +193,7 @@
     "@types/chai": "^5.2.3",
     "@types/mocha": "^10.0.10",
     "@types/sinon": "^22.0.0",
-    "chai": "^6.2.2",
+    "chai": "^6.3.0",
     "concurrently": "^10.0.6",
     "esbuild": "^0.28.2",
     "glob": "^13.0.6",
