@@ -194,7 +194,7 @@
     "@types/mocha": "^10.0.10",
     "@types/sinon": "^22.0.0",
     "chai": "^6.2.2",
-    "concurrently": "^10.0.4",
+    "concurrently": "^10.0.6",
     "esbuild": "^0.28.2",
     "glob": "^13.0.6",
     "google-closure-compiler": "^20260920.0.0",
