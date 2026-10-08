@@ -25,6 +25,9 @@ updates:
         patterns:
           - 'nx'
           - '@nx/*'
+      react:
+        patterns:
+          - 'react*'
   - package-ecosystem: 'github-actions' # See documentation for possible values
     directory: '/'
     target-branch: 'main'
