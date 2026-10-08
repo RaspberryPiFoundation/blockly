@@ -26,7 +26,7 @@
     "@eslint/js": "^10.0.1",
     "@nx/js": "23.2.1",
     "conventional-changelog-conventionalcommits": "9.3.1",
-    "eslint": "10.10.0",
+    "eslint": "10.12.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsdoc": "^65.1.0",
