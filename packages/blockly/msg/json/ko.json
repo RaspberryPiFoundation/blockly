@@ -643,5 +643,12 @@
 	"FIELD_MULTILINEINPUT_NEW_LINE": "새 줄",
 	"ZOOM_TO_FIT_ARIA_LABEL": "확대 축소해서 화면에 맞추기",
 	"MINIMAP_ARIA_LABEL": "작업 공간 미니맵입니다. 작업 공간을 이동하려면 화살표 키를 사용하세요.",
-	"ARIA_LABEL_TRASH_EMPTY": "쓰레기통, 현재 비어 있음"
+	"ARIA_LABEL_TRASH_EMPTY": "쓰레기통, 현재 비어 있음",
+	"WORKSPACE_SEARCH_PLACEHOLDER": "검색",
+	"WORKSPACE_SEARCH_INPUT_LABEL": "검색 작업 영역에서 Enter 키를 눌러 다음 검색 결과를 확인하고, Shift+Enter 키를 눌러 이전 검색 결과를 확인합니다. Esc 키를 누르면 검색이 종료되고 현재 검색 결과에 포커스가 맞춰집니다.",
+	"WORKSPACE_SEARCH_FIND_NEXT": "다음 찾기",
+	"WORKSPACE_SEARCH_FIND_PREVIOUS": "이전 찾기",
+	"WORKSPACE_SEARCH_CLOSE": "검색 바 닫기",
+	"WORKSPACE_SEARCH_NO_MATCHES": "일치하는 블록이 없습니다",
+	"TOOLBOX_SEARCH_PLACEHOLDER": "블록 검색"
 }
