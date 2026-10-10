@@ -154,13 +154,14 @@ exports.createPlugin = function (pluginName, options) {
     '@blockly/dev-scripts',
     '@blockly/dev-tools',
   ];
-  if (isTypescript) {
-    devDependencies.push('typescript');
-  }
   devDependencies.forEach((dep) => {
     const latestVersion = execSync(`npm show ${dep} version`).toString().trim();
     packageJson.devDependencies[dep] = `^${latestVersion}`;
   });
+  if (isTypescript) {
+    // Not the latest: dev-scripts and ts-loader do not support TypeScript 7.
+    packageJson.devDependencies.typescript = '^6.0.3';
+  }
 
   // Write the README.md to the new package.
   let readme = fs.readFileSync(
