@@ -227,6 +227,8 @@ export function getTextWidth(textElement: SVGTextElement): number {
     style.fontSize,
     style.fontWeight,
     style.fontFamily,
+    style.letterSpacing,
+    style.wordSpacing,
   );
 
   // Cache the computed width and return.
@@ -245,6 +247,8 @@ export function getTextWidth(textElement: SVGTextElement): number {
  * @param fontSize The font size to use.
  * @param fontWeight The font weight to use.
  * @param fontFamily The font family to use.
+ * @param letterSpacing The letter spacing to use.
+ * @param wordSpacing The word spacing to use.
  * @returns Width of element.
  */
 export function getFastTextWidth(
@@ -252,12 +256,16 @@ export function getFastTextWidth(
   fontSize: number,
   fontWeight: string,
   fontFamily: string,
+  letterSpacing?: string,
+  wordSpacing?: string,
 ): number {
   return getFastTextWidthWithSizeString(
     textElement,
     fontSize + 'pt',
     fontWeight,
     fontFamily,
+    letterSpacing,
+    wordSpacing,
   );
 }
 
@@ -272,6 +280,8 @@ export function getFastTextWidth(
  * @param fontSize The font size to use.
  * @param fontWeight The font weight to use.
  * @param fontFamily The font family to use.
+ * @param letterSpacing The letter spacing to use.
+ * @param wordSpacing The word spacing to use.
  * @returns Width of element.
  */
 export function getFastTextWidthWithSizeString(
@@ -279,9 +289,14 @@ export function getFastTextWidthWithSizeString(
   fontSize: string,
   fontWeight: string,
   fontFamily: string,
+  letterSpacing?: string,
+  wordSpacing?: string,
 ): number {
   const text = textElement.textContent;
-  const key = text + '\n' + textElement.className.baseVal;
+  const key =
+    text +
+    '\n' +
+    `${fontSize}-${fontWeight}-${fontFamily}-${letterSpacing}-${wordSpacing}`;
   let width;
 
   // Return the cached width if it exists.
@@ -308,6 +323,11 @@ export function getFastTextWidthWithSizeString(
   if (text && canvasContext) {
     // Set the desired font size and family.
     canvasContext.font = fontWeight + ' ' + fontSize + ' ' + fontFamily;
+    // Canvas doesn't understand 'normal', so map to 0px in that case (or when not specified)
+    canvasContext.letterSpacing =
+      letterSpacing && letterSpacing !== 'normal' ? letterSpacing : '0px';
+    canvasContext.wordSpacing =
+      wordSpacing && wordSpacing !== 'normal' ? wordSpacing : '0px';
     width = Math.ceil(canvasContext.measureText(text).width);
   } else {
     width = 0;

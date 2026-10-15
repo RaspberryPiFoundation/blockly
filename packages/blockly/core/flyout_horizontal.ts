@@ -265,7 +265,10 @@ export class HorizontalFlyout extends Flyout {
     for (const item of contents) {
       const rect = item.getElement().getBoundingRectangle();
       const moveX = this.RTL ? cursorX + rect.getWidth() : cursorX;
-      item.getElement().moveBy(moveX, cursorY);
+      const origin = item.getElement().getBoundingRectangle();
+      const deltaX = moveX - origin.left;
+      const deltaY = cursorY - origin.top;
+      item.getElement().moveBy(deltaX, deltaY);
       cursorX += item.getElement().getBoundingRectangle().getWidth();
     }
   }

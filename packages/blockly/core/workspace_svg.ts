@@ -15,6 +15,8 @@ import type {Block} from './block.js';
 import type {BlockSvg} from './block_svg.js';
 import type {BlocklyOptions} from './blockly_options.js';
 import * as browserEvents from './browser_events.js';
+import {MiniWorkspaceBubble} from './bubbles/mini_workspace_bubble.js';
+import {TextBubble} from './bubbles/text_bubble.js';
 import {TextInputBubble} from './bubbles/textinput_bubble.js';
 import {COMMENT_COLLAPSE_BAR_BUTTON_FOCUS_IDENTIFIER} from './comments/collapse_comment_bar_button.js';
 import {COMMENT_EDITOR_FOCUS_IDENTIFIER} from './comments/comment_editor.js';
@@ -37,6 +39,7 @@ import {getFocusManager} from './focus_manager.js';
 import {Gesture} from './gesture.js';
 import {Grid} from './grid.js';
 import * as hints from './hints.js';
+import {IconType} from './icons/icon_types.js';
 import {isAutoHideable} from './interfaces/i_autohideable.js';
 import type {IBoundedElement} from './interfaces/i_bounded_element.js';
 import type {IComponent} from './interfaces/i_component.js';
@@ -58,6 +61,7 @@ import {Msg} from './msg.js';
 import {Options} from './options.js';
 import * as Procedures from './procedures.js';
 import * as registry from './registry.js';
+import * as renderManagement from './render_management.js';
 import * as blockRendering from './renderers/common/block_rendering.js';
 import type {Renderer} from './renderers/common/renderer.js';
 import type {ScrollbarPair} from './scrollbar_pair.js';
@@ -527,10 +531,35 @@ export class WorkspaceSvg
       );
     }
 
+    const stylishBlocks: BlockSvg[] = [];
+
+    this.getAllBlocks(false).forEach((block) => {
+      if (block.getStyleName()) {
+        stylishBlocks.push(block);
+      }
+      // Clear cached field sizes and rerender the block.
+      block.markDirty();
+      block.queueRender();
+
+      const warningIcon = block.getIcon(IconType.WARNING);
+      if (warningIcon?.bubbleIsVisible()) {
+        const bubble = warningIcon.getBubble();
+        if (bubble instanceof TextBubble) {
+          bubble.updateBubbleSize();
+        }
+      }
+
+      const mutatorIcon = block.getIcon(IconType.MUTATOR);
+      if (mutatorIcon?.bubbleIsVisible()) {
+        const bubble = mutatorIcon.getBubble();
+        if (bubble instanceof MiniWorkspaceBubble) {
+          bubble.updateBubbleSize();
+        }
+      }
+    });
+
     // Update all blocks in workspace that have a style name.
-    this.updateBlockStyles(
-      this.getAllBlocks(false).filter((block) => !!block.getStyleName()),
-    );
+    this.updateBlockStyles(stylishBlocks);
 
     // Update current toolbox selection.
     this.refreshToolboxSelection();
@@ -541,6 +570,15 @@ export class WorkspaceSvg
     // Re-render if workspace is visible
     if (this.isVisible()) {
       this.setVisible(true);
+    }
+
+    // If this workspace is inside a flyout, reflow the flyout to accommodate
+    // changes in block dimensions based on theme text size.
+    if (this.isFlyout && !this.targetWorkspace?.getToolbox()) {
+      renderManagement.finishQueuedRenders().then(() => {
+        const flyout = this.targetWorkspace?.getFlyout();
+        flyout?.reflow();
+      });
     }
 
     const event = new (eventUtils.get(EventType.THEME_CHANGE))(
