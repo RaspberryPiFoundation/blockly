@@ -10,6 +10,8 @@
  */
 import * as Blockly from 'blockly/core';
 import {BlockSearcher} from './block_searcher';
+import {SearchFieldNode} from './search_field_node';
+import {SearchFlyoutNavigator} from './search_flyout_navigator';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 
@@ -20,12 +22,15 @@ import {BlockSearcher} from './block_searcher';
 export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
   private static readonly START_SEARCH_SHORTCUT = 'startSearch';
   static readonly SEARCH_CATEGORY_KIND = 'search';
-  private readonly SEARCH_INPUT_ID = 'toolbox-search-input';
-  private searchField?: HTMLInputElement;
+  private searchNode?: SearchFieldNode;
+  private flyoutNavigator?: SearchFlyoutNavigator;
+  /** The flyout this category searches into. */
+  private readonly flyout: Blockly.Flyout;
   private blockSearcher: BlockSearcher;
   private onChangeWrapper?: (event: Blockly.Events.Abstract) => void;
   private indexedBlocks = '';
   private boundEvents: Blockly.browserEvents.Data[] = [];
+  private resultCount = 0;
 
   /**
    * Initializes a ToolboxSearchCategory.
@@ -42,6 +47,11 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
     opt_parent?: Blockly.ICollapsibleToolboxItem,
   ) {
     super(categoryDef, parentToolbox, opt_parent);
+    const flyout = parentToolbox.getFlyout();
+    if (!(flyout instanceof Blockly.Flyout)) {
+      throw Error('A search category needs a toolbox that has a flyout.');
+    }
+    this.flyout = flyout;
     this.blockSearcher = new BlockSearcher(this.workspace_);
     this.initBlockSearcher();
     this.registerShortcut();
@@ -50,79 +60,80 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
   }
 
   /**
-   * Initializes the search field toolbox category.
-   *
-   * @returns The <div> that will be displayed in the toolbox.
+   * Initializes the category and creates its search field.
    */
-  protected override createDom_(): HTMLDivElement {
-    const dom = super.createDom_();
-    this.searchField = document.createElement('input');
-    this.searchField.id = this.SEARCH_INPUT_ID;
-    this.searchField.type = 'search';
-    this.searchField.placeholder = Blockly.Msg['TOOLBOX_SEARCH_PLACEHOLDER'];
-    this.workspace_.RTL
-      ? (this.searchField.style.marginRight = '8px')
-      : (this.searchField.style.marginLeft = '8px');
+  override init() {
+    super.init();
+    const node = new SearchFieldNode(
+      `toolbox-search-input-${this.getId()}`,
+      this.workspace_,
+      this.flyout,
+      this,
+    );
+    this.searchNode = node;
+    // Make the field the node that arrowing into the flyout lands on.
+    this.flyoutNavigator = new SearchFlyoutNavigator(this.flyout, node);
+    this.flyout.getWorkspace().setNavigator(this.flyoutNavigator);
+
+    const searchField = node.getInput();
     this.boundEvents.push(
       Blockly.browserEvents.conditionalBind(
-        this.searchField,
+        searchField,
         'keydown',
         this,
+        // Blockly suppresses its own keyboard shortcuts while a text input
+        // has focus, so every key that should move focus is handled here.
+        // Left and right are left alone in both layouts: inside the field
+        // they belong to the cursor.
         (event: KeyboardEvent) => {
-          if (
-            event.key === 'ArrowUp' &&
-            this.searchField?.selectionStart === 0
-          ) {
-            const previous = this.parentToolbox_
-              .getNavigator()
-              .getPreviousNode();
-            if (previous) {
-              Blockly.getFocusManager().focusNode(previous);
-            }
-            return;
-          } else if (
-            event.key === 'ArrowRight' &&
-            this.searchField?.selectionStart === this.searchField?.value.length
-          ) {
-            const previous = this.parentToolbox_.getNavigator().getInNode();
-            if (previous) {
-              Blockly.getFocusManager().focusNode(previous);
-            }
-            return;
-          } else if (
-            event.key === 'ArrowDown' &&
-            this.searchField?.selectionStart === this.searchField?.value.length
-          ) {
-            const next = this.parentToolbox_.getNavigator().getNextNode();
-            if (next) {
-              Blockly.getFocusManager().focusNode(next);
-            }
-            return;
-          } else if (event.key === 'Escape' && this.searchField) {
-            if (this.searchField.value !== '') {
-              this.searchField.value = '';
-              event.stopPropagation();
-              // Removes matches from the flyout after programmatically clearing the search field.
-              this.matchBlocks();
-            }
+          const isHorizontal = this.flyout.horizontalLayout;
+          const leaveKey =
+            this.workspace_.options.toolboxPosition ===
+            Blockly.utils.toolbox.Position.BOTTOM
+              ? 'ArrowDown'
+              : 'ArrowUp';
+          let handled = true;
+          if (event.key === 'Escape') {
+            Blockly.getFocusManager().focusTree(this.workspace_);
+          } else if (event.key === 'Enter') {
+            this.focusResult();
+          } else if (!isHorizontal && event.key === 'ArrowDown') {
+            this.focusResult();
+          } else if (!isHorizontal && event.key === 'ArrowUp') {
+            this.focusResult(true);
+          } else if (isHorizontal && event.key === leaveKey) {
+            Blockly.getFocusManager().focusNode(this);
+          } else {
+            handled = false;
+          }
+
+          if (handled) {
+            event.preventDefault();
           }
         },
       ),
       // When the user types in the search field, update the flyout to show matching blocks.
-      Blockly.browserEvents.conditionalBind(
-        this.searchField,
-        'input',
-        this,
-        () => this.matchBlocks(),
+      Blockly.browserEvents.conditionalBind(searchField, 'input', this, () =>
+        this.matchBlocks(),
       ),
     );
-    this.rowContents_?.replaceChildren(this.searchField);
-    return dom;
   }
 
-  /** The ID of the toolbox item must match the ID of the focusable node. */
-  override getId(): string {
-    return this.SEARCH_INPUT_ID;
+  /**
+   * Moves focus to one end of the results.
+   *
+   * @param getLast Whether to focus the last item instead of the first.
+   */
+  private focusResult(getLast = false) {
+    if (!this.flyoutNavigator) return;
+    const result = getLast
+      ? this.flyoutNavigator.getLastNode()
+      : this.flyoutNavigator.getFirstChild(
+          this.flyout.getWorkspace().getRootFocusableNode(),
+        );
+    if (result) {
+      Blockly.getFocusManager().focusNode(result);
+    }
   }
 
   /**
@@ -136,7 +147,14 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
     Blockly.ShortcutRegistry.registry.register({
       name: ToolboxSearchCategory.START_SEARCH_SHORTCUT,
       callback: () => {
-        Blockly.getFocusManager().focusNode(this);
+        if (this.parentToolbox_.getSelectedItem() !== this) {
+          // Shows the flyout and the field, so that the field can take focus.
+          this.parentToolbox_.setSelectedItem(this);
+        }
+        this.matchBlocks();
+        if (this.searchNode?.canBeFocused()) {
+          Blockly.getFocusManager().focusNode(this.searchNode);
+        }
         return true;
       },
       keyCodes: [shortcut],
@@ -189,39 +207,102 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
     this.blockSearcher.indexBlocks([...availableBlocks]);
   }
 
-  /** See IFocusableNode.getFocusableElement. */
-  override getFocusableElement(): HTMLElement | SVGElement {
-    if (!this.searchField) {
-      throw Error('This field currently has no representative DOM element.');
-    }
-    return this.searchField;
-  }
-
   /** See IFocusableNode.onNodeFocus. */
   override onNodeFocus(): void {
     super.onNodeFocus();
-    if (!this.searchField?.value) {
-      Blockly.renderManagement.finishQueuedRenders().then(() => {
-        this.matchBlocks();
-      });
-    }
+    Blockly.renderManagement.finishQueuedRenders().then(() => {
+      this.matchBlocks();
+    });
+  }
+
+  /**
+   * Shows the search field alongside this category's flyout.
+   *
+   * @param isSelected Whether this category is now the selected one.
+   */
+  override setSelected(isSelected: boolean) {
+    super.setSelected(isSelected);
+    this.searchNode?.setVisible(isSelected);
   }
 
   /**
    * Filters the available blocks based on the current query string.
    */
   private matchBlocks() {
-    const query = this.searchField?.value || '';
+    const node = this.searchNode;
+    const field = node?.getInput();
+    const query = field?.value || '';
+    const results = query ? this.blockSearcher.blockTypesMatching(query) : [];
 
-    const oldCount = this.flyoutItems_.length;
-    this.flyoutItems_ = query
-      ? this.blockSearcher.blockTypesMatching(query)
-      : [];
+    const oldCount = this.resultCount;
+    this.resultCount = results.length;
+    this.flyoutItems_ = this.generateFlyoutContent(query, results);
 
-    const newCount = this.flyoutItems_.length;
+    if (this.parentToolbox_.getSelectedItem() !== this) {
+      return;
+    }
 
-    if (!this.flyoutItems_.length) {
-      this.flyoutItems_.push({
+    if (oldCount !== results.length) {
+      Blockly.utils.aria.announceDynamicAriaState(
+        results.length === 1
+          ? Blockly.Msg['TOOLBOX_SEARCH_RESULT_COUNT_ONE']
+          : Blockly.Msg['TOOLBOX_SEARCH_RESULT_COUNT'].replace(
+              '%1',
+              String(results.length),
+            ),
+      );
+    }
+
+    // Prevent losing the cursor position in the search field when the flyout is rebuilt.
+    const cursorToRestore =
+      field && node && Blockly.getFocusManager().getFocusedNode() === node
+        ? {
+            field,
+            node,
+            start: field.selectionStart,
+            end: field.selectionEnd,
+          }
+        : null;
+
+    this.parentToolbox_.refreshSelection();
+    // Start each new set of results from the best match rather than from
+    // wherever the previous query left the flyout scrolled.
+    this.flyout.scrollToStart();
+
+    if (cursorToRestore) {
+      Blockly.getFocusManager().focusNode(cursorToRestore.node);
+      cursorToRestore.field.setSelectionRange(
+        cursorToRestore.start,
+        cursorToRestore.end,
+      );
+    }
+    // Showing the flyout may have changed its width, and that path doesn't
+    // run positionable components.
+    this.searchNode?.position();
+  }
+
+  /**
+   * Builds the flyout contents for a query.
+   *
+   * The list always starts with a separator tall enough to clear the search
+   * field, so that the first result appears below it rather than behind it.
+   *
+   * @param query The current search query.
+   * @param results The blocks matching the query.
+   * @returns The contents to show in the flyout.
+   */
+  private generateFlyoutContent(
+    query: string,
+    results: Blockly.utils.toolbox.BlockInfo[],
+  ): Blockly.utils.toolbox.FlyoutItemInfoArray {
+    const items: Blockly.utils.toolbox.FlyoutItemInfoArray = [
+      {kind: 'sep', gap: this.searchNode?.getRequiredGap() ?? 0},
+    ];
+
+    if (results.length) {
+      items.push(...results);
+    } else {
+      items.push({
         kind: 'label',
         text:
           query.length < 3
@@ -229,23 +310,7 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
             : Blockly.Msg['TOOLBOX_SEARCH_NO_RESULTS'],
       });
     }
-
-    if (this.parentToolbox_.getSelectedItem() !== this) {
-      return;
-    }
-
-    if (oldCount !== newCount) {
-      Blockly.utils.aria.announceDynamicAriaState(
-        newCount === 1
-          ? Blockly.Msg['TOOLBOX_SEARCH_RESULT_COUNT_ONE']
-          : Blockly.Msg['TOOLBOX_SEARCH_RESULT_COUNT'].replace(
-              '%1',
-              String(newCount),
-            ),
-      );
-    }
-
-    this.parentToolbox_.refreshSelection();
+    return items;
   }
 
   /**
@@ -257,6 +322,8 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
       Blockly.browserEvents.unbind(event);
     }
     this.boundEvents.length = 0;
+    this.searchNode?.dispose();
+    this.searchNode = undefined;
     if (this.onChangeWrapper) {
       this.workspace_.removeChangeListener(this.onChangeWrapper);
       this.onChangeWrapper = undefined;
@@ -313,15 +380,6 @@ export class ToolboxSearchCategory extends Blockly.ToolboxCategory {
     return true;
   }
 }
-
-// Make the clear button clickable in Safari.
-Blockly.Css.register(`
-input[type="search"]::-webkit-search-cancel-button {
-    -webkit-appearance: searchfield-cancel-button;
-    pointer-events: auto !important;
-    position: relative;
-    z-index: 10;
-}`);
 
 Blockly.registry.register(
   Blockly.registry.Type.TOOLBOX_ITEM,
