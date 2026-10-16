@@ -130,6 +130,7 @@ export class HorizontalFlyout extends Flyout {
     const metricsManager = this.targetWorkspace!.getMetricsManager();
     const targetWorkspaceViewMetrics = metricsManager.getViewMetrics();
     this.width_ = targetWorkspaceViewMetrics.width;
+    if (this.RTL) this.alignContentsRight();
 
     const edgeWidth = targetWorkspaceViewMetrics.width - 2 * this.CORNER_RADIUS;
     const edgeHeight = this.getHeight() - this.CORNER_RADIUS;
@@ -264,9 +265,8 @@ export class HorizontalFlyout extends Flyout {
 
     for (const item of contents) {
       const rect = item.getElement().getBoundingRectangle();
-      const moveX = this.RTL ? cursorX + rect.getWidth() : cursorX;
-      item.getElement().moveBy(moveX, cursorY);
-      cursorX += item.getElement().getBoundingRectangle().getWidth();
+      item.getElement().moveBy(cursorX - rect.left, cursorY);
+      cursorX += rect.getWidth();
     }
   }
 
@@ -307,6 +307,8 @@ export class HorizontalFlyout extends Flyout {
    */
   protected override reflowInternal_() {
     this.workspace_.scale = this.getFlyoutScale();
+    // position() realigns too, but only runs below if the height changed.
+    if (this.RTL) this.alignContentsRight();
     let flyoutHeight = this.getContents().reduce((maxHeightSoFar, item) => {
       return Math.max(
         maxHeightSoFar,
@@ -337,6 +339,28 @@ export class HorizontalFlyout extends Flyout {
       this.position();
       this.targetWorkspace.resizeContents();
       this.targetWorkspace.recordDragTargets();
+    }
+  }
+
+  /**
+   * Shifts the contents so they end at the flyout's right padding. Contents
+   * wider than the flyout start at the left padding instead, keeping them
+   * within the scrollable area; scrollToStart then scrolls to the right end,
+   * so they still read from the right and overflow to the left.
+   */
+  private alignContentsRight() {
+    const rects = this.getContents().map((item) =>
+      item.getElement().getBoundingRectangle(),
+    );
+    if (!rects.length) return;
+    const left = Math.min(...rects.map((rect) => rect.left));
+    const right = Math.max(...rects.map((rect) => rect.right));
+
+    const width = this.getWidth() / this.workspace_.scale;
+    const padding = this.MARGIN + this.tabWidth_;
+    const newLeft = Math.max(padding, width - padding - (right - left));
+    for (const item of this.getContents()) {
+      item.getElement().moveBy(newLeft - left, 0);
     }
   }
 }

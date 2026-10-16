@@ -1917,7 +1917,9 @@ export class BlockSvg
     if (focusedNode && focusedNode !== this) {
       renderManagement.finishQueuedRenders().then(() => {
         this.workspace.scrollBoundsIntoView(
-          this.getBoundingRectangleWithoutChildren(),
+          this.workspace.isFlyout
+            ? this.getBoundingRectangle()
+            : this.getBoundingRectangleWithoutChildren(),
         );
       });
     }
