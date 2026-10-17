@@ -199,7 +199,7 @@
     "rimraf": "^6.1.3",
     "sinon": "^22.1.0",
     "typescript": "^6.0.3",
-    "webdriverio": "^9.31.9",
+    "webdriverio": "^10.0.2",
     "yargs": "^18.2.0"
   },
   "engines": {
