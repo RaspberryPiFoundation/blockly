@@ -135,4 +135,26 @@ suite('Gesture', function () {
       this.workspace.id,
     );
   });
+
+  test('Duplicate pointerdown (missed pointerup) does not lock the workspace', function () {
+    // Some touch environments emit a pointerdown for a pointer that is already
+    // down (a missed pointerup). getGesture() handles this by cancelling the
+    // stale gesture and starting a new one; that new gesture must still be
+    // disposable so the workspace does not lock up permanently.
+    const target = this.workspace.getSvgGroup();
+    dispatchPointerEvent(target, 'pointerdown', {pointerId: 1});
+    assert.isTrue(
+      Blockly.Gesture.inProgress(),
+      'Precondition: first pointerdown must start a gesture.',
+    );
+    // Duplicate pointerdown for the same pointer id (missed pointerup).
+    dispatchPointerEvent(target, 'pointerdown', {pointerId: 1});
+    // Releasing the pointer must end the gesture.
+    dispatchPointerEvent(document, 'pointerup', {pointerId: 1});
+
+    assert.isFalse(
+      Blockly.Gesture.inProgress(),
+      'Gesture should not remain in progress after the pointer is released.',
+    );
+  });
 });
