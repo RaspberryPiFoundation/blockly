@@ -1,6 +1,7 @@
 // Typedoc theme & router overrides
 
 import {
+  MarkdownPageEvent,
   MarkdownTheme,
   MarkdownThemeContext,
   MemberRouter,
@@ -93,6 +94,15 @@ class MemberIndexTheme extends MarkdownTheme {
   getRenderContext(page) {
     return new MemberIndexContext(this, page, this.application.options);
   }
+
+  getNavigation(project) {
+    // Every plugin is under the Plugins heading, so '@blockly/field-slider'
+    // reads as 'field-slider'
+    return super.getNavigation(project).map((item) => ({
+      ...item,
+      title: item.title.replace(/^@blockly\//, ''),
+    }));
+  }
 }
 
 /**
@@ -111,4 +121,11 @@ class NamespaceDirRouter extends MemberRouter {
 export function load(app) {
   app.renderer.defineTheme('member-index', MemberIndexTheme);
   app.renderer.defineRouter('namespace-dirs', NamespaceDirRouter);
+
+  // Without a title, Docusaurus takes one from the page's first heading, which
+  // for a plugin is its README's, badges and all.
+  app.renderer.on(MarkdownPageEvent.BEGIN, (page) => {
+    if (page.model.kind !== ReflectionKind.Module) return;
+    page.frontmatter = { ...page.frontmatter, title: page.model.name };
+  });
 }

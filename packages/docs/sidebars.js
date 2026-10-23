@@ -27,6 +27,16 @@ try {
 } catch {
   console.warn('Reference sidebar not found.');
 }
+try {
+  referenceSidebar.push({
+    type: 'category',
+    label: 'Plugins',
+    link: {type: 'doc', id: 'reference/plugins/index'},
+    items: require('./docs/reference/plugins/typedoc-sidebar.cjs'),
+  });
+} catch {
+  console.warn('Plugins reference sidebar not found.');
+}
 
 const sidebars = {
   codelabsSidebar: [

@@ -37,10 +37,6 @@
   "router": "namespace-dirs",
 
   "frontmatterNamingConvention": "snakeCase",
-  "indexFrontmatter": {
-    "title": "API Reference",
-    "sidebar_label": "Overview"
-  },
 
   "indexFormat": "table",
   "parametersFormat": "table",

@@ -73,11 +73,29 @@ const config = {
 
   // Generates the API reference with TypeDoc as part of the Docusaurus build.
   plugins: [
+    // Run docusaurus-plugin-typedoc twice, once for core and once for plugins
     [
       'docusaurus-plugin-typedoc',
       {
+        id: 'core',
         options: './typedoc.json',
         out: 'docs/reference',
+        cleanOutputDir: false,
+        indexFrontmatter: {
+          title: 'API Reference',
+          sidebar_label: 'Overview',
+        },
+      },
+    ],
+    [
+      'docusaurus-plugin-typedoc',
+      {
+        id: 'plugins',
+        options: './typedoc.json',
+        entryPoints: ['./plugins_api.json'],
+        out: 'docs/reference/plugins',
+        // Drops the '@blockly' scope directory from plugins
+        excludeScopesInPaths: true,
       },
     ],
   ],
