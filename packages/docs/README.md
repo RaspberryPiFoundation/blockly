@@ -59,10 +59,14 @@ using [TypeDoc](https://www.npmjs.com/package/typedoc). Typedoc automatically
 generates MDX files into `/docs/reference/` when Docusaurus starts.
 
 TypeDoc generates the API docs based on the latest Blockly release, not the 
-current code. If you would like to see unreleased or beta changes reflected 
-in your local docs site, run `npm run reference:refresh`. This will overwrite a 
+current code. If you would like to see unreleased or beta changes to core Blockly 
+in your local docs site, run `npm run reference-refresh`. This will overwrite a 
 file called `blockly_api.json` which TypeDoc uses to generate the docs. Then, 
 you can run docs again to see updates to the API docs. 
 
-If you regenerate `blockly_api.json`, please do not commit it in a PR. This 
-file is committed automatically as part of our release process. 
+If your changes are on a plugin instead, run `npm run plugins-refresh` which 
+will regenerate `plugins_api.json`. 
+
+If you regenerate `blockly_api.json` or `plugins_api.json`, please do not commit 
+either of these files in a PR. This file is committed automatically as part of 
+our release process. 
