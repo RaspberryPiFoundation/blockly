@@ -1,0 +1,53 @@
+{
+  "name": "@blockly/plugin-lesson-authoring",
+  "version": "13.4.0",
+  "description": "A set of tools for authoring Blockly lessons",
+  "scripts": {
+    "audit-fix": "blockly-scripts auditFix",
+    "build": "blockly-scripts build",
+    "clean": "blockly-scripts clean",
+    "lint": "eslint .",
+    "predeploy": "blockly-scripts predeploy",
+    "start": "blockly-scripts start",
+    "test": "blockly-scripts test"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "unpkg": "./dist/index.js",
+  "private": true,
+  "author": "Blockly Team",
+  "keywords": [
+    "blockly",
+    "blockly-plugin",
+    "lesson-authoring"
+  ],
+  "homepage": "https://github.com/mikeharv/blockly/tree/lesson-editor-prototype/packages/plugins/lesson-authoring#readme",
+  "bugs": {
+    "url": "https://github.com/mikeharv/blockly/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mikeharv/blockly.git",
+    "directory": "packages/plugins/lesson-authoring"
+  },
+  "license": "Apache-2.0",
+  "directories": {
+    "dist": "dist",
+    "src": "src"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "devDependencies": {
+    "@blockly/dev-scripts": "^13.4.0",
+    "@blockly/dev-tools": "^13.4.0",
+    "typescript": "^6.0.3"
+  },
+  "peerDependencies": {
+    "blockly": "^13.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
