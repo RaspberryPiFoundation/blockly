@@ -448,6 +448,14 @@ suite('Mirroring events', function () {
         fontBoundingBoxDescent: 4,
       }),
     });
+    // jsdom does not implement CSS.escape, which keyboard navigation uses to
+    // look up elements by ID.
+    global.CSS = {
+      escape: (id) =>
+        id.replace(/^\d|[^\w-]/g, (char, offset) =>
+          offset === 0 && /\d/.test(char) ? `\\3${char} ` : `\\${char}`,
+        ),
+    };
     this.clock = sinon.useFakeTimers();
     window.requestAnimationFrame = (callback) => setTimeout(callback, 0);
     window.cancelAnimationFrame = (id) => clearTimeout(id);
@@ -463,6 +471,7 @@ suite('Mirroring events', function () {
     this.workspace.dispose();
     this.clock.runAll();
     sinon.restore();
+    delete global.CSS;
     this.jsdomCleanup();
   });
 
@@ -479,6 +488,37 @@ suite('Mirroring events', function () {
       minimapBlock.getField('VAR').getText(),
       'b',
       'Minimap block should show the renamed variable',
+    );
+  });
+
+  test('Tabbing between edited fields keeps the next editor open', async function () {
+    const block = Blockly.serialization.blocks.append(
+      {
+        type: 'controls_for',
+        inputs: {
+          FROM: {shadow: {type: 'math_number', fields: {NUM: 1}}},
+          TO: {shadow: {type: 'math_number', fields: {NUM: 10}}},
+        },
+      },
+      this.workspace,
+    );
+    await this.clock.runAllAsync();
+    const fromField = block.getInputTargetBlock('FROM').getField('NUM');
+    const toField = block.getInputTargetBlock('TO').getField('NUM');
+
+    fromField.showEditor();
+    fromField.setValue(2);
+    document
+      .querySelector('.blocklyHtmlInput')
+      .dispatchEvent(
+        new window.KeyboardEvent('keydown', {key: 'Tab', bubbles: true}),
+      );
+    // Let the minimap mirror the change and zoom to fit.
+    await this.clock.runAllAsync();
+
+    assert.isTrue(
+      toField.isBeingEdited_,
+      'The editor opened by Tab should stay open after the minimap updates',
     );
   });
 });

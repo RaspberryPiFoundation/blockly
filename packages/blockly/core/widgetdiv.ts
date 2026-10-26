@@ -259,13 +259,13 @@ export function hideIfOwnerIsInWorkspace(workspace: WorkspaceSvg) {
   let ownerIsInWorkspace = ownerWorkspace === null;
   // Check if the given workspace is a parent workspace of the one containing
   // our owner.
-  let currentWorkspace: WorkspaceSvg | null = workspace;
+  let currentWorkspace: WorkspaceSvg | null = ownerWorkspace;
   while (!ownerIsInWorkspace && currentWorkspace) {
     if (currentWorkspace === workspace) {
       ownerIsInWorkspace = true;
       break;
     }
-    currentWorkspace = workspace.options.parentWorkspace;
+    currentWorkspace = currentWorkspace.options.parentWorkspace;
   }
 
   if (ownerIsInWorkspace) {
