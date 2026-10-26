@@ -31,7 +31,7 @@ try {
   referenceSidebar.push({
     type: 'category',
     label: 'Plugins',
-    link: {type: 'doc', id: 'reference/plugins/index'},
+    link: { type: 'doc', id: 'reference/plugins/index' },
     items: require('./docs/reference/plugins/typedoc-sidebar.cjs'),
   });
 } catch {

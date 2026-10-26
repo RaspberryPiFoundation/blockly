@@ -3,7 +3,6 @@
 
   "name": "plugins",
 
-  // Set to "none" because there's no overall readme for plugins
   "readme": "none",
 
   "entryPointStrategy": "packages",
