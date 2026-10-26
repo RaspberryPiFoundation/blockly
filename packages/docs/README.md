@@ -64,9 +64,9 @@ in your local docs site, run `npm run reference-refresh`. This will overwrite a
 file called `blockly_api.json` which TypeDoc uses to generate the docs. Then, 
 you can run docs again to see updates to the API docs. 
 
-If your changes are on a plugin instead, run `npm run plugins-refresh` which 
+If your changes are on a plugin instead, run `npm run plugins-reference-refresh` which 
 will regenerate `plugins_api.json`. 
 
 If you regenerate `blockly_api.json` or `plugins_api.json`, please do not commit 
-either of these files in a PR. This file is committed automatically as part of 
+either of these files in a PR. These files are committed automatically as part of 
 our release process. 

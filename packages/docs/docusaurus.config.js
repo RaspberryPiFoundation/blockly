@@ -80,7 +80,7 @@ const config = {
         id: 'core',
         options: './typedoc.json',
         out: 'docs/reference',
-        cleanOutputDir: false,
+        cleanOutputDir: false, // don't overwrite the plugins
         indexFrontmatter: {
           title: 'API Reference',
           sidebar_label: 'Overview',

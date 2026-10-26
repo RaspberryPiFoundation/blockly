@@ -53,6 +53,6 @@
     "format": "prettier --write .",
     "format-check": "prettier --check .",
     "clean": "npx nx reset && npm run clean --ws --if-present",
-    "version": "npm run reference-refresh --workspace=blockly-docs && git add packages/docs/blockly_api.json"
+    "version": "npm run reference-refresh --workspace=blockly-docs && npm run plugins-reference-refresh --workspace=blockly-docs && git add packages/docs/blockly_api.json packages/docs/plugins_api.json"
   }
 }

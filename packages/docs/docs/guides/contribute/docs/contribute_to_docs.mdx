@@ -107,7 +107,7 @@ time Blockly is released, these two files are regenerated so that the reference
 docs always reflect the state of the current release. 
 
 If you would like to view local API changes in the reference docs: 
-1. Run `npm run reference-refresh` (or `npm run plugins-refresh` if your changes
+1. Run `npm run reference-refresh` (or `npm run plugins-reference-refresh` if your changes
 are on a plugin) in the `packages/docs/` folder. 
 1. Run `npm run start` in the `packages/docs/` folder. The reference docs will 
 include local changes. 
@@ -119,10 +119,11 @@ anyone contributing to Blockly.
 :::
 
 If you regenerate `blockly_api.json` with `npm run reference-refresh`, or if you 
-regenerate `plugins_api.json` with `npm run plugins-refresh`, you should discard 
-the changes before committing. Or, you can can run the following git commands to 
+regenerate `plugins_api.json` with `npm run plugins-reference-refresh`, you should discard 
+the changes before committing. Or, you can run the following git command to 
 restore both files: 
-```
-git restore packages/docs/blockly_api.json && git restore packages/docs/plugins_api.json
+
+```bash
+git restore packages/docs/blockly_api.json packages/docs/plugins_api.json
 ```
 
