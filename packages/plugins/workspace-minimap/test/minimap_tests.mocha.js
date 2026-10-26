@@ -441,6 +441,7 @@ suite('Mirroring events', function () {
       '<!DOCTYPE html><div id="blocklyDiv"></div>',
     );
     global.SVGElement = window.SVGElement;
+    global.FocusEvent = window.FocusEvent;
     window.HTMLCanvasElement.prototype.getContext = () => ({
       measureText: () => ({
         width: '',
