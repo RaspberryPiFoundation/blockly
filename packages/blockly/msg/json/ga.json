@@ -591,5 +591,17 @@
 	"FIELD_MULTILINEINPUT_NEW_LINE": "Líne nua",
 	"ZOOM_TO_FIT_ARIA_LABEL": "Zúmáil chun oiriúnú",
 	"MINIMAP_ARIA_LABEL": "Mionléarscáil spáis oibre. Úsáid na heochracha saigheada chun an spás oibre a phánáil.",
-	"ARIA_LABEL_TRASH_EMPTY": "Bruscar, folamh faoi láthair"
+	"ARIA_LABEL_TRASH_EMPTY": "Bruscar, folamh faoi láthair",
+	"WORKSPACE_SEARCH_PLACEHOLDER": "Cuardaigh",
+	"WORKSPACE_SEARCH_INPUT_LABEL": "Cuardaigh an spás oibre. Brúigh Enter don chéad mheaitseáil eile, nó Shift+Enter don mheaitseáil roimhe sin. Brúigh Escape chun an cuardach a dhúnadh agus an fócas a chur ar an meaitseáil reatha.",
+	"WORKSPACE_SEARCH_FIND_NEXT": "Aimsigh an chéad cheann eile",
+	"WORKSPACE_SEARCH_FIND_PREVIOUS": "Aimsigh an ceann roimhe seo",
+	"WORKSPACE_SEARCH_CLOSE": "Dún an barra cuardaigh",
+	"WORKSPACE_SEARCH_NO_MATCHES": "Níl aon bhloic mheaitseála ann",
+	"WORKSPACE_SEARCH_MATCH": "Meaitseáil %1 as %2: %3",
+	"TOOLBOX_SEARCH_PLACEHOLDER": "Cuardaigh bloic",
+	"TOOLBOX_SEARCH_PROMPT": "Clóscríobh chun bloic a chuardach",
+	"TOOLBOX_SEARCH_NO_RESULTS": "Níor aimsíodh aon bhloic a mheaitseálann",
+	"TOOLBOX_SEARCH_RESULT_COUNT_ONE": "1 bhloc meaitseála",
+	"TOOLBOX_SEARCH_RESULT_COUNT": "%1 bloc a mheaitseálann"
 }
