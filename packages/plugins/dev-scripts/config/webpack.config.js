@@ -7,22 +7,40 @@
  * @fileoverview Webpack configuration file.
  * @author samelh@google.com (Sam El-Husseini)
  */
-'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const webpack = require('webpack');
+import fs from 'fs';
+import {createRequire} from 'module';
+import path from 'path';
+import {fileURLToPath} from 'url';
+import webpack from 'webpack';
+
+const cjsRequire = createRequire(import.meta.url);
+
+/**
+ * Resolves a package to a file path, starting from this file's location. Tries
+ * ESM resolution first, then falls back to CJS.
+ * @param {string} name The name of the package to resolve.
+ * @returns {string} The absolute path of the package's entry point.
+ */
+function resolvePackage(name) {
+  try {
+    return fileURLToPath(import.meta.resolve(name));
+  } catch {
+    return cjsRequire.resolve(name);
+  }
+}
 
 const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
 const exists = (relativePath) => fs.existsSync(resolveApp(relativePath));
 
-const packageJson = require(resolveApp('package.json'));
+const packageJson = JSON.parse(
+  fs.readFileSync(resolveApp('package.json'), 'utf8'),
+);
 
-module.exports = (env) => {
+export default (env) => {
   const mode = env.mode;
   const isDevelopment = mode === 'development';
-  const isProduction = mode === 'production';
   const isTest = mode === 'test';
   const isTypescript = exists('tsconfig.json');
 
@@ -41,12 +59,7 @@ module.exports = (env) => {
     }),
   ];
 
-  if (isProduction) {
-    // Production.
-    if (exists('./src/index.js')) entry = './src/index.js';
-    if (exists('./src/index.ts')) entry = './src/index.ts';
-    outputFile = 'index.js';
-  } else if (isDevelopment) {
+  if (isDevelopment) {
     // Development.
     if (exists('./test/index.js')) entry = './test/index.js';
     if (exists('./test/index.ts')) entry = './test/index.ts';
@@ -81,21 +94,18 @@ module.exports = (env) => {
 
   return {
     target,
-    mode: isProduction ? 'production' : 'development',
+    mode: 'development',
     entry: entry,
-    devtool: isProduction ? 'source-map' : 'eval-source-map',
+    devtool: 'eval-source-map',
     output: {
-      path: isProduction ? resolveApp('dist') : resolveApp('build'),
-      publicPath: isProduction ? '/dist/' : '/build/',
+      path: resolveApp('build'),
+      publicPath: '/build/',
       filename: outputFile,
-      library: {
-        type: 'umd',
-      },
-      globalObject: 'this',
       clean: true,
     },
     resolve: {
       extensions: ['.ts', '.js', '.json', '.wasm'],
+      extensionAlias: {'.js': ['.ts', '.js']},
       // Some deps may require node.js core modules.  Tell node.js what
       // polyfills to use for them when building for non-node.js targets
       // (Or to ignore them if the fallback is false.)
@@ -108,13 +118,13 @@ module.exports = (env) => {
         // Load Blockly source maps.
         {
           test: /(blockly[/\\].*\.js)$/,
-          use: [require.resolve('source-map-loader')],
+          use: [resolvePackage('source-map-loader')],
           enforce: 'pre',
         },
         isTypescript && {
           test: /\.tsx?$/,
-          loader: require.resolve('ts-loader'),
-          options: isProduction ? {} : {compilerOptions: {rootDir: '.'}},
+          loader: resolvePackage('ts-loader'),
+          options: {compilerOptions: {rootDir: '.'}},
         },
       ].filter(Boolean),
     },
@@ -122,52 +132,6 @@ module.exports = (env) => {
     // It can't find source maps for some Closure modules and that is expected
     ignoreWarnings: [/Failed to parse source map.*blockly/],
     plugins,
-    externals: isProduction
-      ? {
-          'blockly': {
-            root: 'Blockly',
-            commonjs: 'blockly',
-            commonjs2: 'blockly',
-            amd: 'blockly',
-          },
-          'blockly/core': {
-            root: 'Blockly',
-            commonjs: 'blockly/core',
-            commonjs2: 'blockly/core',
-            amd: 'blockly/core',
-          },
-          'blockly/javascript': {
-            root: 'Blockly.JavaScript',
-            commonjs: 'blockly/javascript',
-            commonjs2: 'blockly/javascript',
-            amd: 'blockly/javascript',
-          },
-          'blockly/python': {
-            root: 'Blockly.Python',
-            commonjs: 'blockly/python',
-            commonjs2: 'blockly/python',
-            amd: 'blockly/python',
-          },
-          'blockly/dart': {
-            root: 'Blockly.Dart',
-            commonjs: 'blockly/dart',
-            commonjs2: 'blockly/dart',
-            amd: 'blockly/dart',
-          },
-          'blockly/php': {
-            root: 'Blockly.PHP',
-            commonjs: 'blockly/php',
-            commonjs2: 'blockly/php',
-            amd: 'blockly/php',
-          },
-          'blockly/lua': {
-            root: 'Blockly.Lua',
-            commonjs: 'blockly/lua',
-            commonjs2: 'blockly/lua',
-            amd: 'blockly/lua',
-          },
-          'jsdom': 'commonjs jsdom',
-        }
-      : {jsdom: 'commonjs jsdom'},
+    externals: {jsdom: 'commonjs jsdom'},
   };
 };

@@ -1,0 +1,14 @@
+// This is the base config for plugins. Only update this if you want the change
+// to apply to all plugins. For changes to individual plugins, use the tsconfig
+// file in the plugin's directory.
+{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "es2022",
+    "strict": true
+  }
+}

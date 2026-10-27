@@ -11,16 +11,16 @@
  * @author samelh@google.com (Sam El-Husseini)
  */
 
-'use strict';
+import {readFileSync, realpathSync} from 'fs';
+import {resolve} from 'path';
+import {rimraf} from 'rimraf';
 
-const fs = require('fs');
-const path = require('path');
-const rimraf = require('rimraf');
+const appDirectory = realpathSync(process.cwd());
+const resolveApp = (relativePath) => resolve(appDirectory, relativePath);
 
-const appDirectory = fs.realpathSync(process.cwd());
-const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
-
-const packageJson = require(resolveApp('package.json'));
+const packageJson = JSON.parse(
+  readFileSync(resolveApp('package.json'), 'utf8'),
+);
 console.log(`Running clean for ${packageJson.name}`);
 
 // Delete both the dist and build directories if they exist.
