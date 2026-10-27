@@ -465,7 +465,7 @@ export class Navigator {
    * `delta` relative to the current element's stack when navigating backwards.
    */
   navigateStacks(current: IFocusableNode, delta: number) {
-    const stacks = this.getTopLevelItems(current);
+    const stacks = this.getNavigableItems(current);
     const root =
       this.getSourceBlockFromNode(current)?.getRootBlock() ?? current;
     const currentIndex = stacks.indexOf(root);

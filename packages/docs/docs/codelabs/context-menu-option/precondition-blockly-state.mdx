@@ -8,7 +8,7 @@ import Image from '@site/src/components/Image';
 
 ## 6. Precondition: Blockly state
 
-Disabling your context menu options half of the time is not useful, but you may want to show or hide an option based on what the user is doing. For example, let's show a **Help** option in the context menu if the user doesn't have any blocks on the workspace. Add this code in `src/index.js`:
+Disabling your context menu options half of the time is not useful, but you may want to show or hide an option based on what the user is doing. For example, show a **Help** option in the context menu if the user doesn't have any blocks on the workspace. Add this code in `src/index.js`:
 
 ```js
 function registerHelpItem() {
@@ -29,7 +29,7 @@ function registerHelpItem() {
 }
 ```
 
-Don't forget to call `registerHelpItem()` in `src/index.js`, before `Blockly.inject`.
+Don't forget to call `registerHelpItem` in `src/index.js`, before `Blockly.inject`.
 
 ### Test it
 

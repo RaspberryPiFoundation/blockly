@@ -81,8 +81,7 @@
 
 # Default pages for directories
 /guides/   /guides/get-started/what-is-blockly/   301
-/reference/   /reference/blockly/   301
-/reference/overview   /reference/blockly/   301
+/reference/overview   /reference/   301
 
 # Begin - Site refactoring - 2025
 
@@ -150,3 +149,6 @@
 /accessibility-fund-recipients   https://www.blockly.com/accessibility-projects   301
 /accessibility-fund   https://www.blockly.com/accessibility-projects   301
 /accessibility   https://www.blockly.com/accessibility   301
+
+# Add contributing to docs section
+/guides/contribute/core/write_a_codelab   /guides/contribute/docs/write_a_codelab/   301

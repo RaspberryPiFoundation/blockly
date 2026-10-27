@@ -75,7 +75,11 @@ suite('Procedures', function () {
       .callsFake(() => {
         return {
           measureText: function () {
-            return {width: 0};
+            return {
+              width: 0,
+              fontBoundingBoxAscent: 12,
+              fontBoundingBoxDescent: 4,
+            };
           },
         };
       });

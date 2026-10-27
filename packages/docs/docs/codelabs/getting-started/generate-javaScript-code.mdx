@@ -9,7 +9,7 @@ import Image from '@site/src/components/Image';
 ## 8. Generate JavaScript code
 
 Blockly can convert blocks into strings of code in a process called _code generation_. 
-Blocks on their own don't do anything, but we can make them generate code that does, and then execute that code. 
+Blocks on their own don't do anything, but you can make them generate code that does, and then execute that code.
 The code execution step is application-specific and therefore outside of Blockly's scope. It is up to you to determine if, when, and how to execute the strings of code that Blockly generates. 
 
 Code generation and execution is how you get from a list of blocks to a program that *does* something.
@@ -26,9 +26,9 @@ You can also create a custom language generator to generate code in a different 
 
 ### Add a block generator
 
-When Blockly generates JavaScript code for blocks in a workspace, it translates each block into code. By default, it knows how to translate all library-provided default blocks into JavaScript code. However, for any custom blocks, we need to specify our own translation functions. These are called _block generators_.
+When Blockly generates JavaScript code for blocks in a workspace, it translates each block into code. By default, it knows how to translate all library-provided default blocks into JavaScript code. However, for any custom blocks, you need to specify your own translation functions. These are called _block generators_.
 
-Find the `javascript.js` file in `src/generators/`. This is where you'll write the block generator function for the `add_text` block.. 
+Find the `javascript.js` file in `src/generators/`.
 
 The block generator for `add_text` will first recursively generate the code for the input `TEXT`. 
 Then, it provides the function that will add text to the output area using `generator.provideFunction_`. 
@@ -88,7 +88,7 @@ addText('Hello, World!');
 
 ### Register the block code generator
 
-Finally, you need to register the block generator for `add_text` with Blockly's JavaScript generator.
+Finally, register the block generator for `add_text` with Blockly's JavaScript generator.
 
 Add the following imports to the `index.js` file:
 ```js
@@ -107,7 +107,7 @@ import {toolbox} from './toolbox';
 import './index.css';
 ```
 
-Now you can add the `forBlock` for `add_text` into Blockly's javascriptGenerator so that Blockly can generate the code for your block.
+Now add the `forBlock` for `add_text` into Blockly's javascriptGenerator so that Blockly can generate the code for your block.
 The following `Object.assign` statement *registers* your block generator by adding it to the `forBlock` object of the `javascriptGenerator`.
 Adding this assignment means that `add_text` is part of the list of blocks that `javascriptGenerator` knows how to generate code for.
 

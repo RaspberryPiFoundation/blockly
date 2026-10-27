@@ -8,19 +8,19 @@ import Image from '@site/src/components/Image';
 
 ## 6. Add an icon to your category
 
-We are going to add an icon to our "Logic" category by adding an icon library to
-our `index.html` file, and setting the appropriate CSS class on our category definition.
+In this section, add an icon to the "Logic" category by adding an icon library to
+the `index.html` file, and setting the appropriate CSS class on the category definition.
 
-To start, we are going to grab an icon library and paste it to `index.html`, inside 
+To start, add an icon library to `index.html`, inside 
 the `<head>` element:
 
 ```html
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 ```
 
-We are going to add a cog icon from this library to the "Logic" category.
-To do this, we will add the appropriate CSS classes to our category definition.
-For a JSON toolbox definition like the one in `toolbox.js`, you'll use a `cssconfig` object. 
+Next, add a cog icon from this library to the "Logic" category.
+To do this, add the appropriate CSS classes to the category definition.
+For a JSON toolbox definition like the one in `toolbox.js`, use a `cssconfig` object. 
 
 In `toolbox.js` scroll in to your toolbox definition and change the category with
 the name "Logic":
@@ -46,14 +46,14 @@ to be:
 },
 ```
 
-All the classes used to create a category can be set similar to how we set the
+All the classes used to create a category can be set the same way as the
 icon class above. See the [Blockly toolbox documentation](/guides/configure/toolboxes/appearance#category-css) for more information.
 
 ### Add some CSS
 
 If you open the running app you will notice that the gear icon is positioned
-incorrectly and is a bit difficult to see. We will use the `customIcon` class to
-change the color of the icon and use the `blocklyTreeRowContentContainer` class
+incorrectly and is a bit difficult to see. Use the `customIcon` class to
+change the color of the icon and the `blocklyTreeRowContentContainer` class
 to position the icon above the text.
 
 In your `toolbox_style.css` file add:
@@ -79,7 +79,7 @@ In your `toolbox_style.css` file add:
 If you open the running app and click on the "Logic" category you will notice
 that the white icon now blends into the white background.
 
-In order to fix this, we are going to update our `setSelected` method to set the
+To fix this, update the `setSelected` method to set the
 color of the icon to the category color when the category has been selected.
 
 Inside `custom_category.js` add the below line to `setSelected` if the category

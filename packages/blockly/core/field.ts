@@ -972,8 +972,10 @@ export abstract class Field<T = any>
 
     let contentWidth = 0;
     if (this.textElement_) {
-      contentWidth = dom.getTextWidth(this.textElement_);
+      const textSize = dom.getTextSize(this.textElement_);
+      contentWidth = textSize.width;
       totalWidth += contentWidth;
+      totalHeight = Math.max(totalHeight, textSize.height);
     }
     if (this.borderRect_) {
       totalHeight = Math.max(totalHeight, constants!.FIELD_BORDER_RECT_HEIGHT);
@@ -1428,8 +1430,9 @@ export abstract class Field<T = any>
   }
 
   /**
-   * Whether this field references any Blockly variables.  If true it may need
-   * to be handled differently during serialization and deserialization.
+   * Whether this field references any Blockly variables. If true it may need
+   * to be handled differently during serialization and deserialization, and
+   * this field's value must correspond to the ID of an existing variable.
    * Subclasses may override this.
    *
    * @returns True if this field has any variable references.

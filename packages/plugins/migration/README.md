@@ -5,8 +5,8 @@ A collection of tools that help with migrating apps built on [Blockly](https://w
 ## Example Usage
 
 ```
-npx @blockly/migrate rename --from 6 --in-place ./path/to/my/files*
-npx @blockly/migrate rename --from 6 --to 7 --in-place ./path/to/my/files*
+npx @blockly/migrate rename ./path/to/my/files* --from 6 --in-place
+npx @blockly/migrate rename ./path/to/my/files* --from 6 --to 7 --in-place
 ```
 
 Use `help` subcommand for more info.

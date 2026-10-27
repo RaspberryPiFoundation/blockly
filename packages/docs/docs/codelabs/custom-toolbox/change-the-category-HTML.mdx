@@ -8,12 +8,12 @@ import Image from '@site/src/components/Image';
 
 ## 7. Change the category HTML
 
-If you only need to change the CSS, like we did in the previous section, then using the cssConfig is a great choice.
+If you only need to change the CSS, as in the previous section, then using the cssConfig is a great choice.
 However, if you need to change the html, maybe to add text, an image, or anything else, you can override
-the corresponding method that creates the dom. In this example, we'll add an `<img>`
-to our category by overriding the `createIconDom_` method.
+the corresponding method that creates the dom. In this example, override the `createIconDom_` method
+to replace the category's icon.
 
-### Change the element for our icon
+### Change the element for the icon
 
 By default, the `createIconDom_` method adds a `<span>` element for the category
 icon. Note that you can override this to create other types of elements, if needed.

@@ -58,11 +58,26 @@ export class FlyoutMetricsManager extends MetricsManager {
     const blockBoundingBox = this.getBoundingBox();
     const scale = opt_getWorkspaceCoordinates ? 1 : this.workspace_.scale;
 
+    // Separators reserve space without drawing anything, so the canvas's
+    // rendered bounds miss a separator at the start of the contents.
+    // Include every item's bounds as well.
+    let left = blockBoundingBox.x;
+    let top = blockBoundingBox.y;
+    let right = blockBoundingBox.x + blockBoundingBox.width;
+    let bottom = blockBoundingBox.y + blockBoundingBox.height;
+    for (const item of this.flyout_.getContents()) {
+      const rect = item.getElement().getBoundingRectangle();
+      left = Math.min(left, rect.left);
+      top = Math.min(top, rect.top);
+      right = Math.max(right, rect.right);
+      bottom = Math.max(bottom, rect.bottom);
+    }
+
     return {
-      height: blockBoundingBox.height * scale,
-      width: blockBoundingBox.width * scale,
-      top: blockBoundingBox.y * scale,
-      left: blockBoundingBox.x * scale,
+      height: (bottom - top) * scale,
+      width: (right - left) * scale,
+      top: top * scale,
+      left: left * scale,
     };
   }
 

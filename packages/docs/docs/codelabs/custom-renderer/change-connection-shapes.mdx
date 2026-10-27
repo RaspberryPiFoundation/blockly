@@ -9,7 +9,7 @@ description: How to change connection shapes.
 This step will define and use new shapes for previous/next connections and input/output connections. This takes three steps:
 
 1. Define new shape objects.
-1. Override `init()` to store the new shape objects.
+1. Override `init` to store the new shape objects.
 1. Override `shapeFor(connection)` to return the new objects.
 
 ### Define a previous/next connection shape
@@ -23,7 +23,7 @@ Previous and next connections are defined by the same object. The object has fou
 - `pathLeft`: The sub-path that describes the connection when drawn from left-to-right.
 - `pathRight`: The sub-path that describes the connection when drawn from right-to-left.
 
-Define a new function called `makeRectangularPreviousConn()` and put it inside the `CustomConstantProvider` class definition. Note that `NOTCH_WIDTH` and `NOTCH_HEIGHT` have already been overridden in the `constructor()`, so they'll be reused:
+Define a new function called `makeRectangularPreviousConn` and put it inside the `CustomConstantProvider` class definition. Note that `NOTCH_WIDTH` and `NOTCH_HEIGHT` have already been overridden in the `constructor`, so they'll be reused:
 
 ```js
   /**
@@ -71,7 +71,7 @@ Input and output connections are defined by the same object. The object has four
 - `pathUp`: The sub-path that describes the connection when drawn from top-to-bottom.
 - `pathDown`: The sub-path that describes the connection when drawn from bottom-to-top.
 
-Define a new function called `makeRectangularInputConn()` and put it inside the `CustomConstantProvider` class definition. Note that `TAB_WIDTH` and `TAB_HEIGHT` have already been overridden in the `constructor()` so they'll be reused:
+Define a new function called `makeRectangularInputConn` and put it inside the `CustomConstantProvider` class definition. Note that `TAB_WIDTH` and `TAB_HEIGHT` have already been overridden in the `constructor` so they'll be reused:
 
 ```js
   /**
@@ -108,9 +108,9 @@ Define a new function called `makeRectangularInputConn()` and put it inside the 
   }
 ```
 
-### Override init()
+### Override `init`
 
-Override the `init()` function in the `CustomConstantProvider` class definition and store the new shape objects as `RECT_PREV_NEXT` and `RECT_INPUT_OUTPUT`. Make sure to call the superclass `init()` function to store other objects that have not been overridden.
+Override the `init` function in the `CustomConstantProvider` class definition and store the new shape objects as `RECT_PREV_NEXT` and `RECT_INPUT_OUTPUT`. Make sure to call the superclass `init` function to store other objects that have not been overridden.
 
 ```js
   /**
@@ -152,4 +152,4 @@ Next, override the `shapeFor(connection)` function in the `CustomConstantProvide
 
 Return to the browser, click on the `Loops` entry, and drag out a repeat block. The resulting block should have rectangular connections for all four connection types.
 
-![[Screenshot of a custom renderer with notches, corners, and tabs with fundamentally different shapes than the defaults.]](../../../static/images/codelabs/custom-renderer/custom_notches.png)
+![Screenshot of a custom renderer with notches, corners, and tabs with fundamentally different shapes than the defaults.](../../../static/images/codelabs/custom-renderer/custom_notches.png)

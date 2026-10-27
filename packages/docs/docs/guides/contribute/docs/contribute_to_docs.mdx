@@ -1,0 +1,119 @@
+---
+description: Steps and guidelines for adding to Blockly's documentation.
+title: Contribute to docs
+image: images/blockly_banner.png
+---
+
+# Contribute to docs 
+
+Blockly's documentation lives in the [same repository](https://github.com/RaspberryPiFoundation/blockly) 
+as Blockly's core code and first-party plugins. 
+
+Here is a quick overview of the facts you need to know to make a contribution to 
+Blockly's documentation. These may be familiar to you if you have already made a 
+[contribution to core](/guides/contribute/core). 
+
+- The working branch is **main** and all PRs should be made against main.
+- You must fill out the pull request template with the requested information.
+- Code snippets must conform to Blockly's [style guide](/guides/contribute/core/style_guide).
+- Use [conventional commits](/guides/contribute/get-started/commits)
+  in your commit messages and pull request titles.
+- PR summaries and comments should be human written, and AI usage is not allowed 
+  on issues labeled `good first issue`. Consult the [AI policy](/guides/contribute/core/ai_policy)
+  for more information.
+- Docs are written in [MDX](https://mdxjs.com/docs/what-is-mdx/). 
+
+## Make and verify a documentation change
+
+1. Run `npm install` at the top level of the repository to install dependencies.
+1. Make your changes. Documents can be found in the `packages/docs/docs/` folder.
+1. Proofread your writing. 
+1. Test any code snippets to ensure that the behavior works as described. 
+1. Run `npm run start` from the [`packages/docs/`](https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/docs)
+folder to run the docs site and view your changes locally. This can help you 
+catch any typos, errors, or clunky wording. 
+1. Run `npm run lint` and `npm run format` from the top level of the repository.
+1. If everything looks good, you are ready to open a PR against **main** with 
+your changes. Docs changes undergo the same [PR submission and review](/guides/contribute/get-started/write_a_good_pr#write-a-summary)
+process as code changes.
+
+## Writing style 
+
+Blockly docs should follow general best practices for technical writing. 
+For an intro to technical writing, you can check out [Google's Technical Writing
+One](https://developers.google.com/tech-writing/one).
+
+Best practices also include: 
+- Link other relevant docs where possible, including guides, codelabs, and 
+reference docs. 
+- Use code snippets when explaining technical concepts.
+- If you're writing a new document, create an outline before writing to ensure 
+that the document is well structured and includes all necessary information.
+
+In general, you can look to the existing docs for examples of how Blockly docs 
+are written.  
+
+## Create a new document
+
+Occasionally, you may need to add a new document rather than editing an existing 
+one. Find the appropriate folder in `packages/docs/docs` for your document and 
+create the `.mdx` file. 
+
+Be sure to include front matter with the description, title, and Blockly banner image. 
+For example, here's the front matter for this document:
+```yaml
+---
+description: Steps and guidelines for adding to Blockly's documentation.
+title: Contributing to docs
+image: images/blockly_banner.png
+---
+```
+
+Once you have created the document, add an entry to `sidebars.js`. This will 
+make your new document findable in the left sidebar. You can also add categories 
+in `sidebars.js`. 
+
+For example, here's the `sidebars.js` entry for this document:
+```js
+    {
+        type: 'doc',
+        label: 'Overview',
+        id: 'guides/contribute/docs/contribute_to_docs', 
+    },
+```
+
+## Add redirects
+
+You should add a redirect whenever you move or rename a document. Changing the 
+name or path of a document changes the URL, so adding a redirect means that 
+bookmarks or other saved links will still resolve to the correct document.
+
+Edit `packages/docs/static/_redirects` to include a new redirect. The format is 
+`source` `destination` `status code`. 
+
+For example, if you were to rename this document, the redirect might look like 
+this: 
+
+```
+/guides/contribute/docs/contribute_to_docs /guides/contribute/docs/new_doc_name/ 301
+```
+
+## Refresh the API docs
+
+The [API reference docs](https://docs.blockly.com/reference/) are automatically 
+generated with [TypeDoc](https://typedoc.org/) based on the contents of 
+`blockly_api.json`. Each time Blockly is released, `blockly_api.json` is 
+regenerated, so that the reference docs always reflect the state of the current 
+release. 
+
+If you would like to view local API changes in the reference docs: 
+1. Run `npm run reference-refresh` in the `packages/docs/` folder. This command 
+regenerates `blockly_api.json` based on the local state of the repository rather 
+than the latest released version. 
+1. Run `npm run start` in the docs folder. The reference docs will include local 
+changes. 
+
+Take care to *never* commit `blockly_api.json`. This file is committed 
+automatically during the release process, and never by anyone contributing to 
+Blockly. Run `git restore packages/docs/blockly_api.json` to restore `blockly_api.json` 
+to the latest release. 

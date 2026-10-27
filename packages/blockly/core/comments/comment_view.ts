@@ -554,7 +554,7 @@ export class CommentView implements IRenderedElement {
 
   /** Returns the current location of the comment in workspace coordinates. */
   getRelativeToSurfaceXY(): Coordinate {
-    return this.location;
+    return this.location.clone();
   }
 
   /**

@@ -10,7 +10,7 @@ When you're designing custom blocks, you may find that it doesn't make sense to 
 
 ### Basic field constraints
 
-Blockly generally allows users to enter negative values and decimal values for number fields, but for this custom block, let's make sure that only positive whole numbers are allowed. In `src/blocks/text.js`, add `min: 0` and `precision: 1` to the fields in the `listRange` definition so that they look like this:
+Blockly generally allows users to enter negative values and decimal values for number fields, but this custom block should only allow positive whole numbers. In `src/blocks/text.js`, add `min: 0` and `precision: 1` to the fields in the `listRange` definition so that they look like this:
 
 ```js
   args0: [
@@ -37,11 +37,11 @@ If you want, you can also add a `max` constraint to a number field.
 
 ### Adding custom validation to a field
 
-The built-in constraints are very convenient, but sometimes you might need to add custom constraints. For example, let's say that our custom block needs the first number of the range to be even, and the last number to be odd. We can easily implement the even constraint by setting the `precision` constraint of the `FIRST` field to `2`, but the odd constraint requires a custom validator.
+The built-in constraints are very convenient, but sometimes you might need to add custom constraints. For example, suppose the custom block needs the first number of the range to be even, and the last number to be odd. The even constraint is easy to implement by setting the `precision` constraint of the `FIRST` field to `2`, but the odd constraint requires a custom validator.
 
-So far, we've been using Blockly's JSON API for defining custom blocks, but Blockly also has a JavaScript API with more advanced features, and one of those features is defining custom validators. Fortunately, we don't have to convert our entire custom block definition to the JavaScript API in order to take advantage of these advanced features, because Blockly has a system for adding JavaScript extensions to blocks that were defined with the JSON API.
+So far, this codelab has used Blockly's JSON API for defining custom blocks, but Blockly also has a JavaScript API with more advanced features, and one of those features is defining custom validators. Fortunately, you don't have to convert the entire custom block definition to the JavaScript API in order to take advantage of these advanced features, because Blockly has a system for adding JavaScript extensions to blocks that were defined with the JSON API.
 
-Let's give our custom block a new extension called `list_range_validation`. In `src/blocks/text.js`, add `extensions: ['list_range_validation']` to the end of the `listRange` definition like so:
+Give the custom block a new extension called `list_range_validation`. In `src/blocks/text.js`, add `extensions: ['list_range_validation']` to the end of the `listRange` definition like so:
 
 ```js
 const listRange = {
@@ -52,7 +52,7 @@ const listRange = {
 };
 ```
 
-Then we need to register an implementation of that extension in `src/index.js`.  
+Then register an implementation of that extension in `src/index.js`.  
 
 Add the following code to `src/index.js` above the `// Register the blocks and generator with Blockly` comment:
 
@@ -62,7 +62,7 @@ Blockly.Extensions.register('list_range_validation', function () {
 });
 ```
 
-The extension's function will be executed every time the custom block is instantiated, and the block instance itself will be implicitly available inside the function using JavaScript's `this` keyword. We can use it to access Blockly's JavaScript API for blocks, including validators. To add a validator on the `LAST` field, put the following code inside the extension function:
+The extension's function will be executed every time the custom block is instantiated, and the block instance itself will be implicitly available inside the function using JavaScript's `this` keyword. This provides access to Blockly's JavaScript API for blocks, including validators. To add a validator on the `LAST` field, put the following code inside the extension function:
 
 ```js
 this.getField('LAST').setValidator(function (newValue) {

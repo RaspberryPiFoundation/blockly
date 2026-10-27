@@ -149,14 +149,10 @@ export default defineConfig(
       'packages/**/build/',
       'packages/**/dist/',
       // Core Build artifacts
-      // All Packages
-      'packages/*/node_modules/**',
-      'packages/**/build/',
-      'packages/**/dist/',
-      // Core Build artifacts
       'packages/blockly/msg/*',
       'packages/blockly/typings/*',
       'packages/blockly/docs/*',
+      'packages/blockly/_deploy/*',
       // Core Tests other than mocha unit tests
       'packages/blockly/tests/blocks/*',
       'packages/blockly/tests/themes/*',

@@ -34,7 +34,7 @@ on the extra state. In this case, updating the shape is necessary.
 
 ### Adding an input
 
-The same `updateShape()` function will be responsible for updating the shape
+The same `updateShape` function will be responsible for updating the shape
 regardless of whether an input has been added or removed. First, focus on adding
 a new input. Add the following function and code to the `LIST_MUTATOR`:
 
@@ -55,7 +55,7 @@ export const LIST_MUTATOR = {
 };
 ```
 
-The `updateShape()` function adds `itemCount - 1` inputs, since the block
+The `updateShape` function adds `itemCount - 1` inputs, since the block
 starts with 1 input. This function also sets the aria label for each input 
 manually, so that screenreaders distinguish clearly between each input. 
 
@@ -66,7 +66,7 @@ in the block definition is called `ADD0`, so subsequent blocks are named `ADD1`,
 ### Removing an input
 
 To remove an input, remove the appropriate number of inputs from the end of the 
-list. Finish the `updateShape()` function with the code below: 
+list. Finish the `updateShape` function with the code below: 
 
 ```js
 export const LIST_MUTATOR = { 
@@ -92,7 +92,7 @@ export const LIST_MUTATOR = {
 ### Updating after load 
 Since this list block will add or remove inputs based on the value of 
 `itemCount`, it is important to update the physical shape after deserialization. 
-Add a call to `updateShape()` in `loadExtraState()`:
+Add a call to `updateShape` in `loadExtraState`:
 
 ```js {3}
 loadExtraState: function(state) {
@@ -103,6 +103,6 @@ loadExtraState: function(state) {
 
 ### Next steps
 
-Although `updateShape()` is complete, only the deserializer calls it. The next 
+Although `updateShape` is complete, only the deserializer calls it. The next 
 step of creating a mutator is considering how the user will interact with the 
 mutator in order to modify the `extraState`. 

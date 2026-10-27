@@ -16,13 +16,11 @@ In Blockly, a _block definition_ describes how a block looks and behaves. This i
 Blocks can be defined in either JavaScript or JSON. The developer site has a full article on [how to define a block](/guides/create-custom-blocks/define/block-definitions#how-to-create-block-definitions).
 There are also opinionated guides on topics such as [block design](/guides/design/blocks) and [block appearance](/guides/design/appearance) that reflect recommended best practices when creating blocks.
 
-In this codelab we will provide a custom block definition for you to copy and use.
-
 ### Define the add_text block
 
-Imagine you want to build a block that adds text to the output div of this workspace. You'll start with the block definition and then add the ability to generate JavaScript code with that block. 
+Now, build a block that adds text to the output div of this workspace.
 
-Find the `text.js` file in `src/blocks/`. Here you'll specify your block definition. Add the following code to `text.js`:
+Find the `text.js` file in `src/blocks/`. Specify the block definition by adding the following code to `text.js`: 
 
 ```js
 import * as Blockly from 'blockly/core';
@@ -54,9 +52,9 @@ The page on [Block structure in JSON](/guides/create-custom-blocks/define/struct
 
 ### Create Block Definition
 
-After declaring the JSON definition for the block, we'll need to turn it into the full block definition that Blockly can register later. 
+After declaring the JSON definition for the block, turn it into the full block definition that Blockly can register. 
 To do that, call `createBlockDefinitionsFromJsonArray` which turns the raw JSON object into the JavaScript block definition that Blockly will use.
-Then, we save that definition as an object called blocks which we will use in the next steps.
+Save that definition as an object called `blocks`. 
 Add the following code to the end of `text.js`, after your `addText` object.
 
 ```js
@@ -70,14 +68,14 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
 
 ### Register the custom block
 
-The block is set up, now you need to register it. Add the following import statement and code to the top of the `index.js` file:
+Now register the block. Add the following import statement and code to the top of the `index.js` file:
 
 ```js
 import {blocks} from './blocks/text';
 ```
 
 Just after the import statements, insert the following code in `index.js`. 
-This code uses the block definition that we just saved in order to add the custom `add_text` block to the list of available blocks: 
+This code uses the block definition that you just saved in order to add the custom `add_text` block to the list of available blocks: 
 
 ```js
 Blockly.common.defineBlocks(blocks);
@@ -85,7 +83,7 @@ Blockly.common.defineBlocks(blocks);
 
 ### Add the custom block to the toolbox
 
-Now you can update the toolbox to include the new block, by adding `{'kind': 'block', 'type': 'add_text'}` to the `toolbox` definition. The full toolbox should now be:
+Now, update the toolbox to include the new block, by adding `{'kind': 'block', 'type': 'add_text'}` to the `toolbox` definition. The full toolbox should now be: 
 
 ```js
 export const toolbox = {

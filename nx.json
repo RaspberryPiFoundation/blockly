@@ -37,16 +37,12 @@
       "outputs": ["{projectRoot}/build/msg"],
       "cache": true
     },
-    "minify": {
-      "outputs": ["{projectRoot}/dist"],
-      "cache": true
-    },
     "package": {
       "outputs": ["{projectRoot}/dist", "{projectRoot}/build"],
       "cache": true
     },
     "prepareDemos": {
-      "outputs": ["{projectRoot}/../_deploy"],
+      "outputs": ["{projectRoot}/_deploy"],
       "cache": true
     },
     "tsc": {

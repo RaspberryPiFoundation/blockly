@@ -42,7 +42,7 @@
     "@blockly/dev-scripts": "^13.4.0",
     "@blockly/dev-tools": "^13.4.0",
     "chai": "^6.3.0",
-    "jsdom": "^30.0.1",
+    "jsdom": "^30.1.3",
     "jsdom-global": "3.0.2",
     "sinon": "^22.1.0",
     "typescript": "^6.0.3"

@@ -44,8 +44,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Npm Install
-        run: npm install
+      - name: Npm Clean Install
+        run: npm ci
+        working-directory: .
 
       - name: Linux Test Setup
         if: runner.os == 'Linux'

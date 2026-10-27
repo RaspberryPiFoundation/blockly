@@ -90,7 +90,7 @@ export async function testSetup(playgroundUrl) {
   await driver.url(playgroundUrl);
   // Wait for the workspace to exist and be rendered.
   await driver
-    .$('.blocklySvg .blocklyWorkspace > .blocklyBlockCanvas')
+    .$$('.blocklySvg .blocklyWorkspace > .blocklyBlockCanvas')[0]
     .waitForExist({timeout: 2000});
   return driver;
 }
@@ -184,9 +184,9 @@ export async function getSelectedBlockElement(browser) {
  *     the given ID, as an interactable browser element.
  */
 export async function getBlockElementById(browser, id, toolbox) {
-  const elem = await browser.$(
+  const elem = await browser.$$(
     `${toolbox ? '' : '.blocklySvg'} [data-id="${id}"]`,
-  );
+  )[0];
   elem['id'] = id;
   return elem;
 }

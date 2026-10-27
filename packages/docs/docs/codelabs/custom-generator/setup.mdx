@@ -103,7 +103,7 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
 ]);
 ```
 
-This code creates the block definitions, but it doesn't register the definitions with Blockly to make the blocks usable. We'll do that in `src/index.js`.
+This code creates the block definitions, but it doesn't register the definitions with Blockly to make the blocks usable. That happens in `src/index.js`.
 Currently, the app imports `blocks` from the original sample file, `text.js`. Instead, it should import the definitions that were just added. Remove the original import:
 
 ```js
@@ -165,7 +165,7 @@ export const toolbox = {
 };
 ```
 
-Our `index.js` file already handles importing the toolbox and using it in Blockly.
+The `index.js` file already handles importing the toolbox and using it in Blockly.
 
 If the server is already running, refresh the page to see changes. Otherwise, run `npm start` to start the server. New blocks should now exist in the toolbox, like this:
 
@@ -175,4 +175,4 @@ If the server is already running, refresh the page to see changes. Otherwise, ru
   className="codelabImage"
 />
 
-The app is still trying to generate and run JavaScript for the workspace, instead of JSON. We will change that soon.
+The app is still trying to generate and run JavaScript for the workspace, instead of JSON. The next section changes that.

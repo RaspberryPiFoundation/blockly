@@ -7,11 +7,7 @@
 # Run this script to get the new values.
 
 # Location of the pre-built compressed files.
-#
-# (TODO(#5007): Should fetch this from scripts/gulpfiles/config.js
-# instead of hardcoding it here.
-readonly RELEASE_DIR='dist'
-
+readonly RELEASE_DIR=$(node --input-type=module -e "import { RELEASE_DIR } from './scripts/build_constants.mjs'; console.log(RELEASE_DIR)")
 # These values should be updated with each release.  (Note that the
 # historic values are tab-delimited.)
 

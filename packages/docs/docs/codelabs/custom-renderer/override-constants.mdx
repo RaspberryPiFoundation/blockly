@@ -8,12 +8,12 @@ description: How to override the constants in a renderer.
 
 A **ConstantsProvider** holds all rendering-related constants. This includes sizing information and colours. Blockly provides a base **ConstantsProvider** with all required fields set to default values.
 
-The **ConstantsProvider** `constructor()` sets all static properties, such as `NOTCH_WIDTH` and `NOTCH_HEIGHT`. For a full list of properties, see [constants.ts](https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/blockly/core/renderers/common/constants.ts).
+The **ConstantsProvider** `constructor` sets all static properties, such as `NOTCH_WIDTH` and `NOTCH_HEIGHT`. For a full list of properties, see [constants.ts](https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/blockly/core/renderers/common/constants.ts).
 
 Only override the necessary subset of the constants, rather than all of them. To do so:
 
 - Define a constants provider that extends the base `ConstantProvider`.
-- Call the superclass `super()` in the `constructor()`.
+- Call the superclass `super()` in the `constructor`.
 - Set individual properties.
 
 Add this above the `CustomRenderer` definition in `src/renderers/custom.js`:
@@ -56,7 +56,7 @@ class CustomConstantProvider extends Blockly.blockRendering.ConstantProvider {
 }
 ```
 
-To use the new **CustomConstantProvider**, override `makeConstants_()` inside the `CustomRenderer` class. Below the `constructor()`, add:
+To use the new **CustomConstantProvider**, override `makeConstants_` inside the `CustomRenderer` class. Below the `constructor`, add:
 
 ```js
   /**

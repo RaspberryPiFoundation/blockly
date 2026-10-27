@@ -15,6 +15,8 @@ updates:
     labels:
       - 'PR: chore'
       - 'PR: dependencies'
+    assignees:
+      - 'gonfunko'
     groups:
       docusaurus:
         patterns:
@@ -42,3 +44,5 @@ updates:
     labels:
       - 'PR: chore'
       - 'PR: dependencies'
+    assignees:
+      - 'gonfunko'

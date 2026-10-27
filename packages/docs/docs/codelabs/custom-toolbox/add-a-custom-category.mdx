@@ -12,7 +12,7 @@ import Image from '@site/src/components/Image';
 
 To start, create a file named `custom_category.js` in the `src` directory.  
 
-In order to create a custom category, you will create a new category that extends
+To create a custom category, define a new class that extends
 the default `Blockly.ToolboxCategory` class. Add a Blockly import and class definition to your `custom_category.js` file:
 
 ```js
@@ -24,7 +24,7 @@ class CustomCategory extends Blockly.ToolboxCategory {
 }
 ```
 
-After defining your category you need to tell Blockly that it exists.
+After defining the category, tell Blockly that it exists.
 Create a function to register your category by adding the below code to the end of `custom_category.js`:
 
 ```js
@@ -38,8 +38,8 @@ export function registerCustomCategory() {
 }
 ```
 
-Finally, you'll need to import the registration function in `index.js`.
-To register the custom category, call the `registerCustomCategory()` function in `index.js`, just after registering the blocks and generator:
+Finally, import the registration function in `index.js`.
+To register the custom category, call the `registerCustomCategory` function in `index.js`, just after registering the blocks and generator:
 
 ```js
 import { registerCustomCategory } from './custom_category.js';
@@ -52,11 +52,11 @@ Object.assign(javascriptGenerator.forBlock, forBlock);
 registerCustomCategory();
 ```
 
-By registering our `CustomCategory` with `Blockly.ToolboxCategory.registrationName`
-we are *overriding* the default category in Blockly. Because we are overriding a
-toolbox item instead of adding a new one, we must pass in `true` as the last
+Registering `CustomCategory` with `Blockly.ToolboxCategory.registrationName`
+*overrides* the default category in Blockly. Because this overrides an existing
+toolbox item instead of adding a new one, pass in `true` as the last
 argument. If this flag is `false`, `Blockly.registry.register` will throw
-an error because we are overriding an existing class.
+an error because the name is already registered.
 
 ### The result
 

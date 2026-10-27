@@ -442,7 +442,11 @@ suite('Mirroring events', function () {
     );
     global.SVGElement = window.SVGElement;
     window.HTMLCanvasElement.prototype.getContext = () => ({
-      measureText: () => ({width: ''}),
+      measureText: () => ({
+        width: '',
+        fontBoundingBoxAscent: 12,
+        fontBoundingBoxDescent: 4,
+      }),
     });
     this.clock = sinon.useFakeTimers();
     window.requestAnimationFrame = (callback) => setTimeout(callback, 0);

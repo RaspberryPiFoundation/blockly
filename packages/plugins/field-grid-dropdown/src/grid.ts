@@ -233,12 +233,21 @@ export class Grid {
    * @param value The value of the grid item to select.
    */
   setSelectedValue(value: string) {
+    let matchFound = false;
     for (const [index, item] of this.items.entries()) {
       const selected = item.getValue() === value;
       item.setSelected(selected);
       if (selected) {
+        matchFound = true;
         this.moveFocus(index, false, true);
       }
+    }
+
+    // If we didn't find an item with the given value, fall back to selecting
+    // the first option.
+    if (!matchFound) {
+      this.moveFocus(0, false, false);
+      this.itemAtIndex(0)?.setSelected(true);
     }
   }
 

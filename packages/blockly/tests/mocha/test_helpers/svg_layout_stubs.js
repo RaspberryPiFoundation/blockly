@@ -180,10 +180,15 @@ class FakeCanvasContext {
 
   /**
    * @param {string} text The text to measure.
-   * @return {{width: number}} An approximate text metrics object.
+   * @return {{width: number, fontBoundingBoxAscent: number,
+   *     fontBoundingBoxDescent: number}} An approximate text metrics object.
    */
   measureText(text) {
-    return {width: (text ? text.length : 0) * CHAR_WIDTH};
+    return {
+      width: (text ? text.length : 0) * CHAR_WIDTH,
+      fontBoundingBoxAscent: 12,
+      fontBoundingBoxDescent: 4,
+    };
   }
 }
 

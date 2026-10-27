@@ -377,6 +377,11 @@ export class Gesture {
 
     this.mouseDownXY = new Coordinate(e.clientX, e.clientY);
 
+    // Re-establish the touch identifier for this gesture's starting pointer.
+    // This avoids a workspace lockup if a mouse-up is missed.
+    // See https://github.com/RaspberryPiFoundation/blockly/issues/9955
+    Touch.checkTouchIdentifier(e);
+
     this.bindMouseEvents(e);
 
     if (!this.isEnding_) {

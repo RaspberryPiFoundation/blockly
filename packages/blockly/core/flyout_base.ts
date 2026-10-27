@@ -628,13 +628,6 @@ export abstract class Flyout
 
     this.setContents(flyoutInfo);
 
-    this.layout_(flyoutInfo);
-
-    if (this.horizontalLayout) {
-      this.height_ = 0;
-    } else {
-      this.width_ = 0;
-    }
     this.reflow();
     this.updateAriaContext();
     eventUtils.setRecordUndo(true);
@@ -752,11 +745,12 @@ export abstract class Flyout
    * separators as needed.
    *
    * When multiple separators occur one after another, the value of the last one
-   * takes precedence and the earlier separators in the group are removed.
+   * takes precedence and the earlier separators in the group are removed. A
+   * separator at the end is removed outright.
    *
    * @param contents The list of flyout contents to flatten separators in.
    * @returns An updated list of flyout contents with only one separator between
-   *     each non-separator item.
+   *     each non-separator item, and none at the end.
    */
   protected normalizeSeparators(contents: FlyoutItem[]): FlyoutItem[] {
     for (let i = contents.length - 1; i > 0; i--) {
@@ -772,6 +766,12 @@ export abstract class Flyout
         // separator elements.
         contents.splice(i - 1, 1);
       }
+    }
+
+    // A gap after the last item would leave padding after it.
+    const last = contents[contents.length - 1];
+    if (last?.getType().toLowerCase() === SEPARATOR_TYPE) {
+      contents.pop();
     }
 
     return contents;
@@ -829,6 +829,12 @@ export abstract class Flyout
    * Reflow flyout contents.
    */
   reflow() {
+    this.layout_(this.getContents());
+    if (this.horizontalLayout) {
+      this.height_ = 0;
+    } else {
+      this.width_ = 0;
+    }
     this.inhibitReflowWrapper = true;
     this.reflowInternal_();
     this.inhibitReflowWrapper = false;

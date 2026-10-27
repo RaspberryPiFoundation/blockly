@@ -1,24 +1,26 @@
 /**
  * @license
- * Copyright 2018 Google LLC
+ * Copyright 2026 Raspberry Pi Foundation
  * SPDX-License-Identifier: Apache-2.0
  */
 
 /**
- * @fileoverview Gulp script to build Blockly for Node & NPM.
+ * @fileoverview Script to build the blockly package.
  */
 
-import * as gulp from 'gulp';
-import rename from 'gulp-rename';
-import replace from 'gulp-replace';
-import sourcemaps from 'gulp-sourcemaps';
-
-import * as fs from 'fs';
-import * as fsPromises from 'fs/promises';
-import * as path from 'path';
+import {execSync} from 'child_process';
+import {
+  appendFile,
+  mkdir,
+  readFile,
+  rename,
+  rm,
+  unlink,
+  writeFile,
+} from 'node:fs/promises';
 
 import {globSync} from 'glob';
-import {gulp as closureCompiler} from 'google-closure-compiler';
+import * as path from 'path';
 import yargs from 'yargs';
 import {hideBin} from 'yargs/helpers';
 
@@ -26,21 +28,13 @@ import {
   BUILD_DIR,
   RELEASE_DIR,
   TSC_OUTPUT_DIR,
-} from './config.mjs';
-
-import {posixPath, quote} from '../helpers.js';
-import {getPackageJson} from '../lib/package_json.mjs';
+  TSC_OUTPUT_DIR_POSIX,
+} from './build_constants.mjs';
+import {posixPath, quote} from './helpers.js';
+import {compile} from './lib/build_utils.mjs';
+import {getPackageJson} from './lib/package_json.mjs';
 
 const argv = yargs(hideBin(process.argv)).parse();
-
-////////////////////////////////////////////////////////////
-//                        Build                           //
-////////////////////////////////////////////////////////////
-
-/**
- * Posix version of TSC_OUTPUT_DIR
- */
-const TSC_OUTPUT_DIR_POSIX = posixPath(TSC_OUTPUT_DIR);
 
 /**
  * Suffix to add to compiled output files.
@@ -182,9 +176,10 @@ for (let i = 1; i < chunks.length; i++) {
  * with an arbitrary, very short name.
  *
  * Nevertheless, this function can still be used to compute the
- * location of @defined variables, because --define directives are
+ * location of `@define`d variables, because --define directives are
  * processed before the final renaming occurs.
- */ 
+ * @param {{entry: string}} chunk The chunk whose module path to compute.
+ */
 function modulePath(chunk) {
   const entryPath = path.posix.join(TSC_OUTPUT_DIR_POSIX, chunk.entry);
   return 'module$' + entryPath.replace(/\.js$/, '').replaceAll('/', '$');
@@ -199,127 +194,28 @@ const licenseRegex = `\\/\\*\\*
 
 /**
  * Helper method for stripping the Google's and MIT's Apache Licenses.
+ *
+ * @param {!Array<string>} filePaths Files to rewrite.
  */
-function stripApacheLicense() {
-  // Strip out Google's and MIT's Apache licences.
-  // Closure Compiler preserves dozens of Apache licences in the Blockly code.
-  // Remove these if they belong to Google or MIT.
-  // MIT's permission to do this is logged in Blockly issue #2412.
-  return replace(new RegExp(licenseRegex, 'g'), '\n\n\n\n');
-  // Replace with the same number of lines so that source-maps are not affected.
+async function stripApacheLicenses(filePaths) {
+  await Promise.all(
+    filePaths.map(async (filePath) => {
+      const source = await readFile(filePath, 'utf8');
+      // Strip out Google's, MIT's, and Raspberry Pi Foundation's Apache
+      // licences. Closure Compiler preserves dozens of Apache licences in the
+      // Blockly code. Remove these if they belong to Google, MIT, or Raspberry
+      // Pi Foundation.
+      // MIT's permission to do this is logged in Blockly issue #2412.
+      const stripped = source.replace(
+        new RegExp(licenseRegex, 'g'),
+        '\n\n\n\n',
+      );
+      // Replace with the same number of lines so that source-maps are
+      // not affected.
+      if (stripped !== source) await writeFile(filePath, stripped);
+    }),
+  );
 }
-
-/**
- * Closure Compiler diagnostic groups we want to be treated as errors.
- * These are effected when the --debug or --strict flags are passed.
- * For a full list of Closure Compiler groups, consult the output of
- * google-closure-compiler --help or look in the source  here:
- * https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/DiagnosticGroups.java#L117
- *
- * The list in JSCOMP_ERROR contains all the diagnostic groups we know
- * about, but some are commented out if we don't want them, and may
- * appear in JSCOMP_WARNING or JSCOMP_OFF instead.  Items not
- * appearing on any list will default to setting provided by the
- * compiler, which may vary depending on compilation level.
- */
-const JSCOMP_ERROR = [
-  // 'accessControls',  // Deprecated; means same as visibility.
-  // 'checkPrototypalTypes',  // override annotations are stripped by tsc.
-  'checkRegExp',
-  // 'checkTypes',  // Disabled; see note in JSCOMP_OFF.
-  'checkVars',
-  'conformanceViolations',
-  'const',
-  'constantProperty',
-  'duplicateMessage',
-  'es5Strict',
-  'externsValidation',
-  'extraRequire', // Undocumented but valid.
-  'functionParams',
-  // 'globalThis',  // This types are stripped by tsc.
-  'invalidCasts',
-  'misplacedTypeAnnotation',
-  // 'missingOverride',  // There are many of these, which should be fixed.
-  'missingPolyfill',
-  // 'missingProperties',  // Unset static properties are stripped by tsc.
-  'missingProvide',
-  'missingRequire',
-  'missingReturn',
-  // 'missingSourcesWarnings',  // Group of several other options.
-  'moduleLoad',
-  'msgDescriptions',
-  // 'nonStandardJsDocs',  // Disabled; see note in JSCOMP_OFF.
-  // 'partialAlias',  // Don't want this to be an error yet; only warning.
-  // 'polymer',  // Not applicable.
-  // 'reportUnknownTypes',  // VERY verbose.
-  // 'strictCheckTypes',  // Use --strict to enable.
-  // 'strictMissingProperties',  // Part of strictCheckTypes.
-  'strictModuleChecks', // Undocumented but valid.
-  'strictModuleDepCheck',
-  // 'strictPrimitiveOperators',  // Part of strictCheckTypes.
-  'suspiciousCode',
-  'typeInvalidation',
-  'undefinedVars',
-  'underscore',
-  'unknownDefines',
-  // 'unusedLocalVariables',  // Disabled; see note in JSCOMP_OFF.
-  'uselessCode',
-  'untranspilableFeatures',
-  // 'visibility',  // Disabled; see note in JSCOMP_OFF.
-];
-
-/**
- * Closure Compiler diagnostic groups we want to be treated as warnings.
- * These are effected when the --debug or --strict flags are passed.
- *
- * For most (all?) diagnostic groups this is the default level, so
- * it's generally sufficient to remove them from JSCOMP_ERROR.
- */
-const JSCOMP_WARNING = ['deprecated', 'deprecatedAnnotations'];
-
-/**
- * Closure Compiler diagnostic groups we want to be ignored.  These
- * suppressions are always effected by default.
- *
- * Make sure that anything added here is commented out of JSCOMP_ERROR
- * above, as that takes precedence.)
- */
-const JSCOMP_OFF = [
-  /* The removal of Closure type system types from our JSDoc
-   * annotations means that the Closure Compiler now generates certain
-   * diagnostics because it no longer has enough information to be
-   * sure that the input code is correct.  The following diagnostic
-   * groups are turned off to suppress such errors.
-   *
-   * When adding additional items to this list it may be helpful to
-   * search the compiler source code
-   * (https://github.com/google/closure-compiler/) for the JSC_*
-   * diagnostic name (omitting the JSC_ prefix) to find the corresponding
-   * DiagnosticGroup.
-   */
-  'checkTypes',
-  'nonStandardJsDocs', // Due to @internal
-  'unusedLocalVariables', // Due to code generated for merged namespaces.
-
-  /* In order to transition to ES modules, modules will need to import
-   * one another by relative paths. This means that the previous
-   * practice of moving all source files into the same directory for
-   * compilation would break imports.
-   *
-   * Not flattening files in this way breaks our usage
-   * of @package however: files were flattened so that all Blockly
-   * source files are in the same directory and can use @package to
-   * mark methods that are only allowed for use by Blockly, while
-   * still allowing access between e.g. core/events/* and
-   * core/utils/*. We were downgrading access control violations
-   * (including @private) to warnings, but this ends up being so
-   * spammy that it makes the compiler output nearly useless.
-   *
-   * Once ES module migration is complete, they will be re-enabled and
-   * an alternative to @package will be established.
-   */
-  'visibility',
-];
 
 /**
  * Return the path to the generated chunk exporter for the given
@@ -327,7 +223,7 @@ const JSCOMP_OFF = [
  *
  * See buildChunkExporters for additional information.
  *
- * @param {{name: string}} chunk
+ * @param {{name: string}} chunk The chunk whose exporter path to compute.
  * @return {string}
  */
 function chunkExporterPath(chunk) {
@@ -393,7 +289,7 @@ function chunkExporterPath(chunk) {
  */
 async function buildChunkExporters() {
   const outDir = path.join(TSC_OUTPUT_DIR, CHUNK_EXPORTERS_DIR);
-  await fsPromises.mkdir(outDir, {recursive: true});
+  await mkdir(outDir, {recursive: true});
 
   await Promise.all(
     chunks.map(async (chunk) => {
@@ -401,7 +297,7 @@ async function buildChunkExporters() {
       const importPath = posixPath(
         path.posix.relative(path.posix.dirname(filename), chunk.entry),
       );
-      await fsPromises.writeFile(
+      await writeFile(
         path.join(TSC_OUTPUT_DIR, filename),
         // Suppress undefined-variable diagnostics, since Closure
         // Compiler can't see the declaration of NAMESPACE_VARIABLE
@@ -420,6 +316,9 @@ ${NAMESPACE_VARIABLE}['${CHUNK_EXPORTS_PREFIX}${chunk.name}'] = exports;
  * A helper method to return an Closure Compiler chunk wrapper that
  * wraps the compiler output for the given chunk in a Universal Module
  * Definition.
+ * @param {{name: string, parent: ?object, scriptExport: string,
+ *     scriptNamedExports: ({[key: string]: string}|undefined)}} chunk
+ *     The chunk to generate a UMD wrapper for.
  */
 function chunkWrapper(chunk) {
   // Each chunk can have only a single dependency, which is its parent
@@ -453,7 +352,7 @@ function chunkWrapper(chunk) {
   const scriptExportStatements = [
     `root.${chunk.scriptExport} = factory(${scriptDepsExpr});`,
   ];
-  for (var location in chunk.scriptNamedExports) {
+  for (let location in chunk.scriptNamedExports) {
     const namedExport = chunk.scriptNamedExports[location];
     scriptExportStatements.push(
       `root.${location} = root.${chunk.scriptExport}.${namedExport};`,
@@ -551,40 +450,15 @@ function getChunkOptions() {
 }
 
 /**
- * Helper method for calling the Closure Compiler, establishing
- * default options (that can be overridden by the caller).
- * @param {*} options Caller-supplied options that will override the
- *     defaultOptions.
- */
-function compile(options) {
-  const defaultOptions = {
-    compilation_level: 'SIMPLE_OPTIMIZATIONS',
-    warning_level: argv.verbose ? 'VERBOSE' : 'DEFAULT',
-    language_in: 'ECMASCRIPT_2020',
-    language_out: 'ECMASCRIPT_2015',
-    jscomp_off: [...JSCOMP_OFF],
-    rewrite_polyfills: true,
-    hide_warnings_for: ['node_modules'],
-    define: ['COMPILED=true'],
-  };
-  if (argv.debug || argv.strict) {
-    defaultOptions.jscomp_error = [...JSCOMP_ERROR];
-    defaultOptions.jscomp_warning = [...JSCOMP_WARNING];
-    if (argv.strict) {
-      defaultOptions.jscomp_error.push('strictCheckTypes');
-    }
-  }
-  // Extra options for Closure Compiler gulp plugin.
-  const platform = ['native'];
-
-  return closureCompiler({...defaultOptions, ...options}, {platform});
-}
-
-/**
  * This task compiles the core library, blocks and generators, creating
  * blockly_compressed.js, blocks_compressed.js, etc.
  */
-function buildCompiled() {
+async function buildCompiled() {
+  // Closure writes each chunk's bare output here rather than straight into
+  // RELEASE_DIR, so it can't overwrite files already in dist/ (package.mjs
+  // writes legacy shims named blocks.js, dart.js, etc., which collide with
+  // Closure's bare chunk output).
+  const compiledDir = path.join(BUILD_DIR, 'compiled');
   // Get chunking.
   const chunkOptions = getChunkOptions();
   // Closure Compiler options.
@@ -600,23 +474,58 @@ function buildCompiled() {
     // by the time --define is processed.)  See
     // https://github.com/google/closure-compiler/issues/1601#issuecomment-483452226
     define: `VERSION$$${modulePath(chunks[0])}='${packageJson.version}'`,
+    js: chunkOptions.js,
     chunk: chunkOptions.chunk,
     chunk_wrapper: chunkOptions.chunk_wrapper,
-    // Don't supply the list of source files in chunkOptions.js as an
-    // option to Closure Compiler; instead feed them as input via gulp.src.
+    // Closure writes one file per chunk, named after the chunk, so
+    // this produces e.g. build/compiled/blockly.js; the file is then
+    // renamed with COMPILED_SUFFIX and moved into RELEASE_DIR below.
+    chunk_output_path_prefix: `${compiledDir}/`,
+    create_source_map: '%outname%.map',
     rename_prefix_namespace: NAMESPACE_VARIABLE,
     assume_function_wrapper: true,
   };
 
-  // Fire up compilation pipline.
-  return gulp
-    .src(chunkOptions.js, {base: './'})
-    .pipe(stripApacheLicense())
-    .pipe(sourcemaps.init())
-    .pipe(compile(options))
-    .pipe(rename({suffix: COMPILED_SUFFIX}))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(RELEASE_DIR));
+  await stripApacheLicenses(chunkOptions.js);
+  // Start from an empty scratch directory and ensure the destination exists.
+  await rm(compiledDir, {recursive: true, force: true});
+  await mkdir(compiledDir, {recursive: true});
+  await mkdir(RELEASE_DIR, {recursive: true});
+  await compile(options, argv);
+  for (const chunk of chunks) {
+    const compiledPath = path.join(compiledDir, `${chunk.name}.js`);
+    const outputName = `${chunk.name}${COMPILED_SUFFIX}.js`;
+    const outputPath = path.join(RELEASE_DIR, outputName);
+
+    // Closure's --chunk_output_path_prefix write path appends one extra
+    // trailing blank line beyond what's in chunk_wrapper. Trim it here so the
+    // .js and its .map stay consistent with each other.
+    let code = await readFile(compiledPath, 'utf8');
+    if (code.endsWith('\n\n')) {
+      code = code.slice(0, -1);
+      await writeFile(compiledPath, code);
+    }
+
+    const sourceMap = JSON.parse(await readFile(`${compiledPath}.map`, 'utf8'));
+    sourceMap.file = outputName;
+    if (sourceMap.mappings.endsWith(';')) {
+      sourceMap.mappings = sourceMap.mappings.slice(0, -1);
+    }
+    sourceMap.sourcesContent = await Promise.all(
+      sourceMap.sources.map((source) =>
+        readFile(source, 'utf8').catch(() => null),
+      ),
+    );
+
+    await writeFile(`${outputPath}.map`, JSON.stringify(sourceMap));
+    await unlink(`${compiledPath}.map`);
+
+    await rename(compiledPath, outputPath);
+    await appendFile(
+      outputPath,
+      `\n\n//# sourceMappingURL=${outputName}.map\n`,
+    );
+  }
 }
 
 /**
@@ -635,13 +544,13 @@ async function buildShims() {
   // .js files therein are ESM not CJS, so we can import the
   // entrypoints to enumerate their exported names.
   const TMP_PACKAGE_JSON = path.join(BUILD_DIR, 'package.json');
-  await fsPromises.writeFile(TMP_PACKAGE_JSON, '{"type": "module"}');
+  await writeFile(TMP_PACKAGE_JSON, '{"type": "module"}');
 
   await Promise.all(
     chunks.map(async (chunk) => {
       // Import chunk entrypoint to get names of exports for chunk.
       const entryPath = path.posix.join(TSC_OUTPUT_DIR_POSIX, chunk.entry);
-      const exportedNames = Object.keys(await import(`../../${entryPath}`));
+      const exportedNames = Object.keys(await import(`../${entryPath}`));
 
       // Write an ESM wrapper that imports the CJS module and re-exports
       // its named exports.
@@ -649,7 +558,7 @@ async function buildShims() {
       const wrapperPath = path.join(RELEASE_DIR, `${chunk.name}.mjs`);
       const importName = chunk.scriptExport.replace(/.*\./, '');
 
-      await fsPromises.writeFile(
+      await writeFile(
         wrapperPath,
         `import ${importName} from '${cjsPath}';
 export const {
@@ -661,7 +570,7 @@ ${exportedNames.map((name) => `  ${name},`).join('\n')}
       // For first chunk, write an additional ESM wrapper for 'blockly'
       // entrypoint since it has the same exports as 'blockly/core'.
       if (chunk.name === 'blockly') {
-        await fsPromises.writeFile(
+        await writeFile(
           path.join(RELEASE_DIR, `index.mjs`),
           `import Blockly from './index.js';
 export const {
@@ -683,7 +592,7 @@ ${exportedNames.map((name) => `  ${name},`).join('\n')}
         ? `import ${quote(`./${chunk.parent.name}.loader.mjs`)};`
         : '';
 
-      await fsPromises.writeFile(
+      await writeFile(
         shimPath,
         `import {loadChunk} from '../tests/scripts/load.mjs';
 ${parentImport}
@@ -700,58 +609,26 @@ ${exportedNames.map((name) => `  ${name},`).join('\n')}
     }),
   );
 
-  await fsPromises.rm(TMP_PACKAGE_JSON);
+  await rm(TMP_PACKAGE_JSON);
 }
 
 /**
- * This task uses Closure Compiler's ADVANCED_OPTIMIZATIONS mode to
- * compile together Blockly core, blocks and generators with a simple
- * test app; the purpose is to verify that Blockly is compatible with
- * the ADVANCED_OPTIMIZATIONS mode.
+ * Executes the langfiles command.
+ */
+function execLangFiles() {
+  execSync('npm run langfiles', {stdio: 'inherit'});
+}
+
+/**
+ * Build all chunks, compressed files, sourcemaps, shims, and langfiles.
  *
  * Prerequisite: tsc.
  */
-function compileAdvancedCompilationTest() {
-  // If main_compressed.js exists (from a previous run) delete it so that
-  // a later browser-based test won't check it should the compile fail.
-  try {
-    fs.unlinkSync('./tests/compile/main_compressed.js');
-  } catch {
-    // Probably it didn't exist.
-  }
-
-  const srcs = [
-    TSC_OUTPUT_DIR + '/**/*.js',
-    'tests/compile/main.js',
-    'tests/compile/test_blocks.js',
-  ];
-
-  // Closure Compiler options.
-  const options = {
-    dependency_mode: 'PRUNE',
-    compilation_level: 'ADVANCED_OPTIMIZATIONS',
-    entry_point: './tests/compile/main.js',
-    js_output_file: 'main_compressed.js',
-  };
-  return gulp
-    .src(srcs, {base: './'})
-    .pipe(stripApacheLicense())
-    .pipe(sourcemaps.init())
-    .pipe(compile(options))
-    .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: '../../'}))
-    .pipe(gulp.dest('./tests/compile/'));
+async function build() {
+  await buildChunkExporters();
+  await buildCompiled();
+  await buildShims();
+  execLangFiles();
 }
 
-// function tsc, above
-export const minify = gulp.series(
-  buildChunkExporters,
-  buildCompiled,
-  buildShims,
-);
-export const build = minify;
-
-// Manually-invokable targets, with prerequisites where required.
-// function messages, above
-export const buildAdvancedCompilationTest = gulp.series(
-  compileAdvancedCompilationTest,
-);
+await build();

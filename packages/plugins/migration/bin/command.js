@@ -27,9 +27,9 @@ const ROOT_COMMAND = new Command(SCRIPT_NAME)
   )
   .usage(
     `${chalk.blue('<migration>')} ` +
-      `${chalk.green('--from <from-version>')}` +
-      '[--to <to-version>] [options] ' +
-      `${chalk.green('<file...>')}`,
+      `${chalk.green('<file...>')} ` +
+      `${chalk.magenta('--from <from-version>')} ` +
+      '[--to <to-version>] [options]',
   );
 
 const HELP_COMMAND = new Command('help')
@@ -95,6 +95,7 @@ export function createSubCommand(name, targetVersionRange, description) {
 
   return new Command(name)
     .description(description)
+    .usage('<file...> [options]')
     .requiredOption('--from <from-version>', 'Blockly version to migrate from')
     .option('--to <to-version>', 'Blockly version to migrate to')
     .argument('<file...>', 'Files to migrate');
