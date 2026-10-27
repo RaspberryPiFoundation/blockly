@@ -13,7 +13,7 @@ playground in the browser. The page will reload if you make edits.
 
 ### `blockly-scripts build`
 
-Builds the package into the `dist` directory.
+Builds the package into the `dist/esm` and `dist/cjs` directories.
 
 ### `blockly-scripts clean`
 
