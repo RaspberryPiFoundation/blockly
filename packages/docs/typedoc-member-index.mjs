@@ -1,7 +1,7 @@
 // Typedoc theme & router overrides
 
 import {
-  MarkdownPageEvent,
+  MarkdownRendererEvent,
   MarkdownTheme,
   MarkdownThemeContext,
   MemberRouter,
@@ -96,8 +96,7 @@ class MemberIndexTheme extends MarkdownTheme {
   }
 
   getNavigation(project) {
-    // Every plugin is under the Plugins heading, so '@blockly/field-slider'
-    // reads as 'field-slider'
+    // Remove @blockly from sidebar nav for plugins
     return super.getNavigation(project).map((item) => ({
       ...item,
       title: item.title.replace(/^@blockly\//, ''),
@@ -122,10 +121,14 @@ export function load(app) {
   app.renderer.defineTheme('member-index', MemberIndexTheme);
   app.renderer.defineRouter('namespace-dirs', NamespaceDirRouter);
 
-  // Without a title, Docusaurus takes one from the page's first heading, which
-  // for a plugin is its README's, badges and all.
-  app.renderer.on(MarkdownPageEvent.BEGIN, (page) => {
-    if (page.model.kind !== ReflectionKind.Module) return;
-    page.frontmatter = { ...page.frontmatter, title: page.model.name };
+  // Members that plugins inherit from Blockly show as defined in blockly/dist.
+  // Drop those sources, since the pages already show the inherited members 
+  app.renderer.on(MarkdownRendererEvent.BEGIN, (event) => {
+    for (const reflection of Object.values(event.project.reflections)) {
+      const sources = reflection.sources?.filter(
+        (source) => !source.fileName.startsWith('blockly/dist/'),
+      );
+      reflection.sources = sources?.length ? sources : undefined;
+    }
   });
 }
