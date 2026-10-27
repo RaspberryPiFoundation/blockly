@@ -109,8 +109,36 @@ jobs:
               echo "GitHub release would be created as prerelease."  
             fi
           else
-            eval "$VERSION_COMMAND"
+            eval "${VERSION_COMMAND} --no-push"
           fi
+
+      - name: Sync blockly peerDependencies
+        if: ${{ !inputs.skip_versioning && !inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          RANGE="^$(node -p "require('./packages/blockly/package.json').version")"
+          WORKSPACES=$(npm pkg get peerDependencies.blockly --workspaces --json \
+            | jq -r --arg r "$RANGE" \
+                'to_entries[] | select((.value | type) == "string" and .value != $r) | .key')
+
+          if [ -z "$WORKSPACES" ]; then
+            exit 0
+          fi
+
+          for ws in $WORKSPACES; do
+            echo "$ws: peerDependencies.blockly -> $RANGE"
+            npm pkg set "peerDependencies.blockly=$RANGE" --workspace "$ws"
+          done
+
+          TAGS=$(git tag --points-at HEAD)
+          npm install --package-lock-only --ignore-scripts
+          git add -u
+          git commit --amend --no-edit --no-verify
+          for t in $TAGS; do git tag -f -a "$t" -m "$t"; done
+
+      - name: Push release commit and tags
+        if: ${{ !inputs.skip_versioning && !inputs.dry_run }}
+        run: git push --follow-tags --no-verify --atomic origin HEAD
 
       - name: Build core package
         if: ${{ !inputs.dry_run }}
