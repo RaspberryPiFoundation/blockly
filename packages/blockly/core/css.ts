@@ -596,6 +596,15 @@ input[type=number] {
       )
   .blocklyPassiveFocus.blocklyField
   > .blocklyFieldRect,
+/* Full-block fields use the block path for their passive focus indicator. */
+.blocklyKeyboardNavigation:not(
+        :has(
+            .blocklyDropDownDiv:focus-within,
+            .blocklyWidgetDiv:focus-within
+          )
+      )
+  .blocklyBlock:has(> .blocklyFullBlockField.blocklyPassiveFocus)
+  > .blocklyPath:not(.blocklyFlyout .blocklyPath),
 /* Icons with passive focus except when widget/dropdown div in use. */
 .blocklyKeyboardNavigation:not(
         :has(
