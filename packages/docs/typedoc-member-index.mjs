@@ -122,7 +122,7 @@ export function load(app) {
   app.renderer.defineRouter('namespace-dirs', NamespaceDirRouter);
 
   // Members that plugins inherit from Blockly show as defined in blockly/dist.
-  // Drop those sources, since the pages already show the inherited members 
+  // Drop those sources, since the pages already show the inherited members
   app.renderer.on(MarkdownRendererEvent.BEGIN, (event) => {
     for (const reflection of Object.values(event.project.reflections)) {
       const sources = reflection.sources?.filter(
