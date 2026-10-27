@@ -46,37 +46,125 @@ suite('Flyout', function () {
   });
 
   suite('focus management', function () {
-    setup(function () {
-      this.flyout = this.workspace.getFlyout();
-      assert.isNull(this.workspace.getToolbox());
+    suite('toolbox', function () {
+      setup(function () {
+        workspaceTeardown.call(this, this.workspace);
+        this.workspace = Blockly.inject('blocklyDiv', {
+          ...DEFAULT_INJECT_OPTIONS,
+          toolbox: document.getElementById('toolbox-categories'),
+        });
+        this.toolbox = this.workspace.getToolbox();
+        this.flyout = this.toolbox.getFlyout();
+        this.toolbox.setSelectedItem(this.toolbox.getToolboxItems()[0]);
+      });
+
+      test('Losing flyout focus hides autoclosing flyout and clears category', function () {
+        this.flyout.setAutoClose(true);
+        Blockly.getFocusManager().focusNode(
+          this.flyout.getWorkspace().getTopBlocks(false)[0],
+        );
+        assert.isTrue(this.flyout.isVisible());
+
+        Blockly.getFocusManager().focusNode(this.workspace);
+
+        assert.isFalse(this.flyout.isVisible());
+        assert.isNull(this.toolbox.getSelectedItem());
+      });
+
+      test('Losing flyout focus preserves non-autoclosing flyout and category', function () {
+        this.flyout.setAutoClose(false);
+        const selectedCategory = this.toolbox.getSelectedItem();
+        Blockly.getFocusManager().focusNode(
+          this.flyout.getWorkspace().getTopBlocks(false)[0],
+        );
+        assert.isTrue(this.flyout.isVisible());
+
+        Blockly.getFocusManager().focusNode(this.workspace);
+
+        assert.isTrue(this.flyout.isVisible());
+        assert.strictEqual(this.toolbox.getSelectedItem(), selectedCategory);
+      });
     });
 
-    test('Losing focus hides autoclosing flyout', function () {
-      this.flyout.setAutoClose(true);
+    suite('workspace', function () {
+      setup(function () {
+        this.flyout = this.workspace.getFlyout();
+        assert.isNull(this.workspace.getToolbox());
+      });
 
-      // Focus a block in the standalone flyout.
-      Blockly.getFocusManager().focusNode(
-        this.flyout.getWorkspace().getTopBlocks(false)[0],
-      );
-      assert.isTrue(this.flyout.isVisible());
+      test('Losing focus hides autoclosing flyout', function () {
+        this.flyout.setAutoClose(true);
 
-      // Focus the workspace to trigger the flyout to close.
-      Blockly.getFocusManager().focusNode(this.workspace);
-      assert.isFalse(this.flyout.isVisible());
+        // Focus a block in the standalone flyout.
+        Blockly.getFocusManager().focusNode(
+          this.flyout.getWorkspace().getTopBlocks(false)[0],
+        );
+        assert.isTrue(this.flyout.isVisible());
+
+        // Focus the workspace to trigger the flyout to close.
+        Blockly.getFocusManager().focusNode(this.workspace);
+        assert.isFalse(this.flyout.isVisible());
+      });
+
+      test('Losing focus does not hide non-autoclosing flyout', function () {
+        this.flyout.setAutoClose(false);
+
+        // Focus a block in the standalone flyout.
+        Blockly.getFocusManager().focusNode(
+          this.flyout.getWorkspace().getTopBlocks(false)[0],
+        );
+        assert.isTrue(this.flyout.isVisible());
+
+        // Focus the workspace; the flyout should remain visible.
+        Blockly.getFocusManager().focusNode(this.workspace);
+        assert.isTrue(this.flyout.isVisible());
+      });
     });
 
-    test('Losing focus does not hide non-autoclosing flyout', function () {
-      this.flyout.setAutoClose(false);
+    suite('other', function () {
+      setup(function () {
+        // Integrations such as parameter flydowns can create another flyout
+        // targeting a workspace without replacing the one getFlyout returns.
+        const options = this.workspace.copyOptionsForFlyout();
+        options.toolboxPosition = Blockly.TOOLBOX_AT_RIGHT;
+        this.flyout = new Blockly.VerticalFlyout(options);
+        this.flyout.autoHide = function (onlyClosePopups) {
+          if (!onlyClosePopups && this.autoClose) {
+            this.hide();
+          }
+        };
+        this.workspace.getParentSvg().after(this.flyout.createDom('svg'));
+        this.flyout.init(this.workspace);
+        this.flyout.show([{kind: 'block', type: 'basic_block'}]);
+      });
 
-      // Focus a block in the standalone flyout.
-      Blockly.getFocusManager().focusNode(
-        this.flyout.getWorkspace().getTopBlocks(false)[0],
-      );
-      assert.isTrue(this.flyout.isVisible());
+      teardown(function () {
+        this.flyout.dispose();
+      });
 
-      // Focus the workspace; the flyout should remain visible.
-      Blockly.getFocusManager().focusNode(this.workspace);
-      assert.isTrue(this.flyout.isVisible());
+      test('Losing focus hides autoclosing flyout', function () {
+        this.flyout.setAutoClose(true);
+        Blockly.getFocusManager().focusNode(
+          this.flyout.getWorkspace().getTopBlocks(false)[0],
+        );
+        assert.isTrue(this.flyout.isVisible());
+
+        Blockly.getFocusManager().focusNode(this.workspace);
+
+        assert.isFalse(this.flyout.isVisible());
+      });
+
+      test('Losing focus does not hide non-autoclosing flyout', function () {
+        this.flyout.setAutoClose(false);
+        Blockly.getFocusManager().focusNode(
+          this.flyout.getWorkspace().getTopBlocks(false)[0],
+        );
+        assert.isTrue(this.flyout.isVisible());
+
+        Blockly.getFocusManager().focusNode(this.workspace);
+
+        assert.isTrue(this.flyout.isVisible());
+      });
     });
   });
 

@@ -40,7 +40,6 @@ import {Gesture} from './gesture.js';
 import {Grid} from './grid.js';
 import * as hints from './hints.js';
 import {IconType} from './icons/icon_types.js';
-import {isAutoHideable} from './interfaces/i_autohideable.js';
 import type {IBoundedElement} from './interfaces/i_bounded_element.js';
 import type {IComponent} from './interfaces/i_component.js';
 import type {IContextMenu} from './interfaces/i_contextmenu.js';
@@ -3112,14 +3111,7 @@ export class WorkspaceSvg
       return;
     }
 
-    if (isAutoHideable(toolbox)) {
-      toolbox.autoHide(false);
-    } else {
-      const flyout = this.targetWorkspace.getFlyout();
-      if (isAutoHideable(flyout)) {
-        flyout.autoHide(false);
-      }
-    }
+    this.targetWorkspace.hideComponents(false);
   }
 
   /**
