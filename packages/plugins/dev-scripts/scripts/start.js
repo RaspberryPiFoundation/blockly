@@ -14,26 +14,26 @@
  * @author samelh@google.com (Sam El-Husseini)
  */
 
-'use strict';
+import {existsSync, readFileSync, realpathSync} from 'fs';
+import {resolve} from 'path';
+import {EOL} from 'os';
 
-const path = require('path');
-const fs = require('fs');
-const os = require('os');
+import webpack from 'webpack';
+import WebpackDevServer from 'webpack-dev-server';
+import webpackConfig from '../config/webpack.config.js';
+import webpackDevServerConfig from '../config/webpackDevServer.config.js';
 
-const webpack = require('webpack');
-const WebpackDevServer = require('webpack-dev-server');
-const webpackConfig = require('../config/webpack.config');
-const webpackDevServerConfig = require('../config/webpackDevServer.config');
+import chalk from 'chalk';
+import {codeFrameColumns as codeFrame} from '@babel/code-frame';
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 
-const chalk = require('chalk').default;
-const codeFrame = require('@babel/code-frame').codeFrameColumns;
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const appDirectory = realpathSync(process.cwd());
+const resolveApp = (relativePath) => resolve(appDirectory, relativePath);
 
-const appDirectory = fs.realpathSync(process.cwd());
-const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
-
-const packageJson = require(resolveApp('package.json'));
-const isTypescript = fs.existsSync(resolveApp('tsconfig.json'));
+const packageJson = JSON.parse(
+  readFileSync(resolveApp('package.json'), 'utf8'),
+);
+const isTypescript = existsSync(resolveApp('tsconfig.json'));
 const options = process.argv.slice(2);
 
 console.log(`Running start for ${packageJson.name}`);
@@ -86,8 +86,7 @@ if (isTypescript) {
 
       const messageColor = severity == 'warning' ? chalk.yellow : chalk.red;
 
-      const source =
-        file && fs.existsSync(file) && fs.readFileSync(file, 'utf-8');
+      const source = file && existsSync(file) && readFileSync(file, 'utf-8');
       const frame = source
         ? codeFrame(
             source,
@@ -96,17 +95,17 @@ if (isTypescript) {
           )
             .split('\n')
             .map((str) => '  ' + str)
-            .join(os.EOL)
+            .join(EOL)
         : '';
 
       return [
-        os.EOL,
+        EOL,
         messageColor.bold(`${severity.toLowerCase()} in `) +
           chalk.cyan.bold(`${file}(${line},${character})`) +
           messageColor(':'),
         '',
         frame,
-      ].join(os.EOL);
+      ].join(EOL);
     };
 
     tsMessagesResolver({

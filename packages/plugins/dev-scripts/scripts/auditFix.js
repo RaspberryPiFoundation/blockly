@@ -11,16 +11,16 @@
  *   - Runs `npm audit fix` to do the fixes.
  * @author fenichel@google.com (Rachel Fenichel)
  */
-'use strict';
+import {readFileSync, realpathSync} from 'fs';
+import {resolve} from 'path';
+import {execSync} from 'child_process';
 
-const fs = require('fs');
-const path = require('path');
-const execSync = require('child_process').execSync;
+const appDirectory = realpathSync(process.cwd());
+const resolveApp = (relativePath) => resolve(appDirectory, relativePath);
 
-const appDirectory = fs.realpathSync(process.cwd());
-const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
-
-const packageJson = require(resolveApp('package.json'));
+const packageJson = JSON.parse(
+  readFileSync(resolveApp('package.json'), 'utf8'),
+);
 
 console.log(`Running npm audit fix steps for ${packageJson.name}`);
 

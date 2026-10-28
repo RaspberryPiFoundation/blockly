@@ -10,8 +10,10 @@
  * @author samelh@google.com (Sam El-Husseini)
  */
 
+import {spawnSync} from 'child_process';
+import {fileURLToPath} from 'url';
+
 const args = process.argv.slice(2);
-const {spawnSync} = require('child_process');
 
 const availableScripts = [
   'build',
@@ -25,8 +27,11 @@ const availableScripts = [
 const script = args[0];
 if (availableScripts.includes(script)) {
   const result = spawnSync(
-    'node',
-    [].concat(require.resolve('../scripts/' + script)).concat(args.slice(1)),
+    process.execPath,
+    [
+      fileURLToPath(new URL(`../scripts/${script}.js`, import.meta.url)),
+      ...args.slice(1),
+    ],
     {stdio: 'inherit'},
   );
   if (result.signal) {
