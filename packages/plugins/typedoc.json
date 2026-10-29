@@ -1,0 +1,25 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+
+  "name": "plugins",
+
+  "readme": "none",
+
+  "entryPointStrategy": "packages",
+  "entryPoints": ["./*"],
+  "exclude": [
+    "**/plugins/dev-*",
+    "**/plugins/sample-app*",
+    "**/plugins/migration",
+    "**/plugins/block-test"
+  ],
+
+  "packageOptions": {
+    "entryPoints": ["src/index.*"],
+    "compilerOptions": {"allowJs": true},
+    "excludeInternal": true,
+    "excludePrivate": true,
+    "skipErrorChecking": true,
+    "sourceLinkTemplate": "https://github.com/RaspberryPiFoundation/blockly/blob/{gitRevision}/{path}#L{line}"
+  }
+}

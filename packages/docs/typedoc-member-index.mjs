@@ -1,6 +1,7 @@
 // Typedoc theme & router overrides
 
 import {
+  MarkdownRendererEvent,
   MarkdownTheme,
   MarkdownThemeContext,
   MemberRouter,
@@ -93,6 +94,14 @@ class MemberIndexTheme extends MarkdownTheme {
   getRenderContext(page) {
     return new MemberIndexContext(this, page, this.application.options);
   }
+
+  getNavigation(project) {
+    // Remove @blockly from sidebar nav for plugins
+    return super.getNavigation(project).map((item) => ({
+      ...item,
+      title: item.title.replace(/^@blockly\//, ''),
+    }));
+  }
 }
 
 /**
@@ -111,4 +120,15 @@ class NamespaceDirRouter extends MemberRouter {
 export function load(app) {
   app.renderer.defineTheme('member-index', MemberIndexTheme);
   app.renderer.defineRouter('namespace-dirs', NamespaceDirRouter);
+
+  // Members that plugins inherit from Blockly show as defined in blockly/dist.
+  // Drop those sources, since the pages already show the inherited members
+  app.renderer.on(MarkdownRendererEvent.BEGIN, (event) => {
+    for (const reflection of Object.values(event.project.reflections)) {
+      const sources = reflection.sources?.filter(
+        (source) => !source.fileName.startsWith('blockly/dist/'),
+      );
+      reflection.sources = sources?.length ? sources : undefined;
+    }
+  });
 }
