@@ -9,3 +9,4 @@
  */
 export * from './artifact_types';
 export * from './requirements';
+export * from './block_state_menu';
