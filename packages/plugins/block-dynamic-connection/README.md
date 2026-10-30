@@ -1,4 +1,6 @@
-# @blockly/block-dynamic-connection [![Built on Blockly](https://tinyurl.com/built-on-blockly)](https://github.com/google/blockly)
+# @blockly/block-dynamic-connection
+
+## [<img src="https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/docs/static/images/logos/built-with-blockly-badge-white.svg" alt="Built with Blockly" width="119">](https://github.com/RaspberryPiFoundation/blockly)
 
 A group of [Blockly](https://www.npmjs.com/package/blockly) blocks that
 add and remove connections dynamically.

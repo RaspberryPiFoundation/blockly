@@ -1,4 +1,6 @@
-# @blockly/workspace-minimap [![Built on Blockly](https://tinyurl.com/built-on-blockly)](https://github.com/google/blockly)
+# @blockly/workspace-minimap
+
+## [<img src="https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/docs/static/images/logos/built-with-blockly-badge-white.svg" alt="Built with Blockly" width="119">](https://github.com/RaspberryPiFoundation/blockly)
 
 A [Blockly](https://www.npmjs.com/package/blockly) plugin that adds a minimap to the workspace. A minimap is a miniature version of your blocks that appears on top of your main workspace. This gives you an overview of what your code looks like, and how it is organized.
 There is a focus region within the minimap that highlights the users's current viewport; this is on by default.
