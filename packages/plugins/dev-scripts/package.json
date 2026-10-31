@@ -30,7 +30,7 @@
     "source-map-loader": "^5.0.0",
     "ts-loader": "^9.6.1",
     "webpack": "^5.111.1",
-    "webpack-dev-server": "^6.0.0"
+    "webpack-dev-server": "^6.1.0"
   },
   "peerDependencies": {
     "typescript": "^4.3.2 || ^5 || ^6"
