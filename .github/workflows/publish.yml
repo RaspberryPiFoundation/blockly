@@ -45,12 +45,17 @@ jobs:
     outputs:
       dist_tag: ${{ steps.dist.outputs.dist_tag }}
       version_command: ${{ steps.command.outputs.version_command }}
+      sha: ${{ steps.head.outputs.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
           ref: ${{ github.ref }}
           fetch-depth: 0
+
+      - name: Record commit
+        id: head
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Setup Node.js
         uses: actions/setup-node@v7
@@ -71,8 +76,8 @@ jobs:
           echo "dist_tag=$DIST_TAG" >> "$GITHUB_OUTPUT"
           echo "NPM distribution tag: $DIST_TAG"
 
-      # The publish job runs this exact command, so the version shown here is
-      # the version that gets published.
+      # The publish job runs this exact command on the same commit, so the
+      # version shown here is the version that gets published.
       - name: Build version command
         id: command
         env:
@@ -130,6 +135,18 @@ jobs:
           fetch-depth: 0
           ssh-key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
 
+      # If the branch moved while waiting for approval, the version would no
+      # longer match the preview.
+      - name: Check branch has not moved
+        env:
+          PREVIEW_SHA: ${{ needs.preview.outputs.sha }}
+        run: |
+          HEAD_SHA=$(git rev-parse HEAD)
+          if [ "${HEAD_SHA}" != "${PREVIEW_SHA}" ]; then
+            echo "::error::Branch moved from ${PREVIEW_SHA} to ${HEAD_SHA} after the preview. Run the workflow again."
+            exit 1
+          fi
+
       # This uses a reverse-engineered email for the github actions bot. See
       # https://github.com/actions/checkout/issues/13#issuecomment-724415212
       - name: Git Identity
@@ -159,7 +176,7 @@ jobs:
           eval "${VERSION_COMMAND} --no-push"
 
       - name: Sync blockly peerDependencies
-        if: ${{ !inputs.skip_versioning && !inputs.dry_run }}
+        if: ${{ !inputs.skip_versioning }}
         run: |
           set -euo pipefail
           RANGE="^$(node -p "require('./packages/blockly/package.json').version")"
@@ -183,16 +200,14 @@ jobs:
           for t in $TAGS; do git tag -f -a "$t" -m "$t"; done
 
       - name: Push release commit and tags
-        if: ${{ !inputs.skip_versioning && !inputs.dry_run }}
+        if: ${{ !inputs.skip_versioning }}
         run: git push --follow-tags --no-verify --atomic origin HEAD
 
       - name: Build core package
-        if: ${{ !inputs.dry_run }}
         working-directory: packages/blockly
         run: npm run package
 
       - name: Publish
-        if: ${{ !inputs.dry_run }}
         env:
           GH_TOKEN: ${{ github.token }}
           SKIP_VERSIONING: ${{ inputs.skip_versioning }}
@@ -205,12 +220,10 @@ jobs:
           fi
 
       - name: Create tarball
-        if: ${{ !inputs.dry_run }}
         working-directory: packages/blockly
         run: npm pack ./dist
         
       - name: Create GitHub release
-        if: ${{ !inputs.dry_run }}
         working-directory: packages/blockly
         env:
           GH_TOKEN: ${{ github.token }}
