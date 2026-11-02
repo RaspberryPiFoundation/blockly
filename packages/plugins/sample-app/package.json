@@ -30,7 +30,7 @@
     "style-loader": "^4.0.0",
     "webpack": "^5.111.1",
     "webpack-cli": "^7.2.3",
-    "webpack-dev-server": "^6.0.0"
+    "webpack-dev-server": "^6.1.0"
   },
   "dependencies": {
     "blockly": "^13.4.0"
