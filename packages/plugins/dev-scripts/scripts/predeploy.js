@@ -12,19 +12,19 @@
  * @author samelh@google.com (Sam El-Husseini)
  */
 
-'use strict';
+import {readFileSync, realpathSync} from 'fs';
+import {resolve} from 'path';
 
-const path = require('path');
-const fs = require('fs');
+import chalk from 'chalk';
+import webpack from 'webpack';
+import webpackConfig from '../config/webpack.config.js';
 
-const chalk = require('chalk').default;
-const webpack = require('webpack');
-const webpackConfig = require('../config/webpack.config');
+const appDirectory = realpathSync(process.cwd());
+const resolveApp = (relativePath) => resolve(appDirectory, relativePath);
 
-const appDirectory = fs.realpathSync(process.cwd());
-const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
-
-const packageJson = require(resolveApp('package.json'));
+const packageJson = JSON.parse(
+  readFileSync(resolveApp('package.json'), 'utf8'),
+);
 console.log(`Running predeploy for ${packageJson.name}`);
 
 // Create the webpack configuration for based on the build environment.

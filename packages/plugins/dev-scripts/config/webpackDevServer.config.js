@@ -7,9 +7,8 @@
  * @fileoverview Webpack dev server configuration file.
  * @author samelh@google.com (Sam El-Husseini)
  */
-'use strict';
 
-module.exports = () => {
+export default () => {
   return {
     port: 'auto',
     hot: true,

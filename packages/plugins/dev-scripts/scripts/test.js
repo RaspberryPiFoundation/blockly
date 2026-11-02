@@ -11,20 +11,27 @@
  * @author samelh@google.com (Sam El-Husseini)
  */
 
-'use strict';
+import {
+  existsSync,
+  readdirSync,
+  readFileSync,
+  realpathSync,
+  writeFileSync,
+} from 'fs';
+import {join, resolve} from 'path';
+import {pathToFileURL} from 'url';
 
-const fs = require('fs');
-const path = require('path');
+import chalk from 'chalk';
+import Mocha from 'mocha';
+import webpack from 'webpack';
+import webpackConfig from '../config/webpack.config.js';
 
-const chalk = require('chalk').default;
-const {Mocha} = require('mocha');
-const webpack = require('webpack');
-const webpackConfig = require('../config/webpack.config');
+const appDirectory = realpathSync(process.cwd());
+const resolveApp = (relativePath) => resolve(appDirectory, relativePath);
 
-const appDirectory = fs.realpathSync(process.cwd());
-const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
-
-const packageJson = require(resolveApp('package.json'));
+const packageJson = JSON.parse(
+  readFileSync(resolveApp('package.json'), 'utf8'),
+);
 console.log(`Building tests for ${packageJson.name}`);
 
 const config = webpackConfig({
@@ -47,8 +54,11 @@ let mochaConfig = {
 };
 // If custom configuration exists, use that instead.
 const testDir = resolveApp('test');
-if (fs.existsSync(path.join(testDir, '.mocharc.js'))) {
-  mochaConfig = require(path.join(testDir, '.mocharc.js'));
+if (existsSync(join(testDir, '.mocharc.js'))) {
+  // The default export covers both ESM (export default) and CommonJS
+  // (module.exports) config files.
+  mochaConfig = (await import(pathToFileURL(join(testDir, '.mocharc.js')).href))
+    .default;
 }
 
 // Create and run the webpack compiler.
@@ -75,13 +85,19 @@ webpack(config, (err, stats) => {
 
   // Run mocha for each built mocha .js file.
   const testOutputDir = 'build';
-  fs.readdirSync(testOutputDir)
+  // Webpack emits CommonJS for these bundles, so tell Node not to treat them
+  // as ES modules even though the package is "type": "module".
+  writeFileSync(
+    join(testOutputDir, 'package.json'),
+    JSON.stringify({type: 'commonjs'}) + '\n',
+  );
+  readdirSync(testOutputDir)
     .filter((file) => {
       // Only keep the .mocha.js files
       return file.substr(-9) === '.mocha.js';
     })
     .forEach((file) => {
-      mocha.addFile(path.join(testOutputDir, file));
+      mocha.addFile(join(testOutputDir, file));
     });
 
   // Run the tests.
