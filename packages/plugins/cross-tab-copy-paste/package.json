@@ -1,6 +1,6 @@
 {
   "name": "@blockly/plugin-cross-tab-copy-paste",
-  "version": "13.4.1-beta.0",
+  "version": "13.4.1-beta.1",
   "description": "Allows copying blocks between multiple tabs with Blockly editors.",
   "scripts": {
     "audit-fix": "blockly-scripts auditFix",
@@ -39,11 +39,11 @@
     "src"
   ],
   "devDependencies": {
-    "@blockly/dev-scripts": "^13.4.1-beta.0",
-    "@blockly/dev-tools": "^13.4.1-beta.0"
+    "@blockly/dev-scripts": "^13.4.1-beta.1",
+    "@blockly/dev-tools": "^13.4.1-beta.1"
   },
   "peerDependencies": {
-    "blockly": "^13.4.1-beta.0"
+    "blockly": "^13.4.1-beta.1"
   },
   "publishConfig": {
     "access": "public"

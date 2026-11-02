@@ -1,6 +1,6 @@
 {
   "name": "@blockly/migrate",
-  "version": "13.4.1-beta.0",
+  "version": "13.4.1-beta.1",
   "description": "A collection of tools that help with migrating apps using Blockly to new versions of BLockly.",
   "bin": "./bin/migrate.js",
   "author": "Blockly Team",

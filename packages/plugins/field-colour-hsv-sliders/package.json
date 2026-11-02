@@ -1,6 +1,6 @@
 {
   "name": "@blockly/field-colour-hsv-sliders",
-  "version": "13.4.1-beta.0",
+  "version": "13.4.1-beta.1",
   "description": "A Blockly colour field using HSV sliders.",
   "scripts": {
     "audit-fix": "blockly-scripts auditFix",
@@ -41,17 +41,17 @@
     "src"
   ],
   "dependencies": {
-    "@blockly/field-colour": "^13.4.1-beta.0"
+    "@blockly/field-colour": "^13.4.1-beta.1"
   },
   "devDependencies": {
-    "@blockly/dev-scripts": "^13.4.1-beta.0",
-    "@blockly/dev-tools": "^13.4.1-beta.0",
+    "@blockly/dev-scripts": "^13.4.1-beta.1",
+    "@blockly/dev-tools": "^13.4.1-beta.1",
     "jsdom": "^30.1.3",
     "jsdom-global": "^3.0.2",
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "blockly": "^13.4.1-beta.0"
+    "blockly": "^13.4.1-beta.1"
   },
   "publishConfig": {
     "access": "public"
