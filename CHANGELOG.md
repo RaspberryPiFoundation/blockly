@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [13.4.1-beta.0](https://github.com/RaspberryPiFoundation/blockly/compare/blockly-v13.4.0...blockly-v13.4.1-beta.0) (2026-11-02)
+
+### Bug Fixes
+
+* Avoid callers accidentally mutating comment internal state ([#10577](https://github.com/RaspberryPiFoundation/blockly/issues/10577)) ([d3d93a8](https://github.com/RaspberryPiFoundation/blockly/commit/d3d93a88778324ba1887fe435daf70fb5d76243c))
+* Avoid situations where no grid item has focus/selection ([#10603](https://github.com/RaspberryPiFoundation/blockly/issues/10603)) ([17f35cf](https://github.com/RaspberryPiFoundation/blockly/commit/17f35cf6ad6365b61bea62ffa2718c91d6a276b6))
+* Fix bug when pasting mutatorarg blocks ([#9866](https://github.com/RaspberryPiFoundation/blockly/issues/9866)) ([1d5f40d](https://github.com/RaspberryPiFoundation/blockly/commit/1d5f40d023fdbc558049f0633eebb29df80a861d))
+* Fix ordering of arguments and options in migration script help ([4bcb434](https://github.com/RaspberryPiFoundation/blockly/commit/4bcb4344cfaef1419e1684862d3a1db5c5d5c9c4))
+* flyout bug fixes ([#10581](https://github.com/RaspberryPiFoundation/blockly/issues/10581)) ([03c915d](https://github.com/RaspberryPiFoundation/blockly/commit/03c915d28f8d46964e7998f0adc1e0f845a40bec))
+* Improve rendering of text in response to theme and CSS changes ([#10579](https://github.com/RaspberryPiFoundation/blockly/issues/10579)) ([ae98875](https://github.com/RaspberryPiFoundation/blockly/commit/ae98875d66014c342ea5d781887fba992b576f4c))
+* only hide WidgetDiv when its owner is in the given workspace ([#10633](https://github.com/RaspberryPiFoundation/blockly/issues/10633)) ([8eeb652](https://github.com/RaspberryPiFoundation/blockly/commit/8eeb6524c4113c1543504ed18d170a4ed5573c7f))
+* position flyouts over workspace scrollbars ([#10561](https://github.com/RaspberryPiFoundation/blockly/issues/10561)) ([0572633](https://github.com/RaspberryPiFoundation/blockly/commit/057263333c68d93ba831df35870f1aeb2f7db214))
+* re-establish touch identifier when a gesture restarts after a missed pointerup ([#9956](https://github.com/RaspberryPiFoundation/blockly/issues/9956)) ([7dea058](https://github.com/RaspberryPiFoundation/blockly/commit/7dea058b9e55b549abcfcbd3535066922173c61e))
+* resize flyout on workspace resize; navigate navigable stacks ([#10599](https://github.com/RaspberryPiFoundation/blockly/issues/10599)) ([ed5bc3d](https://github.com/RaspberryPiFoundation/blockly/commit/ed5bc3defa2cd1eacd853839171fc80fab77798e))
+* Restore auto-close behavior for all flyouts ([#10636](https://github.com/RaspberryPiFoundation/blockly/issues/10636)) ([86f1a6b](https://github.com/RaspberryPiFoundation/blockly/commit/86f1a6b1c643b2ce1da142f74e9949d9fc8bf874))
+* restore passive focus on full-block fields in Zelos ([#10559](https://github.com/RaspberryPiFoundation/blockly/issues/10559)) ([26d7da0](https://github.com/RaspberryPiFoundation/blockly/commit/26d7da007bbdcb44afdaa3e9bcd855ad2ff0f4e2))
+* scaffold TypeScript plugins with TypeScript 6 ([#10570](https://github.com/RaspberryPiFoundation/blockly/issues/10570)) ([c578695](https://github.com/RaspberryPiFoundation/blockly/commit/c578695eb5cc94482a2f69817d30130fcce550cc)), closes [#10507](https://github.com/RaspberryPiFoundation/blockly/issues/10507)
+
+
 ## [13.4.0](https://github.com/RaspberryPiFoundation/blockly/compare/blockly-v13.3.0...blockly-v13.4.0) (2026-10-13)
 
 ### Features

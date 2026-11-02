@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [13.4.1-beta.0](https://github.com/RaspberryPiFoundation/blockly/compare/blockly-v13.4.0...blockly-v13.4.1-beta.0) (2026-11-02)
+
+### Bug Fixes
+
+* Avoid situations where no grid item has focus/selection ([#10603](https://github.com/RaspberryPiFoundation/blockly/issues/10603)) ([17f35cf](https://github.com/RaspberryPiFoundation/blockly/commit/17f35cf6ad6365b61bea62ffa2718c91d6a276b6))
+
+
 ## [13.4.0](https://github.com/RaspberryPiFoundation/blockly/compare/blockly-v13.3.0...blockly-v13.4.0) (2026-10-13)
 
 **Note:** Version bump only for package @blockly/field-grid-dropdown

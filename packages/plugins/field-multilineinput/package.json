@@ -1,6 +1,6 @@
 {
   "name": "@blockly/field-multilineinput",
-  "version": "13.4.0",
+  "version": "13.4.1-beta.0",
   "description": "A Blockly multilineinput field.",
   "scripts": {
     "audit-fix": "blockly-scripts auditFix",
@@ -40,14 +40,14 @@
     "src"
   ],
   "devDependencies": {
-    "@blockly/dev-scripts": "^13.4.0",
-    "@blockly/dev-tools": "^13.4.0",
+    "@blockly/dev-scripts": "^13.4.1-beta.0",
+    "@blockly/dev-tools": "^13.4.1-beta.0",
     "chai": "^6.3.0",
     "sinon": "^22.1.0",
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "blockly": "^13.2.0"
+    "blockly": "^13.4.1-beta.0"
   },
   "publishConfig": {
     "access": "public"

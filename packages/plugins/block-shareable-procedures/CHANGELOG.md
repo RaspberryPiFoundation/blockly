@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [13.4.1-beta.0](https://github.com/RaspberryPiFoundation/blockly/compare/blockly-v13.4.0...blockly-v13.4.1-beta.0) (2026-11-02)
+
+### Bug Fixes
+
+* Improve rendering of text in response to theme and CSS changes ([#10579](https://github.com/RaspberryPiFoundation/blockly/issues/10579)) ([ae98875](https://github.com/RaspberryPiFoundation/blockly/commit/ae98875d66014c342ea5d781887fba992b576f4c))
+
+
 ## [13.4.0](https://github.com/RaspberryPiFoundation/blockly/compare/blockly-v13.3.0...blockly-v13.4.0) (2026-10-13)
 
 **Note:** Version bump only for package @blockly/block-shareable-procedures

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [13.4.1-beta.0](https://github.com/RaspberryPiFoundation/blockly/compare/blockly-v13.4.0...blockly-v13.4.1-beta.0) (2026-11-02)
+
+### Bug Fixes
+
+* scaffold TypeScript plugins with TypeScript 6 ([#10570](https://github.com/RaspberryPiFoundation/blockly/issues/10570)) ([c578695](https://github.com/RaspberryPiFoundation/blockly/commit/c578695eb5cc94482a2f69817d30130fcce550cc)), closes [#10507](https://github.com/RaspberryPiFoundation/blockly/issues/10507)
+
+
 ## [13.4.0](https://github.com/RaspberryPiFoundation/blockly/compare/blockly-v13.3.0...blockly-v13.4.0) (2026-10-13)
 
 **Note:** Version bump only for package @blockly/create-package
