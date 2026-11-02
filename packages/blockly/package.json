@@ -188,7 +188,7 @@
     "chai": "^6.3.0",
     "concurrently": "^10.0.6",
     "esbuild": "^0.28.2",
-    "glob": "^13.0.6",
+    "glob": "^14.0.2",
     "google-closure-compiler": "^20261019.0.0",
     "gulp": "^5.0.1",
     "http-server": "^14.1.1",
