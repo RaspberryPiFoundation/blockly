@@ -1,8 +1,7 @@
 {
   "name": "@blockly/workspace-minimap",
   "version": "13.4.0",
-  "description": "A Blockly plugin.",
-  "scripts": {
+  "description": "A Blockly plugin that adds a minimap, which is a miniature version of the blocks that appears on top of the main workspace.",
     "audit-fix": "blockly-scripts auditFix",
     "build": "blockly-scripts build",
     "clean": "blockly-scripts clean",
