@@ -5,7 +5,7 @@
  */
 
 /**
- * A Blockly plugin that adds a minimap, which is a miniature version of the 
+ * A Blockly plugin that adds a minimap, which is a miniature version of the
  * blocks that appears on top of the main workspace.
  *
  * @packageDocumentation
