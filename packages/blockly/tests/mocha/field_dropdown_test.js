@@ -742,6 +742,18 @@ suite('Dropdown Fields', function () {
             'Drop-down div started hiding while opening',
           );
         });
+
+        test('Focusing an element outside of Blockly closes the dropdown', function () {
+          Blockly.getFocusManager().focusNode(this.block);
+          this.field.showEditor();
+          const outsideButton = document.createElement('button');
+          document.body.appendChild(outsideButton);
+
+          outsideButton.focus();
+
+          assert.isNull(this.field.menu_);
+          outsideButton.remove();
+        });
       });
     }
   });
