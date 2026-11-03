@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+const Blockly = require('blockly');
 const {assert} = require('chai');
 const sinon = require('sinon');
 const {
@@ -252,6 +253,62 @@ suite('FieldSlider', function () {
           assertFieldValue(this.sliderField, suiteInfo.expectedValue);
         });
       });
+    });
+  });
+
+  suite('Editor', function () {
+    setup(function () {
+      this.jsdomCleanup = require('jsdom-global')(
+        '<!DOCTYPE html><div id="blocklyDiv"></div>',
+      );
+      // See https://github.com/RaspberryPiFoundation/blockly-samples/issues/2528.
+      global.SVGElement = window.SVGElement;
+      // Blockly's focus handling constructs FocusEvent, which jsdom exposes on
+      // window but not as a global.
+      global.FocusEvent = window.FocusEvent;
+      // jsdom doesn't provide requestAnimationFrame/cancelAnimationFrame, which
+      // block rendering relies on.
+      this.clock = sinon.useFakeTimers();
+      window.requestAnimationFrame = (cb) => setTimeout(cb, 0);
+      window.cancelAnimationFrame = (id) => clearTimeout(id);
+      this.workspace = Blockly.inject('blocklyDiv', {media: 'media/'});
+
+      if (!Blockly.Blocks['slider_block']) {
+        Blockly.defineBlocksWithJsonArray([
+          {
+            type: 'slider_block',
+            message0: '%1',
+            args0: [{type: 'field_slider', name: 'FIELD', value: 50}],
+          },
+        ]);
+      }
+      const block = this.workspace.newBlock('slider_block');
+      block.initSvg();
+      block.render();
+      this.field = block.getField('FIELD');
+      this.field.showEditor_();
+    });
+
+    teardown(function () {
+      Blockly.WidgetDiv.hide();
+      Blockly.DropDownDiv.hideWithoutAnimation();
+      this.workspace.dispose();
+      this.clock.runAll();
+      sinon.restore();
+      this.jsdomCleanup();
+    });
+
+    test('Slider follows the text editor after being dragged', function () {
+      const slider = this.field.sliderInput;
+      slider.value = '20';
+      slider.dispatchEvent(new window.Event('input'));
+
+      const textInput = this.field.htmlInput_;
+      textInput.value = '70';
+      textInput.dispatchEvent(new window.Event('input'));
+      Blockly.renderManagement.triggerQueuedRenders();
+
+      assert.equal(slider.value, '70');
     });
   });
 
