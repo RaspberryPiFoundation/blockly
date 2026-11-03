@@ -214,9 +214,9 @@ jobs:
           DIST_TAG: ${{ needs.preview.outputs.dist_tag }}
         run: |
           if [ "${SKIP_VERSIONING}" = "true" ]; then
-            npx lerna publish from-package --yes --dist-tag ${DIST_TAG} --loglevel silly
+            npx lerna publish from-package --yes --dist-tag ${DIST_TAG} --loglevel warn
           else
-            npx lerna publish from-git --yes --dist-tag ${DIST_TAG} --loglevel silly
+            npx lerna publish from-git --yes --dist-tag ${DIST_TAG} --loglevel warn
           fi
 
       - name: Create tarball
