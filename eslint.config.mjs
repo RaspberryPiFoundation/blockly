@@ -413,6 +413,7 @@ export default defineConfig(
       'packages/plugins/block-test/**',
       'packages/plugins/dev-scripts/**',
       'packages/plugins/dev-tools/**',
+      'packages/plugins/theme-modern/**',
     ],
     settings: {
       jsdoc: {

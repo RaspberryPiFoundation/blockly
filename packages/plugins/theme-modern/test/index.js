@@ -9,7 +9,7 @@
  */
 
 import * as Blockly from 'blockly';
-import Theme from '../src/index';
+import Theme from '../src/index.js';
 
 const toolbox = {
   kind: 'categoryToolbox',
