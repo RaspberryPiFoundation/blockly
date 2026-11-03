@@ -5,7 +5,9 @@
  */
 
 /**
- * @fileoverview Tritanopia theme.
+ * A Blockly theme for people that have tritanopia.
+ *
+ * @packageDocumentation
  */
 
 /* eslint-disable @typescript-eslint/naming-convention */

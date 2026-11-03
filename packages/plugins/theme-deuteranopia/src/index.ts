@@ -5,7 +5,9 @@
  */
 
 /**
- * @fileoverview Deuteranopia theme.
+ * A Blockly theme for people that have deuteranopia.
+ *
+ * @packageDocumentation
  */
 
 /* eslint-disable @typescript-eslint/naming-convention */

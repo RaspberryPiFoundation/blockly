@@ -5,7 +5,10 @@
  */
 
 /**
- * @fileoverview A Blockly plugin that makes connection type checks strict.
+ * A connection checker that prevents blocks that don't provide type information
+ * from being connected to blocks that do.
+ *
+ * @packageDocumentation
  */
 
 import * as Blockly from 'blockly/core';

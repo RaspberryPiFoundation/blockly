@@ -5,9 +5,10 @@
  */
 
 /**
- * @fileoverview A minimap is a miniature version of your blocks that
- * appears on top of your main workspace. This gives you an overview
- * of what your code looks like, and how it is organized.
+ * A Blockly plugin that adds a minimap, which is a miniature version of the
+ * blocks that appears on top of the main workspace.
+ *
+ * @packageDocumentation
  */
 export {Minimap} from './minimap';
 export {PositionedMinimap} from './positioned_minimap';

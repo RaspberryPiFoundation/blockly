@@ -5,8 +5,10 @@
  */
 
 /**
- * @fileoverview Hacker Mode theme.
- * Black background and blocks with lime green text to simulate a hacker screen.
+ * A Blockly theme with an all black theme and green text to mimic a hacking
+ * page
+ *
+ * @packageDocumentation
  */
 
 /* eslint-disable @typescript-eslint/naming-convention */

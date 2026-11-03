@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/**
+ * Allows copying blocks between multiple tabs with Blockly editors.
+ *
+ * @packageDocumentation
+ */
+
 import * as Blockly from 'blockly/core';
 
 type TypeErrorCallback = () => void;

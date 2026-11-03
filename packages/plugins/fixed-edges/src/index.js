@@ -5,8 +5,11 @@
  */
 
 /**
- * @fileoverview A metrics manager that makes fixed edges more easily
- * configurable.
+ * A plugin that provides a MetricsManager that can be used to prevent the
+ * workspace from expanding to the top/left/right/bottom when blocks are dragged
+ * to that edge.
+ *
+ * @packageDocumentation
  */
 
 import * as Blockly from 'blockly/core';

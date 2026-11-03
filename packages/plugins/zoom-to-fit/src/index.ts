@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/**
+ * A Blockly plugin that adds a zoom-to-fit control to the workspace.
+ *
+ * @packageDocumentation
+ */
+
 import * as Blockly from 'blockly/core';
 
 /**

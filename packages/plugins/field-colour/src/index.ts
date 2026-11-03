@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/**
+ * A Blockly colour field.
+ *
+ * @packageDocumentation
+ */
+
 export * from './field_colour';
 
 import * as colourPicker from './blocks/colourPicker';

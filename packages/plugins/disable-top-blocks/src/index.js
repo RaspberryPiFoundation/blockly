@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 /**
- * @fileoverview Plugin for changing the context menu to match the
- * `disableOrphans` event handler.
+ * A Blockly plugin that shows the 'disable' context menu option only on
+ * non-orphan blocks.
+ *
+ * @packageDocumentation
  */
 
 import * as Blockly from 'blockly/core';

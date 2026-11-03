@@ -5,7 +5,9 @@
  */
 
 /**
- * @fileoverview Modern theme.
+ * A Blockly modern theme with darker block borders.
+ *
+ * @packageDocumentation
  */
 
 /* eslint-disable @typescript-eslint/naming-convention */

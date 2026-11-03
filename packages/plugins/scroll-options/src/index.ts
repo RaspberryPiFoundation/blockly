@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/**
+ * A Blockly plugin that adds advanced scroll options such as scroll-on-drag and
+ * scroll while holding a block.
+ *
+ * @packageDocumentation
+ */
+
 import * as Blockly from 'blockly/core';
 import type {EdgeScrollOptions} from './ScrollBlockDragger';
 import {ScrollBlockDragger} from './ScrollBlockDragger';

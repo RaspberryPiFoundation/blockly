@@ -19,6 +19,17 @@
     "compilerOptions": {"allowJs": true},
     "excludeInternal": true,
     "excludePrivate": true,
+    "excludeTags": [
+      "@override",
+      "@virtual",
+      "@privateRemarks",
+      "@satisfies",
+      "@overload",
+      "@inline",
+      "@inlineType",
+      "@fileoverview",
+      "@author"
+    ],
     "skipErrorChecking": true,
     "sourceLinkTemplate": "https://github.com/RaspberryPiFoundation/blockly/blob/{gitRevision}/{path}#L{line}"
   }
