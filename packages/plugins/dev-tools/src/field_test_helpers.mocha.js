@@ -5,7 +5,7 @@
  */
 
 import {assert} from 'chai';
-import {runTestCases, TestCase} from './common_test_helpers.mocha';
+import {runTestCases, TestCase} from './common_test_helpers.mocha.js';
 
 /**
  * Field value test case.

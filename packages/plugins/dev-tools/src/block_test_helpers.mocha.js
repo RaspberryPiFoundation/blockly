@@ -6,7 +6,7 @@
 
 import {assert} from 'chai';
 import * as sinon from 'sinon';
-import * as commonTestHelpers from './common_test_helpers.mocha';
+import * as commonTestHelpers from './common_test_helpers.mocha.js';
 import * as Blockly from 'blockly/core';
 
 const {runTestCases, runTestSuites, TestCase, TestSuite} = commonTestHelpers;
@@ -36,6 +36,8 @@ export class CodeGenerationTestCase {
     this.expectedInnerOrder;
   }
 
+  // This is an interface stub; test cases supply the real implementation.
+  // eslint-disable-next-line jsdoc/require-returns-check
   /**
    * Creates the block to use for this test case.
    * @param {!Blockly.Workspace} workspace The workspace context for this

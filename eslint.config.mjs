@@ -176,7 +176,6 @@ export default defineConfig(
       'packages/docs/docs/reference/**',
       'packages/docs/.docusaurus/**',
       // Plugins
-      'packages/plugins/dev-tools/src/index.d.ts',
       'packages/plugins/**/golden/*',
     ],
   },
@@ -406,6 +405,20 @@ export default defineConfig(
         },
       ],
     }
+  },
+  {
+    // Plugins migrated to ESM are built with tsc and need typescript mode.
+    // Remove this and update the mode above once every plugin is migrated.
+    files: [
+      'packages/plugins/block-test/**',
+      'packages/plugins/dev-scripts/**',
+      'packages/plugins/dev-tools/**',
+    ],
+    settings: {
+      jsdoc: {
+        mode: 'typescript',
+      },
+    },
   },
   {
     files: ['packages/plugins/**/*.mocha.js'],

@@ -11,23 +11,22 @@
  */
 import * as Blockly from 'blockly/core';
 import * as dat from 'dat.gui';
-
-import {DebugDrawer} from '../debugDrawer';
-import {registerDebugRendererFromName, debugRendererName} from '../debug';
-import {disableLogger, enableLogger} from '../logger';
-import {HashState} from './hash_state';
-import {populateRandom} from '../populateRandom';
-import {spaghetti} from '../spaghetti';
-import {id} from './id';
-import toolboxCategories from '../toolboxCategories';
-import toolboxSimple from '../toolboxSimple';
+import assign from 'lodash.assign';
+import merge from 'lodash.merge';
 import darkTheme from '@blockly/theme-dark';
 import deuteranopiaTheme from '@blockly/theme-deuteranopia';
 import themeTritanopia from '@blockly/theme-tritanopia';
 import highContrastTheme from '@blockly/theme-highcontrast';
 
-const assign = require('lodash.assign');
-const merge = require('lodash.merge');
+import {DebugDrawer} from '../debugDrawer.js';
+import {registerDebugRendererFromName, debugRendererName} from '../debug.js';
+import {disableLogger, enableLogger} from '../logger.js';
+import {HashState} from './hash_state.js';
+import {populateRandom} from '../populateRandom.js';
+import {spaghetti} from '../spaghetti.js';
+import {id} from './id.js';
+import toolboxCategories from '../toolboxCategories.js';
+import toolboxSimple from '../toolboxSimple.js';
 
 /**
  * @typedef {Blockly.utils.toolbox.ToolboxDefinition} BlocklyToolbox

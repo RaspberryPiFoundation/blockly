@@ -16,20 +16,20 @@ import {luaGenerator} from 'blockly/lua';
 import {phpGenerator} from 'blockly/php';
 import {pythonGenerator} from 'blockly/python';
 
-import {downloadWorkspaceScreenshot} from '../screenshot';
-import toolboxCategories from '../toolboxCategories';
-import toolboxSimple from '../toolboxSimple';
+import {downloadWorkspaceScreenshot} from '../screenshot.js';
+import toolboxCategories from '../toolboxCategories.js';
+import toolboxSimple from '../toolboxSimple.js';
 
-import {id} from './id';
-import {addCodeEditor} from './monaco';
-import {addGUIControls} from './options';
-import {LocalStorageState} from './state';
+import {id} from './id.js';
+import {addCodeEditor} from './monaco.js';
+import {addGUIControls} from './options.js';
+import {LocalStorageState} from './state.js';
 import {
   renderButton,
   renderCheckbox,
   renderCodeTab,
   renderPlayground,
-} from './ui';
+} from './ui.js';
 
 /**
  * @typedef {function(!HTMLElement,!Blockly.BlocklyOptions):
