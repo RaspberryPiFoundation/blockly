@@ -10,8 +10,8 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {Grid} from './grid';
-import type {GridItem} from './grid_item';
+import {Grid} from './grid.js';
+import type {GridItem} from './grid_item.js';
 
 /**
  * A config object for defining a field grid dropdown.
