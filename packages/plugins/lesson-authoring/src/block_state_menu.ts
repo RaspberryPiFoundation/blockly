@@ -8,6 +8,7 @@
  */
 
 import * as Blockly from 'blockly/core';
+import {setShadowState} from './shadow_state_change';
 
 /**
  * Returns all blocks in the workspace that are not shadows.
@@ -15,7 +16,7 @@ import * as Blockly from 'blockly/core';
  * @param workspace The workspace with blocks to filter.
  * @returns An array of non-shadow blocks.
  */
-function nonShadowBlocks(workspace: Blockly.Workspace) {
+function getNonShadowBlocks(workspace: Blockly.Workspace) {
   return workspace.getAllBlocks().filter((block) => !block.isShadow());
 }
 
@@ -65,7 +66,7 @@ function registerAllDeletable() {
         throw new Error('No workspace in scope for context menu item');
       }
       if (
-        nonShadowBlocks(workspace).every((block) => !block.isOwnDeletable())
+        getNonShadowBlocks(workspace).every((block) => !block.isOwnDeletable())
       ) {
         return 'Make ALL blocks deletable';
       }
@@ -86,7 +87,7 @@ function registerAllDeletable() {
       if (!workspace) {
         throw new Error('No workspace in scope for context menu item');
       }
-      const allBlocks = nonShadowBlocks(workspace);
+      const allBlocks = getNonShadowBlocks(workspace);
       if (allBlocks.every((block) => !block.isOwnDeletable())) {
         allBlocks.forEach((block) => block.setDeletable(true));
       } else {
@@ -234,7 +235,9 @@ function registerAllMovable() {
       if (!workspace) {
         throw new Error('No workspace in scope for context menu item');
       }
-      if (nonShadowBlocks(workspace).every((block) => !block.isOwnMovable())) {
+      if (
+        getNonShadowBlocks(workspace).every((block) => !block.isOwnMovable())
+      ) {
         return 'Make ALL blocks movable';
       }
       return 'Make ALL blocks immovable';
@@ -255,7 +258,7 @@ function registerAllMovable() {
         throw new Error('No workspace in scope for context menu item');
       }
 
-      const allBlocks = nonShadowBlocks(workspace);
+      const allBlocks = getNonShadowBlocks(workspace);
       if (allBlocks.every((block) => !block.isOwnMovable())) {
         allBlocks.forEach((block) => block.setMovable(true));
       } else {
@@ -272,44 +275,21 @@ function registerAllMovable() {
 }
 
 /**
- * Returns the connections a block's children attach to: one per input, plus
- * the next connection.
- *
- * @param block The parent block.
- * @returns The block's child connections.
- */
-function childConnections(block: Blockly.Block): Blockly.Connection[] {
-  return [
-    ...block.inputList.map((input) => input.connection),
-    block.nextConnection,
-  ].filter((connection) => !!connection);
-}
-
-/**
- * Returns the child connections of a block that have shadow state, whether
- * the shadow is visible or covered by a real block.
+ * Returns the value input connections of a block that have shadow state,
+ * whether the shadow is visible or covered by a real block.
  *
  * @param block The parent block.
  * @returns The connections with shadow state.
  */
-function shadowConnections(block: Blockly.Block) {
-  return childConnections(block).filter((connection) =>
-    connection.getShadowState(true),
-  );
-}
-
-/**
- * Returns the connection a block is attached to on its parent, if any.
- *
- * @param block The child block.
- * @returns The parent's connection, or null if the block is top-level.
- */
-function parentConnection(block: Blockly.Block) {
-  return (
-    block.outputConnection?.targetConnection ??
-    block.previousConnection?.targetConnection ??
-    null
-  );
+function getShadowInputConnections(block: Blockly.Block) {
+  return block.inputList
+    .map((input) => input.connection)
+    .filter((connection) => !!connection)
+    .filter(
+      (connection) =>
+        connection.type === Blockly.ConnectionType.INPUT_VALUE &&
+        !!connection.getShadowState(true),
+    );
 }
 
 /**
@@ -322,7 +302,11 @@ function registerMakeShadow() {
     },
     preconditionFn(scope: Blockly.ContextMenuRegistry.Scope) {
       const block = scope.block;
-      if (!block || block.isInFlyout || !parentConnection(block)) {
+      if (
+        !block ||
+        block.isInFlyout ||
+        !block.outputConnection?.targetConnection
+      ) {
         return 'hidden';
       }
       // Shadows cannot have real children, and variable fields cannot exist
@@ -340,7 +324,7 @@ function registerMakeShadow() {
     },
     callback(scope: Blockly.ContextMenuRegistry.Scope) {
       const block = scope.block;
-      const connection = block && parentConnection(block);
+      const connection = block?.outputConnection?.targetConnection;
       if (!block || !connection) {
         return;
       }
@@ -353,9 +337,15 @@ function registerMakeShadow() {
       if (!state) {
         return;
       }
-      connection.setShadowState(state);
-      // Unplugging the block respawns the shadow in its place.
-      block.dispose(false);
+      const existingGroup = Blockly.Events.getGroup();
+      if (!existingGroup) Blockly.Events.setGroup(true);
+      try {
+        setShadowState(connection, state);
+        // Unplugging the block respawns the shadow in its place.
+        block.dispose(false);
+      } finally {
+        Blockly.Events.setGroup(existingGroup);
+      }
     },
     scopeType: Blockly.ContextMenuRegistry.ScopeType.BLOCK,
     id: 'lessonMakeShadow',
@@ -371,12 +361,18 @@ function registerMakeShadow() {
 function registerMakeShadowsReal() {
   const makeShadowsRealOption: Blockly.ContextMenuRegistry.RegistryItem = {
     displayText(scope: Blockly.ContextMenuRegistry.Scope) {
-      const count = scope.block ? shadowConnections(scope.block).length : 0;
+      const count = scope.block
+        ? getShadowInputConnections(scope.block).length
+        : 0;
       return `Make ${count} shadow block${count === 1 ? '' : 's'} real`;
     },
     preconditionFn(scope: Blockly.ContextMenuRegistry.Scope) {
       const block = scope.block;
-      if (block && !block.isInFlyout && shadowConnections(block).length) {
+      if (
+        block &&
+        !block.isInFlyout &&
+        getShadowInputConnections(block).length
+      ) {
         return 'enabled';
       }
       return 'hidden';
@@ -386,29 +382,34 @@ function registerMakeShadowsReal() {
       if (!block) {
         return;
       }
-      for (const connection of shadowConnections(block)) {
-        const state = connection.getShadowState(true);
-        if (!state) {
-          continue;
-        }
-        // Clear the shadow first, so that unplugging a covering block does
-        // not respawn it.
-        connection.setShadowState(null);
-        const coveringBlock = connection.targetBlock();
-        coveringBlock?.unplug();
+      const existingGroup = Blockly.Events.getGroup();
+      if (!existingGroup) Blockly.Events.setGroup(true);
+      try {
+        for (const connection of getShadowInputConnections(block)) {
+          const state = connection.getShadowState(true);
+          if (!state) {
+            continue;
+          }
+          // Clear the shadow first, so that unplugging a covering block does
+          // not respawn it.
+          setShadowState(connection, null);
+          const coveringBlock = connection.targetBlock();
+          coveringBlock?.unplug();
 
-        const realBlock = Blockly.serialization.blocks.append(
-          state,
-          block.workspace,
-          {recordUndo: true},
-        );
-        const childConnection =
-          realBlock.outputConnection ?? realBlock.previousConnection;
-        if (childConnection) {
-          connection.connect(childConnection);
+          const realBlock = Blockly.serialization.blocks.append(
+            state,
+            block.workspace,
+            {recordUndo: true},
+          );
+          const childConnection = realBlock.outputConnection;
+          if (childConnection) {
+            connection.connect(childConnection);
+          }
+          // Move the unplugged block so it isn't hidden behind the new one.
+          coveringBlock?.bumpNeighbours();
         }
-        // Move the unplugged block so it isn't hidden behind the new one.
-        coveringBlock?.bumpNeighbours();
+      } finally {
+        Blockly.Events.setGroup(existingGroup);
       }
     },
     scopeType: Blockly.ContextMenuRegistry.ScopeType.BLOCK,
@@ -425,12 +426,18 @@ function registerMakeShadowsReal() {
 function registerRemoveShadows() {
   const removeShadowsOption: Blockly.ContextMenuRegistry.RegistryItem = {
     displayText(scope: Blockly.ContextMenuRegistry.Scope) {
-      const count = scope.block ? shadowConnections(scope.block).length : 0;
+      const count = scope.block
+        ? getShadowInputConnections(scope.block).length
+        : 0;
       return `Remove ${count} shadow block${count === 1 ? '' : 's'}`;
     },
     preconditionFn(scope: Blockly.ContextMenuRegistry.Scope) {
       const block = scope.block;
-      if (block && !block.isInFlyout && shadowConnections(block).length) {
+      if (
+        block &&
+        !block.isInFlyout &&
+        getShadowInputConnections(block).length
+      ) {
         return 'enabled';
       }
       return 'hidden';
@@ -440,10 +447,16 @@ function registerRemoveShadows() {
       if (!block) {
         return;
       }
-      // Disposes a visible shadow, or forgets a covered one.
-      shadowConnections(block).forEach((connection) =>
-        connection.setShadowState(null),
-      );
+      const existingGroup = Blockly.Events.getGroup();
+      if (!existingGroup) Blockly.Events.setGroup(true);
+      try {
+        // Disposes a visible shadow, or forgets a covered one.
+        getShadowInputConnections(block).forEach((connection) =>
+          setShadowState(connection, null),
+        );
+      } finally {
+        Blockly.Events.setGroup(existingGroup);
+      }
     },
     scopeType: Blockly.ContextMenuRegistry.ScopeType.BLOCK,
     id: 'lessonRemoveShadows',
