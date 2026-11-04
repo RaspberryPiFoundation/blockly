@@ -9,10 +9,11 @@
     "lint": "eslint .",
     "start": "blockly-scripts start"
   },
-  "main": "dist/index.js",
-  "module": "./src/index.js",
-  "unpkg": "./dist/index.js",
-  "types": "./src/index.d.ts",
+  "engines": {"node": ">=24"},
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "unpkg": "./dist/esm/index.js",
   "author": "Blockly Team",
   "keywords": [
     "blockly",
@@ -37,6 +38,13 @@
     "dist",
     "src"
   ],
+  "exports": {
+    ".": {
+      "node":    {"types": "./dist/cjs/index.d.ts", "default": "./dist/cjs/index.js"},
+      "import":  {"types": "./dist/esm/index.d.ts", "default": "./dist/esm/index.js"},
+      "require": {"types": "./dist/cjs/index.d.ts", "default": "./dist/cjs/index.js"}
+    }
+  },
   "dependencies": {
     "@blockly/block-test": "^13.4.0",
     "@blockly/theme-dark": "^13.4.0",

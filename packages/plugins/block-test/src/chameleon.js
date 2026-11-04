@@ -3,7 +3,6 @@
  * Copyright 2024 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-'use strict';
 
 /**
  * @fileoverview Blocks that have both a previous connection and an output

@@ -3,7 +3,6 @@
  * Copyright 2020 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-'use strict';
 
 /**
  * @fileoverview Import all the test blocks.
@@ -12,24 +11,30 @@
 
 import * as Blockly from 'blockly/core';
 
-import {category as alignCategory, onInit as initAlign} from './align';
-import {category as basicCategory, onInit as initBasic} from './basic';
+import {category as alignCategory, onInit as initAlign} from './align.js';
+import {category as basicCategory, onInit as initBasic} from './basic.js';
 import {
   category as chameleonCategory,
   onInit as initChameleon,
-} from './chameleon';
+} from './chameleon.js';
 import {
   category as connectionsCategory,
   onInit as initConnections,
-} from './connections';
-import {category as dragCategory, onInit as initDrag} from './drag';
-import {category as fieldsCategory, onInit as initFields} from './fields';
-import {category as mutatorsCategory, onInit as initMutators} from './mutators';
-import {category as styleCategory, onInit as initStyle} from './style';
+} from './connections/index.js';
+import {category as dragCategory, onInit as initDrag} from './drag.js';
+import {
+  category as fieldsCategory,
+  onInit as initFields,
+} from './fields/index.js';
+import {
+  category as mutatorsCategory,
+  onInit as initMutators,
+} from './mutators.js';
+import {category as styleCategory, onInit as initStyle} from './style.js';
 import {
   category as serializationCategory,
   onInit as initSerialization,
-} from './serialization/category';
+} from './serialization/category.js';
 
 /**
  * The Test blocks toolbox.

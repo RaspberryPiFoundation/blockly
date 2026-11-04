@@ -107,7 +107,7 @@ if (exists('tsconfig.json')) {
     '--declarationMap',
     '--sourceMap',
     '--target',
-    'es2022',
+    'es2020',
     '--rootDir',
     'src',
   ];

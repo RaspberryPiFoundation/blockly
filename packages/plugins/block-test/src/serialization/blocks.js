@@ -5,10 +5,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-'use strict';
-
 import * as Blockly from 'blockly/core';
-import './fields';
+import './fields.js';
 
 Blockly.defineBlocksWithJsonArray([
   {

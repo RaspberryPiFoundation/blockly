@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const Blockly = require('blockly/core');
-const sinon = require('sinon');
+import * as Blockly from 'blockly/core';
+import * as sinon from 'sinon';
 
 /**
  * Returns a matcher that asserts that the actual object has the same properties

@@ -12,7 +12,7 @@ import * as Blockly from 'blockly';
 import {
   toolboxTestBlocks as toolbox,
   toolboxTestBlocksInit as onInit,
-} from '../src/index';
+} from '../src/index.js';
 
 // Do not use the advanced playground here because it will create a circular
 // dependency with the @blockly/dev-tools package.

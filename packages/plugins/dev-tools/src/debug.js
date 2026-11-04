@@ -5,7 +5,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {DebugDrawer} from './debugDrawer';
+import {DebugDrawer} from './debugDrawer.js';
 
 /**
  * The name that the debug renderer is registered under.

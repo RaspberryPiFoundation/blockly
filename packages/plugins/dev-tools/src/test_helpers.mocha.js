@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as commonHelpers from './common_test_helpers.mocha';
-import * as blockTestHelpers from './block_test_helpers.mocha';
-import * as fieldTestHelpers from './field_test_helpers.mocha';
-import * as eventTestHelpers from './event_test_helpers.mocha';
+import * as commonHelpers from './common_test_helpers.mocha.js';
+import * as blockTestHelpers from './block_test_helpers.mocha.js';
+import * as fieldTestHelpers from './field_test_helpers.mocha.js';
+import * as eventTestHelpers from './event_test_helpers.mocha.js';
 
 const {TestCase, TestSuite, runTestCases, runTestSuites, captureWarnings} =
   commonHelpers;

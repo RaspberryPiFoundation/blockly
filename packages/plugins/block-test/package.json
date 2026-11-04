@@ -10,9 +10,13 @@
     "prepublishOnly": "npm run clean && npm run build",
     "start": "blockly-scripts start"
   },
-  "main": "./dist/index.js",
-  "module": "./src/index.js",
-  "unpkg": "./dist/index.js",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "unpkg": "./dist/esm/index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
   "author": "Blockly Team",
   "keywords": [
     "blockly",
@@ -38,6 +42,13 @@
     "dist",
     "src"
   ],
+  "exports": {
+    ".": {
+      "node":    {"types": "./dist/cjs/index.d.ts", "default": "./dist/cjs/index.js"},
+      "import":  {"types": "./dist/esm/index.d.ts", "default": "./dist/esm/index.js"},
+      "require": {"types": "./dist/cjs/index.d.ts", "default": "./dist/cjs/index.js"}
+    }
+  },
   "devDependencies": {
     "@blockly/dev-scripts": "^13.4.0"
   },

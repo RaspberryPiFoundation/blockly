@@ -8,7 +8,7 @@
     "sourceMap": true,
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "target": "es2022",
+    "target": "es2020",
     "strict": true
   }
 }
