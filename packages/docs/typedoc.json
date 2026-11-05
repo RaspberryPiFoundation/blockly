@@ -7,6 +7,8 @@
   "tsconfig": "../blockly/tsconfig.json",
   "excludeInternal": true,
   "excludePrivate": true,
+  "excludeNotDocumented": true,
+  "excludeNotDocumentedKinds": ["Namespace", "Function"],
   "readme": "none",
   "skipErrorChecking": true,
   "sourceLinkTemplate": "https://github.com/RaspberryPiFoundation/blockly/blob/{gitRevision}/{path}#L{line}",
