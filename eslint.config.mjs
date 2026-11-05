@@ -418,6 +418,7 @@ export default defineConfig(
       'packages/plugins/field-grid-dropdown/**',
       'packages/plugins/modal/**',
       'packages/plugins/theme-modern/**',
+      'packages/plugins/typed-variable-modal/**',
     ],
     settings: {
       jsdoc: {
