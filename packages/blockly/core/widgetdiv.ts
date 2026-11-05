@@ -72,8 +72,8 @@ export function testOnly_setDiv(newDiv: HTMLDivElement | null) {
 }
 
 /**
- * Deals with the root element that contains this and other popovers losing
- * focus by returning ephemeral focus if we hold it and hiding the WidgetDiv.
+ * Deals with focus moving outside of the workspace and all popovers by
+ * returning ephemeral focus if we hold it and hiding the WidgetDiv.
  */
 function handleFocusLoss() {
   if (returnEphemeralFocus) {
@@ -154,6 +154,7 @@ export function show(
     .getFocusableElement()
     .classList.add(SHOWING_WIDGETDIV_SELECTOR);
 
+  getFocusManager().registerPopoverElement(div);
   const parentDiv = common.getParentContainer();
   parentDiv?.appendChild(div);
 

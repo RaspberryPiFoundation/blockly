@@ -510,4 +510,68 @@ suite('DropDownDiv', function () {
       });
     });
   });
+
+  suite('focus loss outside of the injection div', function () {
+    setup(function () {
+      const block = this.setUpBlockWithField();
+      const field = Array.from(block.getFields())[0];
+      this.onHideCallback = sinon.stub();
+      Blockly.getFocusManager().focusNode(block);
+      Blockly.DropDownDiv.showPositionedByField(
+        field,
+        this.onHideCallback,
+        null,
+        true,
+      );
+      this.dropDownDivElem = document.querySelector('.blocklyDropDownDiv');
+      this.outsideButton = document.createElement('button');
+      document.body.appendChild(this.outsideButton);
+    });
+    teardown(function () {
+      Blockly.WidgetDiv.hide();
+      Blockly.DropDownDiv.hideWithoutAnimation();
+      this.outsideButton.remove();
+    });
+
+    test('moving focus from the workspace into the div does not hide it', function () {
+      // The parent container places the div outside of the injection div.
+      assert.isFalse(
+        this.workspace.getInjectionDiv().contains(this.dropDownDivElem),
+      );
+      assert.strictEqual(document.activeElement, this.dropDownDivElem);
+      assert.strictEqual(this.onHideCallback.callCount, 0);
+      assert.strictEqual(this.dropDownDivElem.style.opacity, '1');
+    });
+
+    test('moving focus into the WidgetDiv does not hide it', function () {
+      Blockly.WidgetDiv.show(this, false, () => {}, this.workspace, false);
+      const input = document.createElement('input');
+      Blockly.WidgetDiv.getDiv().appendChild(input);
+
+      input.focus();
+
+      assert.strictEqual(document.activeElement, input);
+      assert.strictEqual(this.onHideCallback.callCount, 0);
+      assert.isTrue(Blockly.WidgetDiv.isVisible());
+    });
+
+    test('moving focus outside of Blockly hides it', function () {
+      this.outsideButton.focus();
+
+      assert.strictEqual(document.activeElement, this.outsideButton);
+      assert.strictEqual(this.onHideCallback.callCount, 1);
+    });
+
+    test('moving focus outside of Blockly also hides the WidgetDiv', function () {
+      Blockly.WidgetDiv.show(this, false, () => {}, this.workspace, false);
+      const input = document.createElement('input');
+      Blockly.WidgetDiv.getDiv().appendChild(input);
+      input.focus();
+
+      this.outsideButton.focus();
+
+      assert.strictEqual(this.onHideCallback.callCount, 1);
+      assert.isFalse(Blockly.WidgetDiv.isVisible());
+    });
+  });
 });
