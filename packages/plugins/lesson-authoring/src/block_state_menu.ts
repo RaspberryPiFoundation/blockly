@@ -8,7 +8,24 @@
  */
 
 import * as Blockly from 'blockly/core';
+import {setBlockState} from './block_state_change';
 import {setShadowState} from './shadow_state_change';
+
+/**
+ * Runs a callback with its events in one group, so they undo as one step.
+ * Joins the current group if there is one.
+ *
+ * @param callback The function whose events to group.
+ */
+function executeInEventGroup(callback: () => void) {
+  const existingGroup = Blockly.Events.getGroup();
+  if (!existingGroup) Blockly.Events.setGroup(true);
+  try {
+    callback();
+  } finally {
+    Blockly.Events.setGroup(existingGroup);
+  }
+}
 
 /**
  * Returns all blocks in the workspace that are not shadows.
@@ -46,7 +63,7 @@ function registerDeletable() {
       if (!block) {
         throw new Error('No block in scope for context menu item');
       }
-      block.setDeletable(!block.isOwnDeletable());
+      setBlockState(block, 'deletable', !block.isOwnDeletable());
     },
     scopeType: Blockly.ContextMenuRegistry.ScopeType.BLOCK,
     id: 'lessonBlockDeletable',
@@ -88,13 +105,15 @@ function registerAllDeletable() {
         throw new Error('No workspace in scope for context menu item');
       }
       const allBlocks = getNonShadowBlocks(workspace);
-      if (allBlocks.every((block) => !block.isOwnDeletable())) {
-        allBlocks.forEach((block) => block.setDeletable(true));
-      } else {
-        allBlocks
-          .filter((block) => block.isOwnDeletable())
-          .forEach((block) => block.setDeletable(false));
-      }
+      executeInEventGroup(() => {
+        if (allBlocks.every((block) => !block.isOwnDeletable())) {
+          allBlocks.forEach((block) => setBlockState(block, 'deletable', true));
+        } else {
+          allBlocks
+            .filter((block) => block.isOwnDeletable())
+            .forEach((block) => setBlockState(block, 'deletable', false));
+        }
+      });
     },
     scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
     id: 'lessonAllBlocksDeletable',
@@ -126,15 +145,19 @@ function registerEditable() {
         throw new Error('No block in scope for context menu item');
       }
       const editable = !block.isOwnEditable();
-      block.setEditable(editable);
-      block
-        .getChildren(false)
-        .filter((child) => child.isShadow())
-        .forEach((shadow) =>
-          shadow
-            .getDescendants(false)
-            .forEach((descendant) => descendant.setEditable(editable)),
-        );
+      executeInEventGroup(() => {
+        setBlockState(block, 'editable', editable);
+        block
+          .getChildren(false)
+          .filter((child) => child.isShadow())
+          .forEach((shadow) =>
+            shadow
+              .getDescendants(false)
+              .forEach((descendant) =>
+                setBlockState(descendant, 'editable', editable),
+              ),
+          );
+      });
     },
     scopeType: Blockly.ContextMenuRegistry.ScopeType.BLOCK,
     id: 'lessonBlockEditable',
@@ -175,13 +198,15 @@ function registerAllEditable() {
       }
 
       const allBlocks = workspace.getAllBlocks();
-      if (allBlocks.every((block) => !block.isOwnEditable())) {
-        allBlocks.forEach((block) => block.setEditable(true));
-      } else {
-        allBlocks
-          .filter((block) => block.isOwnEditable())
-          .forEach((block) => block.setEditable(false));
-      }
+      executeInEventGroup(() => {
+        if (allBlocks.every((block) => !block.isOwnEditable())) {
+          allBlocks.forEach((block) => setBlockState(block, 'editable', true));
+        } else {
+          allBlocks
+            .filter((block) => block.isOwnEditable())
+            .forEach((block) => setBlockState(block, 'editable', false));
+        }
+      });
     },
     scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
     id: 'lessonAllBlocksEditable',
@@ -216,7 +241,7 @@ function registerMovable() {
       if (!block) {
         throw new Error('No block in scope for context menu item');
       }
-      block.setMovable(!block.isOwnMovable());
+      setBlockState(block, 'movable', !block.isOwnMovable());
     },
     scopeType: Blockly.ContextMenuRegistry.ScopeType.BLOCK,
     id: 'lessonBlockMovable',
@@ -259,13 +284,15 @@ function registerAllMovable() {
       }
 
       const allBlocks = getNonShadowBlocks(workspace);
-      if (allBlocks.every((block) => !block.isOwnMovable())) {
-        allBlocks.forEach((block) => block.setMovable(true));
-      } else {
-        allBlocks
-          .filter((block) => block.isOwnMovable())
-          .forEach((block) => block.setMovable(false));
-      }
+      executeInEventGroup(() => {
+        if (allBlocks.every((block) => !block.isOwnMovable())) {
+          allBlocks.forEach((block) => setBlockState(block, 'movable', true));
+        } else {
+          allBlocks
+            .filter((block) => block.isOwnMovable())
+            .forEach((block) => setBlockState(block, 'movable', false));
+        }
+      });
     },
     scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
     id: 'lessonAllBlocksMovable',
@@ -337,15 +364,11 @@ function registerMakeShadow() {
       if (!state) {
         return;
       }
-      const existingGroup = Blockly.Events.getGroup();
-      if (!existingGroup) Blockly.Events.setGroup(true);
-      try {
+      executeInEventGroup(() => {
         setShadowState(connection, state);
         // Unplugging the block respawns the shadow in its place.
         block.dispose(false);
-      } finally {
-        Blockly.Events.setGroup(existingGroup);
-      }
+      });
     },
     scopeType: Blockly.ContextMenuRegistry.ScopeType.BLOCK,
     id: 'lessonMakeShadow',
@@ -382,9 +405,7 @@ function registerMakeShadowsReal() {
       if (!block) {
         return;
       }
-      const existingGroup = Blockly.Events.getGroup();
-      if (!existingGroup) Blockly.Events.setGroup(true);
-      try {
+      executeInEventGroup(() => {
         for (const connection of getShadowInputConnections(block)) {
           const state = connection.getShadowState(true);
           if (!state) {
@@ -408,9 +429,7 @@ function registerMakeShadowsReal() {
           // Move the unplugged block so it isn't hidden behind the new one.
           coveringBlock?.bumpNeighbours();
         }
-      } finally {
-        Blockly.Events.setGroup(existingGroup);
-      }
+      });
     },
     scopeType: Blockly.ContextMenuRegistry.ScopeType.BLOCK,
     id: 'lessonMakeShadowsReal',
@@ -447,16 +466,12 @@ function registerRemoveShadows() {
       if (!block) {
         return;
       }
-      const existingGroup = Blockly.Events.getGroup();
-      if (!existingGroup) Blockly.Events.setGroup(true);
-      try {
-        // Disposes a visible shadow, or forgets a covered one.
+      // Disposes a visible shadow, or forgets a covered one.
+      executeInEventGroup(() =>
         getShadowInputConnections(block).forEach((connection) =>
           setShadowState(connection, null),
-        );
-      } finally {
-        Blockly.Events.setGroup(existingGroup);
-      }
+        ),
+      );
     },
     scopeType: Blockly.ContextMenuRegistry.ScopeType.BLOCK,
     id: 'lessonRemoveShadows',

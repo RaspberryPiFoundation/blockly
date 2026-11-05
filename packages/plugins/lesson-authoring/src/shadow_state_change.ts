@@ -21,8 +21,8 @@ interface ShadowStateChangeJson extends Blockly.Events.BlockBaseJson {
 }
 
 /**
- * Notifies listeners that the shadow state of one of a block's value
- * inputs has changed.
+ * Notifies listeners that the shadow state of one of a block's value inputs
+ * has changed.
  */
 class ShadowStateChange extends Blockly.Events.BlockBase {
   override type = SHADOW_STATE_CHANGE;
@@ -128,7 +128,7 @@ Blockly.registry.register(
 /**
  * Sets a connection's shadow state, firing an event so it can be undone.
  *
- * @param connection The connection to change.
+ * @param connection The value input connection to change.
  * @param newState The new shadow state, or null to remove the shadow.
  */
 export function setShadowState(
