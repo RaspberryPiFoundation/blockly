@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const {assertFieldValue} = require('@blockly/dev-tools').testHelpers;
-const {FieldColourHsvSliders} = require('../src/index');
+import {testHelpers} from '@blockly/dev-tools';
+import {FieldColourHsvSliders} from '../src/index.js';
 
 /**
  * Assert the colour hsv sliders field options.
@@ -19,7 +19,11 @@ function assertColourHsvSlidersField(
   expectedValue,
   expectedText,
 ) {
-  assertFieldValue(colourHsvSlidersField, expectedValue, expectedText);
+  testHelpers.assertFieldValue(
+    colourHsvSlidersField,
+    expectedValue,
+    expectedText,
+  );
 }
 
 /**
@@ -30,7 +34,4 @@ function assertColourHsvSlidersFieldDefault(colourHsvSlidersField) {
   assertColourHsvSlidersField(colourHsvSlidersField, '#ffffff', '#fff');
 }
 
-module.exports = {
-  assertColourHsvSlidersField,
-  assertColourHsvSlidersFieldDefault,
-};
+export {assertColourHsvSlidersField, assertColourHsvSlidersFieldDefault};

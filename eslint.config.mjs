@@ -414,6 +414,7 @@ export default defineConfig(
       'packages/plugins/dev-scripts/**',
       'packages/plugins/dev-tools/**',
       'packages/plugins/field-colour/**',
+      'packages/plugins/field-colour-hsv-sliders/**',
       'packages/plugins/field-grid-dropdown/**',
       'packages/plugins/theme-modern/**',
     ],
