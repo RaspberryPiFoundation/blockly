@@ -2,7 +2,7 @@
   "extends": "@blockly/dev-scripts/config/tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "dist/esm",
+    "outDir": "dist/esm"
   },
   // NOTE: `test/**/*` is automatically included in `blockly-scripts start`.
   // Only src matters for production builds.
