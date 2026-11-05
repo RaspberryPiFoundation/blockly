@@ -416,6 +416,7 @@ export default defineConfig(
       'packages/plugins/field-colour/**',
       'packages/plugins/field-colour-hsv-sliders/**',
       'packages/plugins/field-grid-dropdown/**',
+      'packages/plugins/modal/**',
       'packages/plugins/theme-modern/**',
     ],
     settings: {
