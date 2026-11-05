@@ -5,6 +5,7 @@
  */
 
 import {assert} from 'chai';
+import jsdomGlobal from 'jsdom-global';
 
 import {testHelpers} from '@blockly/dev-tools';
 import {FieldColour, registerFieldColour} from '../src/index.js';
@@ -21,7 +22,7 @@ const {
 suite('FieldColour', function () {
   setup(function () {
     registerFieldColour();
-    this.jsdomCleanup = require('jsdom-global')(
+    this.jsdomCleanup = jsdomGlobal(
       '<!DOCTYPE html><div id="blocklyDiv"></div>',
     );
   });
