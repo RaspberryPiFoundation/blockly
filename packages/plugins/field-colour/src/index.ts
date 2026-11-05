@@ -4,19 +4,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './field_colour';
+export * from './field_colour.js';
 
-import * as colourPicker from './blocks/colourPicker';
-import * as colourRandom from './blocks/colourRandom';
-import * as colourRgb from './blocks/colourRgb';
-import * as colourBlend from './blocks/colourBlend';
-import type {Generators} from './blocks/generatorsType';
+import * as colourPicker from './blocks/colourPicker.js';
+import * as colourRandom from './blocks/colourRandom.js';
+import * as colourRgb from './blocks/colourRgb.js';
+import * as colourBlend from './blocks/colourBlend.js';
+import type {Generators} from './blocks/generatorsType.js';
 
 // Re-export all parts of the definition.
-export * as colourPicker from './blocks/colourPicker';
-export * as colourRandom from './blocks/colourRandom';
-export * as colourRgb from './blocks/colourRgb';
-export * as colourBlend from './blocks/colourBlend';
+export * as colourPicker from './blocks/colourPicker.js';
+export * as colourRandom from './blocks/colourRandom.js';
+export * as colourRgb from './blocks/colourRgb.js';
+export * as colourBlend from './blocks/colourBlend.js';
 
 /**
  * Install all of the blocks defined in this file and all of their
