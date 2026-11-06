@@ -161,12 +161,12 @@ export function math_number_property(
     string,
     [string, string, Order, Order] | [null, null, Order, Order]
   > = {
-    'EVEN': ['', ' % 2 == 0', Order.MODULUS, Order.EQUALITY],
-    'ODD': ['', ' % 2 == 1', Order.MODULUS, Order.EQUALITY],
-    'WHOLE': ['is_int(', ')', Order.NONE, Order.FUNCTION_CALL],
+    'EVEN': ['fmod(', ', 2) == 0', Order.NONE, Order.EQUALITY],
+    'ODD': ['abs(fmod(', ', 2)) == 1', Order.NONE, Order.EQUALITY],
+    'WHOLE': ['fmod(', ', 1) == 0', Order.NONE, Order.EQUALITY],
     'POSITIVE': ['', ' > 0', Order.RELATIONAL, Order.RELATIONAL],
     'NEGATIVE': ['', ' < 0', Order.RELATIONAL, Order.RELATIONAL],
-    'DIVISIBLE_BY': [null, null, Order.MODULUS, Order.EQUALITY],
+    'DIVISIBLE_BY': [null, null, Order.NONE, Order.EQUALITY],
     'PRIME': [null, null, Order.NONE, Order.FUNCTION_CALL],
   };
   type PropertyOption = keyof typeof PROPERTIES;
@@ -188,7 +188,7 @@ function ${generator.FUNCTION_NAME_PLACEHOLDER_}($n) {
   }
   // False if n is NaN, negative, is 1, or not whole.
   // And false if n is divisible by 2 or 3.
-  if (!is_numeric($n) || $n <= 1 || $n % 1 != 0 || $n % 2 == 0 || $n % 3 == 0) {
+  if (!is_numeric($n) || $n <= 1 || fmod($n, 1) != 0 || fmod($n, 2) == 0 || fmod($n, 3) == 0) {
     return false;
   }
   // Check all the numbers of form 6k +/- 1, up to sqrt(n).
@@ -203,12 +203,11 @@ function ${generator.FUNCTION_NAME_PLACEHOLDER_}($n) {
     );
     code = functionName + '(' + numberToCheck + ')';
   } else if (dropdownProperty === 'DIVISIBLE_BY') {
-    const divisor =
-      generator.valueToCode(block, 'DIVISOR', Order.MODULUS) || '0';
+    const divisor = generator.valueToCode(block, 'DIVISOR', Order.NONE) || '0';
     if (divisor === '0') {
       return ['false', Order.ATOMIC];
     }
-    code = numberToCheck + ' % ' + divisor + ' == 0';
+    code = 'fmod(' + numberToCheck + ', ' + divisor + ') == 0';
   } else {
     code = prefix + numberToCheck + suffix;
   }
@@ -232,6 +231,8 @@ export function math_on_list(
   block: Block,
   generator: PhpGenerator,
 ): [string, Order] {
+  generator.provideListObject();
+
   // Math functions for lists.
   const func = block.getFieldValue('OP');
   let list;
@@ -239,29 +240,34 @@ export function math_on_list(
   switch (func) {
     case 'SUM':
       list =
-        generator.valueToCode(block, 'LIST', Order.FUNCTION_CALL) || 'array()';
-      code = 'array_sum(' + list + ')';
+        generator.valueToCode(block, 'LIST', Order.FUNCTION_CALL) ||
+        '(new ListObject())';
+      code = 'array_sum(' + list + '->getArrayCopy())';
       break;
     case 'MIN':
       list =
-        generator.valueToCode(block, 'LIST', Order.FUNCTION_CALL) || 'array()';
-      code = 'min(' + list + ')';
+        generator.valueToCode(block, 'LIST', Order.FUNCTION_CALL) ||
+        '(new ListObject())';
+      code = 'min(' + list + '->getArrayCopy())';
       break;
     case 'MAX':
       list =
-        generator.valueToCode(block, 'LIST', Order.FUNCTION_CALL) || 'array()';
-      code = 'max(' + list + ')';
+        generator.valueToCode(block, 'LIST', Order.FUNCTION_CALL) ||
+        '(new ListObject())';
+      code = 'max(' + list + '->getArrayCopy())';
       break;
     case 'AVERAGE': {
       const functionName = generator.provideFunction_(
         'math_mean',
         `
 function ${generator.FUNCTION_NAME_PLACEHOLDER_}($myList) {
-  return array_sum($myList) / count($myList);
+  return array_sum($myList->getArrayCopy()) / count($myList);
 }
 `,
       );
-      list = generator.valueToCode(block, 'LIST', Order.NONE) || 'array()';
+      list =
+        generator.valueToCode(block, 'LIST', Order.NONE) ||
+        '(new ListObject())';
       code = functionName + '(' + list + ')';
       break;
     }
@@ -270,13 +276,16 @@ function ${generator.FUNCTION_NAME_PLACEHOLDER_}($myList) {
         'math_median',
         `
 function ${generator.FUNCTION_NAME_PLACEHOLDER_}($arr) {
+  $arr = $arr->getArrayCopy();
   sort($arr,SORT_NUMERIC);
   return (count($arr) % 2) ? $arr[floor(count($arr) / 2)] :
       ($arr[floor(count($arr) / 2)] + $arr[floor(count($arr) / 2) - 1]) / 2;
 }
 `,
       );
-      list = generator.valueToCode(block, 'LIST', Order.NONE) || '[]';
+      list =
+        generator.valueToCode(block, 'LIST', Order.NONE) ||
+        '(new ListObject())';
       code = functionName + '(' + list + ')';
       break;
     }
@@ -288,15 +297,17 @@ function ${generator.FUNCTION_NAME_PLACEHOLDER_}($arr) {
         'math_modes',
         `
 function ${generator.FUNCTION_NAME_PLACEHOLDER_}($values) {
-  if (empty($values)) return array();
-  $counts = array_count_values($values);
+  if (count($values) == 0) return new ListObject();
+  $counts = array_count_values($values->getArrayCopy());
   arsort($counts); // Sort counts in descending order
   $modes = array_keys($counts, current($counts), true);
-  return $modes;
+  return new ListObject($modes);
 }
 `,
       );
-      list = generator.valueToCode(block, 'LIST', Order.NONE) || '[]';
+      list =
+        generator.valueToCode(block, 'LIST', Order.NONE) ||
+        '(new ListObject())';
       code = functionName + '(' + list + ')';
       break;
     }
@@ -307,13 +318,15 @@ function ${generator.FUNCTION_NAME_PLACEHOLDER_}($values) {
 function ${generator.FUNCTION_NAME_PLACEHOLDER_}($numbers) {
   $n = count($numbers);
   if (!$n) return null;
-  $mean = array_sum($numbers) / count($numbers);
+  $mean = array_sum($numbers->getArrayCopy()) / count($numbers);
   foreach($numbers as $key => $num) $devs[$key] = pow($num - $mean, 2);
   return sqrt(array_sum($devs) / (count($devs) - 1));
 }
 `,
       );
-      list = generator.valueToCode(block, 'LIST', Order.NONE) || '[]';
+      list =
+        generator.valueToCode(block, 'LIST', Order.NONE) ||
+        '(new ListObject())';
       code = functionName + '(' + list + ')';
       break;
     }
@@ -327,7 +340,9 @@ function ${generator.FUNCTION_NAME_PLACEHOLDER_}($list) {
 }
 `,
       );
-      list = generator.valueToCode(block, 'LIST', Order.NONE) || '[]';
+      list =
+        generator.valueToCode(block, 'LIST', Order.NONE) ||
+        '(new ListObject())';
       code = functionName + '(' + list + ')';
       break;
     }
@@ -342,12 +357,10 @@ export function math_modulo(
   generator: PhpGenerator,
 ): [string, Order] {
   // Remainder computation.
-  const argument0 =
-    generator.valueToCode(block, 'DIVIDEND', Order.MODULUS) || '0';
-  const argument1 =
-    generator.valueToCode(block, 'DIVISOR', Order.MODULUS) || '0';
-  const code = argument0 + ' % ' + argument1;
-  return [code, Order.MODULUS];
+  const argument0 = generator.valueToCode(block, 'DIVIDEND', Order.NONE) || '0';
+  const argument1 = generator.valueToCode(block, 'DIVISOR', Order.NONE) || '0';
+  const code = 'fmod(' + argument0 + ', ' + argument1 + ')';
+  return [code, Order.FUNCTION_CALL];
 }
 
 export function math_constrain(
@@ -357,8 +370,7 @@ export function math_constrain(
   // Constrain a number between two limits.
   const argument0 = generator.valueToCode(block, 'VALUE', Order.NONE) || '0';
   const argument1 = generator.valueToCode(block, 'LOW', Order.NONE) || '0';
-  const argument2 =
-    generator.valueToCode(block, 'HIGH', Order.NONE) || 'Infinity';
+  const argument2 = generator.valueToCode(block, 'HIGH', Order.NONE) || 'INF';
   const code =
     'min(max(' + argument0 + ', ' + argument1 + '), ' + argument2 + ')';
   return [code, Order.FUNCTION_CALL];
@@ -391,7 +403,7 @@ export function math_random_float(
   generator: PhpGenerator,
 ): [string, Order] {
   // Random fraction between 0 and 1.
-  return ['(float)rand()/(float)getrandmax()', Order.FUNCTION_CALL];
+  return ['(float)rand()/(float)getrandmax()', Order.DIVISION];
 }
 
 export function math_atan2(

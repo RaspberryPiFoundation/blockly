@@ -68,6 +68,12 @@ function phpDefineAssert() {
       ['function ' + phpGenerator.FUNCTION_NAME_PLACEHOLDER_ +
       '($actual, $expected, $message) {',
       '  global ' + resultsVar + ';',
+      '  if ($actual instanceof ArrayObject) {',
+      '     $actual = $actual->getArrayCopy();',
+      '  }',
+      '  if ($expected instanceof ArrayObject) {',
+      '     $expected = $expected->getArrayCopy();',
+      '  }',
       '  // Asserts that a value equals another value.',
       '  if (!is_array(' + resultsVar + ')) {',
       '    throw new Exception("Orphaned assert: " . $message);',
