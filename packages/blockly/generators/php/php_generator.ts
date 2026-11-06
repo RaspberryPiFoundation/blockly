@@ -25,10 +25,10 @@ import type {Workspace} from '../../core/workspace.js';
 // prettier-ignore
 export enum Order {
   ATOMIC = 0,             // 0 "" ...
-  CLONE = 1,              // clone
-  NEW = 1,                // new
-  MEMBER = 2.1,           // []
-  FUNCTION_CALL = 2.2,    // ()
+  MEMBER = 1.1,           // []
+  FUNCTION_CALL = 1.2,    // ()
+  CLONE = 2,              // clone
+  NEW = 2,                // new
   POWER = 3,              // **
   INCREMENT = 4,          // ++
   DECREMENT = 4,          // --
@@ -66,6 +66,10 @@ export enum Order {
 export class PhpGenerator extends CodeGenerator {
   /** List of outer-inner pairings that do NOT require parentheses. */
   ORDER_OVERRIDES: [Order, Order][] = [
+    // (foo())[0] -> foo()[0]
+    [Order.FUNCTION_CALL, Order.MEMBER],
+    // (foo())() -> foo()()
+    [Order.FUNCTION_CALL, Order.FUNCTION_CALL],
     // (foo()).bar() -> foo().bar()
     // (foo())[0] -> foo()[0]
     [Order.MEMBER, Order.FUNCTION_CALL],
@@ -83,6 +87,9 @@ export class PhpGenerator extends CodeGenerator {
     // a || (b || c) -> a || b || c
     [Order.LOGICAL_OR, Order.LOGICAL_OR],
   ];
+
+  /** Whether to emit the opening <?php tag when generating code. */
+  protected outputOpeningTag = true;
 
   /** @param name Name of the language the generator is for. */
   constructor(name = 'PHP') {
@@ -173,7 +180,12 @@ export class PhpGenerator extends CodeGenerator {
     this.isInitialized = false;
 
     this.nameDB_!.reset();
-    return definitions.join('\n\n') + '\n\n\n' + code;
+    return (
+      (this.outputOpeningTag ? '<?php\n\n' : '') +
+      definitions.join('\n\n') +
+      '\n\n\n' +
+      code
+    );
   }
 
   /**
@@ -312,9 +324,77 @@ export class PhpGenerator extends CodeGenerator {
     if (negate) {
       at = delta ? `-(${at})` : `-${at}`;
     }
-    if (Math.floor(order) >= Math.floor(orderForInput)) {
+    if (Math.floor(order) <= Math.floor(orderForInput)) {
       at = `(${at})`;
     }
     return at;
+  }
+
+  /**
+   * Sets whether or not this generator outputs the opening <?php tag when
+   * generating code. Defaults to true.
+   */
+  setOutputOpeningTag(outputTag: boolean) {
+    this.outputOpeningTag = outputTag;
+  }
+
+  /**
+   * Defines a class used by Blockly's built-in list blocks. PHP passes by
+   * value, including `array()`; using an object-based array wrapper gets us
+   * behavior that is more or less consistent with pass by reference semantics,
+   * consistent with the other languages we provide generators for. This is
+   * particularly important for variables that contain lists, where one would
+   * quite reasonably assume that mutating a list variable actually does so. See
+   * #1201 for more context.
+   * @internal
+   */
+  provideListObject() {
+    // This isn't technically a function, but this gets us one-time-injection of
+    // a class definition just as well.
+    this.provideFunction_(
+      'ListObject',
+      `
+class ListObject extends ArrayObject {
+  public function slice($offset, $length = null) {
+    $values = $this->getArrayCopy();
+    $result = array_slice($values, $offset, $length);
+    return new ListObject($result);
+  }
+
+  public function splice($offset, $length = null, $replacement = []) {
+    $values = $this->getArrayCopy();
+    $result = array_splice($values, $offset, $length, $replacement);
+    $this->exchangeArray($values);
+    return new ListObject($result);
+  }
+
+  public function shift() {
+    $values = $this->getArrayCopy();
+    $result = array_shift($values);
+    $this->exchangeArray($values);
+    return $result;
+  }
+
+  public function unshift(...$newValues) {
+    $values = $this->getArrayCopy();
+    $result = array_unshift($values, ...$newValues);
+    $this->exchangeArray($values);
+    return $result;
+  }
+
+  public function pop() {
+    $values = $this->getArrayCopy();
+    $result = array_pop($values);
+    $this->exchangeArray($values);
+    return $result;
+  }
+
+  public function __toString()
+  {
+    return implode(', ', $this->getArrayCopy());
+  }
+}
+    `,
+    );
   }
 }

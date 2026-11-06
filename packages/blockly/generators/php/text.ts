@@ -57,10 +57,7 @@ export function text_append(block: Block, generator: PhpGenerator) {
   return varName + ' .= ' + value + ';\n';
 }
 
-export function text_length(
-  block: Block,
-  generator: PhpGenerator,
-): [string, Order] {
+function provideLengthCheck(generator: PhpGenerator) {
   // String or array length.
   const functionName = generator.provideFunction_(
     'length',
@@ -68,13 +65,26 @@ export function text_length(
 function ${generator.FUNCTION_NAME_PLACEHOLDER_}($value) {
   if (is_string($value)) {
     return strlen($value);
+  } else {
+    return count($value);
   }
-  return count($value);
 }
 `,
   );
+
+  return functionName;
+}
+
+export function text_length(
+  block: Block,
+  generator: PhpGenerator,
+): [string, Order] {
+  // String or array length.
   const text = generator.valueToCode(block, 'VALUE', Order.NONE) || "''";
-  return [functionName + '(' + text + ')', Order.FUNCTION_CALL];
+  return [
+    provideLengthCheck(generator) + '(' + text + ')',
+    Order.FUNCTION_CALL,
+  ];
 }
 
 export function text_isEmpty(
@@ -83,7 +93,10 @@ export function text_isEmpty(
 ): [string, Order] {
   // Is the string null or array empty?
   const text = generator.valueToCode(block, 'VALUE', Order.NONE) || "''";
-  return ['empty(' + text + ')', Order.FUNCTION_CALL];
+  return [
+    provideLengthCheck(generator) + '(' + text + ') == 0',
+    Order.EQUALITY,
+  ];
 }
 
 export function text_indexOf(
