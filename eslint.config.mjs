@@ -415,6 +415,7 @@ export default defineConfig(
       'packages/plugins/dev-tools/**',
       'packages/plugins/theme-dark/**',
       'packages/plugins/theme-deuteranopia/**',
+      'packages/plugins/theme-hackermode/**',
       'packages/plugins/theme-modern/**',
     ],
     settings: {
