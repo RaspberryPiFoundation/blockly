@@ -419,6 +419,12 @@ export default defineConfig(
       'packages/plugins/modal/**',
       'packages/plugins/theme-modern/**',
       'packages/plugins/typed-variable-modal/**',
+      'packages/plugins/theme-dark/**',
+      'packages/plugins/theme-deuteranopia/**',
+      'packages/plugins/theme-hackermode/**',
+      'packages/plugins/theme-highcontrast/**',
+      'packages/plugins/theme-modern/**',
+      'packages/plugins/theme-tritanopia/**',
     ],
     settings: {
       jsdoc: {

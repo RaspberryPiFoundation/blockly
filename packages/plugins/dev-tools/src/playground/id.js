@@ -9,4 +9,12 @@
  * @author samelh@google.com (Sam El-Husseini)
  */
 
-export const id = process.env.PACKAGE_NAME;
+let packageName;
+// Get the package name added by blockly-scripts, if set
+try {
+  packageName = process.env.PACKAGE_NAME;
+} catch {
+  // Not built by blockly-scripts; continue
+}
+
+export const id = packageName ?? 'playground';
