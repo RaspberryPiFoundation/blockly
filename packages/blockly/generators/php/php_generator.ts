@@ -88,6 +88,9 @@ export class PhpGenerator extends CodeGenerator {
     [Order.LOGICAL_OR, Order.LOGICAL_OR],
   ];
 
+  /** Whether to emit the opening <?php tag when generating code. */
+  protected outputOpeningTag = true;
+
   /** @param name Name of the language the generator is for. */
   constructor(name = 'PHP') {
     super(name);
@@ -177,7 +180,12 @@ export class PhpGenerator extends CodeGenerator {
     this.isInitialized = false;
 
     this.nameDB_!.reset();
-    return '<?php\n\n' + definitions.join('\n\n') + '\n\n\n' + code;
+    return (
+      (this.outputOpeningTag ? '<?php\n\n' : '') +
+      definitions.join('\n\n') +
+      '\n\n\n' +
+      code
+    );
   }
 
   /**
@@ -320,6 +328,14 @@ export class PhpGenerator extends CodeGenerator {
       at = `(${at})`;
     }
     return at;
+  }
+
+  /**
+   * Sets whether or not this generator outputs the opening <?php tag when
+   * generating code. Defaults to true.
+   */
+  setOutputOpeningTag(outputTag: boolean) {
+    this.outputOpeningTag = outputTag;
   }
 
   /**
