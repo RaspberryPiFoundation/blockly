@@ -413,7 +413,12 @@ export default defineConfig(
       'packages/plugins/block-test/**',
       'packages/plugins/dev-scripts/**',
       'packages/plugins/dev-tools/**',
+      'packages/plugins/theme-dark/**',
+      'packages/plugins/theme-deuteranopia/**',
+      'packages/plugins/theme-hackermode/**',
+      'packages/plugins/theme-highcontrast/**',
       'packages/plugins/theme-modern/**',
+      'packages/plugins/theme-tritanopia/**',
     ],
     settings: {
       jsdoc: {
