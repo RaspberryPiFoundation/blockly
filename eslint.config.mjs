@@ -410,6 +410,7 @@ export default defineConfig(
     // Plugins migrated to ESM are built with tsc and need typescript mode.
     // Remove this and update the mode above once every plugin is migrated.
     files: [
+      'packages/plugins/block-dynamic-connection/**',
       'packages/plugins/block-test/**',
       'packages/plugins/dev-scripts/**',
       'packages/plugins/dev-tools/**',

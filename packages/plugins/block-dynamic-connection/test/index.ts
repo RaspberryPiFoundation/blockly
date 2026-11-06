@@ -10,7 +10,7 @@
 
 import * as Blockly from 'blockly';
 import {createPlayground} from '@blockly/dev-tools';
-import * as BlockDynamicConnection from '../src/index';
+import * as BlockDynamicConnection from '../src/index.js';
 
 /**
  * Create a workspace.
