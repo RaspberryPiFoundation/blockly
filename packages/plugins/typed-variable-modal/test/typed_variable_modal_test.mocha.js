@@ -9,11 +9,12 @@
  * @author aschmiedt@google.com (Abby Schmiedt)
  */
 
-const assert = require('assert');
-const Blockly = require('blockly');
-const sinon = require('sinon');
+import {assert} from 'chai';
+import * as Blockly from 'blockly';
+import sinon from 'sinon';
+import jsdomGlobal from 'jsdom-global';
 
-const {TypedVariableModal} = require('../src/index.js');
+import {TypedVariableModal} from '../src/index.js';
 
 suite('TypedVariableModal', function () {
   /**
@@ -59,7 +60,7 @@ suite('TypedVariableModal', function () {
   }
 
   setup(function () {
-    this.jsdomCleanup = require('jsdom-global')(
+    this.jsdomCleanup = jsdomGlobal(
       '<!DOCTYPE html><div id="blocklyDiv"></div>',
     );
     const types = [

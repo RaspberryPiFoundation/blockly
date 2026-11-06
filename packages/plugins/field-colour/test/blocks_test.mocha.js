@@ -13,8 +13,9 @@ import {dartGenerator} from 'blockly/dart';
 import {phpGenerator} from 'blockly/php';
 import {pythonGenerator} from 'blockly/python';
 import {luaGenerator} from 'blockly/lua';
-import {installAllBlocks} from '../src/index';
+import {installAllBlocks} from '../src/index.js';
 import {assert} from 'chai';
+import jsdomGlobal from 'jsdom-global';
 
 const blockJson = {
   blocks: {
@@ -195,7 +196,7 @@ suite('Colour Block Generators', function () {
     });
   });
   setup(function () {
-    this.jsdomCleanup = require('jsdom-global')(
+    this.jsdomCleanup = jsdomGlobal(
       '<!DOCTYPE html><div id="blocklyDiv"></div>',
     );
     this.workspace = new Blockly.Workspace();

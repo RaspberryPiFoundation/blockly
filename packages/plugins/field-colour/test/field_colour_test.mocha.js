@@ -4,9 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const {testHelpers} = require('@blockly/dev-tools');
-const {FieldColour, registerFieldColour} = require('../src/index');
-const {assert} = require('chai');
+import {assert} from 'chai';
+import jsdomGlobal from 'jsdom-global';
+
+import {testHelpers} from '@blockly/dev-tools';
+import {FieldColour, registerFieldColour} from '../src/index.js';
 
 const {
   assertFieldValue,
@@ -20,7 +22,7 @@ const {
 suite('FieldColour', function () {
   setup(function () {
     registerFieldColour();
-    this.jsdomCleanup = require('jsdom-global')(
+    this.jsdomCleanup = jsdomGlobal(
       '<!DOCTYPE html><div id="blocklyDiv"></div>',
     );
   });

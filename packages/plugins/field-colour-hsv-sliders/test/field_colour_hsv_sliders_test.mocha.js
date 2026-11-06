@@ -4,12 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const {
+import {testHelpers} from '@blockly/dev-tools';
+import jsdomGlobal from 'jsdom-global';
+
+import {
   assertColourHsvSlidersField,
   assertColourHsvSlidersFieldDefault,
-} = require('./field_colour_hsv_sliders_test_helpers.mocha');
-const {testHelpers} = require('@blockly/dev-tools');
-const {FieldColourHsvSliders} = require('../src/index');
+} from './field_colour_hsv_sliders_test_helpers.mocha.js';
+import {FieldColourHsvSliders} from '../src/index.js';
 
 const {
   FieldCreationTestCase,
@@ -21,7 +23,7 @@ const {
 
 suite('FieldColourHsvSliders', function () {
   setup(function () {
-    this.jsdomCleanup = require('jsdom-global')(
+    this.jsdomCleanup = jsdomGlobal(
       '<!DOCTYPE html><div id="blocklyDiv"></div>',
     );
     this.field = new FieldColourHsvSliders();

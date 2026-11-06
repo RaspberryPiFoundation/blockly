@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const {testHelpers} = require('@blockly/dev-tools');
-const {FieldGridDropdown} = require('../src/index');
+import {testHelpers} from '@blockly/dev-tools';
+import {FieldGridDropdown} from '../src/index.js';
 
 const {
   assertFieldValue,
