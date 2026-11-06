@@ -9,7 +9,7 @@
  * @author aschmiedt@google.com (Abby Schmiedt)
  */
 
-import assert from 'chai';
+import {assert} from 'chai';
 import * as Blockly from 'blockly';
 import sinon from 'sinon';
 import jsdomGlobal from 'jsdom-global';
