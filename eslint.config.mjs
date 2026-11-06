@@ -418,6 +418,7 @@ export default defineConfig(
       'packages/plugins/theme-hackermode/**',
       'packages/plugins/theme-highcontrast/**',
       'packages/plugins/theme-modern/**',
+      'packages/plugins/theme-tritanopia/**',
     ],
     settings: {
       jsdoc: {
