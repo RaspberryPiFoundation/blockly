@@ -56,6 +56,7 @@ function checkResult(suffix, generated) {
 suite('Multiline Text Block Generators', function () {
   suiteSetup(function () {
     Blockly.setLocale(en);
+    phpGenerator.setOutputOpeningTag(false);
     installAllBlocks({
       javascript: javascriptGenerator,
       dart: dartGenerator,
