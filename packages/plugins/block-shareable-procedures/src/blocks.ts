@@ -3,13 +3,12 @@
  * Copyright 2023 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-'use strict';
 
 import * as Blockly from 'blockly/core';
-import {ObservableProcedureModel} from './observable_procedure_model';
-import {ObservableParameterModel} from './observable_parameter_model';
-import type {IProcedureBlock} from './i_procedure_block';
-import {ProcedureCreate} from './events_procedure_create';
+import {ObservableProcedureModel} from './observable_procedure_model.js';
+import {ObservableParameterModel} from './observable_parameter_model.js';
+import type {IProcedureBlock} from './i_procedure_block.js';
+import {ProcedureCreate} from './events_procedure_create.js';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 

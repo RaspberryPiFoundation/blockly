@@ -412,6 +412,7 @@ export default defineConfig(
     files: [
       'packages/plugins/block-dynamic-connection/**',
       'packages/plugins/block-plus-minus/**',
+      'packages/plugins/block-shareable-procedures/**',
       'packages/plugins/block-test/**',
       'packages/plugins/dev-scripts/**',
       'packages/plugins/dev-tools/**',

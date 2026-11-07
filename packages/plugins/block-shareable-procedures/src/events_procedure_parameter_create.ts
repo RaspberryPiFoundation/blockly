@@ -5,9 +5,9 @@
  */
 
 import * as Blockly from 'blockly/core';
-import type {ProcedureParameterBaseJson} from './events_procedure_parameter_base';
-import {ProcedureParameterBase} from './events_procedure_parameter_base';
-import {ObservableParameterModel} from './observable_parameter_model';
+import type {ProcedureParameterBaseJson} from './events_procedure_parameter_base.js';
+import {ProcedureParameterBase} from './events_procedure_parameter_base.js';
+import {ObservableParameterModel} from './observable_parameter_model.js';
 
 /**
  * Notifies listeners that a parameter has been added to a procedure model.

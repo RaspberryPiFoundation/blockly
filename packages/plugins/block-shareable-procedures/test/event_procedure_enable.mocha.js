@@ -4,14 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const chai = require('chai');
-const sinon = require('sinon');
-const assert = chai.assert;
-const Blockly = require('blockly');
-const eventTestHelpers = require('./event_test_helpers');
-const {testHelpers} = require('@blockly/dev-tools');
-const {ObservableProcedureModel} = require('../src/observable_procedure_model');
-const {ProcedureEnable} = require('../src/events_procedure_enable');
+import {assert} from 'chai';
+import sinon from 'sinon';
+import * as Blockly from 'blockly';
+import {testHelpers} from '@blockly/dev-tools';
+import * as eventTestHelpers from './event_test_helpers.js';
+import {ObservableProcedureModel} from '../src/observable_procedure_model.js';
+import {ProcedureEnable} from '../src/events_procedure_enable.js';
 
 suite('Procedure Enable Event', function () {
   setup(function () {

@@ -13,8 +13,8 @@ import {
   blocks,
   unregisterProcedureBlocks,
   registerProcedureSerializer,
-} from '../src/index';
-import {ProcedureBase} from '../src/events_procedure_base';
+} from '../src/index.js';
+import {ProcedureBase} from '../src/events_procedure_base.js';
 
 /* eslint no-unused-vars: "off" */
 

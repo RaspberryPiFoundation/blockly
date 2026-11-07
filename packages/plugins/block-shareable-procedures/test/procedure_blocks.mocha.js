@@ -4,32 +4,32 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const Blockly = require('blockly');
-const chai = require('chai');
-const assert = chai.assert;
-const sinon = require('sinon');
-const {
+import {assert} from 'chai';
+import sinon from 'sinon';
+import jsdomGlobal from 'jsdom-global';
+import * as Blockly from 'blockly';
+import {testHelpers} from '@blockly/dev-tools';
+import {
   assertCallBlockStructure,
   assertDefBlockStructure,
   createGenUidStubWithReturns,
   createProcCallBlock,
   createProcDefBlock,
-} = require('./procedure_test_helpers');
-const {assertEventFiredShallow} = require('./event_test_helpers');
-const {testHelpers} = require('@blockly/dev-tools');
-const {ObservableParameterModel} = require('../src/observable_parameter_model');
-const {ObservableProcedureModel} = require('../src/observable_procedure_model');
-const {blocks} = require('../src/blocks');
-const {
+} from './procedure_test_helpers.js';
+import {assertEventFiredShallow} from './event_test_helpers.js';
+import {ObservableParameterModel} from '../src/observable_parameter_model.js';
+import {ObservableProcedureModel} from '../src/observable_procedure_model.js';
+import {blocks} from '../src/blocks.js';
+import {
   unregisterProcedureBlocks,
   registerProcedureSerializer,
-} = require('../src/index');
-const {ProcedureDelete} = require('../src/events_procedure_delete');
-const {ProcedureCreate} = require('../src/events_procedure_create');
+} from '../src/index.js';
+import {ProcedureDelete} from '../src/events_procedure_delete.js';
+import {ProcedureCreate} from '../src/events_procedure_create.js';
 
 suite('Procedures', function () {
   setup(function () {
-    this.jsdomCleanup = require('jsdom-global')(
+    this.jsdomCleanup = jsdomGlobal(
       '<!DOCTYPE html><div id="blocklyDiv"></div>',
       {pretendToBeVisual: true},
     );

@@ -5,36 +5,45 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {ObservableParameterModel} from './observable_parameter_model';
-import {ObservableProcedureModel} from './observable_procedure_model';
+import {ObservableParameterModel} from './observable_parameter_model.js';
+import {ObservableProcedureModel} from './observable_procedure_model.js';
 
-export {blocks} from './blocks';
-export {IProcedureBlock, isProcedureBlock} from './i_procedure_block';
-export {ProcedureBase, ProcedureBaseJson} from './events_procedure_base';
+export {blocks} from './blocks.js';
+export {IProcedureBlock, isProcedureBlock} from './i_procedure_block.js';
+export {ProcedureBase, ProcedureBaseJson} from './events_procedure_base.js';
 export {
   ProcedureChangeReturn,
   ProcedureChangeReturnJson,
-} from './events_procedure_change_return';
-export {ProcedureCreate, ProcedureCreateJson} from './events_procedure_create';
-export {ProcedureDelete, ProcedureDeleteJson} from './events_procedure_delete';
+} from './events_procedure_change_return.js';
+export {
+  ProcedureCreate,
+  ProcedureCreateJson,
+} from './events_procedure_create.js';
+export {
+  ProcedureDelete,
+  ProcedureDeleteJson,
+} from './events_procedure_delete.js';
 export {
   ProcedureParameterBase,
   ProcedureParameterBaseJson,
-} from './events_procedure_parameter_base';
+} from './events_procedure_parameter_base.js';
 export {
   ProcedureParameterCreate,
   ProcedureParameterCreateJson,
-} from './events_procedure_parameter_create';
+} from './events_procedure_parameter_create.js';
 export {
   ProcedureParameterDelete,
   ProcedureParameterDeleteJson,
-} from './events_procedure_parameter_delete';
+} from './events_procedure_parameter_delete.js';
 export {
   ProcedureParameterRename,
   ProcedureParameterRenameJson,
-} from './events_procedure_parameter_rename';
-export {ProcedureRename, ProcedureRenameJson} from './events_procedure_rename';
-export {triggerProceduresUpdate} from './update_procedures';
+} from './events_procedure_parameter_rename.js';
+export {
+  ProcedureRename,
+  ProcedureRenameJson,
+} from './events_procedure_rename.js';
+export {triggerProceduresUpdate} from './update_procedures.js';
 
 export {ObservableParameterModel, ObservableProcedureModel};
 

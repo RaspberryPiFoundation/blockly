@@ -5,8 +5,8 @@
  */
 
 import * as Blockly from 'blockly/core';
-import type {ProcedureBaseJson} from './events_procedure_base';
-import {ProcedureBase} from './events_procedure_base';
+import type {ProcedureBaseJson} from './events_procedure_base.js';
+import {ProcedureBase} from './events_procedure_base.js';
 
 /** Notifies listeners that a procedure model has been renamed. */
 export class ProcedureRename extends ProcedureBase {
