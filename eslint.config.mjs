@@ -411,6 +411,7 @@ export default defineConfig(
     // Remove this and update the mode above once every plugin is migrated.
     files: [
       'packages/plugins/block-dynamic-connection/**',
+      'packages/plugins/block-plus-minus/**',
       'packages/plugins/block-test/**',
       'packages/plugins/dev-scripts/**',
       'packages/plugins/dev-tools/**',

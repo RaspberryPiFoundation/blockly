@@ -9,8 +9,8 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {createMinusField} from './field_minus';
-import {createPlusField} from './field_plus';
+import {createMinusField} from './field_minus.js';
+import {createPlusField} from './field_plus.js';
 
 const controlsIfMutator = {
   /**
