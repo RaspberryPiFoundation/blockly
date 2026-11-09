@@ -189,13 +189,13 @@ class HsvColour {
  */
 export class FieldColourHsvSliders extends FieldColour {
   /** The maximum value of the hue slider range. */
-  private static readonly HUE_SLIDER_MAX = 360;
+  protected static readonly HUE_SLIDER_MAX = 360;
 
   /** The maximum value of the saturation slider range. */
-  private static readonly SATURATION_SLIDER_MAX = 100;
+  protected static readonly SATURATION_SLIDER_MAX = 100;
 
   /** The maximum value of the brightness slider range. */
-  private static readonly BRIGHTNESS_SLIDER_MAX = 100;
+  protected static readonly BRIGHTNESS_SLIDER_MAX = 100;
 
   /**
    * The gradient control point positions should align with the center of the
