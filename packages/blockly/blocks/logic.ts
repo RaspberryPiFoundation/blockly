@@ -22,6 +22,7 @@ import '../core/icons/mutator_icon.js';
 import {Msg} from '../core/msg.js';
 import * as xmlUtils from '../core/utils/xml.js';
 import type {Workspace} from '../core/workspace.js';
+import {NON_DUPLICATABLE_EXTENSION_ID} from './shared.js';
 
 /**
  * A dictionary of the block definitions provided by this module.
@@ -234,6 +235,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
     'enableContextMenu': false,
     'style': 'logic_blocks',
     'tooltip': '%{BKY_CONTROLS_IF_IF_TOOLTIP}',
+    'extensions': [NON_DUPLICATABLE_EXTENSION_ID],
   },
   // Block representing the else-if statement in the controls_if mutator.
   {

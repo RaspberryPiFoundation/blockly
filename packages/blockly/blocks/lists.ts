@@ -22,6 +22,7 @@ import {ValueInput} from '../core/inputs/value_input.js';
 import {Msg} from '../core/msg.js';
 import * as xmlUtils from '../core/utils/xml.js';
 import type {Workspace} from '../core/workspace.js';
+import {NON_DUPLICATABLE_MIXIN} from './shared.js';
 
 /**
  * A dictionary of the block definitions provided by this module.
@@ -317,6 +318,7 @@ const LISTS_CREATE_WITH_CONTAINER = {
     this.appendStatementInput('STACK');
     this.setTooltip(Msg['LISTS_CREATE_WITH_CONTAINER_TOOLTIP']);
     this.contextMenu = false;
+    this.mixin(NON_DUPLICATABLE_MIXIN, true);
   },
 };
 blocks['lists_create_with_container'] = LISTS_CREATE_WITH_CONTAINER;
