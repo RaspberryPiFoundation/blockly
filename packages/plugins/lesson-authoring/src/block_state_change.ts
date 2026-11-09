@@ -10,6 +10,7 @@
  */
 
 import * as Blockly from 'blockly/core';
+import {refreshBlockStateIcon} from './block_state_icon';
 
 const BLOCK_STATE_CHANGE = 'lesson_block_state_change';
 
@@ -41,7 +42,8 @@ function getBlockState(block: Blockly.Block, state: BlockStateName): boolean {
 }
 
 /**
- * Applies a value to one of a block's boolean states, without firing an event.
+ * Applies a value to one of a block's boolean states and updates the
+ * block's state icon.
  *
  * @param block The block to change.
  * @param state The state to change.
@@ -63,6 +65,7 @@ function applyBlockState(
       block.setMovable(value);
       break;
   }
+  refreshBlockStateIcon(block);
 }
 
 /**

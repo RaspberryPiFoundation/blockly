@@ -10,3 +10,5 @@
 export * from './artifact_types';
 export * from './requirements';
 export * from './block_state_menu';
+export {BlockStateIndicators} from './block_state_icon';
+export type {BlockStateIndicatorsOptions} from './block_state_icon';
