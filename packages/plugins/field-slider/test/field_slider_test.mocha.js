@@ -401,4 +401,23 @@ suite('FieldSlider', function () {
       });
     });
   });
+
+  suite('Slider Input Synchronization', function () {
+    test('updateSlider_ updates value property and attribute after user manipulation', function () {
+      const field = new FieldSlider(0);
+      const dropdown = field.dropdownCreate_();
+      const slider = dropdown.querySelector('input[type="range"]');
+      assert.equal(slider.value, '0');
+
+      // Simulate user interacting with the slider directly
+      slider.value = '25';
+      slider.dispatchEvent(new Event('input'));
+      assert.equal(field.getValue(), 25);
+
+      // Verify that updating the field (e.g. from inline text editor) synchronizes slider.value
+      field.setValue(50);
+      assert.equal(slider.value, '50');
+      assert.equal(slider.getAttribute('value'), '50');
+    });
+  });
 });

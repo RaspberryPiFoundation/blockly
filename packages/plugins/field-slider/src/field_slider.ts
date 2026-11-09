@@ -231,6 +231,7 @@ export class FieldSlider extends Blockly.FieldNumber {
     if (!this.sliderInput) {
       return;
     }
+    this.sliderInput.value = `${this.getValue()}`;
     this.sliderInput.setAttribute('value', `${this.getValue()}`);
   }
   /* eslint-enable @typescript-eslint/naming-convention */
