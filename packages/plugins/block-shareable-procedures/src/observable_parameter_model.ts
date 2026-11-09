@@ -5,8 +5,8 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {ProcedureParameterRename} from './events_procedure_parameter_rename';
-import {triggerProceduresUpdate} from './update_procedures';
+import {ProcedureParameterRename} from './events_procedure_parameter_rename.js';
+import {triggerProceduresUpdate} from './update_procedures.js';
 
 /** Represents a procedure parameter. */
 export class ObservableParameterModel

@@ -5,10 +5,10 @@
  */
 
 import * as Blockly from 'blockly/core';
-import type {ProcedureBaseJson} from './events_procedure_base';
-import {ProcedureBase} from './events_procedure_base';
-import type {ObservableParameterModel} from './observable_parameter_model';
-import type {ObservableProcedureModel} from './observable_procedure_model';
+import type {ProcedureBaseJson} from './events_procedure_base.js';
+import {ProcedureBase} from './events_procedure_base.js';
+import type {ObservableParameterModel} from './observable_parameter_model.js';
+import type {ObservableProcedureModel} from './observable_procedure_model.js';
 
 let procedureModelClass: typeof ObservableProcedureModel | undefined;
 let parameterModelClass: typeof ObservableParameterModel | undefined;

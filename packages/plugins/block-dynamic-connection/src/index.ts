@@ -10,10 +10,10 @@
  */
 
 import * as Blockly from 'blockly/core';
-import './dynamic_if';
-import './dynamic_text_join';
-import './dynamic_list_create';
-import {decoratePreviewer, blockIsDynamic} from './connection_previewer';
+import './dynamic_if.js';
+import './dynamic_text_join.js';
+import './dynamic_list_create.js';
+import {decoratePreviewer, blockIsDynamic} from './connection_previewer.js';
 
 export {decoratePreviewer, blockIsDynamic};
 

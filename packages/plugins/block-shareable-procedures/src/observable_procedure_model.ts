@@ -5,18 +5,18 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {ObservableParameterModel} from './observable_parameter_model';
-import {ProcedureChangeReturn} from './events_procedure_change_return';
+import {ObservableParameterModel} from './observable_parameter_model.js';
+import {ProcedureChangeReturn} from './events_procedure_change_return.js';
 import {
   ProcedureCreate,
   setProcedureModelClasses,
-} from './events_procedure_create';
-import {ProcedureDelete} from './events_procedure_delete';
-import {ProcedureEnable} from './events_procedure_enable';
-import {ProcedureParameterCreate} from './events_procedure_parameter_create';
-import {ProcedureParameterDelete} from './events_procedure_parameter_delete';
-import {ProcedureRename} from './events_procedure_rename';
-import {triggerProceduresUpdate} from './update_procedures';
+} from './events_procedure_create.js';
+import {ProcedureDelete} from './events_procedure_delete.js';
+import {ProcedureEnable} from './events_procedure_enable.js';
+import {ProcedureParameterCreate} from './events_procedure_parameter_create.js';
+import {ProcedureParameterDelete} from './events_procedure_parameter_delete.js';
+import {ProcedureRename} from './events_procedure_rename.js';
+import {triggerProceduresUpdate} from './update_procedures.js';
 
 /** Represents a procedure signature. */
 export class ObservableProcedureModel

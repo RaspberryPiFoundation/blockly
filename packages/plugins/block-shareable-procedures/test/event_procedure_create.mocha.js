@@ -4,15 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const chai = require('chai');
-const sinon = require('sinon');
-const assert = chai.assert;
-const Blockly = require('blockly');
-const {testHelpers} = require('@blockly/dev-tools');
-const eventTestHelpers = require('./event_test_helpers');
-const {ObservableProcedureModel} = require('../src/observable_procedure_model');
-const {ProcedureCreate} = require('../src/events_procedure_create');
-const {ProcedureDelete} = require('../src/events_procedure_delete');
+import {assert} from 'chai';
+import sinon from 'sinon';
+import * as Blockly from 'blockly';
+import {testHelpers} from '@blockly/dev-tools';
+import * as eventTestHelpers from './event_test_helpers.js';
+import {ObservableProcedureModel} from '../src/observable_procedure_model.js';
+import {ProcedureCreate} from '../src/events_procedure_create.js';
+import {ProcedureDelete} from '../src/events_procedure_delete.js';
 
 suite('Procedure Create Event', function () {
   setup(function () {

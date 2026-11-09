@@ -10,7 +10,7 @@
 
 import * as Blockly from 'blockly';
 import {toolboxCategories, createPlayground} from '@blockly/dev-tools';
-import {ContentHighlight} from '../src/index';
+import {ContentHighlight} from '../src/index.js';
 
 /**
  * Create a workspace.

@@ -10,7 +10,7 @@
 
 import * as Blockly from 'blockly';
 import {createPlayground} from '@blockly/dev-tools';
-import {registerContinuousToolbox} from '../src/index';
+import {registerContinuousToolbox} from '../src/index.js';
 
 /**
  * Create a workspace.

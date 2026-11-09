@@ -9,8 +9,8 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {createPlusField} from './field_plus';
-import {createMinusField} from './field_minus';
+import {createPlusField} from './field_plus.js';
+import {createMinusField} from './field_minus.js';
 
 // Delete original block because there's no way to unregister it:
 // https://github.com/RaspberryPiFoundation/blockly-samples/issues/768#issuecomment-885663394

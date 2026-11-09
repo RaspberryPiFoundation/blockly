@@ -4,11 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const chai = require('chai');
-const Blockly = require('blockly');
-
-require('../src/index');
-const assert = chai.assert;
+import {assert} from 'chai';
+import * as Blockly from 'blockly';
+import '../src/index.js';
 
 /**
  * Asserts that the procedure definition block has the expected inputs and
@@ -251,7 +249,7 @@ function createProcCallBlock(
   );
 }
 
-module.exports = {
+export {
   assertDefBlockStructure,
   assertCallBlockStructure,
   assertProcBlocksStructure,

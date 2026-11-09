@@ -4,19 +4,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const chai = require('chai');
-const {testHelpers} = require('@blockly/dev-tools');
-const {runPlusMinusTestSuite} = require('./test_helpers.mocha');
-const Blockly = require('blockly');
-const {dartGenerator} = require('blockly/dart');
-const {javascriptGenerator} = require('blockly/javascript');
-const {luaGenerator} = require('blockly/lua');
-const {phpGenerator} = require('blockly/php');
-const {pythonGenerator} = require('blockly/python');
+import {assert} from 'chai';
+import {testHelpers} from '@blockly/dev-tools';
+import * as Blockly from 'blockly';
+import {dartGenerator} from 'blockly/dart';
+import {javascriptGenerator} from 'blockly/javascript';
+import {luaGenerator} from 'blockly/lua';
+import {phpGenerator} from 'blockly/php';
+import {pythonGenerator} from 'blockly/python';
+import {runPlusMinusTestSuite} from './test_helpers.mocha.js';
+import '../src/index.js';
 
-require('../src/index');
-
-const assert = chai.assert;
 const {
   CodeGenerationTestSuite,
   runCodeGenerationTestSuites,
@@ -45,7 +43,7 @@ suite('Text join block', function () {
 
     assert.equal(block.inputList.length, inputCount);
     for (let i = 0; i < inputCount; i++) {
-      chai.assert.equal(block.inputList[i].name, 'ADD' + i);
+      assert.equal(block.inputList[i].name, 'ADD' + i);
     }
     assert.isNotNull(block.getField('MINUS'));
     // Easy way to test we're displaying normal text instead of quotes.

@@ -9,9 +9,9 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {ContinuousToolbox} from './ContinuousToolbox';
-import {ContinuousFlyoutMetrics} from './ContinuousFlyoutMetrics';
-import {RecyclableBlockFlyoutInflater} from './RecyclableBlockFlyoutInflater';
+import {ContinuousToolbox} from './ContinuousToolbox.js';
+import {ContinuousFlyoutMetrics} from './ContinuousFlyoutMetrics.js';
+import {RecyclableBlockFlyoutInflater} from './RecyclableBlockFlyoutInflater.js';
 
 export interface LabelFlyoutItem extends Blockly.FlyoutItem {
   // Blockly.FlyoutButton represents both buttons and labels; a label is just

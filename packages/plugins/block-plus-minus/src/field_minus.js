@@ -10,7 +10,7 @@
 'use strict';
 
 import * as Blockly from 'blockly/core';
-import {getExtraBlockState} from './serialization_helper';
+import {getExtraBlockState} from './serialization_helper.js';
 
 /**
  * Creates a minus image field used for mutation.

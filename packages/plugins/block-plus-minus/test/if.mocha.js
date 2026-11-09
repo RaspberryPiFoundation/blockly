@@ -4,19 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const chai = require('chai');
-const {testHelpers} = require('@blockly/dev-tools');
-const {runPlusMinusTestSuite} = require('./test_helpers.mocha');
-const Blockly = require('blockly');
-const {dartGenerator} = require('blockly/dart');
-const {javascriptGenerator} = require('blockly/javascript');
-const {luaGenerator} = require('blockly/lua');
-const {phpGenerator} = require('blockly/php');
-const {pythonGenerator} = require('blockly/python');
-
-require('../src/index');
-
-const assert = chai.assert;
+import {assert} from 'chai';
+import {testHelpers} from '@blockly/dev-tools';
+import * as Blockly from 'blockly';
+import {dartGenerator} from 'blockly/dart';
+import {javascriptGenerator} from 'blockly/javascript';
+import {luaGenerator} from 'blockly/lua';
+import {phpGenerator} from 'blockly/php';
+import {pythonGenerator} from 'blockly/python';
+import {runPlusMinusTestSuite} from './test_helpers.mocha.js';
+import '../src/index.js';
 
 const {
   CodeGenerationTestSuite,

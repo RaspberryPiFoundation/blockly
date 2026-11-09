@@ -4,14 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const chai = require('chai');
-const {testHelpers} = require('@blockly/dev-tools');
-const Blockly = require('blockly/core');
-require('blockly/blocks');
-const En = require('blockly/msg/en');
-const {overrideOldBlockDefinitions} = require('../src/index');
-
-const assert = chai.assert;
+import {assert} from 'chai';
+import {testHelpers} from '@blockly/dev-tools';
+import * as Blockly from 'blockly/core';
+import 'blockly/blocks';
+import * as En from 'blockly/msg/en';
+import {overrideOldBlockDefinitions} from '../src/index.js';
 
 Blockly.setLocale(En);
 

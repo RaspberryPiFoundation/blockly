@@ -5,8 +5,8 @@
  */
 
 import * as Blockly from 'blockly/core';
-import type {ContinuousToolbox} from './ContinuousToolbox';
-import {ContinuousCategory} from './ContinuousCategory';
+import type {ContinuousToolbox} from './ContinuousToolbox.js';
+import {ContinuousCategory} from './ContinuousCategory.js';
 
 /**
  * A Navigator that handles keyboard navigation within a continuous toolbox.

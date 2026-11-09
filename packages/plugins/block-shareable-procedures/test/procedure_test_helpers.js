@@ -5,10 +5,9 @@
  */
 'use strict';
 
-const Blockly = require('blockly/core');
-const chai = require('chai');
-const assert = chai.assert;
-const sinon = require('sinon');
+import {assert} from 'chai';
+import sinon from 'sinon';
+import * as Blockly from 'blockly';
 
 /**
  * Creates stub for Blockly.utils.idGenerator.genUid that returns the

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const sinon = require('sinon');
+import sinon from 'sinon';
 
 /**
  * Returns a matcher that asserts that the actual object has the same properties

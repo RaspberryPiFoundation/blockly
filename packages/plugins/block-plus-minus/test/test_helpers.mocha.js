@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const {assert} = require('chai');
+import {assert} from 'chai';
 
 /**
  * Runs test suite for plus/minus functionality for the  block of the given
@@ -106,6 +106,4 @@ function runPlusMinusTestSuite(
   });
 }
 
-module.exports = {
-  runPlusMinusTestSuite,
-};
+export {runPlusMinusTestSuite};

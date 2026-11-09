@@ -4,29 +4,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const chai = require('chai');
-const sinon = require('sinon');
-const assert = chai.assert;
-const eventTestHelpers = require('./event_test_helpers');
-const Blockly = require('blockly');
-const {ObservableProcedureModel} = require('../src/observable_procedure_model');
-const {ObservableParameterModel} = require('../src/observable_parameter_model');
-const {ProcedureCreate} = require('../src/events_procedure_create');
-const {ProcedureDelete} = require('../src/events_procedure_delete');
-const {ProcedureRename} = require('../src/events_procedure_rename');
-const {
-  ProcedureChangeReturn,
-} = require('../src/events_procedure_change_return');
-const {ProcedureEnable} = require('../src/events_procedure_enable');
-const {
-  ProcedureParameterCreate,
-} = require('../src/events_procedure_parameter_create');
-const {
-  ProcedureParameterDelete,
-} = require('../src/events_procedure_parameter_delete');
-const {
-  ProcedureParameterRename,
-} = require('../src/events_procedure_parameter_rename');
+import {assert} from 'chai';
+import sinon from 'sinon';
+import * as eventTestHelpers from './event_test_helpers.js';
+import * as Blockly from 'blockly';
+import {ObservableProcedureModel} from '../src/observable_procedure_model.js';
+import {ObservableParameterModel} from '../src/observable_parameter_model.js';
+import {ProcedureCreate} from '../src/events_procedure_create.js';
+import {ProcedureDelete} from '../src/events_procedure_delete.js';
+import {ProcedureRename} from '../src/events_procedure_rename.js';
+import {ProcedureChangeReturn} from '../src/events_procedure_change_return.js';
+import {ProcedureEnable} from '../src/events_procedure_enable.js';
+import {ProcedureParameterCreate} from '../src/events_procedure_parameter_create.js';
+import {ProcedureParameterDelete} from '../src/events_procedure_parameter_delete.js';
+import {ProcedureParameterRename} from '../src/events_procedure_parameter_rename.js';
 
 suite('Procedure data models', function () {
   setup(function () {
@@ -71,7 +62,7 @@ suite('Procedure data models', function () {
         );
         this.procedureMap.set(procedureModel.getId(), procedureModel);
 
-        chai.assert.isFalse(
+        assert.isFalse(
           this.updateSpy.called,
           'Expected no update to be triggered',
         );
@@ -82,7 +73,7 @@ suite('Procedure data models', function () {
           new ObservableProcedureModel(this.workspace, 'test name'),
         );
 
-        chai.assert.isFalse(
+        assert.isFalse(
           this.updateSpy.called,
           'Expected no update to be triggered',
         );
@@ -97,7 +88,7 @@ suite('Procedure data models', function () {
 
         this.procedureMap.delete(procedureModel.getId());
 
-        chai.assert.isTrue(
+        assert.isTrue(
           this.updateSpy.calledOnce,
           'Expected an update to be triggered',
         );
@@ -233,7 +224,7 @@ suite('Procedure data models', function () {
 
         parameterModel.setName('test2');
 
-        chai.assert.isTrue(
+        assert.isTrue(
           this.updateSpy.calledOnce,
           'Expected an update to be triggered',
         );
@@ -494,7 +485,7 @@ suite('Procedure data models', function () {
       const variable = this.workspace.getVariableMap().createVariable('test1');
       const param = new ObservableParameterModel(this.workspace, 'test1');
 
-      chai.assert.equal(
+      assert.equal(
         variable,
         param.getVariableModel(),
         'Expected the parameter model to reference the existing variable',
@@ -504,7 +495,7 @@ suite('Procedure data models', function () {
     test('construction creates a variable if none exists', function () {
       const param = new ObservableParameterModel(this.workspace, 'test1');
 
-      chai.assert.equal(
+      assert.equal(
         this.workspace.getVariableMap().getVariable('test1'),
         param.getVariableModel(),
         'Expected the parameter model to create a variable',
@@ -517,7 +508,7 @@ suite('Procedure data models', function () {
 
       param.setName('test2');
 
-      chai.assert.equal(
+      assert.equal(
         variable,
         param.getVariableModel(),
         'Expected the parameter model to reference the existing variable',
@@ -529,7 +520,7 @@ suite('Procedure data models', function () {
 
       param.setName('test2');
 
-      chai.assert.equal(
+      assert.equal(
         this.workspace.getVariableMap().getVariable('test2'),
         param.getVariableModel(),
         'Expected the parameter model to create a variable',
@@ -539,7 +530,7 @@ suite('Procedure data models', function () {
     test('setTypes is unimplemented', function () {
       const param = new ObservableParameterModel(this.workspace, 'test1');
 
-      chai.assert.throws(() => {
+      assert.throws(() => {
         param.setTypes(['some', 'types']);
       }, 'The built-in ParameterModel does not support typing');
     });
