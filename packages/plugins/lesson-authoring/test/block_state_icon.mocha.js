@@ -6,17 +6,10 @@
 
 import {assert} from 'chai';
 import * as Blockly from 'blockly';
+import sinon from 'sinon';
 import {BlockStateIndicators} from '../src/index';
 import {BlockStateIcon} from '../src/block_state_icon';
 import {setBlockState} from '../src/block_state_change';
-
-/**
- * Waits for queued events to be fired to listeners and the undo stack.
- * @returns {!Promise<void>} Resolves once events have fired.
- */
-function flushEvents() {
-  return new Promise((resolve) => setTimeout(resolve));
-}
 
 /**
  * Returns the number of glyphs a block's state icon shows, or 0 if it has no
@@ -35,11 +28,14 @@ function glyphCount(block) {
 // to date.
 suite('Block state indicators', function () {
   setup(function () {
+    this.clock = sinon.useFakeTimers();
     this.workspace = new Blockly.Workspace();
   });
 
   teardown(function () {
     this.workspace.dispose();
+    this.clock.runAll();
+    this.clock.restore();
   });
 
   test('adds icons to existing restricted blocks', function () {
@@ -71,7 +67,7 @@ suite('Block state indicators', function () {
     assert.isFalse(block.hasIcon(BlockStateIcon.TYPE));
   });
 
-  test('loaded blocks get icons', async function () {
+  test('loaded blocks get icons', function () {
     new BlockStateIndicators(this.workspace);
     Blockly.serialization.workspaces.load(
       {
@@ -82,7 +78,7 @@ suite('Block state indicators', function () {
       },
       this.workspace,
     );
-    await flushEvents();
+    this.clock.runAll();
     assert.equal(glyphCount(this.workspace.getBlockById('loaded')), 1);
   });
 
@@ -132,9 +128,9 @@ suite('Block state indicators', function () {
       assert.isFalse(this.block.hasIcon(BlockStateIcon.TYPE));
     });
 
-    test('undo and redo update the icon', async function () {
+    test('undo and redo update the icon', function () {
       setBlockState(this.block, 'deletable', false);
-      await flushEvents();
+      this.clock.runAll();
 
       this.workspace.undo(false);
       assert.isFalse(this.block.hasIcon(BlockStateIcon.TYPE));

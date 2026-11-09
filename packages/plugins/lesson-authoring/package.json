@@ -42,6 +42,7 @@
   "devDependencies": {
     "@blockly/dev-scripts": "^13.4.0",
     "@blockly/dev-tools": "^13.4.0",
+    "sinon": "^22.1.0",
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
