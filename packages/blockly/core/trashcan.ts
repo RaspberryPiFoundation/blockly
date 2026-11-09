@@ -741,4 +741,11 @@ Css.register(`
   .blocklyRTL .blocklyTrash.blocklyTrashFull:focus .blocklyTrashLid {
     rotate: -45deg;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blocklyTrash > image,
+    .blocklyTrashLid {
+      transition: none;
+    }
+  }
 `);

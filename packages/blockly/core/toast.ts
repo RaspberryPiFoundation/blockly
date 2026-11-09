@@ -218,4 +218,10 @@ Css.register(`
   border: none;
   cursor: pointer;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .${CLASS_NAME} {
+    transition: none;
+  }
+}
 `);

@@ -7,6 +7,7 @@
 // Former goog.module ID: Blockly.blockAnimations
 
 import type {BlockSvg} from './block_svg.js';
+import * as accessibility from './utils/accessibility.js';
 import * as dom from './utils/dom.js';
 import {Svg} from './utils/svg.js';
 
@@ -31,12 +32,17 @@ let wobblingBlock: BlockSvg | null = null;
  * @internal
  */
 export function disposeUiEffect(block: BlockSvg) {
-  // Disposing is going to take so long the animation won't play anyway.
-  if (block.getDescendants(false).length > 100) return;
-
   const workspace = block.workspace;
   const svgGroup = block.getSvgRoot();
   workspace.getAudioManager().play('delete');
+
+  // Disposing is going to take so long the animation won't play anyway.
+  if (
+    block.getDescendants(false).length > 100 ||
+    accessibility.reduceMotion()
+  ) {
+    return;
+  }
 
   const xy = block.getRelativeToSurfaceXY();
   // Deeply clone the current block.
@@ -97,7 +103,7 @@ export function connectionUiEffect(block: BlockSvg) {
   const workspace = block.workspace;
   const scale = workspace.scale;
   workspace.getAudioManager().play('click');
-  if (scale < 1) {
+  if (scale < 1 || accessibility.reduceMotion()) {
     return; // Too small to care about visual effects.
   }
   // Determine the absolute coordinates of the inferior block.
@@ -163,7 +169,7 @@ export function connectionUiEffect(block: BlockSvg) {
 export function disconnectUiEffect(block: BlockSvg) {
   disconnectUiStop();
   block.workspace.getAudioManager().play('disconnect');
-  if (block.workspace.scale < 1) {
+  if (block.workspace.scale < 1 || accessibility.reduceMotion()) {
     return; // Too small to care about visual effects.
   }
   // Horizontal distance for bottom of block to wiggle.
