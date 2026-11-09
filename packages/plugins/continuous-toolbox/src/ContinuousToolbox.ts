@@ -9,8 +9,8 @@
  */
 
 import * as Blockly from 'blockly/core';
-import type {ContinuousFlyout} from './ContinuousFlyout';
-import {ContinuousToolboxNavigator} from './ContinuousToolboxNavigator';
+import type {ContinuousFlyout} from './ContinuousFlyout.js';
+import {ContinuousToolboxNavigator} from './ContinuousToolboxNavigator.js';
 
 /**
  * Class for continuous toolbox.

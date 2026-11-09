@@ -10,12 +10,12 @@
 
 import * as Blockly from 'blockly/core';
 
-import {ContinuousCategory} from './ContinuousCategory';
-import {ContinuousFlyout} from './ContinuousFlyout';
-import type {LabelFlyoutItem} from './ContinuousFlyout';
-import {ContinuousMetrics} from './ContinuousMetrics';
-import {ContinuousToolbox} from './ContinuousToolbox';
-import {RecyclableBlockFlyoutInflater} from './RecyclableBlockFlyoutInflater';
+import {ContinuousCategory} from './ContinuousCategory.js';
+import {ContinuousFlyout} from './ContinuousFlyout.js';
+import type {LabelFlyoutItem} from './ContinuousFlyout.js';
+import {ContinuousMetrics} from './ContinuousMetrics.js';
+import {ContinuousToolbox} from './ContinuousToolbox.js';
+import {RecyclableBlockFlyoutInflater} from './RecyclableBlockFlyoutInflater.js';
 
 export {
   ContinuousCategory,

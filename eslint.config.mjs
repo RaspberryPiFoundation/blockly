@@ -415,6 +415,7 @@ export default defineConfig(
       'packages/plugins/block-shareable-procedures/**',
       'packages/plugins/block-test/**',
       'packages/plugins/content-highlight/**',
+      'packages/plugins/continuous-toolbox/**',
       'packages/plugins/dev-scripts/**',
       'packages/plugins/dev-tools/**',
       'packages/plugins/theme-dark/**',
