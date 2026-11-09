@@ -414,6 +414,7 @@ export default defineConfig(
       'packages/plugins/block-plus-minus/**',
       'packages/plugins/block-shareable-procedures/**',
       'packages/plugins/block-test/**',
+      'packages/plugins/content-highlight/**',
       'packages/plugins/dev-scripts/**',
       'packages/plugins/dev-tools/**',
       'packages/plugins/theme-dark/**',
