@@ -43,6 +43,7 @@ import * as Variables from '../core/variables.js';
 import type {Workspace} from '../core/workspace.js';
 import type {WorkspaceSvg} from '../core/workspace_svg.js';
 import * as Xml from '../core/xml.js';
+import {NON_DUPLICATABLE_MIXIN} from './shared.js';
 
 /** A dictionary of the block definitions provided by this module. */
 export const blocks: {[key: string]: BlockDefinition} = {};
@@ -616,6 +617,7 @@ const PROCEDURES_MUTATORCONTAINER = {
     this.setStyle('procedure_blocks');
     this.setTooltip(Msg['PROCEDURES_MUTATORCONTAINER_TOOLTIP']);
     this.contextMenu = false;
+    this.mixin(NON_DUPLICATABLE_MIXIN, true);
   },
 };
 blocks['procedures_mutatorcontainer'] = PROCEDURES_MUTATORCONTAINER;

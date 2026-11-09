@@ -25,6 +25,7 @@ import {ValueInput} from '../core/inputs/value_input.js';
 import {Msg} from '../core/msg.js';
 import * as xmlUtils from '../core/utils/xml.js';
 import type {Workspace} from '../core/workspace.js';
+import {NON_DUPLICATABLE_EXTENSION_ID} from './shared.js';
 
 /**
  * A dictionary of the block definitions provided by this module.
@@ -71,6 +72,7 @@ export const blocks = createBlockDefinitionsFromJsonArray([
     'style': 'text_blocks',
     'tooltip': '%{BKY_TEXT_CREATE_JOIN_TOOLTIP}',
     'enableContextMenu': false,
+    'extensions': [NON_DUPLICATABLE_EXTENSION_ID],
   },
   {
     'type': 'text_create_join_item',
