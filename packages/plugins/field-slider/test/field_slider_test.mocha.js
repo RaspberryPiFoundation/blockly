@@ -266,9 +266,16 @@ suite('FieldSlider', function () {
       // Blockly's focus handling constructs FocusEvent, which jsdom exposes on
       // window but not as a global.
       global.FocusEvent = window.FocusEvent;
+      // jsdom has no canvas, which Blockly uses to measure field text.
+      window.HTMLCanvasElement.prototype.getContext = () => ({
+        measureText: () => ({
+          width: '',
+          fontBoundingBoxAscent: 12,
+          fontBoundingBoxDescent: 4,
+        }),
+      });
       // jsdom doesn't provide requestAnimationFrame/cancelAnimationFrame, which
       // block rendering relies on.
-      this.clock = sinon.useFakeTimers();
       window.requestAnimationFrame = (cb) => setTimeout(cb, 0);
       window.cancelAnimationFrame = (id) => clearTimeout(id);
       this.workspace = Blockly.inject('blocklyDiv', {media: 'media/'});
@@ -293,8 +300,6 @@ suite('FieldSlider', function () {
       Blockly.WidgetDiv.hide();
       Blockly.DropDownDiv.hideWithoutAnimation();
       this.workspace.dispose();
-      this.clock.runAll();
-      sinon.restore();
       this.jsdomCleanup();
     });
 
