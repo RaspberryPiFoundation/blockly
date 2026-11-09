@@ -11,7 +11,7 @@ let shouldReduceMotion: MediaQueryList | undefined = undefined;
  */
 export function reduceMotion(): boolean {
   if (shouldReduceMotion === undefined) {
-    if (typeof window === 'undefined') {
+    if (typeof window === 'undefined' || !('matchMedia' in window)) {
       // No point in animating if there's no window, i.e. we're running under
       // Node.
       return true;
