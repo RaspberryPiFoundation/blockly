@@ -715,4 +715,12 @@ input[type=number] {
   flex-direction: ${userAgent.MOBILE || userAgent.APPLE ? 'row-reverse' : 'row'};
   column-gap: 8px;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .blocklyBlockCanvas.blocklyCanvasTransitioning,
+  .blocklyBubbleCanvas.blocklyCanvasTransitioning,
+  .blocklyDropDownDiv {
+    transition: none !important;
+  }
+}
 `;

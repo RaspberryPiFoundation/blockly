@@ -220,7 +220,10 @@ export class ContinuousFlyout extends Blockly.VerticalFlyout {
     if (this.scrollTarget === undefined) return;
     const currentScrollPos = -this.getWorkspace().scrollY;
     const diff = this.scrollTarget - currentScrollPos;
-    if (Math.abs(diff) < 1) {
+    if (
+      Math.abs(diff) < 1 ||
+      Blockly.utils.accessibility.shouldReduceMotion()
+    ) {
       this.getWorkspace().scrollbar?.setY(this.scrollTarget);
       this.scrollTarget = undefined;
       return;
