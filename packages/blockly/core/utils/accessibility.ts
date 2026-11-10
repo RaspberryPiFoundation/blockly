@@ -9,7 +9,7 @@ let shouldReduceMotion: MediaQueryList | undefined = undefined;
 /**
  * Returns true if motion and animations should be minimized.
  */
-export function reduceMotion(): boolean {
+export function shouldReduceMotion(): boolean {
   if (shouldReduceMotion === undefined) {
     if (typeof window === 'undefined' || !('matchMedia' in window)) {
       // No point in animating if there's no window, i.e. we're running under
