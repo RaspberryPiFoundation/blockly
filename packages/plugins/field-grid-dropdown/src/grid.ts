@@ -12,7 +12,7 @@ import {
   utils,
   WorkspaceSvg,
 } from 'blockly/core';
-import {GridItem} from './grid_item';
+import {GridItem} from './grid_item.js';
 
 /**
  * Class for managing a group of items displayed in a grid.

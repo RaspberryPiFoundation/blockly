@@ -9,9 +9,10 @@
  * This script compiles the src directory with tsc, twice:
  *   - as ES modules into dist/esm
  *   - as CommonJS into dist/cjs
- * TypeScript packages are built with their tsconfig.json (ESM) and
- * tsconfig.cjs.json (CommonJS). JavaScript packages have no tsconfig, so they
- * are built with equivalent command line options.
+ * TypeScript packages are built with their tsconfig.json. The CommonJS build
+ * overrides its module settings on the command line, unless the package has a
+ * tsconfig.cjs.json, which is used instead. JavaScript packages have no
+ * tsconfig, so they are built with equivalent command line options.
  * @author samelh@google.com (Sam El-Husseini)
  */
 
