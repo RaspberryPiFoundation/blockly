@@ -333,6 +333,9 @@ export class PhpGenerator extends CodeGenerator {
   /**
    * Sets whether or not this generator outputs the opening <?php tag when
    * generating code. Defaults to true.
+   *
+   * @param outputTag True to include the opening PHP tag in generated code, or
+   *     false to omit it.
    */
   setOutputOpeningTag(outputTag: boolean) {
     this.outputOpeningTag = outputTag;
