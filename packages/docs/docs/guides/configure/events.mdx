@@ -131,10 +131,96 @@ blocks for examples.
 Note that editable fields have their own event listeners for input validation
 and causing side effects.
 
+## Setting an event group
+
+You may need to to group related events so that your user's actions can be 
+properly undone. 
+
+For example, consider the "Clean up Blocks" item on the context menu. It takes 
+one action from the user to clean up the blocks. However, the process of 
+cleaning up the blocks involves moving every block on the workspace into a 
+column. In practice, Blockly groups these events so that an undo action will 
+undo all of these move events at once, rather than one at a time. 
+
+Before calling [`setGroup`](/reference/namespaces/Events/functions/setGroup/) 
+to set an event group, you should always fetch the current group with [`getGroup`](/reference/namespaces/Events/functions/getGroup/). 
+This ensures that you do not set up a new event group while another group already 
+exists. 
+
+```js
+const existingGroup = Blockly.Events.getGroup();
+if(!existingGroup){
+  Blockly.Events.setGroup(true);
+}
+
+// The code that you'd like to group
+
+Blockly.Events.setGroup(existingGroup);
+
+```
+
+Events in a group will all still fire, but they will be grouped in the undo 
+stack. 
+
+## Disabling undo/redo
+
+Event groups are a helpful tool for grouping related events, but sometimes your 
+app may have operations that should not be part of the undo stack at all. This 
+can be the case when there are programmatic changes that you don't want your 
+users to be able to undo. For example, core Blockly disables adding events to the undo stack when 
+populating the flyout with blocks, so that users can't undo blocks from existing 
+in the flyout. 
+
+Similar to setting an event group, it's best practice to check first whether undo 
+is already disabled with [`getRecordUndo`](/reference/namespaces/Events/functions/getRecordUndo/) 
+before calling [`setRecordUndo`](/reference/namespaces/Events/functions/setRecordUndo/).
+That way, you don't prematurely re-enable the undo stack while another process 
+has disabled it. 
+
+```js
+const undoEnabledPreviously = Blockly.Events.getRecordUndo();
+Blockly.Events.setRecordUndo(false);
+
+// Actions that you don't want on the undo stack
+
+if(undoEnabledPreviously){
+  Blockly.Events.setRecordUndo(true);
+}
+```
+
+## Disabling events
+
+Disabling events should be done with caution, since core Blockly and many plugins
+rely on events to update various parts of the workspace. Before disabling events, 
+consider whether you can accomplish your goal by [disabling undo/redo](#disabling-undoredo) 
+or [grouping events](#setting-an-event-group). 
+ 
+Disable events with [`disable`](/reference/namespaces/Events/functions/disable/). 
+All calls to `disable` must also call [`enable`](/reference/namespaces/Events/functions/enable/) 
+afterward to re-enable events. 
+
 ## Event types
 
 Refer to the [reference documentation](/reference/namespaces/Events)
-for information about individual events.
+for information about individual events. 
+
+Events are registrable and can be swapped out, so if you intend to fire an event 
+manually, it's best to fetch that event from the registry rather than hard coding 
+the event type. For example, do: 
+
+```js
+const newEvent = new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
+  // parameters for BLOCK_CHANGE event go here
+);
+```
+
+instead of: 
+
+```js
+const newEvent = new Blockly.Events.BlockChange(
+  // parameters for BLOCK_CHANGE event go here
+)
+```
 
 ## Demo
 
