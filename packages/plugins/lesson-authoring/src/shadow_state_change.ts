@@ -115,7 +115,9 @@ class ShadowStateChange extends Blockly.Events.BlockBase {
       console.warn("Can't set shadow state of non-existent connection");
       return;
     }
-    connection.setShadowState(forward ? this.newState : this.oldState);
+    // Fires a new event, as core's events do when run, so that listeners
+    // hear about undo and redo. Undo isn't recorded while undoing.
+    setShadowState(connection, forward ? this.newState : this.oldState);
   }
 }
 

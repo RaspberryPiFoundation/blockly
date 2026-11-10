@@ -10,9 +10,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-
-/** A state that has been turned off on a block. */
-export type Restriction = 'deletable' | 'editable' | 'movable';
+import type {BlockPermission} from './block_state_change';
 
 /** The width and height of each glyph, in workspace-scale units. */
 const GLYPH_SIZE = 16;
@@ -21,7 +19,7 @@ const GLYPH_SIZE = 16;
 const GLYPH_GAP = 2;
 
 /** Outlines of each glyph, drawn on a 16x16 grid. */
-const GLYPH_PATHS: Record<Restriction, string> = {
+const GLYPH_PATHS: Record<BlockPermission, string> = {
   deletable: 'M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.8 9h6.4l.8-9', // Trash can with slash
   editable: 'M3 13l.8-3 6.7-6.7 2.2 2.2L6 12.2zM9.3 4.5l2.2 2.2', // Pencil with slash
   movable: 'M5.5 2.5h5M6.5 2.5v3.8L4.5 9h7l-2-2.7V2.5M8 9v4.5', // Pin
@@ -64,7 +62,7 @@ export function getGlyphRowWidth(count: number): number {
  */
 export function drawGlyphRow(
   parent: SVGElement,
-  restrictions: Restriction[],
+  restrictions: BlockPermission[],
   height: number,
 ) {
   const top = (height - GLYPH_SIZE) / 2;

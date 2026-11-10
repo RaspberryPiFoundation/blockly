@@ -10,7 +10,7 @@
 
 import * as Blockly from 'blockly/core';
 import {drawGlyphRow, getGlyphRowWidth} from './block_state_glyphs';
-import type {Restriction} from './block_state_glyphs';
+import type {BlockPermission} from './block_state_change';
 import {pickContrastingColour} from './colour_contrast';
 
 /** The size of the icon in workspace-scale units. */
@@ -24,7 +24,7 @@ const FOCUS_RING_MARGIN = 3;
  * written, so it can be translated without the code changing its case or
  * combining it into a sentence. TODO: Translate these labels.
  */
-const LABELS: Record<Restriction, string> = {
+const LABELS: Record<BlockPermission, string> = {
   deletable: "Can't delete",
   editable: "Can't edit",
   movable: "Can't move",
@@ -50,8 +50,8 @@ Blockly.Css.register(`
  * @param block The block to read.
  * @returns The restrictions to show.
  */
-function getRestrictions(block: Blockly.Block): Restriction[] {
-  const restrictions: Restriction[] = [];
+function getRestrictions(block: Blockly.Block): BlockPermission[] {
+  const restrictions: BlockPermission[] = [];
   if (!block.isShadow() && !block.isOwnDeletable()) {
     restrictions.push('deletable');
   }
@@ -73,13 +73,13 @@ export class BlockStateIcon extends Blockly.icons.Icon {
   /** Places this icon after core's mutator, warning and comment icons. */
   static readonly WEIGHT = 4;
 
-  private restrictions: Restriction[];
+  private restrictions: BlockPermission[];
 
   /**
    * @param sourceBlock The block this icon is attached to.
    * @param restrictions The restrictions to show.
    */
-  constructor(sourceBlock: Blockly.Block, restrictions: Restriction[]) {
+  constructor(sourceBlock: Blockly.Block, restrictions: BlockPermission[]) {
     super(sourceBlock);
     this.restrictions = restrictions;
     this.updateTooltip();
@@ -146,7 +146,7 @@ export class BlockStateIcon extends Blockly.icons.Icon {
    *
    * @param restrictions The restrictions to show.
    */
-  setRestrictions(restrictions: Restriction[]) {
+  setRestrictions(restrictions: BlockPermission[]) {
     const sizeChanged = restrictions.length !== this.restrictions.length;
     this.restrictions = restrictions;
     this.updateTooltip();

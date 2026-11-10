@@ -14,58 +14,16 @@ import {refreshBlockStateIcon} from './block_state_icon';
 
 const BLOCK_STATE_CHANGE = 'lesson_block_state_change';
 
-/** A boolean block state that core changes without firing an event. */
-type BlockStateName = 'deletable' | 'editable' | 'movable';
+/**
+ * Something a block allows, which core turns on and off without firing an
+ * event.
+ */
+export type BlockPermission = 'deletable' | 'editable' | 'movable';
 
 interface BlockStateChangeJson extends Blockly.Events.BlockBaseJson {
-  element: BlockStateName;
+  element: BlockPermission;
   oldValue: boolean;
   newValue: boolean;
-}
-
-/**
- * Returns the value of one of a block's own boolean states.
- *
- * @param block The block to read.
- * @param state The state to read.
- * @returns The block's own value for the state.
- */
-function getBlockState(block: Blockly.Block, state: BlockStateName): boolean {
-  switch (state) {
-    case 'deletable':
-      return block.isOwnDeletable();
-    case 'editable':
-      return block.isOwnEditable();
-    case 'movable':
-      return block.isOwnMovable();
-  }
-}
-
-/**
- * Applies a value to one of a block's boolean states and updates the
- * block's state icon.
- *
- * @param block The block to change.
- * @param state The state to change.
- * @param value The new value of the state.
- */
-function applyBlockState(
-  block: Blockly.Block,
-  state: BlockStateName,
-  value: boolean,
-) {
-  switch (state) {
-    case 'deletable':
-      block.setDeletable(value);
-      break;
-    case 'editable':
-      block.setEditable(value);
-      break;
-    case 'movable':
-      block.setMovable(value);
-      break;
-  }
-  refreshBlockStateIcon(block);
 }
 
 /**
@@ -76,7 +34,7 @@ class BlockStateChange extends Blockly.Events.BlockBase {
   override type = BLOCK_STATE_CHANGE;
 
   /** The state that changed. Undefined for a blank event. */
-  element?: BlockStateName;
+  element?: BlockPermission;
 
   /** The value before the change. */
   oldValue: boolean;
@@ -92,7 +50,7 @@ class BlockStateChange extends Blockly.Events.BlockBase {
    */
   constructor(
     block?: Blockly.Block,
-    element?: BlockStateName,
+    element?: BlockPermission,
     oldValue = false,
     newValue = false,
   ) {
@@ -167,11 +125,9 @@ class BlockStateChange extends Blockly.Events.BlockBase {
       console.warn("Can't change state of non-existent block");
       return;
     }
-    applyBlockState(
-      block,
-      this.element,
-      forward ? this.newValue : this.oldValue,
-    );
+    // Fires a new event, as core's events do when run, so that listeners
+    // hear about undo and redo. Undo isn't recorded while undoing.
+    setBlockState(block, this.element, forward ? this.newValue : this.oldValue);
   }
 }
 
@@ -182,8 +138,8 @@ Blockly.registry.register(
 );
 
 /**
- * Sets a block's deletable, editable or movable state, firing an event so it
- * can be undone.
+ * Sets a block's deletable, editable or movable state and updates its state
+ * icon, firing an event so the change can be undone.
  *
  * @param block The block to change.
  * @param state The state to set.
@@ -191,11 +147,24 @@ Blockly.registry.register(
  */
 export function setBlockState(
   block: Blockly.Block,
-  state: BlockStateName,
+  state: BlockPermission,
   value: boolean,
 ) {
-  Blockly.Events.fire(
-    new BlockStateChange(block, state, getBlockState(block, state), value),
-  );
-  applyBlockState(block, state, value);
+  let oldValue: boolean;
+  switch (state) {
+    case 'deletable':
+      oldValue = block.isOwnDeletable();
+      block.setDeletable(value);
+      break;
+    case 'editable':
+      oldValue = block.isOwnEditable();
+      block.setEditable(value);
+      break;
+    case 'movable':
+      oldValue = block.isOwnMovable();
+      block.setMovable(value);
+      break;
+  }
+  Blockly.Events.fire(new BlockStateChange(block, state, oldValue, value));
+  refreshBlockStateIcon(block);
 }

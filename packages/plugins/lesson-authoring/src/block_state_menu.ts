@@ -494,3 +494,28 @@ export function registerLessonAuthoringContextMenuOptions() {
   registerMakeShadowsReal();
   registerRemoveShadows();
 }
+
+/** The IDs of every option that registerLessonAuthoringContextMenuOptions adds. */
+const MENU_ITEM_IDS = [
+  'lessonBlockDeletable',
+  'lessonAllBlocksDeletable',
+  'lessonBlockEditable',
+  'lessonAllBlocksEditable',
+  'lessonBlockMovable',
+  'lessonAllBlocksMovable',
+  'lessonMakeShadow',
+  'lessonMakeShadowsReal',
+  'lessonRemoveShadows',
+];
+
+/**
+ * Unregisters the lesson-authoring context menu options. Options that aren't
+ * registered are skipped, so this is safe to call more than once.
+ */
+export function unregisterLessonAuthoringContextMenuOptions() {
+  for (const id of MENU_ITEM_IDS) {
+    if (Blockly.ContextMenuRegistry.registry.getItem(id)) {
+      Blockly.ContextMenuRegistry.registry.unregister(id);
+    }
+  }
+}
