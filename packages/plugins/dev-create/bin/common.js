@@ -1,11 +1,11 @@
-const fs = require('fs-extra');
+import fs from 'fs-extra';
 
 /**
  * Create package directory if it doesn't exist yet.
  * Throws if the directory exists and isn't the current directory.
  * @param {string} path Path at which to create directory.
  */
-exports.checkAndCreateDir = function (path) {
+export function checkAndCreateDir(path) {
   const root = process.cwd();
   // If we're already in the desired directory, don't need to create it.
   if (path == root) {
@@ -20,4 +20,4 @@ exports.checkAndCreateDir = function (path) {
     // Create the directory.
     fs.mkdirSync(path);
   }
-};
+}

@@ -10,7 +10,7 @@
 
 import * as Blockly from 'blockly';
 import {createPlayground} from '@blockly/dev-tools';
-import '../src/index';
+import '../src/index.js';
 
 // TODO: Edit list of blocks.
 const allBlocks = ['block_template'];
@@ -42,9 +42,9 @@ document.addEventListener('DOMContentLoaded', function () {
       }),
     },
   };
-  createPlayground(
-    document.getElementById('root'),
-    createWorkspace,
-    defaultOptions,
-  );
+  const rootElement = document.getElementById('root');
+  if (!rootElement) {
+    throw new Error(`div with id 'root' not found`);
+  }
+  createPlayground(rootElement, createWorkspace, defaultOptions);
 });
