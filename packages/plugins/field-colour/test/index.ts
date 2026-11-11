@@ -16,7 +16,7 @@ import {pythonGenerator} from 'blockly/python';
 import {luaGenerator} from 'blockly/lua';
 
 import {createPlayground} from '@blockly/dev-tools';
-import {installAllBlocks as installColourBlocks} from '../src/index';
+import {installAllBlocks as installColourBlocks} from '../src/index.js';
 
 /**
  * An array of blocks that are defined only for the purposes of
