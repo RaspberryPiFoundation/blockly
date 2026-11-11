@@ -421,6 +421,7 @@ export default defineConfig(
       'packages/plugins/dev-scripts/**',
       'packages/plugins/dev-tools/**',
       'packages/plugins/disable-top-blocks/**',
+      'packages/plugins/field-angle/**',
       'packages/plugins/field-colour/**',
       'packages/plugins/field-colour-hsv-sliders/**',
       'packages/plugins/field-grid-dropdown/**',

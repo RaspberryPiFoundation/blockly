@@ -10,7 +10,7 @@
 
 import * as Blockly from 'blockly';
 import {createPlayground} from '@blockly/dev-tools';
-import {registerFieldAngle} from '../src/index';
+import {registerFieldAngle} from '../src/index.js';
 
 /**
  * An array of blocks that are defined only for the purposes of
