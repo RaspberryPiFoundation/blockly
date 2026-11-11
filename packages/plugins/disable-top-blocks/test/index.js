@@ -10,7 +10,7 @@
 
 import * as Blockly from 'blockly';
 import {toolboxCategories, createPlayground} from '@blockly/dev-tools';
-import {DisableTopBlocks} from '../src/index';
+import {DisableTopBlocks} from '../src/index.js';
 
 /**
  * Create a workspace.

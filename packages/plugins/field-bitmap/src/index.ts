@@ -4,4 +4,4 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './field-bitmap';
+export * from './field-bitmap.js';

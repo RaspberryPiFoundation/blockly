@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const {testHelpers} = require('@blockly/dev-tools');
-const {assert} = require('chai');
-const {FieldBitmap, DEFAULT_HEIGHT, DEFAULT_WIDTH} = require('../src/index');
+import {testHelpers} from '@blockly/dev-tools';
+import {assert} from 'chai';
+import {FieldBitmap, DEFAULT_HEIGHT, DEFAULT_WIDTH} from '../src/index.js';
 
 /**
  * Helper method to reformat raw test cases to a format that the

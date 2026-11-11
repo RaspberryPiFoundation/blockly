@@ -10,7 +10,7 @@
 
 import * as Blockly from 'blockly';
 import {generateFieldTestBlocks, createPlayground} from '@blockly/dev-tools';
-import '../src/index';
+import '../src/index.js';
 
 const toolbox = generateFieldTestBlocks('field_template', [
   {
@@ -39,9 +39,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const defaultOptions = {
     toolbox,
   };
-  createPlayground(
-    document.getElementById('root'),
-    createWorkspace,
-    defaultOptions,
-  );
+  const rootElement = document.getElementById('root');
+  if (!rootElement) {
+    throw new Error(`div with id 'root' not found`);
+  }
+  createPlayground(rootElement, createWorkspace, defaultOptions);
 });

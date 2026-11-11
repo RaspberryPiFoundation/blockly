@@ -10,17 +10,19 @@
  * templates.
  */
 
-'use strict';
-
-const commander = require('commander');
-const scriptPackageJson = require('../package.json');
-const {createApp} = require('./app');
-const {createPlugin} = require('./plugin');
+import {Command} from 'commander';
+import fs from 'fs-extra';
+import path from 'path';
+import {createApp} from './app.js';
+import {createPlugin} from './plugin.js';
 
 const pluginTypes = ['plugin', 'field', 'block', 'theme'];
+const scriptPackageJson = JSON.parse(
+  fs.readFileSync(path.join(import.meta.dirname, '../package.json'), 'utf8'),
+);
 const scriptName = scriptPackageJson.name;
 
-const program = new commander.Command(scriptName);
+const program = new Command(scriptName);
 
 program
   .command('plugin', {isDefault: true})

@@ -4,4 +4,4 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './field_angle';
+export * from './field_angle.js';

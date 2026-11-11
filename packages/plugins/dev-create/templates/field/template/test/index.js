@@ -10,7 +10,7 @@
 
 import * as Blockly from 'blockly';
 import {generateFieldTestBlocks, createPlayground} from '@blockly/dev-tools';
-import '../src/index';
+import '../src/index.js';
 
 const toolbox = generateFieldTestBlocks('field_template', [
   {
