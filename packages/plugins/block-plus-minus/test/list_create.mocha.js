@@ -114,7 +114,7 @@ suite('List create block', function () {
         testCases: [
           {
             title: 'Trivial',
-            expectedCode: 'array(null, null, null)',
+            expectedCode: 'new ListObject(array(null, null, null))',
             createBlock: trivialCreateBlock,
           },
         ],

@@ -88,6 +88,8 @@ suite('Procedure blocks', function () {
           };
         };
 
+        phpGenerator.setOutputOpeningTag(false);
+
         /**
          * Test suites for code generation test.
          * @type {Array<CodeGenerationTestSuite>}

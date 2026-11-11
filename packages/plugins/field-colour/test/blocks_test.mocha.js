@@ -186,6 +186,7 @@ function checkResult(suffix, generated) {
 
 suite('Colour Block Generators', function () {
   suiteSetup(function () {
+    phpGenerator.setOutputOpeningTag(false);
     installAllBlocks({
       javascript: javascriptGenerator,
       dart: dartGenerator,
