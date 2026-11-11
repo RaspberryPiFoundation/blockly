@@ -136,8 +136,8 @@ and causing side effects.
 You may need to to group related events so that your user's actions can be 
 properly undone. 
 
-For example, consider the "Clean up Blocks" item on the context menu. It takes 
-one action from the user to clean up the blocks. However, the process of 
+For example, consider the "Clean up Blocks" item on the [context menu](guides/configure/context-menus/). 
+It takes one action from the user to clean up the blocks. However, the process of 
 cleaning up the blocks involves moving every block on the workspace into a 
 column. In practice, Blockly groups these events so that an undo action will 
 undo all of these move events at once, rather than one at a time. 
@@ -204,9 +204,9 @@ afterward to re-enable events.
 Refer to the [reference documentation](/reference/namespaces/Events)
 for information about individual events. 
 
-Events are registrable and can be swapped out, so if you intend to fire an event 
-manually, it's best to fetch that event from the registry rather than hard coding 
-the event type. For example, do: 
+Events are registrable and can be swapped out, so if you intend to [fire an event](/reference/namespaces/Events/functions/fire/), 
+it's best to fetch that event from the registry rather than hard-coding the 
+event type. For example, do: 
 
 ```js
 const newEvent = new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
