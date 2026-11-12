@@ -425,6 +425,7 @@ export default defineConfig(
       'packages/plugins/field-grid-dropdown/**',
       'packages/plugins/field-multilineinput/**',
       'packages/plugins/field-slider/**',
+      'packages/plugins/fixed-edges/**',
       'packages/plugins/modal/**',
       'packages/plugins/theme-modern/**',
       'packages/plugins/typed-variable-modal/**',
