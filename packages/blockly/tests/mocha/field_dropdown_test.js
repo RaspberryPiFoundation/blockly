@@ -682,4 +682,79 @@ suite('Dropdown Fields', function () {
       });
     });
   });
+
+  suite('With a custom parent container', function () {
+    const containers = [
+      {name: 'document.body', create: () => document.body},
+      {
+        name: 'an overlay div outside the workspace',
+        create: () => {
+          const overlay = document.createElement('div');
+          document.body.appendChild(overlay);
+          return overlay;
+        },
+      },
+    ];
+
+    for (const {name, create} of containers) {
+      suite(name, function () {
+        setup(function () {
+          this.parentContainer = create();
+          Blockly.common.setParentContainer(this.parentContainer);
+          this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
+          // The workspace needs to be visible for focus-specific tests.
+          document.getElementById('blocklyDiv').style.visibility = 'visible';
+
+          this.block = this.workspace.newBlock('logic_boolean');
+          this.block.initSvg();
+          this.block.render();
+          this.field = this.block.getField('BOOL');
+        });
+
+        teardown(function () {
+          Blockly.DropDownDiv.hideWithoutAnimation();
+          workspaceTeardown.call(this, this.workspace);
+          document.getElementById('blocklyDiv').style.visibility = 'hidden';
+          Blockly.common.setParentContainer(null);
+          if (this.parentContainer !== document.body) {
+            // Move Blockly's shared pop-up divs back before removing the overlay.
+            document.body.append(...this.parentContainer.children);
+            this.parentContainer.remove();
+          }
+        });
+
+        test('Dropdown opens and stays open', function () {
+          // Clicking a field focuses its block before the editor opens.
+          Blockly.getFocusManager().focusNode(this.block);
+          assert.strictEqual(
+            document.activeElement,
+            this.block.getFocusableElement(),
+          );
+
+          assert.doesNotThrow(() => this.field.showEditor());
+
+          const dropDownDiv = document.querySelector('.blocklyDropDownDiv');
+          assert.strictEqual(dropDownDiv.parentElement, this.parentContainer);
+          assert.isNotNull(this.field.menu_, 'Menu was disposed while opening');
+          assert.strictEqual(
+            dropDownDiv.style.opacity,
+            '1',
+            'Drop-down div started hiding while opening',
+          );
+        });
+
+        test('Focusing an element outside of Blockly closes the dropdown', function () {
+          Blockly.getFocusManager().focusNode(this.block);
+          this.field.showEditor();
+          const outsideButton = document.createElement('button');
+          document.body.appendChild(outsideButton);
+
+          outsideButton.focus();
+
+          assert.isNull(this.field.menu_);
+          outsideButton.remove();
+        });
+      });
+    }
+  });
 });

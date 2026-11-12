@@ -88,31 +88,56 @@ export class FocusManager {
   private isUpdatingFocusedNode: boolean = false;
 
   /**
-   * Root element in which popovers (WidgetDiv, DropDownDiv) currently live.
+   * Root element of the active workspace (its injection div).
    */
   private popoverFocusRoot?: HTMLElement;
 
   /**
-   * Set of callbacks to invoke if the popover focus root loses focus.
+   * Elements that hold popovers (WidgetDiv, DropDownDiv). These may live
+   * outside of the popover focus root, e.g. when a custom parent container is
+   * set.
+   */
+  private popoverElements: Set<Element> = new Set();
+
+  /**
+   * Set of callbacks to invoke if focus moves outside of the popover focus
+   * root and all popover elements.
    */
   private popoverFocusLossHandlers: Set<() => void> = new Set();
 
   /**
-   * Handler for focusout in the popover focus root that selectively
-   * invokes the popover focus loss handlers if focus has truly transitioned
-   * outside of the focus root, and not e.g. to a different popover.
+   * Returns whether the given node is within the popover focus root or one of
+   * the registered popover elements.
+   *
+   * @param node The node to check.
+   * @returns True if the node is within the workspace or a popover.
    */
-  private popoverFocusOutHandler = (e: FocusEvent) => {
-    const target = e.relatedTarget;
+  private isInPopoverScope(node: EventTarget | null): boolean {
+    if (!(node instanceof Node)) return false;
+    if (this.popoverFocusRoot?.contains(node)) return true;
+    for (const element of this.popoverElements) {
+      if (element.contains(node)) return true;
+    }
+    return false;
+  }
+
+  /**
+   * Invokes the popover focus loss handlers if focus has truly transitioned
+   * from the workspace or a popover to somewhere outside of all of them, and
+   * not e.g. from the workspace into a popover or between popovers.
+   *
+   * @param e The focusout event.
+   */
+  private handlePopoverFocusOut(e: FocusEvent) {
     if (
-      target === null ||
-      (target instanceof Node && !this.popoverFocusRoot?.contains(target))
+      this.isInPopoverScope(e.target) &&
+      !this.isInPopoverScope(e.relatedTarget)
     ) {
       for (const handler of this.popoverFocusLossHandlers) {
         handler();
       }
     }
-  };
+  }
 
   constructor(
     addGlobalEventListener: (type: string, listener: EventListener) => void,
@@ -165,6 +190,9 @@ export class FocusManager {
     });
     addGlobalEventListener('focusout', (event) => {
       if (!(event instanceof FocusEvent)) return;
+
+      // Let popovers react to losing focus before the focused node is updated.
+      this.handlePopoverFocusOut(event);
 
       // When something loses focus, it seems that document.activeElement may
       // not necessarily be correct. Instead, use relatedTarget.
@@ -707,29 +735,35 @@ export class FocusManager {
   }
 
   /**
-   * Sets the current popover focus root. Generally this is active
-   * workspace's injection div or the explicitly specified parent container for
-   * the WidgetDiv, DropDownDiv, etc.
+   * Sets the current popover focus root. This is the active workspace's
+   * injection div. Focus moving within it, or within a registered popover
+   * element, does not count as popovers losing focus.
    *
    * @internal
-   * @param newRoot The new element that contains all popovers.
+   * @param newRoot The root element of the active workspace.
    */
   setPopoverFocusRoot(newRoot: HTMLElement) {
-    this.popoverFocusRoot?.removeEventListener(
-      'focusout',
-      this.popoverFocusOutHandler,
-    );
     this.popoverFocusRoot = newRoot;
-    this.popoverFocusRoot.addEventListener(
-      'focusout',
-      this.popoverFocusOutHandler,
-    );
   }
 
   /**
-   * Registers a callback to be invoked if the popover focus root loses
-   * focus. This should only be called by popovers that need to react to
-   * focus changes by e.g. hiding themselves and resigning ephemeral focus.
+   * Registers an element that holds a popover, such as the WidgetDiv or
+   * DropDownDiv. Focus moving into or within it does not count as popovers
+   * losing focus, even if it lives outside of the popover focus root (e.g.
+   * when a custom parent container is set).
+   *
+   * @internal
+   * @param element The popover element.
+   */
+  registerPopoverElement(element: Element) {
+    this.popoverElements.add(element);
+  }
+
+  /**
+   * Registers a callback to be invoked if focus moves outside of the popover
+   * focus root and all popover elements. This should only be called by
+   * popovers that need to react to focus changes by e.g. hiding themselves and
+   * resigning ephemeral focus.
    *
    * @internal
    * @param handler A callback function.
