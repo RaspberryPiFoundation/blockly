@@ -7,7 +7,6 @@
 /**
  * @fileoverview Utilities for handling versions in migrations.
  */
-'use strict';
 
 import semver from 'semver';
 

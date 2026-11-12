@@ -421,6 +421,13 @@ export default defineConfig(
       'packages/plugins/field-colour/**',
       'packages/plugins/field-colour-hsv-sliders/**',
       'packages/plugins/field-grid-dropdown/**',
+<<<<<<< Updated upstream
+=======
+      'packages/plugins/field-multilineinput/**',
+      'packages/plugins/field-slider/**',
+      'packages/plugins/fixed-edges/**',
+      'packages/plugins/migration/**',
+>>>>>>> Stashed changes
       'packages/plugins/modal/**',
       'packages/plugins/theme-modern/**',
       'packages/plugins/typed-variable-modal/**',

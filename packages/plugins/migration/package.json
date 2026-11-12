@@ -3,6 +3,9 @@
   "version": "13.4.0",
   "description": "A collection of tools that help with migrating apps using Blockly to new versions of BLockly.",
   "bin": "./bin/migrate.js",
+  "engines": {
+    "node": ">=24"
+  },
   "author": "Blockly Team",
   "scripts": {
     "test": "mocha --ui tdd"
@@ -28,7 +31,6 @@
     "chalk": "^6.0.1",
     "commander": "^15.0.0",
     "json5": "^2.2.3",
-    "node-fetch": "^3.3.2",
     "semver": "^7.8.4"
   },
   "publishConfig": {

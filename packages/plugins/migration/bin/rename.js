@@ -8,10 +8,8 @@
  * @fileoverview A script that automatically upgrades pieces of the Blockly API
  *     that have been renamed by modifying developers' local files.
  */
-'use strict';
 
 import {createSubCommand, extractRequiredInfo} from './command.js';
-import fetch from 'node-fetch';
 import {readFileSync, statSync, writeFileSync} from 'fs';
 import * as versionUtils from './versions.js';
 import JSON5 from 'json5';
@@ -90,7 +88,10 @@ export class Renamer {
    * @param {string} newVersion The version to migrate to.
    */
   constructor(database, currVersion, newVersion) {
-    /** @private @const {!Array<!VersionRenamer>} */
+    /**
+     * @private
+     * @const {!Array<!VersionRenamer>}
+     */
     this.versionRenamers_ = Renamer.calculateRenamings(
       database,
       currVersion,
@@ -149,7 +150,8 @@ class VersionRenamer {
   constructor(entry) {
     /**
      * List of pre-compiled renamings.
-     * @private @const {
+     * @private
+     * @const {
      *     !Array<{old: string, new: ?string, get: ?string, set: ?string}>}
      */
     this.renamings_ = [];
