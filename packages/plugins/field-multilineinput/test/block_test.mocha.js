@@ -14,7 +14,7 @@ import {dartGenerator} from 'blockly/dart';
 import {phpGenerator} from 'blockly/php';
 import {pythonGenerator} from 'blockly/python';
 import {luaGenerator} from 'blockly/lua';
-import {installAllBlocks} from '../src/index';
+import {installAllBlocks} from '../src/index.js';
 import {assert} from 'chai';
 
 const blockJson = {

@@ -15,7 +15,7 @@ import {phpGenerator} from 'blockly/php';
 import {pythonGenerator} from 'blockly/python';
 import {luaGenerator} from 'blockly/lua';
 import {createPlayground} from '@blockly/dev-tools';
-import {FieldMultilineInput, textMultiline} from '../src/index';
+import {FieldMultilineInput, textMultiline} from '../src/index.js';
 
 /**
  * An array of blocks that are defined only for the purposes of

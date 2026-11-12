@@ -6,8 +6,8 @@
 
 import {assert} from 'chai';
 import {testHelpers} from '@blockly/dev-tools';
-import {FieldDate} from '../src/index';
-import {getLocaleDateString} from '../src/utils';
+import {FieldDate} from '../src/index.js';
+import {getLocaleDateString} from '../src/utils.js';
 
 const {
   assertFieldValue,

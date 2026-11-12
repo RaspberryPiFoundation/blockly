@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const {assert} = require('chai');
-const {assertFieldValue} = require('@blockly/dev-tools').testHelpers;
-const {FieldSlider} = require('../src/index');
+import {assert} from 'chai';
+import {testHelpers} from '@blockly/dev-tools';
+import {FieldSlider} from '../src/index.js';
 
 /**
  * Assert the slider field options.
@@ -23,7 +23,7 @@ function assertSliderField(
   expectedPrecision,
   expectedValue,
 ) {
-  assertFieldValue(sliderField, expectedValue);
+  testHelpers.assertFieldValue(sliderField, expectedValue);
   assert.equal(sliderField.getMin(), expectedMin, 'Min');
   assert.equal(sliderField.getMax(), expectedMax, 'Max');
   assert.equal(sliderField.getPrecision(), expectedPrecision, 'Precision');
@@ -36,7 +36,4 @@ function assertSliderFieldDefault(sliderField) {
   assertSliderField(sliderField, -Infinity, Infinity, 0, 0);
 }
 
-module.exports = {
-  assertSliderField,
-  assertSliderFieldDefault,
-};
+export {assertSliderField, assertSliderFieldDefault};
