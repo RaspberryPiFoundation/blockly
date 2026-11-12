@@ -10,7 +10,7 @@
 
 import * as Blockly from 'blockly';
 import {createPlayground} from '@blockly/dev-tools';
-import './field_dependent_dropdown_test_block';
+import './field_dependent_dropdown_test_block.js';
 
 const toolbox: Blockly.utils.toolbox.ToolboxDefinition = {
   kind: 'flyoutToolbox',

@@ -10,7 +10,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {DependentDropdownOptionsChange} from './dependent_dropdown_options_change';
+import {DependentDropdownOptionsChange} from './dependent_dropdown_options_change.js';
 
 /** The type of the mapping from parent value to child options. */
 export interface ChildOptionMapping {
