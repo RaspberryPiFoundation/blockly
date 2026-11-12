@@ -4,14 +4,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const {testHelpers} = require('@blockly/dev-tools');
-const {
+import jsdomGlobal from 'jsdom-global';
+import {assert} from 'chai';
+import sinon from 'sinon';
+import * as Blockly from 'blockly';
+import {testHelpers} from '@blockly/dev-tools';
+import {
   FieldMultilineInput,
   registerFieldMultilineInput,
-} = require('../src/index');
-const Blockly = require('blockly');
-const {assert} = require('chai');
-const sinon = require('sinon');
+} from '../src/index.js';
 
 const {
   assertFieldValue,
@@ -150,7 +151,7 @@ suite('FieldMultilineInput', function () {
     };
 
     setup(function () {
-      this.jsdomCleanup = require('jsdom-global')(
+      this.jsdomCleanup = jsdomGlobal(
         '<!DOCTYPE html><div id="blocklyDiv"></div>',
       );
       // See https://github.com/RaspberryPiFoundation/blockly-samples/issues/2528.
