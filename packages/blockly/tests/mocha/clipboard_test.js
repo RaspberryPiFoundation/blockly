@@ -216,6 +216,143 @@ suite('Clipboard', function () {
           new Blockly.utils.Coordinate(94, 125),
         );
       });
+
+      test('pasting a nested block with children moves the copy, not the original stack', function () {
+        Blockly.serialization.workspaces.load(
+          {
+            'blocks': {
+              'languageVersion': 0,
+              'blocks': [
+                {
+                  'type': 'controls_repeat',
+                  'id': 'outerId',
+                  'x': 38,
+                  'y': 13,
+                  'inputs': {
+                    'DO': {
+                      'block': {
+                        'type': 'controls_repeat',
+                        'id': 'innerId',
+                        'inputs': {
+                          'DO': {'block': {'type': 'text_print'}},
+                        },
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          this.workspace,
+        );
+        this.clock.runAll(); // Update the connection DB.
+        const outer = this.workspace.getBlockById('outerId');
+        const inner = this.workspace.getBlockById('innerId');
+        const outerXY = outer.getRelativeToSurfaceXY();
+        const innerXY = inner.getRelativeToSurfaceXY();
+
+        const newBlock = Blockly.clipboard.paste(
+          inner.toCopyData(),
+          this.workspace,
+        );
+        this.clock.runAll();
+
+        assert.deepEqual(outer.getRelativeToSurfaceXY(), outerXY);
+        // One step down and to the right would put the copy's previous
+        // connection within the snap radius of the original print block, so
+        // the copy is moved two steps.
+        assert.deepEqual(
+          newBlock.getRelativeToSurfaceXY(),
+          new Blockly.utils.Coordinate(
+            innerXY.x + Blockly.config.snapRadius * 2,
+            innerXY.y + Blockly.config.snapRadius * 4,
+          ),
+        );
+      });
+
+      test('pasted blocks are placed using their rendered connection positions', function () {
+        const target = Blockly.serialization.blocks.append(
+          {'type': 'text_print', 'x': 300, 'y': 300},
+          this.workspace,
+        );
+        const source = Blockly.serialization.blocks.append(
+          {'type': 'controls_repeat', 'x': 600, 'y': 600},
+          this.workspace,
+        );
+        this.clock.runAll(); // Update the connection DB.
+        const targetXY = target.getRelativeToSurfaceXY();
+        const sourceXY = source.getRelativeToSurfaceXY();
+        // Paste so that the copy's next connection, at the bottom of the
+        // block, lands on the target's previous connection.
+        const coordinate = new Blockly.utils.Coordinate(
+          target.previousConnection.x - (source.nextConnection.x - sourceXY.x),
+          target.previousConnection.y - (source.nextConnection.y - sourceXY.y),
+        );
+
+        const newBlock = Blockly.clipboard.paste(
+          source.toCopyData(),
+          this.workspace,
+          coordinate,
+        );
+        this.clock.runAll();
+
+        assert.notDeepEqual(newBlock.getRelativeToSurfaceXY(), coordinate);
+        assert.deepEqual(target.getRelativeToSurfaceXY(), targetXY);
+      });
+
+      test('pasted blocks are bumped away from neighbours they cannot connect to', function () {
+        const arithmetic = Blockly.serialization.blocks.append(
+          {'type': 'math_arithmetic', 'x': 38, 'y': 13},
+          this.workspace,
+        );
+        const text = Blockly.serialization.blocks.append(
+          {'type': 'text', 'x': 300, 'y': 300},
+          this.workspace,
+        );
+        this.clock.runAll(); // Update the connection DB.
+        // A text block cannot connect to the arithmetic block's number input,
+        // so the copy is placed right next to it and then has to be bumped.
+        const input = arithmetic.getInput('A').connection;
+
+        const newBlock = Blockly.clipboard.paste(
+          text.toCopyData(),
+          this.workspace,
+          new Blockly.utils.Coordinate(input.x, input.y),
+        );
+        this.clock.runAll();
+
+        assert.isEmpty(
+          newBlock.outputConnection.neighbours(Blockly.config.snapRadius),
+        );
+      });
+
+      test('pasting still bumps blocks whose render was queued before the paste', function () {
+        const arithmetic = Blockly.serialization.blocks.append(
+          {'type': 'math_arithmetic', 'x': 38, 'y': 13},
+          this.workspace,
+        );
+        const number = Blockly.serialization.blocks.append(
+          {'type': 'math_number', 'x': 300, 'y': 300},
+          this.workspace,
+        );
+        const source = Blockly.serialization.blocks.append(
+          {'type': 'controls_if', 'x': 600, 'y': 600},
+          this.workspace,
+        );
+        this.clock.runAll(); // Update the connection DB.
+        // Line the number block up with the arithmetic block's input without
+        // connecting it, and queue a render, which will bump it.
+        const input = arithmetic.getInput('A').connection;
+        number.moveTo(new Blockly.utils.Coordinate(input.x, input.y));
+        number.queueRender();
+
+        Blockly.clipboard.paste(source.toCopyData(), this.workspace);
+        this.clock.runAll();
+
+        assert.isEmpty(
+          number.outputConnection.neighbours(Blockly.config.snapRadius),
+        );
+      });
     });
   });
 

@@ -86,12 +86,18 @@ export function finishQueuedRenders(): Promise<void> {
  * (such as rendering icons).
  *
  * @param workspace If provided, only rerender blocks in this workspace.
+ * @param param1 bumpNeighbours: If false, the rendered blocks are not bumped
+ *     away from their neighbours. The caller is then responsible for bumping
+ *     them. True by default.
  *
  * @internal
  */
-export function triggerQueuedRenders(workspace?: WorkspaceSvg) {
+export function triggerQueuedRenders(
+  workspace?: WorkspaceSvg,
+  {bumpNeighbours = true}: {bumpNeighbours?: boolean} = {},
+) {
   if (!workspace) window.cancelAnimationFrame(animationRequestId);
-  doRenders(workspace);
+  doRenders(workspace, bumpNeighbours);
   if (!workspace && afterRendersResolver) afterRendersResolver();
 }
 
@@ -128,8 +134,10 @@ function queueBlock(block: BlockSvg) {
  * Rerenders all of the blocks in the queue.
  *
  * @param workspace If provided, only rerender blocks in this workspace.
+ * @param bumpNeighbours Whether to bump the rendered blocks away from their
+ *     neighbours.
  */
-function doRenders(workspace?: WorkspaceSvg) {
+function doRenders(workspace?: WorkspaceSvg, bumpNeighbours = true) {
   const workspaces = workspace
     ? new Set([workspace])
     : new Set([...rootBlocks].map((block) => block.workspace));
@@ -150,7 +158,7 @@ function doRenders(workspace?: WorkspaceSvg) {
   for (const workspace of workspaces) {
     workspace.connectionDBList.forEach((db) => db?.endBulkUpdates());
   }
-  for (const block of blocks) {
+  for (const block of bumpNeighbours ? blocks : []) {
     const oldGroup = eventUtils.getGroup();
     const oldRecordUndo = eventUtils.getRecordUndo();
     const context = eventContexts.get(block);
