@@ -255,7 +255,6 @@ suite('Clipboard', function () {
           inner.toCopyData(),
           this.workspace,
         );
-        this.clock.runAll();
 
         assert.deepEqual(outer.getRelativeToSurfaceXY(), outerXY);
         // One step down and to the right would put the copy's previous
@@ -294,7 +293,6 @@ suite('Clipboard', function () {
           this.workspace,
           coordinate,
         );
-        this.clock.runAll();
 
         assert.notDeepEqual(newBlock.getRelativeToSurfaceXY(), coordinate);
         assert.deepEqual(target.getRelativeToSurfaceXY(), targetXY);
@@ -319,7 +317,6 @@ suite('Clipboard', function () {
           this.workspace,
           new Blockly.utils.Coordinate(input.x, input.y),
         );
-        this.clock.runAll();
 
         assert.isEmpty(
           newBlock.outputConnection.neighbours(Blockly.config.snapRadius),
@@ -347,7 +344,6 @@ suite('Clipboard', function () {
         number.queueRender();
 
         Blockly.clipboard.paste(source.toCopyData(), this.workspace);
-        this.clock.runAll();
 
         assert.isEmpty(
           number.outputConnection.neighbours(Blockly.config.snapRadius),

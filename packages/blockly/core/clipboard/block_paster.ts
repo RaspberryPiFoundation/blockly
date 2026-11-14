@@ -34,8 +34,9 @@ export class BlockPaster implements IPaster<BlockCopyData, BlockSvg> {
       copyData.blockState['y'] = coordinate.y;
     }
 
-    // The algorithm for deciding where to paste a block depends on the starting
-    // position of the copied block, so we'll pass those coordinates along.
+    // After appending the block to the workspace, it will be bumped from its neighbors
+    // However, the algorithm for deciding where to paste a block depends on
+    // the starting position of the copied block, so we'll pass those coordinates along
     const initialCoordinates =
       coordinate ??
       new Coordinate(
@@ -46,8 +47,6 @@ export class BlockPaster implements IPaster<BlockCopyData, BlockSvg> {
     eventUtils.disable();
     let block;
     try {
-      // Finish any renders queued before the paste, so that the render below
-      // only covers the pasted block.
       renderManagement.triggerQueuedRenders();
       block = appendInternal(copyData.blockState, workspace) as BlockSvg;
       // The block has to be rendered for its connections to be in the right

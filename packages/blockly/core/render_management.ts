@@ -158,19 +158,21 @@ function doRenders(workspace?: WorkspaceSvg, bumpNeighbours = true) {
   for (const workspace of workspaces) {
     workspace.connectionDBList.forEach((db) => db?.endBulkUpdates());
   }
-  for (const block of bumpNeighbours ? blocks : []) {
-    const oldGroup = eventUtils.getGroup();
-    const oldRecordUndo = eventUtils.getRecordUndo();
-    const context = eventContexts.get(block);
-    if (context) {
-      if (context.group) eventUtils.setGroup(context.group);
-      eventUtils.setRecordUndo(context.recordUndo);
+  if (bumpNeighbours) {
+    for (const block of blocks) {
+      const oldGroup = eventUtils.getGroup();
+      const oldRecordUndo = eventUtils.getRecordUndo();
+      const context = eventContexts.get(block);
+      if (context) {
+        if (context.group) eventUtils.setGroup(context.group);
+        eventUtils.setRecordUndo(context.recordUndo);
+      }
+
+      block.bumpNeighbours();
+
+      eventUtils.setGroup(oldGroup);
+      eventUtils.setRecordUndo(oldRecordUndo);
     }
-
-    block.bumpNeighbours();
-
-    eventUtils.setGroup(oldGroup);
-    eventUtils.setRecordUndo(oldRecordUndo);
   }
 
   for (const block of blocks) {
