@@ -433,6 +433,7 @@ export default defineConfig(
       'packages/plugins/fixed-edges/**',
       'packages/plugins/migration/**',
       'packages/plugins/modal/**',
+      'packages/plugins/sample-app/**',
       'packages/plugins/theme-modern/**',
       'packages/plugins/typed-variable-modal/**',
       'packages/plugins/theme-dark/**',
