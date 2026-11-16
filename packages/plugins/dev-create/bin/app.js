@@ -1,10 +1,10 @@
-const chalk = require('chalk').default;
-const fs = require('fs-extra');
-const path = require('path');
-const execSync = require('child_process').execSync;
-const {checkAndCreateDir} = require('./common');
+import chalk from 'chalk';
+import fs from 'fs-extra';
+import path from 'path';
+import {execSync} from 'child_process';
+import {checkAndCreateDir} from './common.js';
 
-exports.createApp = function (name, options) {
+export function createApp(name, options) {
   const root = process.cwd();
   const dir = options.dir ?? name;
   const appPath = path.join(root, dir);
@@ -25,16 +25,21 @@ exports.createApp = function (name, options) {
     'package-lock.json',
     'package.json',
   ].map((file) => {
-    return path.resolve(__dirname, sampleDir, file);
+    return path.resolve(import.meta.dirname, sampleDir, file);
   });
-  fs.copySync(path.resolve(__dirname, sampleDir), appPath, {
+  fs.copySync(path.resolve(import.meta.dirname, sampleDir), appPath, {
     filter(src) {
       return !excludes.includes(src);
     },
   });
 
   // Create package.json file for app.
-  const templateJson = require(path.join(sampleDir, 'package.json'));
+  const templateJson = JSON.parse(
+    fs.readFileSync(
+      path.resolve(import.meta.dirname, sampleDir, 'package.json'),
+      'utf8',
+    ),
+  );
   const packageJson = {
     ...templateJson,
     name: name,
@@ -63,4 +68,4 @@ exports.createApp = function (name, options) {
   }
   console.log(chalk.blue('  npm start'));
   console.log('See README.md for more commands and information.');
-};
+}

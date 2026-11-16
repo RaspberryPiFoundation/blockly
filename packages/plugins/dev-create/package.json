@@ -3,6 +3,10 @@
   "version": "13.4.0",
   "description": "A tool for creating a Blockly plugin based on a template.",
   "bin": "./bin/create.js",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
   "author": "Blockly Team",
   "keywords": [
     "blockly",

@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const {testHelpers} = require('@blockly/dev-tools');
-const {FieldAngle, registerFieldAngle} = require('../src/index');
-const {assert} = require('chai');
+import {testHelpers} from '@blockly/dev-tools';
+import {FieldAngle, registerFieldAngle} from '../src/index.js';
+import {assert} from 'chai';
 
 const {
   assertFieldValue,

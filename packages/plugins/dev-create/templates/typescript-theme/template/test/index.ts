@@ -10,7 +10,7 @@
 
 import * as Blockly from 'blockly';
 import {toolboxCategories, createPlayground} from '@blockly/dev-tools';
-import Theme from '../src/index';
+import Theme from '../src/index.js';
 
 /**
  * Create a workspace.
@@ -32,9 +32,9 @@ document.addEventListener('DOMContentLoaded', function () {
     toolbox: toolboxCategories,
     theme: Theme,
   };
-  createPlayground(
-    document.getElementById('root'),
-    createWorkspace,
-    defaultOptions,
-  );
+  const rootElement = document.getElementById('root');
+  if (!rootElement) {
+    throw new Error(`div with id 'root' not found`);
+  }
+  createPlayground(rootElement, createWorkspace, defaultOptions);
 });

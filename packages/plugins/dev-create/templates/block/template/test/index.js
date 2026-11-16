@@ -10,7 +10,7 @@
 
 import * as Blockly from 'blockly';
 import {createPlayground} from '@blockly/dev-tools';
-import '../src/index';
+import '../src/index.js';
 
 // TODO: Edit list of blocks.
 const allBlocks = ['block_template'];

@@ -24,11 +24,19 @@ export class FieldTemplate extends Blockly.Field {
    * @package
    * @nocollapse
    */
-  static fromJson(options): Blockly.Field {
+  static fromJson(options: FieldTemplateFromJsonConfig): FieldTemplate {
     // `this` might be a subclass of FieldTemplate if that class doesn't
     // override the static fromJson method.
-    return new this(options['value']);
+    return new this(options.value);
   }
+}
+
+// TODO: Edit the type of value and add any other JSON options.
+/**
+ * fromJson configuration options for the template field.
+ */
+export interface FieldTemplateFromJsonConfig extends Blockly.FieldConfig {
+  value?: string;
 }
 
 // TODO: Edit field registration key.

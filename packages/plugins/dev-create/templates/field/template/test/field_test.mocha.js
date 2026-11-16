@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const {testHelpers} = require('@blockly/dev-tools');
-const {FieldTemplate} = require('../src/index');
+import {testHelpers} from '@blockly/dev-tools';
+import {FieldTemplate} from '../src/index.js';
 
 const {
   FieldCreationTestCase,
