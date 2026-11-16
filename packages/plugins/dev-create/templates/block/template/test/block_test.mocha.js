@@ -4,18 +4,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const chai = require('chai');
-const Blockly = require('blockly/core');
-const {testHelpers} = require('@blockly/dev-tools');
-const {dartGenerator} = require('blockly/dart');
-const {javascriptGenerator} = require('blockly/javascript');
-const {luaGenerator} = require('blockly/lua');
-const {phpGenerator} = require('blockly/php');
-const {pythonGenerator} = require('blockly/python');
-
-require('../src/index');
-
-const assert = chai.assert;
+import {assert} from 'chai';
+import * as Blockly from 'blockly/core';
+import {testHelpers} from '@blockly/dev-tools';
+import {dartGenerator} from 'blockly/dart';
+import {javascriptGenerator} from 'blockly/javascript';
+import {luaGenerator} from 'blockly/lua';
+import {phpGenerator} from 'blockly/php';
+import {pythonGenerator} from 'blockly/python';
+import '../src/index.js';
 
 const {
   CodeGenerationTestSuite,
@@ -44,14 +41,16 @@ suite('BlockTemplate', function () {
 
   suite('Creation', function () {
     // TODO Add basic test for creation of block using newBlock call.
-    const block = this.workspace.newBlock('block_type');
-    assertBlockStructure(block);
+    test('newBlock', function () {
+      const block = this.workspace.newBlock('block_template');
+      assertBlockStructure(block);
+    });
   });
 
   suite('Code generation', function () {
     const trivialCreateBlock = (workspace) => {
       // TODO implement.
-      // return workspace.newBlock('block_type');
+      // return workspace.newBlock('block_template');
     };
 
     /**
@@ -129,10 +128,10 @@ suite('BlockTemplate', function () {
     // TODO update xml and expectedXml.
     {
       title: 'Empty XML',
-      xml: '<block type="block_type"/>',
+      xml: '<block type="block_template"/>',
       expectedXml:
         '<block xmlns="https://developers.google.com/blockly/xml" ' +
-        'type="block_type" id="1"></block>',
+        'type="block_template" id="1"></block>',
       assertBlockStructure: (block) => {
         // TODO implement.
         // assertBlockStructure(block);

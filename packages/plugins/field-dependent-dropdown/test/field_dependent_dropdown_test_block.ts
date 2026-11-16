@@ -1,5 +1,5 @@
 import * as Blockly from 'blockly';
-import {ChildOptionMapping, FieldDependentDropdown} from '../src/index';
+import {ChildOptionMapping, FieldDependentDropdown} from '../src/index.js';
 
 Blockly.defineBlocksWithJsonArray([
   {

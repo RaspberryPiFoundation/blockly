@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const {assert} = require('chai');
-const sinon = require('sinon');
-const {
+import {assert} from 'chai';
+import sinon from 'sinon';
+import {
   assertSliderField,
   assertSliderFieldDefault,
-} = require('./field_slider_test_helpers.mocha');
-const {testHelpers} = require('@blockly/dev-tools');
-const {FieldSlider} = require('../src/index');
+} from './field_slider_test_helpers.mocha.js';
+import {testHelpers} from '@blockly/dev-tools';
+import {FieldSlider} from '../src/index.js';
 
 const {
   assertFieldValue,

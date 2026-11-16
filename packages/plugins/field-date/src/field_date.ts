@@ -8,7 +8,7 @@
  * @fileoverview Plugin overview.
  */
 import * as Blockly from 'blockly/core';
-import {getLocaleDateString} from './utils';
+import {getLocaleDateString} from './utils.js';
 
 /**
  * Class for a date input field.

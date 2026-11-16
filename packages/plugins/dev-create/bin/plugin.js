@@ -10,19 +10,17 @@
  * templates.
  */
 
-'use strict';
-
-const chalk = require('chalk').default;
-const fs = require('fs-extra');
-const path = require('path');
-const execSync = require('child_process').execSync;
-const {checkAndCreateDir} = require('./common');
+import chalk from 'chalk';
+import fs from 'fs-extra';
+import path from 'path';
+import {execSync} from 'child_process';
+import {checkAndCreateDir} from './common.js';
 
 const pluginTypes = ['plugin', 'field', 'block', 'theme'];
 
 const root = process.cwd();
 
-exports.createPlugin = function (pluginName, options) {
+export function createPlugin(pluginName, options) {
   let gitRoot = '';
   let gitURL = '';
   try {
@@ -38,7 +36,7 @@ exports.createPlugin = function (pluginName, options) {
   const isGit = !!gitURL;
   const isFirstParty =
     options.firstParty ||
-    gitURL == 'https://github.com/RaspberryPiFoundation/blockly-samples';
+    gitURL == 'https://github.com/RaspberryPiFoundation/blockly';
 
   /**
    * Gets the name of the plugin prefixed with the type.
@@ -108,9 +106,13 @@ exports.createPlugin = function (pluginName, options) {
       'start': 'blockly-scripts start',
       'test': 'blockly-scripts test',
     },
-    main: './dist/index.js',
-    module: './src/index.js',
-    unpkg: './dist/index.js',
+    main: './dist/cjs/index.js',
+    module: './dist/esm/index.js',
+    unpkg: './dist/esm/index.js',
+    type: 'module',
+    engines: {
+      node: '>=24',
+    },
     author: pluginAuthor,
     keywords: [
       'blockly',
@@ -118,7 +120,7 @@ exports.createPlugin = function (pluginName, options) {
       pluginType != 'plugin' && `blockly-${pluginType}`,
       pluginName,
     ].filter(Boolean),
-    homepage: isGit ? `${gitURL}/tree/master/${gitPluginPath}#readme` : '',
+    homepage: isGit ? `${gitURL}/tree/main/${gitPluginPath}#readme` : '',
     bugs: isGit
       ? {
           url: `${gitURL}/issues`,
@@ -137,6 +139,19 @@ exports.createPlugin = function (pluginName, options) {
       src: 'src',
     },
     files: ['dist', 'src'],
+    exports: {
+      '.': {
+        node: {types: './dist/cjs/index.d.ts', default: './dist/cjs/index.js'},
+        import: {
+          types: './dist/esm/index.d.ts',
+          default: './dist/esm/index.js',
+        },
+        require: {
+          types: './dist/cjs/index.d.ts',
+          default: './dist/cjs/index.js',
+        },
+      },
+    },
     devDependencies: {},
     peerDependencies: {
       blockly: `^${latestBlocklyVersion}`,
@@ -165,19 +180,22 @@ exports.createPlugin = function (pluginName, options) {
 
   // Write the README.md to the new package.
   let readme = fs.readFileSync(
-    path.resolve(__dirname, templateDir, 'README.md'),
+    path.resolve(import.meta.dirname, templateDir, 'README.md'),
     'utf-8',
   );
   readme = readme.replace(/@blockly\/plugin/gim, `${pluginPackageName}`);
   fs.writeFileSync(path.join(pluginPath, 'README.md'), readme, 'utf-8');
 
   // Copy the rest of the template folder into the new package.
-  fs.copySync(path.resolve(__dirname, templateDir, 'template'), pluginPath);
+  fs.copySync(
+    path.resolve(import.meta.dirname, templateDir, 'template'),
+    pluginPath,
+  );
 
   // Copy third party plugin files to the new package if third-party.
   if (!isFirstParty) {
     fs.copySync(
-      path.resolve(__dirname, templatesDir, 'third_party'),
+      path.resolve(import.meta.dirname, templatesDir, 'third_party'),
       pluginPath,
     );
   }
@@ -213,4 +231,4 @@ exports.createPlugin = function (pluginName, options) {
   console.log(`Search ${chalk.red(`'TODO'`)} to see remaining tasks.`);
 
   process.exit(1);
-};
+}

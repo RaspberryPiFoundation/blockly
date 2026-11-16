@@ -8,7 +8,7 @@
  * @fileoverview Field test.
  */
 
-import '../src/field-bitmap';
+import '../src/field-bitmap.js';
 
 import {createPlayground} from '@blockly/dev-tools';
 import * as Blockly from 'blockly';
