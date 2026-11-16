@@ -66,6 +66,16 @@ handlers:
 - url: /static/demos/custom-fields/.*
   static_files: redirect.html
   upload: redirect.html
+# Playgrounds moved to GitHub Pages.
+- url: /static/tests/playgrounds/advanced_playground\.html
+  static_files: redirect.html
+  upload: redirect.html
+- url: /static/tests/multi_playground\.html
+  static_files: redirect.html
+  upload: redirect.html
+- url: /static/tests/playground\.html
+  static_files: redirect.html
+  upload: redirect.html
 
 # Blockly files.
 - url: /static

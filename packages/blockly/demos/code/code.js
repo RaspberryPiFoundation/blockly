@@ -490,6 +490,7 @@ Code.init = function() {
 
   Code.bindClick('trashButton',
       function() {Code.discard(); Code.renderContent();});
+  Code.bindClick('exportButton', Code.exportWorkspace);
   Code.bindClick('runButton', Code.runJS);
   // Disable the link button if page isn't backed by App Engine storage.
   var linkButton = document.getElementById('linkButton');
@@ -602,6 +603,24 @@ Code.runJS = function(event) {
   } catch (e) {
     alert(MSG['badCode'].replace('%1', e));
   }
+};
+
+/**
+ * Download the current workspace as a JSON file that can be loaded into the
+ * Blockly Playground.
+ */
+Code.exportWorkspace = function() {
+  var state = Blockly.serialization.workspaces.save(Code.workspace);
+  var text = JSON.stringify(state, null, 2);
+  var blob = new Blob([text], {type: 'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'blockly-workspace.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 };
 
 /**
