@@ -436,6 +436,7 @@ export default defineConfig(
       'packages/plugins/sample-app/**',
       'packages/plugins/sample-app-ts/**',
       'packages/plugins/scroll-options/**',
+      'packages/plugins/shadow-block-converter/**',
       'packages/plugins/theme-dark/**',
       'packages/plugins/theme-deuteranopia/**',
       'packages/plugins/theme-hackermode/**',

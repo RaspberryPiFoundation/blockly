@@ -6,8 +6,9 @@
 
 import {assert} from 'chai';
 import sinon from 'sinon';
+import jsdomGlobal from 'jsdom-global';
 import * as Blockly from 'blockly';
-import {shadowBlockConversionChangeListener} from '../src/index';
+import {shadowBlockConversionChangeListener} from '../src/index.js';
 
 suite('shadowBlockConversionChangeListener', function () {
   /**
@@ -32,7 +33,7 @@ suite('shadowBlockConversionChangeListener', function () {
   }
 
   setup(function () {
-    this.jsdomCleanup = require('jsdom-global')(
+    this.jsdomCleanup = jsdomGlobal(
       '<!DOCTYPE html><div id="blocklyDiv"></div>',
       {pretendToBeVisual: true},
     );
