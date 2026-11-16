@@ -5,10 +5,10 @@
  */
 
 import * as Blockly from 'blockly/core';
-import type {EdgeScrollOptions} from './ScrollBlockDragger';
-import {ScrollBlockDragger} from './ScrollBlockDragger';
-import {getTranslation} from './utils';
-import {isCacheable} from './ScrollMetricsManager';
+import type {EdgeScrollOptions} from './ScrollBlockDragger.js';
+import {ScrollBlockDragger} from './ScrollBlockDragger.js';
+import {getTranslation} from './utils.js';
+import {isCacheable} from './ScrollMetricsManager.js';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 
@@ -223,6 +223,6 @@ export class ScrollOptions {
   }
 }
 
-export * from './ScrollBlockDragger';
-export * from './ScrollMetricsManager';
-export * from './AutoScrollable';
+export * from './ScrollBlockDragger.js';
+export * from './ScrollMetricsManager.js';
+export * from './AutoScrollable.js';

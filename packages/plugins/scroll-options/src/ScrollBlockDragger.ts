@@ -5,8 +5,8 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {AutoScroll} from './AutoScroll';
-import {isAutoScrollable} from './AutoScrollable';
+import {AutoScroll} from './AutoScroll.js';
+import {isAutoScrollable} from './AutoScrollable.js';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 

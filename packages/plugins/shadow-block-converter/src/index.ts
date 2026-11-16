@@ -4,4 +4,4 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './shadow_block_converter';
+export * from './shadow_block_converter.js';

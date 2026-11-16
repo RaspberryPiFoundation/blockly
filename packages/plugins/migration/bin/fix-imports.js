@@ -8,7 +8,6 @@
  * @fileoverview A script that automatically adds imports of things that have
  *     been moved out of the Blockly namespace to developers' local files.
  */
-'use strict';
 
 import {createSubCommand, extractRequiredInfo} from './command.js';
 import {readFileSync, statSync, writeFileSync} from 'fs';

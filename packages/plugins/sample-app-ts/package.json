@@ -3,6 +3,10 @@
   "version": "13.4.0",
   "description": "A sample app using Blockly",
   "main": "index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
   "private": true,
   "scripts": {
     "test": "echo \"Warning: no test specified\" && exit 0",

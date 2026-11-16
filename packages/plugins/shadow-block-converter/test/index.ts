@@ -10,7 +10,7 @@
 
 import * as Blockly from 'blockly';
 import {createPlayground} from '@blockly/dev-tools';
-import {shadowBlockConversionChangeListener} from '../src/index';
+import {shadowBlockConversionChangeListener} from '../src/index.js';
 
 const toolbox: Blockly.utils.toolbox.ToolboxDefinition = {
   kind: 'flyoutToolbox',

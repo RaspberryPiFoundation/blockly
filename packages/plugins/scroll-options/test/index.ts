@@ -15,7 +15,7 @@ import {
   ScrollBlockDragger,
   ScrollMetricsManager,
   ScrollOptions,
-} from '../src/index';
+} from '../src/index.js';
 
 /**
  * Create a workspace.

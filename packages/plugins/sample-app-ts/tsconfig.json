@@ -5,9 +5,9 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "module": "ES2015",
-    "moduleResolution": "bundler",
-    "target": "es6",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "es2020",
     "strict": true
   },
   "include": ["src"]

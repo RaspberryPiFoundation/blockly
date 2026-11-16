@@ -11,11 +11,11 @@
 import chalk from 'chalk';
 import semver from 'semver';
 import {Command} from 'commander';
+import {readFileSync} from 'fs';
 
-// require() is not available in ES modules by default, so we must obtain it.
-import {createRequire} from 'module';
-const require = createRequire(import.meta.url);
-const scriptPackageJson = require('../package.json');
+const scriptPackageJson = JSON.parse(
+  readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
+);
 
 const SCRIPT_NAME = scriptPackageJson.name;
 
@@ -102,7 +102,8 @@ export function createSubCommand(name, targetVersionRange, description) {
 }
 
 /**
- * Add the given command as a sub command of the root @blockly/migrate command.
+ * Add the given command as a sub command of the root `@blockly/migrate`
+ * command.
  * @param {Command} command The migration to run.
  */
 export function addSubCommand(command) {

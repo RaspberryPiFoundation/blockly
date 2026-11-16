@@ -5,9 +5,9 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {isCacheable} from './ScrollMetricsManager';
-import {getTranslation} from './utils';
-import type {ScrollBlockDragger} from './ScrollBlockDragger';
+import {isCacheable} from './ScrollMetricsManager.js';
+import {getTranslation} from './utils.js';
+import type {ScrollBlockDragger} from './ScrollBlockDragger.js';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 
