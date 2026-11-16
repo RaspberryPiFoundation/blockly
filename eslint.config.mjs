@@ -434,14 +434,14 @@ export default defineConfig(
       'packages/plugins/migration/**',
       'packages/plugins/modal/**',
       'packages/plugins/sample-app/**',
-      'packages/plugins/theme-modern/**',
-      'packages/plugins/typed-variable-modal/**',
+      'packages/plugins/sample-app-ts/**',
       'packages/plugins/theme-dark/**',
       'packages/plugins/theme-deuteranopia/**',
       'packages/plugins/theme-hackermode/**',
       'packages/plugins/theme-highcontrast/**',
       'packages/plugins/theme-modern/**',
       'packages/plugins/theme-tritanopia/**',
+      'packages/plugins/typed-variable-modal/**',
     ],
     settings: {
       jsdoc: {
