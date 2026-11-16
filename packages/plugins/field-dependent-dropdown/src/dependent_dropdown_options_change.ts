@@ -10,7 +10,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import type {FieldDependentDropdown} from './field_dependent_dropdown';
+import type {FieldDependentDropdown} from './field_dependent_dropdown.js';
 
 /**
  * A deep equality comparison between the two provided arrays recursively

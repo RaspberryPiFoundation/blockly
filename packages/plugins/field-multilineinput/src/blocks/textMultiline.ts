@@ -13,8 +13,8 @@ import {DartGenerator, Order as DartOrder} from 'blockly/dart';
 import {LuaGenerator, Order as LuaOrder} from 'blockly/lua';
 import {PhpGenerator, Order as PhpOrder} from 'blockly/php';
 import {PythonGenerator, Order as PythonOrder} from 'blockly/python';
-import {registerFieldMultilineInput} from '../field_multilineinput';
-import {Generators} from './generatorsType';
+import {registerFieldMultilineInput} from '../field_multilineinput.js';
+import {Generators} from './generatorsType.js';
 
 /** The name this block is registered under. */
 export const BLOCK_NAME = 'text_multiline';

@@ -4,12 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const chai = require('chai');
-const sinon = require('sinon');
-const Blockly = require('blockly');
-require('./field_dependent_dropdown_test_block');
-
-const assert = chai.assert;
+import {assert} from 'chai';
+import sinon from 'sinon';
+import * as Blockly from 'blockly';
+import './field_dependent_dropdown_test_block.js';
 
 suite('fieldDependentDropdown', function () {
   setup(function () {

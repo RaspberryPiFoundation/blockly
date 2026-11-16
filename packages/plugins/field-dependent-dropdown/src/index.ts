@@ -4,4 +4,4 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './field_dependent_dropdown';
+export * from './field_dependent_dropdown.js';
