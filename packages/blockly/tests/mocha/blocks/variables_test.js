@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {nameUsedWithConflictingParam} from '../../../build/src/core/variables.js';
-import {assert} from '../../../node_modules/chai/index.js';
+import {nameUsedWithConflictingParam} from '#core/variables.js';
+import {assert} from 'chai';
 import {
   MockParameterModelWithVar,
   MockProcedureModel,
-} from '../test_helpers/procedures.js';
+} from '../test_helpers/procedures.ts';
 import {
   sharedTestSetup,
   sharedTestTeardown,

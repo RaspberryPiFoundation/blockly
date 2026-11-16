@@ -7,7 +7,7 @@
 // Former goog.module ID: Blockly.procedures.IProcedureBlock
 
 import type {Block} from '../block.js';
-import {IProcedureModel} from './i_procedure_model.js';
+import type {IProcedureModel} from './i_procedure_model.js';
 
 /** The interface for a block which models a procedure. */
 export interface IProcedureBlock {

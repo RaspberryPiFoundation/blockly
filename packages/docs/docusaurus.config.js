@@ -71,6 +71,35 @@ const config = {
     ],
   ],
 
+  // Generates the API reference with TypeDoc as part of the Docusaurus build.
+  plugins: [
+    // Run docusaurus-plugin-typedoc twice, once for core and once for plugins
+    [
+      'docusaurus-plugin-typedoc',
+      {
+        id: 'core',
+        options: './typedoc.json',
+        out: 'docs/reference',
+        cleanOutputDir: false, // don't overwrite the plugins
+        indexFrontmatter: {
+          title: 'API Reference',
+          sidebar_label: 'Overview',
+        },
+      },
+    ],
+    [
+      'docusaurus-plugin-typedoc',
+      {
+        id: 'plugins',
+        options: './typedoc.json',
+        entryPoints: ['./plugins_api.json'],
+        out: 'docs/reference/plugins',
+        // Drops the '@blockly' scope directory from plugins
+        excludeScopesInPaths: true,
+      },
+    ],
+  ],
+
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
@@ -195,12 +224,6 @@ const config = {
         contextualSearch: true,
         searchParameters: {},
         searchPagePath: 'search',
-        askAi: {
-          indexName: 'markdown-index',
-          apiKey: '9a6e9f24a807a1571990048ef66c9438',
-          appId: 'JOPASJ603L',
-          assistantId: '0JvuvoDNFavC',
-        },
       },
       docs: {
         sidebar: {

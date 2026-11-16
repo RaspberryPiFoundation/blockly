@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {FieldCheckboxFromJsonConfig} from '../field_checkbox.js';
-import {FieldDropdownFromJsonConfig} from '../field_dropdown';
-import {FieldImageFromJsonConfig} from '../field_image';
-import {FieldNumberFromJsonConfig} from '../field_number';
-import {FieldTextInputFromJsonConfig} from '../field_textinput';
-import {FieldVariableFromJsonConfig} from '../field_variable';
-import {Align} from '../inputs/align.js';
+import type {FieldCheckboxFromJsonConfig} from '../field_checkbox.js';
+import type {FieldDropdownFromJsonConfig} from '../field_dropdown';
+import type {FieldImageFromJsonConfig} from '../field_image';
+import type {FieldNumberFromJsonConfig} from '../field_number';
+import type {FieldTextInputFromJsonConfig} from '../field_textinput';
+import type {FieldVariableFromJsonConfig} from '../field_variable';
+import type {Align} from '../inputs/align.js';
 
 /**
  * Defines the JSON structure for a block definition.
@@ -71,28 +71,39 @@ interface UnknownArg {
   [key: string]: unknown;
 }
 
+/**
+ * A custom ARIA label for the input, used in place of the label derived from
+ * the input's preceding fields. May contain message references of the form
+ * `%{BKY_...}`, which are replaced with the corresponding `Blockly.Msg` value.
+ */
+type AriaLabelText = string;
+
 /** Input args */
 interface InputValueArg {
   type: 'input_value';
   name?: string;
   check?: string | string[];
   align?: Align;
+  ariaLabelText?: AriaLabelText;
 }
 
 interface InputStatementArg {
   type: 'input_statement';
   name?: string;
   check?: string | string[];
+  ariaLabelText?: AriaLabelText;
 }
 
 interface InputDummyArg {
   type: 'input_dummy';
   name?: string;
+  ariaLabelText?: AriaLabelText;
 }
 
 interface InputEndRowArg {
   type: 'input_end_row';
   name?: string;
+  ariaLabelText?: AriaLabelText;
 }
 
 /** Field args */

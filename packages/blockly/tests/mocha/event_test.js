@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from '../../build/src/core/blockly.js';
-import * as eventUtils from '../../build/src/core/events/utils.js';
-import {assert} from '../../node_modules/chai/index.js';
+import * as Blockly from '#core/blockly.js';
+import * as eventUtils from '#core/events/utils.js';
+import {assert} from 'chai';
 import {
   assertEventEquals,
   assertNthCallEventArgEquals,
@@ -14,11 +14,12 @@ import {
 } from './test_helpers/events.js';
 import {
   createGenUidStubWithReturns,
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
-import {assertVariableValues} from './test_helpers/variables.js';
+import {assertVariableValues} from './test_helpers/variables.ts';
 
 suite('Events', function () {
   setup(function () {
@@ -1367,7 +1368,10 @@ suite('Events', function () {
       let workspaceSvg;
       try {
         const toolbox = document.getElementById('toolbox-categories');
-        workspaceSvg = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+        workspaceSvg = Blockly.inject('blocklyDiv', {
+          ...DEFAULT_INJECT_OPTIONS,
+          toolbox: toolbox,
+        });
         const TEST_BLOCK_ID = 'test_block_id';
         const genUidStub = createGenUidStubWithReturns([
           TEST_BLOCK_ID,
@@ -1465,7 +1469,7 @@ suite('Events', function () {
       const genUidStub = createGenUidStubWithReturns(TEST_GROUP_ID);
       const dom = Blockly.utils.xml.textToDom(
         '<xml xmlns="https://developers.google.com/blockly/xml">' +
-          '  <block type="field_variable_test_block" id="test_block_id">' +
+          '  <block type="field_variable_test_block" id="test_block_id" x="0" y="0">' +
           '    <field name="VAR" id="test_var_id">name1</field>' +
           '  </block>' +
           '</xml>',
@@ -1530,7 +1534,10 @@ suite('Events', function () {
     setup(function () {
       // disableOrphans needs a WorkspaceSVG
       const toolbox = document.getElementById('toolbox-categories');
-      this.workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+      this.workspace = Blockly.inject('blocklyDiv', {
+        ...DEFAULT_INJECT_OPTIONS,
+        toolbox: toolbox,
+      });
     });
     teardown(function () {
       workspaceTeardown.call(this, this.workspace);

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from '../../../build/src/core/blockly.js';
-import {assert} from '../../../node_modules/chai/index.js';
+import * as Blockly from '#core/blockly.js';
+import {assert} from 'chai';
 import {defineRowBlock} from '../test_helpers/block_definitions.js';
 import {
   assertCallBlockStructure,
@@ -13,10 +13,11 @@ import {
   createProcCallBlock,
   createProcDefBlock,
   MockProcedureModel,
-} from '../test_helpers/procedures.js';
+} from '../test_helpers/procedures.ts';
 import {runSerializationTestSuite} from '../test_helpers/serialization.js';
 import {
   createGenUidStubWithReturns,
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
@@ -25,7 +26,7 @@ import {
 suite('Procedures', function () {
   setup(function () {
     sharedTestSetup.call(this, {fireEventsNow: false});
-    this.workspace = Blockly.inject('blocklyDiv', {});
+    this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
     this.workspace
       .getVariableMap()
       .createVariable('preCreatedVar', '', 'preCreatedVarId');
@@ -614,12 +615,6 @@ suite('Procedures', function () {
       );
     });
 
-    test.skip(
-      'renaming a variable such that you get a parameter ' +
-        'conflict does... something!',
-      function () {},
-    );
-
     test('undoing renaming a procedure parameter reverts the change', async function () {
       // Create a stack of container, parameter.
       const defBlock = createProcDefBlock(this.workspace);
@@ -700,6 +695,8 @@ suite('Procedures', function () {
         .connection.connect(paramBlock1.previousConnection);
       paramBlock1.nextConnection.connect(paramBlock2.previousConnection);
       this.clock.runAll();
+      await Blockly.renderManagement.finishQueuedRenders();
+      this.clock.runAll();
 
       // Reorder the parameters.
       paramBlock2.previousConnection.disconnect();
@@ -709,13 +706,16 @@ suite('Procedures', function () {
         .connection.connect(paramBlock2.previousConnection);
       paramBlock2.nextConnection.connect(paramBlock1.previousConnection);
       this.clock.runAll();
+      await Blockly.renderManagement.finishQueuedRenders();
+      this.clock.runAll();
 
       assert.isNotNull(
         defBlock.getField('PARAMS'),
         'Expected the params field to exist',
       );
-      assert.isTrue(
-        defBlock.getFieldValue('PARAMS').includes('param2, param1'),
+      assert.include(
+        defBlock.getFieldValue('PARAMS'),
+        'param2, param1',
         'Expected the params field order to match the parameter order',
       );
     });
@@ -737,6 +737,8 @@ suite('Procedures', function () {
         .connection.connect(paramBlock1.previousConnection);
       paramBlock1.nextConnection.connect(paramBlock2.previousConnection);
       this.clock.runAll();
+      await Blockly.renderManagement.finishQueuedRenders();
+      this.clock.runAll();
 
       // Reorder the parameters.
       paramBlock2.previousConnection.disconnect();
@@ -745,6 +747,8 @@ suite('Procedures', function () {
         .getInput('STACK')
         .connection.connect(paramBlock2.previousConnection);
       paramBlock2.nextConnection.connect(paramBlock1.previousConnection);
+      this.clock.runAll();
+      await Blockly.renderManagement.finishQueuedRenders();
       this.clock.runAll();
 
       assert.isNotNull(
@@ -1045,10 +1049,13 @@ suite('Procedures', function () {
         );
       });
 
-      test.skip('callers whose defs are deserialized later do not create defs', function () {
+      test('callers whose defs are deserialized later do not create defs', function () {
         Blockly.Xml.domToWorkspace(
           Blockly.utils.xml.textToDom(`
                 <xml>
+                  <variables>
+                    <variable id="arg">x</variable>
+                  </variables>
                   <block type="procedures_callreturn">
                     <mutation name="do something">
                       <arg name="x"></arg>
@@ -1071,8 +1078,6 @@ suite('Procedures', function () {
         const callBlock = this.workspace.getBlocksByType(
           'procedures_callreturn',
         )[0];
-        // TODO: Currently the callers are creating variables with different
-        //   IDs than those serialized to XML, so these assertions fail.
         assertDefBlockStructure(defBlock, true, ['x'], ['arg']);
         assertCallBlockStructure(callBlock, ['x'], ['arg'], 'do something');
       });
@@ -1187,7 +1192,7 @@ suite('Procedures', function () {
         );
       });
 
-      test.skip('callers whose defs are deserialized later do not create defs', function () {
+      test('callers whose defs are deserialized later do not create defs', function () {
         Blockly.serialization.workspaces.load(
           {
             'blocks': {
@@ -1196,6 +1201,7 @@ suite('Procedures', function () {
                 {
                   'type': 'procedures_callreturn',
                   'extraState': {
+                    'name': 'do something',
                     'params': ['x'],
                   },
                 },
@@ -1215,6 +1221,12 @@ suite('Procedures', function () {
                 },
               ],
             },
+            'variables': [
+              {
+                'name': 'x',
+                'id': 'arg',
+              },
+            ],
           },
           this.workspace,
         );
@@ -1225,8 +1237,6 @@ suite('Procedures', function () {
         const callBlock = this.workspace.getBlocksByType(
           'procedures_callreturn',
         )[0];
-        // TODO: Currently the callers are creating variables with different
-        //   IDs than those serialized to JSON, so these assertions fail.
         assertDefBlockStructure(defBlock, true, ['x'], ['arg']);
         assertCallBlockStructure(callBlock, ['x'], ['arg'], 'do something');
       });
@@ -1929,14 +1939,23 @@ suite('Procedures', function () {
               const statementField = containerBlock.getField('STATEMENTS');
               statementField.setValue(value);
               defBlock.compose(containerBlock);
+              workspaceTeardown.call(this, mutatorWorkspace);
             }
             if (testSuite.defType === 'procedures_defreturn') {
               test('Has Statements', function () {
-                setStatementValue(this.workspace, this.defBlock, true);
+                setStatementValue.apply(this, [
+                  this.workspace,
+                  this.defBlock,
+                  true,
+                ]);
                 assert.isTrue(this.defBlock.hasStatements_);
               });
               test('Has No Statements', function () {
-                setStatementValue(this.workspace, this.defBlock, false);
+                setStatementValue.apply(this, [
+                  this.workspace,
+                  this.defBlock,
+                  false,
+                ]);
                 assert.isFalse(this.defBlock.hasStatements_);
               });
               test('Saving Statements', function () {
@@ -1951,9 +1970,13 @@ suite('Procedures', function () {
                   blockXml,
                   this.workspace,
                 );
-                setStatementValue(this.workspace, defBlock, false);
+                setStatementValue.apply(this, [
+                  this.workspace,
+                  defBlock,
+                  false,
+                ]);
                 assert.isNull(defBlock.getInput('STACK'));
-                setStatementValue(this.workspace, defBlock, true);
+                setStatementValue.apply(this, [this.workspace, defBlock, true]);
                 assert.isNotNull(defBlock.getInput('STACK'));
                 const statementBlocks = defBlock.getChildren();
                 assert.equal(statementBlocks.length, 1);
@@ -2063,6 +2086,7 @@ suite('Procedures', function () {
                   .getTopBlocks()[0]
                   .getInput('STATEMENT_INPUT');
                 assert.isNotNull(statementInput);
+                workspaceTeardown.call(this, mutatorWorkspace);
               });
               test('Has Statements', function () {
                 this.defBlock.hasStatements_ = true;
@@ -2077,6 +2101,7 @@ suite('Procedures', function () {
                   .getField('STATEMENTS')
                   .getValueBoolean();
                 assert.isTrue(statementValue);
+                workspaceTeardown.call(this, mutatorWorkspace);
               });
               test('No Has Statements', function () {
                 this.defBlock.hasStatements_ = false;
@@ -2091,6 +2116,7 @@ suite('Procedures', function () {
                   .getField('STATEMENTS')
                   .getValueBoolean();
                 assert.isFalse(statementValue);
+                workspaceTeardown.call(this, mutatorWorkspace);
               });
             } else {
               test('Has no Statement Input', function () {
@@ -2104,6 +2130,7 @@ suite('Procedures', function () {
                   .getTopBlocks()[0]
                   .getInput('STATEMENT_INPUT');
                 assert.isNull(statementInput);
+                workspaceTeardown.call(this, mutatorWorkspace);
               });
             }
           });

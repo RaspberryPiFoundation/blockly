@@ -17,7 +17,8 @@ import type {
 import * as registry from '../registry.js';
 
 import type {Workspace} from '../workspace.js';
-import {VarBase, VarBaseJson} from './events_var_base.js';
+import type {VarBaseJson} from './events_var_base.js';
+import {VarBase} from './events_var_base.js';
 import {EventType} from './type.js';
 
 /**

@@ -25,7 +25,7 @@ import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
 import type {IKeyboardAccessible} from './interfaces/i_keyboard_accessible.js';
 import type {IRegistrable} from './interfaces/i_registrable.js';
-import {ISerializable} from './interfaces/i_serializable.js';
+import type {ISerializable} from './interfaces/i_serializable.js';
 import {Msg} from './msg.js';
 import type {ConstantProvider} from './renderers/common/constants.js';
 import type {KeyboardShortcut} from './shortcut_registry.js';
@@ -42,13 +42,13 @@ import {Svg} from './utils/svg.js';
 import * as userAgent from './utils/useragent.js';
 import * as utilsXml from './utils/xml.js';
 import * as WidgetDiv from './widgetdiv.js';
-import {WorkspaceSvg} from './workspace_svg.js';
+import type {WorkspaceSvg} from './workspace_svg.js';
 
 /**
  * A function that is called to validate changes to the field's value before
  * they are set.
  *
- * @see {@link https://developers.google.com/blockly/guides/create-custom-blocks/fields/validators#return_values}
+ * @see {@link https://docs.blockly.com/guides/create-custom-blocks/fields/validators/#return-values}
  * @param newValue The value to be validated.
  * @returns One of three instructions for setting the new value: `T`, `null`,
  * or `undefined`.
@@ -254,7 +254,7 @@ export abstract class Field<T = any>
       this.setTooltip(parsing.replaceMessageReferences(config.tooltip));
     }
     if (config.ariaTypeName) {
-      this.ariaTypeName = config.ariaTypeName;
+      this.setAriaTypeName(config.ariaTypeName);
     }
   }
 
@@ -322,12 +322,15 @@ export abstract class Field<T = any>
    * Sets the ARIA-friendly label representation of this field's type.
    *
    * Implementations are responsible for, and encouraged to, set a localized
-   * version of the ARIA representation of the field's type.
+   * version of the ARIA representation of the field's type. To that end, the
+   * provided value may contain message references of the form `%{BKY_...}`
+   * (e.g. `%{BKY_MY_FIELD_ARIA_TYPE}`), which are replaced with the
+   * corresponding `Blockly.Msg` value.
    *
    * @param ariaTypeName An ARIA representation of the field's type.
    */
   setAriaTypeName(ariaTypeName: string) {
-    this.ariaTypeName = ariaTypeName;
+    this.ariaTypeName = parsing.replaceMessageReferences(ariaTypeName);
   }
 
   /**
@@ -426,6 +429,7 @@ export abstract class Field<T = any>
     // Since full-block fields can be focused from the workspace's tree,
     // they need IDs in the format that the workspace is expecting.
     if (this.isFullBlockField()) {
+      dom.addClass(this.fieldGroup_, 'blocklyFullBlockField');
       this.id_ = idGenerator.getNextUniqueId();
     } else {
       this.id_ = `${sourceBlockSvg.id}_field_${idGenerator.getNextUniqueId()}`;
@@ -658,6 +662,13 @@ export abstract class Field<T = any>
       dom.removeNode(this.fieldGroup_);
     }
 
+    const clickTarget = this.getClickTarget_();
+    if (clickTarget) {
+      Tooltip.unbindMouseEvents(clickTarget);
+      delete (clickTarget as any).tooltip;
+    }
+    this.tooltip = null;
+
     this.disposed = true;
   }
 
@@ -878,7 +889,7 @@ export abstract class Field<T = any>
    * at relevant times, such as when the parent block or renderer changes.
    *
    * See {@link
-   * https://developers.google.com/blockly/guides/create-custom-blocks/fields/customizing-fields/creating#matching_block_colours
+   * https://docs.blockly.com/guides/create-custom-blocks/fields/customizing-fields/creating/#matching-block-colours
    * | the field documentation} for more information, or FieldDropdown for an
    * example.
    */
@@ -962,8 +973,10 @@ export abstract class Field<T = any>
 
     let contentWidth = 0;
     if (this.textElement_) {
-      contentWidth = dom.getTextWidth(this.textElement_);
+      const textSize = dom.getTextSize(this.textElement_);
+      contentWidth = textSize.width;
       totalWidth += contentWidth;
+      totalHeight = Math.max(totalHeight, textSize.height);
     }
     if (this.borderRect_) {
       totalHeight = Math.max(totalHeight, constants!.FIELD_BORDER_RECT_HEIGHT);
@@ -1297,7 +1310,7 @@ export abstract class Field<T = any>
    * it is valid for a subclass to return `undefined` if the new value is
    * compatible with `T`.
    *
-   * @see {@link https://developers.google.com/blockly/guides/create-custom-blocks/fields/validators#return_values}
+   * @see {@link https://docs.blockly.com/guides/create-custom-blocks/fields/validators/#return-values}
    * @param newValue - The value to be validated.
    * @returns One of three instructions for setting the new value: `T`, `null`,
    * or `undefined`.
@@ -1418,8 +1431,9 @@ export abstract class Field<T = any>
   }
 
   /**
-   * Whether this field references any Blockly variables.  If true it may need
-   * to be handled differently during serialization and deserialization.
+   * Whether this field references any Blockly variables. If true it may need
+   * to be handled differently during serialization and deserialization, and
+   * this field's value must correspond to the ID of an existing variable.
    * Subclasses may override this.
    *
    * @returns True if this field has any variable references.

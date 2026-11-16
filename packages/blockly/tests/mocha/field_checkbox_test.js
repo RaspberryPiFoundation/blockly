@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from '../../build/src/core/blockly.js';
-import {assert} from '../../node_modules/chai/index.js';
+import * as Blockly from '#core/blockly.js';
+import {assert} from 'chai';
 import {defineRowBlock} from './test_helpers/block_definitions.js';
 import {
   assertFieldValue,
@@ -14,6 +14,7 @@ import {
   runSetValueTests,
 } from './test_helpers/fields.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
@@ -297,6 +298,7 @@ suite('Checkbox Fields', function () {
   suite('ARIA', function () {
     setup(function () {
       this.workspace = Blockly.inject('blocklyDiv', {
+        ...DEFAULT_INJECT_OPTIONS,
         renderer: 'geras',
       });
       this.block = this.workspace.newBlock('test_fields_checkbox');
@@ -306,6 +308,11 @@ suite('Checkbox Fields', function () {
 
       this.focusableElement = this.field.getClickTarget_();
     });
+
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
+    });
+
     test('Block has field type name in ARIA label', function () {
       const blockLabel = this.block.getAriaLabel();
       assert.include(blockLabel, 'checkbox');

@@ -1,0 +1,54 @@
+{
+  "name": "@blockly/block-plus-minus",
+  "version": "13.4.0",
+  "description": "A group of blocks that replace the built-in mutator UI with a +/- based UI.",
+  "scripts": {
+    "audit-fix": "blockly-scripts auditFix",
+    "build": "blockly-scripts build",
+    "clean": "blockly-scripts clean",
+    "lint": "eslint .",
+    "predeploy": "blockly-scripts predeploy",
+    "prepublishOnly": "npm run clean && npm run build",
+    "start": "blockly-scripts start",
+    "test": "blockly-scripts test"
+  },
+  "main": "./dist/index.js",
+  "unpkg": "./dist/index.js",
+  "author": "Beka Westberg",
+  "keywords": [
+    "blockly",
+    "block",
+    "mutator"
+  ],
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/block-plus-minus#readme",
+  "bugs": {
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RaspberryPiFoundation/blockly.git",
+    "directory": "packages/plugins/block-plus-minus"
+  },
+  "license": "Apache-2.0",
+  "directories": {
+    "dist": "dist",
+    "src": "src"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "devDependencies": {
+    "@blockly/dev-scripts": "^13.4.0",
+    "@blockly/dev-tools": "^13.4.0",
+    "chai": "^6.3.0",
+    "mocha": "^12.0.3",
+    "sinon": "^22.1.0"
+  },
+  "peerDependencies": {
+    "blockly": "^13.2.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

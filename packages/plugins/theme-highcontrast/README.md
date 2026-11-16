@@ -1,9 +1,11 @@
-# @blockly/theme-highcontrast [![Built on Blockly](https://tinyurl.com/built-on-blockly)](https://github.com/google/blockly)
+# @blockly/theme-highcontrast
+
+## [<img src="https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/docs/static/images/logos/built-with-blockly-badge-white.svg" alt="Built with Blockly" width="119">](https://github.com/RaspberryPiFoundation/blockly)
 
 A [Blockly](https://www.npmjs.com/package/blockly theme that uses darker colors
 for the blocks to create contrast between the block color and the white text.
 
-![A Blockly workspace using the high contrast theme.](https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/theme-highcontrast/readme-media/HighContrastTheme.png)
+![A Blockly workspace using the high contrast theme.](https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/theme-highcontrast/readme-media/HighContrastTheme.png)
 
 ## Installation
 

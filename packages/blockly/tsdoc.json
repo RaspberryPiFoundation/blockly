@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/tsdoc/v0/tsdoc.schema.json",
-  // Include the definitions that are required for API Extractor
-  "extends": ["@microsoft/api-extractor/extends/tsdoc-base.json"],
+  // Include the non-standard tags
+  "extends": ["typedoc/tsdoc.json"],
   "tagDefinitions": [
     {
       "tagName": "@define",

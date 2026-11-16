@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from '../../build/src/core/blockly.js';
-import {assert} from '../../node_modules/chai/index.js';
+import * as Blockly from '#core/blockly.js';
+import {assert} from 'chai';
 import {
   addBlockTypeToCleanup,
   addMessageToCleanup,
@@ -850,6 +850,26 @@ suite('Abstract Fields', function () {
 
         const field = CustomField.fromJson({ariaTypeName: 'text input'});
         assert.equal(field.getAriaTypeName(), 'text input');
+      });
+
+      suite('W/ Msg References', function () {
+        setup(function () {
+          addMessageToCleanup(this.sharedCleanup, 'ARIA_TYPE');
+          Blockly.Msg['ARIA_TYPE'] = 'speed';
+        });
+
+        test('setAriaTypeName resolves message references', function () {
+          const field = new TestField();
+          field.setAriaTypeName('%{BKY_ARIA_TYPE}');
+          assert.equal(field.getAriaTypeName(), 'speed');
+        });
+
+        test('Configured ariaTypeName resolves message references', function () {
+          const field = new TestField('value', {
+            ariaTypeName: '%{BKY_ARIA_TYPE}',
+          });
+          assert.equal(field.getAriaTypeName(), 'speed');
+        });
       });
     });
 

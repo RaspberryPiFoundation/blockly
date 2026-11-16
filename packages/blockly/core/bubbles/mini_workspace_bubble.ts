@@ -5,13 +5,13 @@
  */
 
 import type {BlocklyOptions} from '../blockly_options.js';
-import {Abstract as AbstractEvent} from '../events/events_abstract.js';
+import type {Abstract as AbstractEvent} from '../events/events_abstract.js';
 import {getFocusManager} from '../focus_manager.js';
 import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
 import type {IHasBubble} from '../interfaces/i_has_bubble.js';
 import {KeyboardMover} from '../keyboard_nav/keyboard_mover.js';
 import {Options} from '../options.js';
-import {Coordinate} from '../utils/coordinate.js';
+import type {Coordinate} from '../utils/coordinate.js';
 import * as dom from '../utils/dom.js';
 import type {Rect} from '../utils/rect.js';
 import {Size} from '../utils/size.js';
@@ -135,7 +135,7 @@ export class MiniWorkspaceBubble extends Bubble {
       options.moveOptions.drag
     ) {
       throw new Error(
-        'The miniworkspace bubble does not scrolling/moving the workspace',
+        'The miniworkspace bubble does not allow scrolling/moving the workspace',
       );
     }
     if (options.horizontalLayout) {
@@ -191,8 +191,10 @@ export class MiniWorkspaceBubble extends Bubble {
   /**
    * Updates the size of this bubble to account for the size of the
    * mini workspace.
+   *
+   * @internal
    */
-  private updateBubbleSize() {
+  updateBubbleSize() {
     if (this.miniWorkspace.isDragging() && !KeyboardMover.mover.isMoving()) {
       return;
     }

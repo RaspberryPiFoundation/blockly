@@ -12,7 +12,7 @@
  */
 // Former goog.module ID: Blockly.Grid
 
-import {GridOptions} from './options.js';
+import type {GridOptions} from './options.js';
 import {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
 import {Svg} from './utils/svg.js';
@@ -32,7 +32,7 @@ export class Grid {
    * @param pattern The grid's SVG pattern, created during injection.
    * @param options A dictionary of normalized options for the grid.
    *     See grid documentation:
-   *     https://developers.google.com/blockly/guides/configure/grid
+   *     https://docs.blockly.com/guides/configure/grid/
    */
   constructor(
     private pattern: SVGElement,

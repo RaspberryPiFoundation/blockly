@@ -49,7 +49,7 @@ interface. This method can return arbitrary json, which gets passed to your
 
 ```js
 saveState() {
-  return this.state;  // Some arbirtary JSON-compatible data.
+  return this.state;  // Some arbitrary JSON-compatible data.
 }
 ```
 
@@ -99,10 +99,10 @@ class myIcon extends Blockly.icons.Icon {
 Blockly.icons.registry.register(new Blockly.icons.IconType('my_icon'), myIcon);
 ```
 
-[ISerializable]: /reference/blockly.iserializable
+[ISerializable]: /reference/interfaces/ISerializable
 [registering]: /guides/create-custom-blocks/icons/creating-custom-icons/save-and-load#register-icon-classes
-[saveState]: /reference/blockly.iserializable.savestate
-[loadState]: /reference/blockly.iserializable.loadstate
-[IconType]: /reference/blockly.icons.icontype
-[getType]: /reference/blockly.iicon.gettype
+[saveState]: /reference/interfaces/ISerializable#savestate
+[loadState]: /reference/interfaces/ISerializable#loadstate
+[IconType]: /reference/namespaces/icons/classes/IconType
+[getType]: /reference/interfaces/IIcon#gettype
 [serializer]: /guides/configure/serialization#serializer-hooks

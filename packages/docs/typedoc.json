@@ -1,0 +1,48 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+
+  "entryPointStrategy": "merge",
+  "entryPoints": ["./blockly_api.json"],
+  "out": "docs/reference",
+  "tsconfig": "../blockly/tsconfig.json",
+  "excludeInternal": true,
+  "excludePrivate": true,
+  "excludeNotDocumented": true,
+  "excludeNotDocumentedKinds": ["Namespace", "Function"],
+  "readme": "none",
+  "skipErrorChecking": true,
+  "sourceLinkTemplate": "https://github.com/RaspberryPiFoundation/blockly/blob/{gitRevision}/{path}#L{line}",
+
+  "sort": ["kind", "source-order"],
+  "groupOrder": [
+    "Classes",
+    "Enumerations",
+    "Functions",
+    "Interfaces",
+    "Namespaces",
+    "Variables",
+    "Type Aliases",
+    "Constructors",
+    "Properties",
+    "Accessors",
+    "Methods",
+    "*"
+  ],
+
+  "plugin": [
+    "typedoc-plugin-markdown",
+    "typedoc-docusaurus-theme",
+    "typedoc-plugin-frontmatter",
+    "./typedoc-member-index.mjs"
+  ],
+  "theme": "member-index",
+  "router": "namespace-dirs",
+
+  "frontmatterNamingConvention": "snakeCase",
+
+  "indexFormat": "table",
+  "parametersFormat": "table",
+  "useCustomAnchors": true,
+  "customAnchorsFormat": "curlyBrace",
+  "useCodeBlocks": true
+}

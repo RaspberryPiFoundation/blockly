@@ -159,7 +159,7 @@ else clauses to the if-do block.](/images/mutator-annot.png)
 
 You don't have to use this UI if you want to add extra serialization. You could
 use a custom UI, like the [blocks-plus-minus
-plugin](https://github.com/RaspberryPiFoundation/blockly-samples/tree/main/plugins/block-plus-minus)
+plugin](https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/block-plus-minus)
 provides, or you could use no UI at all!
 
 ### compose and decompose
@@ -222,7 +222,7 @@ compose: function(topBlock) {
     }
   }
 
-  // Then we update the shape of our block (removing or adding iputs as necessary).
+  // Then we update the shape of our block (removing or adding inputs as necessary).
   // `this` refers to the main block.
   this.itemCount_ = connections.length;
   this.updateShape_();
@@ -334,5 +334,5 @@ is defined for a block. You don't have to instantiate `MutatorIcon` directly to
 use the default mutator UI or to make a custom mutator UI. If you are extending 
 Blockly itself to add new mutator features, you might want to extend the 
 `MutatorIcon` class, but note that this will not always be needed. See the 
-[MutatorIcon](https://docs.blockly.com/reference/blockly.icons_namespace.mutatoricon_class/#iconsmutatoricon-class)
+[MutatorIcon](/reference/namespaces/icons/classes/MutatorIcon)
 reference documentation for more details about this class. 

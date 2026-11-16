@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {assert} from '../../node_modules/chai/index.js';
+import {assert} from 'chai';
 import {
   defineBasicBlockWithField,
   defineStackBlock,
@@ -12,6 +12,7 @@ import {
 import {
   sharedTestSetup,
   sharedTestTeardown,
+  workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 import {
   getBasicToolbox,
@@ -29,11 +30,11 @@ suite('Toolbox', function () {
   setup(function () {
     sharedTestSetup.call(this);
     this.toolbox = getInjectedToolbox();
+    this.workspace = this.toolbox.getWorkspace();
     defineStackBlock();
   });
 
   teardown(function () {
-    this.toolbox.dispose();
     sharedTestTeardown.call(this);
   });
 
@@ -227,6 +228,23 @@ suite('Toolbox', function () {
       assert.isTrue(this.toolbox.getFlyout().isVisible());
     });
 
+    test('Focusing an item scrolls it into view', function () {
+      const item = getNonCollapsibleItem(this.toolbox);
+      const scrollIntoView = sinon.spy(
+        item.getFocusableElement(),
+        'scrollIntoView',
+      );
+
+      Blockly.getFocusManager().focusNode(item);
+
+      // Focus is taken with preventScroll, so an item outside the visible area
+      // of a scrolling toolbox would otherwise stay out of sight.
+      sinon.assert.calledWith(scrollIntoView, {
+        block: 'nearest',
+        inline: 'nearest',
+      });
+    });
+
     test('Tab order follows toolbox, flyout, workspace DOM order', function () {
       const injectionDiv = this.toolbox.getWorkspace().getInjectionDiv();
       const children = Array.from(injectionDiv.children);
@@ -257,14 +275,12 @@ suite('Toolbox', function () {
       sinon.assert.calledOnce(hideChaffStub);
     });
     test('Category clicked -> Should select category', function () {
-      const categoryXml = document.getElementsByClassName(
-        'blocklyToolboxCategory',
-      )[0];
+      const item = this.toolbox.getToolboxItems()[0];
+      const categoryXml = item.getClickTarget();
       const evt = {
         'target': categoryXml,
         'stopPropagation': () => {},
       };
-      const item = this.toolbox.contents.get(categoryXml.getAttribute('id'));
       const setSelectedSpy = sinon.spy(this.toolbox, 'setSelectedItem');
       const onClickSpy = sinon.spy(item, 'onClick');
       this.toolbox.onClick_(evt);
@@ -331,6 +347,23 @@ suite('Toolbox', function () {
 
         assert.isFalse(this.parentCategory.isExpanded());
         assert.isFalse(this.flyout.isVisible());
+      });
+      test('resizing a toolbox item with an auto-closing flyout visible should not offset the workspace by the flyout size', function () {
+        clickCategory(this.parentCategory);
+        assert.isTrue(this.flyout.isVisible());
+        assert.isAbove(this.flyout.getWidth(), 0);
+
+        const workspace = this.toolbox.workspace_;
+        const translateSpy = sinon.spy(workspace, 'translate');
+        this.toolbox.handleToolboxItemResize();
+
+        const expectedX =
+          workspace.scrollX +
+          this.toolbox.HtmlDiv.getBoundingClientRect().width;
+        assert.deepEqual(translateSpy.firstCall.args, [
+          expectedX,
+          workspace.scrollY,
+        ]);
       });
     });
   });
@@ -666,6 +699,10 @@ suite('Toolbox', function () {
       this.toolbox = getBasicToolbox();
       const metricsStub = sinon.stub(this.toolbox.workspace_, 'getMetrics');
       metricsStub.returns({});
+    });
+
+    teardown(function () {
+      workspaceTeardown.call(this, this.toolbox.getWorkspace());
     });
 
     function checkHorizontalToolbox(toolbox) {

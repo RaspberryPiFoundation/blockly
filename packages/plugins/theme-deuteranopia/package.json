@@ -1,9 +1,9 @@
 {
   "name": "@blockly/theme-deuteranopia",
-  "version": "13.1.0",
+  "version": "13.4.0",
   "description": "A Blockly theme for people that have deuteranopia.",
   "scripts": {
-    "audit:fix": "blockly-scripts auditFix",
+    "audit-fix": "blockly-scripts auditFix",
     "build": "blockly-scripts build",
     "clean": "blockly-scripts clean",
     "lint": "eslint .",
@@ -21,14 +21,14 @@
     "blockly-theme",
     "deuteranopia"
   ],
-  "homepage": "https://github.com/RaspberryPiFoundation/blockly-samples/tree/master/plugins/theme-deuteranopia#readme",
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/theme-deuteranopia#readme",
   "bugs": {
-    "url": "https://github.com/RaspberryPiFoundation/blockly-samples/issues"
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/RaspberryPiFoundation/blockly-samples.git",
-    "directory": "plugins/theme-deuteranopia"
+    "url": "https://github.com/RaspberryPiFoundation/blockly.git",
+    "directory": "packages/plugins/theme-deuteranopia"
   },
   "license": "Apache-2.0",
   "directories": {
@@ -40,10 +40,10 @@
     "src"
   ],
   "devDependencies": {
-    "@blockly/dev-scripts": "^13.1.0"
+    "@blockly/dev-scripts": "^13.4.0"
   },
   "peerDependencies": {
-    "blockly": "^13.1.0"
+    "blockly": "^13.2.0"
   },
   "publishConfig": {
     "access": "public"

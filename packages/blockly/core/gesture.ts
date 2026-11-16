@@ -15,7 +15,7 @@
 import * as blockAnimations from './block_animations.js';
 import type {BlockSvg} from './block_svg.js';
 import * as browserEvents from './browser_events.js';
-import {RenderedWorkspaceComment} from './comments.js';
+import type {RenderedWorkspaceComment} from './comments.js';
 import * as common from './common.js';
 import {config} from './config.js';
 import * as dropDownDiv from './dropdowndiv.js';
@@ -25,8 +25,9 @@ import type {Field} from './field.js';
 import {getFocusManager} from './focus_manager.js';
 import type {IBubble} from './interfaces/i_bubble.js';
 import {hasContextMenu} from './interfaces/i_contextmenu.js';
-import {IDraggable, isDraggable} from './interfaces/i_draggable.js';
-import {IDragger} from './interfaces/i_dragger.js';
+import type {IDraggable} from './interfaces/i_draggable.js';
+import {isDraggable} from './interfaces/i_draggable.js';
+import type {IDragger} from './interfaces/i_dragger.js';
 import type {IFlyout} from './interfaces/i_flyout.js';
 import type {IIcon} from './interfaces/i_icon.js';
 import {keyboardNavigationController} from './keyboard_navigation_controller.js';
@@ -375,6 +376,11 @@ export class Gesture {
     }
 
     this.mouseDownXY = new Coordinate(e.clientX, e.clientY);
+
+    // Re-establish the touch identifier for this gesture's starting pointer.
+    // This avoids a workspace lockup if a mouse-up is missed.
+    // See https://github.com/RaspberryPiFoundation/blockly/issues/9955
+    Touch.checkTouchIdentifier(e);
 
     this.bindMouseEvents(e);
 
@@ -975,9 +981,17 @@ export class Gesture {
    * @internal
    */
   setStartBlock(block: BlockSvg) {
-    // If the gesture already went through a block child, don't set the start
-    // block.
-    if (!this.startBlock && !this.startBubble && !this.startIcon) {
+    // If the gesture already went through a clickable block child, don't set
+    // the start block.
+    if (
+      !this.startBlock &&
+      !this.startBubble &&
+      (!this.startIcon ||
+        (block.isInFlyout &&
+          !this.startIcon.isClickableInFlyout?.(
+            !!block.workspace.getFlyout()?.autoClose,
+          )))
+    ) {
       this.startBlock = block;
       if (block.isInFlyout && block !== block.getRootBlock()) {
         this.setTargetBlock(block.getRootBlock());

@@ -1,0 +1,47 @@
+# @blockly/workspace-content-highlight
+
+## [<img src="https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/docs/static/images/logos/built-with-blockly-badge-white.svg" alt="Built with Blockly" width="119">](https://github.com/RaspberryPiFoundation/blockly)
+
+A [Blockly](https://www.npmjs.com/package/blockly) plugin that highlights the
+content on the workspace.
+
+![](https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/content-highlight/readme-media/content-highlight.gif)
+
+## Installation
+
+### Yarn
+
+```
+yarn add @blockly/workspace-content-highlight
+```
+
+### npm
+
+```
+npm install @blockly/workspace-content-highlight --save
+```
+
+## Usage
+
+```js
+import * as Blockly from 'blockly';
+import {ContentHighlight} from '@blockly/workspace-content-highlight';
+
+// Inject Blockly.
+const workspace = Blockly.inject('blocklyDiv', {
+  toolbox: toolboxCategories,
+});
+
+// Initialize plugin.
+const contentHighlight = new ContentHighlight(workspace);
+contentHighlight.init();
+```
+
+## API
+
+- `init`: Initializes the content highlight.
+- `dispose`: Disposes of content highlight.
+
+## License
+
+Apache 2.0

@@ -6,12 +6,12 @@
 
 import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
 import type {IHasBubble} from '../interfaces/i_has_bubble.js';
-import {Coordinate} from '../utils/coordinate.js';
+import type {Coordinate} from '../utils/coordinate.js';
 import * as dom from '../utils/dom.js';
-import {Rect} from '../utils/rect.js';
+import type {Rect} from '../utils/rect.js';
 import {Size} from '../utils/size.js';
 import {Svg} from '../utils/svg.js';
-import {WorkspaceSvg} from '../workspace_svg.js';
+import type {WorkspaceSvg} from '../workspace_svg.js';
 import {Bubble} from './bubble.js';
 
 /**
@@ -101,8 +101,12 @@ export class TextBubble extends Bubble {
     }
   }
 
-  /** Updates the size of this bubble to account for the size of the text. */
-  private updateBubbleSize() {
+  /**
+   * Updates the size of this bubble to account for the size of the text.
+   *
+   * @internal
+   */
+  updateBubbleSize() {
     const bbox = this.paragraph.getBBox();
     this.setSize(
       new Size(

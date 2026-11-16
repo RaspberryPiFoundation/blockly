@@ -17,7 +17,7 @@ import * as drag from '../utils/drag.js';
 import {Rect} from '../utils/rect.js';
 import {Size} from '../utils/size.js';
 import {Svg} from '../utils/svg.js';
-import {WorkspaceSvg} from '../workspace_svg.js';
+import type {WorkspaceSvg} from '../workspace_svg.js';
 import {Bubble} from './bubble.js';
 
 /**

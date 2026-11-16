@@ -1,0 +1,57 @@
+{
+  "name": "@blockly/toolbox-search",
+  "version": "13.4.0",
+  "description": "A Blockly plugin that adds a toolbox category that allows searching for blocks.",
+  "scripts": {
+    "audit-fix": "blockly-scripts auditFix",
+    "build": "blockly-scripts build",
+    "clean": "blockly-scripts clean",
+    "lint": "eslint .",
+    "predeploy": "blockly-scripts predeploy",
+    "start": "blockly-scripts start",
+    "test": "blockly-scripts test"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "unpkg": "./dist/index.js",
+  "author": "",
+  "keywords": [
+    "blockly",
+    "blockly-plugin",
+    "toolbox search",
+    "block search"
+  ],
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/toolbox-search#readme",
+  "bugs": {
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RaspberryPiFoundation/blockly.git",
+    "directory": "packages/plugins/toolbox-search"
+  },
+  "license": "Apache-2.0",
+  "directories": {
+    "dist": "dist",
+    "src": "src"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "devDependencies": {
+    "@blockly/dev-scripts": "^13.4.0",
+    "@blockly/dev-tools": "^13.4.0",
+    "chai": "^6.3.0",
+    "jsdom": "^30.1.3",
+    "jsdom-global": "^3.0.2",
+    "sinon": "^22.1.0",
+    "typescript": "^6.0.3"
+  },
+  "peerDependencies": {
+    "blockly": "^13.2.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

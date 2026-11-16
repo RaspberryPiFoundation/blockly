@@ -26,7 +26,7 @@ Blockly.inject('blocklyDiv', {
 A [wide variety of plugins](https://raspberrypifoundation.github.io/blockly-samples/)
 that add additional features and functionality to Blockly are available. All
 plugins are distributed via NPM; source code can be found in the
-[Blockly Samples repo](http://github.com/RaspberryPiFoundation/blockly-samples).
+[Blockly repo](http://github.com/RaspberryPiFoundation/blockly).
 
 ## Installation
 

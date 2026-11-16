@@ -16,8 +16,6 @@ import {ComponentManager} from './component_manager.js';
 import * as Css from './css.js';
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
-import type {IComponent} from './interfaces/i_component.js';
-import {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IPositionable} from './interfaces/i_positionable.js';
 import type {UiMetrics} from './metrics_manager.js';
 import {Msg} from './msg.js';
@@ -37,8 +35,9 @@ import type {WorkspaceSvg} from './workspace_svg.js';
  *
  * @internal
  */
-abstract class ZoomControl implements IFocusableNode, IComponent {
+abstract class ZoomControl {
   private pointerDownHandler: browserEvents.Data;
+  private keyDownHandler: browserEvents.Data;
   id: string;
 
   constructor(
@@ -50,6 +49,12 @@ abstract class ZoomControl implements IFocusableNode, IComponent {
       'pointerdown',
       null,
       this.performAction.bind(this),
+    );
+    this.keyDownHandler = browserEvents.bind(
+      group,
+      'keydown',
+      this,
+      this.onKeyDown,
     );
 
     aria.setRole(group, aria.Role.BUTTON);
@@ -85,26 +90,30 @@ abstract class ZoomControl implements IFocusableNode, IComponent {
     eventUtils.fire(uiEvent);
   }
 
-  getFocusableElement() {
+  /**
+   * Returns the SVG group for this zoom button.
+   */
+  getGroup(): SVGGElement {
     return this.group;
-  }
-
-  getFocusableTree() {
-    return this.workspace;
-  }
-
-  onNodeFocus() {}
-
-  onNodeBlur() {}
-
-  canBeFocused() {
-    return true;
   }
 
   abstract performAction(_e: Event): void;
 
+  /**
+   * Activates the control when Enter or Space is pressed.
+   *
+   * @param e A keydown event.
+   */
+  private onKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.performAction(e);
+    }
+  }
+
   dispose() {
     browserEvents.unbind(this.pointerDownHandler);
+    browserEvents.unbind(this.keyDownHandler);
   }
 }
 
@@ -380,20 +389,6 @@ export class ZoomControls implements IPositionable {
       );
     }
 
-    for (const control of [
-      this.zoomOutControl,
-      this.zoomInControl,
-      this.zoomResetControl,
-    ]) {
-      if (!control) continue;
-
-      this.workspace.getComponentManager().addComponent({
-        component: control,
-        weight: ComponentManager.ComponentWeight.ZOOM_CONTROLS_WEIGHT,
-        capabilities: [ComponentManager.Capability.FOCUSABLE],
-      });
-    }
-
     return this.svgGroup;
   }
 
@@ -484,13 +479,13 @@ export class ZoomControls implements IPositionable {
     if (verticalPosition === uiPosition.verticalPosition.TOP) {
       const zoomInTranslateY = this.SMALL_SPACING + this.HEIGHT;
       this.zoomInControl
-        ?.getFocusableElement()
+        ?.getGroup()
         .setAttribute('transform', 'translate(0, ' + zoomInTranslateY + ')');
       if (this.zoomResetControl) {
         const zoomResetTranslateY =
           zoomInTranslateY + this.LARGE_SPACING + this.HEIGHT;
         this.zoomResetControl
-          .getFocusableElement()
+          .getGroup()
           .setAttribute(
             'transform',
             'translate(0, ' + zoomResetTranslateY + ')',
@@ -501,12 +496,12 @@ export class ZoomControls implements IPositionable {
         ? this.LARGE_SPACING + this.HEIGHT
         : 0;
       this.zoomInControl
-        ?.getFocusableElement()
+        ?.getGroup()
         .setAttribute('transform', 'translate(0, ' + zoomInTranslateY + ')');
       const zoomOutTranslateY =
         zoomInTranslateY + this.SMALL_SPACING + this.HEIGHT;
       this.zoomOutControl
-        ?.getFocusableElement()
+        ?.getGroup()
         .setAttribute('transform', 'translate(0, ' + zoomOutTranslateY + ')');
     }
 

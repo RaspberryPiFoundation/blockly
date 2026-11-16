@@ -10,7 +10,8 @@
  * @class
  */
 // Former goog.module ID: Blockly.FieldCheckbox
-import {Field, FieldConfig, FieldValidator} from './field.js';
+import type {FieldConfig, FieldValidator} from './field.js';
+import {Field} from './field.js';
 import * as fieldRegistry from './field_registry.js';
 import {Msg} from './msg.js';
 import {aria} from './utils.js';
@@ -50,7 +51,7 @@ export class FieldCheckbox extends Field<CheckboxBool> {
    *     validated value ('TRUE' or 'FALSE'), or null to abort the change.
    * @param config A map of options used to configure the field.
    *     See the [field creation documentation]{@link
-   * https://developers.google.com/blockly/guides/create-custom-blocks/fields/built-in-fields/checkbox#creation}
+   * https://docs.blockly.com/guides/create-custom-blocks/fields/built-in-fields/checkbox/#creation}
    * for a list of properties this parameter supports.
    */
   constructor(
@@ -308,7 +309,7 @@ export interface FieldCheckboxFromJsonConfig extends FieldCheckboxConfig {
  * A function that is called to validate changes to the field's value before
  * they are set.
  *
- * @see {@link https://developers.google.com/blockly/guides/create-custom-blocks/fields/validators#return_values}
+ * @see {@link https://docs.blockly.com/guides/create-custom-blocks/fields/validators/#return-values}
  * @param newValue The value to be validated.
  * @returns One of three instructions for setting the new value: `T`, `null`,
  * or `undefined`.

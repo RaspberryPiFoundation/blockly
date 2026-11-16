@@ -1,6 +1,7 @@
 name: Make a feature request ✨
 description: Suggest an idea to make Blockly better.
-labels: 'issue: feature request, issue: triage'
+type: Feature
+labels: 'status: triage'
 body:
   - type: markdown
     attributes:

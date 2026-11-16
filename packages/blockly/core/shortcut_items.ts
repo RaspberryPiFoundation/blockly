@@ -22,6 +22,10 @@ import {
   showCutHint,
   showScreenreaderModeHint,
 } from './hints.js';
+import {
+  type IBoundedElement,
+  isBoundedElement,
+} from './interfaces/i_bounded_element.js';
 import {hasContextMenu} from './interfaces/i_contextmenu.js';
 import {isCopyable as isICopyable} from './interfaces/i_copyable.js';
 import {isDeletable as isIDeletable} from './interfaces/i_deletable.js';
@@ -29,11 +33,13 @@ import {type IDraggable, isDraggable} from './interfaces/i_draggable.js';
 import {type IFlyout} from './interfaces/i_flyout.js';
 import {type IFocusableNode} from './interfaces/i_focusable_node.js';
 import {isSelectable} from './interfaces/i_selectable.js';
+import type {IToolbox} from './interfaces/i_toolbox.js';
 import {Direction, KeyboardMover} from './keyboard_nav/keyboard_mover.js';
 import {keyboardNavigationController} from './keyboard_navigation_controller.js';
 import {Msg} from './msg.js';
 import {RenderedConnection} from './rendered_connection.js';
-import {KeyboardShortcut, ShortcutRegistry} from './shortcut_registry.js';
+import type {KeyboardShortcut} from './shortcut_registry.js';
+import {ShortcutRegistry} from './shortcut_registry.js';
 import * as Tooltip from './tooltip.js';
 import {aria} from './utils.js';
 import {Coordinate} from './utils/coordinate.js';
@@ -87,6 +93,12 @@ export enum names {
   JUMP_BLOCK_END = 'jump_to_block_end',
   JUMP_FIRST_BLOCK = 'jump_to_first_block',
   JUMP_LAST_BLOCK = 'jump_to_last_block',
+  JUMP_PREVIOUS_PAGE = 'jump_to_previous_page',
+  JUMP_NEXT_PAGE = 'jump_to_next_page',
+  SCROLL_LEFT = 'scroll_left',
+  SCROLL_RIGHT = 'scroll_right',
+  SCROLL_UP = 'scroll_up',
+  SCROLL_DOWN = 'scroll_down',
 }
 
 /**
@@ -472,6 +484,27 @@ export function registerRedo() {
 }
 
 /**
+ * Ctrl/Cmd + arrow keys. Shared by unconstrained keyboard move (`MOVE_*`) and
+ * workspace scroll (`SCROLL_*`). Scroll shortcuts are safely registered after move
+ * shortcuts because scroll shortcuts do not work when a keyboard move is in progress.
+ */
+const CTRL_CMD_LEFT = ShortcutRegistry.registry.createSerializedKey(
+  KeyCodes.LEFT,
+  [KeyCodes.CTRL_CMD],
+);
+const CTRL_CMD_RIGHT = ShortcutRegistry.registry.createSerializedKey(
+  KeyCodes.RIGHT,
+  [KeyCodes.CTRL_CMD],
+);
+const CTRL_CMD_UP = ShortcutRegistry.registry.createSerializedKey(KeyCodes.UP, [
+  KeyCodes.CTRL_CMD,
+]);
+const CTRL_CMD_DOWN = ShortcutRegistry.registry.createSerializedKey(
+  KeyCodes.DOWN,
+  [KeyCodes.CTRL_CMD],
+);
+
+/**
  * Registers keyboard shortcuts for keyboard-driven movement of workspace
  * elements.
  */
@@ -547,12 +580,7 @@ export function registerMovementShortcuts() {
         e.preventDefault();
         return KeyboardMover.mover.move(Direction.LEFT, e as KeyboardEvent);
       },
-      keyCodes: [
-        KeyCodes.LEFT,
-        ShortcutRegistry.registry.createSerializedKey(KeyCodes.LEFT, [
-          KeyCodes.CTRL_CMD,
-        ]),
-      ],
+      keyCodes: [KeyCodes.LEFT, CTRL_CMD_LEFT],
       allowCollision: true,
       displayText: () => Msg['SHORTCUTS_MOVE_LEFT'],
     },
@@ -563,12 +591,7 @@ export function registerMovementShortcuts() {
         e.preventDefault();
         return KeyboardMover.mover.move(Direction.RIGHT, e as KeyboardEvent);
       },
-      keyCodes: [
-        KeyCodes.RIGHT,
-        ShortcutRegistry.registry.createSerializedKey(KeyCodes.RIGHT, [
-          KeyCodes.CTRL_CMD,
-        ]),
-      ],
+      keyCodes: [KeyCodes.RIGHT, CTRL_CMD_RIGHT],
       allowCollision: true,
       displayText: () => Msg['SHORTCUTS_MOVE_RIGHT'],
     },
@@ -579,12 +602,7 @@ export function registerMovementShortcuts() {
         e.preventDefault();
         return KeyboardMover.mover.move(Direction.UP, e as KeyboardEvent);
       },
-      keyCodes: [
-        KeyCodes.UP,
-        ShortcutRegistry.registry.createSerializedKey(KeyCodes.UP, [
-          KeyCodes.CTRL_CMD,
-        ]),
-      ],
+      keyCodes: [KeyCodes.UP, CTRL_CMD_UP],
       allowCollision: true,
       displayText: () => Msg['SHORTCUTS_MOVE_UP'],
     },
@@ -595,12 +613,7 @@ export function registerMovementShortcuts() {
         e.preventDefault();
         return KeyboardMover.mover.move(Direction.DOWN, e as KeyboardEvent);
       },
-      keyCodes: [
-        KeyCodes.DOWN,
-        ShortcutRegistry.registry.createSerializedKey(KeyCodes.DOWN, [
-          KeyCodes.CTRL_CMD,
-        ]),
-      ],
+      keyCodes: [KeyCodes.DOWN, CTRL_CMD_DOWN],
       allowCollision: true,
       displayText: () => Msg['SHORTCUTS_MOVE_DOWN'],
     },
@@ -1473,6 +1486,46 @@ export function registerJumpBottomStack() {
 }
 
 /**
+ * Returns the toolbox of the given workspace if the toolbox currently holds
+ * focus, otherwise null.
+ *
+ * @param workspace The workspace the shortcut is being handled on.
+ * @returns The focused toolbox, or null if focus is elsewhere.
+ */
+const getFocusedToolbox = (workspace: WorkspaceSvg) => {
+  const toolbox = workspace.getToolbox();
+  if (!toolbox || getFocusManager().getFocusedTree() !== toolbox) return null;
+  return toolbox;
+};
+
+/**
+ * Returns whether the given workspace is a flyout workspace that currently
+ * holds focus.
+ *
+ * @param workspace The workspace the shortcut is being handled on.
+ * @returns True if focus is inside this flyout, otherwise false.
+ */
+const isFocusedFlyout = (workspace: WorkspaceSvg) => {
+  return workspace.isFlyout && getFocusManager().getFocusedTree() === workspace;
+};
+
+/**
+ * Returns the navigable items of the toolbox or flyout that currently holds
+ * focus.
+ *
+ * @param workspace The workspace the shortcut is being handled on.
+ * @returns The items to move between, or null if neither the toolbox nor a
+ *     flyout has focus.
+ */
+const getFocusedItems = (workspace: WorkspaceSvg) => {
+  const tree =
+    getFocusedToolbox(workspace) ??
+    (isFocusedFlyout(workspace) ? workspace : null);
+  if (!tree) return null;
+  return tree.getNavigator().getNavigableItems(tree.getRootFocusableNode());
+};
+
+/**
  * Registers a keyboard shortcut that sets the focus to the first
  * block in the workspace.
  */
@@ -1489,6 +1542,13 @@ export function registerJumpFirstBlock() {
       );
     },
     callback(workspace) {
+      const items = getFocusedItems(workspace);
+      if (items) {
+        if (!items.length) return false;
+        getFocusManager().focusNode(items[0]);
+        return true;
+      }
+
       const topBlocks = workspace.getTopBlocks(true);
       if (!topBlocks.length) return false;
       getFocusManager().focusNode(topBlocks[0]);
@@ -1517,6 +1577,13 @@ export function registerJumpLastBlock() {
       );
     },
     callback(workspace) {
+      const items = getFocusedItems(workspace);
+      if (items) {
+        if (!items.length) return false;
+        getFocusManager().focusNode(items[items.length - 1]);
+        return true;
+      }
+
       const allBlocks = workspace.getAllBlocks(true);
       if (!allBlocks.length) return false;
       getFocusManager().focusNode(allBlocks[allBlocks.length - 1]);
@@ -1526,6 +1593,372 @@ export function registerJumpLastBlock() {
     displayText: () => Msg['SHORTCUTS_JUMP_LAST_BLOCK'],
   };
   ShortcutRegistry.registry.register(jumpLastBlockShortcut);
+}
+
+/**
+ * A list of items laid out along one axis, with coordinates oriented so that
+ * they increase in navigation order. Expressing paging in this space keeps it
+ * free of RTL and horizontal-layout special cases.
+ */
+interface PagedItemList {
+  /** The navigable items, in navigation order. */
+  items: IFocusableNode[];
+  /** The edge of the item at the given index that is reached first. */
+  leadingEdge(index: number): number;
+  /** The edge of the item at the given index that is reached last. */
+  trailingEdge(index: number): number;
+  /** The edge of the visible area that is reached first. */
+  viewLeadingEdge: number;
+  /** The edge of the visible area that is reached last. */
+  viewTrailingEdge: number;
+}
+
+/** The extent of an item along the axis it is laid out on. */
+interface Span {
+  start: number;
+  end: number;
+}
+
+/**
+ * Orients raw measurements taken in a container's own coordinate system so
+ * that they increase in navigation order.
+ *
+ * @param items The navigable items, in navigation order.
+ * @param spans The extent of each item, in the same order as `items`. These
+ *     are a snapshot: focusing an item scrolls the container, so they must not
+ *     be re-measured partway through.
+ * @param view The extent of the visible area.
+ * @returns The oriented list.
+ */
+function createPagedItemList(
+  items: IFocusableNode[],
+  spans: Span[],
+  view: Span,
+): PagedItemList {
+  // Items may run either way along the axis; an RTL horizontal flyout, for
+  // example, lays its first item out on the right.
+  const forwards = spans[spans.length - 1].start >= spans[0].start;
+
+  return {
+    items,
+    leadingEdge: (index) => (forwards ? spans[index].start : -spans[index].end),
+    trailingEdge: (index) =>
+      forwards ? spans[index].end : -spans[index].start,
+    viewLeadingEdge: forwards ? view.start : -view.end,
+    viewTrailingEdge: forwards ? view.end : -view.start,
+  };
+}
+
+/**
+ * Measures the categories of a toolbox for paging.
+ *
+ * @param toolbox The toolbox to measure.
+ * @returns The measured list, or null if it cannot be paged through.
+ */
+function createToolboxPagedList(toolbox: IToolbox): PagedItemList | null {
+  const items = toolbox
+    .getNavigator()
+    .getNavigableItems(toolbox.getRootFocusableNode());
+  if (!items.length) return null;
+
+  const horizontal = toolbox.isHorizontal();
+  const measure = (element: Element): Span => {
+    const rect = element.getBoundingClientRect();
+    return horizontal
+      ? {start: rect.left, end: rect.right}
+      : {start: rect.top, end: rect.bottom};
+  };
+  const container = toolbox.getRootFocusableNode().getFocusableElement();
+  const spans = items.map((item) => measure(item.getFocusableElement()));
+
+  return createPagedItemList(items, spans, measure(container));
+}
+
+/**
+ * Measures the contents of a flyout for paging.
+ *
+ * @param workspace The flyout's workspace.
+ * @returns The measured list, or null if it cannot be paged through.
+ */
+function createFlyoutPagedList(workspace: WorkspaceSvg): PagedItemList | null {
+  const items = workspace
+    .getNavigator()
+    .getNavigableItems(workspace.getRootFocusableNode())
+    .filter((item): item is IFocusableNode & IBoundedElement =>
+      isBoundedElement(item),
+    );
+  if (!items.length) return null;
+
+  const horizontal = !!workspace.targetWorkspace?.getFlyout()?.horizontalLayout;
+  const metrics = workspace.getMetricsManager().getViewMetrics(true);
+  const view = horizontal
+    ? {start: metrics.left, end: metrics.left + metrics.width}
+    : {start: metrics.top, end: metrics.top + metrics.height};
+  const spans = items.map((item): Span => {
+    const rect = item.getBoundingRectangle();
+    return horizontal
+      ? {start: rect.left, end: rect.right}
+      : {start: rect.top, end: rect.bottom};
+  });
+
+  return createPagedItemList(items, spans, view);
+}
+
+/**
+ * Moves focus by one viewport's worth of items through the focused toolbox or
+ * flyout. The target is the furthest item that is at least partly visible after
+ * the move, so paging never skips one; scrolling it into view is left to the
+ * item itself, which moves only as far as it takes to show it.
+ *
+ * @param workspace The workspace the shortcut is being handled on.
+ * @param forward True to page towards the end of the list, false towards the
+ *     start.
+ * @returns True if focus moved, otherwise false.
+ */
+function jumpPage(workspace: WorkspaceSvg, forward: boolean): boolean {
+  const toolbox = getFocusedToolbox(workspace);
+  const list = toolbox
+    ? createToolboxPagedList(toolbox)
+    : createFlyoutPagedList(workspace);
+  if (!list) return false;
+
+  const items = list.items;
+  const current = getFocusManager().getFocusedNode();
+  const currentIndex = current ? items.indexOf(current) : -1;
+  const pageSize = list.viewTrailingEdge - list.viewLeadingEdge;
+  let targetIndex = -1;
+
+  if (forward) {
+    // Page from whichever is further along: the leading edge of the viewport,
+    // or the focused item, which may have been scrolled past it.
+    const from =
+      currentIndex >= 0
+        ? Math.max(list.viewLeadingEdge, list.leadingEdge(currentIndex))
+        : list.viewLeadingEdge;
+    for (let i = 0; i < items.length; i++) {
+      if (list.leadingEdge(i) >= from + pageSize) break;
+      targetIndex = i;
+    }
+  } else {
+    const from =
+      currentIndex >= 0
+        ? Math.min(list.viewTrailingEdge, list.trailingEdge(currentIndex))
+        : list.viewTrailingEdge;
+    for (let i = items.length - 1; i >= 0; i--) {
+      if (list.trailingEdge(i) <= from - pageSize) break;
+      targetIndex = i;
+    }
+  }
+
+  if (targetIndex < 0) return false;
+  if (targetIndex === currentIndex) {
+    // An item longer than the viewport fills the page on its own; step over it
+    // so that the shortcut always moves.
+    targetIndex += forward ? 1 : -1;
+    if (targetIndex < 0 || targetIndex >= items.length) return false;
+  }
+
+  getFocusManager().focusNode(items[targetIndex]);
+  return true;
+}
+
+/**
+ * @param workspace
+ * @returns true if the paging shortcuts should be allowed, false otherwise.
+ */
+const shouldDoItemPaging = (workspace: WorkspaceSvg) => {
+  return (
+    !workspace.isDragging() &&
+    !getFocusManager().ephemeralFocusTaken() &&
+    (!!getFocusedToolbox(workspace) || isFocusedFlyout(workspace))
+  );
+};
+
+/**
+ * Registers a keyboard shortcut that pages backwards through the items of the
+ * focused toolbox or flyout.
+ */
+export function registerJumpPreviousPage() {
+  const jumpPreviousPageShortcut: KeyboardShortcut = {
+    name: names.JUMP_PREVIOUS_PAGE,
+    preconditionFn: shouldDoItemPaging,
+    callback(workspace, e) {
+      if (!jumpPage(workspace, false)) return false;
+      e.preventDefault();
+      return true;
+    },
+    keyCodes: [KeyCodes.PAGE_UP],
+    allowCollision: true,
+    displayText: () => Msg['SHORTCUTS_JUMP_PREVIOUS_PAGE'],
+  };
+  ShortcutRegistry.registry.register(jumpPreviousPageShortcut);
+}
+
+/**
+ * Registers a keyboard shortcut that pages forwards through the items of the
+ * focused toolbox or flyout.
+ */
+export function registerJumpNextPage() {
+  const jumpNextPageShortcut: KeyboardShortcut = {
+    name: names.JUMP_NEXT_PAGE,
+    preconditionFn: shouldDoItemPaging,
+    callback(workspace, e) {
+      if (!jumpPage(workspace, true)) return false;
+      e.preventDefault();
+      return true;
+    },
+    keyCodes: [KeyCodes.PAGE_DOWN],
+    allowCollision: true,
+    displayText: () => Msg['SHORTCUTS_JUMP_NEXT_PAGE'],
+  };
+  ShortcutRegistry.registry.register(jumpNextPageShortcut);
+}
+
+/**
+ * Pixels to scroll with each workspace shortcut.
+ */
+const SCROLL_PIXELS = 50;
+
+/** Cardinal directions in which the workspace can be scrolled. */
+enum ScrollDirection {
+  LEFT,
+  RIGHT,
+  UP,
+  DOWN,
+}
+
+/**
+ * Maps scroll directions to the message keys used to announce them to the ARIA live region.
+ */
+const SCROLL_ANNOUNCEMENT_KEYS: Record<ScrollDirection, string> = {
+  [ScrollDirection.LEFT]: 'ANNOUNCE_SCROLLED_LEFT',
+  [ScrollDirection.RIGHT]: 'ANNOUNCE_SCROLLED_RIGHT',
+  [ScrollDirection.UP]: 'ANNOUNCE_SCROLLED_UP',
+  [ScrollDirection.DOWN]: 'ANNOUNCE_SCROLLED_DOWN',
+};
+
+/**
+ * Returns true if the workspace can be scrolled by a shortcut.
+ * Workspaces inside mutator bubbles are never scrollable.
+ */
+const canScrollWorkspace = (workspace: WorkspaceSvg) => {
+  return (
+    !workspace.isDragging() &&
+    workspace.isMovable() &&
+    !workspace.targetWorkspace?.isMutator &&
+    !KeyboardMover.mover.isMoving() &&
+    !dropDownDiv.isVisible() &&
+    !widgetDiv.isVisible()
+  );
+};
+
+/**
+ * Beeps and announces that the workspace cannot scroll further.
+ */
+const scrollFailure = (workspace: WorkspaceSvg) => {
+  workspace.getAudioManager().playErrorBeep();
+  aria.announceDynamicAriaState(Msg['ANNOUNCE_CANT_SCROLL_FURTHER']);
+};
+
+/**
+ * Scrolls the workspace in the given direction.
+ *
+ * @param workspace The workspace to scroll.
+ * @param e The key event that triggered the shortcut.
+ * @param direction The direction to scroll.
+ * @returns True so the key is consumed.
+ */
+const scrollWorkspace = (
+  workspace: WorkspaceSvg,
+  e: Event,
+  direction: ScrollDirection,
+): boolean => {
+  e.preventDefault();
+
+  const horizontal =
+    direction === ScrollDirection.LEFT || direction === ScrollDirection.RIGHT;
+  const canScroll = horizontal
+    ? workspace.isMovableHorizontally()
+    : workspace.isMovableVertically();
+  if (!canScroll) {
+    scrollFailure(workspace);
+    return true;
+  }
+
+  let deltaX = 0;
+  let deltaY = 0;
+  switch (direction) {
+    case ScrollDirection.LEFT:
+      deltaX = SCROLL_PIXELS;
+      break;
+    case ScrollDirection.RIGHT:
+      deltaX = -SCROLL_PIXELS;
+      break;
+    case ScrollDirection.UP:
+      deltaY = SCROLL_PIXELS;
+      break;
+    case ScrollDirection.DOWN:
+      deltaY = -SCROLL_PIXELS;
+      break;
+  }
+  const oldX = workspace.scrollX;
+  const oldY = workspace.scrollY;
+  workspace.scroll(oldX + deltaX, oldY + deltaY);
+  if (workspace.scrollX === oldX && workspace.scrollY === oldY) {
+    scrollFailure(workspace);
+    return true;
+  }
+  aria.announceDynamicAriaState(Msg[SCROLL_ANNOUNCEMENT_KEYS[direction]]);
+  return true;
+};
+
+/**
+ * Registers keyboard shortcuts to scroll the focused workspace or flyout with
+ * Ctrl/Cmd + arrow keys.
+ */
+export function registerWorkspaceScrollShortcuts() {
+  const shortcuts: KeyboardShortcut[] = [
+    {
+      name: names.SCROLL_LEFT,
+      preconditionFn: canScrollWorkspace,
+      callback: (workspace, e) =>
+        scrollWorkspace(workspace, e, ScrollDirection.LEFT),
+      keyCodes: [CTRL_CMD_LEFT],
+      allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_SCROLL_LEFT'],
+    },
+    {
+      name: names.SCROLL_RIGHT,
+      preconditionFn: canScrollWorkspace,
+      callback: (workspace, e) =>
+        scrollWorkspace(workspace, e, ScrollDirection.RIGHT),
+      keyCodes: [CTRL_CMD_RIGHT],
+      allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_SCROLL_RIGHT'],
+    },
+    {
+      name: names.SCROLL_UP,
+      preconditionFn: canScrollWorkspace,
+      callback: (workspace, e) =>
+        scrollWorkspace(workspace, e, ScrollDirection.UP),
+      keyCodes: [CTRL_CMD_UP],
+      allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_SCROLL_UP'],
+    },
+    {
+      name: names.SCROLL_DOWN,
+      preconditionFn: canScrollWorkspace,
+      callback: (workspace, e) =>
+        scrollWorkspace(workspace, e, ScrollDirection.DOWN),
+      keyCodes: [CTRL_CMD_DOWN],
+      allowCollision: true,
+      displayText: () => Msg['SHORTCUTS_SCROLL_DOWN'],
+    },
+  ];
+
+  for (const shortcut of shortcuts) {
+    ShortcutRegistry.registry.register(shortcut);
+  }
 }
 
 /**
@@ -1573,7 +2006,9 @@ export function registerScreenReaderShortcuts() {
 }
 
 /**
- * Registers keyboard shortcuts used to jump between blocks and stacks in the workspace.
+ * Registers keyboard shortcuts used to jump between blocks and stacks in the
+ * workspace, between items in the toolbox and flyout, and to scroll the
+ * workspace or flyout.
  * Note these are not registered by default, so call this function to enable them if desired.
  */
 export function registerNavigationShortcuts() {
@@ -1583,6 +2018,9 @@ export function registerNavigationShortcuts() {
   registerJumpBottomStack();
   registerJumpFirstBlock();
   registerJumpLastBlock();
+  registerJumpPreviousPage();
+  registerJumpNextPage();
+  registerWorkspaceScrollShortcuts();
 }
 
 registerDefaultShortcuts();

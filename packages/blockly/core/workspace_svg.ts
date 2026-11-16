@@ -15,22 +15,22 @@ import type {Block} from './block.js';
 import type {BlockSvg} from './block_svg.js';
 import type {BlocklyOptions} from './blockly_options.js';
 import * as browserEvents from './browser_events.js';
+import {MiniWorkspaceBubble} from './bubbles/mini_workspace_bubble.js';
+import {TextBubble} from './bubbles/text_bubble.js';
 import {TextInputBubble} from './bubbles/textinput_bubble.js';
 import {COMMENT_COLLAPSE_BAR_BUTTON_FOCUS_IDENTIFIER} from './comments/collapse_comment_bar_button.js';
 import {COMMENT_EDITOR_FOCUS_IDENTIFIER} from './comments/comment_editor.js';
 import {COMMENT_DELETE_BAR_BUTTON_FOCUS_IDENTIFIER} from './comments/delete_comment_bar_button.js';
 import {RenderedWorkspaceComment} from './comments/rendered_workspace_comment.js';
-import {WorkspaceComment} from './comments/workspace_comment.js';
+import type {WorkspaceComment} from './comments/workspace_comment.js';
 import * as common from './common.js';
 import {ComponentManager} from './component_manager.js';
 import {ConnectionDB} from './connection_db.js';
 import * as ContextMenu from './contextmenu.js';
-import {
-  ContextMenuOption,
-  ContextMenuRegistry,
-} from './contextmenu_registry.js';
+import type {ContextMenuOption} from './contextmenu_registry.js';
+import {ContextMenuRegistry} from './contextmenu_registry.js';
 import * as dropDownDiv from './dropdowndiv.js';
-import {Abstract as AbstractEvent} from './events/events.js';
+import type {Abstract as AbstractEvent} from './events/events.js';
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
 import {Flyout} from './flyout_base.js';
@@ -39,11 +39,10 @@ import {getFocusManager} from './focus_manager.js';
 import {Gesture} from './gesture.js';
 import {Grid} from './grid.js';
 import * as hints from './hints.js';
-import {MutatorIcon} from './icons/mutator_icon.js';
-import {isAutoHideable} from './interfaces/i_autohideable.js';
+import {IconType} from './icons/icon_types.js';
 import type {IBoundedElement} from './interfaces/i_bounded_element.js';
 import type {IComponent} from './interfaces/i_component.js';
-import {IContextMenu} from './interfaces/i_contextmenu.js';
+import type {IContextMenu} from './interfaces/i_contextmenu.js';
 import type {IDragTarget} from './interfaces/i_drag_target.js';
 import type {IFlyout} from './interfaces/i_flyout.js';
 import {
@@ -61,6 +60,7 @@ import {Msg} from './msg.js';
 import {Options} from './options.js';
 import * as Procedures from './procedures.js';
 import * as registry from './registry.js';
+import * as renderManagement from './render_management.js';
 import * as blockRendering from './renderers/common/block_rendering.js';
 import type {Renderer} from './renderers/common/renderer.js';
 import type {ScrollbarPair} from './scrollbar_pair.js';
@@ -530,10 +530,35 @@ export class WorkspaceSvg
       );
     }
 
+    const stylishBlocks: BlockSvg[] = [];
+
+    this.getAllBlocks(false).forEach((block) => {
+      if (block.getStyleName()) {
+        stylishBlocks.push(block);
+      }
+      // Clear cached field sizes and rerender the block.
+      block.markDirty();
+      block.queueRender();
+
+      const warningIcon = block.getIcon(IconType.WARNING);
+      if (warningIcon?.bubbleIsVisible()) {
+        const bubble = warningIcon.getBubble();
+        if (bubble instanceof TextBubble) {
+          bubble.updateBubbleSize();
+        }
+      }
+
+      const mutatorIcon = block.getIcon(IconType.MUTATOR);
+      if (mutatorIcon?.bubbleIsVisible()) {
+        const bubble = mutatorIcon.getBubble();
+        if (bubble instanceof MiniWorkspaceBubble) {
+          bubble.updateBubbleSize();
+        }
+      }
+    });
+
     // Update all blocks in workspace that have a style name.
-    this.updateBlockStyles(
-      this.getAllBlocks(false).filter((block) => !!block.getStyleName()),
-    );
+    this.updateBlockStyles(stylishBlocks);
 
     // Update current toolbox selection.
     this.refreshToolboxSelection();
@@ -544,6 +569,15 @@ export class WorkspaceSvg
     // Re-render if workspace is visible
     if (this.isVisible()) {
       this.setVisible(true);
+    }
+
+    // If this workspace is inside a flyout, reflow the flyout to accommodate
+    // changes in block dimensions based on theme text size.
+    if (this.isFlyout && !this.targetWorkspace?.getToolbox()) {
+      renderManagement.finishQueuedRenders().then(() => {
+        const flyout = this.targetWorkspace?.getFlyout();
+        flyout?.reflow();
+      });
     }
 
     const event = new (eventUtils.get(EventType.THEME_CHANGE))(
@@ -1017,7 +1051,7 @@ export class WorkspaceSvg
   addTrashcan() {
     this.trashcan = WorkspaceSvg.newTrashcan(this);
     const svgTrashcan = this.trashcan.createDom();
-    this.svgGroup_.insertBefore(svgTrashcan, this.getCanvas());
+    this.svgGroup_.appendChild(svgTrashcan);
   }
 
   /**
@@ -1164,6 +1198,8 @@ export class WorkspaceSvg
     } else if (this.flyout) {
       this.flyout.position();
     }
+
+    this.getFlyout()?.getWorkspace().resize();
 
     const positionables = this.componentManager.getComponents(
       ComponentManager.Capability.POSITIONABLE,
@@ -1828,8 +1864,15 @@ export class WorkspaceSvg
     if (e instanceof PointerEvent) {
       location = new Coordinate(e.clientX, e.clientY);
     } else {
-      const x = this.RTL ? this.getWidth() - 5 : 5;
-      location = svgMath.wsToScreenCoordinates(this, new Coordinate(x, 5));
+      const viewportBounds = this.getMetricsManager().getViewMetrics(true);
+
+      const x = this.RTL
+        ? viewportBounds.left + viewportBounds.width - 5
+        : viewportBounds.left + 5;
+      location = svgMath.wsToScreenCoordinates(
+        this,
+        new Coordinate(x, viewportBounds.top + 5),
+      );
     }
 
     ContextMenu.show(e, menuOptions, this.RTL, this, location);
@@ -1932,8 +1975,8 @@ export class WorkspaceSvg
     // The scrollX and scrollY still need to have absoluteLeft and absoluteTop
     // subtracted from them, but we'll leave that for setScale so that they're
     // correctly updated for the new flyout size if we have a simple toolbox.
-    this.scrollX = matrix.e;
-    this.scrollY = matrix.f;
+    this.scrollX = Math.round(matrix.e);
+    this.scrollY = Math.round(matrix.f);
     this.setScale(newScale);
   }
 
@@ -2119,6 +2162,7 @@ export class WorkspaceSvg
    * @param newScale Zoom factor. Units: (pixels / workspaceUnit).
    */
   setScale(newScale: number) {
+    newScale = Math.round(newScale * 1000) / 1000;
     if (
       this.options.zoomOptions.maxScale &&
       newScale > this.options.zoomOptions.maxScale
@@ -2236,9 +2280,12 @@ export class WorkspaceSvg
    *
    * @param x Target X to scroll to.
    * @param y Target Y to scroll to.
+   * @param shouldHidePopups Whether to hide popups. Defaults to true.
    */
-  scroll(x: number, y: number) {
-    this.hideChaff(/* opt_onlyClosePopups= */ true);
+  scroll(x: number, y: number, shouldHidePopups = true) {
+    if (shouldHidePopups) {
+      this.hideChaff(/* opt_onlyClosePopups= */ true);
+    }
 
     // Keep scrolling within the bounds of the content.
     const metrics = this.getMetrics();
@@ -2256,8 +2303,8 @@ export class WorkspaceSvg
       metrics.scrollHeight - metrics.viewHeight,
     );
     const maxYScroll = metrics.scrollTop + maxYDisplacement;
-    x = Math.max(x, -maxXScroll);
-    y = Math.max(y, -maxYScroll);
+    x = Math.round(Math.max(x, -maxXScroll));
+    y = Math.round(Math.max(y, -maxYScroll));
     this.scrollX = x;
     this.scrollY = y;
 
@@ -2770,7 +2817,7 @@ export class WorkspaceSvg
 
     deltaX *= scale;
     deltaY *= scale;
-    this.scroll(this.scrollX + deltaX, this.scrollY + deltaY);
+    this.scroll(this.scrollX + deltaX, this.scrollY + deltaY, false);
   }
 
   /** See IFocusableNode.getFocusableElement. */
@@ -2876,15 +2923,11 @@ export class WorkspaceSvg
 
   /** See IFocusableTree.getNestedTrees. */
   getNestedTrees(): Array<IFocusableTree> {
-    const nestedWorkspaces = this.getAllBlocks()
-      .map((block) => block.getIcons())
-      .flat()
+    const nestedWorkspaces = common
+      .getAllWorkspaces()
       .filter(
-        (icon): icon is MutatorIcon =>
-          icon instanceof MutatorIcon && icon.bubbleIsVisible(),
-      )
-      .map((icon) => icon.getBubble()?.getWorkspace())
-      .filter((workspace) => !!workspace);
+        (w) => w.isMutator && w.options.parentWorkspace === this,
+      ) as WorkspaceSvg[];
 
     const ownFlyout = this.getFlyout(true);
     if (ownFlyout) {
@@ -2981,8 +3024,7 @@ export class WorkspaceSvg
           return (
             comment.view
               .getCommentBarButtons()
-              .find((button) => button.getFocusableElement().id.includes(id)) ??
-            null
+              .find((button) => button.id.includes(id)) ?? null
           );
         }
       }
@@ -3051,16 +3093,25 @@ export class WorkspaceSvg
 
   /** See IFocusableTree.onTreeBlur. */
   onTreeBlur(nextTree: IFocusableTree | null): void {
-    // If the flyout loses focus, make sure to close it unless focus is being
-    // lost to the toolbox or ephemeral focus.
-    if (this.isFlyout && this.targetWorkspace) {
-      // Only hide the flyout if the flyout's workspace is losing focus and that
-      // focus isn't returning to the flyout itself, the toolbox, or ephemeral.
-      if (getFocusManager().ephemeralFocusTaken()) return;
-      const toolbox = this.targetWorkspace.getToolbox();
-      if (toolbox && nextTree === toolbox) return;
-      if (isAutoHideable(toolbox)) toolbox.autoHide(false);
+    // Close the flyout when it loses focus, except for the toolbox or while
+    // overlay UI is open (dropdowns, dialogs).
+    if (!this.isFlyout || !this.targetWorkspace) return;
+
+    const toolbox = this.targetWorkspace.getToolbox();
+
+    // Keep the flyout open when focus moves to the toolbox.
+    if (toolbox && nextTree === toolbox) return;
+
+    // Keep it open for overlay UI, but not when the user is going to the
+    // workspace (for example dragging a block from the flyout).
+    if (
+      getFocusManager().ephemeralFocusTaken() &&
+      nextTree !== this.targetWorkspace
+    ) {
+      return;
     }
+
+    this.targetWorkspace.hideComponents(false);
   }
 
   /**

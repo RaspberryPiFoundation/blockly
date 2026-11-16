@@ -722,13 +722,13 @@ export class Toolbox
       this.toolboxPosition === toolbox.Position.LEFT
         ? workspace.scrollX +
           rect.width +
-          (flyout?.isVisible() ? flyout.getWidth() : 0)
+          (flyout && !flyout.autoClose ? flyout.getWidth() : 0)
         : workspace.scrollX;
     const newY =
       this.toolboxPosition === toolbox.Position.TOP
         ? workspace.scrollY +
           rect.height +
-          (flyout?.isVisible() ? flyout.getHeight() : 0)
+          (flyout && !flyout.autoClose ? flyout.getHeight() : 0)
         : workspace.scrollY;
     workspace.translate(newX, newY);
 

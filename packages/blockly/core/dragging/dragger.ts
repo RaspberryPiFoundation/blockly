@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {BlockSvg} from '../block_svg.js';
 import {ComponentManager} from '../component_manager.js';
 import * as eventUtils from '../events/utils.js';
 import {getFocusManager} from '../focus_manager.js';
@@ -22,7 +23,14 @@ export class Dragger implements IDragger {
 
   protected dragTarget: IDragTarget | null = null;
 
+  protected revertShouldDelete = false;
+
   constructor(protected draggable: IDraggable) {
+    // Blocks originating from the flyout should be deleted if the drag is
+    // reverted.
+    if (draggable instanceof BlockSvg && draggable.workspace.isFlyout) {
+      this.revertShouldDelete = true;
+    }
     this.startLoc = draggable.getRelativeToSurfaceXY();
   }
 
@@ -167,7 +175,13 @@ export class Dragger implements IDragger {
   }
 
   /** Handles a drag being reverted. */
-  onDragRevert() {
+  onDragRevert(e?: PointerEvent | KeyboardEvent) {
+    if (this.revertShouldDelete && isDeletable(this.draggable)) {
+      this.draggable.endDrag(e, DragDisposition.DELETE);
+      this.draggable.dispose();
+      return;
+    }
+
     this.draggable.revertDrag();
     if (isFocusableNode(this.draggable)) {
       getFocusManager().focusNode(this.draggable);

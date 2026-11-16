@@ -5,9 +5,9 @@
  */
 
 /**
- * @fileoverview High contrast theme.
+ * A Blockly high contrast theme.
  *
- * Darker colours to contrast the white font.
+ * @packageDocumentation
  */
 
 /* eslint-disable @typescript-eslint/naming-convention */

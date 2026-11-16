@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {IProcedureModel} from './i_procedure_model.js';
+import type {IProcedureModel} from './i_procedure_model.js';
 
 export interface IProcedureMap extends Map<string, IProcedureModel> {
   /**

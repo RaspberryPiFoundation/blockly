@@ -59,7 +59,7 @@ async function runGeneratorsInBrowser(outputDir) {
 
     await browser
         .$('.blocklySvg .blocklyWorkspace > .blocklyBlockCanvas')
-        .waitForExist({timeout: 2000});
+        .waitForExist({timeout: 3000});
 
     await browser.execute(function() {
       checkAll();

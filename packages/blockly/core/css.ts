@@ -238,7 +238,7 @@ const content = `
 
 .blocklyFlyout {
   position: absolute;
-  z-index: 20;
+  z-index: 25;
 }
 
 .blocklyText text {
@@ -535,9 +535,9 @@ input[type=number] {
   .blocklyBubble,
   .blocklyIconGroup,
   .blocklyTextarea,
-  .blocklyZoom,
-  .blocklyTrash,
-) {
+),
+.blocklyZoom:focus,
+.blocklyTrash:focus {
   outline: none;
 }
 .hiddenForAria {
@@ -568,7 +568,9 @@ input[type=number] {
   > .blocklyIconShape:first-child,
 .blocklyKeyboardNavigation
   .blocklyActiveFocus
-  > .blocklyFocusRing {
+  > .blocklyFocusRing,
+.blocklyTrash:focus-visible > .blocklyFocusRing,
+.blocklyZoom:focus-visible > .blocklyFocusRing {
   stroke: var(--blockly-active-node-color);
   stroke-width: var(--blockly-selection-width);
 }
@@ -594,6 +596,15 @@ input[type=number] {
       )
   .blocklyPassiveFocus.blocklyField
   > .blocklyFieldRect,
+/* Full-block fields use the block path for their passive focus indicator. */
+.blocklyKeyboardNavigation:not(
+        :has(
+            .blocklyDropDownDiv:focus-within,
+            .blocklyWidgetDiv:focus-within
+          )
+      )
+  .blocklyBlock:has(> .blocklyFullBlockField.blocklyPassiveFocus)
+  > .blocklyPath:not(.blocklyFlyout .blocklyPath),
 /* Icons with passive focus except when widget/dropdown div in use. */
 .blocklyKeyboardNavigation:not(
         :has(
@@ -703,5 +714,13 @@ input[type=number] {
   display: flex;
   flex-direction: ${userAgent.MOBILE || userAgent.APPLE ? 'row-reverse' : 'row'};
   column-gap: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blocklyBlockCanvas.blocklyCanvasTransitioning,
+  .blocklyBubbleCanvas.blocklyCanvasTransitioning,
+  .blocklyDropDownDiv {
+    transition: none !important;
+  }
 }
 `;

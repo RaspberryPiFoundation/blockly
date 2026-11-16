@@ -23,15 +23,15 @@ jobs:
 
             - You can find tips about contributing to Blockly and how to
             validate your changes on our
-            [developer site](https://developers.google.com/blockly/guides/contribute/core#making_and_verifying_a_change).
+            [developer site](https://docs.blockly.com/guides/contribute/core/#make-and-verify-a-change).
 
             - We use conventional commits to make versioning the package easier. Make sure your commit
-            message is in the [proper format](https://developers.google.com/blockly/guides/contribute/get-started/commits)
-            or [learn how to fix it](https://developers.google.com/blockly/guides/contribute/get-started/commits#fixing_non-conventional_commits).
+            message is in the [proper format](https://docs.blockly.com/guides/contribute/get-started/commits/)
+            or [learn how to fix it](https://docs.blockly.com/guides/contribute/get-started/commits/#fixing-non-conventional-commits).
 
             - If any of the other checks on this PR fail, you can click on
             them to learn why. It might be that your change caused a test
             failure, or that you need to double-check the
-            [style guide](https://developers.google.com/blockly/guides/contribute/core/style_guide).
+            [style guide](https://docs.blockly.com/guides/contribute/core/style_guide/).
 
             Thank you for opening this PR! A member of the Blockly team will review it soon.

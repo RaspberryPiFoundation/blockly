@@ -1,13 +1,14 @@
 name: Report a documentation problem 📖
 description: Could our documentation be better? Tell us how.
-labels: 'issue: docs, issue: triage'
+type: Task
+labels: 'status: triage, area: docs & examples'
 body:
   - type: markdown
     attributes:
       value: >
         Thanks for helping us improve our developer site documentation!
         Use this template to describe issues with the content on our
-        [developer site](https://developers.google.com/blockly/guides).
+        [developer site](https://docs.blockly.com/).
   - type: input
     id: link
     attributes:

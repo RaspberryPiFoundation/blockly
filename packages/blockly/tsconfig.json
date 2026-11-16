@@ -5,6 +5,8 @@
     // normally they are ignored as source files
     "allowJs": true,
 
+    "incremental": true,
+
     // Generate d.ts files and sourcemaps.
     "declaration": true,
     // Generate declaration maps used for api-extractor

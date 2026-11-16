@@ -11,7 +11,7 @@ import * as registry from './clipboard/registry.js';
 import type {ICopyData, ICopyable} from './interfaces/i_copyable.js';
 import {isSelectable} from './interfaces/i_selectable.js';
 import * as globalRegistry from './registry.js';
-import {Coordinate} from './utils/coordinate.js';
+import type {Coordinate} from './utils/coordinate.js';
 import {WorkspaceSvg} from './workspace_svg.js';
 
 /** Metadata about the object that is currently on the clipboard. */

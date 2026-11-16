@@ -8,12 +8,10 @@ import type {BlockSvg} from './block_svg.js';
 import {ConnectionType} from './connection_type.js';
 import type {Input} from './inputs/input.js';
 import {inputTypes} from './inputs/input_types.js';
-import {
-  ISelectableToolboxItem,
-  isSelectableToolboxItem,
-} from './interfaces/i_selectable_toolbox_item.js';
+import type {ISelectableToolboxItem} from './interfaces/i_selectable_toolbox_item.js';
+import {isSelectableToolboxItem} from './interfaces/i_selectable_toolbox_item.js';
 import {Msg} from './msg.js';
-import {RenderedConnection} from './rendered_connection.js';
+import type {RenderedConnection} from './rendered_connection.js';
 import {Role, setRole, setState, State, Verbosity} from './utils/aria.js';
 
 /**

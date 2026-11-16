@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {ICopyable, ICopyData} from '../interfaces/i_copyable.js';
+import type {ICopyable, ICopyData} from '../interfaces/i_copyable.js';
 import type {IPaster} from '../interfaces/i_paster.js';
 import * as registry from '../registry.js';
 

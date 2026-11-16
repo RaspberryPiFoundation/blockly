@@ -260,13 +260,6 @@ export function convertFlyoutDefToJsonArray(
  * @internal
  */
 export function hasCategories(toolboxJson: ToolboxInfo | null): boolean {
-  return TEST_ONLY.hasCategoriesInternal(toolboxJson);
-}
-
-/**
- * Private version of hasCategories for stubbing in tests.
- */
-function hasCategoriesInternal(toolboxJson: ToolboxInfo | null): boolean {
   if (!toolboxJson) {
     return false;
   }
@@ -404,7 +397,3 @@ export function parseToolboxTree(
   }
   return parsedToolboxDef;
 }
-
-export const TEST_ONLY = {
-  hasCategoriesInternal,
-};

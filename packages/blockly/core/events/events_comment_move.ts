@@ -15,7 +15,8 @@ import type {WorkspaceComment} from '../comments/workspace_comment.js';
 import * as registry from '../registry.js';
 import {Coordinate} from '../utils/coordinate.js';
 import type {Workspace} from '../workspace.js';
-import {CommentBase, CommentBaseJson} from './events_comment_base.js';
+import type {CommentBaseJson} from './events_comment_base.js';
+import {CommentBase} from './events_comment_base.js';
 import {EventType} from './type.js';
 
 /**
@@ -24,7 +25,12 @@ import {EventType} from './type.js';
 export class CommentMove extends CommentBase {
   override type = EventType.COMMENT_MOVE;
 
-  /** The comment that is being moved. */
+  /**
+   * The comment that is being moved.
+   *
+   * @deprecated This field will be removed in v14. Use `workspaceId` and
+   *     `commentId` to get a reference to the comment object if needed.
+   */
   comment_?: WorkspaceComment;
 
   // TODO(#6774): We should remove underscores.

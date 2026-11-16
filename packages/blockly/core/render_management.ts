@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {BlockSvg} from './block_svg.js';
+import type {BlockSvg} from './block_svg.js';
 import * as eventUtils from './events/utils.js';
 import * as userAgent from './utils/useragent.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
@@ -15,8 +15,13 @@ const rootBlocks = new Set<BlockSvg>();
 /** The set of all blocks in need of rendering. */
 const dirtyBlocks = new WeakSet<BlockSvg>();
 
-/** A map from queued blocks to the event group from when they were queued. */
-const eventGroups = new WeakMap<BlockSvg, string>();
+/**
+ * A map from queued blocks to the event context from when they were queued.
+ */
+const eventContexts = new WeakMap<
+  BlockSvg,
+  {group: string; recordUndo: boolean}
+>();
 
 /**
  * The promise which resolves after the current set of renders is completed. Or
@@ -107,7 +112,10 @@ function alwaysImmediatelyRender() {
  */
 function queueBlock(block: BlockSvg) {
   dirtyBlocks.add(block);
-  eventGroups.set(block, eventUtils.getGroup());
+  eventContexts.set(block, {
+    group: eventUtils.getGroup(),
+    recordUndo: eventUtils.getRecordUndo(),
+  });
   const parent = block.getParent();
   if (parent) {
     queueBlock(parent);
@@ -144,12 +152,17 @@ function doRenders(workspace?: WorkspaceSvg) {
   }
   for (const block of blocks) {
     const oldGroup = eventUtils.getGroup();
-    const newGroup = eventGroups.get(block);
-    if (newGroup) eventUtils.setGroup(newGroup);
+    const oldRecordUndo = eventUtils.getRecordUndo();
+    const context = eventContexts.get(block);
+    if (context) {
+      if (context.group) eventUtils.setGroup(context.group);
+      eventUtils.setRecordUndo(context.recordUndo);
+    }
 
     block.bumpNeighbours();
 
     eventUtils.setGroup(oldGroup);
+    eventUtils.setRecordUndo(oldRecordUndo);
   }
 
   for (const block of blocks) {
@@ -162,7 +175,7 @@ function doRenders(workspace?: WorkspaceSvg) {
 function dequeueBlock(block: BlockSvg) {
   rootBlocks.delete(block);
   dirtyBlocks.delete(block);
-  eventGroups.delete(block);
+  eventContexts.delete(block);
   for (const child of block.getChildren(false)) {
     dequeueBlock(child);
   }

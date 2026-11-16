@@ -11,7 +11,8 @@
  */
 // Former goog.module ID: Blockly.FieldImage
 
-import {Field, FieldConfig} from './field.js';
+import type {FieldConfig} from './field.js';
+import {Field} from './field.js';
 import * as fieldRegistry from './field_registry.js';
 import {Msg} from './msg.js';
 import {aria} from './utils.js';
@@ -69,7 +70,7 @@ export class FieldImage extends Field<string> {
    * @param flipRtl Whether to flip the icon in RTL.
    * @param config A map of options used to configure the field.
    *     See the [field creation documentation]{@link
-   * https://developers.google.com/blockly/guides/create-custom-blocks/fields/built-in-fields/image#creation}
+   * https://docs.blockly.com/guides/create-custom-blocks/fields/built-in-fields/image/#creation}
    * for a list of properties this parameter supports.
    */
   constructor(
@@ -351,7 +352,14 @@ export class FieldImage extends Field<string> {
    *     the returned label, if available.
    */
   override computeAriaLabel(includeTypeInfo: boolean): string {
-    return this.isClickable() ? '' : super.computeAriaLabel(includeTypeInfo);
+    const ariaValue = this.getAriaValue();
+    if (this.isClickable() || !ariaValue) return '';
+
+    const ariaTypeName = includeTypeInfo ? this.getAriaTypeName() : null;
+    if (ariaTypeName) {
+      return `${ariaTypeName}: ${ariaValue}`;
+    }
+    return ariaValue;
   }
 
   /**

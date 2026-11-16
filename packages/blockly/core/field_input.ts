@@ -14,18 +14,13 @@
 import {computeAriaLabel, getBeginStackLabel} from './block_aria_composer.js';
 import {BlockSvg} from './block_svg.js';
 import * as browserEvents from './browser_events.js';
-import * as bumpObjects from './bump_objects.js';
 import * as css from './css.js';
 import * as dialog from './dialog.js';
 import * as dropDownDiv from './dropdowndiv.js';
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
-import {
-  Field,
-  FieldConfig,
-  FieldValidator,
-  UnattachedFieldError,
-} from './field.js';
+import type {FieldConfig, FieldValidator} from './field.js';
+import {Field, UnattachedFieldError} from './field.js';
 import {getFocusManager} from './focus_manager.js';
 import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import {Msg} from './msg.js';
@@ -33,8 +28,11 @@ import * as renderManagement from './render_management.js';
 import * as aria from './utils/aria.js';
 import {Verbosity} from './utils/aria.js';
 import * as dom from './utils/dom.js';
-import {Size} from './utils/size.js';
+import {Rect} from './utils/rect.js';
+import type {Size} from './utils/size.js';
+import * as style from './utils/style.js';
 import {Svg} from './utils/svg.js';
+import * as svgMath from './utils/svg_math.js';
 import * as userAgent from './utils/useragent.js';
 import * as WidgetDiv from './widgetdiv.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
@@ -142,7 +140,7 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
    *     to abort the change.
    * @param config A map of options used to configure the field.
    *     See the [field creation documentation]{@link
-   * https://developers.google.com/blockly/guides/create-custom-blocks/fields/built-in-fields/text-input#creation}
+   * https://docs.blockly.com/guides/create-custom-blocks/fields/built-in-fields/text-input/#creation}
    * for a list of properties this parameter supports.
    */
   constructor(
@@ -819,9 +817,10 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
       const block = this.getSourceBlock();
       if (!block) throw new UnattachedFieldError();
       const div = WidgetDiv.getDiv();
+      if (!div) return;
       const bBox = this.getScaledBBox();
-      div!.style.width = bBox.right - bBox.left + 'px';
-      div!.style.height = bBox.bottom - bBox.top + 'px';
+      div.style.width = bBox.right - bBox.left + 'px';
+      div.style.height = bBox.bottom - bBox.top + 'px';
 
       // In RTL mode block fields and LTR input fields the left edge moves,
       // whereas the right edge is fixed.  Reposition the editor.
@@ -830,38 +829,44 @@ export abstract class FieldInput<T extends InputTypes> extends Field<
 
       const parentElement = div?.parentElement;
       if (parentElement) {
-        const bounds = parentElement.getBoundingClientRect();
-        x -= bounds.left + window.scrollX;
-        y -= bounds.top + window.scrollY;
+        ({x, y} = style.pageToContainerOffset(x, y, parentElement));
       }
 
-      div!.style.left = `${x}px`;
-      div!.style.top = `${y}px`;
+      div.style.left = `${x}px`;
+      div.style.top = `${y}px`;
     });
   }
 
   /**
    * Handles repositioning the WidgetDiv used for input fields when the
-   * workspace is resized. Will bump the block into the viewport and update the
-   * position of the text input if necessary.
+   * workspace is resized. Scrolls this field into view, then updates the
+   * position of the text input.
    *
    * @returns True for rendered workspaces, as we never want to hide the widget
    *     div.
    */
   override repositionForWindowResize(): boolean {
-    const block = this.getSourceBlock()?.getRootBlock();
+    const block = this.getSourceBlock();
+    const workspace = this.workspace_;
     // This shouldn't be possible. We should never have a WidgetDiv if not using
     // rendered blocks.
     if (!(block instanceof BlockSvg)) return false;
 
-    const bumped = bumpObjects.bumpIntoBounds(
-      this.workspace_!,
-      this.workspace_!.getMetricsManager().getViewMetrics(true),
-      block,
+    this.resizeEditor_();
+
+    const element = this.getClickTarget_();
+    if (!element || !workspace) return true;
+
+    const bbox = Rect.from(element.getBoundingClientRect());
+    const origin = svgMath.screenToWsCoordinates(workspace, bbox.getOrigin());
+    const scale = workspace.scale;
+    workspace.scrollBoundsIntoView(
+      Rect.createFromPoint(
+        origin,
+        bbox.getWidth() / scale,
+        bbox.getHeight() / scale,
+      ),
     );
-
-    if (!bumped) this.resizeEditor_();
-
     return true;
   }
 
@@ -1009,7 +1014,7 @@ export interface FieldInputConfig extends FieldConfig {
  * A function that is called to validate changes to the field's value before
  * they are set.
  *
- * @see {@link https://developers.google.com/blockly/guides/create-custom-blocks/fields/validators#return_values}
+ * @see {@link https://docs.blockly.com/guides/create-custom-blocks/fields/validators/#return-values}
  * @param newValue The value to be validated.
  * @returns One of three instructions for setting the new value: `T`, `null`,
  * or `undefined`.

@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {assert} from '../../node_modules/chai/index.js';
+import {assert} from 'chai';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
@@ -34,6 +35,7 @@ suite('Flyout', function () {
     ]);
     this.toolboxXml = document.getElementById('toolbox-simple');
     this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
       toolbox: this.toolboxXml,
     });
   });
@@ -41,6 +43,129 @@ suite('Flyout', function () {
   teardown(function () {
     this.clock.runAll();
     sharedTestTeardown.call(this);
+  });
+
+  suite('focus management', function () {
+    suite('toolbox', function () {
+      setup(function () {
+        workspaceTeardown.call(this, this.workspace);
+        this.workspace = Blockly.inject('blocklyDiv', {
+          ...DEFAULT_INJECT_OPTIONS,
+          toolbox: document.getElementById('toolbox-categories'),
+        });
+        this.toolbox = this.workspace.getToolbox();
+        this.flyout = this.toolbox.getFlyout();
+        this.toolbox.setSelectedItem(this.toolbox.getToolboxItems()[0]);
+      });
+
+      test('Losing flyout focus hides autoclosing flyout and clears category', function () {
+        this.flyout.setAutoClose(true);
+        Blockly.getFocusManager().focusNode(
+          this.flyout.getWorkspace().getTopBlocks(false)[0],
+        );
+        assert.isTrue(this.flyout.isVisible());
+
+        Blockly.getFocusManager().focusNode(this.workspace);
+
+        assert.isFalse(this.flyout.isVisible());
+        assert.isNull(this.toolbox.getSelectedItem());
+      });
+
+      test('Losing flyout focus preserves non-autoclosing flyout and category', function () {
+        this.flyout.setAutoClose(false);
+        const selectedCategory = this.toolbox.getSelectedItem();
+        Blockly.getFocusManager().focusNode(
+          this.flyout.getWorkspace().getTopBlocks(false)[0],
+        );
+        assert.isTrue(this.flyout.isVisible());
+
+        Blockly.getFocusManager().focusNode(this.workspace);
+
+        assert.isTrue(this.flyout.isVisible());
+        assert.strictEqual(this.toolbox.getSelectedItem(), selectedCategory);
+      });
+    });
+
+    suite('workspace', function () {
+      setup(function () {
+        this.flyout = this.workspace.getFlyout();
+        assert.isNull(this.workspace.getToolbox());
+      });
+
+      test('Losing focus hides autoclosing flyout', function () {
+        this.flyout.setAutoClose(true);
+
+        // Focus a block in the standalone flyout.
+        Blockly.getFocusManager().focusNode(
+          this.flyout.getWorkspace().getTopBlocks(false)[0],
+        );
+        assert.isTrue(this.flyout.isVisible());
+
+        // Focus the workspace to trigger the flyout to close.
+        Blockly.getFocusManager().focusNode(this.workspace);
+        assert.isFalse(this.flyout.isVisible());
+      });
+
+      test('Losing focus does not hide non-autoclosing flyout', function () {
+        this.flyout.setAutoClose(false);
+
+        // Focus a block in the standalone flyout.
+        Blockly.getFocusManager().focusNode(
+          this.flyout.getWorkspace().getTopBlocks(false)[0],
+        );
+        assert.isTrue(this.flyout.isVisible());
+
+        // Focus the workspace; the flyout should remain visible.
+        Blockly.getFocusManager().focusNode(this.workspace);
+        assert.isTrue(this.flyout.isVisible());
+      });
+    });
+
+    suite('other', function () {
+      setup(function () {
+        // Integrations such as parameter flydowns can create another flyout
+        // targeting a workspace without replacing the one getFlyout returns.
+        const options = this.workspace.copyOptionsForFlyout();
+        options.toolboxPosition = Blockly.TOOLBOX_AT_RIGHT;
+        this.flyout = new Blockly.VerticalFlyout(options);
+        this.flyout.autoHide = function (onlyClosePopups) {
+          if (!onlyClosePopups && this.autoClose) {
+            this.hide();
+          }
+        };
+        this.workspace.getParentSvg().after(this.flyout.createDom('svg'));
+        this.flyout.init(this.workspace);
+        this.flyout.show([{kind: 'block', type: 'basic_block'}]);
+      });
+
+      teardown(function () {
+        this.flyout.dispose();
+      });
+
+      test('Losing focus hides autoclosing flyout', function () {
+        this.flyout.setAutoClose(true);
+        Blockly.getFocusManager().focusNode(
+          this.flyout.getWorkspace().getTopBlocks(false)[0],
+        );
+        assert.isTrue(this.flyout.isVisible());
+
+        Blockly.getFocusManager().focusNode(this.workspace);
+
+        assert.isFalse(this.flyout.isVisible());
+      });
+
+      test('Losing focus does not hide non-autoclosing flyout', function () {
+        this.flyout.setAutoClose(false);
+        Blockly.getFocusManager().focusNode(
+          this.flyout.getWorkspace().getTopBlocks(false)[0],
+        );
+        assert.isTrue(this.flyout.isVisible());
+
+        Blockly.getFocusManager().focusNode(this.workspace);
+
+        assert.isTrue(this.flyout.isVisible());
+      });
+    });
   });
 
   suite('workspace change listeners', function () {
@@ -106,6 +231,7 @@ suite('Flyout', function () {
         setup(function () {
           const toolbox = document.getElementById('toolbox-categories');
           this.workspace = Blockly.inject('blocklyDiv', {
+            ...DEFAULT_INJECT_OPTIONS,
             toolbox: toolbox,
           });
           this.flyout = this.workspace.getToolbox().getFlyout();
@@ -194,6 +320,7 @@ suite('Flyout', function () {
     suite('horizontal flyout', function () {
       setup(function () {
         this.workspace = Blockly.inject('blocklyDiv', {
+          ...DEFAULT_INJECT_OPTIONS,
           toolbox: this.toolboxXml,
           horizontalLayout: true,
         });
@@ -242,6 +369,7 @@ suite('Flyout', function () {
         setup(function () {
           const toolbox = document.getElementById('toolbox-categories');
           this.workspace = Blockly.inject('blocklyDiv', {
+            ...DEFAULT_INJECT_OPTIONS,
             toolbox: toolbox,
             horizontalLayout: true,
           });
@@ -331,7 +459,7 @@ suite('Flyout', function () {
       const flyoutInfo = flyoutSpy.returnValues[0];
       const contents = flyoutInfo;
 
-      assert.equal(contents.length, 6, 'Contents');
+      assert.equal(contents.length, 5, 'Contents');
 
       assert.equal(contents[0].type, 'block', 'Contents');
       const block = contents[0]['element'];
@@ -355,9 +483,6 @@ suite('Flyout', function () {
 
       assert.equal(contents[4].type, 'label', 'Contents');
       assert.instanceOf(contents[4]['element'], Blockly.FlyoutButton);
-
-      assert.equal(contents[5].type, 'sep');
-      assert.equal(contents[5].element.getBoundingRectangle().getHeight(), 24);
     }
 
     suite('Direct show', function () {
@@ -435,6 +560,139 @@ suite('Flyout', function () {
       test('Array of XML', function () {
         this.stubAndAssert(getXmlArray());
       });
+    });
+  });
+
+  suite('layout', function () {
+    test('content metrics include a leading separator', function () {
+      const flyout = this.workspace.getFlyout();
+      flyout.show([
+        {kind: 'sep', gap: '50'},
+        {kind: 'block', type: 'basic_block'},
+      ]);
+      const separator = flyout.getContents()[0].getElement();
+      const content = flyout
+        .getWorkspace()
+        .getMetricsManager()
+        .getContentMetrics(true);
+
+      assert.isAtMost(
+        content.top,
+        separator.getBoundingRectangle().top,
+        'content starts at or above the separator',
+      );
+      assert.isAtLeast(
+        content.top + content.height,
+        separator.getBoundingRectangle().bottom,
+        'content ends at or below the separator',
+      );
+    });
+
+    suite('RTL horizontal flyout', function () {
+      function itemRects(flyout) {
+        return flyout
+          .getContents()
+          .map((item) => item.getElement().getBoundingRectangle());
+      }
+
+      function contentRight(flyout) {
+        return Math.max(...itemRects(flyout).map((rect) => rect.right));
+      }
+
+      // The right padding of a flyout of the given pixel width, in workspace
+      // units.
+      function rightPadding(flyout, width) {
+        return (
+          width / flyout.workspace_.scale - flyout.MARGIN - flyout.tabWidth_
+        );
+      }
+
+      setup(function () {
+        this.blocklyDiv = document.getElementById('blocklyDiv');
+        this.originalWidth = this.blocklyDiv.style.width;
+        this.workspace = Blockly.inject(this.blocklyDiv, {
+          ...DEFAULT_INJECT_OPTIONS,
+          toolbox: this.toolboxXml,
+          horizontalLayout: true,
+          rtl: true,
+        });
+        this.flyout = this.workspace.getFlyout();
+        this.flyout.show(getSimpleJson());
+      });
+      // Mocha gives each suite its own context, so the workspace injected
+      // above is not the one the outer teardown disposes.
+      teardown(function () {
+        workspaceTeardown.call(this, this.workspace);
+        this.blocklyDiv.style.width = this.originalWidth;
+      });
+
+      test('contents align to the right padding', function () {
+        assert.closeTo(
+          contentRight(this.flyout),
+          rightPadding(this.flyout, this.flyout.getWidth()),
+          0.01,
+        );
+      });
+
+      test('contents stay at the right padding after a resize', function () {
+        const width = this.flyout.getWidth() / 2;
+        this.blocklyDiv.style.width = `${width}px`;
+        Blockly.svgResize(this.workspace);
+
+        assert.closeTo(
+          contentRight(this.flyout),
+          rightPadding(this.flyout, width),
+          0.01,
+        );
+      });
+
+      // Items are positioned by measured edge, so this holds whatever the
+      // element reports as its origin. Blocks in RTL report their right edge,
+      // while buttons, labels and separators always report their left.
+      test('contents are laid out end to end', function () {
+        const rects = itemRects(this.flyout);
+        for (let i = 1; i < rects.length; i++) {
+          assert.closeTo(
+            rects[i].left,
+            rects[i - 1].right,
+            0.01,
+            `item ${i} should start where item ${i - 1} ends`,
+          );
+        }
+      });
+    });
+  });
+
+  suite('focus', function () {
+    test('Focusing a block scrolls its children into view', async function () {
+      Blockly.defineBlocksWithJsonArray([
+        {type: 'stack_block', previousStatement: null, nextStatement: null},
+      ]);
+      const flyout = this.workspace.getFlyout();
+      flyout.show([
+        {kind: 'block', type: 'basic_block'},
+        {
+          kind: 'block',
+          type: 'stack_block',
+          next: {block: {type: 'stack_block'}},
+        },
+      ]);
+      const [first, parent] = flyout.getWorkspace().getTopBlocks(true);
+      const scrollBoundsIntoView = sinon.spy(
+        flyout.getWorkspace(),
+        'scrollBoundsIntoView',
+      );
+
+      Blockly.getFocusManager().focusNode(first);
+      Blockly.getFocusManager().focusNode(parent);
+      const rendered = Blockly.renderManagement.finishQueuedRenders();
+      this.clock.runAll();
+      await rendered;
+
+      assert.deepEqual(
+        scrollBoundsIntoView.lastCall.args[0],
+        parent.getBoundingRectangle(),
+      );
     });
   });
 

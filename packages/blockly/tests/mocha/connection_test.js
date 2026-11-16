@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {assert} from '../../node_modules/chai/index.js';
+import {assert} from 'chai';
 import {
   defineRowBlock,
   defineStackBlock,
@@ -12,6 +12,7 @@ import {
 } from './test_helpers/block_definitions.js';
 import {
   createGenUidStubWithReturns,
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
@@ -101,7 +102,7 @@ suite('Connection', function () {
       {
         title: 'Rendered',
         createWorkspace: () => {
-          return Blockly.inject('blocklyDiv');
+          return Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
         },
       },
       {
@@ -2987,6 +2988,10 @@ suite('Connection', function () {
       this.assertBlockCount = function (count) {
         assert.equal(this.workspace.getAllBlocks().length, count);
       };
+    });
+
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
     });
 
     suite('Disconnect from old parent', function () {

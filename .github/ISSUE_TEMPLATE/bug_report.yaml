@@ -1,6 +1,7 @@
 name: Report a bug 🐛
 description: Report bugs in Blockly, so we can fix them.
-labels: 'issue: bug, issue: triage'
+type: Bug
+labels: 'status: triage'
 body:
   - type: markdown
     attributes:

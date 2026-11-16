@@ -15,18 +15,19 @@ import {Block} from './block.js';
 import * as blockAnimations from './block_animations.js';
 import {computeAriaLabel, configureAriaRole} from './block_aria_composer.js';
 import * as browserEvents from './browser_events.js';
-import {BlockCopyData, BlockPaster} from './clipboard/block_paster.js';
+import type {BlockCopyData} from './clipboard/block_paster.js';
+import {BlockPaster} from './clipboard/block_paster.js';
 import * as common from './common.js';
 import {config} from './config.js';
 import type {Connection} from './connection.js';
 import {ConnectionType} from './connection_type.js';
 import * as constants from './constants.js';
 import * as ContextMenu from './contextmenu.js';
-import {
+import type {
   ContextMenuOption,
-  ContextMenuRegistry,
   LegacyContextMenuOption,
 } from './contextmenu_registry.js';
+import {ContextMenuRegistry} from './contextmenu_registry.js';
 import {BlockDragStrategy} from './dragging/block_drag_strategy.js';
 import type {BlockMove} from './events/events_block_move.js';
 import {EventType} from './events/type.js';
@@ -34,14 +35,14 @@ import * as eventUtils from './events/utils.js';
 import {FieldLabel} from './field_label.js';
 import {getFocusManager} from './focus_manager.js';
 import * as hints from './hints.js';
-import {IconType} from './icons/icon_types.js';
+import type {IconType} from './icons/icon_types.js';
 import {MutatorIcon} from './icons/mutator_icon.js';
 import {WarningIcon} from './icons/warning_icon.js';
 import type {Input} from './inputs/input.js';
 import type {IBoundedElement} from './interfaces/i_bounded_element.js';
-import {IContextMenu} from './interfaces/i_contextmenu.js';
+import type {IContextMenu} from './interfaces/i_contextmenu.js';
 import type {ICopyable} from './interfaces/i_copyable.js';
-import {IDeletable} from './interfaces/i_deletable.js';
+import type {IDeletable} from './interfaces/i_deletable.js';
 import type {
   DragDisposition,
   IDragStrategy,
@@ -49,7 +50,7 @@ import type {
 } from './interfaces/i_draggable.js';
 import type {IFocusableNode} from './interfaces/i_focusable_node.js';
 import type {IFocusableTree} from './interfaces/i_focusable_tree.js';
-import {IIcon} from './interfaces/i_icon.js';
+import type {IIcon} from './interfaces/i_icon.js';
 import * as internalConstants from './internal_constants.js';
 import {KeyboardMover} from './keyboard_nav/keyboard_mover.js';
 import {Msg} from './msg.js';
@@ -66,7 +67,8 @@ import * as dom from './utils/dom.js';
 import {Rect} from './utils/rect.js';
 import {Svg} from './utils/svg.js';
 import * as svgMath from './utils/svg_math.js';
-import {FlyoutItemInfo} from './utils/toolbox.js';
+import type {FlyoutItemInfo} from './utils/toolbox.js';
+import * as userAgent from './utils/useragent.js';
 import type {Workspace} from './workspace.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 
@@ -301,7 +303,6 @@ export class BlockSvg
       return;
     }
 
-    const oldXY = this.getRelativeToSurfaceXY();
     const focusedNode = getFocusManager().getFocusedNode();
     const restoreFocus = this.getSvgRoot().contains(
       focusedNode?.getFocusableElement() ?? null,
@@ -316,66 +317,21 @@ export class BlockSvg
         getFocusManager().focusNode(focusedNode);
       }
     } else if (oldParent) {
-      // If we are losing a parent, we want to move our DOM element to the
-      // root of the workspace.  Try to insert it before any top-level
-      // block being dragged, but note that blocks can have the
-      // blocklyDragging class even if they're not top blocks (especially
-      // at start and end of a drag).
-      const draggingBlockElement = this.workspace
-        .getCanvas()
-        .querySelector('.blocklyDragging');
-      const draggingParentElement = draggingBlockElement?.parentElement as
-        SVGElement | null | undefined;
-      const canvas = this.workspace.getCanvas();
-      if (draggingParentElement === canvas) {
-        canvas.insertBefore(svgRoot, draggingBlockElement);
-      } else {
-        canvas.appendChild(svgRoot);
-        // appendChild() clears focus state, so re-focus the previously focused
-        // node in case it was this block and would otherwise lose its focus. Once
-        // Element.moveBefore() has better browser support, it should be used
-        // instead.
-        if (restoreFocus && focusedNode) {
-          getFocusManager().focusNode(focusedNode);
-        }
-      }
+      const oldXY = this.getRelativeToSurfaceXY();
+      this.workspace.getCanvas().appendChild(svgRoot);
       this.translate(oldXY.x, oldXY.y);
+    }
+
+    // appendChild() clears focus state, so re-focus the previously focused
+    // node in case it was this block and would otherwise lose its focus. Once
+    // Element.moveBefore() has better browser support, it should be used
+    // instead.
+    if (restoreFocus && focusedNode) {
+      getFocusManager().focusNode(focusedNode);
     }
 
     this.applyColour();
     this.recomputeAriaContext();
-  }
-
-  /**
-   * Return the coordinates of the top-left corner of this block relative to the
-   * drawing surface's origin (0,0), in workspace units.
-   * If the block is on the workspace, (0, 0) is the origin of the workspace
-   * coordinate system.
-   * This does not change with workspace scale.
-   *
-   * @returns Object with .x and .y properties in workspace coordinates.
-   */
-  override getRelativeToSurfaceXY(): Coordinate {
-    const layerManager = this.workspace.getLayerManager();
-    if (!layerManager) {
-      throw new Error(
-        'Cannot calculate position because the workspace has not been appended',
-      );
-    }
-    let x = 0;
-    let y = 0;
-
-    let element: SVGElement = this.getSvgRoot();
-    if (element) {
-      do {
-        // Loop through this block and every parent.
-        const xy = svgMath.getRelativeXY(element);
-        x += xy.x;
-        y += xy.y;
-        element = element.parentNode as SVGElement;
-      } while (element && !layerManager.hasLayer(element));
-    }
-    return new Coordinate(x, y);
   }
 
   /**
@@ -453,7 +409,6 @@ export class BlockSvg
    */
   moveDuringDrag(newLoc: Coordinate) {
     this.translate(newLoc.x, newLoc.y);
-    this.getSvgRoot().setAttribute('transform', this.getTranslation());
     this.updateComponentLocations(newLoc);
   }
 
@@ -736,6 +691,9 @@ export class BlockSvg
    * @internal
    */
   updateComponentLocations(blockOrigin: Coordinate) {
+    this.xy.x = blockOrigin.x;
+    this.xy.y = blockOrigin.y;
+
     if (!this.dragging) this.updateConnectionLocations(blockOrigin);
     this.updateIconLocations(blockOrigin);
     this.updateFieldLocations(blockOrigin);
@@ -928,6 +886,8 @@ export class BlockSvg
   override dispose(healStack?: boolean, animate?: boolean) {
     this.disposing = true;
 
+    Tooltip.unbindMouseEvents(this.pathObject.svgPath);
+    delete (this.pathObject.svgPath as any).tooltip;
     Tooltip.dispose();
     ContextMenu.hide();
 
@@ -937,8 +897,14 @@ export class BlockSvg
     }
 
     const focusManager = getFocusManager();
-    const focusedElement =
-      focusManager.getFocusedNode()?.getFocusableElement() ?? null;
+    let focusedElement: Element | null;
+    try {
+      // This can throw for a focused connection.
+      focusedElement =
+        focusManager.getFocusedNode()?.getFocusableElement() ?? null;
+    } catch {
+      focusedElement = null;
+    }
 
     super.dispose(!!healStack);
     dom.removeNode(this.svgGroup);
@@ -1496,7 +1462,6 @@ export class BlockSvg
     this.queueRender();
   }
 
-  /** @override */
   override appendInput(input: Input): Input {
     super.appendInput(input);
     this.queueRender();
@@ -1952,7 +1917,9 @@ export class BlockSvg
     if (focusedNode && focusedNode !== this) {
       renderManagement.finishQueuedRenders().then(() => {
         this.workspace.scrollBoundsIntoView(
-          this.getBoundingRectangleWithoutChildren(),
+          this.workspace.isFlyout
+            ? this.getBoundingRectangle()
+            : this.getBoundingRectangleWithoutChildren(),
         );
       });
     }
@@ -2062,11 +2029,13 @@ export class BlockSvg
       fullBlockField.recomputeAriaContext();
       return;
     }
-    aria.setState(
-      this.getFocusableElement(),
-      aria.State.LABEL,
-      this.getAriaLabel(aria.Verbosity.STANDARD),
-    );
+    let label = this.getAriaLabel(aria.Verbosity.STANDARD);
+    // VoiceOver inserts a comma between aria-label and aria-roledescription.
+    // Specific screen readers are not detectable, so OS is used as a proxy.
+    if (label && !userAgent.APPLE && !label.endsWith(',')) {
+      label += ',';
+    }
+    aria.setState(this.getFocusableElement(), aria.State.LABEL, label);
     configureAriaRole(this);
   }
 

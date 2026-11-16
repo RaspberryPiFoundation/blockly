@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {defineBlocksWithJsonArray} from 'blockly-test/core';
-import type {JsonBlockDefinition} from 'blockly-test/core/interfaces/i_json_block_definition';
+import {
+  defineBlocksWithJsonArray,
+  type JsonBlockDefinition,
+} from 'blockly-test/core';
 
 import './different_user_input';
 

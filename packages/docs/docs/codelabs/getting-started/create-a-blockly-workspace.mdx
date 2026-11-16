@@ -35,9 +35,7 @@ If you'd like to customize the appearance of your toolbox, you can consult the [
 
 ### Define the toolbox
 
-Find the file in your `src/` folder called `toolbox.js`. This is where you'll define your toolbox using the JSON format. 
-
-Add the following toolbox definition to `toolbox.js`: 
+Find the file in the `src/` folder called `toolbox.js`. Add the following JSON toolbox definition to `toolbox.js`: 
 
 ```js
 export const toolbox = {
@@ -65,7 +63,7 @@ export const toolbox = {
 };
 ```
 
-This JavaScript object defines a flyout toolbox with a loop block and a text block.
+This defines a flyout toolbox with a loop block and a text block.
 
 ### Injection
 
@@ -76,7 +74,7 @@ To do this you call the function `Blockly.inject(container, options)`, which tak
 - `container` is where the Blockly workspace should be placed on the page. It can be an `Element`, an ID string, or a CSS selector.
 - `options` is a dictionary of configuration options.
 
-For this codelab we will inject into a div with the id `"blocklyDiv"`, which was already created in `index.html`.
+For this codelab, the workspace goes into the `div` with the id `"blocklyDiv"`, which you already created in `index.html`. 
 
 ```html
 <div id="blocklyDiv"></div>
@@ -86,7 +84,7 @@ For this codelab we will inject into a div with the id `"blocklyDiv"`, which was
 
 Now, in `src/index.js`, import the toolbox you just created. 
 Then, set up variables for each major div in `index.html` so that you can later reference these UI elements.
-Finally, you'll inject Blockly using the toolbox you just created. 
+Finally, inject Blockly using the toolbox you just created. 
 
 Copy and paste the full code into your `index.js`: 
 ```js

@@ -1,0 +1,118 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"],
+      "cache": true
+    },
+    "build-debug": {
+      "dependsOn": ["^build-debug"],
+      "outputs": ["{projectRoot}/dist"],
+      "cache": true
+    },
+    "build-debug-log": {
+      "dependsOn": ["^build-debug-log"],
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "build-strict": {
+      "dependsOn": ["^build-strict"],
+      "outputs": ["{projectRoot}/dist"],
+      "cache": true
+    },
+    "build-strict-log": {
+      "dependsOn": ["^build-strict-log"],
+      "outputs": ["{projectRoot}/dist"],
+      "cache": true
+    },
+    "docs": {
+      "outputs": ["{projectRoot}/../docs/docs/reference"],
+      "cache": true
+    },
+    "messages": {
+      "outputs": ["{projectRoot}/msg/json"],
+      "cache": true
+    },
+    "langfiles": {
+      "outputs": ["{projectRoot}/build/msg"],
+      "cache": true
+    },
+    "package": {
+      "outputs": ["{projectRoot}/dist", "{projectRoot}/build"],
+      "cache": true
+    },
+    "prepareDemos": {
+      "outputs": ["{projectRoot}/_deploy"],
+      "cache": true
+    },
+    "tsc": {
+      "outputs": [
+        "{projectRoot}/build/src",
+        "{projectRoot}/build/declarations"
+      ],
+      "cache": true
+    },
+    "prepublishOnly": {
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "predeploy": {
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "lint": {
+      "cache": true
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "cache": true
+    },
+    "test-browser": {
+      "cache": true
+    },
+    "test-mocha-node": {
+      "dependsOn": ["tsc"],
+      "cache": true
+    },
+    "test-generators": {
+      "dependsOn": ["tsc"],
+      "cache": true
+    },
+    "test-build-compile-advanced": {
+      "outputs": ["{projectRoot}/tests/compile/main_compressed*"],
+      "cache": true
+    },
+    "test-mocha-typecheck": {
+      "cache": true
+    },
+    "write-translations": {
+      "outputs": ["{projectRoot}/i18n"],
+      "cache": true
+    },
+    "start": {
+      "continuous": true
+    }
+  },
+  "neverConnectToCloud": true,
+  "analytics": false,
+  "release": {
+    "version": {
+      "conventionalCommits": true,
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "plugins": [
+    {
+      "plugin": "@nx/js/typescript",
+      "options": {
+        "typecheck": {
+          "targetName": "typecheck"
+        },
+        "build": {
+          "targetName": "build",
+          "configName": "tsconfig.lib.json",
+          "buildDepsName": "build-deps",
+          "watchDepsName": "watch-deps"
+        }
+      }
+    }
+  ]
+}

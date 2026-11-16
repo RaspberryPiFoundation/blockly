@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build:
-    timeout-minutes: 10
+    timeout-minutes: 20
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -52,7 +52,10 @@ jobs:
         run: source ./tests/scripts/setup_linux_env.sh
         working-directory: ./packages/blockly
 
-      - name: Run
+      - name: Run Build
+        run: npm run build-all
+
+      - name: Run Test
         run: npm run test
 
         env:
@@ -94,4 +97,4 @@ jobs:
         run: npm install
 
       - name: Check Format
-        run: npm run format:check
+        run: npm run format-check

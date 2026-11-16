@@ -81,6 +81,10 @@ function buildTSOverride({files, tsconfig}) {
       // TS rules
       // Blockly uses namespaces to do declaration merging in some cases.
       '@typescript-eslint/no-namespace': ['off'],
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        {fixStyle: 'separate-type-imports'},
+      ],
       // Use the updated TypeScript-specific rule.
       'no-invalid-this': ['off'],
       '@typescript-eslint/no-invalid-this': ['error'],
@@ -145,14 +149,10 @@ export default defineConfig(
       'packages/**/build/',
       'packages/**/dist/',
       // Core Build artifacts
-      // All Packages
-      'packages/*/node_modules/**',
-      'packages/**/build/',
-      'packages/**/dist/',
-      // Core Build artifacts
       'packages/blockly/msg/*',
       'packages/blockly/typings/*',
       'packages/blockly/docs/*',
+      'packages/blockly/_deploy/*',
       // Core Tests other than mocha unit tests
       'packages/blockly/tests/blocks/*',
       'packages/blockly/tests/themes/*',
@@ -175,6 +175,9 @@ export default defineConfig(
       // Docs
       'packages/docs/docs/reference/**',
       'packages/docs/.docusaurus/**',
+      // Plugins
+      'packages/plugins/dev-tools/src/index.d.ts',
+      'packages/plugins/**/golden/*',
     ],
   },
   jsdoc.configs['flat/recommended'],
@@ -193,6 +196,9 @@ export default defineConfig(
       'packages/blockly/.prettierrc.js',
       'packages/blockly/gulpfile.mjs',
       'packages/blockly/scripts/helpers.js',
+      'packages/blockly/scripts/lib/*.mjs',
+      'packages/blockly/scripts/package.mjs',
+      'packages/blockly/scripts/update_github_pages.mjs',
       'packages/blockly/tests/mocha/.mocharc.js',
       'packages/blockly/tests/migration/validate-renamings.mjs',
       'packages/blockly/tests/scripts/magic_symlink.js',
@@ -327,10 +333,7 @@ export default defineConfig(
     },
   },
   {
-    files: [
-      'packages/plugins/theme-*/**',
-      'packages/plugins/dev-tools/**'
-    ],
+    files: ['packages/plugins/**'],
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -361,6 +364,8 @@ export default defineConfig(
       // http://eslint.org/docs/rules/
       'camelcase': 'warn',
       'new-cap': ['error', {capIsNewExceptionPattern: '^.*Error'}],
+      // Allow TODO comments.
+      'no-warning-comments': 'off',
       'no-invalid-this': 'off',
       // valid-jsdoc does not work properly for interface methods.
       // https://github.com/eslint/eslint/issues/9978
@@ -403,6 +408,125 @@ export default defineConfig(
     }
   },
   {
+    files: ['packages/plugins/**/*.mocha.js'],
+    languageOptions: {
+      globals: {
+        ...globals.mocha,
+      },
+    },
+  },
+  {
+    files: ['packages/plugins/**/src/*.ts'],
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+      jsdoc,
+    },
+    languageOptions: {
+      parser: tseslint.parser,
+      'ecmaVersion': 6,
+      'sourceType': 'module',
+      parserOptions: {
+        'project': './tsconfig.json',
+        'tsconfigRootDir': process.cwd(),
+      },
+    },
+    rules: {
+      // The types are specified in TS rather than JsDoc.
+      'jsdoc/no-types': 'warn',
+      'jsdoc/require-param-type': 'off',
+      'jsdoc/require-property-type': 'off',
+      'jsdoc/require-returns-type': 'off',
+      // Don't auto-add missing jsdoc. Only required on exported items.
+      'jsdoc/require-jsdoc': [
+        'warn',
+        {
+          enableFixer: false,
+          publicOnly: true,
+        },
+      ],
+      // params and returns docs are optional.
+      'jsdoc/require-param-description': ['off'],
+      'jsdoc/require-returns': ['off'],
+      // Ensure there is a blank line between the body and any @tags,
+      // as required by the tsdoc spec.
+      'jsdoc/tag-lines': ['error', 'any', {startLines: 1}],
+
+      // Already handled by tsc.
+      'no-dupe-class-members': 'off',
+      'no-undef': 'off',
+
+      // Add TypeScript specific rules (and turn off ESLint equivalents)
+      '@typescript-eslint/array-type': [
+        'error',
+        {
+          default: 'array-simple',
+        },
+      ],
+      '@typescript-eslint/ban-ts-comment': 'error',
+      '@typescript-eslint/no-wrapper-object-types': 'error',
+      'camelcase': 'off',
+      '@typescript-eslint/naming-convention': [
+        'error',
+        {
+          selector: 'default',
+          format: ['camelCase', 'PascalCase'],
+        },
+        {
+          selector: 'class',
+          format: ['PascalCase'],
+        },
+        {
+          // Disallow starting interaces with 'I'
+          selector: 'interface',
+          format: ['PascalCase'],
+          custom: {
+            regex: '^I[A-Z]',
+            match: false,
+          },
+        },
+        {
+          selector: 'variable',
+          modifiers: ['const'],
+          format: ['camelCase', 'UPPER_CASE', 'PascalCase'],
+        },
+        {
+          selector: 'classProperty',
+          modifiers: ['static', 'readonly'],
+          format: ['camelCase', 'UPPER_CASE', 'PascalCase'],
+        },
+      ],
+      '@typescript-eslint/consistent-type-assertions': 'error',
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        {fixStyle: 'separate-type-imports'},
+      ],
+
+      'no-array-constructor': 'off',
+      '@typescript-eslint/no-array-constructor': 'error',
+
+      '@typescript-eslint/no-empty-interface': 'error',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-inferrable-types': 'error',
+      '@typescript-eslint/no-misused-new': 'error',
+      '@typescript-eslint/no-namespace': 'error',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
+      '@typescript-eslint/no-this-alias': 'error',
+
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': ['warn', {args: 'none'}],
+
+      '@typescript-eslint/no-var-requires': 'error',
+      '@typescript-eslint/prefer-namespace-keyword': 'error',
+      '@typescript-eslint/triple-slash-reference': 'error',
+      '@typescript-eslint/consistent-type-definitions': 'error',
+      '@typescript-eslint/explicit-member-accessibility': [
+        'error',
+        {accessibility: 'no-public'},
+      ],
+      '@typescript-eslint/no-require-imports': 'error',
+    },
+  },
+  {
     settings: {
       // Allowlist some JSDoc tag aliases we use.
       'jsdoc': {
@@ -424,6 +548,10 @@ export default defineConfig(
     buildTSOverride({
       files: ['packages/blockly/tests/typescript/**/*.ts', 'packages/blockly/tests/typescript/**/*.tsx'],
       tsconfig: './tests/typescript/tsconfig.json',
+    }),
+    buildTSOverride({
+      files: ['packages/blockly/tests/mocha/**/*.ts'],
+      tsconfig: './tests/mocha/tsconfig.json',
     }),
   ),
 );

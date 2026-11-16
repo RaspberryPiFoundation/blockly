@@ -1,0 +1,44 @@
+{
+  "name": "@blockly/migrate",
+  "version": "13.4.0",
+  "description": "A collection of tools that help with migrating apps using Blockly to new versions of BLockly.",
+  "bin": "./bin/migrate.js",
+  "author": "Blockly Team",
+  "scripts": {
+    "test": "mocha --ui tdd"
+  },
+  "keywords": [
+    "blockly",
+    "dev",
+    "migration",
+    "migrate",
+    "version"
+  ],
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/migration#readme",
+  "bugs": {
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RaspberryPiFoundation/blockly.git",
+    "directory": "packages/plugins/migration"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "chalk": "^6.0.1",
+    "commander": "^15.0.0",
+    "json5": "^2.2.3",
+    "node-fetch": "^3.3.2",
+    "semver": "^7.8.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "chai": "^6.3.0",
+    "mocha": "^12.0.3",
+    "sinon": "^22.1.0"
+  }
+}

@@ -39,13 +39,13 @@ The build folder is now served at http://localhost:3000/
 
 ```bash
 # check formatting:
-npm run format:check
+npm run format-check
 # fix formatting:
 npm run format
 # check linting:
 npm run lint
 # fix linting:
-npm run lint:fix
+npm run lint-fix
 ```
 
 Prettier is used for formatting JavaScript files (the `format` script).
@@ -54,12 +54,19 @@ ESlint is used for linting `.md` and `.mdx` files due to poor support for these 
 
 ## Generating reference docs
 
-The API reference pages are auto-generated from the Blockly TypeScript source using `@microsoft/api-extractor` and `@microsoft/api-documenter`. This is a separate step from the Docusaurus build and must be run from the `packages/blockly` directory:
+The API reference pages are auto-generated from the Blockly TypeScript source 
+using [TypeDoc](https://www.npmjs.com/package/typedoc). Typedoc automatically 
+generates MDX files into `/docs/reference/` when Docusaurus starts.
 
-```bash
-cd packages/blockly
-npm run build && npm run package
-npm run docs
-```
+TypeDoc generates the API docs based on the latest Blockly release, not the 
+current code. If you would like to see unreleased or beta changes to core Blockly 
+in your local docs site, run `npm run reference-refresh`. This will overwrite a 
+file called `blockly_api.json` which TypeDoc uses to generate the docs. Then, 
+you can run docs again to see updates to the API docs. 
 
-This generates MDX files into `packages/docs/docs/reference/`. These files are gitignored, so this needs to be run locally (and / or in CI).
+If your changes are on a plugin instead, run `npm run plugins-reference-refresh` which 
+will regenerate `plugins_api.json`. 
+
+If you regenerate `blockly_api.json` or `plugins_api.json`, please do not commit 
+either of these files in a PR. These files are committed automatically as part of 
+our release process. 

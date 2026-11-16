@@ -168,7 +168,14 @@ export class ToolboxItem implements IToolboxItem {
   }
 
   /** See IFocusableNode.onNodeFocus. */
-  onNodeFocus(): void {}
+  onNodeFocus(): void {
+    // Focus is taken with preventScroll, so bring the item into view here,
+    // moving it no further than it takes to make it fully visible.
+    this.getFocusableElement().scrollIntoView({
+      block: 'nearest',
+      inline: 'nearest',
+    });
+  }
 
   /** See IFocusableNode.onNodeBlur. */
   onNodeBlur(): void {}

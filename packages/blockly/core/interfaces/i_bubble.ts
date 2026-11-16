@@ -7,10 +7,10 @@
 // Former goog.module ID: Blockly.IBubble
 
 import type {Coordinate} from '../utils/coordinate.js';
-import {IBoundedElement} from './i_bounded_element.js';
+import type {IBoundedElement} from './i_bounded_element.js';
 import type {IContextMenu} from './i_contextmenu.js';
 import type {IDraggable} from './i_draggable.js';
-import {ISelectable} from './i_selectable.js';
+import type {ISelectable} from './i_selectable.js';
 
 /**
  * A bubble interface.

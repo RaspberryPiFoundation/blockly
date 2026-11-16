@@ -3,6 +3,11 @@
 .prettierrc.js
 eslint.config.mjs
 package.json
+.claude/
+
+# Symlinks to AGENTS.md. Formatting these in place would replace the symlink
+# with a regular file.
+**/CLAUDE.md
 
 # Package build aritifacts, etc.
 **/dist/*
@@ -40,3 +45,12 @@ packages/docs/node_modules/
 
 # Docs: Auto-generated
 packages/docs/CHANGELOG.md
+packages/docs/blockly_api.json
+packages/docs/plugins_api.json
+
+# Plugins: Specific examples that are sometimes copied into plugins
+packages/plugins/dev-create/templates/sample-app/*
+packages/plugins/dev-create/templates/sample-app-ts/*
+
+# Plugins: Golden test files
+packages/plugins/**/golden/*

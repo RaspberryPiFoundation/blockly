@@ -4,10 +4,7 @@
 # reflect the new values.
 
 # Location of the pre-built compressed files.
-#
-# (TODO(#5007): Should fetch this from scripts/gulpfiles/config.js
-# instead of hardcoding it here.
-readonly RELEASE_DIR='dist'
+readonly RELEASE_DIR=$(node --input-type=module -e "import { RELEASE_DIR } from './scripts/build_constants.mjs'; console.log(RELEASE_DIR)")
 
 gzip -k "${RELEASE_DIR}/blockly_compressed.js"
 gzip -k "${RELEASE_DIR}/blocks_compressed.js"

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {KeyCodes} from '../../../build/src/core/utils/keycodes.js';
+import {KeyCodes} from '#core/utils/keycodes.js';
 
 /**
  * Triggers pointer event on target.
@@ -39,6 +39,7 @@ export function dispatchPointerEvent(target, type, properties) {
 export function createKeyDownEvent(keyCode, modifiers) {
   const event = {
     keyCode: keyCode,
+    bubbles: true,
   };
   if (modifiers && modifiers.length > 0) {
     event.altKey = modifiers.includes(KeyCodes.ALT);

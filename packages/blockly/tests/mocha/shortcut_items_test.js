@@ -4,13 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from '../../build/src/core/blockly.js';
-import {assert} from '../../node_modules/chai/index.js';
+import * as Blockly from '#core/blockly.js';
+import {assert} from 'chai';
 import {
   defineRowBlock,
   defineStackBlock,
 } from './test_helpers/block_definitions.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
@@ -21,7 +22,11 @@ suite('Keyboard Shortcut Items', function () {
     sharedTestSetup.call(this);
     const toolbox = document.getElementById('toolbox-test');
     // Zelos has full-block fields, which we want to exercise in tests.
-    this.workspace = Blockly.inject('blocklyDiv', {toolbox, renderer: 'zelos'});
+    this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
+      toolbox,
+      renderer: 'zelos',
+    });
     this.injectionDiv = this.workspace.getInjectionDiv();
     Blockly.ContextMenuRegistry.registry.reset();
     Blockly.ContextMenuItems.registerDefaultOptions();
@@ -52,9 +57,9 @@ suite('Keyboard Shortcut Items', function () {
    */
   function setSelectedConnection(workspace) {
     const block = workspace.newBlock('stack_block');
-    sinon
-      .stub(Blockly.getFocusManager(), 'getFocusedNode')
-      .returns(block.nextConnection);
+    block.initSvg();
+    block.render();
+    Blockly.getFocusManager().focusNode(block.nextConnection);
   }
 
   /**
@@ -63,7 +68,7 @@ suite('Keyboard Shortcut Items', function () {
    */
   function setSelectedComment(workspace) {
     const comment = workspace.newComment();
-    sinon.stub(Blockly.getFocusManager(), 'getFocusedNode').returns(comment);
+    Blockly.getFocusManager().focusNode(comment);
     return comment;
   }
 
@@ -112,6 +117,7 @@ suite('Keyboard Shortcut Items', function () {
 
     test('Called when connection is focused', function () {
       setSelectedConnection(this.workspace);
+      this.hideChaffSpy.resetHistory();
       this.injectionDiv.dispatchEvent(this.event);
       sinon.assert.calledOnce(this.hideChaffSpy);
     });
@@ -212,6 +218,7 @@ suite('Keyboard Shortcut Items', function () {
     // Do not delete anything if a connection is focused.
     test('Not called when connection is focused', function () {
       setSelectedConnection(this.workspace);
+      this.hideChaffSpy.resetHistory();
       const event = createKeyDownEvent(Blockly.utils.KeyCodes.DELETE);
       this.injectionDiv.dispatchEvent(event);
       sinon.assert.notCalled(this.hideChaffSpy);
@@ -266,6 +273,7 @@ suite('Keyboard Shortcut Items', function () {
     });
     test('Not called when connection is focused', function () {
       setSelectedConnection(this.workspace);
+      this.hideChaffSpy.resetHistory();
       const event = createKeyDownEvent(Blockly.utils.KeyCodes.C, [
         Blockly.utils.KeyCodes.CTRL,
       ]);
@@ -277,6 +285,7 @@ suite('Keyboard Shortcut Items', function () {
     test('Workspace comment', function () {
       this.comment = setSelectedComment(this.workspace);
       this.copySpy = sinon.spy(this.comment, 'toCopyData');
+      this.hideChaffSpy.resetHistory();
 
       this.injectionDiv.dispatchEvent(keyEvent);
       sinon.assert.calledOnce(this.copySpy);
@@ -355,6 +364,7 @@ suite('Keyboard Shortcut Items', function () {
     });
     test('Not called when connection is focused', function () {
       setSelectedConnection(this.workspace);
+      this.hideChaffSpy.resetHistory();
       const event = createKeyDownEvent(Blockly.utils.KeyCodes.C, [
         Blockly.utils.KeyCodes.CTRL,
       ]);
@@ -1570,6 +1580,7 @@ suite('Keyboard Shortcut Items', function () {
     test('Shows a toast with RTL navigation hints for navigable blocks', function () {
       const toolbox = document.getElementById('toolbox-test');
       const ws = Blockly.inject('blocklyDiv', {
+        ...DEFAULT_INJECT_OPTIONS,
         toolbox,
         renderer: 'zelos',
         rtl: true,
@@ -1597,6 +1608,7 @@ suite('Keyboard Shortcut Items', function () {
 
     test('Shows a toast with navigation hints for flyout labels', function () {
       const ws = Blockly.inject('blocklyDiv', {
+        ...DEFAULT_INJECT_OPTIONS,
         toolbox: {
           kind: 'flyoutToolbox',
           contents: [
@@ -1878,6 +1890,22 @@ suite('Keyboard Shortcut Items', function () {
       this.workspace.getInjectionDiv().dispatchEvent(event);
       assert.equal(this.workspace.getTopComments().length, 1);
     });
+
+    test('Is idempotent when a contextual menu is open', function () {
+      const comment = this.workspace.newComment();
+      comment.setText('Hello');
+      Blockly.getFocusManager().focusNode(comment);
+      comment.showContextMenu();
+      assert.equal(this.workspace.getTopComments().length, 1);
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.D);
+      // The WidgetDiv (used by the dropdown menu) registers the global shortcut
+      // handler for its own div, since it may live outside of the injection
+      // div. Ensure that it also prevents event bubbling to the main shortcut
+      // handler, which could cause shortcuts like Duplicate to be invoked
+      // multiple times from one keypress. See #10250.
+      Blockly.WidgetDiv.getDiv().dispatchEvent(event);
+      assert.equal(this.workspace.getTopComments().length, 2);
+    });
   });
 
   suite('Clean up workspace (C)', function () {
@@ -1923,6 +1951,14 @@ suite('Keyboard Shortcut Items', function () {
     const event = createKeyDownEvent(Blockly.utils.KeyCodes.J, [
       Blockly.utils.KeyCodes.CTRL_CMD,
     ]);
+
+    setup(function () {
+      Blockly.common.setParentContainer(document.firstElementChild);
+    });
+
+    teardown(function () {
+      Blockly.common.setParentContainer(null);
+    });
 
     test('Displays tooltip on a block using the keyboard shortcut', function () {
       const block = this.workspace.newBlock('controls_if');
@@ -2183,11 +2219,6 @@ suite('Keyboard Shortcut Items', function () {
 
   suite('Jump shortcuts', function () {
     setup(function () {
-      this.getFocusedNodeStub = sinon.stub(
-        Blockly.getFocusManager(),
-        'getFocusedNode',
-      );
-      this.focusNodeSpy = sinon.stub(Blockly.getFocusManager(), 'focusNode');
       Blockly.serialization.workspaces.load(blockJson, this.workspace);
     });
 
@@ -2203,6 +2234,12 @@ suite('Keyboard Shortcut Items', function () {
         'jump_to_block_end',
         'jump_to_first_block',
         'jump_to_last_block',
+        'jump_to_previous_page',
+        'jump_to_next_page',
+        'scroll_left',
+        'scroll_right',
+        'scroll_up',
+        'scroll_down',
       ]) {
         Blockly.ShortcutRegistry.registry.unregister(shortcut);
       }
@@ -2210,208 +2247,315 @@ suite('Keyboard Shortcut Items', function () {
 
     test('Home focuses current block if block is focused', function () {
       const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
-      this.getFocusedNodeStub.returns(inListBlock);
+      Blockly.getFocusManager().focusNode(inListBlock);
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.HOME),
       );
-      sinon.assert.calledWith(this.focusNodeSpy, inListBlock);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), inListBlock);
     });
 
     test('Home focuses owning block if field is focused', function () {
       const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
       const fieldToFocus = inListBlock.getField('MODE');
-      this.getFocusedNodeStub.returns(fieldToFocus);
+      Blockly.getFocusManager().focusNode(fieldToFocus);
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.HOME),
       );
-      sinon.assert.calledWith(this.focusNodeSpy, inListBlock);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), inListBlock);
     });
 
     test('End focuses last input on owning block', function () {
       const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
       const fieldToFocus = inListBlock.getField('MODE');
-      this.getFocusedNodeStub.returns(fieldToFocus);
+      Blockly.getFocusManager().focusNode(fieldToFocus);
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.END),
       );
       const expectedFocus = inListBlock.getInput('AT').connection;
-      sinon.assert.calledWith(this.focusNodeSpy, expectedFocus);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), expectedFocus);
     });
 
     test('End has no effect if block has no inputs', function () {
       const textBlock = this.workspace.getBlockById('text_1');
-      this.getFocusedNodeStub.returns(textBlock);
+      Blockly.getFocusManager().focusNode(textBlock);
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.END),
       );
-      sinon.assert.notCalled(this.focusNodeSpy);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), textBlock);
     });
 
     test('CtrlHome focuses top block in workspace if block is focused', function () {
       const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
-      this.getFocusedNodeStub.returns(inListBlock);
+      Blockly.getFocusManager().focusNode(inListBlock);
       const topBlock = this.workspace.getBlockById('controls_repeat_1');
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.HOME, [
           Blockly.utils.KeyCodes.CTRL_CMD,
         ]),
       );
-      sinon.assert.calledWith(this.focusNodeSpy, topBlock);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), topBlock);
     });
 
     test('CtrlHome focuses top block in workspace if field is focused', function () {
       const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
       const fieldToFocus = inListBlock.getField('MODE');
-      this.getFocusedNodeStub.returns(fieldToFocus);
+      Blockly.getFocusManager().focusNode(fieldToFocus);
       const topBlock = this.workspace.getBlockById('controls_repeat_1');
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.HOME, [
           Blockly.utils.KeyCodes.CTRL_CMD,
         ]),
       );
-      sinon.assert.calledWith(this.focusNodeSpy, topBlock);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), topBlock);
     });
 
     test('CtrlHome focuses top block in workspace if workspace is focused', function () {
-      this.getFocusedNodeStub.returns(this.workspace);
+      Blockly.getFocusManager().focusNode(this.workspace);
       const topBlock = this.workspace.getBlockById('controls_repeat_1');
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.HOME, [
           Blockly.utils.KeyCodes.CTRL_CMD,
         ]),
       );
-      sinon.assert.calledWith(this.focusNodeSpy, topBlock);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), topBlock);
     });
 
     test('CtrlEnd focuses last block in workspace if block is focused', function () {
       const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
-      this.getFocusedNodeStub.returns(inListBlock);
+      Blockly.getFocusManager().focusNode(inListBlock);
       const lastBlock = this.workspace.getBlockById('text_2');
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.END, [
           Blockly.utils.KeyCodes.CTRL_CMD,
         ]),
       );
-      sinon.assert.calledWith(this.focusNodeSpy, lastBlock);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), lastBlock);
     });
 
     test('CtrlEnd focuses last block in workspace if field is focused', function () {
       const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
       const fieldToFocus = inListBlock.getField('MODE');
-      this.getFocusedNodeStub.returns(fieldToFocus);
+      Blockly.getFocusManager().focusNode(fieldToFocus);
       const lastBlock = this.workspace.getBlockById('text_2');
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.END, [
           Blockly.utils.KeyCodes.CTRL_CMD,
         ]),
       );
-      sinon.assert.calledWith(this.focusNodeSpy, lastBlock);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), lastBlock);
     });
 
     test('CtrlEnd focuses last block in workspace if workspace is focused', function () {
-      this.getFocusedNodeStub.returns(this.workspace);
+      Blockly.getFocusManager().focusNode(this.workspace);
       const lastBlock = this.workspace.getBlockById('text_2');
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.END, [
           Blockly.utils.KeyCodes.CTRL_CMD,
         ]),
       );
-      sinon.assert.calledWith(this.focusNodeSpy, lastBlock);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), lastBlock);
     });
 
     test('PageUp focuses on first block in stack', function () {
       const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
       const fieldToFocus = inListBlock.getField('MODE');
-      this.getFocusedNodeStub.returns(fieldToFocus);
+      Blockly.getFocusManager().focusNode(fieldToFocus);
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.PAGE_UP),
       );
       const expectedFocus = this.workspace.getBlockById('controls_repeat_1');
-      sinon.assert.calledWith(this.focusNodeSpy, expectedFocus);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), expectedFocus);
     });
 
     test('PageDown focuses on last block in stack with nested row blocks', function () {
       const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
       const fieldToFocus = inListBlock.getField('MODE');
-      this.getFocusedNodeStub.returns(fieldToFocus);
+      Blockly.getFocusManager().focusNode(fieldToFocus);
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.PAGE_DOWN),
       );
       const expectedFocus = this.workspace.getBlockById('math_number_2');
-      sinon.assert.calledWith(this.focusNodeSpy, expectedFocus);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), expectedFocus);
     });
 
     test('PageDown focuses on last block in stack with many stack blocks', function () {
       const blockToFocus = this.workspace.getBlockById('text_1');
-      this.getFocusedNodeStub.returns(blockToFocus);
+      Blockly.getFocusManager().focusNode(blockToFocus);
       this.injectionDiv.dispatchEvent(
         createKeyDownEvent(Blockly.utils.KeyCodes.PAGE_DOWN),
       );
       const expectedFocus = this.workspace.getBlockById('text_2');
-      sinon.assert.calledWith(this.focusNodeSpy, expectedFocus);
+      assert.equal(Blockly.getFocusManager().getFocusedNode(), expectedFocus);
     });
 
     suite('in flyout', function () {
+      setup(function () {
+        this.workspace.getToolbox().selectItemByPosition(0);
+        this.flyoutWorkspace = this.workspace.getFlyout().getWorkspace();
+        const flyoutItems = [
+          ...this.flyoutWorkspace
+            .getNavigator()
+            .getNavigableItems(this.flyoutWorkspace.getRootFocusableNode()),
+        ];
+        this.firstFlyoutItem = flyoutItems[0];
+        this.lastFlyoutItem = flyoutItems[flyoutItems.length - 1];
+        assert.notEqual(this.firstFlyoutItem, this.lastFlyoutItem);
+      });
+
       test('Home has no effect', function () {
-        this.workspace.internalIsFlyout = true;
-        const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
-        this.getFocusedNodeStub.returns(inListBlock);
+        Blockly.getFocusManager().focusNode(this.lastFlyoutItem);
         this.injectionDiv.dispatchEvent(
           createKeyDownEvent(Blockly.utils.KeyCodes.HOME),
         );
-        sinon.assert.notCalled(this.focusNodeSpy);
+        assert.equal(
+          Blockly.getFocusManager().getFocusedNode(),
+          this.lastFlyoutItem,
+        );
       });
       test('End has no effect', function () {
-        this.workspace.internalIsFlyout = true;
-        const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
-        this.getFocusedNodeStub.returns(inListBlock);
+        Blockly.getFocusManager().focusNode(this.firstFlyoutItem);
         this.injectionDiv.dispatchEvent(
           createKeyDownEvent(Blockly.utils.KeyCodes.END),
         );
-        sinon.assert.notCalled(this.focusNodeSpy);
+        assert.equal(
+          Blockly.getFocusManager().getFocusedNode(),
+          this.firstFlyoutItem,
+        );
       });
-      test('CtrlHome focuses top block in flyout workspace', function () {
-        this.workspace.internalIsFlyout = true;
-        const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
-        this.getFocusedNodeStub.returns(inListBlock);
-        const topBlock = this.workspace.getBlockById('controls_repeat_1');
+      test('CtrlHome focuses top item in flyout workspace', function () {
+        Blockly.getFocusManager().focusNode(this.lastFlyoutItem);
         this.injectionDiv.dispatchEvent(
           createKeyDownEvent(Blockly.utils.KeyCodes.HOME, [
             Blockly.utils.KeyCodes.CTRL_CMD,
           ]),
         );
-        sinon.assert.calledWith(this.focusNodeSpy, topBlock);
+        assert.equal(
+          Blockly.getFocusManager().getFocusedNode(),
+          this.firstFlyoutItem,
+        );
       });
-      test('CtrlEnd focuses last block in flyout workspace', function () {
-        this.workspace.internalIsFlyout = true;
-        const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
-        this.getFocusedNodeStub.returns(inListBlock);
-        const lastBlock = this.workspace.getBlockById('text_2');
+      test('CtrlEnd focuses last item in flyout workspace', function () {
+        Blockly.getFocusManager().focusNode(this.firstFlyoutItem);
         this.injectionDiv.dispatchEvent(
           createKeyDownEvent(Blockly.utils.KeyCodes.END, [
             Blockly.utils.KeyCodes.CTRL_CMD,
           ]),
         );
-        sinon.assert.calledWith(this.focusNodeSpy, lastBlock);
-      });
-      test('PageUp has no effect', function () {
-        this.workspace.internalIsFlyout = true;
-        const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
-        this.getFocusedNodeStub.returns(inListBlock);
-        this.injectionDiv.dispatchEvent(
-          createKeyDownEvent(Blockly.utils.KeyCodes.PAGE_UP),
+        assert.equal(
+          Blockly.getFocusManager().getFocusedNode(),
+          this.lastFlyoutItem,
         );
-        sinon.assert.notCalled(this.focusNodeSpy);
-      });
-      test('PageDown has no effect', function () {
-        this.workspace.internalIsFlyout = true;
-        const inListBlock = this.workspace.getBlockById('lists_getIndex_1');
-        this.getFocusedNodeStub.returns(inListBlock);
-        this.injectionDiv.dispatchEvent(
-          createKeyDownEvent(Blockly.utils.KeyCodes.PAGE_DOWN),
-        );
-        sinon.assert.notCalled(this.focusNodeSpy);
       });
     });
+  });
+});
+
+suite('Workspace scroll shortcuts', function () {
+  suiteSetup(function () {
+    Blockly.ShortcutItems.registerNavigationShortcuts();
+  });
+
+  suiteTeardown(function () {
+    for (const shortcut of [
+      'jump_to_top_of_stack',
+      'jump_to_bottom_of_stack',
+      'jump_to_block_start',
+      'jump_to_block_end',
+      'jump_to_first_block',
+      'jump_to_last_block',
+      'jump_to_previous_page',
+      'jump_to_next_page',
+      'scroll_left',
+      'scroll_right',
+      'scroll_up',
+      'scroll_down',
+    ]) {
+      Blockly.ShortcutRegistry.registry.unregister(shortcut);
+    }
+  });
+
+  /**
+   * Dispatches Ctrl/Cmd + the given arrow key and flushes timers.
+   *
+   * @param {!Blockly.WorkspaceSvg} workspace The workspace whose injection
+   *     div receives the event.
+   * @param {number} keyCode Arrow key code.
+   */
+  function pressScroll(workspace, keyCode) {
+    workspace
+      .getInjectionDiv()
+      .dispatchEvent(
+        createKeyDownEvent(keyCode, [Blockly.utils.KeyCodes.CTRL_CMD]),
+      );
+    this.clock.runAll();
+  }
+  setup(function () {
+    sharedTestSetup.call(this);
+    this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
+      move: {scrollbars: true},
+    });
+    this.liveRegion = document.getElementById('blocklyAriaAnnounce');
+    this.workspace.scrollCenter();
+    Blockly.getFocusManager().focusNode(this.workspace);
+  });
+
+  teardown(function () {
+    sharedTestTeardown.call(this);
+  });
+
+  test('Cmd+Right scrolls the workspace to the right', function () {
+    const startX = this.workspace.scrollX;
+    pressScroll.call(this, this.workspace, Blockly.utils.KeyCodes.RIGHT);
+    assert.isBelow(this.workspace.scrollX, startX);
+  });
+
+  test('Cmd+Left scrolls the workspace to the left', function () {
+    const startX = this.workspace.scrollX;
+    pressScroll.call(this, this.workspace, Blockly.utils.KeyCodes.LEFT);
+    assert.isAbove(this.workspace.scrollX, startX);
+  });
+
+  test('Cmd+Down scrolls the workspace down', function () {
+    const startY = this.workspace.scrollY;
+    pressScroll.call(this, this.workspace, Blockly.utils.KeyCodes.DOWN);
+    assert.isBelow(this.workspace.scrollY, startY);
+  });
+
+  test('Cmd+Up scrolls the workspace up', function () {
+    const startY = this.workspace.scrollY;
+    pressScroll.call(this, this.workspace, Blockly.utils.KeyCodes.UP);
+    assert.isAbove(this.workspace.scrollY, startY);
+  });
+
+  test('Announces when the workspace is scrolled', function () {
+    const startX = this.workspace.scrollX;
+    pressScroll.call(this, this.workspace, Blockly.utils.KeyCodes.RIGHT);
+    assert.include(this.liveRegion.textContent, 'Scrolled right.');
+    assert.isBelow(this.workspace.scrollX, startX);
+  });
+
+  test('Does not scroll past the edge', function () {
+    const metrics = this.workspace.getMetrics();
+    this.workspace.scroll(-metrics.scrollLeft, this.workspace.scrollY);
+    const startX = this.workspace.scrollX;
+    pressScroll.call(this, this.workspace, Blockly.utils.KeyCodes.LEFT);
+    assert.equal(this.workspace.scrollX, startX);
+    assert.include(this.liveRegion.textContent, "Can't scroll further.");
+  });
+
+  test('Does not scroll while a keyboard move is in progress', function () {
+    const block = this.workspace.newBlock('logic_boolean');
+    block.initSvg();
+    block.render();
+    Blockly.getFocusManager().focusNode(block);
+    this.workspace
+      .getInjectionDiv()
+      .dispatchEvent(createKeyDownEvent(Blockly.utils.KeyCodes.M));
+    assert.isTrue(Blockly.KeyboardMover.mover.isMoving());
+    const startX = this.workspace.scrollX;
+    pressScroll.call(this, this.workspace, Blockly.utils.KeyCodes.RIGHT);
+    assert.equal(this.workspace.scrollX, startX);
+    Blockly.KeyboardMover.mover.abortMove();
   });
 });

@@ -16,39 +16,11 @@
 //
 // organize-imports-ignore
 
-import {parallel} from 'gulp';
 import {
   deployDemos,
   deployDemosBeta,
   prepareDemos,
 } from './scripts/gulpfiles/appengine_tasks.mjs';
-import {
-  build,
-  buildAdvancedCompilationTest,
-  cleanBuildDir,
-  langfiles,
-  messages,
-  minify,
-  tsc,
-} from './scripts/gulpfiles/build_tasks.mjs';
-import {docs} from './scripts/gulpfiles/docs_tasks.mjs';
-import {updateGithubPages} from './scripts/gulpfiles/git_tasks.mjs';
-import {
-  cleanReleaseDir,
-  pack,
-  typings,
-} from './scripts/gulpfiles/package_tasks.mjs';
-import {publish, publishBeta} from './scripts/gulpfiles/release_tasks.mjs';
-import {
-  generators,
-  interactiveMocha,
-  test,
-} from './scripts/gulpfiles/test_tasks.mjs';
-
-const clean = parallel(cleanBuildDir, cleanReleaseDir);
-
-// Default target if gulp invoked without specifying.
-export default build;
 
 // Main sequence targets.  They already invoke prerequisites.  Listed
 // in typical order of invocation, and strictly listing prerequisites
@@ -56,30 +28,7 @@ export default build;
 //
 // prettier-ignore
 export {
-  langfiles,
-  tsc,
-  minify,
-  build,
-  pack,  // Formerly package.
-  publishBeta,
-  publish,
   prepareDemos,
   deployDemosBeta,
   deployDemos,
-  updateGithubPages,
-}
-
-// Manually-invokable targets that also invoke prerequisites where
-// required.
-//
-// prettier-ignore
-export {
-  messages, // Generate msg/json/en.json et al.
-  clean,
-  test,
-  generators as testGenerators,
-  interactiveMocha,
-  buildAdvancedCompilationTest,
-  docs,
-  typings,
 }

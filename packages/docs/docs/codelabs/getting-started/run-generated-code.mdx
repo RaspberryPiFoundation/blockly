@@ -11,7 +11,7 @@ import Image from '@site/src/components/Image';
 Executing generated code is always the responsibility of the application. 
 Blockly turns blocks into code, and what you do with that code is up to you. 
 
-For this codelab, you'll display the generated code and use `eval` to run it. Then you'll show the output beneath the code. 
+For this codelab, you'll display the generated code and use `eval` to run it. Then you'll show the output beneath the code.
 
 ### Set up the code execution
 
@@ -42,8 +42,8 @@ const runCode = () => {
 
 ### Run the code
 
-Now, we need to actually call this `runCode` function. 
-First, consider the scenario when your app is first loading up. After loading in the saved data, you'll also run the code automatically. 
+Now, call the new `runCode` function. 
+First, consider the scenario when your app is first loading up. After loading in the saved data, the code should run automatically.
 
 Add a call to `runCode` just after your call to `load`. 
 
@@ -60,9 +60,9 @@ You also want the code to run any time a block is added or changed in the worksp
 
 ### Add a change listener
 
-Similar to the last change listener, you'll want to exclude certain types of events. This time, in addition to ignoring UI Events, we'll ignore the event that fires when the workspace has finished loading, since this would be redundant with the code we just added.
-We'll also disregard anything that fires when a block is currently being dragged, so that we don't save an invalid state. 
-For all other events, this change listener will call `runCode()`.
+Similar to the last change listener, you'll want to exclude certain types of events. This time, in addition to ignoring UI Events, ignore the event that fires when the workspace has finished loading, since you already added a call to `runCode` after `load`. 
+Disregard anything that fires when a block is currently being dragged, so that you don't run the code for an invalid state. 
+For all other events, this change listener will call `runCode`.
 
 Copy and paste the following code at the bottom of `index.js`:
 

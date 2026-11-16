@@ -4,8 +4,27 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as eventUtils from '../../../build/src/core/events/utils.js';
-import {FocusManager} from '../../../build/src/core/focus_manager.js';
+import * as eventUtils from '#core/events/utils.js';
+import {FocusManager} from '#core/focus_manager.js';
+
+/**
+ * Path to Blockly's media directory, relative to the test harness page
+ * (tests/mocha/index.html).
+ * @type {string}
+ */
+const TEST_MEDIA_PATH = '../../media/';
+
+/**
+ * Default options for Blockly.inject in tests. Media is loaded from the local
+ * instance so that tests never fetch assets over the network. Spread this to
+ * add or override options, e.g.
+ *
+ *     Blockly.inject('blocklyDiv', {...DEFAULT_INJECT_OPTIONS, rtl: true});
+ */
+export const DEFAULT_INJECT_OPTIONS = Object.freeze({
+  media: TEST_MEDIA_PATH,
+  scrollbars: true,
+});
 
 /**
  * Safely disposes of Blockly workspace, logging any errors.
@@ -91,6 +110,14 @@ function wrapDefineBlocksWithJsonArrayWithCleanup_(sharedCleanupObj) {
 }
 
 /**
+ * The state sharedTestSetup() installs.
+ * @typedef {{
+ *   clock: import('sinon').SinonFakeTimers,
+ *   eventsFireStub: (import('sinon').SinonStub),
+ * }} SharedTestState
+ */
+
+/**
  * Shared setup method that sets up fake timer for clock so that pending
  * setTimeout calls can be cleared in test teardown along with other common
  * stubs. Should be called in setup of outermost suite using
@@ -105,10 +132,10 @@ function wrapDefineBlocksWithJsonArrayWithCleanup_(sharedCleanupObj) {
  *      track of block types defined so that they can be undefined in
  *      sharedTestTeardown and calls original method.
  *
+ * @this {Mocha.Context}
  * @param {Object<string, boolean>} options Options to enable/disable setup
  *    of certain stubs.
- * @return {{clock: *}} The fake clock (as part of an object to make refactoring
- *     easier).
+ * @return {SharedTestState} The state this setup created.
  */
 export function sharedTestSetup(options = {}) {
   this.sharedSetupCalled_ = true;
@@ -140,23 +167,39 @@ export function sharedTestSetup(options = {}) {
   wrapDefineBlocksWithJsonArrayWithCleanup_(this.sharedCleanup);
   return {
     clock: this.clock,
+    eventsFireStub: this.eventsFireStub,
   };
 }
 
 /**
  * Shared cleanup method that clears up pending setTimeout calls, disposes of
- * workspace, and resets global variables. Should be called in setup of
- * outermost suite using sharedTestTeardown.call(this).
+ * workspace, and resets global variables. Should be called in the teardown of
+ * the same suite that called sharedTestSetup, using
+ * sharedTestTeardown.call(this, workspace).
+ * @this {Mocha.Context}
+ * @param {?import('#core/blockly.js').Workspace} [workspace] The workspace to
+ *     dispose, defaulting to whatever is on the Mocha context. Should be
+ *     explicitly passed by TS tests.
  */
-export function sharedTestTeardown() {
+export function sharedTestTeardown(workspace = this.workspace) {
   const testRef = this.currentTest || this.test;
   if (!this.sharedSetupCalled_) {
     console.error('"' + testRef.fullTitle() + '" did not call sharedTestSetup');
   }
 
+  // Remove the globally registered listener from FocusManager to avoid state
+  // being shared across test boundaries.
+  for (const registeredListener of this.globalDocumentEventListeners) {
+    document.removeEventListener(
+      registeredListener.type,
+      registeredListener.listener,
+    );
+  }
+  this.globalDocumentEventListeners = [];
+
   try {
-    if (this.workspace) {
-      workspaceTeardown.call(this, this.workspace);
+    if (workspace) {
+      workspaceTeardown.call(this, workspace);
       this.workspace = null;
     } else {
       this.clock.runAll(); // Run all queued setTimeout calls.
@@ -198,14 +241,6 @@ export function sharedTestTeardown() {
 
     Blockly.WidgetDiv.testOnly_setDiv(null);
 
-    // Remove the globally registered listener from FocusManager to avoid state
-    // being shared across test boundaries.
-    for (const registeredListener of this.globalDocumentEventListeners) {
-      const eventType = registeredListener.type;
-      const eventListener = registeredListener.listener;
-      document.removeEventListener(eventType, eventListener);
-    }
-    this.globalDocumentEventListeners = [];
     FocusManager.getFocusManager = this.oldGetFocusManager;
   }
 }

@@ -8,11 +8,11 @@ description: How to save and load your workspace.
 
 You now have a Blockly workspace. However, if you reload the page, you'll find that any blocks you've dragged into the workspace will disappear.
 Your users likely won't want their blocks to vanish, but you can fix this by saving the state of the workspace and loading it back in the next time they visit the site. 
-For this codelab, we'll save the state of the workspace to local browser storage.  
+For this codelab, you'll save the state of the workspace to local browser storage. 
 
 ### Add the save method
 
-Open `src/serialization.js`. You'll set a unique storage key for this codelab. Then you'll add a function `save` which takes the Blockly workspace, exports its state to a JavaScript object, then saves that object to local storage. 
+Open `src/serialization.js`. Set a unique storage key for this codelab. Then add a function `save` which takes the Blockly workspace, exports its state to a JavaScript object, then saves that object to local storage. 
 
 Add the following code to the `serialization.js` file:
 
@@ -69,10 +69,8 @@ In `src/index.js`, add the following import statement.
 import {save, load} from './serialization';
 ```
 
-Now, you'll add a change listener at the bottom of `index.js` to listen to the event stream. 
-You'll also add a call to `load` outside of the change listener, so that your app finds the saved blocks on initial load.  
-
-In the code below, every time an event fires, this change listener will trigger and save the workspace.  
+Now, add a change listener at the bottom of `index.js` to listen to the event stream and save the workspace after events. 
+Additionally, add a call to `load` outside of the change listener, so that your app finds the saved blocks on initial load.  
 
 ```js
 load(ws);
@@ -85,9 +83,9 @@ ws.addChangeListener((e) => {
 
 This change listener is not yet complete, since there are some types of events that you shouldn't save after. 
 UI changes (e.g. scrolling, zooming, or opening toolbox categories) change how the workspace *looks* but don't change the state of the blocks. 
-Since we're only saving the blocks, we won't save after these types of events. 
+Since you're only saving the blocks, you don't have to save after these types of events. 
 
-Here's the full change listener code, including the call to `load` outside of the change listener:
+Here's the full change listener code, including the call to `load` outside of the change listener: 
 
 ```js
 load(ws);

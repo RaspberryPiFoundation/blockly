@@ -4,13 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from 'blockly-test/core';
+import type * as Blockly from 'blockly-test/core';
 
 /**
  * Test: should be able to import a generator instance, class, and
  * Order enum.
  */
-import {Order, pythonGenerator, PythonGenerator} from 'blockly-test/python';
+import type {PythonGenerator} from 'blockly-test/python';
+import {Order, pythonGenerator} from 'blockly-test/python';
 
 /**
  * Test: should be able to create a simple block generator function,

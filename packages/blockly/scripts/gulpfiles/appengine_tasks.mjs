@@ -11,15 +11,14 @@
 import * as gulp from 'gulp';
 
 import * as fs from 'fs';
-import * as path from 'path';
 import {execSync} from 'child_process';
-import * as buildTasks from './build_tasks.mjs';
-import {getPackageJson} from './helper_tasks.mjs';
-import * as packageTasks from './package_tasks.mjs';
+import {getPackageJson} from '../lib/package_json.mjs';
+import {cleanBuildDir, cleanReleaseDir} from '../lib/fs_utils.mjs';
 import {rimraf} from 'rimraf';
 
-const demoTmpDir = '../_deploy';
-const demoStaticTmpDir = '../_deploy/static';
+const demoTmpDir = '_deploy';
+const demoStaticTmpDir = '_deploy/static';
+const demoStaticBlocklyDir = '_deploy/static/packages/blockly';
 
 /**
  * Cleans and creates the tmp directory used for deploying.
@@ -51,8 +50,8 @@ function copyStaticSrc(done) {
  * Prerequisite: clean, build.
  */
 function copyBuilt(done) {
-  return gulp.src(['build/msg/*', 'dist/*_compressed.js*', 'build/*.loader.mjs'], {base: '.'})
-      .pipe(gulp.dest(demoStaticTmpDir));
+  return gulp.src(['build/src/**/*', 'build/msg/*', 'dist/*_compressed.js*', 'build/*.loader.mjs'], {base: '.'})
+      .pipe(gulp.dest(demoStaticBlocklyDir));
 }
 
 /**
@@ -76,7 +75,7 @@ function copyCompressedToOldLocation(done) {
  */
 function copyMessagesToOldLocation(done) {
   return gulp.src(['build/msg/*'])
-      .pipe(gulp.dest(demoStaticTmpDir + '/msg/js'));
+      .pipe(gulp.dest(`${demoStaticTmpDir}/msg/js`));
 }
 
 /**
@@ -84,8 +83,8 @@ function copyMessagesToOldLocation(done) {
  */
 function copyAppengineSrc() {
   const appengineSrc = [
-      `${demoStaticTmpDir}/appengine/**/*`,
-      `${demoStaticTmpDir}/appengine/.gcloudignore`,
+      `${demoStaticBlocklyDir}/appengine/**/*`,
+      `${demoStaticBlocklyDir}/appengine/.gcloudignore`,
   ];
   return gulp.src(appengineSrc).pipe(gulp.dest(demoTmpDir));
 }
@@ -95,12 +94,11 @@ function copyAppengineSrc() {
  */
 function copyPlaygroundDeps() {
   const playgroundDeps = [
-      './node_modules/@blockly/dev-tools/dist/index.js',
-      './node_modules/@blockly/theme-modern/dist/index.js',
-      './node_modules/@blockly/block-test/dist/index.js',
-      './node_modules/@blockly/keyboard-navigation/dist/index.js',
+      '../../node_modules/@blockly/dev-tools/dist/index.js',
+      '../../node_modules/@blockly/theme-modern/dist/index.js',
+      '../../node_modules/@blockly/block-test/dist/index.js',
   ];
-  return gulp.src(playgroundDeps, {base: '.'}).pipe(gulp.dest(demoStaticTmpDir));
+  return gulp.src(playgroundDeps, {base: '../..'}).pipe(gulp.dest(demoStaticBlocklyDir));
 }
 
 /**
@@ -159,6 +157,14 @@ function deployBetaAndClean(done) {
 }
 
 /**
+ * Executes the build command.
+ */
+function execBuild(done) {
+  execSync('npm run build', {stdio: 'inherit'});
+  done()
+}
+
+/**
  * Prepares demos.
  *
  * Prerequisites (invoked): clean, build
@@ -170,9 +176,9 @@ export const prepareDemos = gulp.series(
             copyStaticSrc,
             copyAppengineSrc),
         gulp.series(
-            gulp.parallel(buildTasks.cleanBuildDir,
-                          packageTasks.cleanReleaseDir),
-            buildTasks.build,
+            gulp.parallel(cleanBuildDir,
+                          cleanReleaseDir),
+            execBuild,
             gulp.parallel(copyBuilt,
                           copyCompressedToOldLocation,
                           copyMessagesToOldLocation)),

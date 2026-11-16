@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Aue Nai",
-			"Htawmonzel"
+			"Htawmonzel",
+			"咽頭べさ"
 		]
 	},
 	"VARIABLES_DEFAULT_NAME": "ဒကုတ်",
@@ -70,10 +71,10 @@
 	"CONTROLS_IF_MSG_IF": "ယဝ်ရ",
 	"CONTROLS_IF_MSG_ELSEIF": "ယဝ်နွံမံၚ်ဏီ",
 	"CONTROLS_IF_MSG_ELSE": "မုနွံ",
-	"CONTROLS_IF_IF_TOOLTIP": "ထပ်, ပတိတ်, ဟွံသေၚ် ကလေၚ်ဖျေံလၟေၚ် ရုဲစှ် သွက်ဂွံကလေၚ်ထမံက်ဣဏံ ယဝ်ရကၟာတ်မ္ဂး",
+	"CONTROLS_IF_IF_TOOLTIP": "ထပ်၊ ပ္တိတ်၊ ဟွံသေၚ် ကလေၚ်ဖျေံလၟေၚ် ရုဲစှ် သွက်ဂွံကလေၚ်ထမံက်ဣဏံ ယဝ်ရတှ်ေ။",
 	"LOGIC_COMPARE_HELPURL": "https://en.wikipedia.org/wiki/ဟွံညဳသၟဟ်_(သၚ်္ချာဂမၠိုၚ်)",
 	"LOGIC_OPERATION_AND": "ကေုာံ",
-	"LOGIC_OPERATION_OR": "ဟွံသေင်မ္ဂး",
+	"LOGIC_OPERATION_OR": "ဟွံသေၚ်မ္ဂး",
 	"LOGIC_NEGATE_TITLE": "ဟွံသေၚ် %1",
 	"LOGIC_NEGATE_TOOLTIP": "ကလေၚ်မဍာံတေံ ယဝ်ရတၚ်စုတ်ဏံဗၠေတ်မ္ဂး. ကလေၚ်မဗၠောတ်တေံ ယဝ်ရတၚ်စုတ်ဏံဒးမ္ဂး",
 	"LOGIC_BOOLEAN_TRUE": "ဍာံ",

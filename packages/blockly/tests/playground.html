@@ -17,7 +17,6 @@
 
       await loadScript('../build/msg/en.js');
       await loadScript('playgrounds/screenshot.js');
-      await loadScript('../node_modules/@blockly/dev-tools/dist/index.js');
 
       var workspace = null;
 
@@ -283,23 +282,25 @@
         for (var i = 0, block; (block = blocks[i]); i++) {
           prototypes.push(block.getAttribute('type'));
         }
+
+        const scatteredBlocks = [];
+        const data = {
+          'blocks': {
+            blocks: scatteredBlocks,
+          },
+        };
+
         for (var i = 0; i < n; i++) {
           var prototype =
             prototypes[Math.floor(Math.random() * prototypes.length)];
-          var block = workspace.newBlock(prototype);
-          block.initSvg();
-          block
-            .getSvgRoot()
-            .setAttribute(
-              'transform',
-              'translate(' +
-                Math.round(Math.random() * 450 + 40) +
-                ', ' +
-                Math.round(Math.random() * 600 + 40) +
-                ')',
-            );
-          block.render();
+          scatteredBlocks.push({
+            type: prototype,
+            x: Math.round(Math.random() * 450 + 40),
+            y: Math.round(Math.random() * 600 + 40),
+          });
         }
+
+        Blockly.serialization.workspaces.load(data, workspace);
       }
 
       function spaghetti(n) {
@@ -534,7 +535,9 @@
     <p>
       <input id="show" type="button" value="Show" /> -
       <input id="hide" type="button" value="Hide" /> -
-      <a href="playgrounds/advanced_playground.html">Advanced</a>
+      <a href="playgrounds/advanced_playground.html">Advanced</a> -
+      <a href="playgrounds/web_component.html">Web Component</a> -
+      <a href="multi_playground.html">Multi Playground</a>
     </p>
 
     <form id="options">
@@ -583,7 +586,7 @@
     </ul>
 
     <!-- The next three blocks of XML are sample toolboxes for testing basic
-  configurations.  For more information on building toolboxes, see https://developers.google.com/blockly/guides/configure/toolboxes/toolbox -->
+  configurations.  For more information on building toolboxes, see https://docs.blockly.com/guides/configure/toolboxes/toolbox/ -->
 
     <!-- toolbox-simple is an always-open flyout with no category menu.
   Always-open flyouts are a good idea if you have a small number of blocks. -->
@@ -618,7 +621,7 @@
 
     <!-- toolbox-categories has a category menu and an auto-closing flyout.  The
   Variables category uses untyped variable blocks.
-  See https://developers.google.com/blockly/guides/create-custom-blocks/variables#untyped_variable_blocks for more information. -->
+  See https://docs.blockly.com/guides/create-custom-blocks/variables/#untyped-variable-blocks for more information. -->
     <xml
       xmlns="https://developers.google.com/blockly/xml"
       id="toolbox-categories"
@@ -930,7 +933,7 @@
 
     <!-- toolbox-categories-typed-variables has a category menu and an
   auto-closing flyout.  The Variables category uses typed variable blocks.
-  See https://developers.google.com/blockly/guides/create-custom-blocks/variables#typed_variable_blocks for more information. -->
+  See https://docs.blockly.com/guides/create-custom-blocks/variables/#typed-variable-blocks for more information. -->
     <xml
       xmlns="https://developers.google.com/blockly/xml"
       id="toolbox-categories-typed-variables"

@@ -21,12 +21,13 @@ import {
 } from './events/predicates.js';
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
-import {Field, UnattachedFieldError} from './field.js';
+import type {Field} from './field.js';
+import {UnattachedFieldError} from './field.js';
 import {MutatorIcon} from './icons.js';
+import type {ProcedureBlock} from './interfaces/i_legacy_procedure_blocks.js';
 import {
   isLegacyProcedureCallBlock,
   isLegacyProcedureDefBlock,
-  ProcedureBlock,
   ProcedureTuple,
 } from './interfaces/i_legacy_procedure_blocks.js';
 import {IParameterModel} from './interfaces/i_parameter_model.js';

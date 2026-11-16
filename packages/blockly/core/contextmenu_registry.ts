@@ -12,9 +12,9 @@
 // Former goog.module ID: Blockly.ContextMenuRegistry
 
 import type {BlockSvg} from './block_svg.js';
-import {RenderedWorkspaceComment} from './comments/rendered_workspace_comment.js';
+import type {RenderedWorkspaceComment} from './comments/rendered_workspace_comment.js';
 import type {IFocusableNode} from './interfaces/i_focusable_node.js';
-import {Coordinate} from './utils/coordinate.js';
+import type {Coordinate} from './utils/coordinate.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 
 /**

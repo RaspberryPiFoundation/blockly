@@ -15,10 +15,21 @@ updates:
     labels:
       - 'PR: chore'
       - 'PR: dependencies'
+    assignees:
+      - 'gonfunko'
     groups:
       docusaurus:
         patterns:
           - '@docusaurus/*'
+      # nx requires every @nx/* package to be on exactly the same version as
+      # nx itself, so they are pinned exactly and must be updated together.
+      nx:
+        patterns:
+          - 'nx'
+          - '@nx/*'
+      react:
+        patterns:
+          - 'react*'
   - package-ecosystem: 'github-actions' # See documentation for possible values
     directory: '/'
     target-branch: 'main'
@@ -33,3 +44,5 @@ updates:
     labels:
       - 'PR: chore'
       - 'PR: dependencies'
+    assignees:
+      - 'gonfunko'

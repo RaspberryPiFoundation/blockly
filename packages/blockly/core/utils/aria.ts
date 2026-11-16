@@ -95,6 +95,8 @@ export enum Role {
   REGION = 'region',
   /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/row_role. */
   ROW = 'row',
+  /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/search_role. */
+  SEARCH = 'search',
   /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/separator_role. */
   SEPARATOR = 'separator',
   /** See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/status_role. */
@@ -193,6 +195,12 @@ export enum State {
    * Value: one of {polite, assertive, off}.
    */
   LIVE = 'live',
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-pressed.
+   *
+   * Value: one of {true, false, mixed, undefined}.
+   */
+  PRESSED = 'pressed',
   /**
    * See https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-roledescription.
    *
@@ -339,7 +347,7 @@ let liveRegionElement: HTMLElement | null = null;
  *
  * @param parent The container element to which the live region will be appended.
  */
-export function initializeGlobalAriaLiveRegion(parent: HTMLDivElement) {
+export function initializeGlobalAriaLiveRegion(parent: HTMLElement) {
   if (liveRegionElement && document.contains(liveRegionElement)) {
     return;
   }

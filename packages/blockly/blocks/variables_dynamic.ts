@@ -16,10 +16,10 @@ import type {
   ContextMenuOption,
   LegacyContextMenuOption,
 } from '../core/contextmenu_registry.js';
-import {Abstract as AbstractEvent} from '../core/events/events_abstract.js';
+import type {Abstract as AbstractEvent} from '../core/events/events_abstract.js';
 import * as Extensions from '../core/extensions.js';
 import '../core/field_label.js';
-import {FieldVariable} from '../core/field_variable.js';
+import type {FieldVariable} from '../core/field_variable.js';
 import {Msg} from '../core/msg.js';
 import * as Variables from '../core/variables.js';
 

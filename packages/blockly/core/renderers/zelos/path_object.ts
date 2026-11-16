@@ -8,6 +8,7 @@
 
 import type {BlockSvg} from '../../block_svg.js';
 import type {BlockStyle} from '../../theme.js';
+import * as aria from '../../utils/aria.js';
 import {Role} from '../../utils/aria.js';
 import * as dom from '../../utils/dom.js';
 import {Svg} from '../../utils/svg.js';
@@ -159,19 +160,18 @@ export class PathObject extends BasePathObject {
    */
   getOutlinePath(name: string): SVGElement {
     if (!this.outlines.has(name)) {
-      this.outlines.set(
-        name,
-        dom.createSvgElement(
-          Svg.PATH,
-          {
-            'class': 'blocklyOutlinePath', // IE doesn't like paths without the
-            // data definition, set empty
-            // default
-            'd': '',
-          },
-          this.svgRoot,
-        ),
+      const outline = dom.createSvgElement(
+        Svg.PATH,
+        {
+          'class': 'blocklyOutlinePath', // IE doesn't like paths without the
+          // data definition, set empty
+          // default
+          'd': '',
+        },
+        this.svgRoot,
       );
+      aria.setState(outline, aria.State.HIDDEN, true);
+      this.outlines.set(name, outline);
     }
     this.remainingOutlines.delete(name);
     return this.outlines.get(name)!;

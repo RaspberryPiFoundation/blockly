@@ -8,6 +8,7 @@
 
 import * as browserEvents from './browser_events.js';
 import * as extensions from './extensions.js';
+import * as accessibility from './utils/accessibility.js';
 import * as aria from './utils/aria.js';
 import * as arrayUtils from './utils/array.js';
 import * as colour from './utils/colour.js';
@@ -32,6 +33,7 @@ import * as userAgent from './utils/useragent.js';
 import * as xml from './utils/xml.js';
 
 export {
+  accessibility,
   aria,
   arrayUtils as array,
   browserEvents,

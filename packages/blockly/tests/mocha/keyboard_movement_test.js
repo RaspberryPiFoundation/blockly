@@ -4,16 +4,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from '../../build/src/core/blockly.js';
-import {assert} from '../../node_modules/chai/index.js';
+import * as Blockly from '#core/blockly.js';
+import {assert} from 'chai';
 import {
   moveStatementTestBlocks,
   moveValueTestBlocks,
-} from './test_helpers/move_test_blocks.js';
-import {p5blocks} from './test_helpers/p5_blocks.js';
+} from './test_helpers/move_test_blocks.ts';
+import {p5blocks} from './test_helpers/p5_blocks.ts';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
+  workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 import {createKeyDownEvent} from './test_helpers/user_input.js';
 
@@ -40,12 +42,19 @@ suite('Keyboard-driven movement', function () {
       ],
     };
 
-    this.workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+    this.workspace = Blockly.inject('blocklyDiv', {
+      ...DEFAULT_INJECT_OPTIONS,
+      toolbox: toolbox,
+    });
     Blockly.common.defineBlocks(p5blocks);
     Blockly.KeyboardMover.mover.setMoveDistance(20);
   });
 
   teardown(function () {
+    Blockly.KeyboardMover.mover.setMoveDistance(20);
+    for (const block of Object.keys(p5blocks)) {
+      delete Blockly.Blocks[block];
+    }
     sharedTestTeardown.call(this);
   });
 
@@ -541,6 +550,23 @@ suite('Keyboard-driven movement', function () {
       this.element.initSvg();
       this.element.render();
       this.modifiers = [Blockly.utils.KeyCodes.CTRL_CMD];
+    });
+
+    test('deletes blocks dragged from the flyout when a drag is reverted', function () {
+      // One block is on the workspace to start.
+      let blocks = this.workspace.getTopBlocks();
+      assert.equal(blocks.length, 1);
+
+      // Starting a move from the toolbox creates a new block on the main workspace.
+      focusToolbox(this.workspace);
+      startMove(this.workspace);
+      blocks = this.workspace.getTopBlocks();
+      assert.equal(blocks.length, 2);
+
+      // Canceling the move originating from the toolbox deletes the new block.
+      cancelMove(this.workspace);
+      blocks = this.workspace.getTopBlocks();
+      assert.equal(blocks.length, 1);
     });
 
     suite('in unconstrained mode', function () {
@@ -1117,6 +1143,7 @@ suite('Keyboard-driven movement', function () {
             setup(function () {
               const toolbox = document.getElementById('toolbox-simple');
               this.workspace = Blockly.inject('blocklyDiv', {
+                ...DEFAULT_INJECT_OPTIONS,
                 toolbox: toolbox,
                 renderer: renderer,
               });
@@ -1124,6 +1151,10 @@ suite('Keyboard-driven movement', function () {
                 moveValueTestBlocks,
                 this.workspace,
               );
+            });
+
+            teardown(function () {
+              workspaceTeardown.call(this, this.workspace);
             });
 
             suite('Constrained moves of a simple reporter block', function () {
@@ -1190,7 +1221,6 @@ suite('Keyboard-driven movement', function () {
                   this.strategy.cacheAllConnectionPairs();
 
                   moveRight(this.workspace);
-                  console.log(getConnectionCandidate());
                   assert.deepEqual(getConnectionCandidate(), {
                     id: 'join0',
                     index: 2,
@@ -1198,7 +1228,6 @@ suite('Keyboard-driven movement', function () {
                   });
 
                   moveRight(this.workspace);
-                  console.log(getConnectionCandidate());
                   assert.deepEqual(getConnectionCandidate(), {
                     id: 'join0',
                     index: 3,
@@ -1574,6 +1603,52 @@ suite('Keyboard-driven movement', function () {
           ['Moving', 'to', 'second value', 'equals'],
           [this.getBlockLabel(boolean)],
         );
+
+        cancelMove(this.workspace);
+      });
+      test('re-announces when moving between identically labeled inputs', function () {
+        const json = {
+          'blocks': {
+            'languageVersion': 0,
+            'blocks': [
+              {
+                'type': 'controls_if',
+                'id': 'ifBlock',
+                'x': 0,
+                'y': 100,
+                'extraState': {
+                  'elseIfCount': 2,
+                },
+              },
+            ],
+          },
+        };
+        Blockly.serialization.workspaces.load(json, this.workspace);
+        const boolean = this.workspace.newBlock('logic_boolean');
+        boolean.initSvg();
+        boolean.render();
+        this.workspace.cleanUp();
+
+        Blockly.getFocusManager().focusNode(boolean);
+        startMove(this.workspace);
+        // Skip the first `if` value input.
+        moveRight(this.workspace);
+
+        this.moveAndAssert(
+          moveRight,
+          ['Moving', 'to', 'else if'],
+          [this.getBlockLabel(boolean)],
+        );
+        const afterFirstElseIf = this.liveRegion.textContent;
+
+        this.moveAndAssert(
+          moveRight,
+          ['Moving', 'to', 'else if'],
+          [this.getBlockLabel(boolean)],
+        );
+
+        const afterSecondElseIf = this.liveRegion.textContent;
+        assert.notEqual(afterSecondElseIf, afterFirstElseIf);
 
         cancelMove(this.workspace);
       });

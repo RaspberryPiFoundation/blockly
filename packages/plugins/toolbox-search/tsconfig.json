@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "dist",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "module": "es2015",
+    "moduleResolution": "bundler",
+    "target": "es6",
+    "lib": ["es2021", "dom"],
+    "strict": true
+  },
+  // NOTE: `test/**/*` is automatically included in `blockly-scripts start`.
+  // Only src matters for production builds.
+  "include": ["src"]
+}

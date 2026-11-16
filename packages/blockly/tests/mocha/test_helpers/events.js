@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {assert} from '../../../node_modules/chai/index.js';
+import {assert} from 'chai';
 
 /**
  * Creates spy for workspace fireChangeListener
@@ -118,7 +118,7 @@ export function assertEventEquals(
     if (isXmlProperty_(key)) {
       assertXmlPropertyEqual_(value, expectedValue, prependMessage + key);
     } else {
-      assert.equal(value, expectedValue, prependMessage + key);
+      assert.deepEqual(value, expectedValue, prependMessage + key);
     }
   });
   if (isUiEvent) {

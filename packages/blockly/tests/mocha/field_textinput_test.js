@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from '../../build/src/core/blockly.js';
-import {assert} from '../../node_modules/chai/index.js';
+import * as Blockly from '#core/blockly.js';
+import {assert} from 'chai';
 import {
   createTestBlock,
   defineRowBlock,
@@ -17,6 +17,7 @@ import {
   runSetValueTests,
 } from './test_helpers/fields.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
@@ -347,6 +348,7 @@ suite('Text Input Fields', function () {
     suite('Geras theme', function () {
       setup(function () {
         this.workspace = Blockly.inject('blocklyDiv', {
+          ...DEFAULT_INJECT_OPTIONS,
           renderer: 'geras',
         });
         Blockly.serialization.blocks.append(this.blockJson, this.workspace);
@@ -540,6 +542,7 @@ suite('Text Input Fields', function () {
     suite('Zelos theme', function () {
       setup(function () {
         this.workspace = Blockly.inject('blocklyDiv', {
+          ...DEFAULT_INJECT_OPTIONS,
           renderer: 'zelos',
         });
         Blockly.serialization.blocks.append(this.blockJson, this.workspace);
@@ -623,6 +626,7 @@ suite('Text Input Fields', function () {
   suite('ARIA', function () {
     setup(function () {
       this.workspace = Blockly.inject('blocklyDiv', {
+        ...DEFAULT_INJECT_OPTIONS,
         renderer: 'geras',
       });
       this.block = this.workspace.newBlock('text');
@@ -632,6 +636,11 @@ suite('Text Input Fields', function () {
 
       this.focusableElement = this.field.getClickTarget_();
     });
+
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
+    });
+
     test('Field has field type name in ARIA label', function () {
       const fieldLabel = this.focusableElement.getAttribute('aria-label');
       assert.include(fieldLabel, 'text:');

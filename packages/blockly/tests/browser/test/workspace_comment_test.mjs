@@ -13,9 +13,7 @@ suite('Workspace comments', function () {
   this.timeout(0);
 
   suiteSetup(async function () {
-    this.browser = await testSetup(
-      testFileLocations.PLAYGROUND + '?toolbox=test-blocks',
-    );
+    this.browser = await testSetup(testFileLocations.PLAYGROUND);
   });
 
   teardown(async function () {
@@ -179,7 +177,9 @@ suite('Workspace comments', function () {
       const textArea = await this.browser.$('.blocklyComment .blocklyTextarea');
       await textArea.addValue('test text');
       // Deselect text area to fire browser change event.
-      await this.browser.$('.blocklyWorkspace').click();
+      await this.browser.execute(() => {
+        Blockly.getFocusManager().focusNode(Blockly.getMainWorkspace());
+      });
 
       chai.assert.equal(
         await getCommentText(this.browser, commentId),

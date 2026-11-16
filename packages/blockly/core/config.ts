@@ -26,7 +26,7 @@ const DEFAULT_SNAP_RADIUS = 28;
  * Object holding all the values on Blockly that we expect developers to be
  * able to change.
  */
-export const config: Config = {
+export const config = {
   /**
    * Number of pixels the mouse must move before a drag starts.
    *
@@ -41,12 +41,15 @@ export const config: Config = {
   flyoutDragRadius: 10,
   /**
    * Maximum misalignment between connections for them to snap together.
+   * Default is 28.
    *
    */
   snapRadius: DEFAULT_SNAP_RADIUS,
   /**
    * Maximum misalignment between connections for them to snap together.
    * This should be the same as the snap radius.
+   * Default is 28.
+   *
    */
   connectingSnapRadius: DEFAULT_SNAP_RADIUS,
   /**
@@ -62,4 +65,4 @@ export const config: Config = {
    *
    */
   bumpDelay: 250,
-};
+} satisfies Config;

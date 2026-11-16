@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from '../../build/src/core/blockly.js';
-import {assert} from '../../node_modules/chai/index.js';
+import * as Blockly from '#core/blockly.js';
+import {assert} from 'chai';
 import {
   createTestBlock,
   defineRowBlock,
@@ -18,6 +18,7 @@ import {
 } from './test_helpers/fields.js';
 import {
   createGenUidStubWithReturns,
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
@@ -652,6 +653,7 @@ suite('Variable Fields', function () {
   suite('ARIA', function () {
     setup(function () {
       this.workspace = Blockly.inject('blocklyDiv', {
+        ...DEFAULT_INJECT_OPTIONS,
         renderer: 'geras',
       });
       this.block = this.workspace.newBlock('variables_set');
@@ -661,6 +663,11 @@ suite('Variable Fields', function () {
 
       this.focusableElement = this.field.getFocusableElement();
     });
+
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
+    });
+
     test('Block has "Variable" qualifier in ARIA label', function () {
       const blockLabel = this.block.getAriaLabel();
       assert.include(blockLabel, 'Variable');

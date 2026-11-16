@@ -9,7 +9,7 @@ import {FlyoutItem} from './flyout_item.js';
 import type {IFlyout} from './interfaces/i_flyout.js';
 import type {IFlyoutInflater} from './interfaces/i_flyout_inflater.js';
 import * as registry from './registry.js';
-import {ButtonOrLabelInfo} from './utils/toolbox.js';
+import type {ButtonOrLabelInfo} from './utils/toolbox.js';
 const LABEL_TYPE = 'label';
 
 /**

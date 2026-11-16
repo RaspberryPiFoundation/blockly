@@ -13,7 +13,10 @@
 
 import {EventType} from './events/type.js';
 import * as eventUtils from './events/utils.js';
-import {IVariableModel, IVariableState} from './interfaces/i_variable_model.js';
+import type {
+  IVariableModel,
+  IVariableState,
+} from './interfaces/i_variable_model.js';
 import * as registry from './registry.js';
 import * as idGenerator from './utils/idgenerator.js';
 import type {Workspace} from './workspace.js';

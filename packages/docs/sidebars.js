@@ -1,14 +1,5 @@
 // @ts-nocheck
 
-let referenceSidebar = [];
-try {
-  referenceSidebar = require('./docs/reference/_reference.js').referenceSidebar;
-} catch {
-  console.warn(
-    'Reference sidebar not found — run "npm run docs" in packages/blockly to generate it.',
-  );
-}
-
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 /**
@@ -23,6 +14,30 @@ Create as many sidebars as you want.
 
 @type {import('@docusaurus/plugin-content-docs').SidebarsConfig}
 */
+let referenceSidebar = [];
+try {
+  referenceSidebar = [
+    {
+      type: 'doc',
+      id: 'reference/index',
+      label: 'Overview',
+    },
+    ...require('./docs/reference/typedoc-sidebar.cjs'),
+  ];
+} catch {
+  console.warn('Reference sidebar not found.');
+}
+try {
+  referenceSidebar.push({
+    type: 'category',
+    label: 'Plugins',
+    link: { type: 'doc', id: 'reference/plugins/index' },
+    items: require('./docs/reference/plugins/typedoc-sidebar.cjs'),
+  });
+} catch {
+  console.warn('Plugins reference sidebar not found.');
+}
+
 const sidebars = {
   codelabsSidebar: [
     {
@@ -423,6 +438,57 @@ const sidebars = {
         },
       ],
     },
+    {
+      type: 'category',
+      label: 'Build a custom mutator',
+      items: [
+        {
+          type: 'doc',
+          label: '1. Codelab-overview',
+          id: 'codelabs/custom-mutator/codelab-overview',
+        },
+        {
+          type: 'doc',
+          label: '2. Setup',
+          id: 'codelabs/custom-mutator/setup',
+        },
+        {
+          type: 'doc',
+          label: '3. Mutator overview',
+          id: 'codelabs/custom-mutator/the-basics',
+        },
+        {
+          type: 'doc',
+          label: '4. Create the mutator',
+          id: 'codelabs/custom-mutator/create-the-mutator',
+        },
+        {
+          type: 'doc',
+          label: '5. Update the block shape',
+          id: 'codelabs/custom-mutator/update-shape',
+        },
+        {
+          type: 'doc',
+          label: '6. Create a UI',
+          id: 'codelabs/custom-mutator/custom-ui',
+        },
+        {
+          type: 'doc',
+          label: '7. Generate code',
+          id: 'codelabs/custom-mutator/code-generation',
+        },
+        {
+          type: 'doc',
+          label: '8. Event handling',
+          id: 'codelabs/custom-mutator/event-handling',
+        },
+        {
+          type: 'doc',
+          label: '9. Summary',
+          id: 'codelabs/custom-mutator/summary',
+        },
+      ],
+    },
   ],
   guidesSidebar: [
     {
@@ -497,7 +563,7 @@ const sidebars = {
             {
               type: 'link',
               label: 'Blockly Playground',
-              href: 'https://blockly-demo.appspot.com/static/tests/playground.html',
+              href: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/playground.html',
             },
             {
               type: 'link',
@@ -742,9 +808,20 @@ const sidebars = {
           ],
         },
         {
-          type: 'doc',
+          type: 'category',
           label: 'Save and load',
-          id: 'guides/configure/serialization',
+          items: [
+            {
+              type: 'doc',
+              label: 'Save and load',
+              id: 'guides/configure/serialization',
+            },
+            {
+              type: 'doc',
+              label: 'Migrating to JSON serialization',
+              id: 'guides/configure/json-serialization-migration',
+            },
+          ],
         },
         {
           type: 'doc',
@@ -1336,11 +1413,6 @@ const sidebars = {
             },
             {
               type: 'doc',
-              label: 'Development tools',
-              id: 'guides/contribute/get-started/development_tools',
-            },
-            {
-              type: 'doc',
               label: 'Write a good issue',
               id: 'guides/contribute/get-started/write_a_good_issue',
             },
@@ -1353,21 +1425,6 @@ const sidebars = {
               type: 'doc',
               label: 'Commit message guide',
               id: 'guides/contribute/get-started/commits',
-            },
-            {
-              type: 'doc',
-              label: 'Code review process',
-              id: 'guides/contribute/get-started/pr_review_process',
-            },
-            {
-              type: 'doc',
-              label: 'Issue labels',
-              id: 'guides/contribute/get-started/issue_labels',
-            },
-            {
-              type: 'doc',
-              label: 'Use the playground',
-              id: 'guides/contribute/get-started/playground',
             },
           ],
         },
@@ -1386,10 +1443,20 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
+                  label: 'Core tour',
+                  id: 'guides/contribute/core/core-architecture/core-tour',
+                },
+                {
+                  type: 'doc',
                   label: 'Render management',
-                  id: 'guides/contribute/core-architecture/render-management',
+                  id: 'guides/contribute/core/core-architecture/render-management',
                 },
               ],
+            },
+            {
+              type: 'doc',
+              label: 'Development tools',
+              id: 'guides/contribute/core/development_tools',
             },
             {
               type: 'doc',
@@ -1398,60 +1465,45 @@ const sidebars = {
             },
             {
               type: 'doc',
-              label: 'Build scripts',
-              id: 'guides/contribute/core/building',
-            },
-            {
-              type: 'doc',
-              label: 'Advanced compilation',
-              id: 'guides/contribute/core/advanced',
+              label: 'Localization and translation',
+              id: 'guides/contribute/core/localization_and_translation',
             },
             {
               type: 'category',
-              label: 'Localization',
+              label: 'Testing',
               items: [
                 {
                   type: 'doc',
-                  label: 'Add a new localization token',
-                  id: 'guides/contribute/core/add_localization_token',
+                  label: 'Use the playground',
+                  id: 'guides/contribute/core/testing/playground',
                 },
                 {
                   type: 'doc',
-                  label: 'Translate text',
-                  id: 'guides/contribute/core/translating',
+                  label: 'Unit tests',
+                  id: 'guides/contribute/core/testing/unit_testing',
+                },
+              ],
+            },
+            {
+              type: 'category',
+              label: 'Building and compilation',
+              items: [
+                {
+                  type: 'doc',
+                  label: 'Build scripts',
+                  id: 'guides/contribute/core/building_and_compilation/building',
                 },
                 {
                   type: 'doc',
-                  label: 'Klingon',
-                  id: 'guides/contribute/core/klingon',
+                  label: 'Advanced compilation',
+                  id: 'guides/contribute/core/building_and_compilation/advanced',
                 },
               ],
             },
             {
               type: 'doc',
-              label: 'Unit tests',
-              id: 'guides/contribute/core/unit_testing',
-            },
-            {
-              type: 'doc',
-              label: 'Write a codelab',
-              id: 'guides/contribute/core/write_a_codelab',
-            },
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Contribute to samples',
-          items: [
-            {
-              type: 'doc',
-              label: 'Overview',
-              id: 'guides/contribute/samples/index',
-            },
-            {
-              type: 'doc',
-              label: 'Repository structure',
-              id: 'guides/contribute/samples/repository_structure',
+              label: 'AI policy',
+              id: 'guides/contribute/core/ai_policy',
             },
             {
               type: 'category',
@@ -1460,31 +1512,52 @@ const sidebars = {
                 {
                   type: 'doc',
                   label: 'Add a plugin',
-                  id: 'guides/contribute/samples/add_a_plugin',
+                  id: 'guides/contribute/core/plugins/add_a_plugin',
                 },
                 {
                   type: 'doc',
                   label: 'Plugin naming conventions',
-                  id: 'guides/contribute/samples/naming',
+                  id: 'guides/contribute/core/plugins/naming',
                 },
                 {
                   type: 'doc',
                   label: 'Debug plugins',
-                  id: 'guides/contribute/samples/debugging',
+                  id: 'guides/contribute/core/plugins/debugging',
                 },
                 {
                   type: 'doc',
                   label: 'Publish block libraries',
-                  id: 'guides/contribute/samples/block_libraries',
+                  id: 'guides/contribute/core/plugins/block_libraries',
                 },
                 {
                   type: 'doc',
                   label: 'Add a plugin field to Block Factory',
-                  id: 'guides/contribute/samples/block_factory',
+                  id: 'guides/contribute/core/plugins/block_factory',
                 },
               ],
             },
           ],
+        },
+        {
+          type: 'category',
+          label: 'Contribute to docs',
+          items: [
+            {
+              type: 'doc',
+              label: 'Overview',
+              id: 'guides/contribute/docs/contribute_to_docs',
+            },
+            {
+              type: 'doc',
+              label: 'Write a codelab',
+              id: 'guides/contribute/docs/write_a_codelab',
+            },
+          ],
+        },
+        {
+          type: 'doc',
+          label: 'Contribute to samples',
+          id: 'guides/contribute/samples',
         },
       ],
     },

@@ -12,15 +12,19 @@
 // Former goog.module ID: Blockly.FieldVariable
 
 import type {Block} from './block.js';
-import {Field, FieldConfig, UnattachedFieldError} from './field.js';
-import {
-  FieldDropdown,
+import type {FieldConfig} from './field.js';
+import {Field, UnattachedFieldError} from './field.js';
+import type {
   FieldDropdownValidator,
   MenuGenerator,
   MenuOption,
 } from './field_dropdown.js';
+import {FieldDropdown} from './field_dropdown.js';
 import * as fieldRegistry from './field_registry.js';
-import {IVariableModel, IVariableState} from './interfaces/i_variable_model.js';
+import type {
+  IVariableModel,
+  IVariableState,
+} from './interfaces/i_variable_model.js';
 import * as internalConstants from './internal_constants.js';
 import type {Menu} from './menu.js';
 import type {MenuItem} from './menuitem.js';
@@ -73,7 +77,7 @@ export class FieldVariable extends FieldDropdown {
    *     is not provided.
    * @param config A map of options used to configure the field.
    *    See the [field creation documentation]{@link
-   * https://developers.google.com/blockly/guides/create-custom-blocks/fields/built-in-fields/variable#creation}
+   * https://docs.blockly.com/guides/create-custom-blocks/fields/built-in-fields/variable/#creation}
    * for a list of properties this parameter supports.
    */
   constructor(
@@ -649,7 +653,7 @@ export interface FieldVariableFromJsonConfig extends FieldVariableConfig {
  * A function that is called to validate changes to the field's value before
  * they are set.
  *
- * @see {@link https://developers.google.com/blockly/guides/create-custom-blocks/fields/validators#return_values}
+ * @see {@link https://docs.blockly.com/guides/create-custom-blocks/fields/validators/#return-values}
  * @param newValue The value to be validated.
  * @returns One of three instructions for setting the new value: `T`, `null`,
  * or `undefined`.

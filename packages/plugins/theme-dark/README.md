@@ -1,8 +1,10 @@
-# @blockly/theme-dark [![Built on Blockly](https://tinyurl.com/built-on-blockly)](https://github.com/google/blockly)
+# @blockly/theme-dark
+
+## [<img src="https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/docs/static/images/logos/built-with-blockly-badge-white.svg" alt="Built with Blockly" width="119">](https://github.com/RaspberryPiFoundation/blockly)
 
 A [Blockly](https://www.npmjs.com/package/blockly) dark theme.
 
-![A Blockly workspace using the dark theme.](https://github.com/RaspberryPiFoundation/blockly-samples/raw/master/plugins/theme-dark/readme-media/DarkTheme.png)
+![A Blockly workspace using the dark theme.](https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/plugins/theme-dark/readme-media/DarkTheme.png)
 
 ## Installation
 

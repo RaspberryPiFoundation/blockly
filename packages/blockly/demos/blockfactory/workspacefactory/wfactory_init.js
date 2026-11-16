@@ -280,7 +280,7 @@ WorkspaceFactoryInit.assignWorkspaceFactoryClickHandlers_ =
   // Help button on workspace tab.
   document.getElementById('button_optionsHelp').addEventListener
       ('click', function() {
-        open('https://developers.google.com/blockly/guides/get-started/web#configuration');
+        open('https://docs.blockly.com/guides/configure/configuration_struct/#the-options-dictionary');
       });
 
   // Reset to Default button on workspace tab.

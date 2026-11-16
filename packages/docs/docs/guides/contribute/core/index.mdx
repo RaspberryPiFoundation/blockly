@@ -17,10 +17,12 @@ to create a PR.
 - The working branch is **main** and all PRs should be made against
   main.
 - You must fill out the pull request template with the requested information.
-- Code must conform to Google's [TypeScript Style
-  Guide](https://google.github.io/styleguide/tsguide.html).
+- Code must conform to Blockly's [style guide](style_guide)
 - Use [conventional commits](/guides/contribute/get-started/commits)
   in your commit messages and pull request titles.
+- PR summaries and comments should be human written, and AI usage is not allowed 
+  on issues labeled `good first issue`. Consult the [AI policy](/guides/contribute/core/ai_policy)
+  for more information.
 - User-visible strings must be in the `/msg/messages.js` file so they may be
   translated. Less than 6% of the world speaks English natively.
 - Text on blocks should generally be all lowercase (just like the keywords in
@@ -54,7 +56,7 @@ to create a PR.
 1.  Run `npm run format` to format the code and automatically fix some lint
     problems.
 1.  Run `npm test` to run the automated tests. This also runs `eslint`.
-1.  If there are lint errors, run `npm run lint:fix` to fix the problems that
+1.  If there are lint errors, run `npm run lint-fix` to fix the problems that
     are autofixable. Address any remaining lint warnings or errors.
 1.  If all tests pass, you are ready to open a PR against **main** with your
     changes.

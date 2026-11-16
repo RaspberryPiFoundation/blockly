@@ -17,7 +17,7 @@ import {Msg} from '../msg.js';
 import * as renderManagement from '../render_management.js';
 import {Coordinate} from '../utils.js';
 import * as dom from '../utils/dom.js';
-import {Rect} from '../utils/rect.js';
+import type {Rect} from '../utils/rect.js';
 import {Size} from '../utils/size.js';
 import {Svg} from '../utils/svg.js';
 import type {WorkspaceSvg} from '../workspace_svg.js';

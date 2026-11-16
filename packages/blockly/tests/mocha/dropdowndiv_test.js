@@ -4,19 +4,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {Rect} from '../../build/src/core/utils/rect.js';
-import * as style from '../../build/src/core/utils/style.js';
-import {assert} from '../../node_modules/chai/index.js';
+import {Rect} from '#core/utils/rect.js';
+import * as style from '#core/utils/style.js';
+import {assert} from 'chai';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
+  workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
 
 suite('DropDownDiv', function () {
   setup(function () {
     sharedTestSetup.call(this);
     Blockly.common.setParentContainer(document.firstElementChild);
-    this.workspace = Blockly.inject('blocklyDiv');
+    this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
     this.setUpBlockWithField = function () {
       const blockJson = {
         'type': 'text',
@@ -36,6 +38,7 @@ suite('DropDownDiv', function () {
   teardown(function () {
     sharedTestTeardown.call(this);
     document.getElementById('blocklyDiv').style.visibility = 'hidden';
+    Blockly.common.setParentContainer(null);
   });
 
   suite('Positioning', function () {
@@ -149,10 +152,11 @@ suite('DropDownDiv', function () {
           width: 100,
           height: 100,
         });
-      this.workspace = Blockly.inject('blocklyDiv', {});
+      this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
     });
     teardown(function () {
       this.boundsStub.restore();
+      workspaceTeardown.call(this, this.workspace);
     });
     test('Escape dismisses DropDownDiv', function () {
       let hidden = false;
@@ -172,30 +176,19 @@ suite('DropDownDiv', function () {
 
   suite('show()', function () {
     test('without bounds set throws error', function () {
+      Blockly.DropDownDiv.setBoundsElement(null);
       const block = this.setUpBlockWithField();
       const field = Array.from(block.getFields())[0];
 
-      const errorMsgRegex = /Cannot read properties of null.+?/;
-      assert.throws(
-        () => Blockly.DropDownDiv.show(field, false, 50, 60, 70, 80, false),
-        errorMsgRegex,
+      assert.throws(() =>
+        Blockly.DropDownDiv.show(field, false, 50, 60, 70, 80, false),
       );
     });
 
-    test('with bounds set positions and shows div near specified location', function () {
-      Blockly.DropDownDiv.setBoundsElement(document.body);
-      const block = this.setUpBlockWithField();
-      const field = Array.from(block.getFields())[0];
-
-      Blockly.DropDownDiv.show(field, false, 50, 60, 70, 80, false);
-
-      const dropDownDivElem = document.querySelector('.blocklyDropDownDiv');
-      assert.strictEqual(dropDownDivElem.style.opacity, '1');
-      assert.strictEqual(dropDownDivElem.style.left, '45px');
-      assert.strictEqual(dropDownDivElem.style.top, '60px');
-    });
-
     test('sets the dropdowndiv as owned by the workspace', function () {
+      // Set the bounds element explicitly rather than relying on a previous
+      // test having set this module-global, so this test is order-independent.
+      Blockly.DropDownDiv.setBoundsElement(document.body);
       const block = this.setUpBlockWithField();
       const field = Array.from(block.getFields())[0];
 

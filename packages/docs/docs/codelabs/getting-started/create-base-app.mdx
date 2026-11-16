@@ -7,10 +7,10 @@ description: How to set up the base for your app.
 ## 4. Add basic HTML and CSS
 
 ### Create the HTML
-Open the `src/` folder and find the file called `index.html`. In this file, you'll specify some basic structure for your app.
-You'll also make a div (here called `blocklyDiv`) that you'll later inject Blockly into.
+Open the `src/` folder and find the file called `index.html`. 
+`index.html` will specify the basic structure for your app, and will include a `div` (here called `blocklyDiv`) that you'll later inject Blockly into. 
 
-Copy and paste the following HTML into your `index.html` file.
+Copy and paste the following HTML into your `index.html` file:
 
 ```html
 <!doctype html>
@@ -40,7 +40,7 @@ For more fine-grained styling of components and blocks, you can consult the [CSS
 
 ### Import Blockly
 
-At various points throughout this codelab, you'll have to import Blockly in different ways. 
+At various points throughout this codelab, you'll import Blockly in different ways.
 Since you already installed Blockly using npm, you can freely import Blockly into your files without an additional step. 
 Add the following import statement to `index.js`:
 
@@ -49,7 +49,7 @@ import * as Blockly from 'blockly';
 ``` 
 
 Importing Blockly this way includes the core Blockly library, the built-in blocks, and the [English translations](/guides/configure/translations). 
-It also includes some other pieces you need but we won't discuss yet, like the [JavaScript code generator](/codelabs/getting-started/generate-javascript-code).
+It also includes some other pieces you need later in this codelab, like the [JavaScript code generator](/codelabs/getting-started/generate-javascript-code).
 
 However, sometimes you may only want to import the core Blockly library. In that case, you could import Blockly using:
 

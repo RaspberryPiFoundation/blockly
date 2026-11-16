@@ -1917,6 +1917,39 @@ Blockly.Msg.SHORTCUTS_JUMP_FIRST_BLOCK = 'Jump to first block';
 /// shortcut display text for a shortcut that jumps focus to the last block in the workspace.
 Blockly.Msg.SHORTCUTS_JUMP_LAST_BLOCK = 'Jump to last block';
 /** @type {string} */
+/// shortcut display text for a shortcut that jumps focus back one page of items in the toolbox or flyout.
+Blockly.Msg.SHORTCUTS_JUMP_PREVIOUS_PAGE = 'Jump to previous page';
+/** @type {string} */
+/// shortcut display text for a shortcut that jumps focus forward one page of items in the toolbox or flyout.
+Blockly.Msg.SHORTCUTS_JUMP_NEXT_PAGE = 'Jump to next page';
+/** @type {string} */
+/// shortcut display text for a shortcut that scrolls the workspace or flyout to the left.
+Blockly.Msg.SHORTCUTS_SCROLL_LEFT = 'Scroll left';
+/** @type {string} */
+/// shortcut display text for a shortcut that scrolls the workspace or flyout to the right.
+Blockly.Msg.SHORTCUTS_SCROLL_RIGHT = 'Scroll right';
+/** @type {string} */
+/// shortcut display text for a shortcut that scrolls the workspace or flyout up.
+Blockly.Msg.SHORTCUTS_SCROLL_UP = 'Scroll up';
+/** @type {string} */
+/// shortcut display text for a shortcut that scrolls the workspace or flyout down.
+Blockly.Msg.SHORTCUTS_SCROLL_DOWN = 'Scroll down';
+/** @type {string} */
+/// ARIA live region message announcing that the workspace or flyout scrolled left.
+Blockly.Msg.ANNOUNCE_SCROLLED_LEFT = 'Scrolled left.';
+/** @type {string} */
+/// ARIA live region message announcing that the workspace or flyout scrolled right.
+Blockly.Msg.ANNOUNCE_SCROLLED_RIGHT = 'Scrolled right.';
+/** @type {string} */
+/// ARIA live region message announcing that the workspace or flyout scrolled up.
+Blockly.Msg.ANNOUNCE_SCROLLED_UP = 'Scrolled up.';
+/** @type {string} */
+/// ARIA live region message announcing that the workspace or flyout scrolled down.
+Blockly.Msg.ANNOUNCE_SCROLLED_DOWN = 'Scrolled down.';
+/** @type {string} */
+/// ARIA live region message announcing that the workspace or flyout cannot scroll further in the requested direction.
+Blockly.Msg.ANNOUNCE_CANT_SCROLL_FURTHER = 'Can\'t scroll further.';
+/** @type {string} */
 /// Message shown to inform users how to move blocks to arbitrary locations
 /// with the keyboard.
 Blockly.Msg.KEYBOARD_NAV_UNCONSTRAINED_MOVE_HINT = 'Hold %1 and use arrow keys to move freely, then %2 to accept the position.';
@@ -2427,6 +2460,20 @@ Blockly.Msg.FIELD_BITMAP_BUTTON_LABEL_RANDOMIZE = 'Randomize';
 /// Label for the 'Clear' button in the bitmap field editor.
 Blockly.Msg.FIELD_BITMAP_BUTTON_LABEL_CLEAR = 'Clear';
 /** @type {string} */
+/// Word used in bitmap pixel ARIA labels when a pixel is filled/on.
+Blockly.Msg.FIELD_BITMAP_PIXEL_ON = 'on';
+/** @type {string} */
+/// Word used in bitmap pixel ARIA labels when a pixel is empty/off.
+Blockly.Msg.FIELD_BITMAP_PIXEL_OFF = 'off';
+/** @type {string} */
+/// ARIA label for a single pixel in the bitmap field editor.
+/// \n\nParameters:\n* %1 - on/off state\n* %2 - 1-based row index\n* %3 - 1-based column index
+Blockly.Msg.FIELD_BITMAP_PIXEL_LABEL = '%1, row %2, column %3';
+/** @type {string} */
+/// ARIA value summarising the bitmap field contents.
+/// \n\nParameters:\n* %1 - width in pixels\n* %2 - height in pixels\n* %3 - number of filled pixels
+Blockly.Msg.FIELD_BITMAP_ARIA_VALUE = '%1 by %2, %3 pixels on';
+/** @type {string} */
 /// ARIA label for the button that opens the backpack flyout.
 Blockly.Msg.OPEN_BACKPACK = 'Open backpack';
 /** @type {string} */
@@ -2464,3 +2511,42 @@ Blockly.Msg.MINIMAP_ARIA_LABEL = 'Workspace minimap. Use the arrow keys to pan t
 /** @type {string} */
 /// ARIA label for the trashcan when it contains no blocks and cannot be interacted with.
 Blockly.Msg.ARIA_LABEL_TRASH_EMPTY = 'Trash, currently empty';
+/** @type {string} */
+/// Placeholder text shown in the workspace search input.
+Blockly.Msg.WORKSPACE_SEARCH_PLACEHOLDER = 'Search';
+/** @type {string} */
+/// ARIA label for the workspace search text input, including keyboard usage.
+Blockly.Msg.WORKSPACE_SEARCH_INPUT_LABEL = 'Search workspace. Press Enter for the next match, Shift+Enter for the previous match. Press Escape to close search and focus the current match.';
+/** @type {string} */
+/// ARIA label for the workspace search button that selects the next matching block.
+Blockly.Msg.WORKSPACE_SEARCH_FIND_NEXT = 'Find next';
+/** @type {string} */
+/// ARIA label for the workspace search button that selects the previous matching block.
+Blockly.Msg.WORKSPACE_SEARCH_FIND_PREVIOUS = 'Find previous';
+/** @type {string} */
+/// ARIA label for the button that closes the workspace search bar.
+Blockly.Msg.WORKSPACE_SEARCH_CLOSE = 'Close search bar';
+/** @type {string} */
+/// ARIA live region message announced when workspace search finds no matching blocks.
+Blockly.Msg.WORKSPACE_SEARCH_NO_MATCHES = 'No matching blocks';
+/** @type {string} */
+/// ARIA live region message announcing the currently highlighted workspace search match.
+/// \n\nParameters:\n* %1 - 1-based index of the current match\n* %2 - total number of matches\n* %3 - accessible label of the current block
+/// \n\nExamples:\n* "Match 1 of 3: print, hello"
+Blockly.Msg.WORKSPACE_SEARCH_MATCH = 'Match %1 of %2: %3';
+/** @type {string} */
+/// Placeholder text in the toolbox search category's input field.
+Blockly.Msg.TOOLBOX_SEARCH_PLACEHOLDER = 'Search for blocks';
+/** @type {string} */
+/// Message shown in the toolbox search flyout before a query has been entered.
+Blockly.Msg.TOOLBOX_SEARCH_PROMPT = 'Type to search for blocks';
+/** @type {string} */
+/// Message shown in the toolbox search flyout when a query matches no blocks.
+Blockly.Msg.TOOLBOX_SEARCH_NO_RESULTS = 'No matching blocks found';
+/** @type {string} */
+/// Screen reader announcement when a toolbox search matches exactly one block.
+Blockly.Msg.TOOLBOX_SEARCH_RESULT_COUNT_ONE = '1 matching block';
+/** @type {string} */
+/// Screen reader announcement of how many blocks a toolbox search matched.
+/// \n\nParameters:\n* %1 - a number of blocks, which may be zero or greater than one.
+Blockly.Msg.TOOLBOX_SEARCH_RESULT_COUNT = '%1 matching blocks';

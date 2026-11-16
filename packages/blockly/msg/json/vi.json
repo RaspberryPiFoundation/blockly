@@ -12,6 +12,7 @@
 			"Quangkhanhhuynh",
 			"SierraNguyen",
 			"TARGET6tidiem",
+			"ToitenAnh",
 			"Withoutaname",
 			"Yuki Shiromita"
 		]
@@ -40,7 +41,7 @@
 	"UNDO": "Hoàn tác",
 	"REDO": "Làm lại",
 	"CHANGE_VALUE_TITLE": "Thay giá trị thành:",
-	"RENAME_VARIABLE": "Thay tên biến...",
+	"RENAME_VARIABLE": "Thay tên biến '%1'",
 	"RENAME_VARIABLE_TITLE": "Thay tên tất cả các biến \"%1\" thành:",
 	"NEW_VARIABLE": "Tạo biến...",
 	"NEW_STRING_VARIABLE": "Tạo một giá trị dạng chuỗi...",

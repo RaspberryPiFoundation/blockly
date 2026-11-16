@@ -17,39 +17,42 @@
   "author": "Raspberry Pi Foundation",
   "private": true,
   "workspaces": [
-    "packages/blockly",
-    "packages/plugins/theme-dark",
-    "packages/plugins/theme-deuteranopia",
-    "packages/plugins/theme-hackermode",
-    "packages/plugins/theme-highcontrast",
-    "packages/plugins/theme-modern",
-    "packages/plugins/theme-tritanopia",
-    "packages/dev-tools",
-    "packages/docs"
+    "packages/*",
+    "packages/plugins/*"
   ],
   "devDependencies": {
     "@commitlint/cli": "^21.2.1",
-    "@commitlint/config-conventional": "^21.0.2",
-    "@eslint/eslintrc": "^3.3.5",
+    "@commitlint/config-conventional": "21.0.0",
     "@eslint/js": "^10.0.1",
-    "eslint": "10.5.0",
+    "@nx/js": "24.0.6",
+    "conventional-changelog-conventionalcommits": "10.4.1",
+    "eslint": "10.12.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-jsdoc": "^63.0.11",
+    "eslint-plugin-jsdoc": "^65.1.0",
     "eslint-plugin-mdx": "^3.7.0",
-    "eslint-plugin-mocha": "^11.3.0",
+    "eslint-plugin-mocha": "^12.0.2",
     "eslint-plugin-prettier": "^5.5.6",
     "globals": "^17.6.0",
-    "prettier": "3.9.5",
-    "prettier-plugin-organize-imports": "^4.3.0"
+    "lerna": "^10.0.1",
+    "nx": "24.0.6",
+    "prettier": "3.9.10",
+    "prettier-plugin-organize-imports": "^4.3.0",
+    "typescript-eslint": "^8.66.0"
+  },
+  "overrides": {
+    "conventional-changelog-conventionalcommits": "10.4.1"
   },
   "scripts": {
-    "test": "npm run test --ws --if-present",
+    "test": "npx nx run-many -t test",
     "lint": "npm run lint --ws --if-present",
-    "lint:fix": "npm run lint:fix --ws --if-present",
-    "build": "npm run package --workspace=blockly && npm run build --ws --if-present",
+    "lint-fix": "npm run lint-fix --ws --if-present",
+    "build": "npx nx run-many -t build --exclude=blockly-docs",
+    "build-docs": "npx nx run blockly-docs:build",
+    "build-all": "npx nx run-many -t build",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "postinstall": "patch-package"
+    "format-check": "prettier --check .",
+    "clean": "npx nx reset && npm run clean --ws --if-present",
+    "version": "npm run reference-refresh --workspace=blockly-docs && npm run plugins-reference-refresh --workspace=blockly-docs && git add packages/docs/blockly_api.json packages/docs/plugins_api.json"
   }
 }

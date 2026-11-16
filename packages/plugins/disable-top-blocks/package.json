@@ -1,0 +1,50 @@
+{
+  "name": "@blockly/disable-top-blocks",
+  "version": "13.4.0",
+  "description": "A Blockly plugin that shows the 'disable' context menu option only on non-orphan blocks.",
+  "scripts": {
+    "audit-fix": "blockly-scripts auditFix",
+    "build": "blockly-scripts build",
+    "clean": "blockly-scripts clean",
+    "lint": "eslint .",
+    "start": "blockly-scripts start",
+    "predeploy": "npm run build && blockly-scripts predeploy"
+  },
+  "main": "./dist/index.js",
+  "module": "./src/index.js",
+  "unpkg": "./dist/index.js",
+  "author": "",
+  "keywords": [
+    "blockly",
+    "blockly-plugin",
+    "disable-top-blocks"
+  ],
+  "homepage": "https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/plugins/disable-top-blocks#readme",
+  "bugs": {
+    "url": "https://github.com/RaspberryPiFoundation/blockly/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RaspberryPiFoundation/blockly.git",
+    "directory": "packages/plugins/disable-top-blocks"
+  },
+  "license": "Apache-2.0",
+  "directories": {
+    "dist": "dist",
+    "src": "src"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "devDependencies": {
+    "@blockly/dev-scripts": "^13.4.0",
+    "@blockly/dev-tools": "^13.4.0"
+  },
+  "peerDependencies": {
+    "blockly": "^13.2.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

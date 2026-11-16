@@ -13,10 +13,8 @@
 
 import type {Block} from '../block.js';
 import type {Workspace} from '../workspace.js';
-import {
-  Abstract as AbstractEvent,
-  AbstractEventJson,
-} from './events_abstract.js';
+import type {AbstractEventJson} from './events_abstract.js';
+import {Abstract as AbstractEvent} from './events_abstract.js';
 
 /**
  * Abstract class for any event related to blocks.

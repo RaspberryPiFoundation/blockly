@@ -24,7 +24,8 @@ import type {IBubble} from '../interfaces/i_bubble.js';
 import type {IConnectionPreviewer} from '../interfaces/i_connection_previewer.js';
 import type {IDragStrategy} from '../interfaces/i_draggable.js';
 import {DragDisposition} from '../interfaces/i_draggable.js';
-import {IHasBubble, hasBubble} from '../interfaces/i_has_bubble.js';
+import type {IHasBubble} from '../interfaces/i_has_bubble.js';
+import {hasBubble} from '../interfaces/i_has_bubble.js';
 import {Direction} from '../keyboard_nav/keyboard_mover.js';
 import * as layers from '../layers.js';
 import {Msg} from '../msg.js';
@@ -64,7 +65,7 @@ enum MoveMode {
 }
 
 export class BlockDragStrategy implements IDragStrategy {
-  private workspace: WorkspaceSvg;
+  protected workspace: WorkspaceSvg;
 
   /** The parent block at the start of the drag. */
   private startParentConn: RenderedConnection | null = null;
@@ -75,11 +76,11 @@ export class BlockDragStrategy implements IDragStrategy {
    */
   private startChildConn: RenderedConnection | null = null;
 
-  private startLoc: Coordinate | null = null;
+  protected startLoc: Coordinate | null = null;
 
   private connectionCandidate: ConnectionCandidate | null = null;
 
-  private connectionPreviewer: IConnectionPreviewer | null = null;
+  protected connectionPreviewer: IConnectionPreviewer | null = null;
 
   private dragging = false;
 
@@ -87,10 +88,19 @@ export class BlockDragStrategy implements IDragStrategy {
   private allConnectionPairs: ConnectionPair[] = [];
 
   /** The current movement mode. */
-  private moveMode = MoveMode.UNCONSTRAINED;
+  protected moveMode = MoveMode.UNCONSTRAINED;
 
   /** Used to persist an event group when snapping is done async. */
   private originalEventGroup = '';
+
+  /**
+   * Half of the connection of the last announced candidate, or null if that
+   * announcement was for the workspace. Undefined if nothing has been
+   * announced yet this drag.
+   */
+  private lastAnnouncedLocal: RenderedConnection | null | undefined = undefined;
+  private lastAnnouncedNeighbour: RenderedConnection | null | undefined =
+    undefined;
 
   /**
    * Map from block IDs to reason(s) why it was disabled, used to restore
@@ -105,7 +115,7 @@ export class BlockDragStrategy implements IDragStrategy {
    */
   protected readonly WORKSPACE_MARGIN = 10;
 
-  constructor(private block: BlockSvg) {
+  constructor(protected block: BlockSvg) {
     this.workspace = block.workspace;
   }
 
@@ -127,7 +137,7 @@ export class BlockDragStrategy implements IDragStrategy {
    * @param oldBlock The flyout block that was cloned.
    * @param newBlock The new block to position.
    */
-  private positionNewBlock(oldBlock: BlockSvg, newBlock: BlockSvg) {
+  protected positionNewBlock(oldBlock: BlockSvg, newBlock: BlockSvg) {
     const screenCoordinate = svgMath.wsToScreenCoordinates(
       oldBlock.workspace,
       oldBlock.getRelativeToSurfaceXY(),
@@ -140,8 +150,12 @@ export class BlockDragStrategy implements IDragStrategy {
 
     if (this.moveMode !== MoveMode.CONSTRAINED) return;
     const workspace = newBlock.workspace;
-    const initialY = this.WORKSPACE_MARGIN;
-    const initialX = this.WORKSPACE_MARGIN;
+    const metrics = workspace.getMetricsManager().getViewMetrics(true);
+    const initialY = metrics.top + this.WORKSPACE_MARGIN;
+    const initialX = workspace.RTL
+      ? metrics.left + metrics.width - this.WORKSPACE_MARGIN
+      : metrics.left + this.WORKSPACE_MARGIN;
+
     // How far apart the new block should be placed horizontally from an
     // existing one.
     const xSpacing = 80;
@@ -163,12 +177,7 @@ export class BlockDragStrategy implements IDragStrategy {
       );
     });
 
-    const toolboxWidth = workspace.getToolbox()?.getWidth();
-    const workspaceWidth =
-      workspace.getParentSvg().clientWidth - (toolboxWidth ?? 0);
-    const workspaceHeight = workspace.getParentSvg().clientHeight;
-    const {height: newBlockHeight, width: newBlockWidth} =
-      newBlock.getHeightWidth();
+    const newBlockWidth = newBlock.getHeightWidth().width;
 
     const getNextIntersectingBlock = function (
       newBlockRect: Rect,
@@ -189,31 +198,39 @@ export class BlockDragStrategy implements IDragStrategy {
     // Make the initial movement of shifting the block to its best possible
     // position.
     let boundingRect = newBlock.getBoundingRectangle();
-    newBlock.moveBy(cursorX - boundingRect.left, cursorY - boundingRect.top, [
-      'cleanup',
-    ]);
+    newBlock.moveBy(
+      workspace.RTL
+        ? cursorX - boundingRect.right
+        : cursorX - boundingRect.left,
+      cursorY - boundingRect.top,
+      ['cleanup'],
+    );
 
     boundingRect = newBlock.getBoundingRectangle();
     let conflictingRect = getNextIntersectingBlock(boundingRect);
     while (conflictingRect != null) {
-      const newCursorX =
-        conflictingRect.left + conflictingRect.getWidth() + xSpacing;
+      const newCursorX = workspace.RTL
+        ? conflictingRect.left - xSpacing
+        : conflictingRect.right + xSpacing;
       const newCursorY =
         conflictingRect.top + conflictingRect.getHeight() + minBlockHeight;
-      if (newCursorX + newBlockWidth <= workspaceWidth) {
+      if (
+        workspace.RTL
+          ? newCursorX - newBlockWidth >= metrics.left
+          : newCursorX + newBlockWidth <= metrics.left + metrics.width
+      ) {
         cursorX = newCursorX;
-      } else if (newCursorY + newBlockHeight <= workspaceHeight) {
-        cursorY = newCursorY;
-        cursorX = initialX;
       } else {
-        // Off screen, but new blocks will be selected which will scroll them
-        // into view.
         cursorY = newCursorY;
         cursorX = initialX;
       }
-      newBlock.moveBy(cursorX - boundingRect.left, cursorY - boundingRect.top, [
-        'cleanup',
-      ]);
+      newBlock.moveBy(
+        workspace.RTL
+          ? cursorX - boundingRect.right
+          : cursorX - boundingRect.left,
+        cursorY - boundingRect.top,
+        ['cleanup'],
+      );
       boundingRect = newBlock.getBoundingRectangle();
       conflictingRect = getNextIntersectingBlock(boundingRect);
     }
@@ -244,6 +261,7 @@ export class BlockDragStrategy implements IDragStrategy {
         eventUtils.setRecordUndo(false);
         newBlock.render();
         this.positionNewBlock(this.block, newBlock);
+        newBlock.setDragging(true);
         eventUtils.setRecordUndo(true);
 
         return newBlock;
@@ -277,6 +295,21 @@ export class BlockDragStrategy implements IDragStrategy {
       announcementTemplate = Msg['ANNOUNCE_MOVE_WORKSPACE'];
       announcement = announcementTemplate.replace('%1', blockLabel);
     }
+
+    // Skip only when the connection target is unchanged, so identically
+    // worded moves to different inputs (e.g. empty else-if slots) still get read.
+    const local = this.connectionCandidate?.local ?? null;
+    const neighbour = this.connectionCandidate?.neighbour ?? null;
+    if (
+      this.lastAnnouncedLocal !== undefined &&
+      local === this.lastAnnouncedLocal &&
+      neighbour === this.lastAnnouncedNeighbour
+    ) {
+      return;
+    }
+    this.lastAnnouncedLocal = local;
+    this.lastAnnouncedNeighbour = neighbour;
+
     // Collapse whitespace from unused template substitutions.
     aria.announceDynamicAriaState(announcement.replace(/\s+/g, ' '));
   }
@@ -319,6 +352,8 @@ export class BlockDragStrategy implements IDragStrategy {
     this.block.workspace.recordDragTargets();
 
     this.dragging = true;
+    this.lastAnnouncedLocal = undefined;
+    this.lastAnnouncedNeighbour = undefined;
     this.fireDragStartEvent();
 
     this.startLoc = this.block.getRelativeToSurfaceXY();
@@ -469,7 +504,7 @@ export class BlockDragStrategy implements IDragStrategy {
    * @param healStack Whether or not to heal the stack after disconnecting.
    * @returns True to disconnect the block, false otherwise.
    */
-  private shouldDisconnect(healStack: boolean): boolean {
+  protected shouldDisconnect(healStack: boolean): boolean {
     return !!(
       this.block.getParent() ||
       (healStack &&
@@ -902,7 +937,11 @@ export class BlockDragStrategy implements IDragStrategy {
     blockAnimation.disconnectUiStop();
     this.connectionPreviewer?.hidePreview();
 
-    if (!this.block.isDeadOrDying() && this.dragging) {
+    if (
+      !this.block.isDeadOrDying() &&
+      this.dragging &&
+      disposition !== DragDisposition.DELETE
+    ) {
       // These are expensive and don't need to be done if we're deleting, or
       // if we've already stopped dragging because we moved back to the start.
       this.workspace
@@ -921,7 +960,7 @@ export class BlockDragStrategy implements IDragStrategy {
       this.redisableAllDraggedBlocks(this.block);
     }
 
-    if (this.connectionCandidate) {
+    if (this.connectionCandidate && disposition !== DragDisposition.DELETE) {
       // Applying connections also rerenders the relevant blocks.
       this.applyConnections(this.connectionCandidate);
       this.disposeStep();

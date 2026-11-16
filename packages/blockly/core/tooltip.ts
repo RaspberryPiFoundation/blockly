@@ -40,9 +40,10 @@ let customTooltip: CustomTooltip | undefined = undefined;
  * Sets a custom function that will be called if present instead of the default
  * tooltip UI.
  *
- * @param customFn A custom tooltip used to render an alternate tooltip UI.
+ * @param customFn A custom tooltip used to render an alternate tooltip UI, or
+ *     undefined to use the default implementation.
  */
-export function setCustomTooltip(customFn: CustomTooltip) {
+export function setCustomTooltip(customFn: CustomTooltip | undefined) {
   customTooltip = customFn;
 }
 

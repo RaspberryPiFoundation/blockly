@@ -1,0 +1,34 @@
+# @blockly/block-shareable-procedures
+
+## [<img src="https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/docs/static/images/logos/built-with-blockly-badge-white.svg" alt="Built with Blockly" width="119">](https://github.com/RaspberryPiFoundation/blockly)
+
+A set of [Blockly](https://www.npmjs.com/package/blockly) blocks that allow
+end-users to define procedures (i.e. functions). These blocks reference explicit
+backing data models, which allows them to be more easily manipulated, and shared
+between workspaces.
+
+Note that these blocks have the same names as the built-in procedure blocks, so
+you can seamlessly upgrade your existing project to use the new blocks.
+
+## Installation
+
+### Yarn
+
+```
+yarn add @blockly/block-shareable-procedures
+```
+
+### npm
+
+```
+npm install @blockly/block-shareable-procedures
+```
+
+## Usage
+
+See [docs.blockly.com/guides/create-custom-blocks/procedures/using-procedures](https://docs.blockly.com/guides/create-custom-blocks/procedures/using-procedures/)
+for more information about using this plugin.
+
+## License
+
+Apache 2.0

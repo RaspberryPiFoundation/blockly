@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {EventType} from '../../build/src/core/events/type.js';
-import {assert} from '../../node_modules/chai/index.js';
+import {EventType} from '#core/events/type.js';
+import {assert} from 'chai';
 import {assertEventFired} from './test_helpers/events.js';
 import {
   MockParameterModel,
   MockProcedureModel,
-} from './test_helpers/procedures.js';
+} from './test_helpers/procedures.ts';
 import {
   sharedTestSetup,
   sharedTestTeardown,

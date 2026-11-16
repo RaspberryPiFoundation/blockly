@@ -15,13 +15,20 @@ import * as Events from './events/events.js';
 import {getFocusManager} from './focus_manager.js';
 import {isLegacyProcedureDefBlock} from './interfaces/i_legacy_procedure_blocks.js';
 import {isVariableBackedParameterModel} from './interfaces/i_variable_backed_parameter_model.js';
-import {IVariableModel, IVariableState} from './interfaces/i_variable_model.js';
+import type {
+  IVariableModel,
+  IVariableState,
+} from './interfaces/i_variable_model.js';
 import {keyboardNavigationController} from './keyboard_navigation_controller.js';
 import {Msg} from './msg.js';
 import type {BlockInfo, FlyoutItemInfo} from './utils/toolbox.js';
 import * as utilsXml from './utils/xml.js';
 import type {Workspace} from './workspace.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
+
+const nameComparisonCollator = new Intl.Collator(undefined, {
+  sensitivity: 'base',
+});
 
 /**
  * String for use in the "custom" attribute of a category in toolbox XML.
@@ -805,9 +812,7 @@ export function compareByName(
   var1: IVariableModel<IVariableState>,
   var2: IVariableModel<IVariableState>,
 ): number {
-  return var1
-    .getName()
-    .localeCompare(var2.getName(), undefined, {sensitivity: 'base'});
+  return nameComparisonCollator.compare(var1.getName(), var2.getName());
 }
 
 /**

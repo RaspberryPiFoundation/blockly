@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {ConnectionType} from '../../build/src/core/connection_type.js';
-import {EventType} from '../../build/src/core/events/type.js';
-import * as eventUtils from '../../build/src/core/events/utils.js';
-import {IconType} from '../../build/src/core/icons/icon_types.js';
-import {EndRowInput} from '../../build/src/core/inputs/end_row_input.js';
-import {isCommentIcon} from '../../build/src/core/interfaces/i_comment_icon.js';
-import {Size} from '../../build/src/core/utils/size.js';
-import {assert} from '../../node_modules/chai/index.js';
+import {ConnectionType} from '#core/connection_type.js';
+import {EventType} from '#core/events/type.js';
+import * as eventUtils from '#core/events/utils.js';
+import {IconType} from '#core/icons/icon_types.js';
+import {EndRowInput} from '#core/inputs/end_row_input.js';
+import {isCommentIcon} from '#core/interfaces/i_comment_icon.js';
+import {Size} from '#core/utils/size.js';
+import {assert} from 'chai';
 import {createRenderedBlock} from './test_helpers/block_definitions.js';
 import {
   createChangeListenerSpy,
@@ -19,6 +19,7 @@ import {
 } from './test_helpers/events.js';
 import {MockBubbleIcon, MockIcon} from './test_helpers/icon_mocks.js';
 import {
+  DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
   workspaceTeardown,
@@ -479,7 +480,7 @@ suite('Blocks', function () {
 
     suite('Disposing selected shadow block', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv');
+        this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
         this.parentBlock = this.workspace.newBlock('row_block');
         this.parentBlock.initSvg();
         this.parentBlock.render();
@@ -579,7 +580,7 @@ suite('Blocks', function () {
 
   suite('Connection Tracking', function () {
     setup(function () {
-      this.workspace = Blockly.inject('blocklyDiv');
+      this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
 
       this.getInputs = function () {
         return this.workspace.connectionDBList[ConnectionType.INPUT_VALUE]
@@ -1227,10 +1228,7 @@ suite('Blocks', function () {
           this.textBlock.setParent.bind(this.textBlock, null),
         );
         assertNonParentAndOrphan(this.textJoinBlock, this.textBlock, 'ADD0');
-        assert.equal(
-          this.textBlock.getSvgRoot().nextSibling,
-          this.extraTopBlock.getSvgRoot(),
-        );
+        assert.equal(this.textBlock.getSvgRoot().nextSibling, null);
       });
       test('Setting parent to null with non-top dragging block', function () {
         this.extraNestedBlock.setDragging(true);
@@ -1401,6 +1399,7 @@ suite('Blocks', function () {
       suite('Rendered', function () {
         setup(function () {
           this.workspace = Blockly.inject('blocklyDiv', {
+            ...DEFAULT_INJECT_OPTIONS,
             comments: true,
             scrollbars: true,
           });
@@ -1491,7 +1490,7 @@ suite('Blocks', function () {
       }
 
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv', {});
+        this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
 
         this.block = this.workspace.newBlock('stack_block');
         this.block.initSvg();
@@ -1501,9 +1500,16 @@ suite('Blocks', function () {
       teardown(function () {
         workspaceTeardown.call(this, this.workspace);
 
-        Blockly.icons.registry.unregister(
-          Blockly.icons.IconType.COMMENT.toString(),
-        );
+        if (
+          Blockly.registry.hasItem(
+            Blockly.registry.Type.ICON,
+            Blockly.icons.IconType.COMMENT.toString(),
+          )
+        ) {
+          Blockly.icons.registry.unregister(
+            Blockly.icons.IconType.COMMENT.toString(),
+          );
+        }
         Blockly.icons.registry.register(
           Blockly.icons.IconType.COMMENT,
           Blockly.icons.CommentIcon,
@@ -1555,7 +1561,7 @@ suite('Blocks', function () {
 
   suite('Getting/Setting Field (Values)', function () {
     setup(function () {
-      this.workspace = Blockly.inject('blocklyDiv');
+      this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
       this.block = Blockly.Xml.domToBlock(
         Blockly.utils.xml.textToDom(
           '<block type="text"><field name = "TEXT">test</field></block>',
@@ -1664,7 +1670,7 @@ suite('Blocks', function () {
 
     suite('Adding icons', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv', {});
+        this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
 
         this.block = this.workspace.newBlock('stack_block');
         this.block.initSvg();
@@ -1706,7 +1712,7 @@ suite('Blocks', function () {
 
     suite('Removing icons', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv');
+        this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
 
         this.block = this.workspace.newBlock('stack_block');
         this.block.initSvg();
@@ -1806,7 +1812,7 @@ suite('Blocks', function () {
 
     suite('Warning icons', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv');
+        this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
 
         this.block = this.workspace.newBlock('stack_block');
         this.block.initSvg();
@@ -1952,7 +1958,7 @@ suite('Blocks', function () {
 
     suite('Warning icons and collapsing', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv');
+        this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
         this.parentBlock = Blockly.serialization.blocks.append(
           {
             'type': 'statement_block',
@@ -2025,7 +2031,7 @@ suite('Blocks', function () {
 
     suite('Bubbles and collapsing', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv');
+        this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
       });
 
       teardown(function () {
@@ -2145,7 +2151,7 @@ suite('Blocks', function () {
     setup(function () {
       eventUtils.disable();
       // We need a visible workspace.
-      this.workspace = Blockly.inject('blocklyDiv', {});
+      this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
       Blockly.defineBlocksWithJsonArray([
         {
           'type': 'variable_block',
@@ -2724,7 +2730,7 @@ suite('Blocks', function () {
     });
     suite('Rendered', function () {
       setup(function () {
-        this.workspace = Blockly.inject('blocklyDiv', {});
+        this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
         this.block = Blockly.Xml.domToBlock(
           Blockly.utils.xml.textToDom('<block type="empty_block"/>'),
           this.workspace,
@@ -2957,13 +2963,18 @@ suite('Blocks', function () {
 
   suite('Dragging', function () {
     setup(function () {
-      this.workspace = Blockly.inject('blocklyDiv');
+      this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
       this.blocks = createTestBlocks(this.workspace, false);
       for (const block of Object.values(this.blocks)) {
         block.initSvg();
         block.render();
       }
     });
+
+    teardown(function () {
+      workspaceTeardown.call(this, this.workspace);
+    });
+
     test('Bubbles are moved to drag layer along with their blocks', async function () {
       this.blocks.A.setCommentText('a');
       this.blocks.B.setCommentText('b');
@@ -3003,9 +3014,15 @@ suite('Blocks', function () {
 
   suite('Disposal focus management', function () {
     setup(function () {
-      this.workspace = Blockly.inject('blocklyDiv');
+      this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
       const firstBlock = this.workspace.newBlock('stack_block');
       firstBlock.moveBy(-500, -500);
+    });
+
+    teardown(function () {
+      if (this.workspace) {
+        workspaceTeardown.call(this, this.workspace);
+      }
     });
 
     test('Deleting the sole block on the workspace focuses the workspace', function () {
@@ -3112,9 +3129,28 @@ suite('Blocks', function () {
         this.workspace.getTopBlocks(false)[0],
       );
       this.workspace.dispose();
+      this.workspace = null;
       this.clock.runAll();
 
       // No assert, this just shouldn't throw.
+    });
+  });
+
+  suite('Duplication of mutator root blocks', function () {
+    test('is prohibited', function () {
+      const roots = [
+        'lists_create_with_container',
+        'controls_if_if',
+        'procedures_mutatorcontainer',
+        'text_create_join_container',
+      ];
+      for (const root of roots) {
+        const block = this.workspace.newBlock(root);
+        assert.isFalse(
+          block.isDuplicatable(),
+          `Block ${root} should not be duplicatable`,
+        );
+      }
     });
   });
 });

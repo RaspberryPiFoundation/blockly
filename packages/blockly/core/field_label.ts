@@ -12,7 +12,8 @@
  */
 // Former goog.module ID: Blockly.FieldLabel
 
-import {Field, FieldConfig} from './field.js';
+import type {FieldConfig} from './field.js';
+import {Field} from './field.js';
 import * as fieldRegistry from './field_registry.js';
 import {aria} from './utils.js';
 import * as dom from './utils/dom.js';
@@ -47,7 +48,7 @@ export class FieldLabel extends Field<string> {
    * @param textClass Optional CSS class for the field's text.
    * @param config A map of options used to configure the field.
    *    See the [field creation documentation]{@link
-   * https://developers.google.com/blockly/guides/create-custom-blocks/fields/built-in-fields/label#creation}
+   * https://docs.blockly.com/guides/create-custom-blocks/fields/built-in-fields/label/#creation}
    * for a list of properties this parameter supports.
    */
   constructor(

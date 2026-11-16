@@ -6,7 +6,7 @@
 
 import type {BlockSvg} from './block_svg.js';
 import * as renderManagement from './render_management.js';
-import {RenderedConnection} from './rendered_connection.js';
+import type {RenderedConnection} from './rendered_connection.js';
 import {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
 import {Size} from './utils/size.js';
@@ -90,10 +90,9 @@ export class InsertionMarker {
     // Move the insertion marker to abut the static connection and render the
     // static block in case it needs to grow to accommodate the insertion
     // marker.
-    this.marker.setAttribute(
-      'transform',
-      `translate(${blockOffset.x + connectionOffset.x}, ${blockOffset.y + connectionOffset.y})`,
-    );
+    const translate = `translate(${blockOffset.x + connectionOffset.x}, ${blockOffset.y + connectionOffset.y})`;
+    const scale = connectingBlock.workspace.RTL ? 'scale(-1, 1)' : '';
+    this.marker.setAttribute('transform', `${translate} ${scale}`);
     staticConnection.getSourceBlock().queueRender();
     renderManagement.triggerQueuedRenders();
   }

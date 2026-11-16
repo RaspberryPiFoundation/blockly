@@ -303,6 +303,14 @@ export class FocusManager {
   }
 
   /**
+   * Returns the IFocusableNode that held focus immediately before the current
+   * focused node, or null if there is no such node.
+   */
+  getPreviouslyFocusedNode(): IFocusableNode | null {
+    return this.previouslyFocusedNode;
+  }
+
+  /**
    * Focuses the specific IFocusableTree. This either means restoring active
    * focus to the tree's passively focused node, or focusing the tree's root
    * node.

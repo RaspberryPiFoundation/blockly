@@ -8,7 +8,7 @@ import Image from '@site/src/components/Image';
 
 ## 5. Precondition: External state
 
-Use of the `preconditionFn` is not limited to checking the type of the Blockly component that the context menu was invoked on. You can use it to check for conditions entirely outside of Blockly. For instance, let's disable `helloWorldItem` for the second half of every minute:
+Use of the `preconditionFn` is not limited to checking the type of the Blockly component that the context menu was invoked on. You can use it to check for conditions entirely outside of Blockly. For instance, disable `helloWorldItem` for the second half of every minute:
 
 ```js
     preconditionFn: function (scope) {

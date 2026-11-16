@@ -9,12 +9,14 @@
 import * as browserEvents from './browser_events.js';
 import * as common from './common.js';
 import {Field} from './field.js';
-import {ReturnEphemeralFocus, getFocusManager} from './focus_manager.js';
+import type {ReturnEphemeralFocus} from './focus_manager.js';
+import {getFocusManager} from './focus_manager.js';
 import * as aria from './utils/aria.js';
 import * as dom from './utils/dom.js';
 import * as idGenerator from './utils/idgenerator.js';
 import type {Rect} from './utils/rect.js';
 import type {Size} from './utils/size.js';
+import * as style from './utils/style.js';
 import type {WorkspaceSvg} from './workspace_svg.js';
 
 /** The object currently using this container. */
@@ -102,7 +104,10 @@ export function createDom() {
     containerDiv,
     'keydown',
     null,
-    common.globalShortcutHandler,
+    (e: KeyboardEvent) => {
+      common.globalShortcutHandler(e);
+      e.stopPropagation();
+    },
   );
 
   container.appendChild(containerDiv);
@@ -254,13 +259,13 @@ export function hideIfOwnerIsInWorkspace(workspace: WorkspaceSvg) {
   let ownerIsInWorkspace = ownerWorkspace === null;
   // Check if the given workspace is a parent workspace of the one containing
   // our owner.
-  let currentWorkspace: WorkspaceSvg | null = workspace;
+  let currentWorkspace: WorkspaceSvg | null = ownerWorkspace;
   while (!ownerIsInWorkspace && currentWorkspace) {
     if (currentWorkspace === workspace) {
       ownerIsInWorkspace = true;
       break;
     }
-    currentWorkspace = workspace.options.parentWorkspace;
+    currentWorkspace = currentWorkspace.options.parentWorkspace;
   }
 
   if (ownerIsInWorkspace) {
@@ -281,9 +286,7 @@ function positionInternal(x: number, y: number, height: number) {
 
   const parentElement = containerDiv.parentElement;
   if (parentElement) {
-    const bounds = parentElement.getBoundingClientRect();
-    x -= bounds.left + window.scrollX;
-    y -= bounds.top + window.scrollY;
+    ({x, y} = style.pageToContainerOffset(x, y, parentElement));
   }
 
   containerDiv.style.left = x + 'px';
