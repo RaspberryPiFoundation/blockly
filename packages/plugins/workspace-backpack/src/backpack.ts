@@ -13,12 +13,12 @@
 
 import * as Blockly from 'blockly/core';
 
-import {registerContextMenus} from './backpack_helpers';
-import type {BackpackOptions} from './options';
-import {parseOptions} from './options';
-import {BackpackChange, BackpackOpen} from './ui_events';
-import type {Backpackable} from './backpackable';
-import {isBackpackable} from './backpackable';
+import {registerContextMenus} from './backpack_helpers.js';
+import type {BackpackOptions} from './options.js';
+import {parseOptions} from './options.js';
+import {BackpackChange, BackpackOpen} from './ui_events.js';
+import type {Backpackable} from './backpackable.js';
+import {isBackpackable} from './backpackable.js';
 
 /**
  * Class for backpack that can be used save blocks from the workspace for

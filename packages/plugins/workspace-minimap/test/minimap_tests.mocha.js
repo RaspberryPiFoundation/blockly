@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const chai = require('chai');
-const assert = chai.assert;
-const sinon = require('sinon');
-const Blockly = require('blockly');
-const {Minimap} = require('../src/minimap');
-const {PositionedMinimap} = require('../src/positioned_minimap');
+import {assert} from 'chai';
+import sinon from 'sinon';
+import jsdomGlobal from 'jsdom-global';
+import * as Blockly from 'blockly';
+import {Minimap} from '../src/minimap.js';
+import {PositionedMinimap} from '../src/positioned_minimap.js';
 
 suite(
   'Converting click coordinates from minimap to primary workspace',
@@ -437,7 +437,7 @@ suite('Positioning the minimap in the primary workspace', function () {
 
 suite('Mirroring events', function () {
   setup(function () {
-    this.jsdomCleanup = require('jsdom-global')(
+    this.jsdomCleanup = jsdomGlobal(
       '<!DOCTYPE html><div id="blocklyDiv"></div>',
     );
     global.SVGElement = window.SVGElement;
@@ -481,7 +481,7 @@ suite('Mirroring events', function () {
 
 suite('Keyboard navigation', function () {
   setup(function () {
-    this.jsdomCleanup = require('jsdom-global')(
+    this.jsdomCleanup = jsdomGlobal(
       '<!DOCTYPE html><div id="blocklyDiv"></div>',
     );
     // jsdom does not implement SVGElement natively; expose the shim.

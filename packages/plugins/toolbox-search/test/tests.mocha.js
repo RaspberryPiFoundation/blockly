@@ -1,8 +1,9 @@
 import {assert} from 'chai';
-import * as Blockly from 'blockly';
 import * as sinon from 'sinon';
-import {ToolboxSearchCategory} from '../src/toolbox_search';
-import {BlockSearcher} from '../src/block_searcher';
+import jsdomGlobal from 'jsdom-global';
+import * as Blockly from 'blockly';
+import {ToolboxSearchCategory} from '../src/toolbox_search.js';
+import {BlockSearcher} from '../src/block_searcher.js';
 
 suite('Toolbox search', () => {
   test('registers itself as a toolbox item', () => {
@@ -29,9 +30,12 @@ suite('ToolboxSearchCategory', () => {
   }
 
   setup(function () {
-    this.jsdomCleanup = require('jsdom-global')(
+    this.jsdomCleanup = jsdomGlobal(
       '<!DOCTYPE html><div id="blocklyDiv"></div>',
     );
+    this.getContextStub = sinon
+      .stub(window.HTMLCanvasElement.prototype, 'getContext')
+      .returns({measureText: () => ({width: 0})});
     this.clock = sinon.useFakeTimers();
     this.workspace = Blockly.inject('blocklyDiv', {
       media: 'media/',

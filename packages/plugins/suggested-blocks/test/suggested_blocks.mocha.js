@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const {assert} = require('chai');
-const sinon = require('sinon');
-const Blockly = require('blockly');
-const SuggestedBlocks = require('../src/index');
+import {assert} from 'chai';
+import sinon from 'sinon';
+import * as Blockly from 'blockly';
+import * as SuggestedBlocks from '../src/index.js';
 
 const STANDARD_TEST_CASE = {
   usedBlockList: [

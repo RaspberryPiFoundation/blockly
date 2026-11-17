@@ -9,11 +9,11 @@
  * @author kozbial@google.com (Monica Kozbial)
  */
 
-const Blockly = require('blockly');
-const {assert} = require('chai');
-const sinon = require('sinon');
-
-const {WorkspaceSearch} = require('../src/index');
+import jsdomGlobal from 'jsdom-global';
+import * as Blockly from 'blockly';
+import {assert} from 'chai';
+import sinon from 'sinon';
+import {WorkspaceSearch} from '../src/index.js';
 
 suite('WorkspaceSearch', function () {
   /**
@@ -103,7 +103,7 @@ suite('WorkspaceSearch', function () {
   });
 
   setup(function () {
-    this.jsdomCleanup = require('jsdom-global')(
+    this.jsdomCleanup = jsdomGlobal(
       '<!DOCTYPE html><div id="blocklyDiv"></div>',
     );
     this.clock = sinon.useFakeTimers();

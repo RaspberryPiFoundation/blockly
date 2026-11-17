@@ -10,7 +10,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {Minimap} from './minimap';
+import {Minimap} from './minimap.js';
 
 const minWidth = 200;
 

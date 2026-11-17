@@ -4,4 +4,4 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './workspace_search';
+export * from './workspace_search.js';

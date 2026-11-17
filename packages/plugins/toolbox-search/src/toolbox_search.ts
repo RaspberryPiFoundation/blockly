@@ -9,7 +9,7 @@
  * in its flyout.
  */
 import * as Blockly from 'blockly/core';
-import {BlockSearcher} from './block_searcher';
+import {BlockSearcher} from './block_searcher.js';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 

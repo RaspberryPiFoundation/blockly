@@ -11,7 +11,7 @@
 import {createPlayground, toolboxCategories} from '@blockly/dev-tools';
 import * as Blockly from 'blockly';
 
-import {ZoomToFitControl} from '../src/index';
+import {ZoomToFitControl} from '../src/index.js';
 
 /**
  * Create a workspace.

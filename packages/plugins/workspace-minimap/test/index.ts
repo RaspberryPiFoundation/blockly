@@ -10,7 +10,7 @@
 
 import * as Blockly from 'blockly';
 import {toolboxCategories, createPlayground} from '@blockly/dev-tools';
-import {PositionedMinimap} from '../src/index';
+import {PositionedMinimap} from '../src/index.js';
 
 let minimap: PositionedMinimap | null = null;
 

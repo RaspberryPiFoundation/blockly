@@ -12,7 +12,7 @@
 import {createPlayground, toolboxCategories} from '@blockly/dev-tools';
 import * as Blockly from 'blockly';
 
-import {WorkspaceSearch} from '../src/index';
+import {WorkspaceSearch} from '../src/index.js';
 
 /**
  * Create a workspace.
