@@ -9,9 +9,8 @@
  */
 
 import * as chai from 'chai';
-import {readFileSync} from 'fs';
-import {createRequire} from 'module';
 import {Key} from 'webdriverio';
+import {bundleBlockTest} from '../../scripts/bundle_block_test.mjs';
 import {
   getBlockTypeFromCategory,
   getCategory,
@@ -21,12 +20,7 @@ import {
   testSetup,
 } from './test_setup.mjs';
 
-const require = createRequire(import.meta.url);
-
-const blockTestSource = readFileSync(
-  require.resolve('@blockly/block-test'),
-  'utf8',
-);
+const blockTestSource = await bundleBlockTest();
 
 /**
  * Load the test blocks into the playground page and swap in their toolbox.

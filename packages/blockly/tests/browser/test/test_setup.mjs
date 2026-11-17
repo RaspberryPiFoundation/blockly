@@ -62,6 +62,13 @@ export async function driverSetup() {
   // Use Selenium to bring up the page
   console.log('Starting webdriverio...');
   driver = await webdriverio.remote(options);
+  // Chrome only fires focus events while the page has OS focus, so tests that
+  // rely on them fail whenever another window is in front. Emulate page focus so
+  // the outcome doesn't depend on which window is active.
+  const puppeteer = await driver.getPuppeteer();
+  const [page] = await puppeteer.pages();
+  const session = await page.createCDPSession();
+  await session.send('Emulation.setFocusEmulationEnabled', {enabled: true});
   driver.setWindowSize(800, 600);
   driver.setViewport({width: 800, height: 600});
   return driver;

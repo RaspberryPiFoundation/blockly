@@ -18,9 +18,9 @@
 import {config as chaiConfig} from 'chai';
 import {JSDOM} from 'jsdom';
 import {readFileSync} from 'node:fs';
-import {createRequire} from 'node:module';
 import vm from 'node:vm';
 import sinon from 'sinon';
+import {bundleBlockTest} from '../scripts/bundle_block_test.mjs';
 import {installFixtures} from './test_helpers/dom_fixtures.js';
 import {
   HEADLESS_VIEWPORT_SIZE,
@@ -191,10 +191,7 @@ vm.runInThisContext(readFileSync(`${buildDir}/msg/en.js`, 'utf8'));
 
 // Register the shared test blocks (test_fields_*, test_dropdowns_*, etc.) that
 // many suites rely on.
-const require = createRequire(import.meta.url);
-vm.runInThisContext(
-  readFileSync(require.resolve('@blockly/block-test'), 'utf8'),
-);
+vm.runInThisContext(await bundleBlockTest());
 
 // Install the shared DOM fixtures now that Blockly is loaded.
 installFixtures(window.document);
