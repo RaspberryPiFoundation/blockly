@@ -7,7 +7,7 @@
 import {createPlayground, toolboxCategories} from '@blockly/dev-tools';
 import * as Blockly from 'blockly';
 
-import {Backpack} from '../src/index';
+import {Backpack} from '../src/index.js';
 
 /**
  * Create a workspace.

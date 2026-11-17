@@ -4,6 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export {Backpack} from './backpack';
-export * from './ui_events';
-export type {BackpackOptions, BackpackContextMenuOptions} from './options';
+export {Backpack} from './backpack.js';
+export * from './ui_events.js';
+export type {BackpackOptions, BackpackContextMenuOptions} from './options.js';

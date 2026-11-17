@@ -447,6 +447,7 @@ export default defineConfig(
       'packages/plugins/theme-tritanopia/**',
       'packages/plugins/toolbox-search/**',
       'packages/plugins/typed-variable-modal/**',
+      'packages/plugins/workspace-backpack/**',
     ],
     settings: {
       jsdoc: {
