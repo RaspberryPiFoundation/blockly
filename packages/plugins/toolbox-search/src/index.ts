@@ -1,2 +1,2 @@
 // This file exists solely as an entrypoint.
-import './toolbox_search';
+import './toolbox_search.js';

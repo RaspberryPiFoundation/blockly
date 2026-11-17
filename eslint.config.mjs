@@ -445,6 +445,7 @@ export default defineConfig(
       'packages/plugins/theme-highcontrast/**',
       'packages/plugins/theme-modern/**',
       'packages/plugins/theme-tritanopia/**',
+      'packages/plugins/toolbox-search/**',
       'packages/plugins/typed-variable-modal/**',
     ],
     settings: {
