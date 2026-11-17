@@ -12,7 +12,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {FocusRegion} from './focus_region';
+import {FocusRegion} from './focus_region.js';
 
 // Events that should be send over to the minimap from the primary workspace
 const blockEvents = new Set<string>([

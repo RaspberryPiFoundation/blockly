@@ -9,5 +9,5 @@
  * appears on top of your main workspace. This gives you an overview
  * of what your code looks like, and how it is organized.
  */
-export {Minimap} from './minimap';
-export {PositionedMinimap} from './positioned_minimap';
+export {Minimap} from './minimap.js';
+export {PositionedMinimap} from './positioned_minimap.js';
