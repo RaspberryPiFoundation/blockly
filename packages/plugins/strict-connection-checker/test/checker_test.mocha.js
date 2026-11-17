@@ -10,11 +10,9 @@
  * @author fenichel@google.com (Rachel Fenichel)
  */
 
-const chai = require('chai');
-const Blockly = require('blockly');
-
-const StrictConnectionChecker =
-  require('../src/index.js').StrictConnectionChecker;
+import {assert} from 'chai';
+import * as Blockly from 'blockly';
+import {StrictConnectionChecker} from '../src/index.js';
 
 suite('StrictConnectionChecker', function () {
   suiteSetup(function () {
@@ -47,9 +45,9 @@ suite('StrictConnectionChecker', function () {
      *     `canConnectWithReason`.
      */
     function assertReasonHelper(checker, one, two, reason) {
-      chai.assert.equal(checker.canConnectWithReason(one, two), reason);
+      assert.equal(checker.canConnectWithReason(one, two), reason);
       // Order should not matter.
-      chai.assert.equal(checker.canConnectWithReason(two, one), reason);
+      assert.equal(checker.canConnectWithReason(two, one), reason);
     }
 
     test('Target Null', function () {
@@ -313,9 +311,9 @@ suite('StrictConnectionChecker', function () {
      * @param {!Blockly.Connection} two The second connection.
      */
     function assertCheckTypes(checker, one, two) {
-      chai.assert.isTrue(checker.doTypeChecks(one, two));
+      assert.isTrue(checker.doTypeChecks(one, two));
       // Order should not matter.
-      chai.assert.isTrue(checker.doTypeChecks(one, two));
+      assert.isTrue(checker.doTypeChecks(one, two));
     }
     test('No Types', function () {
       assertCheckTypes(this.checker, this.con1, this.con2);
@@ -338,12 +336,12 @@ suite('StrictConnectionChecker', function () {
     test('One Typed, One Null', function () {
       this.con1.setCheck('type1');
       // This is the only difference between this and the base checker.
-      chai.assert.isFalse(this.checker.doTypeChecks(this.con1, this.con2));
+      assert.isFalse(this.checker.doTypeChecks(this.con1, this.con2));
     });
     test('No Compatible Types', function () {
       this.con1.setCheck('type1');
       this.con2.setCheck('type2');
-      chai.assert.isFalse(this.checker.doTypeChecks(this.con1, this.con2));
+      assert.isFalse(this.checker.doTypeChecks(this.con1, this.con2));
     });
   });
 });

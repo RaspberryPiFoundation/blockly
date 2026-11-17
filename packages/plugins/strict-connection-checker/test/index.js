@@ -10,8 +10,8 @@
 
 import * as Blockly from 'blockly';
 import {createPlayground} from '@blockly/dev-tools';
-import {pluginInfo as StrictTypesPluginInfo} from '../src/index';
-import toolboxCategories from '../src/toolboxCategories';
+import {pluginInfo as StrictTypesPluginInfo} from '../src/index.js';
+import toolboxCategories from '../src/toolboxCategories.js';
 
 /**
  * Create a workspace.
