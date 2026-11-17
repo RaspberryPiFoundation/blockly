@@ -14,7 +14,7 @@ import type {IFocusableNode} from '../interfaces/i_focusable_node.js';
 import type {IPaster} from '../interfaces/i_paster.js';
 import * as renderManagement from '../render_management.js';
 import type {State} from '../serialization/blocks.js';
-import {append} from '../serialization/blocks.js';
+import {appendInternal} from '../serialization/blocks.js';
 import {Coordinate} from '../utils/coordinate.js';
 import type {WorkspaceSvg} from '../workspace_svg.js';
 import * as registry from './registry.js';
@@ -47,7 +47,7 @@ export class BlockPaster implements IPaster<BlockCopyData, BlockSvg> {
     eventUtils.disable();
     let block;
     try {
-      block = append(copyData.blockState, workspace) as BlockSvg;
+      block = appendInternal(copyData.blockState, workspace) as BlockSvg;
       moveBlockToNotConflict(block, initialCoordinates);
     } finally {
       eventUtils.enable();
