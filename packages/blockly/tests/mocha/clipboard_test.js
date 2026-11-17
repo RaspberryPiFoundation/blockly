@@ -255,6 +255,7 @@ suite('Clipboard', function () {
           inner.toCopyData(),
           this.workspace,
         );
+        this.clock.runAll();
 
         assert.deepEqual(outer.getRelativeToSurfaceXY(), outerXY);
         // One step down and to the right would put the copy's previous
@@ -267,35 +268,6 @@ suite('Clipboard', function () {
             innerXY.y + Blockly.config.snapRadius * 4,
           ),
         );
-      });
-
-      test('pasted blocks are placed using their rendered connection positions', function () {
-        const target = Blockly.serialization.blocks.append(
-          {'type': 'text_print', 'x': 300, 'y': 300},
-          this.workspace,
-        );
-        const source = Blockly.serialization.blocks.append(
-          {'type': 'controls_repeat', 'x': 600, 'y': 600},
-          this.workspace,
-        );
-        this.clock.runAll(); // Update the connection DB.
-        const targetXY = target.getRelativeToSurfaceXY();
-        const sourceXY = source.getRelativeToSurfaceXY();
-        // Paste so that the copy's next connection, at the bottom of the
-        // block, lands on the target's previous connection.
-        const coordinate = new Blockly.utils.Coordinate(
-          target.previousConnection.x - (source.nextConnection.x - sourceXY.x),
-          target.previousConnection.y - (source.nextConnection.y - sourceXY.y),
-        );
-
-        const newBlock = Blockly.clipboard.paste(
-          source.toCopyData(),
-          this.workspace,
-          coordinate,
-        );
-
-        assert.notDeepEqual(newBlock.getRelativeToSurfaceXY(), coordinate);
-        assert.deepEqual(target.getRelativeToSurfaceXY(), targetXY);
       });
 
       test('pasted blocks are bumped away from neighbours they cannot connect to', function () {
@@ -317,6 +289,7 @@ suite('Clipboard', function () {
           this.workspace,
           new Blockly.utils.Coordinate(input.x, input.y),
         );
+        this.clock.runAll();
 
         assert.isEmpty(
           newBlock.outputConnection.neighbours(Blockly.config.snapRadius),
@@ -344,6 +317,7 @@ suite('Clipboard', function () {
         number.queueRender();
 
         Blockly.clipboard.paste(source.toCopyData(), this.workspace);
+        this.clock.runAll();
 
         assert.isEmpty(
           number.outputConnection.neighbours(Blockly.config.snapRadius),

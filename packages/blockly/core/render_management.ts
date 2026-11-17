@@ -86,18 +86,12 @@ export function finishQueuedRenders(): Promise<void> {
  * (such as rendering icons).
  *
  * @param workspace If provided, only rerender blocks in this workspace.
- * @param param1 bumpNeighbours: If false, the rendered blocks are not bumped
- *     away from their neighbours. The caller is then responsible for bumping
- *     them. True by default.
  *
  * @internal
  */
-export function triggerQueuedRenders(
-  workspace?: WorkspaceSvg,
-  {bumpNeighbours = true}: {bumpNeighbours?: boolean} = {},
-) {
+export function triggerQueuedRenders(workspace?: WorkspaceSvg) {
   if (!workspace) window.cancelAnimationFrame(animationRequestId);
-  doRenders(workspace, bumpNeighbours);
+  doRenders(workspace);
   if (!workspace && afterRendersResolver) afterRendersResolver();
 }
 
@@ -134,10 +128,8 @@ function queueBlock(block: BlockSvg) {
  * Rerenders all of the blocks in the queue.
  *
  * @param workspace If provided, only rerender blocks in this workspace.
- * @param bumpNeighbours Whether to bump the rendered blocks away from their
- *     neighbours.
  */
-function doRenders(workspace?: WorkspaceSvg, bumpNeighbours = true) {
+function doRenders(workspace?: WorkspaceSvg) {
   const workspaces = workspace
     ? new Set([workspace])
     : new Set([...rootBlocks].map((block) => block.workspace));
@@ -158,21 +150,19 @@ function doRenders(workspace?: WorkspaceSvg, bumpNeighbours = true) {
   for (const workspace of workspaces) {
     workspace.connectionDBList.forEach((db) => db?.endBulkUpdates());
   }
-  if (bumpNeighbours) {
-    for (const block of blocks) {
-      const oldGroup = eventUtils.getGroup();
-      const oldRecordUndo = eventUtils.getRecordUndo();
-      const context = eventContexts.get(block);
-      if (context) {
-        if (context.group) eventUtils.setGroup(context.group);
-        eventUtils.setRecordUndo(context.recordUndo);
-      }
-
-      block.bumpNeighbours();
-
-      eventUtils.setGroup(oldGroup);
-      eventUtils.setRecordUndo(oldRecordUndo);
+  for (const block of blocks) {
+    const oldGroup = eventUtils.getGroup();
+    const oldRecordUndo = eventUtils.getRecordUndo();
+    const context = eventContexts.get(block);
+    if (context) {
+      if (context.group) eventUtils.setGroup(context.group);
+      eventUtils.setRecordUndo(context.recordUndo);
     }
+
+    block.bumpNeighbours();
+
+    eventUtils.setGroup(oldGroup);
+    eventUtils.setRecordUndo(oldRecordUndo);
   }
 
   for (const block of blocks) {

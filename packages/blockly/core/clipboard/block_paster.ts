@@ -47,14 +47,8 @@ export class BlockPaster implements IPaster<BlockCopyData, BlockSvg> {
     eventUtils.disable();
     let block;
     try {
-      renderManagement.triggerQueuedRenders();
       block = appendInternal(copyData.blockState, workspace) as BlockSvg;
-      // The block has to be rendered for its connections to be in the right
-      // place. Don't bump it yet: it still sits on top of the copied block, so
-      // bumping would push the copied block's stack away instead.
-      renderManagement.triggerQueuedRenders(undefined, {bumpNeighbours: false});
       moveBlockToNotConflict(block, initialCoordinates);
-      block.bumpNeighbours();
     } finally {
       eventUtils.enable();
     }
