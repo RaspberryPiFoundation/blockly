@@ -7,7 +7,6 @@
 /**
  * @fileoverview Utility functions for handling suggestions.
  */
-'use strict';
 
 import * as Blockly from 'blockly/core';
 

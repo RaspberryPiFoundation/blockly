@@ -438,6 +438,7 @@ export default defineConfig(
       'packages/plugins/scroll-options/**',
       'packages/plugins/shadow-block-converter/**',
       'packages/plugins/strict-connection-checker/**',
+      'packages/plugins/suggested-blocks/**',
       'packages/plugins/theme-dark/**',
       'packages/plugins/theme-deuteranopia/**',
       'packages/plugins/theme-hackermode/**',
