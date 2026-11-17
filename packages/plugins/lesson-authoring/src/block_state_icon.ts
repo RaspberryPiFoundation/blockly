@@ -36,10 +36,6 @@ Blockly.Css.register(`
 .blocklyIconGroup.lessonBlockStateIcon:not(:hover):not(:focus) {
   opacity: 1;
 }
-.lessonBlockStateIcon > .blocklyIconShape {
-  fill: none;
-  stroke: none;
-}
 `);
 
 /**
@@ -183,13 +179,15 @@ export class BlockStateIcon extends Blockly.icons.Icon {
     const svgRoot = this.svgRoot;
     if (!svgRoot) return;
     svgRoot.replaceChildren();
-    // Core draws an icon's focus ring on its first blocklyIconShape. This one
-    // is otherwise invisible, and sits just outside the glyphs.
+    // Core strokes a focused element's blocklyFocusRing child, as it does for
+    // the trashcan and zoom controls. Unfilled, so it shows only when focused,
+    // just outside the glyphs.
     const size = this.getSize();
     Blockly.utils.dom.createSvgElement(
       Blockly.utils.Svg.RECT,
       {
-        class: 'blocklyIconShape',
+        class: 'blocklyFocusRing',
+        fill: 'none',
         x: -FOCUS_RING_MARGIN,
         y: -FOCUS_RING_MARGIN,
         width: size.width + 2 * FOCUS_RING_MARGIN,
