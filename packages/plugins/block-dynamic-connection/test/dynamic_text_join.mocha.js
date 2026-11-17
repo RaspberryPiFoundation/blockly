@@ -30,6 +30,7 @@ suite('Text join block', function () {
     assert.equal(block.type, type);
     assert.equal(block.inputList.length, expectedInputs.length);
     for (let i = 0; i < expectedInputs.length; i++) {
+      assert.equal(block.inputList[i].align, Blockly.inputs.Align.RIGHT);
       assert.match(block.inputList[i].name, expectedInputs[i]);
     }
   }

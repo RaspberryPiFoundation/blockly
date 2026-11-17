@@ -26,7 +26,7 @@ const DYNAMIC_LIST_CREATE_MIXIN = {
   /** Count of item inputs. */
   itemCount: 0,
 
-  /** Block for concatenating any number of strings. */
+  /** Block for creating a list from any number of items. */
   init(this: DynamicListCreateBlock): void {
     this.itemCount = this.minInputs;
 
@@ -34,7 +34,8 @@ const DYNAMIC_LIST_CREATE_MIXIN = {
     this.setStyle('list_blocks');
     this.addFirstInput();
     for (let i = 1; i < this.minInputs; i++) {
-      this.appendValueInput(`ADD${i}`);
+      const input = this.appendValueInput(`ADD${i}`);
+      input.setAlign(Blockly.inputs.Align.RIGHT);
     }
     this.setOutput(true, 'Array');
     this.setTooltip(Blockly.Msg['LISTS_CREATE_WITH_TOOLTIP']);
@@ -83,7 +84,10 @@ const DYNAMIC_LIST_CREATE_MIXIN = {
     if (items) {
       const inputNames = items.split(',');
       this.inputList = [];
-      inputNames.forEach((name) => this.appendValueInput(name));
+      inputNames.forEach((name) => {
+        const input = this.appendValueInput(name);
+        input.setAlign(Blockly.inputs.Align.RIGHT);
+      });
       this.inputList[0].appendField(
         Blockly.Msg['LISTS_CREATE_WITH_INPUT_WITH'],
       );
@@ -102,7 +106,8 @@ const DYNAMIC_LIST_CREATE_MIXIN = {
     );
     // minInputs are added automatically.
     for (let i = this.minInputs; i < this.itemCount; i++) {
-      this.appendValueInput('ADD' + i);
+      const input = this.appendValueInput('ADD' + i);
+      input.setAlign(Blockly.inputs.Align.RIGHT);
     }
   },
 
@@ -143,7 +148,8 @@ const DYNAMIC_LIST_CREATE_MIXIN = {
     this.itemCount = state['itemCount'] ?? 0;
     // minInputs are added automatically.
     for (let i = this.minInputs; i < this.itemCount; i++) {
-      this.appendValueInput('ADD' + i);
+      const input = this.appendValueInput('ADD' + i);
+      input.setAlign(Blockly.inputs.Align.RIGHT);
     }
   },
 
@@ -207,7 +213,10 @@ const DYNAMIC_LIST_CREATE_MIXIN = {
     if (insertIndex == null) {
       return;
     }
-    this.appendValueInput(`ADD${Blockly.utils.idGenerator.genUid()}`);
+    const input = this.appendValueInput(
+      `ADD${Blockly.utils.idGenerator.genUid()}`,
+    );
+    input.setAlign(Blockly.inputs.Align.RIGHT);
     this.moveNumberedInputBefore(this.inputList.length - 1, insertIndex);
   },
 
@@ -270,7 +279,7 @@ const DYNAMIC_LIST_CREATE_MIXIN = {
 
     for (let i = 1; i < targetConns.length; i++) {
       const input = this.appendValueInput(`ADD${i}`);
-
+      input.setAlign(Blockly.inputs.Align.RIGHT);
       const targetConn = targetConns[i];
       if (targetConn) input.connection?.connect(targetConn);
     }
@@ -282,9 +291,10 @@ const DYNAMIC_LIST_CREATE_MIXIN = {
    * @returns The added input.
    */
   addFirstInput(this: DynamicListCreateBlock): Blockly.Input {
-    return this.appendValueInput('ADD0').appendField(
-      Blockly.Msg['LISTS_CREATE_WITH_INPUT_WITH'],
-    );
+    const input = this.appendValueInput('ADD0');
+    input.appendField(Blockly.Msg['LISTS_CREATE_WITH_INPUT_WITH']);
+    input.setAlign(Blockly.inputs.Align.RIGHT);
+    return input;
   },
 
   /**
