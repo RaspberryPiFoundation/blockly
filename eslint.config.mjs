@@ -449,6 +449,7 @@ export default defineConfig(
       'packages/plugins/typed-variable-modal/**',
       'packages/plugins/workspace-backpack/**',
       'packages/plugins/workspace-minimap/**',
+      'packages/plugins/workspace-search/**',
     ],
     settings: {
       jsdoc: {

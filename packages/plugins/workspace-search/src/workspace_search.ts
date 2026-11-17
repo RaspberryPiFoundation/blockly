@@ -6,7 +6,7 @@
 
 import * as Blockly from 'blockly/core';
 
-import {injectSearchCss} from './css';
+import {injectSearchCss} from './css.js';
 
 /**
  * Class for workspace search.
