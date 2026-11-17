@@ -33,15 +33,11 @@ function prepareDeployDir(done) {
 }
 
 /**
- * Copies all files from current git index into static deploy
- * directory.  We do this rather than just copying the working tree,
- * because the working tree is probably full of leftover editor
- * backup-save files, vesigial empty directories, etc.
+ * Copies demo and media files into the static deploy directory.
  */
 function copyStaticSrc(done) {
-  execSync(`GIT_WORK_TREE='${demoStaticTmpDir}' git checkout-index --all`,
-      { stdio: 'inherit' });
-  done();
+  return gulp.src(['demos/**', 'media/**'], {base: '.', encoding: false})
+      .pipe(gulp.dest(demoStaticTmpDir));
 }
 
 /**
@@ -50,32 +46,12 @@ function copyStaticSrc(done) {
  * Prerequisite: clean, build.
  */
 function copyBuilt(done) {
-  return gulp.src(['build/src/**/*', 'build/msg/*', 'dist/*_compressed.js*', 'build/*.loader.mjs'], {base: '.'})
-      .pipe(gulp.dest(demoStaticBlocklyDir));
-}
-
-/**
- * Copies compressed files into the places they used to be used from, for the
- * benefit of our Developers site and (for now) any other websites that
- * hotlink them.  Delete this once devsite is fixed.
- *
- * Prerequisite: clean, build.
- */
-function copyCompressedToOldLocation(done) {
-  return gulp.src(['dist/*_compressed.js*'])
-      .pipe(gulp.dest(demoStaticTmpDir));
-}
-
-/**
- * Copies messages files into the places they used to be used from, for the
- * benefit of our Developers site and (for now) any other websites that
- * hotlink them.  Delete this once devsite is fixed.
- *
- * Prerequisite: clean, build.
- */
-function copyMessagesToOldLocation(done) {
-  return gulp.src(['build/msg/*'])
-      .pipe(gulp.dest(`${demoStaticTmpDir}/msg/js`));
+  return gulp.src([
+      'build/src/**/*',
+      'build/msg/*',
+      'dist/*_compressed.js*',
+      'build/*.loader.mjs'
+    ], {base: '.'}).pipe(gulp.dest(demoStaticTmpDir));
 }
 
 /**
@@ -83,22 +59,10 @@ function copyMessagesToOldLocation(done) {
  */
 function copyAppengineSrc() {
   const appengineSrc = [
-      `${demoStaticBlocklyDir}/appengine/**/*`,
-      `${demoStaticBlocklyDir}/appengine/.gcloudignore`,
+      `appengine/**/*`,
+      `appengine/.gcloudignore`,
   ];
   return gulp.src(appengineSrc).pipe(gulp.dest(demoTmpDir));
-}
-
-/**
- * Copies playground deps into deploy directory.
- */
-function copyPlaygroundDeps() {
-  const playgroundDeps = [
-      '../../node_modules/@blockly/dev-tools/dist/index.js',
-      '../../node_modules/@blockly/theme-modern/dist/index.js',
-      '../../node_modules/@blockly/block-test/dist/index.js',
-  ];
-  return gulp.src(playgroundDeps, {base: '../..'}).pipe(gulp.dest(demoStaticBlocklyDir));
 }
 
 /**
@@ -179,10 +143,8 @@ export const prepareDemos = gulp.series(
             gulp.parallel(cleanBuildDir,
                           cleanReleaseDir),
             execBuild,
-            gulp.parallel(copyBuilt,
-                          copyCompressedToOldLocation,
-                          copyMessagesToOldLocation)),
-        copyPlaygroundDeps));
+            copyBuilt),
+        ));
 
 /**
  * Deploys demos.
