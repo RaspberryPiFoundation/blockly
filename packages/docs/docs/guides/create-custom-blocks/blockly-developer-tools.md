@@ -141,32 +141,6 @@ Blocks are saved in the browser's local storage automatically any time you make
 a change to the block. You can create a new block or load an existing block from
 your local storage by clicking the corresponding buttons in the top toolbar.
 
-### Import from legacy Block Factory
-
-If you've used the [legacy Block Factory][legacy-block-factory] and want to
-migrate your existing block definitions into the new tool, you can do so by
-following these steps:
-
-1.  In the legacy Block Factory, click the `Export Block Library` button in the
-    toolbar. This will download a file with all of your block definitions.
-
-   ![Screenshot of the legacy Block Factory with the "Export Block Library" button highlighted](/images/block-factory/block_factory_legacy_export.png)
-
-1.  In the new Block Factory, click the "Load block" button in the toolbar.
-1.  Select the "Import from Block Factory" option in the menu.
-
-   ![Screenshot of the Block Factory showing the "Load block" and "Import" buttons highlighted](/images/block-factory/block_factory_import.png)
-
-1.  Upload the file you downloaded in Step 1.
-1.  Your block definitions should be automatically converted to the new format
-    and will now be available from the `Load block` menu. Blocks may have been
-    renamed if there were conflicts with existing blocks.
-1.  If there were errors parsing any of your blocks, we won't be able to load
-    them. You can help us by [filing a
-    bug](https://github.com/RaspberryPiFoundation/blockly-samples/issues/new/choose) against
-    blockly-samples and including the file that wouldn't parse.
-
-[legacy-block-factory]: /guides/create-custom-blocks/legacy-blockly-developer-tools
 [add-custom-blocks]: /guides/create-custom-blocks/overview
 [json-and-js]: /guides/create-custom-blocks/define/json-and-js
 [block-definitions]: /guides/create-custom-blocks/define/block-definitions

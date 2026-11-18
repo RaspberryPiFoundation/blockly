@@ -9,7 +9,7 @@ blinking cursor on the command line, and can automatically translate block-based
 programs into a variety of text-based programming languages like Python,
 Javascript and Lua. All code is free and open source.
 
-[Try a live demo](https://raspberrypifoundation.github.io/blockly/packages/blockly/demos/code/index.html),
+[Try a live demo](https://www.blockly.com/#:~:text=Try%20Blockly),
 or browse the source code in the [Blockly repo](http://github.com/RaspberryPiFoundation/blockly).
 
 ## Example Usage

@@ -28,11 +28,8 @@ packages/blockly/tests/compile/*
 packages/blockly/tests/generators/*
 packages/blockly/tests/mocha/webdriver.js
 
-# Core: Demos, scripts, misc
+# Core: Node modules
 packages/blockly/node_modules/*
-packages/blockly/demos/*
-packages/blockly/appengine/*
-packages/blockly/scripts/gulpfiles/*
 
 # Docs: Markdown/MDX (linted by ESLint + eslint-plugin-mdx instead)
 packages/docs/**/*.md
