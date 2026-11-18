@@ -18,13 +18,13 @@ import {
   testSetup,
 } from './test_setup.mjs';
 
-suite('Testing Connecting Blocks', function (done) {
+suite('Procedures', function (done) {
   // Setting timeout to unlimited as the webdriver takes a longer time to run than most mocha test
   this.timeout(0);
 
   // Setup Selenium for all of the tests
   suiteSetup(async function () {
-    this.browser = await testSetup(testFileLocations.CODE_DEMO);
+    this.browser = await testSetup(testFileLocations.PLAYGROUND);
     // Prevent WebDriver from suppressing alerts
     // https://github.com/webdriverio/webdriverio/issues/13610#issuecomment-2357768103
     this.browser.on('dialog', (dialog) => {});
@@ -98,9 +98,15 @@ suite('Testing Connecting Blocks', function (done) {
     // Connect doSomething2 caller with print.
     await connect(this.browser, doSomething2Caller, 'OUTPUT', print, 'TEXT');
 
-    // Click run button and verify the number is 123
-    const runButton = await this.browser.$('#runButton');
-    runButton.click();
+    // Execute the generated code; *do not* await this, because it displays a
+    // blocking alert.
+    this.browser.execute(function () {
+      eval(
+        javascript.javascriptGenerator.workspaceToCode(
+          Blockly.getMainWorkspace(),
+        ),
+      );
+    });
     await this.browser.pause(PAUSE_TIME);
     const alertText = await this.browser.getAlertText(); // get the alert text
     chai.assert.equal(alertText, '123');
