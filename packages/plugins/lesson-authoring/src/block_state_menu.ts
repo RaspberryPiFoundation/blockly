@@ -355,8 +355,6 @@ function registerMakeShadow() {
       if (!block || !connection) {
         return;
       }
-      // Without saveIds, the temporary shadow that setShadowState builds
-      // cannot collide with the IDs of the still-attached block.
       const state = Blockly.serialization.blocks.save(block, {
         addCoordinates: false,
         saveIds: false,
