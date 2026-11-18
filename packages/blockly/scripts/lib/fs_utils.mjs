@@ -11,7 +11,7 @@
 import {globSync} from 'glob';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
-import {BUILD_DIR, RELEASE_DIR} from '../gulpfiles/config.mjs';
+import {BUILD_DIR, RELEASE_DIR} from '../config.mjs';
 
 /**
  * Maximum number of file operations to have in flight at once, across

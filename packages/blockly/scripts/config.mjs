@@ -5,7 +5,7 @@
  */
 
 /**
- * @fileoverview Common configuration for Gulp scripts.
+ * @fileoverview Common configuration for scripts.
  */
 
 import * as path from 'path';
