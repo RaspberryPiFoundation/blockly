@@ -1,7 +1,7 @@
 # packages/blockly — core library
 
-The Blockly library itself. Source is TypeScript in `core/`; the build runs through Gulp
-and the Closure Compiler.
+The Blockly library itself. Source is TypeScript in `core/`; the build runs through
+the Closure Compiler.
 
 Repo-wide conventions (commits, license headers, naming) are in the
 [root `AGENTS.md`](../../AGENTS.md) and are not repeated here.
@@ -11,7 +11,7 @@ Repo-wide conventions (commits, license headers, naming) are in the
 Run from `packages/blockly/`, or from the repo root as `npx nx run blockly:<target>`.
 
 ```bash
-npm run build          # Full build via Gulp
+npm run build          # Full build
 npm run tsc            # TypeScript compilation only
 npm run clean          # Remove build artifacts
 

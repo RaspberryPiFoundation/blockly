@@ -163,13 +163,8 @@ export default defineConfig(
       'packages/blockly/tests/screenshot/*',
       'packages/blockly/tests/test_runner.js',
       'packages/blockly/tests/workspace_svg/*',
-      // Core Demos, scripts, misc
+      // Core generators and docs
       'packages/blockly/generators/*',
-      'packages/blockly/demos/*',
-      'packages/blockly/appengine/*',
-      'packages/blockly/externs/*',
-      'packages/blockly/closure/*',
-      'packages/blockly/scripts/gulpfiles/*',
       'packages/blockly/CHANGELOG.md',
       'packages/blockly/PULL_REQUEST_TEMPLATE.md',
       // Docs
@@ -194,7 +189,6 @@ export default defineConfig(
     files: [
       'packages/blockly/eslint.config.mjs',
       'packages/blockly/.prettierrc.js',
-      'packages/blockly/gulpfile.mjs',
       'packages/blockly/scripts/helpers.js',
       'packages/blockly/scripts/lib/*.mjs',
       'packages/blockly/scripts/package.mjs',

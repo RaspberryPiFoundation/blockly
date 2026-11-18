@@ -68,7 +68,7 @@ Blockly.defineBlocksWithJsonArray([
         options: [
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/a.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/a.png',
               width: 32,
               height: 32,
               alt: 'A',
@@ -77,7 +77,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/b.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/b.png',
               width: 32,
               height: 32,
               alt: 'B',
@@ -86,7 +86,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/c.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/c.png',
               width: 32,
               height: 32,
               alt: 'C',
@@ -95,7 +95,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/d.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/d.png',
               width: 32,
               height: 32,
               alt: 'D',
@@ -104,7 +104,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/e.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/e.png',
               width: 32,
               height: 32,
               alt: 'E',
@@ -113,7 +113,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/f.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/f.png',
               width: 32,
               height: 32,
               alt: 'F',
@@ -122,7 +122,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/g.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/g.png',
               width: 32,
               height: 32,
               alt: 'G',
@@ -131,7 +131,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/h.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/h.png',
               width: 32,
               height: 32,
               alt: 'H',
@@ -140,7 +140,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/i.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/i.png',
               width: 32,
               height: 32,
               alt: 'I',
@@ -149,7 +149,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/j.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/j.png',
               width: 32,
               height: 32,
               alt: 'J',
@@ -158,7 +158,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/k.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/k.png',
               width: 32,
               height: 32,
               alt: 'K',
@@ -167,7 +167,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/l.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/l.png',
               width: 32,
               height: 32,
               alt: 'L',
@@ -176,7 +176,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/m.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/m.png',
               width: 32,
               height: 32,
               alt: 'M',
@@ -198,7 +198,7 @@ Blockly.defineBlocksWithJsonArray([
           ['images and text', 'IMAGES AND TEXT'],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/a.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/a.png',
               width: 32,
               height: 32,
               alt: 'A',
@@ -207,7 +207,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/b.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/b.png',
               width: 32,
               height: 32,
               alt: 'B',
@@ -216,7 +216,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/c.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/c.png',
               width: 32,
               height: 32,
               alt: 'C',
@@ -225,7 +225,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/d.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/d.png',
               width: 32,
               height: 32,
               alt: 'D',
@@ -234,7 +234,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/e.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/e.png',
               width: 32,
               height: 32,
               alt: 'E',
@@ -243,7 +243,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/f.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/f.png',
               width: 32,
               height: 32,
               alt: 'F',
@@ -252,7 +252,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/g.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/g.png',
               width: 32,
               height: 32,
               alt: 'G',
@@ -261,7 +261,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/h.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/h.png',
               width: 32,
               height: 32,
               alt: 'H',
@@ -271,7 +271,7 @@ Blockly.defineBlocksWithJsonArray([
           ['xyz', 'LMNOP'],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/i.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/i.png',
               width: 32,
               height: 32,
               alt: 'I',
@@ -280,7 +280,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/j.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/j.png',
               width: 32,
               height: 32,
               alt: 'J',
@@ -289,7 +289,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/k.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/k.png',
               width: 32,
               height: 32,
               alt: 'K',
@@ -298,7 +298,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/l.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/l.png',
               width: 32,
               height: 32,
               alt: 'L',
@@ -307,7 +307,7 @@ Blockly.defineBlocksWithJsonArray([
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/m.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/m.png',
               width: 32,
               height: 32,
               alt: 'M',

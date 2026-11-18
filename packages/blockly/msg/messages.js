@@ -990,8 +990,7 @@ Blockly.Msg.TEXT_CHARAT_RANDOM = 'get random letter';
 /** @type {string} */
 /// {{Optional|Supply translation only if your language requires it.  Most do not.}}
 /// block text - Text that goes after the rightmost block/dropdown when getting a single letter from
-/// a piece of text, as in [https://blockly-demo.appspot.com/static/apps/code/index.html#3m23km these
-/// blocks] or shown below.  For most languages, this will be blank.
+/// a piece of text. For most languages, this will be blank.
 /// [[File:Blockly-text-get.png]]
 Blockly.Msg.TEXT_CHARAT_TAIL = '';
 /** @type {string} */
@@ -1576,38 +1575,27 @@ Blockly.Msg.VARIABLES_SET_CREATE_GET = 'Create "get %1"';
 /// {{Optional}} url - Information about defining [https://en.wikipedia.org/wiki/Subroutine functions] that do not have return values.
 Blockly.Msg.PROCEDURES_DEFNORETURN_HELPURL = 'https://en.wikipedia.org/wiki/Subroutine';
 /** @type {string} */
-/// block text - This precedes the name of the function when defining it.  See
-/// [https://blockly-demo.appspot.com/static/apps/code/index.html?lang=en#c84aoc this sample
-/// function definition].
+/// block text - This precedes the name of the function when defining it.
 Blockly.Msg.PROCEDURES_DEFNORETURN_TITLE = 'to';
 /** @type {string} */
 /// default name - This acts as a placeholder for the name of a function on a
-/// function definition block, as shown on
-/// [https://blockly-demo.appspot.com/static/apps/code/index.html?lang=en#w7cfju this block].
+/// function definition block.
 /// The user will replace it with the function's name.
 Blockly.Msg.PROCEDURES_DEFNORETURN_PROCEDURE = 'do something';
 /** @type {string} */
-/// block text - This precedes the list of parameters on a function's definition block.  See
-/// [https://blockly-demo.appspot.com/static/apps/code/index.html?lang=en#voztpd this sample
-/// function with parameters].
+/// block text - This precedes the list of parameters on a function's definition block.
 Blockly.Msg.PROCEDURES_BEFORE_PARAMS = 'with:';
 /** @type {string} */
-/// block text - This precedes the list of parameters on a function's caller block.  See
-/// [https://blockly-demo.appspot.com/static/apps/code/index.html?lang=en#voztpd this sample
-/// function with parameters].
+/// block text - This precedes the list of parameters on a function's caller block.
 Blockly.Msg.PROCEDURES_CALL_BEFORE_PARAMS = 'with:';
 /** @type {string} */
 /// warning - This appears if a block that runs a function can't run because the function
-/// definition block is disabled. See
-/// [https://blockly-demo.appspot.com/static/demos/code/index.html#q947d7 this sample of a
-/// disabled function definition and call block].
+/// definition block is disabled.
 Blockly.Msg.PROCEDURES_CALL_DISABLED_DEF_WARNING = 'Can\'t run the user-defined function "%1" because the definition block is disabled.';
 /** @type {string} */
 /// {{Optional|Supply translation only if your language requires it.  Most do not.}}
 /// block text - This appears next to the function's "body", the blocks that should be
-/// run when the function is called, as shown in
-/// [https://blockly-demo.appspot.com/static/apps/code/index.html?lang=en#voztpd this sample
-/// function definition].
+/// run when the function is called.
 Blockly.Msg.PROCEDURES_DEFNORETURN_DO = '';
 /** @type {string} */
 /// tooltip
@@ -1628,9 +1616,7 @@ Blockly.Msg.PROCEDURES_DEFRETURN_DO = Blockly.Msg.PROCEDURES_DEFNORETURN_DO;
 Blockly.Msg.PROCEDURES_DEFRETURN_COMMENT = Blockly.Msg.PROCEDURES_DEFNORETURN_COMMENT;
 /** @type {string} */
 /// block text - This imperative or infinite verb precedes the value that is used as the return value
-/// (output) of this function.  See
-/// [https://blockly-demo.appspot.com/static/apps/code/index.html?lang=en#6ot5y5 this sample
-/// function that returns a value].
+/// (output) of this function.
 Blockly.Msg.PROCEDURES_DEFRETURN_RETURN = 'return';
 /** @type {string} */
 /// tooltip

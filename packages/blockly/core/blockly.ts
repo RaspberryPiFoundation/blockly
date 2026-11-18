@@ -224,7 +224,7 @@ import {ZoomControls} from './zoom_controls.js';
  * Blockly core version.
  * This constant is overridden by the build script (npm run build) to the value
  * of the version in package.json. This is done by the Closure Compiler in the
- * buildCompressed gulp task.
+ * buildCompiled task.
  *
  * @define {string}
  */
