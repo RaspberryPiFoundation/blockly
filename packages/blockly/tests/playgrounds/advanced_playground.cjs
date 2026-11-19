@@ -8,7 +8,7 @@
  * @fileoverview Dependency loader for the advanced playground
  *
  * This loads the blockly plugins used in the advanced playground. It is bundled
- * into build/playgrounds/advanced_playground.js, which is loaded into the 
+ * into build/playgrounds/advanced_playground.js, which is loaded into the
  * advanced playground.
  */
 

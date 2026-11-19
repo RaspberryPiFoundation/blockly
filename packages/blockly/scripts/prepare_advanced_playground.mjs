@@ -5,8 +5,8 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
-import {BUILD_DIR} from './gulpfiles/config.mjs';
 import {bundleWithGlobalBlockly} from '../tests/scripts/bundle.mjs';
+import {BUILD_DIR} from './gulpfiles/config.mjs';
 
 /**
  * This task bundles the modules used by the advanced playground and generates a
