@@ -32,7 +32,6 @@ const EXTRAS = [
   'build/msg',
   'build/playgrounds',
   'dist/*_compressed.js*',
-  'node_modules/@blockly',
   'build/*.loader.mjs',
 ];
 
