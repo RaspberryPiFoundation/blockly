@@ -9,7 +9,7 @@
  * @author aschmiedt@google.com (Abby Schmiedt)
  */
 
-const assert = require('assert');
+const assert = require('node:assert');
 const Blockly = require('blockly');
 const sinon = require('sinon');
 

@@ -13,10 +13,10 @@
 
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
-const chalk = require('chalk').default;
+const {styleText} = require('node:util');
 const {Mocha} = require('mocha');
 const webpack = require('webpack');
 const webpackConfig = require('../config/webpack.config');
@@ -32,10 +32,10 @@ const config = webpackConfig({
 });
 if (!config.entry) {
   console.log(
-    chalk.yellow(`Warning: No tests found`) +
+    styleText('yellow', `Warning: No tests found`) +
       '\n' +
       'There were no ' +
-      chalk.yellow('test/*.mocha.js') +
+      styleText('yellow', 'test/*.mocha.js') +
       ' files found ' +
       'in your package.\n',
   );

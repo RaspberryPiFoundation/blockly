@@ -1,4 +1,4 @@
-import {execSync} from 'child_process';
+import {execSync} from 'node:child_process';
 
 import {TSC_OUTPUT_DIR, TYPINGS_BUILD_DIR} from './build_constants.mjs';
 

@@ -16,16 +16,16 @@
 
 'use strict';
 
-const path = require('path');
-const fs = require('fs');
-const os = require('os');
+const path = require('node:path');
+const fs = require('node:fs');
+const os = require('node:os');
 
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const webpackConfig = require('../config/webpack.config');
 const webpackDevServerConfig = require('../config/webpackDevServer.config');
 
-const chalk = require('chalk').default;
+const {styleText} = require('node:util');
 const codeFrame = require('@babel/code-frame').codeFrameColumns;
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
@@ -44,8 +44,8 @@ const config = webpackConfig({
   mode: 'development',
 });
 if (!config.entry) {
-  console.log(`${chalk.red(`Configuration error.`)}
-Make sure a ${chalk.red('test/index.(js|ts)')} file is included in your package.
+  console.log(`${styleText('red', `Configuration error.`)}
+Make sure a ${styleText('red', 'test/index.(js|ts)')} file is included in your package.
 `);
   process.exit(1);
 }
@@ -54,7 +54,9 @@ let compiler;
 try {
   compiler = webpack(config);
 } catch (err) {
-  console.log(`${chalk.red('Failed to compile.')}\n${err.message || err}\n`);
+  console.log(
+    `${styleText('red', 'Failed to compile.')}\n${err.message || err}\n`,
+  );
   process.exit(1);
 }
 
@@ -84,7 +86,7 @@ if (isTypescript) {
     const formatTypecheckerMessage = (message) => {
       const {severity, file, line, character} = message;
 
-      const messageColor = severity == 'warning' ? chalk.yellow : chalk.red;
+      const messageColor = severity == 'warning' ? 'yellow' : 'red';
 
       const source =
         file && fs.existsSync(file) && fs.readFileSync(file, 'utf-8');
@@ -101,9 +103,9 @@ if (isTypescript) {
 
       return [
         os.EOL,
-        messageColor.bold(`${severity.toLowerCase()} in `) +
-          chalk.cyan.bold(`${file}(${line},${character})`) +
-          messageColor(':'),
+        styleText([messageColor, 'bold'], `${severity.toLowerCase()} in `) +
+          styleText(['cyan', 'bold'], `${file}(${line},${character})`) +
+          styleText(messageColor, ':'),
         '',
         frame,
       ].join(os.EOL);
@@ -142,7 +144,8 @@ compiler.hooks.done.tap('done', async (stats) => {
   if (isTypescript && statsData.errors.length === 0) {
     const delayedMsg = setTimeout(() => {
       console.log(
-        chalk.yellow(
+        styleText(
+          'yellow',
           'Files successfully emitted, waiting for typecheck results...',
         ),
       );
@@ -163,15 +166,15 @@ compiler.hooks.done.tap('done', async (stats) => {
 
   // Emit compile output.
   if (!messages.errors.length && !messages.warnings.length) {
-    console.log(chalk.green('Compiled successfully!'));
+    console.log(styleText('green', 'Compiled successfully!'));
   }
   if (messages.errors.length) {
-    console.log(chalk.red('Failed to compile.\n'));
+    console.log(styleText('red', 'Failed to compile.\n'));
     console.log(messages.errors.join('\n\n'));
     return;
   }
   if (messages.warnings.length) {
-    console.log(chalk.yellow('Compiled with warnings.\n'));
+    console.log(styleText('yellow', 'Compiled with warnings.\n'));
     console.log(messages.warnings.join('\n\n'));
   }
 });

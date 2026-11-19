@@ -14,10 +14,10 @@
 
 'use strict';
 
-const path = require('path');
-const fs = require('fs');
+const path = require('node:path');
+const fs = require('node:fs');
 
-const chalk = require('chalk').default;
+const {styleText} = require('node:util');
 const webpack = require('webpack');
 const webpackConfig = require('../config/webpack.config');
 
@@ -32,8 +32,8 @@ const config = webpackConfig({
   mode: 'development',
 });
 if (!config.entry) {
-  console.log(`${chalk.red(`Configuration error.`)}
-Make sure a ${chalk.red('src/index.(js|ts)')} file is included in your package.
+  console.log(`${styleText('red', `Configuration error.`)}
+Make sure a ${styleText('red', 'src/index.(js|ts)')} file is included in your package.
 `);
   process.exit(1);
 }

@@ -8,7 +8,7 @@
  * @fileoverview Common configuration for scripts.
  */
 
-import * as path from 'path';
+import * as path from 'node:path';
 
 // Paths are all relative to the repository root.  Do not include
 // trailing slash.

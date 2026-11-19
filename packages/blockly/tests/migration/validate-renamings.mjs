@@ -13,8 +13,8 @@
 
 import {validate} from '@hyperjump/json-schema/draft-2020-12';
 import {BASIC} from '@hyperjump/json-schema/experimental';
-import {readFile} from 'fs/promises';
 import JSON5 from 'json5';
+import {readFile} from 'node:fs/promises';
 
 /** @type {URL} Renaming schema filename. */
 const SCHEMA_URL = new URL('renamings.schema.json', import.meta.url);

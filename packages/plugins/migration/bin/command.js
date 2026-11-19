@@ -8,12 +8,12 @@
  * @fileoverview The command building utilities for the migration script.
  */
 
-import chalk from 'chalk';
+import {styleText} from 'node:util';
 import semver from 'semver';
 import {Command} from 'commander';
 
 // require() is not available in ES modules by default, so we must obtain it.
-import {createRequire} from 'module';
+import {createRequire} from 'node:module';
 const require = createRequire(import.meta.url);
 const scriptPackageJson = require('../package.json');
 
@@ -26,9 +26,9 @@ const ROOT_COMMAND = new Command(SCRIPT_NAME)
     'output the version of this script',
   )
   .usage(
-    `${chalk.blue('<migration>')} ` +
-      `${chalk.green('<file...>')} ` +
-      `${chalk.magenta('--from <from-version>')} ` +
+    `${styleText('blue', '<migration>')} ` +
+      `${styleText('green', '<file...>')} ` +
+      `${styleText('magenta', '--from <from-version>')} ` +
       '[--to <to-version>] [options]',
   );
 
@@ -71,7 +71,9 @@ function showVersionHelp(version) {
 
   for (const migration of migrations) {
     if (!semver.intersects(migration.range, version)) continue;
-    console.log(`  ${chalk.blue(migration.name)}, ${migration.description}`);
+    console.log(
+      `  ${styleText('blue', migration.name)}, ${migration.description}`,
+    );
   }
 }
 

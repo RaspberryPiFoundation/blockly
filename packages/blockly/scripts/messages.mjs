@@ -8,8 +8,8 @@
  * @fileoverview Functions for generating message files
  */
 
-import {execSync} from 'child_process';
-import * as path from 'path';
+import {execSync} from 'node:child_process';
+import * as path from 'node:path';
 
 import {PYTHON} from './build_constants.mjs';
 

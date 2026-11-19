@@ -26,7 +26,6 @@ import deuteranopiaTheme from '@blockly/theme-deuteranopia';
 import themeTritanopia from '@blockly/theme-tritanopia';
 import highContrastTheme from '@blockly/theme-highcontrast';
 
-const assign = require('lodash.assign');
 const merge = require('lodash.merge');
 
 /**
@@ -163,7 +162,7 @@ export function addGUIControls(genWorkspace, defaultOptions, config = {}) {
   const reset = () => {
     // Reset saved options.
     Object.keys(saveOptions).forEach((k) => delete saveOptions[k]);
-    assign(saveOptions, defaultOptions);
+    Object.assign(saveOptions, defaultOptions);
     Object.keys(guiState.options).forEach((k) => delete guiState.options[k]);
     // Reset debug options.
     guiState.renderer = defaultRendererName;
