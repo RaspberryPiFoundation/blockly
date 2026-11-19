@@ -10,7 +10,7 @@
 
 import * as chai from 'chai';
 import {Key} from 'webdriverio';
-import {bundleBlockTest} from '../../scripts/bundle_block_test.mjs';
+import {bundleBlockTest} from '../../scripts/bundle.mjs';
 import {
   getBlockTypeFromCategory,
   getCategory,
