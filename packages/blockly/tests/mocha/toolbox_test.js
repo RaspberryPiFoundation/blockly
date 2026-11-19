@@ -760,6 +760,42 @@ suite('Toolbox', function () {
     });
   });
 
+  suite('setVisible', function () {
+    /** How wide the toolbox is laid out while it's visible, in pixels. */
+    const TOOLBOX_WIDTH = 100;
+
+    setup(function () {
+      const div = this.toolbox.HtmlDiv;
+      // jsdom does no layout, so every element measures 0 wide. Measure the
+      // toolbox's div as a browser would: its width while shown, and nothing
+      // once it's hidden with display: none.
+      Object.defineProperty(div, 'offsetWidth', {
+        get: () => (div.style.display === 'none' ? 0 : TOOLBOX_WIDTH),
+      });
+      this.workspace.resize();
+      this.getWorkspaceLeft = () =>
+        this.workspace.getMetricsManager().getAbsoluteMetrics().left;
+    });
+
+    test('Visible -> Workspace starts after the toolbox', function () {
+      assert.equal(this.toolbox.getWidth(), TOOLBOX_WIDTH);
+      assert.equal(this.getWorkspaceLeft(), TOOLBOX_WIDTH);
+    });
+    test('Hidden -> Workspace takes the toolbox width back', function () {
+      this.toolbox.setVisible(false);
+
+      assert.equal(this.toolbox.getWidth(), 0);
+      assert.equal(this.getWorkspaceLeft(), 0);
+    });
+    test('Hidden then shown -> Workspace starts after the toolbox again', function () {
+      this.toolbox.setVisible(false);
+      this.toolbox.setVisible(true);
+
+      assert.equal(this.toolbox.getWidth(), TOOLBOX_WIDTH);
+      assert.equal(this.getWorkspaceLeft(), TOOLBOX_WIDTH);
+    });
+  });
+
   suite('parseMethods', function () {
     setup(function () {
       this.categoryToolboxJSON = getCategoryJSON();
