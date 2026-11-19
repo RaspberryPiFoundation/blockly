@@ -13,7 +13,7 @@
 'use strict';
 
 const chalk = require('chalk').default;
-const fs = require('fs-extra');
+const fs = require('node:fs');
 const path = require('node:path');
 const execSync = require('node:child_process').execSync;
 const {checkAndCreateDir} = require('./common');
@@ -172,13 +172,16 @@ exports.createPlugin = function (pluginName, options) {
   fs.writeFileSync(path.join(pluginPath, 'README.md'), readme, 'utf-8');
 
   // Copy the rest of the template folder into the new package.
-  fs.copySync(path.resolve(__dirname, templateDir, 'template'), pluginPath);
+  fs.cpSync(path.resolve(__dirname, templateDir, 'template'), pluginPath, {
+    recursive: true,
+  });
 
   // Copy third party plugin files to the new package if third-party.
   if (!isFirstParty) {
-    fs.copySync(
+    fs.cpSync(
       path.resolve(__dirname, templatesDir, 'third_party'),
       pluginPath,
+      {recursive: true},
     );
   }
 

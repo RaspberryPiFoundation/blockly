@@ -11,7 +11,6 @@
 'use strict';
 
 import {createSubCommand, extractRequiredInfo} from './command.js';
-import fetch from 'node-fetch';
 import {readFileSync, statSync, writeFileSync} from 'node:fs';
 import * as versionUtils from './versions.js';
 import JSON5 from 'json5';

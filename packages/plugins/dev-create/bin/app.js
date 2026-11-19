@@ -1,5 +1,5 @@
 const chalk = require('chalk').default;
-const fs = require('fs-extra');
+const fs = require('node:fs');
 const path = require('node:path');
 const execSync = require('node:child_process').execSync;
 const {checkAndCreateDir} = require('./common');
@@ -27,7 +27,8 @@ exports.createApp = function (name, options) {
   ].map((file) => {
     return path.resolve(__dirname, sampleDir, file);
   });
-  fs.copySync(path.resolve(__dirname, sampleDir), appPath, {
+  fs.cpSync(path.resolve(__dirname, sampleDir), appPath, {
+    recursive: true,
     filter(src) {
       return !excludes.includes(src);
     },
