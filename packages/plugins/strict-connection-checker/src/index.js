@@ -7,7 +7,6 @@
 /**
  * A connection checker that prevents blocks that don't provide type information
  * from being connected to blocks that do.
- *
  * @packageDocumentation
  */
 
