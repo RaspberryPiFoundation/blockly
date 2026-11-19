@@ -8,7 +8,7 @@
  * @fileoverview Helper functions for build/test.
  */
 
-const path = require('path');
+const path = require('node:path');
 
 /**
  * Replaces OS-specific path with POSIX style path.

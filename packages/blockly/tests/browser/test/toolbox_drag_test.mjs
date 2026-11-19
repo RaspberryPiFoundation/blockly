@@ -9,8 +9,8 @@
  */
 
 import * as chai from 'chai';
-import {readFileSync} from 'fs';
-import {createRequire} from 'module';
+import {readFileSync} from 'node:fs';
+import {createRequire} from 'node:module';
 import {Key} from 'webdriverio';
 import {
   getBlockTypeFromCategory,

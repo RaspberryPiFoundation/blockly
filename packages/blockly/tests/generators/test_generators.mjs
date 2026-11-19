@@ -9,9 +9,9 @@
  * results.
  */
 
-import {spawnSync} from 'child_process';
-import * as fs from 'fs';
-import * as path from 'path';
+import {spawnSync} from 'node:child_process';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 
 const OUTPUT_DIR = 'build/generators';
 const GOLDEN_DIR = 'tests/generators/golden';

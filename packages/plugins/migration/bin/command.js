@@ -13,7 +13,7 @@ import semver from 'semver';
 import {Command} from 'commander';
 
 // require() is not available in ES modules by default, so we must obtain it.
-import {createRequire} from 'module';
+import {createRequire} from 'node:module';
 const require = createRequire(import.meta.url);
 const scriptPackageJson = require('../package.json');
 

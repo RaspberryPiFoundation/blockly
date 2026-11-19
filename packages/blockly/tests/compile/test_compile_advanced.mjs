@@ -16,7 +16,7 @@ import {
 } from 'node:fs/promises';
 
 import {globSync} from 'glob';
-import * as path from 'path';
+import * as path from 'node:path';
 import {parseArgs} from 'node:util';
 
 import {posixPath} from '../../scripts/helpers.js';

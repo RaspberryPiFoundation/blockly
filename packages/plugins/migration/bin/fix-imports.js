@@ -11,7 +11,7 @@
 'use strict';
 
 import {createSubCommand, extractRequiredInfo} from './command.js';
-import {readFileSync, statSync, writeFileSync} from 'fs';
+import {readFileSync, statSync, writeFileSync} from 'node:fs';
 
 export const fixImports = createSubCommand(
   'fix-imports',

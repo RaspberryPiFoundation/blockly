@@ -16,8 +16,8 @@
  * identifiers that Selenium can use to find those elements.
  */
 
-import * as path from 'path';
-import {fileURLToPath} from 'url';
+import * as path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import * as webdriverio from 'webdriverio';
 import {posixPath} from '../../../scripts/helpers.js';
 

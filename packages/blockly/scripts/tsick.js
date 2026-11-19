@@ -11,7 +11,7 @@
 'use strict';
 
 // eslint-disable-next-line no-undef
-const fs = require('fs');
+const fs = require('node:fs');
 
 // eslint-disable-next-line no-undef
 const DIR = process.argv[2];

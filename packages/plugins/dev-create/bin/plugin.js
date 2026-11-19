@@ -14,8 +14,8 @@
 
 const chalk = require('chalk').default;
 const fs = require('fs-extra');
-const path = require('path');
-const execSync = require('child_process').execSync;
+const path = require('node:path');
+const execSync = require('node:child_process').execSync;
 const {checkAndCreateDir} = require('./common');
 
 const pluginTypes = ['plugin', 'field', 'block', 'theme'];

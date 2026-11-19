@@ -8,10 +8,10 @@
  * @fileoverview Functions for building language files.
  */
 
-import {execSync} from 'child_process';
-import {mkdirSync, readdirSync} from 'fs';
-import {writeFile} from 'fs/promises';
-import * as path from 'path';
+import {execSync} from 'node:child_process';
+import {mkdirSync, readdirSync} from 'node:fs';
+import {writeFile} from 'node:fs/promises';
+import * as path from 'node:path';
 
 import {LANG_BUILD_DIR, PYTHON, RELEASE_DIR} from './build_constants.mjs';
 
