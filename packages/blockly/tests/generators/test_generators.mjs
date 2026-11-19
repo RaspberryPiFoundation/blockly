@@ -12,7 +12,6 @@
 import {spawnSync} from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import {rimraf} from 'rimraf';
 
 const OUTPUT_DIR = 'build/generators';
 const GOLDEN_DIR = 'tests/generators/golden';
@@ -77,7 +76,7 @@ function compareFile(file1, file2) {
  */
 async function generators() {
     // Clean up.
-    rimraf.sync(OUTPUT_DIR);
+    fs.rmSync(OUTPUT_DIR, {recursive: true, force: true});
     fs.mkdirSync(OUTPUT_DIR);
 
     const result = spawnSync(

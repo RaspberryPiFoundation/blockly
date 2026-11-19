@@ -15,7 +15,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const rimraf = require('rimraf');
 
 const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
@@ -26,5 +25,5 @@ console.log(`Running clean for ${packageJson.name}`);
 // Delete both the dist and build directories if they exist.
 const dirs = ['dist', 'build'];
 dirs.forEach((dir) => {
-  rimraf.sync(resolveApp(dir));
+  fs.rmSync(resolveApp(dir), {recursive: true, force: true});
 });
