@@ -91,7 +91,7 @@ Blockly.defineBlocksWithJsonArray([
       {
         type: 'field_image',
         name: 'IMAGE',
-        src: 'https://blockly-demo.appspot.com/static/tests/media/a.png',
+        src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/a.png',
         width: 32,
         height: 32,
         alt: 'A',
@@ -266,7 +266,9 @@ export function onInit(workspace) {
     const possible = 'abcdefghijklm';
     const image = possible.charAt(Math.floor(Math.random() * possible.length));
     const src =
-      'https://blockly-demo.appspot.com/static/tests/media/' + image + '.png';
+      'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/' +
+      image +
+      '.png';
     for (let i = 0, block; (block = blocks[i]); i++) {
       const imageField = block.getField('IMAGE');
       imageField.setValue(src);

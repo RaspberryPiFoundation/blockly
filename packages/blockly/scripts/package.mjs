@@ -18,11 +18,7 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import {parseArgs} from 'node:util';
-import {
-  LANG_BUILD_DIR,
-  RELEASE_DIR,
-  TYPINGS_BUILD_DIR,
-} from './gulpfiles/config.mjs';
+import {LANG_BUILD_DIR, RELEASE_DIR, TYPINGS_BUILD_DIR} from './config.mjs';
 import {runNpmScript} from './lib/exec.mjs';
 import {
   PACKAGE_ROOT,

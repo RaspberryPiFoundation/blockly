@@ -116,7 +116,7 @@ const testBlockDefinitions = [
         options: [
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/a.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/a.png',
               width: 32,
               height: 32,
               alt: 'A',
@@ -125,7 +125,7 @@ const testBlockDefinitions = [
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/b.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/b.png',
               width: 32,
               height: 32,
               alt: 'B',
@@ -134,7 +134,7 @@ const testBlockDefinitions = [
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/c.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/c.png',
               width: 32,
               height: 32,
               alt: 'C',
@@ -143,7 +143,7 @@ const testBlockDefinitions = [
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/d.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/d.png',
               width: 32,
               height: 32,
               alt: 'D',
@@ -152,7 +152,7 @@ const testBlockDefinitions = [
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/e.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/e.png',
               width: 32,
               height: 32,
               alt: 'E',
@@ -161,7 +161,7 @@ const testBlockDefinitions = [
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/f.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/f.png',
               width: 32,
               height: 32,
               alt: 'F',
@@ -170,7 +170,7 @@ const testBlockDefinitions = [
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/g.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/g.png',
               width: 32,
               height: 32,
               alt: 'G',
@@ -179,7 +179,7 @@ const testBlockDefinitions = [
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/h.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/h.png',
               width: 32,
               height: 32,
               alt: 'H',
@@ -188,7 +188,7 @@ const testBlockDefinitions = [
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/i.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/i.png',
               width: 32,
               height: 32,
               alt: 'I',
@@ -197,7 +197,7 @@ const testBlockDefinitions = [
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/j.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/j.png',
               width: 32,
               height: 32,
               alt: 'J',
@@ -206,7 +206,7 @@ const testBlockDefinitions = [
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/k.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/k.png',
               width: 32,
               height: 32,
               alt: 'K',
@@ -215,7 +215,7 @@ const testBlockDefinitions = [
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/l.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/l.png',
               width: 32,
               height: 32,
               alt: 'L',
@@ -224,7 +224,7 @@ const testBlockDefinitions = [
           ],
           [
             {
-              src: 'https://blockly-demo.appspot.com/static/tests/media/m.png',
+              src: 'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/m.png',
               width: 32,
               height: 32,
               alt: 'M',

@@ -6,7 +6,7 @@ Blockly is a library that adds a visual code editor to web apps. The Blockly edi
 
 ## Getting Started with Blockly
 
-Blockly has many resources for learning how to use the library. You can [try a live demo](https://raspberrypifoundation.github.io/blockly/packages/blockly/demos/code/index.html) or [visit our developer site](https://docs.blockly.com) to read the documentation on how to get started, configure Blockly, and integrate it into your application. The developer site also contains links to:
+Blockly has many resources for learning how to use the library. You can [try a live demo](https://www.blockly.com/#:~:text=Try%20Blockly) or [visit our developer site](https://docs.blockly.com) to read the documentation on how to get started, configure Blockly, and integrate it into your application. The developer site also contains links to:
 
 - [Getting Started article](https://docs.blockly.com/guides/get-started/what-is-blockly/)
 - [Getting Started codelab](https://docs.blockly.com/codelabs/getting-started/codelab-overview/)

@@ -11,27 +11,27 @@ image: images/blockly_banner.png
 The code for Blockly can be found on
 [GitHub](https://github.com/RaspberryPiFoundation/blockly/tree/main). This
 page is intended as a guide so that you can explore Blockly's repository and
-determine where to start if you're working on a GitHub issue. 
+determine where to start if you're working on a GitHub issue.
 
-If you would like to learn more about Blockly's code, you can do the following: 
+If you would like to learn more about Blockly's code, you can do the following:
 - Read this document
 - Click through the code on [GitHub](https://github.com/RaspberryPiFoundation/blockly/tree/main)
 - Consult the [API documentation](/reference/)
 
-:::tip 
-Don't worry, you do **not** have to read and understand every piece of Blockly's 
+:::tip
+Don't worry, you do **not** have to read and understand every piece of Blockly's
 code in order to contribute to Blockly! You just need to understand the parts
-that relate to what you're working on. 
+that relate to what you're working on.
 :::
 
 ### Folder structure
 
-The root folder of Blockly's repository contains many files (and some folders) 
+The root folder of Blockly's repository contains many files (and some folders)
 for the configuration of our
 [development tools](/guides/contribute/core/development_tools).
 
-Blockly's source code is located in `packages/blockly`. As an external 
-contributor, you will likely focus on the files in the `core/` and `tests/` 
+Blockly's source code is located in `packages/blockly`. As an external
+contributor, you will likely focus on the files in the `core/` and `tests/`
 folders, but all of the folders are listed below.
 
 `packages/blockly/`
@@ -51,7 +51,7 @@ folders, but all of the folders are listed below.
   - `interfaces/` - Shared interfaces implemented across core
   - `keyboard_nav/` - [Keyboard navigation](/guides/configure/keyboard-nav/)
     - `navigation_policies/` - Engines that decide where keyboard focus moves
-    - `navigators/` - Per-element rules telling the navigator where an element's 
+    - `navigators/` - Per-element rules telling the navigator where an element's
     neighbors are
   - `renderers/` - Default
     [renderers](/guides/create-custom-blocks/renderers/overview/)
@@ -65,7 +65,6 @@ folders, but all of the folders are listed below.
   - `theme/` - Built-in [themes](/guides/configure/appearance/themes/)
   - `toolbox/` - The [toolbox](/guides/configure/toolboxes/toolbox/)
   - `utils/` - Utility functions used throughout core
-- `demos/` - Some deprecated Blockly demos. Up-to-date demos and examples are in [blockly-samples](https://github.com/raspberrypifoundation/blockly-samples).
 - `generators/` -
   [Code generators](/guides/create-custom-blocks/code-generation/overview/) for
   the built-in languages
@@ -77,8 +76,8 @@ folders, but all of the folders are listed below.
 
 ### Core files
 
-There are many files in `core/` that don't live in a subfolder, for various 
-reasons. If you're making a change to Blockly, you should take a look at these 
+There are many files in `core/` that don't live in a subfolder, for various
+reasons. If you're making a change to Blockly, you should take a look at these
 files, as well as the subfolders in `core/`, to find the relevant code.
 
 Note that Blockly's foundational base classes, like `Block`, `Workspace`, and
@@ -114,21 +113,21 @@ code.
 
 ## Model vs. view
 
-Before digging into `core/`, it's worth understanding one key part of Blockly's 
-architecture: Blockly separates data modeling from rendering. In practice, this 
-means that some parts of Blockly have two classes that represent them: one for 
+Before digging into `core/`, it's worth understanding one key part of Blockly's
+architecture: Blockly separates data modeling from rendering. In practice, this
+means that some parts of Blockly have two classes that represent them: one for
 the data model, and one for the rendered version.
 
-For an example, look at the implementation of blocks. In the `core/` folder, 
+For an example, look at the implementation of blocks. In the `core/` folder,
 there are two files that implement blocks: `block.ts` and `block_svg.ts`.
 
-In `block.ts`, the `Block` parent class has functions to handle data associated 
-with that block and how it behaves. There are functions in the `Block` class 
-that do deal with visual aspects of a block, like `setColour`. If you look 
-closely at `setColour` in the `Block` class, you'll see that `setColour` just 
-saves the colour. It does not render or display that colour. 
+In `block.ts`, the `Block` parent class has functions to handle data associated
+with that block and how it behaves. There are functions in the `Block` class
+that do deal with visual aspects of a block, like `setColour`. If you look
+closely at `setColour` in the `Block` class, you'll see that `setColour` just
+saves the colour. It does not render or display that colour.
 
-`block_svg.ts`, on the other hand, creates a `BlockSvg` class that extends the 
-`Block` class to add render management. The `setColour` override in BlockSvg 
+`block_svg.ts`, on the other hand, creates a `BlockSvg` class that extends the
+`Block` class to add render management. The `setColour` override in BlockSvg
 calls the super (which saves the colour) and also *applies* that colour
 to the rendered block.

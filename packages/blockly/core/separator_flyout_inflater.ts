@@ -56,7 +56,8 @@ export class SeparatorFlyoutInflater implements IFlyoutInflater {
   gapForItem(state: object, defaultGap: number): number {
     const separatorState = state as SeparatorInfo;
     const newGap = parseInt(String(separatorState['gap']));
-    return newGap ?? defaultGap;
+    const isValidGap = !isNaN(newGap) && newGap >= 0;
+    return isValidGap ? newGap : defaultGap;
   }
 
   /**

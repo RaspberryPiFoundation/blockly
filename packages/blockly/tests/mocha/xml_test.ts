@@ -201,7 +201,7 @@ suite('XML', function () {
                 'type': 'field_image',
                 'name': 'IMAGE',
                 'src':
-                  'https://blockly-demo.appspot.com/static/tests/media/a.png',
+                  'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/a.png',
                 'width': 32,
                 'height': 32,
                 'alt': 'A',

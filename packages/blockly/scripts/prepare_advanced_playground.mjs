@@ -6,7 +6,7 @@
 import {execSync} from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import {BUILD_DIR} from './gulpfiles/config.mjs';
+import {BUILD_DIR} from './config.mjs';
 
 /**
  * This task bundles the modules used by the advanced playground and generates a
@@ -25,8 +25,8 @@ function prepareAdvancedPlayground() {
   });
 
   const input = path.join('tests', 'playgrounds', 'advanced_playground.cjs');
-  const bundlePlaygroundCmd = `cp -R ../plugins/dev-tools/dist node_modules/@blockly/dev-tools && 
-  cp -R ../plugins/theme-modern/dist node_modules/@blockly/theme-modern && 
+  const bundlePlaygroundCmd = `cp -R ../plugins/dev-tools/dist node_modules/@blockly/dev-tools &&
+  cp -R ../plugins/theme-modern/dist node_modules/@blockly/theme-modern &&
   esbuild ${input} \
   --bundle \
   --sourcemap \

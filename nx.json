@@ -41,10 +41,6 @@
       "outputs": ["{projectRoot}/dist", "{projectRoot}/build"],
       "cache": true
     },
-    "prepareDemos": {
-      "outputs": ["{projectRoot}/_deploy"],
-      "cache": true
-    },
     "tsc": {
       "outputs": [
         "{projectRoot}/build/src",
