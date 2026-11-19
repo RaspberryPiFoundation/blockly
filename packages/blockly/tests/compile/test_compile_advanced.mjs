@@ -17,14 +17,19 @@ import {
 
 import {globSync} from 'glob';
 import * as path from 'path';
-import yargs from 'yargs';
-import {hideBin} from 'yargs/helpers';
+import {parseArgs} from 'node:util';
 
 import {posixPath} from '../../scripts/helpers.js';
 import {compile} from '../../scripts/lib/build_utils.mjs';
 import {TSC_OUTPUT_DIR_POSIX} from '../../scripts/build_constants.mjs';
 
-const argv = yargs(hideBin(process.argv)).parse();
+const {values: argv} = parseArgs({
+  options: {
+    debug: {type: 'boolean'},
+    strict: {type: 'boolean'},
+    verbose: {type: 'boolean'},
+  },
+});
 
 /**
  * Resolve glob patterns to file paths using globSync
