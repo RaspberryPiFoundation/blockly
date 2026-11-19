@@ -8,7 +8,6 @@
  * A plugin that provides a MetricsManager that can be used to prevent the
  * workspace from expanding to the top/left/right/bottom when blocks are dragged
  * to that edge.
- *
  * @packageDocumentation
  */
 

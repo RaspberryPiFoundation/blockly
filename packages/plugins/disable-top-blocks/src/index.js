@@ -3,10 +3,10 @@
  * Copyright 2020 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
+
 /**
  * A Blockly plugin that shows the 'disable' context menu option only on
  * non-orphan blocks.
- *
  * @packageDocumentation
  */
 
