@@ -15,7 +15,7 @@ import {
   writeFile,
 } from 'node:fs/promises';
 
-import {globSync} from 'glob';
+import {globSync} from 'node:fs';
 import * as path from 'node:path';
 import {parseArgs} from 'node:util';
 
@@ -35,8 +35,7 @@ const {values: argv} = parseArgs({
  * Resolve glob patterns to file paths using globSync
  */
 function globToArray(patterns) {
-  return globSync(patterns, {absolute: true})
-    .map((file) => posixPath(path.relative(process.cwd(), file)))
+  return globSync(patterns).map(posixPath)
     .sort();
 }
 /**

@@ -19,7 +19,7 @@ import {
   writeFile,
 } from 'node:fs/promises';
 
-import {globSync} from 'glob';
+import {globSync} from 'node:fs';
 import * as path from 'node:path';
 import {parseArgs} from 'node:util';
 
