@@ -1,4 +1,4 @@
-const chalk = require('chalk').default;
+const {styleText} = require('node:util');
 const fs = require('node:fs');
 const path = require('node:path');
 const execSync = require('node:child_process').execSync;
@@ -55,13 +55,13 @@ exports.createApp = function (name, options) {
   }
 
   // Print helpful instructions.
-  console.log(chalk.green('Success!'));
+  console.log(styleText('green', 'Success!'));
 
   console.log('You can start the development server now by typing:');
-  console.log(chalk.blue(`  cd ${dir}`));
+  console.log(styleText('blue', `  cd ${dir}`));
   if (options.skipInstall) {
-    console.log(chalk.blue('  npm install'));
+    console.log(styleText('blue', '  npm install'));
   }
-  console.log(chalk.blue('  npm start'));
+  console.log(styleText('blue', '  npm start'));
   console.log('See README.md for more commands and information.');
 };

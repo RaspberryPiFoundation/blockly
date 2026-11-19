@@ -12,7 +12,7 @@
 
 'use strict';
 
-const chalk = require('chalk').default;
+const {styleText} = require('node:util');
 const fs = require('node:fs');
 const path = require('node:path');
 const execSync = require('node:child_process').execSync;
@@ -68,8 +68,10 @@ exports.createPlugin = function (pluginName, options) {
 
   // Check plugin type.
   if (!pluginTypes.includes(pluginType)) {
-    console.error(`Unknown plugin type: ${chalk.red(pluginType)}`);
-    console.log(`Available types: ${chalk.green(pluginTypes.join(', '))}`);
+    console.error(`Unknown plugin type: ${styleText('red', pluginType)}`);
+    console.log(
+      `Available types: ${styleText('green', pluginTypes.join(', '))}`,
+    );
     process.exit(1);
   }
 
@@ -77,8 +79,8 @@ exports.createPlugin = function (pluginName, options) {
   checkAndCreateDir(pluginPath);
 
   console.log(
-    `Creating a new Blockly ${chalk.green(pluginType)} with name ` +
-      `${chalk.green(pluginName)} in ${chalk.green(pluginPath)}.\n`,
+    `Creating a new Blockly ${styleText('green', pluginType)} with name ` +
+      `${styleText('green', pluginName)} in ${styleText('green', pluginPath)}.\n`,
   );
 
   const templatesDir = `../templates`;
@@ -200,20 +202,20 @@ exports.createPlugin = function (pluginName, options) {
   console.log(
     `Success! Created ${pluginType} '${pluginName}' at ${pluginPath}`,
   );
-  console.log(`\n  ${chalk.blue(`  npm start`)}`);
+  console.log(`\n  ${styleText('blue', `  npm start`)}`);
   console.log(`    Starts the development server.\n`);
-  console.log(`  ${chalk.blue(`  npm run build`)}`);
+  console.log(`  ${styleText('blue', `  npm run build`)}`);
   console.log(`    Builds a production build of the plugin.\n`);
-  console.log(`  ${chalk.blue(`  npm test`)}`);
+  console.log(`  ${styleText('blue', `  npm test`)}`);
   console.log(`    Runs mocha tests.\n\n`);
 
   console.log(`You can begin by typing:`);
-  console.log(chalk.blue(`  cd ${pluginDir}`));
+  console.log(styleText('blue', `  cd ${pluginDir}`));
   if (skipInstall) {
-    console.log(chalk.blue(`  npm install`));
+    console.log(styleText('blue', `  npm install`));
   }
-  console.log(chalk.blue(`  npm start`));
-  console.log(`Search ${chalk.red(`'TODO'`)} to see remaining tasks.`);
+  console.log(styleText('blue', `  npm start`));
+  console.log(`Search ${styleText('red', `'TODO'`)} to see remaining tasks.`);
 
   process.exit(1);
 };
