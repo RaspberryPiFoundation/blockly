@@ -8,12 +8,12 @@
  * @fileoverview Dependency loader for the advanced playground
  *
  * This loads the blockly plugins used in the advanced playground. It is bundled
- * into build/tests/advanced_playground.js, which is loaded into the advanced
- * playground.
+ * into build/playgrounds/advanced_playground.js, which is loaded into the 
+ * advanced playground.
  */
 
 const blocklyDevTools = require('@blockly/dev-tools');
-const modernTheme = require('@blockly/theme-modern');
+const modernTheme = require('@blockly/theme-modern').default;
 
 globalThis.createPlayground = blocklyDevTools.createPlayground;
 globalThis.toolboxCategories = blocklyDevTools.toolboxCategories;
