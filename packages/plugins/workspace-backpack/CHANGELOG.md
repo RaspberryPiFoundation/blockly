@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [13.5.0](https://github.com/RaspberryPiFoundation/blockly/compare/blockly-v13.4.0...blockly-v13.5.0) (2026-11-19)
+
+### Bug Fixes
+
+* **workspace-backpack:** Fix error when using backpack in conjunction with headless workspaces ([#10689](https://github.com/RaspberryPiFoundation/blockly/issues/10689)) ([9183005](https://github.com/RaspberryPiFoundation/blockly/commit/9183005044bed8648a812e52949d000c6fa693dd))
+
+
 ## [13.4.0](https://github.com/RaspberryPiFoundation/blockly/compare/blockly-v13.3.0...blockly-v13.4.0) (2026-10-13)
 
 **Note:** Version bump only for package @blockly/workspace-backpack

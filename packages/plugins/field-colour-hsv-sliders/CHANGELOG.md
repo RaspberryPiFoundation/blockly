@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [13.5.0](https://github.com/RaspberryPiFoundation/blockly/compare/blockly-v13.4.0...blockly-v13.5.0) (2026-11-19)
+
+### Features
+
+* **field-colour-hsv-sliders:** Loosen access control on colour slider constants ([#10669](https://github.com/RaspberryPiFoundation/blockly/issues/10669)) ([2afcda4](https://github.com/RaspberryPiFoundation/blockly/commit/2afcda4002535c60efc85be7d114ad7331df2951))
+
+
 ## [13.4.0](https://github.com/RaspberryPiFoundation/blockly/compare/blockly-v13.3.0...blockly-v13.4.0) (2026-10-13)
 
 **Note:** Version bump only for package @blockly/field-colour-hsv-sliders

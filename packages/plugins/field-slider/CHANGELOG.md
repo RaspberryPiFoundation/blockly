@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [13.5.0](https://github.com/RaspberryPiFoundation/blockly/compare/blockly-v13.4.0...blockly-v13.5.0) (2026-11-19)
+
+### Bug Fixes
+
+* **field-slider:** sync the slider when the text editor changes after a drag ([#10667](https://github.com/RaspberryPiFoundation/blockly/issues/10667)) ([2c83c88](https://github.com/RaspberryPiFoundation/blockly/commit/2c83c8807dd2a7b253de446194107dfe9f246000))
+
+
 ## [13.4.0](https://github.com/RaspberryPiFoundation/blockly/compare/blockly-v13.3.0...blockly-v13.4.0) (2026-10-13)
 
 **Note:** Version bump only for package @blockly/field-slider
