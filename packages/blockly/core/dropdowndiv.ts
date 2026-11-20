@@ -165,8 +165,8 @@ export function createDom() {
 }
 
 /**
- * Deals with the root element that contains this and other popovers losing
- * focus by returning ephemeral focus if we hold it and hiding the DropDownDiv.
+ * Deals with focus moving outside of the workspace and all popovers by
+ * returning ephemeral focus if we hold it and hiding the DropDownDiv.
  */
 function handleFocusLoss() {
   if (returnEphemeralFocus) {
@@ -397,6 +397,7 @@ export function show<T>(
   opt_onHide?: () => void,
 ): boolean {
   getFocusManager().registerPopoverFocusLossHandler(handleFocusLoss);
+  getFocusManager().registerPopoverElement(div);
 
   const parentDiv = common.getParentContainer();
   parentDiv?.appendChild(div);
