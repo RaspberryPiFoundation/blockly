@@ -21,3 +21,20 @@ export function shouldReduceMotion(): boolean {
   }
   return reduceMotion.matches;
 }
+
+let increaseContrast: MediaQueryList | undefined = undefined;
+
+/**
+ * Returns true if the user has asked their operating system for more contrast.
+ */
+export function shouldIncreaseContrast(): boolean {
+  if (increaseContrast === undefined) {
+    if (typeof window === 'undefined' || !('matchMedia' in window)) {
+      // Nothing is drawn if there's no window, i.e. we're running under Node.
+      return false;
+    }
+
+    increaseContrast = window.matchMedia('(prefers-contrast: more)');
+  }
+  return increaseContrast.matches;
+}

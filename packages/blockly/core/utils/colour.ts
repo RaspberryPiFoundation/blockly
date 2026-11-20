@@ -263,3 +263,116 @@ export const names: {[key: string]: string} = {
 export function hueToHex(hue: number): string {
   return hsvToHex(hue, hsvSaturation, hsvValue * 255);
 }
+
+// The constants below come from the WCAG 2.2 definition of relative luminance:
+// https://www.w3.org/TR/WCAG22/#dfn-relative-luminance
+
+/** How much red contributes to perceived brightness. */
+const RED_WEIGHT = 0.2126;
+
+/** How much green contributes to perceived brightness. */
+const GREEN_WEIGHT = 0.7152;
+
+/** How much blue contributes to perceived brightness. */
+const BLUE_WEIGHT = 0.0722;
+
+/** At or below this sRGB value, the sRGB curve is a straight line. */
+const SRGB_LINEAR_THRESHOLD = 0.04045;
+
+/** The slope of the straight part of the sRGB curve. */
+const SRGB_LINEAR_SLOPE = 12.92;
+
+/** The offset applied before the curved part of the sRGB curve. */
+const SRGB_CURVE_OFFSET = 0.055;
+
+/** The scale applied before the curved part of the sRGB curve. */
+const SRGB_CURVE_SCALE = 1.055;
+
+/** The exponent of the curved part of the sRGB curve. */
+const SRGB_CURVE_EXPONENT = 2.4;
+
+/**
+ * Added to both luminances in a contrast ratio, to account for light
+ * reflecting off the screen. From the WCAG 2.2 definition of contrast ratio:
+ * https://www.w3.org/TR/WCAG22/#dfn-contrast-ratio
+ */
+const SCREEN_FLARE = 0.05;
+
+/** The largest value of a red, green or blue channel. */
+const MAX_CHANNEL_VALUE = 255;
+
+/**
+ * Converts a red, green or blue channel value to the amount of light the
+ * screen gives off for it.
+ *
+ * @param channel The channel value, between 0 and 255.
+ * @returns The amount of light, between 0 and 1.
+ */
+function channelToLight(channel: number): number {
+  const value = channel / MAX_CHANNEL_VALUE;
+  if (value <= SRGB_LINEAR_THRESHOLD) {
+    return value / SRGB_LINEAR_SLOPE;
+  }
+  const shifted = (value + SRGB_CURVE_OFFSET) / SRGB_CURVE_SCALE;
+  return shifted ** SRGB_CURVE_EXPONENT;
+}
+
+/**
+ * Gets how bright a colour looks, as defined by WCAG.
+ *
+ * @param colour Colour in any format `parse` accepts ('#ff0000', 'red', etc).
+ * @returns The relative luminance, from 0 for black to 1 for white.
+ * @throws If the colour can't be parsed.
+ * @internal
+ */
+export function getLuminance(colour: string): number {
+  const hex = parse(colour);
+  if (!hex) {
+    throw new Error(`Can't get the luminance of invalid colour "${colour}".`);
+  }
+  const [red, green, blue] = hexToRgb(hex).map(channelToLight);
+  return RED_WEIGHT * red + GREEN_WEIGHT * green + BLUE_WEIGHT * blue;
+}
+
+/**
+ * Gets the contrast ratio between two colours, as defined by WCAG. WCAG asks
+ * for at least 4.5 for normal text and 3 for graphics.
+ *
+ * @param colour1 Colour in any format `parse` accepts. The order of the two
+ *     colours doesn't matter.
+ * @param colour2 Colour in any format `parse` accepts.
+ * @returns The contrast ratio, from 1 for identical colours to 21 for black
+ *     and white.
+ * @throws If either colour can't be parsed.
+ * @internal
+ */
+export function getContrastRatio(colour1: string, colour2: string): number {
+  const luminance1 = getLuminance(colour1);
+  const luminance2 = getLuminance(colour2);
+  const lighter = Math.max(luminance1, luminance2);
+  const darker = Math.min(luminance1, luminance2);
+  return (lighter + SCREEN_FLARE) / (darker + SCREEN_FLARE);
+}
+
+/**
+ * Gets the colour for text drawn on a background: white, or black if white
+ * would have less contrast than the given minimum.
+ *
+ * @param background Colour in any format `parse` accepts.
+ * @param minWhiteContrast The lowest contrast ratio at which the text stays
+ *     white. WCAG asks for at least 4.5 for normal text and 3 for large text
+ *     and graphics.
+ * @returns White ('#ffffff') or black ('#000000').
+ * @throws If the background can't be parsed.
+ * @internal
+ */
+export function getReadableTextColour(
+  background: string,
+  minWhiteContrast: number,
+): string {
+  const white = names['white'];
+  const black = names['black'];
+  return getContrastRatio(background, white) >= minWhiteContrast
+    ? white
+    : black;
+}

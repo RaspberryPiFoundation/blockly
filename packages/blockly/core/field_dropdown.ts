@@ -514,9 +514,16 @@ export class FieldDropdown extends Field<string> {
     if (this.borderRect_) {
       this.borderRect_.setAttribute('stroke', sourceBlock.getColourTertiary());
       if (this.menu_) {
-        this.borderRect_.setAttribute('fill', sourceBlock.getColourTertiary());
+        const background = sourceBlock.getColourTertiary();
+        this.borderRect_.setAttribute('fill', background);
+        // The text sits on this rect, not the block, while the menu is open.
+        this.fieldGroup_?.style.setProperty(
+          '--blockly-block-foreground',
+          sourceBlock.getTextColour(background),
+        );
       } else {
         this.borderRect_.setAttribute('fill', 'transparent');
+        this.fieldGroup_?.style.removeProperty('--blockly-block-foreground');
       }
     }
     // Update arrow's colour.
