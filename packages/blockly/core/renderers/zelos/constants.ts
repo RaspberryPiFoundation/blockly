@@ -735,7 +735,7 @@ export class ConstantProvider extends BaseConstantProvider {
 
       // Fields.
       `${selector} .blocklyText {`,
-      `fill: #fff;`,
+      `fill: var(--blockly-block-foreground, #fff);`,
       `}`,
       `${selector} .blocklyNonEditableField>rect:not(.blocklyDropdownRect),`,
       `${selector} .blocklyEditableField>rect:not(.blocklyDropdownRect) {`,
@@ -776,7 +776,7 @@ export class ConstantProvider extends BaseConstantProvider {
 
       // Dropdown field.
       `${selector} .blocklyDropdownText {`,
-      `fill: #fff !important;`,
+      `fill: var(--blockly-block-foreground, #fff) !important;`,
       `}`,
 
       // Widget and Dropdown Div
