@@ -187,7 +187,7 @@
     "esbuild": "^0.28.2",
     "google-closure-compiler": "^20261102.0.0",
     "http-server": "^14.1.1",
-    "jsdom": "30.1.3",
+    "jsdom": "31.0.1",
     "json5": "^2.2.3",
     "mocha": "^12.0.3",
     "sinon": "^22.1.0",
