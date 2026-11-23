@@ -4,6 +4,7 @@
 			"Amara-Amaziɣ",
 			"Aslmad mohamed belarhzali",
 			"Brahim-essaidi",
+			"Daoudsfouli",
 			"Hakim1bal"
 		]
 	},
@@ -63,6 +64,7 @@
 	"TEXT_INDEXOF_TITLE": "ⴳ ⵓⴹⵕⵉⵚ %1 %2 %3",
 	"TEXT_GET_SUBSTRING_INPUT_IN_TEXT": "ⴳ ⵓⴹⵕⵉⵚ",
 	"TEXT_GET_SUBSTRING_END_LAST": "ⴰⵔ ⴰⵙⴽⴽⵉⵍ ⴰⵏⴳⴳⴰⵔⵓ",
+	"LISTS_CREATE_WITH_CONTAINER_TITLE_ADD": "ⵜⴰⵍⴳⴰⵎⵜ",
 	"LISTS_LENGTH_TITLE": "ⵜⵉⵖⵣⵉ ⵏ %1",
 	"LISTS_INLIST": "ⴳ ⵜⵍⴳⴰⵎⵜ",
 	"LISTS_GET_INDEX_REMOVE": "ⵙⵉⵜⵜⵢ",
@@ -79,5 +81,9 @@
 	"PROCEDURES_CALL_BEFORE_PARAMS": "ⵙ:",
 	"PROCEDURES_MUTATORARG_TOOLTIP": "ⵔⵏⵓ ⴰⵏⴽⵛⴰⵎ ⵖⵔ ⵜⵙⵖⵏⵜ.",
 	"DIALOG_OK": "ⵡⴰⵅⵅⴰ",
-	"DIALOG_CANCEL": "ⵙⵔ"
+	"DIALOG_CANCEL": "ⵙⵔ",
+	"CONTEXT_MENU_KEY": "ⵜⴰⵍⴳⴰⵎⵜ",
+	"ARIA_TYPE_FIELD_DATE": "ⴰⵙⴰⴽⵓⴷ",
+	"ARIA_TYPE_FIELD_COLOUR": "ⴰⴽⵍⵓ",
+	"WORKSPACE_SEARCH_PLACEHOLDER": "ⵔⵣⵓ"
 }
