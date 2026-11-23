@@ -23,12 +23,6 @@ import * as Blockly from 'blockly';
 import {TypedVariableModal} from '@blockly/plugin-typed-variable-modal';
 ```
 
-or
-
-```js
-<script src="https://unpkg.com/@blockly/plugin-typed-variable-modal"></script>
-```
-
 #### Setup
 
 Create your workspace.
