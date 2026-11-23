@@ -46,7 +46,7 @@
     "chai": "^6.3.0",
     "dat.gui": "^0.7.9",
     "lodash.merge": "^4.6.2",
-    "monaco-editor": "^0.57.0",
+    "monaco-editor": "^0.58.0",
     "sinon": "^22.1.0"
   },
   "devDependencies": {
