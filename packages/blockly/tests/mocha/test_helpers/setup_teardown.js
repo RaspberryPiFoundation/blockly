@@ -140,6 +140,10 @@ function wrapDefineBlocksWithJsonArrayWithCleanup_(sharedCleanupObj) {
  */
 export function sharedTestSetup(options = {}) {
   this.sharedSetupCalled_ = true;
+  // Re-enable the events sharedTestTeardown() disabled.
+  while (!eventUtils.isEnabled()) {
+    eventUtils.enable();
+  }
   // Sandbox created for greater control when certain stubs are cleared.
   this.sharedSetupSandbox_ = sinon.createSandbox();
   this.clock = this.sharedSetupSandbox_.useFakeTimers();
@@ -230,6 +234,10 @@ export function sharedTestTeardown(workspace = this.workspace) {
     // Restore all stubbed methods.
     this.sharedSetupSandbox_.restore();
     sinon.restore();
+
+    // Disable events until the next sharedTestSetup() to avoid promises that
+    // resolve after teardown enqueueing events/leaking state.
+    eventUtils.disable();
 
     const blockTypes = this.sharedCleanup.blockTypesCleanup_;
     for (let i = 0; i < blockTypes.length; i++) {
