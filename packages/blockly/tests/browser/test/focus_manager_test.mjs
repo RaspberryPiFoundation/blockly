@@ -23,7 +23,7 @@
 
 import * as chai from 'chai';
 import {FIXTURE_HTML} from '../../mocha/test_helpers/dom_fixtures.js';
-import {focusableTreeImplFactory} from '../../mocha/test_helpers/focusable_tree.js';
+import {focusableTreeImplFactory} from '../../mocha/test_helpers/focusable_tree.ts';
 import {testFileLocations, testSetup} from './test_setup.mjs';
 
 /**

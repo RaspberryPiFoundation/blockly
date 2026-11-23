@@ -6,7 +6,7 @@
 
 import {ConnectionType} from '#core/connection_type.js';
 import {assert} from 'chai';
-import {defineStatementBlock} from '../test_helpers/block_definitions.js';
+import {defineStatementBlock} from '../test_helpers/block_definitions.ts';
 import {runSerializationTestSuite} from '../test_helpers/serialization.js';
 import {
   sharedTestSetup,

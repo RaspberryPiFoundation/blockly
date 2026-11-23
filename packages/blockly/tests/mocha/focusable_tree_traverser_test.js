@@ -7,7 +7,7 @@
 import {FocusManager} from '#core/focus_manager.js';
 import {FocusableTreeTraverser} from '#core/utils/focusable_tree_traverser.js';
 import {assert} from 'chai';
-import {FocusableTreeImpl} from './test_helpers/focusable_tree.js';
+import {FocusableTreeImpl} from './test_helpers/focusable_tree.ts';
 import {
   sharedTestSetup,
   sharedTestTeardown,

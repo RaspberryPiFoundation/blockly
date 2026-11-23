@@ -9,7 +9,7 @@ import {assert} from 'chai';
 import {
   createTestBlock,
   defineRowBlock,
-} from './test_helpers/block_definitions.js';
+} from './test_helpers/block_definitions.ts';
 import {
   assertFieldValue,
   runConstructorSuiteTests,

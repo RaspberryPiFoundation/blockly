@@ -10,7 +10,7 @@ import {
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
-import {simulateClick} from './test_helpers/user_input.js';
+import {simulateClick} from './test_helpers/user_input.ts';
 
 suite('Comment Deserialization', function () {
   setup(function () {

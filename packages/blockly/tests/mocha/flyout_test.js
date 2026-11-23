@@ -15,7 +15,7 @@ import {
   getProperSimpleJson,
   getSimpleJson,
   getXmlArray,
-} from './test_helpers/toolbox_definitions.js';
+} from './test_helpers/toolbox_definitions.ts';
 
 suite('Flyout', function () {
   setup(function () {

@@ -8,7 +8,7 @@ import {assert} from 'chai';
 import {
   defineBasicBlockWithField,
   defineStackBlock,
-} from './test_helpers/block_definitions.js';
+} from './test_helpers/block_definitions.ts';
 import {
   sharedTestSetup,
   sharedTestTeardown,
@@ -24,7 +24,7 @@ import {
   getSeparator,
   getSimpleJson,
   getXmlArray,
-} from './test_helpers/toolbox_definitions.js';
+} from './test_helpers/toolbox_definitions.ts';
 
 suite('Toolbox', function () {
   setup(function () {
