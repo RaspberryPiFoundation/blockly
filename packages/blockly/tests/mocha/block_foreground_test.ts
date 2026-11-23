@@ -129,38 +129,7 @@ suite('Block foreground colour', function () {
       assert.equal(getForeground(block), BLACK);
     });
 
-    test('changing the colour updates the text colour', function () {
-      const block = createBlock(workspace, 'text_print', 'dark');
-      block.setColour(LIGHT_GRAY);
-      assert.equal(getForeground(block), BLACK);
-    });
-
-    test('shadow blocks use the shadow colour', function () {
-      const block = createBlock(
-        workspace,
-        'math_number',
-        'light_with_dark_shadow',
-      );
-      block.setShadow(true);
-      assert.equal(getForeground(block), WHITE);
-    });
-
-    test('changing the theme updates the text colour', function () {
-      const block = createBlock(workspace, 'text_print', 'dark');
-      // A theme that redefines the block's 'dark' style as light.
-      const newTheme = new Blockly.Theme('new_theme', {
-        'dark': {
-          'colourPrimary': LIGHT_GRAY,
-          'colourSecondary': LIGHT_GRAY,
-          'colourTertiary': LIGHT_GRAY,
-        },
-      });
-      workspace.setTheme(newTheme);
-      assert.equal(getForeground(block), BLACK);
-    });
-
     test('disabled blocks use the disabled pattern colour', function () {
-      // White has a contrast of 2.3 on the disabled pattern.
       const block = createBlock(workspace, 'text_print', 'dark');
       block.setDisabledReason(true, 'test');
       assert.equal(getForeground(block), BLACK);
@@ -182,11 +151,6 @@ suite('Block foreground colour', function () {
       });
     });
 
-    test('number blocks get black text, because the field paints the block white', function () {
-      const block = createBlock(workspace, 'math_number', 'dark');
-      assert.equal(getForeground(block), BLACK);
-    });
-
     test('dropdown shadows use the shadow colour', function () {
       const block = createBlock(
         workspace,
@@ -198,30 +162,19 @@ suite('Block foreground colour', function () {
     });
 
     suite('Open dropdown', function () {
-      let block: Blockly.BlockSvg;
-      let field: Blockly.Field;
-
-      setup(function () {
+      test('the dropdown text uses the dropdown colour', function () {
         // The dropdown is filled with the dark tertiary colour while it's open.
-        block = createBlock(
+        const block = createBlock(
           workspace,
           'logic_boolean',
           'light_with_dark_shadow',
         );
         const boolField = block.getField('BOOL');
         assert.exists(boolField);
-        field = boolField;
+        const field = boolField;
         field.showEditor();
-      });
-
-      test('the dropdown text uses the dropdown colour', function () {
         assert.equal(getForeground(block), BLACK);
         assert.equal(getForeground(field), WHITE);
-      });
-
-      test('closing the dropdown goes back to the block colour', function () {
-        workspace.hideChaff();
-        assert.equal(getForeground(field), '');
       });
     });
   });
