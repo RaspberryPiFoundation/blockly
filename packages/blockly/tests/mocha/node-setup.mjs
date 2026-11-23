@@ -20,7 +20,7 @@ import {JSDOM} from 'jsdom';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import sinon from 'sinon';
-import {bundleBlockTest} from '../scripts/bundle_block_test.mjs';
+import {bundleBlockTest} from '../scripts/bundle.mjs';
 import {installFixtures} from './test_helpers/dom_fixtures.js';
 import {
   HEADLESS_VIEWPORT_SIZE,

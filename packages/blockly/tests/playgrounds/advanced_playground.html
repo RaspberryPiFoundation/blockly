@@ -9,15 +9,16 @@
 
       import * as Blockly from '../../build/blockly.loader.mjs';
       import '../../build/blocks.loader.mjs';
-      // Generators not needed (but see also bug #6597).
+      import '../../build/dart.loader.mjs';
+      import '../../build/javascript.loader.mjs';
+      import '../../build/lua.loader.mjs';
+      import '../../build/php.loader.mjs';
+      import '../../build/python.loader.mjs';
 
       await loadScript('../../build/msg/en.js');
       await loadScript('screenshot.js');
       await loadScript('../themes/test_themes.js');
-      await loadScript('../../node_modules/@blockly/dev-tools/dist/index.js');
-      await loadScript(
-        '../../node_modules/@blockly/theme-modern/dist/index.js',
-      );
+      await loadScript('../../build/playgrounds/advanced_playground.js');
 
       let kbNavigation;
 
