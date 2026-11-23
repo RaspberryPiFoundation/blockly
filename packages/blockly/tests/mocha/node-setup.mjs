@@ -20,7 +20,6 @@ import {JSDOM} from 'jsdom';
 import {readFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import vm from 'node:vm';
-import sinon from 'sinon';
 import {installFixtures} from './test_helpers/dom_fixtures.js';
 import {
   HEADLESS_VIEWPORT_SIZE,
@@ -130,6 +129,11 @@ for (const name of [...domInterfaceNames(window), ...WINDOW_MEMBERS]) {
   }
 }
 
+// Import sinon only now that the globals above exist. Sinon only fakes the
+// timers present on the global object when it is first imported, and
+// requestAnimationFrame comes from JSDom.
+const {default: sinon} = await import('sinon');
+
 // JS tests use sinon and chai's config as ambient globals (sinon) / shared
 // config.
 defineGlobal('sinon', sinon);
@@ -147,29 +151,6 @@ if (!process.env.BLOCKLY_TEST_CONSOLE) {
     console[method] = () => {};
   }
 }
-
-// Make sinon's fake clock advance with real time.
-//
-// sharedTestSetup() freezes the clock, and JSDom drives requestAnimationFrame
-// off setTimeout, so frames only run when something advances the clock. The
-// only thing that does so mid-test is the Events.fire stub's clock.runAll(), so
-// a queueRender() landing after the last fired event leaves its frame unrun —
-// and with it the finishQueuedRenders() promise it would resolve. Any test
-// awaiting that promise then hangs until teardown. Advancing with real time
-// keeps frames flowing without giving up the clock's manual tick/runAll
-// control, which tests still rely on.
-//
-// Browsers do not need this: there, sinon fakes requestAnimationFrame itself
-// rather than JSDom's setTimeout-backed one, so the browser harness (which does
-// not load this file) is unaffected.
-const createSandbox = sinon.createSandbox.bind(sinon);
-sinon.createSandbox = function (...args) {
-  const sandbox = createSandbox(...args);
-  const useFakeTimers = sandbox.useFakeTimers.bind(sandbox);
-  sandbox.useFakeTimers = (config = {}) =>
-    useFakeTimers({...config, shouldAdvanceTime: true});
-  return sandbox;
-};
 
 // Install geometry stubs (getBBox/getCTM/getScreenCTM/createSVGPoint, canvas
 // text measurement) that JSDom does not implement.
