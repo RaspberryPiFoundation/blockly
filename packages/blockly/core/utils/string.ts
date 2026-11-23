@@ -52,7 +52,7 @@ export function commonWordPrefix(
       wordPrefix = len + 1;
     }
   }
-  for (let i = 1; i < array.length; i++) {
+  for (let i = 0; i < array.length; i++) {
     const letter = array[i][len];
     if (letter && letter !== ' ') {
       return wordPrefix;
@@ -92,7 +92,7 @@ export function commonWordSuffix(
       wordPrefix = len + 1;
     }
   }
-  for (let i = 1; i < array.length; i++) {
+  for (let i = 0; i < array.length; i++) {
     const letter = array[i].charAt(array[i].length - len - 1);
     if (letter && letter !== ' ') {
       return wordPrefix;

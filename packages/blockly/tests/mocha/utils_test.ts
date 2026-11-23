@@ -518,6 +518,8 @@ suite('Utils', function () {
       assert.equal(len, 4, 'One word prefix');
       len = Blockly.utils.string.commonWordPrefix('abc de,abc deY'.split(','));
       assert.equal(len, 4, 'Overflow no');
+      len = Blockly.utils.string.commonWordPrefix('abc deY,abc de'.split(','));
+      assert.equal(len, 4, 'Overflow no, longer string first');
       len = Blockly.utils.string.commonWordPrefix('abc de,abc de Y'.split(','));
       assert.equal(len, 6, 'Overflow yes');
       len = Blockly.utils.string.commonWordPrefix(['Hello World']);
@@ -551,6 +553,8 @@ suite('Utils', function () {
       assert.equal(len, 3, 'One word suffix');
       len = Blockly.utils.string.commonWordSuffix('abc de,Yabc de'.split(','));
       assert.equal(len, 3, 'Overflow no');
+      len = Blockly.utils.string.commonWordSuffix('Yabc de,abc de'.split(','));
+      assert.equal(len, 3, 'Overflow no, longer string first');
       len = Blockly.utils.string.commonWordSuffix('abc de,Y abc de'.split(','));
       assert.equal(len, 6, 'Overflow yes');
       len = Blockly.utils.string.commonWordSuffix(['Hello World']);

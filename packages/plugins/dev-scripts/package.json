@@ -1,6 +1,6 @@
 {
   "name": "@blockly/dev-scripts",
-  "version": "13.4.0",
+  "version": "13.5.0",
   "description": "Configuration and scripts for Blockly plugins.",
   "bin": {
     "blockly-scripts": "./bin/blockly-scripts.js"
@@ -22,8 +22,6 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@babel/code-frame": "^8.0.6",
-    "fork-ts-checker-webpack-plugin": "^9.1.0",
     "mocha": "^12.0.3",
     "source-map-loader": "^5.0.0",
     "ts-loader": "^9.6.1",

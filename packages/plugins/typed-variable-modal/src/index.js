@@ -6,7 +6,6 @@
 
 /**
  * A Blockly plugin to create a modal for creating typed variables.
- *
  * @packageDocumentation
  */
 

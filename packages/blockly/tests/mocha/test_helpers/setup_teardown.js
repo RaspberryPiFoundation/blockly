@@ -6,6 +6,7 @@
 
 import * as eventUtils from '#core/events/utils.js';
 import {FocusManager} from '#core/focus_manager.js';
+import sinon from 'sinon';
 
 /**
  * Path to Blockly's media directory, relative to the test harness page
