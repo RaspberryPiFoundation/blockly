@@ -3,7 +3,6 @@
  * Copyright 2023 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-'use strict';
 
 import {assert} from 'chai';
 import sinon from 'sinon';
