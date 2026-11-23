@@ -26,7 +26,7 @@ Your first rule will set the colour of the **Logic** category. This rule needs t
 
 Unfortunately, the only thing that distinguishes this `<div>` from other category `<div>`s is a generated `id` attribute (`blockly-1`). This isn't stable enough to use in a CSS rule -- for example, if you switched the order of two categories you'd also have to switch the selectors in their rules.
 
-To solve this problem, you'll need to add a class to the
+To solve this problem, add a class to the
 `blocklyToolboxCategory` `<div>` for the **Logic** category. Open the
 `toolbox.js` file and find the definition of the **Logic** category:
 
@@ -87,7 +87,7 @@ Refresh your web page and click the **Logic** category. The row is highlighted w
 
 ### Update the other categories
 
-Before you can write rules for the remaining categories, you need to replace `categorystyle` with `cssConfig` in each of their definitions:
+Before writing rules for the remaining categories, replace `categorystyle` with `cssConfig` in each of their definitions:
 
 ```js
     {
@@ -102,7 +102,7 @@ Before you can write rules for the remaining categories, you need to replace `ca
     // Repeat for remaining categories
 ```
 
-Next, add the following rules to `halloween.css`. These rules use the colours from themes codelab for the **Loops**, **Text**, and **Lists** categories and the colours from the Classic theme (the default theme) for the **Math**, **Variables**, and **Functions** categories.
+Next, add the following rules to `halloween.css`. These rules use the colours from the themes codelab for the **Loops**, **Text**, and **Lists** categories and the colours from the Classic theme (the default theme) for the **Math**, **Variables**, and **Functions** categories.
 
 ```css
 .loop_category {

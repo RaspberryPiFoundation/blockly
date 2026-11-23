@@ -5,7 +5,12 @@
  */
 
 /**
- * @fileoverview Grid dropdown field.
+ * A Blockly dropdown field with grid layout.
+ *
+ * @packageDocumentation
+ */
+
+/**
  * @author kozbial@google.com (Monica Kozbial)
  */
 

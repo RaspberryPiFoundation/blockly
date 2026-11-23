@@ -5,8 +5,9 @@
  */
 
 /**
- * @fileoverview Adds blocks that replace the built-in mutator UI with dynamic
- *     connections that appear when a block is dragged over inputs on the block.
+ * A group of blocks that add connections dynamically.
+ *
+ * @packageDocumentation
  */
 
 import * as Blockly from 'blockly/core';

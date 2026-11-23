@@ -6,7 +6,7 @@ import Image from '@site/src/components/Image';
 
 # Customizing context menus
 
-## 4 . Precondition: Node type
+## 4. Precondition: Node type
 
 Each registry item has a `preconditionFn`. It is called by Blockly to decide whether and how to display an option on a context menu. You'll use it to display the "Hello, World" option on workspace and block context menus, but not on comment context menus.
 
@@ -20,7 +20,7 @@ The return value of `preconditionFn` is `'enabled'`, `'disabled'`, or `'hidden'`
 
 ### Write the function
 
-You can now test `scope.focusedNode` to display the "Hello World" option in workspace and block context menus, but not on any others. Change `preconditionFn` to:
+Use `scope.focusedNode` to display the "Hello World" option in workspace and block context menus, but not on any others. Change `preconditionFn` to:
 
 ```js
   const helloWorldItem = {

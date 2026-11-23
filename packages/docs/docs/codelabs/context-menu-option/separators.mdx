@@ -12,9 +12,9 @@ You can use separators to break your context menu into different sections.
 
 Separators differ from other items in two ways: They cannot have `displayText`, `preconditionFn`, or `callback` properties and they can only be scoped with the `scopeType` property. The latter accepts an enum value of `Blockly.ContextMenuRegistry.ScopeType.WORKSPACE`, `Blockly.ContextMenuRegistry.ScopeType.BLOCK`, or `Blockly.ContextMenuRegistry.ScopeType.COMMENT`.
 
-Use the `weight` property to position the separator. You'll use a weight of `99` to position the separator just above the other options you added, all of which have a weight of `100`.
+Use the `weight` property to position the separator. Use a weight of `99` to position the separator just above the other options you added, all of which have a weight of `100`.
 
-You need to add a separate item for each separator:
+Add a separate item for each separator:
 
 ```js
 function registerSeparators() {
@@ -36,7 +36,7 @@ function registerSeparators() {
 }
 ```
 
-As usual, remember to call `registerSeparators()` in `src/index.js`, before `Blockly.inject`.
+As usual, remember to call `registerSeparators` in `src/index.js`, before `Blockly.inject`.
 
 ### Test it
 

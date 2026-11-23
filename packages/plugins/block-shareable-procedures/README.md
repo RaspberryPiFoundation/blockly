@@ -1,4 +1,6 @@
-# @blockly/block-shareable-procedures [![Built on Blockly](https://tinyurl.com/built-on-blockly)](https://github.com/google/blockly)
+# @blockly/block-shareable-procedures
+
+## [<img src="https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/docs/static/images/logos/built-with-blockly-badge-white.svg" alt="Built with Blockly" width="119">](https://github.com/RaspberryPiFoundation/blockly)
 
 A set of [Blockly](https://www.npmjs.com/package/blockly) blocks that allow
 end-users to define procedures (i.e. functions). These blocks reference explicit

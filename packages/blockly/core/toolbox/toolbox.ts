@@ -786,6 +786,7 @@ export class Toolbox
       this.HtmlDiv.style.display = isVisible ? 'block' : 'none';
     }
     this.isVisible_ = isVisible;
+    this.workspace_.resize();
     // Invisible toolbox is ignored as drag targets and must have the drag
     // target updated.
     this.workspace_.recordDragTargets();

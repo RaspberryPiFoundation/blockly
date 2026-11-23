@@ -3135,4 +3135,22 @@ suite('Blocks', function () {
       // No assert, this just shouldn't throw.
     });
   });
+
+  suite('Duplication of mutator root blocks', function () {
+    test('is prohibited', function () {
+      const roots = [
+        'lists_create_with_container',
+        'controls_if_if',
+        'procedures_mutatorcontainer',
+        'text_create_join_container',
+      ];
+      for (const root of roots) {
+        const block = this.workspace.newBlock(root);
+        assert.isFalse(
+          block.isDuplicatable(),
+          `Block ${root} should not be duplicatable`,
+        );
+      }
+    });
+  });
 });

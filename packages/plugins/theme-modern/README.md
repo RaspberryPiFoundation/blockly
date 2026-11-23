@@ -1,4 +1,6 @@
-# @blockly/theme-modern [![Built on Blockly](https://tinyurl.com/built-on-blockly)](https://github.com/google/blockly)
+# @blockly/theme-modern
+
+## [<img src="https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/docs/static/images/logos/built-with-blockly-badge-white.svg" alt="Built with Blockly" width="119">](https://github.com/RaspberryPiFoundation/blockly)
 
 A [Blockly](https://www.npmjs.com/package/blockly) modern theme that uses the
 same block colours as the [Classic theme](https://github.com/google/blockly/blob/master/core/theme/classic.ts)

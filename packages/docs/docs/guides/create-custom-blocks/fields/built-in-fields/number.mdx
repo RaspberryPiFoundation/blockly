@@ -127,6 +127,12 @@ Constraints can be set in the field definition, or by using the
 [setConstraints](/reference/classes/FieldNumber#setconstraints)
 function.
 
+By default, number fields accept infinite values. Users can enter
+`Infinity` or `-Infinity` (the case doesn't matter, so `infinity` and
+`-infinity` work too). If you don't want your field to accept infinity,
+set the `min` and `max` constraints. Values outside that range,
+including infinite ones, are clamped to the nearest limit.
+
 ### Minimum value
 
 The `min` value sets the smallest/most-negative value the field is allowed to

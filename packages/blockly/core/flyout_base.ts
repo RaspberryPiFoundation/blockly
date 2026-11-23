@@ -628,13 +628,6 @@ export abstract class Flyout
 
     this.setContents(flyoutInfo);
 
-    this.layout_(flyoutInfo);
-
-    if (this.horizontalLayout) {
-      this.height_ = 0;
-    } else {
-      this.width_ = 0;
-    }
     this.reflow();
     this.updateAriaContext();
     eventUtils.setRecordUndo(true);
@@ -836,6 +829,12 @@ export abstract class Flyout
    * Reflow flyout contents.
    */
   reflow() {
+    this.layout_(this.getContents());
+    if (this.horizontalLayout) {
+      this.height_ = 0;
+    } else {
+      this.width_ = 0;
+    }
     this.inhibitReflowWrapper = true;
     this.reflowInternal_();
     this.inhibitReflowWrapper = false;

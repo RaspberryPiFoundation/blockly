@@ -116,7 +116,10 @@ export function isNotch(shape: Shape): shape is Notch {
   );
 }
 
-const injectionSites = new Map<string, WeakSet<Document | ShadowRoot>>();
+const injectionSites = new Map<
+  string,
+  WeakMap<Document | ShadowRoot, HTMLStyleElement>
+>();
 
 /**
  * An object that provides constants for rendering blocks.
@@ -1126,11 +1129,15 @@ export class ConstantProvider {
    */
   protected injectCSS_(root: Document | ShadowRoot, selector: string) {
     if (typeof window === 'undefined') return;
-    if (injectionSites.get(selector)?.has(root)) return;
 
-    const styleEl = document.createElement('style');
+    const styleEl =
+      injectionSites.get(selector)?.get(root) ??
+      document.createElement('style');
+    const styles = this.getCSS_(selector).join('\n');
+    if (styleEl.textContent === styles) return;
+
     styleEl.className = 'blockly-renderer-style';
-    styleEl.textContent = this.getCSS_(selector).join('\n');
+    styleEl.textContent = styles;
     // See css.ts inject() for the rationale on prepending and shadow root
     // handling.
     (typeof globalThis.ShadowRoot !== 'undefined' && root instanceof ShadowRoot
@@ -1139,8 +1146,9 @@ export class ConstantProvider {
     ).prepend(styleEl);
 
     const sitesForSelector =
-      injectionSites.get(selector) ?? new WeakSet<Document | ShadowRoot>();
-    sitesForSelector.add(root);
+      injectionSites.get(selector) ??
+      new WeakMap<Document | ShadowRoot, HTMLStyleElement>();
+    sitesForSelector.set(root, styleEl);
     injectionSites.set(selector, sitesForSelector);
   }
 

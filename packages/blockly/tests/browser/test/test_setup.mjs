@@ -8,7 +8,7 @@
  * @fileoverview Node.js script to run automated functional tests in
  * Chrome, via webdriver.
  *
- * This file is to be used in the suiteSetup for any automated fuctional test.
+ * This file is to be used in the suiteSetup for any automated functional test.
  *
  * Note: In this file many functions return browser elements that can
  * be clicked or otherwise interacted with through Selenium WebDriver. These
@@ -16,8 +16,8 @@
  * identifiers that Selenium can use to find those elements.
  */
 
-import * as path from 'path';
-import {fileURLToPath} from 'url';
+import * as path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import * as webdriverio from 'webdriverio';
 import {posixPath} from '../../../scripts/helpers.js';
 
@@ -32,7 +32,7 @@ export const PAUSE_TIME = 50;
 /**
  * Start up the test page. This should only be done once, to avoid
  * constantly popping browser windows open and closed.
- * @return A Promsie that resolves to a webdriverIO browser that tests can manipulate.
+ * @return A Promise that resolves to a webdriverIO browser that tests can manipulate.
  */
 export async function driverSetup() {
   const options = {
@@ -81,7 +81,7 @@ export async function driverTeardown() {
  * Navigate to the correct URL for the test, using the shared driver.
  * @param {string} playgroundUrl The URL to open for the test, which should be
  *     a Blockly playground with a workspace.
- * @return A Promsie that resolves to a webdriverIO browser that tests can manipulate.
+ * @return A Promise that resolves to a webdriverIO browser that tests can manipulate.
  */
 export async function testSetup(playgroundUrl) {
   if (!driver) {
@@ -98,14 +98,6 @@ export async function testSetup(playgroundUrl) {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const testFileLocations = {
-  BLOCK_FACTORY:
-    'file://' +
-    posixPath(path.join(__dirname, '..', '..', '..', 'demos', 'blockfactory')) +
-    '/index.html',
-  CODE_DEMO:
-    'file://' +
-    posixPath(path.join(__dirname, '..', '..', '..', 'demos', 'code')) +
-    '/index.html',
   PLAYGROUND:
     'file://' +
     posixPath(path.join(__dirname, '..', '..')) +

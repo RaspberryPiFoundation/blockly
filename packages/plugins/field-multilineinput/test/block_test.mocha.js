@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import fs from 'fs';
+import fs from 'node:fs';
 import * as Blockly from 'blockly/core';
 import * as en from 'blockly/msg/en';
 import 'blockly/blocks';

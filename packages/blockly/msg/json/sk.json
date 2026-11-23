@@ -606,5 +606,17 @@
 	"FIELD_MULTILINEINPUT_NEW_LINE": "Nový riadok",
 	"ZOOM_TO_FIT_ARIA_LABEL": "Priblížiť na mieru",
 	"MINIMAP_ARIA_LABEL": "Minimapa pracovného priestoru. Na posúvanie použite klávesy so šípkami.",
-	"ARIA_LABEL_TRASH_EMPTY": "Kôš, momentálne prázdny"
+	"ARIA_LABEL_TRASH_EMPTY": "Kôš, momentálne prázdny",
+	"WORKSPACE_SEARCH_PLACEHOLDER": "Hľadať",
+	"WORKSPACE_SEARCH_INPUT_LABEL": "Hľadať v pracovnom priestore. Enter prejde na ďalšiu zhodu, Shift+Enter na predchádzajúcu. Escape zavrie hľadanie a zameria aktuálnu zhodu.",
+	"WORKSPACE_SEARCH_FIND_NEXT": "Nájsť ďalšie",
+	"WORKSPACE_SEARCH_FIND_PREVIOUS": "Nájsť predchádzajúce",
+	"WORKSPACE_SEARCH_CLOSE": "Zavrieť panel hľadania",
+	"WORKSPACE_SEARCH_NO_MATCHES": "Žiadne zodpovedajúce bloky",
+	"WORKSPACE_SEARCH_MATCH": "Zhoda %1 z %2: %3",
+	"TOOLBOX_SEARCH_PLACEHOLDER": "Hľadať bloky",
+	"TOOLBOX_SEARCH_PROMPT": "Píšte na vyhľadanie blokov",
+	"TOOLBOX_SEARCH_NO_RESULTS": "Nenašli sa žiadne zodpovedajúce bloky",
+	"TOOLBOX_SEARCH_RESULT_COUNT_ONE": "1 zodpovedajúci blok",
+	"TOOLBOX_SEARCH_RESULT_COUNT": "Zodpovedajúce bloky: %1"
 }

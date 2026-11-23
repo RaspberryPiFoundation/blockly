@@ -33,7 +33,10 @@ const DYNAMIC_TEXT_JOIN_MIXIN = {
     this.setHelpUrl(Blockly.Msg['TEXT_JOIN_HELPURL']);
     this.setStyle('text_blocks');
     this.addFirstInput();
-    for (let i = 1; i < this.minInputs; i++) this.appendValueInput(`ADD${i}`);
+    for (let i = 1; i < this.minInputs; i++) {
+      const input = this.appendValueInput(`ADD${i}`);
+      input.setAlign(Blockly.inputs.Align.RIGHT);
+    }
     this.setOutput(true, 'String');
     this.setTooltip(Blockly.Msg['TEXT_JOIN_TOOLTIP']);
   },
@@ -81,7 +84,10 @@ const DYNAMIC_TEXT_JOIN_MIXIN = {
     if (items) {
       const inputNames = items.split(',');
       this.inputList = [];
-      inputNames.forEach((name) => this.appendValueInput(name));
+      inputNames.forEach((name) => {
+        const input = this.appendValueInput(name);
+        input.setAlign(Blockly.inputs.Align.RIGHT);
+      });
       this.inputList[0].appendField(Blockly.Msg['TEXT_JOIN_TITLE_CREATEWITH']);
     }
   },
@@ -98,7 +104,8 @@ const DYNAMIC_TEXT_JOIN_MIXIN = {
     );
     // minInputs are added automatically.
     for (let i = this.minInputs; i < this.itemCount; i++) {
-      this.appendValueInput('ADD' + i);
+      const input = this.appendValueInput('ADD' + i);
+      input.setAlign(Blockly.inputs.Align.RIGHT);
     }
   },
 
@@ -139,7 +146,8 @@ const DYNAMIC_TEXT_JOIN_MIXIN = {
     this.itemCount = state['itemCount'] ?? 0;
     // minInputs are added automatically.
     for (let i = this.minInputs; i < this.itemCount; i++) {
-      this.appendValueInput('ADD' + i);
+      const input = this.appendValueInput('ADD' + i);
+      input.setAlign(Blockly.inputs.Align.RIGHT);
     }
   },
 
@@ -203,7 +211,10 @@ const DYNAMIC_TEXT_JOIN_MIXIN = {
     if (insertIndex == null) {
       return;
     }
-    this.appendValueInput(`ADD${Blockly.utils.idGenerator.genUid()}`);
+    const input = this.appendValueInput(
+      `ADD${Blockly.utils.idGenerator.genUid()}`,
+    );
+    input.setAlign(Blockly.inputs.Align.RIGHT);
     this.moveNumberedInputBefore(this.inputList.length - 1, insertIndex);
   },
 
@@ -267,7 +278,7 @@ const DYNAMIC_TEXT_JOIN_MIXIN = {
 
     for (let i = 1; i < targetConns.length; i++) {
       const input = this.appendValueInput(`ADD${i}`);
-
+      input.setAlign(Blockly.inputs.Align.RIGHT);
       const targetConn = targetConns[i];
       if (targetConn) input.connection?.connect(targetConn);
     }
@@ -279,9 +290,10 @@ const DYNAMIC_TEXT_JOIN_MIXIN = {
    * @returns The added input.
    */
   addFirstInput(this: DynamicTextJoinBlock): Blockly.Input {
-    return this.appendValueInput('ADD0').appendField(
-      Blockly.Msg['TEXT_JOIN_TITLE_CREATEWITH'],
-    );
+    const input = this.appendValueInput('ADD0');
+    input.appendField(Blockly.Msg['TEXT_JOIN_TITLE_CREATEWITH']);
+    input.setAlign(Blockly.inputs.Align.RIGHT);
+    return input;
   },
 
   /**

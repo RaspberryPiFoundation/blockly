@@ -1,4 +1,4 @@
-const fs = require('fs-extra');
+const fs = require('node:fs');
 
 /**
  * Create package directory if it doesn't exist yet.

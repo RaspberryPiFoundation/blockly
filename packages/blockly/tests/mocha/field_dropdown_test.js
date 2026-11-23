@@ -236,6 +236,17 @@ suite('Dropdown Fields', function () {
         ['f', 'F'],
       ]);
     });
+    test('With trimmable options gets trimmed when the first option is longest', function () {
+      this.field.setOptions([
+        ['10 minutes', 'MINUTES'],
+        ['10 min', 'MIN'],
+      ]);
+      assert.deepEqual(this.field.prefixField, '10');
+      assert.deepEqual(this.field.getOptions(), [
+        ['minutes', 'MINUTES'],
+        ['min', 'MIN'],
+      ]);
+    });
     test('With an empty array of options throws', function () {
       assert.throws(function () {
         this.field.setOptions([]);
@@ -454,7 +465,7 @@ suite('Dropdown Fields', function () {
                   [
                     {
                       'src':
-                        'https://blockly-demo.appspot.com/static/tests/media/a.png',
+                        'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/a.png',
                       'width': 32,
                       'height': 32,
                       'alt': 'A',
@@ -464,7 +475,7 @@ suite('Dropdown Fields', function () {
                   [
                     {
                       'src':
-                        'https://blockly-demo.appspot.com/static/tests/media/b.png',
+                        'https://raspberrypifoundation.github.io/blockly/packages/blockly/tests/media/b.png',
                       'width': 32,
                       'height': 32,
                       'alt': 'B',

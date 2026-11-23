@@ -135,4 +135,22 @@ suite('Gesture', function () {
       this.workspace.id,
     );
   });
+
+  test('Duplicate pointerdown (missed pointerup) does not lock the workspace', function () {
+    const target = this.workspace.getSvgGroup();
+    dispatchPointerEvent(target, 'pointerdown', {pointerId: 1});
+    assert.isTrue(
+      Blockly.Gesture.inProgress(),
+      'Precondition: first pointerdown must start a gesture.',
+    );
+    // Duplicate pointerdown for the same pointer id (missed pointerup).
+    dispatchPointerEvent(target, 'pointerdown', {pointerId: 1});
+    // Releasing the pointer should end the gesture.
+    dispatchPointerEvent(document, 'pointerup', {pointerId: 1});
+
+    assert.isFalse(
+      Blockly.Gesture.inProgress(),
+      'Gesture should not remain in progress after the pointer is released.',
+    );
+  });
 });

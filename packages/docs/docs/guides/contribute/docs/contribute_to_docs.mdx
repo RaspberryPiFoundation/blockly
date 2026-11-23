@@ -102,18 +102,28 @@ this:
 
 The [API reference docs](https://docs.blockly.com/reference/) are automatically 
 generated with [TypeDoc](https://typedoc.org/) based on the contents of 
-`blockly_api.json`. Each time Blockly is released, `blockly_api.json` is 
-regenerated, so that the reference docs always reflect the state of the current 
-release. 
+`blockly_api.json` (core Blockly API) and `plugins_api.json` (plugins API). Each 
+time Blockly is released, these two files are regenerated so that the reference 
+docs always reflect the state of the current release. 
 
 If you would like to view local API changes in the reference docs: 
-1. Run `npm run reference-refresh` in the `packages/docs/` folder. This command 
-regenerates `blockly_api.json` based on the local state of the repository rather 
-than the latest released version. 
-1. Run `npm run start` in the docs folder. The reference docs will include local 
-changes. 
+1. Run `npm run reference-refresh` (or `npm run plugins-reference-refresh` if your changes
+are on a plugin) in the `packages/docs/` folder. 
+1. Run `npm run start` in the `packages/docs/` folder. The reference docs will 
+include local changes. 
 
-Take care to *never* commit `blockly_api.json`. This file is committed 
-automatically during the release process, and never by anyone contributing to 
-Blockly. Run `git restore packages/docs/blockly_api.json` to restore `blockly_api.json` 
-to the latest release. 
+:::warning
+Take care to *never* commit `blockly_api.json` or `plugins_api.json`. These 
+files are committed automatically during the release process, and never by 
+anyone contributing to Blockly. 
+:::
+
+If you regenerate `blockly_api.json` with `npm run reference-refresh`, or if you 
+regenerate `plugins_api.json` with `npm run plugins-reference-refresh`, you should discard 
+the changes before committing. Or, you can run the following git command to 
+restore both files: 
+
+```bash
+git restore packages/docs/blockly_api.json packages/docs/plugins_api.json
+```
+

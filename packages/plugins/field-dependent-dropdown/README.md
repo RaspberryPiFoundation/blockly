@@ -1,4 +1,6 @@
-# @blockly/field-dependent-dropdown [![Built on Blockly](https://tinyurl.com/built-on-blockly)](https://github.com/google/blockly)
+# @blockly/field-dependent-dropdown
+
+## [<img src="https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/docs/static/images/logos/built-with-blockly-badge-white.svg" alt="Built with Blockly" width="119">](https://github.com/RaspberryPiFoundation/blockly)
 
 A [Blockly](https://www.npmjs.com/package/blockly) dropdown field where the options depend on the value of a parent field.
 

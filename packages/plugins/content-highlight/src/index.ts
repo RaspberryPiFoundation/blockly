@@ -5,7 +5,9 @@
  */
 
 /**
- * @fileoverview A plugin that highlights the content on the workspace.
+ * A Blockly workspace plugin that adds a highlight around the content area.
+ *
+ * @packageDocumentation
  */
 
 import * as Blockly from 'blockly/core';

@@ -1,5 +1,5 @@
 ---
-description: Creating the custom block that we'll add validation to.
+description: Creating the custom block to add validation to.
 ---
 
 import Image from '@site/src/components/Image';
@@ -8,11 +8,11 @@ import Image from '@site/src/components/Image';
 
 ## 3. Create a block to validate
 
-Before we can add any validation, we need a custom block to validate. In this section you'll create a `list_range` block that generates a list of numbers counting up within a range, make it available in the toolbox, and define how it generates JavaScript code. The following sections will then build validation on top of it.
+In this codelab, you'll add validation to a custom block. Create a `list_range` block that generates a list of numbers counting up within a range, make it available in the toolbox, and define how it generates JavaScript code. The following sections will then build validation on top of it.
 
 ### Define a custom block type
 
-Let's define a new custom block type named `list_range` with two number fields called `FIRST` and `LAST`. Open `src/blocks/text.js`. It already defines an `add_text` block; add the following `listRange` definition below it:
+Define a new custom block type named `list_range` with two number fields called `FIRST` and `LAST`. Open `src/blocks/text.js`. It already defines an `add_text` block; add the following `listRange` definition below it:
 
 ```js
 // A custom block that generates a list of numbers counting up from FIRST to
@@ -88,4 +88,4 @@ Refresh the running page once again and try adding the new block to the workspac
   className="codelabImage"
 />
 
-Now we are ready to start adding validation!
+Now the block is ready for validation!

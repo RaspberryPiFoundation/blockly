@@ -1,6 +1,6 @@
 {
   "name": "@blockly/dev-scripts",
-  "version": "13.4.0",
+  "version": "13.5.0",
   "description": "Configuration and scripts for Blockly plugins.",
   "bin": {
     "blockly-scripts": "./bin/blockly-scripts.js"
@@ -22,15 +22,11 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@babel/code-frame": "^8.0.0",
-    "chalk": "^6.0.1",
-    "fork-ts-checker-webpack-plugin": "^9.1.0",
     "mocha": "^12.0.3",
-    "rimraf": "^6.1.3",
     "source-map-loader": "^5.0.0",
     "ts-loader": "^9.6.1",
-    "webpack": "^5.111.1",
-    "webpack-dev-server": "^6.0.0"
+    "webpack": "^5.112.2",
+    "webpack-dev-server": "^6.1.0"
   },
   "peerDependencies": {
     "typescript": "^4.3.2 || ^5 || ^6"

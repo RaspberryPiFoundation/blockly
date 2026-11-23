@@ -5,7 +5,9 @@
  */
 
 /**
- * @fileoverview Utility functions for handling suggestions.
+ * A plugin that adds toolbox panes with suggested blocks based on the user's
+ * past usage of blocks.
+ * @packageDocumentation
  */
 'use strict';
 

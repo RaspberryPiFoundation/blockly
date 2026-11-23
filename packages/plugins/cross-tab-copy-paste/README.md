@@ -1,4 +1,6 @@
-# @blockly/plugin-cross-tab-copy-paste [![Built on Blockly](https://tinyurl.com/built-on-blockly)](https://github.com/google/blockly)
+# @blockly/plugin-cross-tab-copy-paste
+
+## [<img src="https://github.com/RaspberryPiFoundation/blockly/raw/main/packages/docs/static/images/logos/built-with-blockly-badge-white.svg" alt="Built with Blockly" width="119">](https://github.com/RaspberryPiFoundation/blockly)
 
 A [Blockly](https://www.npmjs.com/package/blockly) plugin that adds context menu items and keyboard shortcuts to allow users to copy and paste a block between tabs.
 

@@ -22,11 +22,11 @@
   ],
   "devDependencies": {
     "@commitlint/cli": "^21.2.1",
-    "@commitlint/config-conventional": "21.0.0",
+    "@commitlint/config-conventional": "21.2.4",
     "@eslint/js": "^10.0.1",
-    "@nx/js": "23.3.0",
+    "@nx/js": "24.0.6",
     "conventional-changelog-conventionalcommits": "10.4.1",
-    "eslint": "10.12.0",
+    "eslint": "10.15.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsdoc": "^65.1.0",
@@ -34,14 +34,11 @@
     "eslint-plugin-mocha": "^12.0.2",
     "eslint-plugin-prettier": "^5.5.6",
     "globals": "^17.6.0",
-    "lerna": "^10.0.1",
-    "nx": "23.3.0",
-    "prettier": "3.9.10",
+    "lerna": "^10.1.1",
+    "nx": "24.0.6",
+    "prettier": "3.10.1",
     "prettier-plugin-organize-imports": "^4.3.0",
     "typescript-eslint": "^8.66.0"
-  },
-  "overrides": {
-    "conventional-changelog-conventionalcommits": "10.4.1"
   },
   "scripts": {
     "test": "npx nx run-many -t test",
@@ -53,6 +50,6 @@
     "format": "prettier --write .",
     "format-check": "prettier --check .",
     "clean": "npx nx reset && npm run clean --ws --if-present",
-    "version": "npm run reference-refresh --workspace=blockly-docs && git add packages/docs/blockly_api.json"
+    "version": "npm run reference-refresh --workspace=blockly-docs && npm run plugins-reference-refresh --workspace=blockly-docs && git add packages/docs/blockly_api.json packages/docs/plugins_api.json"
   }
 }

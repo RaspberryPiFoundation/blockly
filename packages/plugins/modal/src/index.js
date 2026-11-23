@@ -5,7 +5,11 @@
  */
 
 /**
- * @fileoverview Class responsible for creating a Blockly modal.
+ * A Blockly plugin that creates a modal.
+ * @packageDocumentation
+ */
+
+/**
  * @author aschmiedt@google.com (Abby Schmiedt)
  */
 

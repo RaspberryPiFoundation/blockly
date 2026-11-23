@@ -16,10 +16,10 @@
 
 'use strict';
 
-const path = require('path');
-const fs = require('fs');
+const path = require('node:path');
+const fs = require('node:fs');
 
-const chalk = require('chalk').default;
+const {styleText} = require('node:util');
 const webpack = require('webpack');
 const webpackConfig = require('../config/webpack.config');
 
@@ -34,8 +34,8 @@ const config = webpackConfig({
   mode: 'production',
 });
 if (!config.entry) {
-  console.log(`${chalk.red(`Configuration error.`)}
-Make sure a ${chalk.red('src/index.(js|ts)')} file is included in your package.
+  console.log(`${styleText('red', `Configuration error.`)}
+Make sure a ${styleText('red', 'src/index.(js|ts)')} file is included in your package.
 `);
   process.exit(1);
 }
@@ -65,15 +65,15 @@ webpack(config, (err, stats) => {
   };
 
   if (!messages.errors.length && !messages.warnings.length) {
-    console.log(chalk.green('Compiled successfully!'));
+    console.log(styleText('green', 'Compiled successfully!'));
   }
   if (messages.errors.length) {
-    console.log(chalk.red('Failed to compile.\n'));
+    console.log(styleText('red', 'Failed to compile.\n'));
     console.log(messages.errors.join('\n\n'));
     process.exit(1);
   }
   if (messages.warnings.length) {
-    console.log(chalk.yellow('Compiled with warnings.\n'));
+    console.log(styleText('yellow', 'Compiled with warnings.\n'));
     console.log(messages.warnings.join('\n\n'));
   }
 });

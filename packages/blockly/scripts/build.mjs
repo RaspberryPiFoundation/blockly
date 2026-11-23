@@ -8,7 +8,7 @@
  * @fileoverview Script to build the blockly package.
  */
 
-import {execSync} from 'child_process';
+import {execSync} from 'node:child_process';
 import {
   appendFile,
   mkdir,
@@ -19,10 +19,9 @@ import {
   writeFile,
 } from 'node:fs/promises';
 
-import {globSync} from 'glob';
-import * as path from 'path';
-import yargs from 'yargs';
-import {hideBin} from 'yargs/helpers';
+import {globSync} from 'node:fs';
+import * as path from 'node:path';
+import {parseArgs} from 'node:util';
 
 import {
   BUILD_DIR,
@@ -34,7 +33,13 @@ import {posixPath, quote} from './helpers.js';
 import {compile} from './lib/build_utils.mjs';
 import {getPackageJson} from './lib/package_json.mjs';
 
-const argv = yargs(hideBin(process.argv)).parse();
+const {values: argv} = parseArgs({
+  options: {
+    debug: {type: 'boolean'},
+    strict: {type: 'boolean'},
+    verbose: {type: 'boolean'},
+  },
+});
 
 /**
  * Suffix to add to compiled output files.

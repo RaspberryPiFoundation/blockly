@@ -477,4 +477,66 @@ suite('WidgetDiv', function () {
       );
     });
   });
+
+  suite('hideIfOwnerIsInWorkspace()', function () {
+    let otherDiv: HTMLDivElement;
+    let otherWorkspace: Blockly.WorkspaceSvg;
+
+    setup(function () {
+      otherDiv = document.createElement('div');
+      document.body.appendChild(otherDiv);
+      otherWorkspace = Blockly.inject(otherDiv, DEFAULT_INJECT_OPTIONS);
+    });
+
+    teardown(function () {
+      otherWorkspace.dispose();
+      otherDiv.remove();
+    });
+
+    async function openMutatorWorkspace() {
+      const block = workspace.newBlock('controls_if');
+      block.initSvg();
+      block.render();
+      const icon = block.getIcon(Blockly.icons.MutatorIcon.TYPE);
+      assert.isDefined(icon);
+      await icon.setBubbleVisible(true);
+      const mutatorWorkspace = icon.getWorkspace();
+      assert.isDefined(mutatorWorkspace);
+      return mutatorWorkspace;
+    }
+
+    test('hides div owned by the given workspace', function () {
+      Blockly.WidgetDiv.show({}, false, () => {}, workspace);
+
+      Blockly.WidgetDiv.hideIfOwnerIsInWorkspace(workspace);
+
+      assert.isFalse(Blockly.WidgetDiv.isVisible());
+    });
+
+    test('does not hide div owned by an unrelated workspace', function () {
+      Blockly.WidgetDiv.show({}, false, () => {}, workspace);
+
+      Blockly.WidgetDiv.hideIfOwnerIsInWorkspace(otherWorkspace);
+
+      assert.isTrue(Blockly.WidgetDiv.isVisible());
+    });
+
+    test('hides div owned by a child mutator workspace', async function () {
+      const mutatorWorkspace = await openMutatorWorkspace();
+      Blockly.WidgetDiv.show({}, false, () => {}, mutatorWorkspace);
+
+      Blockly.WidgetDiv.hideIfOwnerIsInWorkspace(workspace);
+
+      assert.isFalse(Blockly.WidgetDiv.isVisible());
+    });
+
+    test('does not hide div owned by the parent of a mutator workspace', async function () {
+      const mutatorWorkspace = await openMutatorWorkspace();
+      Blockly.WidgetDiv.show({}, false, () => {}, workspace);
+
+      Blockly.WidgetDiv.hideIfOwnerIsInWorkspace(mutatorWorkspace);
+
+      assert.isTrue(Blockly.WidgetDiv.isVisible());
+    });
+  });
 });

@@ -25,7 +25,7 @@ the same problem.
 
 ### What makes a great codelab?
 
-A great codelab is focused and readable. It clearly tell the user what they will
+A great codelab is focused and readable. It clearly tells the user what they will
 build and what they will learn, and it walks the user through writing and
 understanding code to complete a specific task.
 
@@ -43,11 +43,11 @@ Blockly team will publish it.
 
 ## Directory structure
 
-The [codelabs directory](https://github.com/RaspberryPiFoundation/blockly/tree/main/docs/docs/codelabs)
+The [codelabs directory](https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/docs/docs/codelabs)
 has one folder per codelab. Each codelab folder contains the codelab's Markdown
 files and usually contain `starter-code/` and `complete-code/` subdirectories.
 Assets (PNGs, GIFs, etc.) are stored in subdirectories of the
-[`docs/static/images/codelabs`](https://github.com/RaspberryPiFoundation/blockly/tree/main/docs/static/images/codelabs).
+[`packages/docs/static/images/codelabs`](https://github.com/RaspberryPiFoundation/blockly/tree/main/packages/docs/static/images/codelabs).
 
 ## Writing tips
 
@@ -62,7 +62,14 @@ writing a codelab.
 
 ### Setup
 
+- Base new codelabs on the Blockly sample app where possible. Readers can create
+  it with `npx @blockly/create-package app <folder-name>`, and the
+  [sample app overview](/guides/get-started/sample-app-overview/) and
+  [getting started codelab](/codelabs/getting-started/codelab-overview) already
+  explain its code.
 - What is the minimum setup required for the user to run your code?
+
+New codelabs should state the version of Blockly they are written for.
 
 ### Structure
 
@@ -74,7 +81,7 @@ codelabs:
   - What you'll build
   - What you need to know
 - Setup
-  - Download the repository code
+  - Create the sample app
   - Additional setup instructions
 - Step one: [Title goes here]
   - Explanation/motivation
@@ -94,9 +101,20 @@ consider breaking it into two codelabs.
 
 ### Writing style
 
-- Use a conversational writing style.
+- Use a friendly, direct writing style.
+- Write instructions in the imperative: "Add the following code to `index.js`",
+  not "Now we'll add the following code" or "Next, you will add the following
+  code".
+- Avoid "we" and "let's", unless "we" refers to the Blockly team (for example,
+  "We recommend...").
+- Use "you" for observations and expected results ("You should see a new block
+  in the toolbox") and for short stage-setting sentences at the start of a step
+  ("In this section, you'll create a custom category").
+- Refer to functions by name, without parentheses: `functionName`, not
+  `functionName()`. Include parameters only when they are relevant to the
+  passage, such as `shapeFor(connection)`.
 - Use headings to make the organization clear.
-- Use bulleted lists to break up walls of texts.
+- Use bulleted lists to break up walls of text.
 - Use images and gifs!
 
 ### Code style

@@ -47,8 +47,6 @@ LIGHT_FACTOR = .8
 DARK_FACTOR = .2
 
 #Change HSV (Hue Saturation Value) to RGB
-#This is adapted to python from the js version found here:
-#https://blockly-demo.appspot.com/closure-library/closure/goog/colour/color.js
 def hsvToRgb(h, s, brightness):
    red = 0
    green = 0
@@ -91,8 +89,6 @@ def hsvToRgb(h, s, brightness):
 
 
 #Blend two rgb colours with the factor being the weight given to the first colour
-#This is adapted to python from the js version found here:
-#https://blockly-demo.appspot.com/closure-library/closure/goog/colour/color.js
 def blend(rgb1, rgb2, factor):
    factor = max(min(factor, 1), 0)
    return [
@@ -103,16 +99,12 @@ def blend(rgb1, rgb2, factor):
 
 
 #Lightens a given rgb colour
-#This is adapted to python from the js version found here:
-#https://blockly-demo.appspot.com/closure-library/closure/goog/colour/color.js
 def lighten(rgb, factor):
    white = [255, 255, 255]
    return blend(white, rgb, factor)
 
 
 #Darkens a given rgb colour
-#This is adapted to python from the js version found here:
-#https://blockly-demo.appspot.com/closure-library/closure/goog/colour/color.js
 def darken(rgb, factor):
    black = [0, 0, 0];
    return blend(black, rgb, factor)

@@ -11,7 +11,7 @@
  */
 
 const args = process.argv.slice(2);
-const {spawnSync} = require('child_process');
+const {spawnSync} = require('node:child_process');
 
 const availableScripts = [
   'build',

@@ -1121,10 +1121,14 @@ class BackpackSerializer {
    * @param workspace the workspace to save
    * @returns the serialized JSON if present
    */
-  save(workspace: Blockly.WorkspaceSvg): object[] {
+  save(workspace: Blockly.Workspace): object | null {
+    if (!(workspace instanceof Blockly.WorkspaceSvg)) return null;
+
     const componentManager = workspace.getComponentManager();
-    const backpack = componentManager.getComponent('backpack') as Backpack;
-    return backpack?.getContents().map((text) => JSON.parse(text));
+    const backpack = componentManager.getComponent('backpack');
+    if (!(backpack instanceof Backpack)) return null;
+
+    return backpack.getContents().map((text) => JSON.parse(text));
   }
 
   /**
@@ -1133,10 +1137,14 @@ class BackpackSerializer {
    * @param state the serialized state JSON
    * @param workspace the workspace to load into
    */
-  load(state: object[], workspace: Blockly.WorkspaceSvg) {
+  load(state: object[], workspace: Blockly.Workspace) {
+    if (!(workspace instanceof Blockly.WorkspaceSvg)) return;
+
     const jsonStrings = state.map((j) => JSON.stringify(j));
     const componentManager = workspace.getComponentManager();
-    const backpack = componentManager.getComponent('backpack') as Backpack;
+    const backpack = componentManager.getComponent('backpack');
+    if (!(backpack instanceof Backpack)) return;
+
     backpack?.setContents(jsonStrings);
   }
 
@@ -1145,9 +1153,13 @@ class BackpackSerializer {
    *
    * @param workspace the workspace to reset
    */
-  clear(workspace: Blockly.WorkspaceSvg) {
+  clear(workspace: Blockly.Workspace) {
+    if (!(workspace instanceof Blockly.WorkspaceSvg)) return;
+
     const componentManager = workspace.getComponentManager();
-    const backpack = componentManager.getComponent('backpack') as Backpack;
+    const backpack = componentManager.getComponent('backpack');
+    if (!(backpack instanceof Backpack)) return;
+
     backpack?.empty();
   }
 }

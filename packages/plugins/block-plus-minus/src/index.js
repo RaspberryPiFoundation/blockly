@@ -5,7 +5,8 @@
  */
 
 /**
- * @fileoverview Adds blocks that replace the built-in mutator UI with a +/- UI.
+ * A group of blocks that replace the built-in mutator UI with a +/- based UI.
+ * @packageDocumentation
  */
 
 import './if.js';

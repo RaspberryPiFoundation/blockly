@@ -5,7 +5,9 @@
  */
 
 /**
- * @fileoverview Continuous-scroll toolbox and flyout that is always open.
+ * A Blockly plugin that adds a continous-scrolling style toolbox and flyout
+ *
+ * @packageDocumentation
  */
 
 import * as Blockly from 'blockly/core';

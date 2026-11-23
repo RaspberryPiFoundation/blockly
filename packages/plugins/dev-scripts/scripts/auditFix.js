@@ -13,9 +13,9 @@
  */
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const execSync = require('child_process').execSync;
+const fs = require('node:fs');
+const path = require('node:path');
+const execSync = require('node:child_process').execSync;
 
 const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);

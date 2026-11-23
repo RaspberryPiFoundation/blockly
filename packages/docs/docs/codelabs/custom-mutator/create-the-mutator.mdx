@@ -29,8 +29,8 @@ The `LIST_MUTATOR` will be the mixin object for the custom mutator.
 ### Serialize
 
 The mutator must serialize the extra state of the block. This is accomplished by 
-implementing the function `saveExtraState()`. Since this codelab implements a 
-list mutator, you can use the same `saveExtraState()` code as the default 
+implementing the function `saveExtraState`. Since this codelab implements a 
+list mutator, you can use the same `saveExtraState` code as the default 
 `lists_create_with` block. This function should return a JSON serializable value.
 
 Add the following code to the `LIST_MUTATOR` object:
@@ -48,10 +48,10 @@ export const LIST_MUTATOR = {
 ### Deserialize
 
 The mutator mixin must also load, or deserialize, the extra state of the block. 
-To deserialize, `loadExtraState()` reads in the `itemCount` value from the 
+To deserialize, `loadExtraState` reads in the `itemCount` value from the 
 `state` of the block. 
 
-Add the following code to the `LIST_MUTATOR`, just after `saveExtraState()`:
+Add the following code to the `LIST_MUTATOR`, just after `saveExtraState`:
 
 ```js
 loadExtraState: function(state) {
@@ -71,7 +71,7 @@ creating a custom UI.
 
 In this case, the optional function is a great way to initialize the number of 
 list items in the mutator. Since the block starts with one input (see the 
-[block definition](/codelabs/custom-mutator/the-basics#create-the-custom-block)), you'll set a variable on the block
+[block definition](/codelabs/custom-mutator/the-basics#create-the-custom-block)), set a variable on the block
 called `itemCount` to 1.
 
 Add the following import and registration to `index.js`: 

@@ -8,10 +8,10 @@
  * @fileoverview Filesystem helpers for the build and packaging scripts.
  */
 
-import {globSync} from 'glob';
+import {globSync} from 'node:fs';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
-import {BUILD_DIR, RELEASE_DIR} from '../gulpfiles/config.mjs';
+import {BUILD_DIR, RELEASE_DIR} from '../config.mjs';
 
 /**
  * Maximum number of file operations to have in flight at once, across
@@ -107,12 +107,12 @@ export async function writeFile(file, contents) {
  * @returns {Promise<void>} Promise resolved when copying is complete.
  */
 export async function copyFiles({from, patterns, to, ignore = [], transform}) {
-  const files = globSync(patterns, {
-    cwd: fromRoot(from),
-    ignore,
-    nodir: true,
-    posix: true,
-  });
+  const cwd = fromRoot(from);
+  const files = globSync(patterns, {cwd, exclude: ignore, withFileTypes: true})
+    .filter((entry) => !entry.isDirectory())
+    .map((entry) =>
+      path.relative(cwd, path.join(entry.parentPath, entry.name)),
+    );
   await Promise.all(
     files.map((file) =>
       withOpenFile(async () => {

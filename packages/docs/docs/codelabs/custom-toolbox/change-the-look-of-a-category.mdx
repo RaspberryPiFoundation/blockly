@@ -11,7 +11,7 @@ import Image from '@site/src/components/Image';
 ### Change the background of the category
 
 In the default `ToolboxCategory` class, the `addColourBorder_` method adds a strip of color next
-to the category name. We can override this method in order to add colour to the entire category div.
+to the category name. Override this method to add colour to the entire category div.
 
 Add the following code to your `CustomCategory` class.
 
@@ -66,7 +66,7 @@ similar to the below toolbox.
   className="codelabImage"
 />
 
-We are going to add some CSS to make it easier to read, and to space out our categories.
+Next, add some CSS to make the toolbox easier to read and to space out the categories.
 
 Create a file named `toolbox_style.css` in the same directory as `index.js`.
 Then, import the new file in `index.js`:

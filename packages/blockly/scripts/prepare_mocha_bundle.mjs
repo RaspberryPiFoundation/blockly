@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {globSync} from 'glob';
+import {globSync} from 'node:fs';
 import * as fs from 'node:fs/promises';
 import {createRequire} from 'node:module';
 import * as path from 'node:path';

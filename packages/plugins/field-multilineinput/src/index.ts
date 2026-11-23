@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/**
+ * A Blockly multilineinput field.
+ *
+ * @packageDocumentation
+ */
+
 import * as textMultiline from './blocks/textMultiline';
 
 export * from './field_multilineinput';

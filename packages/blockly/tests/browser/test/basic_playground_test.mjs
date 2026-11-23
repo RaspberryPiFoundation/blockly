@@ -38,7 +38,7 @@ async function getCommentText(browser, blockId) {
   }, blockId);
 }
 
-suite('Testing Connecting Blocks', function () {
+suite('Dragging out flyout blocks', function () {
   // Setting timeout to unlimited as the webdriver takes a longer time to run than most mocha test
   this.timeout(0);
 

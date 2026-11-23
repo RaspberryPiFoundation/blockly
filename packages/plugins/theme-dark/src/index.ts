@@ -5,7 +5,9 @@
  */
 
 /**
- * @fileoverview Dark theme.
+ * A Blockly dark theme.
+ *
+ * @packageDocumentation
  */
 
 import * as Blockly from 'blockly/core';

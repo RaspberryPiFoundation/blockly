@@ -16,9 +16,9 @@ Each sub-path is a string of [path commands](https://developer.mozilla.org/en-US
 
 SVG path commands can be written as strings, but Blockly provides a set of [utility functions](/reference/namespaces/utils/namespaces/svgPaths) to make writing and reading paths easier.
 
-### `init()`
+### `init`
 
-A connection's shape is stored as an object with information about its width, height, and sub-path. These objects are created in the `ConstantProvider`s `init()` function. Here is the start of the default implementation. The complete definition can be found inside [`constants.ts`](https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/blockly/core/renderers/common/constants.ts).
+A connection's shape is stored as an object with information about its width, height, and sub-path. These objects are created in the `ConstantProvider`s `init` function. Here is the start of the default implementation. The complete definition can be found inside [`constants.ts`](https://github.com/RaspberryPiFoundation/blockly/blob/main/packages/blockly/core/renderers/common/constants.ts).
 
 ```js
 /**
@@ -38,7 +38,7 @@ init() {
 }
 ```
 
-**Properties that are primitives should be set in the `constructor()`, while objects should be set in `init()`**. This separation allows a subclass to override a constant such as `NOTCH_WIDTH` and see the change reflected in objects that depend on the constant.
+**Properties that are primitives should be set in the `constructor`, while objects should be set in `init`**. This separation allows a subclass to override a constant such as `NOTCH_WIDTH` and see the change reflected in objects that depend on the constant.
 
 ### `shapeFor(connection)`
 

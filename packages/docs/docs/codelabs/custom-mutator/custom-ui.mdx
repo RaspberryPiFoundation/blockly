@@ -66,9 +66,9 @@ specific reason to use context menus.
 
 ### Add callbacks
 
-Two more functions complete the `LIST_MUTATOR` object: `addConnection()` 
-and `removeConnection()`. These functions can be called to add or remove an input.
-They simply update the `itemCount` and call `updateShape()` to update the block.
+Two more functions complete the `LIST_MUTATOR` object: `addConnection` 
+and `removeConnection`. These functions can be called to add or remove an input.
+They simply update the `itemCount` and call `updateShape` to update the block.
 
 Add the following code to the `LIST_MUTATOR` object:
 
@@ -96,7 +96,7 @@ precondition, check if this is the right type of block. This will determine
 whether the "Add Item" option should be enabled or hidden.
 
 Since the mutator is "mixed in" to the block definition, you can call 
-`addConnection()` directly on the block for the callback function. 
+`addConnection` directly on the block for the callback function. 
 
 Add the following code to `index.js`:
 
@@ -165,7 +165,7 @@ function registerRemoveItem() {
 
 ### Call the register functions
 
-Finally, call both `registerAddItem()` and `registerRemoveItem()` in `index.js`,  
+Finally, call both `registerAddItem` and `registerRemoveItem` in `index.js`,  
 just after the block and mutator registrations:
 
 ```js {}

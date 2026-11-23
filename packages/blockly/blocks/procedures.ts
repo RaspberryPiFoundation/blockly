@@ -43,6 +43,7 @@ import * as Variables from '../core/variables.js';
 import type {Workspace} from '../core/workspace.js';
 import type {WorkspaceSvg} from '../core/workspace_svg.js';
 import * as Xml from '../core/xml.js';
+import {NON_DUPLICATABLE_MIXIN} from './shared.js';
 
 /** A dictionary of the block definitions provided by this module. */
 export const blocks: {[key: string]: BlockDefinition} = {};
@@ -616,6 +617,7 @@ const PROCEDURES_MUTATORCONTAINER = {
     this.setStyle('procedure_blocks');
     this.setTooltip(Msg['PROCEDURES_MUTATORCONTAINER_TOOLTIP']);
     this.contextMenu = false;
+    this.mixin(NON_DUPLICATABLE_MIXIN, true);
   },
 };
 blocks['procedures_mutatorcontainer'] = PROCEDURES_MUTATORCONTAINER;
@@ -709,14 +711,32 @@ const PROCEDURES_MUTATORARGUMENT = {
       sourceBlock.workspace;
     const blocks = workspace.getAllBlocks(false);
     const caselessName = varName.toLowerCase();
+    const usedNames = [];
+    let isDuplicate = false;
     for (let i = 0; i < blocks.length; i++) {
       if (blocks[i].id === this.getSourceBlock()!.id) {
         continue;
       }
       // Other blocks values may not be set yet when this is loaded.
       const otherVar = blocks[i].getFieldValue('NAME');
-      if (otherVar && otherVar.toLowerCase() === caselessName) {
+      if (otherVar) {
+        if (!this.editingInteractively) {
+          usedNames.push(otherVar);
+        }
+        if (otherVar.toLowerCase() === caselessName) {
+          isDuplicate = true;
+        }
+      }
+    }
+
+    if (isDuplicate) {
+      if (this.editingInteractively) {
         return null;
+      } else {
+        varName = Variables.generateUniqueNameFromOptions(
+          Procedures.DEFAULT_ARG,
+          usedNames,
+        );
       }
     }
 

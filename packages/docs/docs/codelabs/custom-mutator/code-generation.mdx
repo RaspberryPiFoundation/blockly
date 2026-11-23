@@ -55,9 +55,9 @@ Now try moving the list block. The code window will be updated.
 
 ### Why doesn't the code update immediately? 
 
-In the sample app, a function called `runCode()` handles generating the code 
+In the sample app, a function called `runCode` handles generating the code 
 for the code window. A [change listener](https://docs.blockly.com/guides/configure/events/#listen-to-events-from-the-workspace) 
-in `index.js` calls `runCode()` when certain types of events are detected. 
+in `index.js` calls `runCode` when certain types of events are detected. 
 
 This means that when blocks are changed, moved, or added, an event is fired and 
 the code is regenerated. However, the new mutator does not fire any events, so adding 

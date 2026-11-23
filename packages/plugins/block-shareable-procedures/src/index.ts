@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/**
+ * A plugin that adds procedure blocks which are backed by explicit data models.
+ *
+ * @packageDocumentation
+ */
+
 import * as Blockly from 'blockly/core';
 import {ObservableParameterModel} from './observable_parameter_model';
 import {ObservableProcedureModel} from './observable_procedure_model';

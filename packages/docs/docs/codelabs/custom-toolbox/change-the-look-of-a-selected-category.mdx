@@ -13,10 +13,10 @@ Open your application and click on a category. You will see that it
 doesn't give any indication that it has been clicked. Worse than that, if you
 click on the category a second time the background color will disappear.
 
-To fix this, we are going to override the `setSelected` method to change the look
+To fix this, override the `setSelected` method to change the look
 of a category when it has been clicked. In the default category class this method
-adds a colour to the entire row when a category is selected. Since we have already
-expanded the colour over our entire div, we are going to change the background
+adds a colour to the entire row when a category is selected. Since the colour already
+covers the entire div, change the background
 color of the div to white, and the text to the color of the category when it has
 been selected.
 
@@ -43,8 +43,8 @@ setSelected(isSelected){
 
 ### Include accessibility features
 
-Since `setSelected` overrides without calling `super.setSelected()`, this version replaces the parent's behaviour entirely.
-The parent method does one thing we still need: it sets the ARIA state to `State.SELECTED` 
+Since this `setSelected` doesn't call `super.setSelected`, it replaces the parent's behaviour entirely.
+The parent method does one thing that is still needed: it sets the ARIA state to `State.SELECTED` 
 so that screen readers can announce when a category is selected. 
 
 There are multiple ways to handle this:

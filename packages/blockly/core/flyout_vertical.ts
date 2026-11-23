@@ -229,7 +229,10 @@ export class VerticalFlyout extends Flyout {
     let cursorY = margin;
 
     for (const item of contents) {
-      item.getElement().moveBy(cursorX, cursorY);
+      const origin = item.getElement().getBoundingRectangle();
+      const deltaX = cursorX - origin.left;
+      const deltaY = cursorY - origin.top;
+      item.getElement().moveBy(deltaX, deltaY);
       cursorY += item.getElement().getBoundingRectangle().getHeight();
     }
   }
