@@ -160,9 +160,7 @@ suite('Keyboard-driven movement', function () {
    * Get information about the currently-focused block's parent and
    * child blocks.
    *
-   * @returns {!Promise<{parentId: string | null, parentIndex: number | null, nextId: string | null, valueId: string | null}>} A promise resolving to
-   *
-   *         {parentId, parentIndex, nextId, valueId}
+   * @returns {!{parentId: string | null, parentIndex: number | null, nextId: string | null, valueId: string | null}}
    *
    *     where parentId, parentIndex are the ID of the parent block and
    *     the index of the connection on that block to which the
@@ -172,24 +170,22 @@ suite('Keyboard-driven movement', function () {
    *     focused block (or, in each case, null if there is no such
    *     block).
    */
-  async function getFocusedNeighbourInfo() {
-    return Blockly.renderManagement.finishQueuedRenders().then(() => {
-      const block = Blockly.getFocusManager().getFocusedNode();
-      if (!block) throw new Error('nothing focused');
-      if (!(block instanceof Blockly.BlockSvg)) {
-        throw new TypeError('focused node is not a BlockSvg');
-      }
-      const parent = block?.getParent();
-      return {
-        parentId: parent?.id ?? null,
-        parentIndex:
-          parent
-            ?.getConnections_(true)
-            .findIndex((conn) => conn.targetBlock() === block) ?? null,
-        nextId: block?.getNextBlock()?.id ?? null,
-        valueId: block?.inputList[0].connection?.targetBlock()?.id ?? null,
-      };
-    });
+  function getFocusedNeighbourInfo() {
+    const block = Blockly.getFocusManager().getFocusedNode();
+    if (!block) throw new Error('nothing focused');
+    if (!(block instanceof Blockly.BlockSvg)) {
+      throw new TypeError('focused node is not a BlockSvg');
+    }
+    const parent = block?.getParent();
+    return {
+      parentId: parent?.id ?? null,
+      parentIndex:
+        parent
+          ?.getConnections_(true)
+          .findIndex((conn) => conn.targetBlock() === block) ?? null,
+      nextId: block?.getNextBlock()?.id ?? null,
+      valueId: block?.inputList[0].connection?.targetBlock()?.id ?? null,
+    };
   }
 
   /**
@@ -245,7 +241,8 @@ suite('Keyboard-driven movement', function () {
       // Navigate to block to be moved and initiate move.
       const block = this.workspace.getBlockById(mover);
       Blockly.getFocusManager().focusNode(block);
-      const initialInfo = await getFocusedNeighbourInfo();
+      await this.clock.runAllAsync();
+      const initialInfo = getFocusedNeighbourInfo();
       startMove(this.workspace);
       // Press specified key multiple times, checking connection candidates.
       for (let i = 0; i < candidates.length; i++) {
@@ -257,7 +254,8 @@ suite('Keyboard-driven movement', function () {
 
       // Finish move and check final location of moved block.
       endMove(this.workspace);
-      const finalInfo = await getFocusedNeighbourInfo();
+      await this.clock.runAllAsync();
+      const finalInfo = getFocusedNeighbourInfo();
       assert.deepEqual(initialInfo, finalInfo);
     };
   }
@@ -1738,7 +1736,9 @@ suite('Keyboard-driven movement', function () {
       const commentBlock = this.workspace.newBlock('logic_compare');
       commentBlock.setCommentText('Hello world');
       const icon = commentBlock.getIcon(Blockly.icons.IconType.COMMENT);
-      await icon.setBubbleVisible(true);
+      const shown = icon.setBubbleVisible(true);
+      await this.clock.runAllAsync();
+      await shown;
       this.element = icon.getBubble();
     });
 
