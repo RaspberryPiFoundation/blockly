@@ -294,7 +294,7 @@ suite('Variables', function () {
         this.workspace
           .getProcedureMap()
           .add(
-            new MockProcedureModel('test name')
+            new MockProcedureModel(this.workspace, 'test name')
               .insertParameter(
                 new MockParameterModelWithVar('x', this.workspace),
                 0,
@@ -320,7 +320,7 @@ suite('Variables', function () {
           this.workspace
             .getProcedureMap()
             .add(
-              new MockProcedureModel('test name')
+              new MockProcedureModel(this.workspace, 'test name')
                 .insertParameter(
                   new MockParameterModelWithVar(
                     'definitely not x',

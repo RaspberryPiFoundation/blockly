@@ -27,7 +27,7 @@ suite('Procedure Map', function () {
 
   suite('publishing', function () {
     test('inserting a procedure tells it to start publishing', function () {
-      const procedureModel = new MockProcedureModel();
+      const procedureModel = new MockProcedureModel(workspace);
       const spy = sinon.spy(procedureModel, 'startPublishing');
       workspace.getProcedureMap().set(procedureModel.getId(), procedureModel);
 
@@ -35,7 +35,7 @@ suite('Procedure Map', function () {
     });
 
     test('adding a procedure tells it to start publishing', function () {
-      const procedureModel = new MockProcedureModel();
+      const procedureModel = new MockProcedureModel(workspace);
       const spy = sinon.spy(procedureModel, 'startPublishing');
       workspace.getProcedureMap().add(procedureModel);
 
@@ -43,7 +43,7 @@ suite('Procedure Map', function () {
     });
 
     test('deleting a procedure tells it to stop publishing', function () {
-      const procedureModel = new MockProcedureModel();
+      const procedureModel = new MockProcedureModel(workspace);
       const spy = sinon.spy(procedureModel, 'stopPublishing');
       workspace.getProcedureMap().add(procedureModel);
 

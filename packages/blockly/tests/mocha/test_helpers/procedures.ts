@@ -194,17 +194,18 @@ export function createProcCallBlock(
 }
 
 export class MockProcedureModel implements Blockly.procedures.IProcedureModel {
-  private readonly id = Blockly.utils.idGenerator.genUid();
+  private id = Blockly.utils.idGenerator.genUid();
   private name: string;
   private readonly parameters: Blockly.procedures.IParameterModel[] = [];
   private returnTypes: string[] | null = null;
   private enabled = true;
-  constructor(name = '') {
+  constructor(workspace: Blockly.Workspace, name = '', id?: string) {
     this.name = name;
+    this.id = id ?? this.id;
   }
 
-  static loadState(_state: object, _workspace: Blockly.Workspace) {
-    return new MockProcedureModel();
+  static loadState(_state: object, workspace: Blockly.Workspace) {
+    return new MockProcedureModel(workspace);
   }
 
   saveState() {
@@ -269,15 +270,16 @@ export class MockProcedureModel implements Blockly.procedures.IProcedureModel {
 }
 
 export class MockParameterModel implements Blockly.procedures.IParameterModel {
-  private readonly id = Blockly.utils.idGenerator.genUid();
+  private id = Blockly.utils.idGenerator.genUid();
   private types: string[] = [];
   private name: string;
-  constructor(name: string) {
+  constructor(workspace: Blockly.Workspace, name = '', id?: string) {
     this.name = name;
+    this.id = id ?? this.id;
   }
 
-  static loadState(_state: object, _workspace: Blockly.Workspace) {
-    return new MockParameterModel('test');
+  static loadState(_state: object, workspace: Blockly.Workspace) {
+    return new MockParameterModel(workspace, 'test');
   }
 
   setProcedureModel(_model: Blockly.procedures.IProcedureModel) {
@@ -315,7 +317,7 @@ export class MockParameterModelWithVar extends MockParameterModel {
   private variable: Blockly.VariableModel;
 
   constructor(name: string, workspace: Blockly.Workspace) {
-    super(name);
+    super(workspace, name);
     this.variable = new Blockly.VariableModel(workspace, name);
   }
 
