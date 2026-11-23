@@ -61,7 +61,6 @@ import * as blocks from './serialization/blocks.js';
 import type {BlockStyle} from './theme.js';
 import * as Tooltip from './tooltip.js';
 import {idGenerator} from './utils.js';
-import * as accessibility from './utils/accessibility.js';
 import * as aria from './utils/aria.js';
 import * as colour from './utils/colour.js';
 import {Coordinate} from './utils/coordinate.js';
@@ -1052,30 +1051,12 @@ export class BlockSvg
     }
     this.svgGroup.style.setProperty(
       '--blockly-block-foreground',
-      this.getTextColour(background),
+      colour.getReadableTextColour(
+        background,
+        config.textContrast,
+        config.increasedTextContrast,
+      ),
     );
-  }
-
-  /**
-   * Returns the colour for text drawn on this block over the given
-   * background: white, or black if white would have less contrast than
-   * `config.textContrast`, or than `config.increasedTextContrast` for users
-   * who prefer more contrast.
-   *
-   * @param background The colour behind the text.
-   * @param increased Whether the user prefers more contrast. Defaults to their
-   *     operating system setting.
-   * @returns White ('#ffffff') or black ('#000000').
-   * @internal
-   */
-  getTextColour(
-    background: string,
-    increased = accessibility.shouldIncreaseContrast(),
-  ): string {
-    const minWhiteContrast = increased
-      ? Math.max(config.textContrast, config.increasedTextContrast)
-      : config.textContrast;
-    return colour.getReadableTextColour(background, minWhiteContrast);
   }
 
   /**

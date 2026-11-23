@@ -97,36 +97,6 @@ suite('Block foreground colour', function () {
     Object.assign(Blockly.config, defaultConfig);
   });
 
-  suite('getTextColour', function () {
-    let block: Blockly.BlockSvg;
-
-    setup(function () {
-      workspace = Blockly.inject('blocklyDiv', {theme: TEST_THEME});
-      block = createBlock(workspace, 'text_print', 'dark');
-      Object.assign(Blockly.config, defaultConfig);
-    });
-
-    test('by default, text is always white', function () {
-      assert.equal(block.getTextColour(LIGHT_GRAY, false), WHITE);
-    });
-
-    test('by default, users who prefer more contrast get at least 4.5', function () {
-      // The default logic block colour. White has a contrast of 4.1 on it.
-      assert.equal(block.getTextColour('#5b80a5', true), BLACK);
-    });
-
-    test('the minimum for users who prefer more contrast can be changed', function () {
-      Blockly.config.increasedTextContrast = 3;
-      assert.equal(block.getTextColour('#5b80a5', true), WHITE);
-    });
-
-    test('preferring more contrast does not lower a higher setting', function () {
-      Blockly.config.textContrast = 7;
-      // The default math block colour. White has a contrast of 5.4 on it.
-      assert.equal(block.getTextColour('#5b67a5', true), BLACK);
-    });
-  });
-
   suite('Thrasos', function () {
     setup(function () {
       workspace = Blockly.inject('blocklyDiv', {

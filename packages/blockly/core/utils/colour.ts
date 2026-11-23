@@ -6,6 +6,8 @@
 
 // Former goog.module ID: Blockly.utils.colour
 
+import * as accessibility from './accessibility.js';
+
 /**
  * The richness of block colours, regardless of the hue.
  * Must be in the range of 0 (inclusive) to 1 (exclusive).
@@ -356,23 +358,27 @@ export function getContrastRatio(colour1: string, colour2: string): number {
 
 /**
  * Gets the colour for text drawn on a background: white, or black if white
- * would have less contrast than the given minimum.
+ * would have less contrast than the minimum. WCAG asks for at least 4.5 for
+ * normal text and 3 for large text and graphics.
  *
  * @param background Colour in any format `parse` accepts.
- * @param minWhiteContrast The lowest contrast ratio at which the text stays
- *     white. WCAG asks for at least 4.5 for normal text and 3 for large text
- *     and graphics.
+ * @param contrast The lowest contrast ratio at which the text stays white.
+ * @param increasedContrast The lowest contrast ratio at which the text stays
+ *     white for users who ask their operating system for more contrast. It
+ *     never lowers `contrast`.
  * @returns White ('#ffffff') or black ('#000000').
  * @throws If the background can't be parsed.
  * @internal
  */
 export function getReadableTextColour(
   background: string,
-  minWhiteContrast: number,
+  contrast: number,
+  increasedContrast = contrast,
 ): string {
+  const minContrast = accessibility.shouldIncreaseContrast()
+    ? Math.max(contrast, increasedContrast)
+    : contrast;
   const white = names['white'];
   const black = names['black'];
-  return getContrastRatio(background, white) >= minWhiteContrast
-    ? white
-    : black;
+  return getContrastRatio(background, white) >= minContrast ? white : black;
 }

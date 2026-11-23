@@ -14,6 +14,7 @@
 // Former goog.module ID: Blockly.FieldDropdown
 
 import type {BlockSvg} from './block_svg.js';
+import {config} from './config.js';
 import * as dropDownDiv from './dropdowndiv.js';
 import type {FieldConfig, FieldValidator} from './field.js';
 import {Field, UnattachedFieldError} from './field.js';
@@ -23,6 +24,7 @@ import {MenuSeparator} from './menu_separator.js';
 import {MenuItem} from './menuitem.js';
 import {Msg} from './msg.js';
 import * as aria from './utils/aria.js';
+import * as colour from './utils/colour.js';
 import {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
 import * as parsing from './utils/parsing.js';
@@ -519,7 +521,11 @@ export class FieldDropdown extends Field<string> {
         // The text sits on this rect, not the block, while the menu is open.
         this.fieldGroup_?.style.setProperty(
           '--blockly-block-foreground',
-          sourceBlock.getTextColour(background),
+          colour.getReadableTextColour(
+            background,
+            config.textContrast,
+            config.increasedTextContrast,
+          ),
         );
       } else {
         this.borderRect_.setAttribute('fill', 'transparent');

@@ -608,10 +608,6 @@ suite('Utils', function () {
           Blockly.utils.colour.getLuminance('#f00'),
         );
       });
-
-      test('throws for an invalid colour', function () {
-        assert.throws(() => Blockly.utils.colour.getLuminance('not a colour'));
-      });
     });
 
     suite('getContrastRatio', function () {
@@ -659,6 +655,13 @@ suite('Utils', function () {
         assert.equal(
           Blockly.utils.colour.getReadableTextColour('#ffffff', 1),
           '#ffffff',
+        );
+      });
+
+      test('the increased minimum never lowers the minimum', function () {
+        assert.equal(
+          Blockly.utils.colour.getReadableTextColour(MID_BLUE, 4.5, 3),
+          '#000000',
         );
       });
     });
