@@ -49,6 +49,18 @@
             // Refresh theme.
             ws.setTheme(ws.getTheme());
           });
+
+        // Minimum contrast for white block text.
+        var contrastFolder = gui.addFolder('Contrast');
+        for (const key of ['textContrast', 'increasedTextContrast']) {
+          contrastFolder
+            .add(Blockly.config, key, 1, 21, 0.1)
+            .onChange(function () {
+              var ws = playground.getWorkspace();
+              // Refresh theme and recolour all blocks.
+              ws.setTheme(ws.getTheme());
+            });
+        }
       }
 
       function initPlayground() {

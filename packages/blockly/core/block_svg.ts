@@ -62,6 +62,7 @@ import type {BlockStyle} from './theme.js';
 import * as Tooltip from './tooltip.js';
 import {idGenerator} from './utils.js';
 import * as aria from './utils/aria.js';
+import * as colour from './utils/colour.js';
 import {Coordinate} from './utils/coordinate.js';
 import * as dom from './utils/dom.js';
 import {Rect} from './utils/rect.js';
@@ -1017,14 +1018,45 @@ export class BlockSvg
   applyColour() {
     this.pathObject.applyColour?.(this);
 
-    const icons = this.getIcons();
-    for (let i = 0; i < icons.length; i++) {
-      icons[i].applyColour();
-    }
-
     for (const field of this.getFields()) {
       field.applyColour();
     }
+
+    // These have to come after the fields, because a field that fills the
+    // whole block repaints the block in its own applyColour.
+    this.updateForegroundColour();
+    for (const icon of this.getIcons()) {
+      icon.applyColour();
+    }
+  }
+
+  /**
+   * Picks white text, or black if the block is too light for white, and sets
+   * it as the `--blockly-block-foreground` CSS property for the block's text
+   * to use.
+   */
+  private updateForegroundColour() {
+    let background;
+    if (!this.isEnabled() || this.getInheritedDisabled()) {
+      // CSS draws the disabled pattern over the fill set on the path.
+      background = this.workspace
+        .getRenderer()
+        .getConstants().DISABLED_PATTERN_COLOUR;
+    } else {
+      // Read back the fill rather than the style, because a field that fills
+      // the whole block repaints the block in its own colour.
+      background =
+        colour.parse(this.pathObject.svgPath.getAttribute('fill') ?? '') ??
+        this.getColour();
+    }
+    this.svgGroup.style.setProperty(
+      '--blockly-block-foreground',
+      colour.getReadableTextColour(
+        background,
+        config.textContrast,
+        config.increasedTextContrast,
+      ),
+    );
   }
 
   /**

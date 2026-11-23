@@ -588,6 +588,89 @@ suite('Utils', function () {
     });
   });
 
+  suite('Colour', function () {
+    suite('getLuminance', function () {
+      test('black is 0', function () {
+        assert.equal(Blockly.utils.colour.getLuminance('#000000'), 0);
+      });
+
+      test('white is 1', function () {
+        assert.equal(Blockly.utils.colour.getLuminance('#ffffff'), 1);
+      });
+
+      test('mid gray is about 0.184', function () {
+        assert.closeTo(
+          Blockly.utils.colour.getLuminance('#777777'),
+          0.184,
+          0.001,
+        );
+      });
+
+      test('accepts named colours and short hex', function () {
+        assert.equal(
+          Blockly.utils.colour.getLuminance('red'),
+          Blockly.utils.colour.getLuminance('#f00'),
+        );
+      });
+    });
+
+    suite('getContrastRatio', function () {
+      test('black and white is 21', function () {
+        assert.equal(
+          Blockly.utils.colour.getContrastRatio('#000000', '#ffffff'),
+          21,
+        );
+      });
+
+      test('a colour against itself is 1', function () {
+        assert.equal(
+          Blockly.utils.colour.getContrastRatio('#5b80a5', '#5b80a5'),
+          1,
+        );
+      });
+
+      test('the order of the colours does not matter', function () {
+        assert.equal(
+          Blockly.utils.colour.getContrastRatio('#5b80a5', '#ffffff'),
+          Blockly.utils.colour.getContrastRatio('#ffffff', '#5b80a5'),
+        );
+      });
+    });
+
+    suite('getReadableTextColour', function () {
+      // White has a contrast of 4.1 on this blue.
+      const MID_BLUE = '#5b80a5';
+
+      test('white when it meets the minimum', function () {
+        assert.equal(
+          Blockly.utils.colour.getReadableTextColour(MID_BLUE, 3),
+          '#ffffff',
+        );
+      });
+
+      test('black when white is below the minimum', function () {
+        assert.equal(
+          Blockly.utils.colour.getReadableTextColour(MID_BLUE, 4.5),
+          '#000000',
+        );
+      });
+
+      test('a minimum of 1 always gives white', function () {
+        assert.equal(
+          Blockly.utils.colour.getReadableTextColour('#ffffff', 1),
+          '#ffffff',
+        );
+      });
+
+      test('the increased minimum never lowers the minimum', function () {
+        assert.equal(
+          Blockly.utils.colour.getReadableTextColour(MID_BLUE, 4.5, 3),
+          '#000000',
+        );
+      });
+    });
+  });
+
   suite('deepMerge', function () {
     test('Merges two objects', function () {
       const target = {a: 1, b: '2', shared: 'this should be overwritten'};

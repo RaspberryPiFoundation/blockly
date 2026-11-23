@@ -317,6 +317,9 @@ export class ConstantProvider {
    */
   disabledPatternId = '';
 
+  /** The background colour of the pattern drawn over disabled blocks. */
+  DISABLED_PATTERN_COLOUR = '#aaa';
+
   /**
    * The <pattern> element to use for disabled blocks, or null if not set.
    */
@@ -1035,7 +1038,7 @@ export class ConstantProvider {
     );
     dom.createSvgElement(
       Svg.RECT,
-      {'width': 10, 'height': 10, 'fill': '#aaa'},
+      {'width': 10, 'height': 10, 'fill': this.DISABLED_PATTERN_COLOUR},
       disabledPattern,
     );
     dom.createSvgElement(
@@ -1173,7 +1176,7 @@ export class ConstantProvider {
 
       // Fields.
       `${selector} .blocklyText {`,
-        `fill: #fff;`,
+        `fill: var(--blockly-block-foreground, #fff);`,
       `}`,
       `${selector} .blocklyNonEditableField>rect,`,
       `${selector} .blocklyEditableField>rect {`,
