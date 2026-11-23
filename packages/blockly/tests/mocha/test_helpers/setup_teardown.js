@@ -115,6 +115,7 @@ function wrapDefineBlocksWithJsonArrayWithCleanup_(sharedCleanupObj) {
  * @typedef {{
  *   clock: import('sinon').SinonFakeTimers,
  *   eventsFireStub: (import('sinon').SinonStub),
+ *   globalDocumentEventListeners: {type: string, listener: () => void}[],
  * }} SharedTestState
  */
 
@@ -169,6 +170,7 @@ export function sharedTestSetup(options = {}) {
   return {
     clock: this.clock,
     eventsFireStub: this.eventsFireStub,
+    globalDocumentEventListeners: this.globalDocumentEventListeners,
   };
 }
 
