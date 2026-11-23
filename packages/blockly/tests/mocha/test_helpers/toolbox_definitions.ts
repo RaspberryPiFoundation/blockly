@@ -3,13 +3,13 @@
  * Copyright 2020 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-
+import * as Blockly from '#core/blockly.js';
 import {DEFAULT_INJECT_OPTIONS} from './setup_teardown.js';
 
 /**
  * Get JSON for a toolbox that contains categories.
- * @return {Blockly.utils.toolbox.ToolboxJson} The array holding information
- *    for a toolbox.
+ *
+ * @return The array holding information for a toolbox.
  */
 export function getCategoryJSON() {
   return {
@@ -49,9 +49,9 @@ export function getCategoryJSON() {
 }
 
 /**
- * Get JSON for a simple toolbox.
- * @return {Blockly.utils.toolbox.ToolboxJson} The array holding information
- *    for a simple toolbox.
+ * Get JSON for a simple toolbox that uses a `blockxml` field in the JSON.
+ *
+ * @return The array holding information for a simple toolbox.
  */
 export function getSimpleJson() {
   return {
@@ -89,6 +89,11 @@ export function getSimpleJson() {
   };
 }
 
+/**
+ * Get JSON for a simple toolbox using a pure-JSON definition.
+ *
+ * @return A toolbox definition.
+ */
 export function getProperSimpleJson() {
   return {
     'contents': [
@@ -136,8 +141,8 @@ export function getProperSimpleJson() {
 
 /**
  * Get JSON for a toolbox that contains categories that contain categories.
- * @return {Blockly.utils.toolbox.ToolboxJson} The array holding information
- *    for a toolbox.
+ *
+ * @return The array holding information for a toolbox.
  */
 export function getDeeplyNestedJSON() {
   return {
@@ -190,7 +195,8 @@ export function getDeeplyNestedJSON() {
 
 /**
  * Get an array filled with xml elements.
- * @return {Array<Node>} Array holding xml elements for a toolbox.
+ *
+ * @return Array holding xml elements for a toolbox.
  */
 export function getXmlArray() {
   const block = Blockly.utils.xml.textToDom(
@@ -216,6 +222,9 @@ export function getXmlArray() {
   return [block, separator, button, label];
 }
 
+/**
+ * Injects a Blockly workspace and returns its toolbox.
+ */
 export function getInjectedToolbox() {
   /**
    * Category: First
@@ -229,7 +238,7 @@ export function getInjectedToolbox() {
    * Category: NestedCategory
    *   Category: NestedItemOne
    */
-  const toolboxXml = document.getElementById('toolbox-test');
+  const toolboxXml = document.getElementById('toolbox-test') ?? undefined;
   const workspace = Blockly.inject('blocklyDiv', {
     ...DEFAULT_INJECT_OPTIONS,
     toolbox: toolboxXml,
@@ -237,16 +246,21 @@ export function getInjectedToolbox() {
   return workspace.getToolbox();
 }
 
+/**
+ * Returns a jankily-constructed toolbox. New tests should not use this.
+ */
 export function getBasicToolbox() {
   const workspace = new Blockly.WorkspaceSvg(new Blockly.Options({}));
   const toolbox = new Blockly.Toolbox(workspace);
   toolbox.HtmlDiv = document.createElement('div');
-  toolbox.flyout = sinon.createStubInstance(Blockly.VerticalFlyout);
   return toolbox;
 }
 
-export function getCollapsibleItem(toolbox) {
-  const contents = toolbox.contents.values();
+/**
+ * Returns the first collapsible item of the given toolbox.
+ */
+export function getCollapsibleItem(toolbox: Blockly.Toolbox) {
+  const contents = toolbox.getToolboxItems();
   for (const item of contents) {
     if (item.isCollapsible()) {
       return item;
@@ -254,8 +268,11 @@ export function getCollapsibleItem(toolbox) {
   }
 }
 
-export function getNonCollapsibleItem(toolbox) {
-  const contents = toolbox.contents.values();
+/**
+ * Returns the first non-collapsible item of the given toolbox.
+ */
+export function getNonCollapsibleItem(toolbox: Blockly.Toolbox) {
+  const contents = toolbox.getToolboxItems();
   for (const item of contents) {
     if (!item.isCollapsible()) {
       return item;
@@ -263,10 +280,16 @@ export function getNonCollapsibleItem(toolbox) {
   }
 }
 
-export function getChildItem(toolbox) {
+/**
+ * Returns the toolbox item with ID `nestedCategory` of the given toolbox.
+ */
+export function getChildItem(toolbox: Blockly.Toolbox) {
   return toolbox.getToolboxItemById('nestedCategory');
 }
 
-export function getSeparator(toolbox) {
+/**
+ * Returns the toolbox item with ID `separator` of the given toolbox.
+ */
+export function getSeparator(toolbox: Blockly.Toolbox) {
   return toolbox.getToolboxItemById('separator');
 }
