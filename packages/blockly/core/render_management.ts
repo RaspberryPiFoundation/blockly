@@ -61,7 +61,7 @@ export function queueRender(block: BlockSvg): Promise<void> {
   if (!afterRendersPromise) {
     afterRendersPromise = new Promise((resolve) => {
       afterRendersResolver = resolve;
-      animationRequestId = window.requestAnimationFrame(() => {
+      animationRequestId = requestAnimationFrame(() => {
         doRenders();
         resolve();
       });
@@ -90,7 +90,7 @@ export function finishQueuedRenders(): Promise<void> {
  * @internal
  */
 export function triggerQueuedRenders(workspace?: WorkspaceSvg) {
-  if (!workspace) window.cancelAnimationFrame(animationRequestId);
+  if (!workspace) cancelAnimationFrame(animationRequestId);
   doRenders(workspace);
   if (!workspace && afterRendersResolver) afterRendersResolver();
 }
