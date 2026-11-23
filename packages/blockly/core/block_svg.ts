@@ -1019,18 +1019,16 @@ export class BlockSvg
   applyColour() {
     this.pathObject.applyColour?.(this);
 
-    const icons = this.getIcons();
-    for (let i = 0; i < icons.length; i++) {
-      icons[i].applyColour();
-    }
-
     for (const field of this.getFields()) {
       field.applyColour();
     }
 
-    // This has to come last, because a field that fills the whole block
-    // repaints the block in its own applyColour.
+    // These have to come after the fields, because a field that fills the
+    // whole block repaints the block in its own applyColour.
     this.updateForegroundColour();
+    for (const icon of this.getIcons()) {
+      icon.applyColour();
+    }
   }
 
   /**
