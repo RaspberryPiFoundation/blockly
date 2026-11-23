@@ -6,7 +6,7 @@
 
 import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
-import {defineEmptyBlock} from './test_helpers/block_definitions.js';
+import {defineEmptyBlock} from './test_helpers/block_definitions.ts';
 import {MockIcon, MockSerializableIcon} from './test_helpers/icon_mocks.js';
 import {
   DEFAULT_INJECT_OPTIONS,
@@ -14,7 +14,7 @@ import {
   sharedTestTeardown,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
-import {simulateClick} from './test_helpers/user_input.js';
+import {simulateClick} from './test_helpers/user_input.ts';
 
 class TestIcon extends Blockly.icons.Icon {
   showContextMenu(e) {

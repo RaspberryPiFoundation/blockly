@@ -7,7 +7,7 @@
 import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
 import type sinon from 'sinon';
-import {defineRowBlock} from './test_helpers/block_definitions.js';
+import {defineRowBlock} from './test_helpers/block_definitions.ts';
 import {assertEventFired} from './test_helpers/events.js';
 import {
   sharedTestSetup,

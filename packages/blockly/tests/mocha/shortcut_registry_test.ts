@@ -13,7 +13,7 @@ import {
   sharedTestTeardown,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
-import {createKeyDownEvent} from './test_helpers/user_input.js';
+import {createKeyDownEvent} from './test_helpers/user_input.ts';
 
 suite('Keyboard Shortcut Registry Test', function () {
   let registry: Blockly.ShortcutRegistry;

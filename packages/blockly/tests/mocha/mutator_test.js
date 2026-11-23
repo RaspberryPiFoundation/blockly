@@ -8,7 +8,7 @@ import {assert} from 'chai';
 import {
   createRenderedBlock,
   defineMutatorBlocks,
-} from './test_helpers/block_definitions.js';
+} from './test_helpers/block_definitions.ts';
 import {assertEventFired, assertEventNotFired} from './test_helpers/events.js';
 import {
   DEFAULT_INJECT_OPTIONS,

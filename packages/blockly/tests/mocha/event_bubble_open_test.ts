@@ -6,7 +6,7 @@
 
 import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
-import {defineMutatorBlocks} from './test_helpers/block_definitions.js';
+import {defineMutatorBlocks} from './test_helpers/block_definitions.ts';
 import {
   DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,

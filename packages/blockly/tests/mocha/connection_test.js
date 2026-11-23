@@ -9,7 +9,7 @@ import {
   defineRowBlock,
   defineStackBlock,
   defineStatementBlock,
-} from './test_helpers/block_definitions.js';
+} from './test_helpers/block_definitions.ts';
 import {
   createGenUidStubWithReturns,
   DEFAULT_INJECT_OPTIONS,

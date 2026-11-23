@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {EventType} from '#core/events/type.js';
+import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
+import sinon from 'sinon';
 import {assertEventFired} from './test_helpers/events.js';
 import {
   MockParameterModel,
@@ -17,14 +18,18 @@ import {
 } from './test_helpers/setup_teardown.js';
 
 suite('JSO Deserialization', function () {
-  setup(function () {
-    sharedTestSetup.call(this);
-    this.sandbox = sinon.createSandbox();
-    this.workspace = new Blockly.Workspace();
+  let workspace: Blockly.Workspace;
+  let sandbox: sinon.SinonSandbox;
+  let eventsFireStub: sinon.SinonStub;
+
+  setup(function (this: Mocha.Context) {
+    ({eventsFireStub} = sharedTestSetup.call(this));
+    sandbox = sinon.createSandbox();
+    workspace = new Blockly.Workspace();
   });
 
-  teardown(function () {
-    this.sandbox.restore();
+  teardown(function (this: Mocha.Context) {
+    sandbox.restore();
     sharedTestTeardown.call(this);
   });
 
@@ -40,7 +45,7 @@ suite('JSO Deserialization', function () {
         },
       };
       assert.throws(() => {
-        Blockly.serialization.workspaces.load(state, this.workspace);
+        Blockly.serialization.workspaces.load(state, workspace);
       });
       assert.isTrue(
         Blockly.Events.isEnabled(),
@@ -62,12 +67,12 @@ suite('JSO Deserialization', function () {
             ],
           },
         };
-        Blockly.serialization.workspaces.load(state, this.workspace);
+        Blockly.serialization.workspaces.load(state, workspace);
         assertEventFired(
-          this.eventsFireStub,
+          eventsFireStub,
           Blockly.Events.FinishedLoading,
-          {type: EventType.FINISHED_LOADING},
-          this.workspace.id,
+          {type: Blockly.Events.FINISHED_LOADING},
+          workspace.id,
         );
       });
 
@@ -85,12 +90,12 @@ suite('JSO Deserialization', function () {
           },
         };
         Blockly.Events.setGroup('my group');
-        Blockly.serialization.workspaces.load(state, this.workspace);
+        Blockly.serialization.workspaces.load(state, workspace);
         assertEventFired(
-          this.eventsFireStub,
+          eventsFireStub,
           Blockly.Events.FinishedLoading,
-          {'group': 'my group', 'type': EventType.FINISHED_LOADING},
-          this.workspace.id,
+          {'group': 'my group', 'type': Blockly.Events.FINISHED_LOADING},
+          workspace.id,
         );
       });
 
@@ -118,8 +123,8 @@ suite('JSO Deserialization', function () {
             ],
           },
         };
-        Blockly.serialization.workspaces.load(state, this.workspace);
-        const calls = this.eventsFireStub.getCalls();
+        Blockly.serialization.workspaces.load(state, workspace);
+        const calls = eventsFireStub.getCalls();
         const group = calls[0].args[0].group;
         assert.isTrue(calls.every((call) => call.args[0].group == group));
       });
@@ -135,18 +140,18 @@ suite('JSO Deserialization', function () {
             },
           ],
         };
-        Blockly.serialization.workspaces.load(state, this.workspace);
+        Blockly.serialization.workspaces.load(state, workspace);
         assertEventFired(
-          this.eventsFireStub,
+          eventsFireStub,
           Blockly.Events.VarCreate,
           {
             'varName': 'test',
             'varId': 'testId',
             'varType': '',
             'recordUndo': false,
-            'type': EventType.VAR_CREATE,
+            'type': Blockly.Events.VAR_CREATE,
           },
-          this.workspace.id,
+          workspace.id,
         );
       });
 
@@ -159,20 +164,20 @@ suite('JSO Deserialization', function () {
             },
           ],
         };
-        Blockly.serialization.workspaces.load(state, this.workspace, {
+        Blockly.serialization.workspaces.load(state, workspace, {
           recordUndo: true,
         });
         assertEventFired(
-          this.eventsFireStub,
+          eventsFireStub,
           Blockly.Events.VarCreate,
           {
             'varName': 'test',
             'varId': 'testId',
             'varType': '',
             'recordUndo': true,
-            'type': EventType.VAR_CREATE,
+            'type': Blockly.Events.VAR_CREATE,
           },
-          this.workspace.id,
+          workspace.id,
         );
       });
 
@@ -186,18 +191,18 @@ suite('JSO Deserialization', function () {
           ],
         };
         Blockly.Events.setGroup('my group');
-        Blockly.serialization.workspaces.load(state, this.workspace);
+        Blockly.serialization.workspaces.load(state, workspace);
         assertEventFired(
-          this.eventsFireStub,
+          eventsFireStub,
           Blockly.Events.VarCreate,
           {
             'varName': 'test',
             'varId': 'testId',
             'varType': '',
             'group': 'my group',
-            'type': EventType.VAR_CREATE,
+            'type': Blockly.Events.VAR_CREATE,
           },
-          this.workspace.id,
+          workspace.id,
         );
       });
 
@@ -214,8 +219,8 @@ suite('JSO Deserialization', function () {
             },
           ],
         };
-        Blockly.serialization.workspaces.load(state, this.workspace);
-        const calls = this.eventsFireStub.getCalls();
+        Blockly.serialization.workspaces.load(state, workspace);
+        const calls = eventsFireStub.getCalls();
         const group = calls[0].args[0].group;
         assert.isTrue(calls.every((call) => call.args[0].group == group));
       });
@@ -244,8 +249,8 @@ suite('JSO Deserialization', function () {
             ],
           },
         };
-        Blockly.serialization.workspaces.load(state, this.workspace);
-        const calls = this.eventsFireStub.getCalls();
+        Blockly.serialization.workspaces.load(state, workspace);
+        const calls = eventsFireStub.getCalls();
         const count = calls.reduce((acc, call) => {
           if (call.args[0] instanceof Blockly.Events.VarCreate) {
             return acc + 1;
@@ -254,15 +259,15 @@ suite('JSO Deserialization', function () {
         }, 0);
         assert.equal(count, 1);
         assertEventFired(
-          this.eventsFireStub,
+          eventsFireStub,
           Blockly.Events.VarCreate,
           {
             'varName': 'test',
             'varId': 'testId',
             'varType': '',
-            'type': EventType.VAR_CREATE,
+            'type': Blockly.Events.VAR_CREATE,
           },
-          this.workspace.id,
+          workspace.id,
         );
       });
     });
@@ -282,12 +287,12 @@ suite('JSO Deserialization', function () {
               ],
             },
           };
-          Blockly.serialization.workspaces.load(state, this.workspace);
+          Blockly.serialization.workspaces.load(state, workspace);
           assertEventFired(
-            this.eventsFireStub,
+            eventsFireStub,
             Blockly.Events.BlockCreate,
-            {'recordUndo': false, 'type': EventType.BLOCK_CREATE},
-            this.workspace.id,
+            {'recordUndo': false, 'type': Blockly.Events.BLOCK_CREATE},
+            workspace.id,
             'testId',
           );
         });
@@ -305,14 +310,14 @@ suite('JSO Deserialization', function () {
               ],
             },
           };
-          Blockly.serialization.workspaces.load(state, this.workspace, {
+          Blockly.serialization.workspaces.load(state, workspace, {
             'recordUndo': true,
           });
           assertEventFired(
-            this.eventsFireStub,
+            eventsFireStub,
             Blockly.Events.BlockCreate,
-            {'recordUndo': true, 'type': EventType.BLOCK_CREATE},
-            this.workspace.id,
+            {'recordUndo': true, 'type': Blockly.Events.BLOCK_CREATE},
+            workspace.id,
             'testId',
           );
         });
@@ -331,12 +336,12 @@ suite('JSO Deserialization', function () {
             },
           };
           Blockly.Events.setGroup('my group');
-          Blockly.serialization.workspaces.load(state, this.workspace);
+          Blockly.serialization.workspaces.load(state, workspace);
           assertEventFired(
-            this.eventsFireStub,
+            eventsFireStub,
             Blockly.Events.BlockCreate,
-            {'group': 'my group', 'type': EventType.BLOCK_CREATE},
-            this.workspace.id,
+            {'group': 'my group', 'type': Blockly.Events.BLOCK_CREATE},
+            workspace.id,
             'testId',
           );
         });
@@ -360,8 +365,8 @@ suite('JSO Deserialization', function () {
               ],
             },
           };
-          Blockly.serialization.workspaces.load(state, this.workspace);
-          const calls = this.eventsFireStub.getCalls();
+          Blockly.serialization.workspaces.load(state, workspace);
+          const calls = eventsFireStub.getCalls();
           const group = calls[0].args[0].group;
           assert.isTrue(calls.every((call) => call.args[0].group == group));
         });
@@ -393,12 +398,12 @@ suite('JSO Deserialization', function () {
               ],
             },
           };
-          Blockly.serialization.workspaces.load(state, this.workspace);
+          Blockly.serialization.workspaces.load(state, workspace);
           assertEventFired(
-            this.eventsFireStub,
+            eventsFireStub,
             Blockly.Events.BlockCreate,
-            {type: EventType.BLOCK_CREATE},
-            this.workspace.id,
+            {type: Blockly.Events.BLOCK_CREATE},
+            workspace.id,
             'id1',
           );
         });
@@ -412,12 +417,12 @@ suite('JSO Deserialization', function () {
             'x': 42,
             'y': 42,
           };
-          Blockly.serialization.blocks.append(state, this.workspace);
+          Blockly.serialization.blocks.append(state, workspace);
           assertEventFired(
-            this.eventsFireStub,
+            eventsFireStub,
             Blockly.Events.BlockCreate,
             {'recordUndo': false},
-            this.workspace.id,
+            workspace.id,
             'testId',
           );
         });
@@ -429,14 +434,14 @@ suite('JSO Deserialization', function () {
             'x': 42,
             'y': 42,
           };
-          Blockly.serialization.blocks.append(state, this.workspace, {
+          Blockly.serialization.blocks.append(state, workspace, {
             'recordUndo': true,
           });
           assertEventFired(
-            this.eventsFireStub,
+            eventsFireStub,
             Blockly.Events.BlockCreate,
-            {'recordUndo': true, 'type': EventType.BLOCK_CREATE},
-            this.workspace.id,
+            {'recordUndo': true, 'type': Blockly.Events.BLOCK_CREATE},
+            workspace.id,
             'testId',
           );
         });
@@ -449,12 +454,12 @@ suite('JSO Deserialization', function () {
             'y': 42,
           };
           Blockly.Events.setGroup('my group');
-          Blockly.serialization.blocks.append(state, this.workspace);
+          Blockly.serialization.blocks.append(state, workspace);
           assertEventFired(
-            this.eventsFireStub,
+            eventsFireStub,
             Blockly.Events.BlockCreate,
-            {'group': 'my group', 'type': EventType.BLOCK_CREATE},
-            this.workspace.id,
+            {'group': 'my group', 'type': Blockly.Events.BLOCK_CREATE},
+            workspace.id,
             'testId',
           );
         });
@@ -463,13 +468,14 @@ suite('JSO Deserialization', function () {
   });
 
   suite('Exceptions', function () {
-    setup(function () {
-      this.assertThrows = function (state, error) {
-        assert.throws(() => {
-          Blockly.serialization.workspaces.load(state, this.workspace);
-        }, error);
-      };
-    });
+    function assertThrows(
+      state: {[key: string]: any},
+      error: new (...args: any[]) => Error,
+    ) {
+      assert.throws(() => {
+        Blockly.serialization.workspaces.load(state, workspace);
+      }, error);
+    }
 
     suite('Undefined block type', function () {
       test('Name', function () {
@@ -482,7 +488,7 @@ suite('JSO Deserialization', function () {
             ],
           },
         };
-        this.assertThrows(state, TypeError);
+        assertThrows(state, TypeError);
       });
 
       test('Casing', function () {
@@ -495,7 +501,7 @@ suite('JSO Deserialization', function () {
             ],
           },
         };
-        this.assertThrows(state, TypeError);
+        assertThrows(state, TypeError);
       });
     });
 
@@ -517,10 +523,7 @@ suite('JSO Deserialization', function () {
             ],
           },
         };
-        this.assertThrows(
-          state,
-          Blockly.serialization.exceptions.MissingConnection,
-        );
+        assertThrows(state, Blockly.serialization.exceptions.MissingConnection);
       });
 
       test('Input casing', function () {
@@ -540,10 +543,7 @@ suite('JSO Deserialization', function () {
             ],
           },
         };
-        this.assertThrows(
-          state,
-          Blockly.serialization.exceptions.MissingConnection,
-        );
+        assertThrows(state, Blockly.serialization.exceptions.MissingConnection);
       });
 
       test('Next', function () {
@@ -561,10 +561,7 @@ suite('JSO Deserialization', function () {
             ],
           },
         };
-        this.assertThrows(
-          state,
-          Blockly.serialization.exceptions.MissingConnection,
-        );
+        assertThrows(state, Blockly.serialization.exceptions.MissingConnection);
       });
 
       test('Previous', function () {
@@ -582,10 +579,7 @@ suite('JSO Deserialization', function () {
             ],
           },
         };
-        this.assertThrows(
-          state,
-          Blockly.serialization.exceptions.MissingConnection,
-        );
+        assertThrows(state, Blockly.serialization.exceptions.MissingConnection);
       });
 
       test('Output', function () {
@@ -605,10 +599,7 @@ suite('JSO Deserialization', function () {
             ],
           },
         };
-        this.assertThrows(
-          state,
-          Blockly.serialization.exceptions.MissingConnection,
-        );
+        assertThrows(state, Blockly.serialization.exceptions.MissingConnection);
       });
     });
 
@@ -630,7 +621,7 @@ suite('JSO Deserialization', function () {
             ],
           },
         };
-        this.assertThrows(
+        assertThrows(
           state,
           Blockly.serialization.exceptions.BadConnectionCheck,
         );
@@ -662,10 +653,7 @@ suite('JSO Deserialization', function () {
             ],
           },
         };
-        this.assertThrows(
-          state,
-          Blockly.serialization.exceptions.RealChildOfShadow,
-        );
+        assertThrows(state, Blockly.serialization.exceptions.RealChildOfShadow);
       });
 
       test('Next', function () {
@@ -688,28 +676,27 @@ suite('JSO Deserialization', function () {
             ],
           },
         };
-        this.assertThrows(
-          state,
-          Blockly.serialization.exceptions.RealChildOfShadow,
-        );
+        assertThrows(state, Blockly.serialization.exceptions.RealChildOfShadow);
       });
     });
   });
 
   test('Priority', function () {
-    const blocksSerializer = Blockly.registry.getClass(
+    const blocksSerializer = Blockly.registry.getObject(
       Blockly.registry.Type.SERIALIZER,
       'blocks',
     );
-    const variablesSerializer = Blockly.registry.getClass(
+    const variablesSerializer = Blockly.registry.getObject(
       Blockly.registry.Type.SERIALIZER,
       'variables',
     );
+    assert.exists(blocksSerializer);
+    assert.exists(variablesSerializer);
 
     Blockly.serialization.registry.unregister('blocks');
     Blockly.serialization.registry.unregister('variables');
 
-    const calls = [];
+    const calls: string[] = [];
 
     const first = {
       priority: 100,
@@ -736,7 +723,7 @@ suite('JSO Deserialization', function () {
 
     Blockly.serialization.workspaces.load(
       {'first': {}, 'third': {}, 'second': {}},
-      this.workspace,
+      workspace,
     );
 
     Blockly.serialization.registry.unregister('first');
@@ -760,6 +747,7 @@ suite('JSO Deserialization', function () {
     // Most of this is covered by our round-trip tests. But we need one test
     // for old xml hooks.
     test('Xml hooks', function () {
+      type TestBlock = Blockly.Block & {someProperty: string | null};
       Blockly.Blocks['test_block'] = {
         init: function () {},
 
@@ -769,7 +757,7 @@ suite('JSO Deserialization', function () {
           return container;
         },
 
-        domToMutation: function (element) {
+        domToMutation: function (this: TestBlock, element: Element) {
           this.someProperty = element.getAttribute('value');
         },
       };
@@ -779,28 +767,27 @@ suite('JSO Deserialization', function () {
           'type': 'test_block',
           'extraState': '<mutation value="some value"></mutation>',
         },
-        this.workspace,
+        workspace,
       );
 
       delete Blockly.Blocks['test_block'];
 
-      assert.equal(block.someProperty, 'some value');
+      assert.equal((block as TestBlock).someProperty, 'some value');
     });
   });
 
   suite('Procedures', function () {
+    let procedureSerializer: Blockly.serialization.procedures.ProcedureSerializer<
+      MockProcedureModel,
+      MockParameterModel
+    >;
+
     setup(function () {
-      this.procedureSerializer =
+      procedureSerializer =
         new Blockly.serialization.procedures.ProcedureSerializer(
           MockProcedureModel,
           MockParameterModel,
         );
-      this.procedureMap = this.workspace.getProcedureMap();
-    });
-
-    teardown(function () {
-      this.procedureSerializer = null;
-      this.procedureMap = null;
     });
 
     test('load is called for the procedure model', function () {
@@ -808,11 +795,13 @@ suite('JSO Deserialization', function () {
         {
           'id': 'test',
           'parameters': [],
+          'name': 'foo',
+          'returnTypes': [''],
         },
       ];
-      const spy = this.sandbox.spy(MockProcedureModel, 'loadState');
+      const spy = sandbox.spy(MockProcedureModel, 'loadState');
 
-      this.procedureSerializer.load(state, this.workspace);
+      procedureSerializer.load(state, workspace);
 
       assert.isTrue(
         spy.calledOnce,
@@ -827,17 +816,21 @@ suite('JSO Deserialization', function () {
           'parameters': [
             {
               'id': 'test1',
+              'name': 'x',
             },
             {
               'id': 'test2',
+              'name': 'y',
             },
           ],
+          'name': 'foo',
+          'returnTypes': [''],
         },
       ];
 
-      const spy = this.sandbox.spy(MockParameterModel, 'loadState');
+      const spy = sandbox.spy(MockParameterModel, 'loadState');
 
-      this.procedureSerializer.load(state, this.workspace);
+      procedureSerializer.load(state, workspace);
 
       assert.isTrue(
         spy.calledTwice,

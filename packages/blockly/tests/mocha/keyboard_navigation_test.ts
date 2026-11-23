@@ -7,7 +7,7 @@
 import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
 import sinon from 'sinon';
-import {defineStackBlock} from './test_helpers/block_definitions.js';
+import {defineStackBlock} from './test_helpers/block_definitions.ts';
 import {navigationTestBlocks} from './test_helpers/navigation_test_blocks.ts';
 import {p5blocks} from './test_helpers/p5_blocks.ts';
 import {
@@ -16,7 +16,7 @@ import {
   sharedTestTeardown,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
-import {createKeyDownEvent} from './test_helpers/user_input.js';
+import {createKeyDownEvent} from './test_helpers/user_input.ts';
 
 /**
  * Dispatches a keydown event with the given keycode on the workspace injection

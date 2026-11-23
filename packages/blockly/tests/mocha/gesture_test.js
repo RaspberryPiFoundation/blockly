@@ -6,15 +6,15 @@
 
 import {EventType} from '#core/events/type.js';
 import {assert} from 'chai';
-import {defineBasicBlockWithField} from './test_helpers/block_definitions.js';
+import {defineBasicBlockWithField} from './test_helpers/block_definitions.ts';
 import {assertEventFired, assertEventNotFired} from './test_helpers/events.js';
 import {
   DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
-import {getProperSimpleJson} from './test_helpers/toolbox_definitions.js';
-import {dispatchPointerEvent} from './test_helpers/user_input.js';
+import {getProperSimpleJson} from './test_helpers/toolbox_definitions.ts';
+import {dispatchPointerEvent} from './test_helpers/user_input.ts';
 
 suite('Gesture', function () {
   function testGestureIsFieldClick(block, isFieldClick, eventsFireStub) {

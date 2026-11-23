@@ -7,7 +7,7 @@
 import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
 import sinon from 'sinon';
-import {defineStackBlock} from './test_helpers/block_definitions.js';
+import {defineStackBlock} from './test_helpers/block_definitions.ts';
 import {
   assertEventFired,
   assertEventNotFired,
@@ -19,7 +19,7 @@ import {
   sharedTestTeardown,
   workspaceTeardown,
 } from './test_helpers/setup_teardown.js';
-import {dispatchPointerEvent} from './test_helpers/user_input.js';
+import {dispatchPointerEvent} from './test_helpers/user_input.ts';
 import {testAWorkspace} from './test_helpers/workspace.ts';
 
 suite('WorkspaceSvg', function () {

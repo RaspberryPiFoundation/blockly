@@ -4,7 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
+import sinon from 'sinon';
 import {
   DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
@@ -12,23 +14,29 @@ import {
 } from './test_helpers/setup_teardown.js';
 
 suite('Workspace comment', function () {
-  setup(function () {
+  let workspace: Blockly.WorkspaceSvg;
+  let commentView: Blockly.comments.CommentView;
+
+  setup(function (this: Mocha.Context) {
     sharedTestSetup.call(this);
-    this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
-    this.commentView = new Blockly.comments.CommentView(this.workspace);
+    workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
+    commentView = new Blockly.comments.CommentView(
+      workspace,
+      'test-comment-id',
+    );
   });
 
-  teardown(function () {
-    sharedTestTeardown.call(this);
+  teardown(function (this: Mocha.Context) {
+    sharedTestTeardown.call(this, workspace);
   });
 
   suite('Listeners', function () {
     suite('Text change listeners', function () {
       test('text change listeners are called when text is changed', function () {
         const spy = sinon.spy();
-        this.commentView.addTextChangeListener(spy);
+        commentView.addTextChangeListener(spy);
 
-        this.commentView.setText('test');
+        commentView.setText('test');
 
         assert.isTrue(spy.calledOnce, 'Expected the spy to be called once');
         assert.isTrue(
@@ -39,15 +47,15 @@ suite('Workspace comment', function () {
 
       test('text change listeners can remove themselves without skipping others', function () {
         const fake1 = sinon.fake();
-        const fake2 = sinon.fake(() =>
-          this.commentView.removeTextChangeListener(fake2),
+        const fake2: sinon.SinonSpy = sinon.fake(() =>
+          commentView.removeTextChangeListener(fake2),
         );
         const fake3 = sinon.fake();
-        this.commentView.addTextChangeListener(fake1);
-        this.commentView.addTextChangeListener(fake2);
-        this.commentView.addTextChangeListener(fake3);
+        commentView.addTextChangeListener(fake1);
+        commentView.addTextChangeListener(fake2);
+        commentView.addTextChangeListener(fake3);
 
-        this.commentView.setText('test');
+        commentView.setText('test');
 
         assert.isTrue(
           fake1.calledOnce,
@@ -67,11 +75,11 @@ suite('Workspace comment', function () {
     suite('Size change listeners', function () {
       test('size change listeners are called when text is changed', function () {
         const spy = sinon.spy();
-        this.commentView.addSizeChangeListener(spy);
-        const originalSize = this.commentView.getSize();
+        commentView.addSizeChangeListener(spy);
+        const originalSize = commentView.getSize();
         const newSize = new Blockly.utils.Size(1337, 1337);
 
-        this.commentView.setSize(newSize);
+        commentView.setSize(newSize);
 
         assert.isTrue(spy.calledOnce, 'Expected the spy to be called once');
         assert.isTrue(
@@ -82,16 +90,16 @@ suite('Workspace comment', function () {
 
       test('size change listeners can remove themselves without skipping others', function () {
         const fake1 = sinon.fake();
-        const fake2 = sinon.fake(() =>
-          this.commentView.removeSizeChangeListener(fake2),
+        const fake2: sinon.SinonSpy = sinon.fake(() =>
+          commentView.removeSizeChangeListener(fake2),
         );
         const fake3 = sinon.fake();
-        this.commentView.addSizeChangeListener(fake1);
-        this.commentView.addSizeChangeListener(fake2);
-        this.commentView.addSizeChangeListener(fake3);
+        commentView.addSizeChangeListener(fake1);
+        commentView.addSizeChangeListener(fake2);
+        commentView.addSizeChangeListener(fake3);
         const newSize = new Blockly.utils.Size(1337, 1337);
 
-        this.commentView.setSize(newSize);
+        commentView.setSize(newSize);
 
         assert.isTrue(
           fake1.calledOnce,
@@ -111,9 +119,9 @@ suite('Workspace comment', function () {
     suite('Collapse change listeners', function () {
       test('collapse change listeners are called when text is changed', function () {
         const spy = sinon.spy();
-        this.commentView.addOnCollapseListener(spy);
+        commentView.addOnCollapseListener(spy);
 
-        this.commentView.setCollapsed(true);
+        commentView.setCollapsed(true);
 
         assert.isTrue(spy.calledOnce, 'Expected the spy to be called once');
         assert.isTrue(
@@ -124,15 +132,15 @@ suite('Workspace comment', function () {
 
       test('collapse change listeners can remove themselves without skipping others', function () {
         const fake1 = sinon.fake();
-        const fake2 = sinon.fake(() =>
-          this.commentView.removeOnCollapseListener(fake2),
+        const fake2: sinon.SinonSpy = sinon.fake(() =>
+          commentView.removeOnCollapseListener(fake2),
         );
         const fake3 = sinon.fake();
-        this.commentView.addOnCollapseListener(fake1);
-        this.commentView.addOnCollapseListener(fake2);
-        this.commentView.addOnCollapseListener(fake3);
+        commentView.addOnCollapseListener(fake1);
+        commentView.addOnCollapseListener(fake2);
+        commentView.addOnCollapseListener(fake3);
 
-        this.commentView.setCollapsed(true);
+        commentView.setCollapsed(true);
 
         assert.isTrue(
           fake1.calledOnce,
@@ -152,24 +160,24 @@ suite('Workspace comment', function () {
     suite('Dispose change listeners', function () {
       test('dispose listeners are called when text is changed', function () {
         const spy = sinon.spy();
-        this.commentView.addDisposeListener(spy);
+        commentView.addDisposeListener(spy);
 
-        this.commentView.dispose();
+        commentView.dispose();
 
         assert.isTrue(spy.calledOnce, 'Expected the spy to be called once');
       });
 
       test('dispose listeners can remove themselves without skipping others', function () {
         const fake1 = sinon.fake();
-        const fake2 = sinon.fake(() =>
-          this.commentView.removeDisposeListener(fake2),
+        const fake2: sinon.SinonSpy = sinon.fake(() =>
+          commentView.removeDisposeListener(fake2),
         );
         const fake3 = sinon.fake();
-        this.commentView.addDisposeListener(fake1);
-        this.commentView.addDisposeListener(fake2);
-        this.commentView.addDisposeListener(fake3);
+        commentView.addDisposeListener(fake1);
+        commentView.addDisposeListener(fake2);
+        commentView.addDisposeListener(fake3);
 
-        this.commentView.dispose();
+        commentView.dispose();
 
         assert.isTrue(
           fake1.calledOnce,

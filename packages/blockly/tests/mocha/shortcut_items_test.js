@@ -9,13 +9,13 @@ import {assert} from 'chai';
 import {
   defineRowBlock,
   defineStackBlock,
-} from './test_helpers/block_definitions.js';
+} from './test_helpers/block_definitions.ts';
 import {
   DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
-import {createKeyDownEvent} from './test_helpers/user_input.js';
+import {createKeyDownEvent} from './test_helpers/user_input.ts';
 
 suite('Keyboard Shortcut Items', function () {
   setup(function () {

@@ -3,6 +3,7 @@
  * Copyright 2026 Raspberry Pi Foundation
  * SPDX-License-Identifier: Apache-2.0
  */
+import * as Blockly from '#core/blockly.js';
 
 /**
  * @fileoverview A minimal IFocusableTree implementation shared by the focus
@@ -12,12 +13,18 @@
 /**
  * Builds the test IFocusableTree implementation.
  *
- * @returns {!Function} The FocusableTreeImpl class.
+ * @returns The FocusableTreeImpl class.
  */
 export function focusableTreeImplFactory() {
   /** A focusable node wrapping a single element. */
-  class FocusableNodeImpl {
-    constructor(element, tree) {
+  class FocusableNodeImpl implements Blockly.IFocusableNode {
+    element: HTMLElement | SVGElement;
+    tree: Blockly.IFocusableTree;
+
+    constructor(
+      element: HTMLElement | SVGElement,
+      tree: Blockly.IFocusableTree,
+    ) {
       this.element = element;
       this.tree = tree;
     }
@@ -45,21 +52,29 @@ export function focusableTreeImplFactory() {
    * Tests can set `fallbackNode` to control getRestoredFocusableNode(), and
    * override `canBeFocused` on an individual node to make it unfocusable.
    */
-  class FocusableTreeImpl {
-    constructor(rootElement, nestedTrees = []) {
+  class FocusableTreeImpl implements Blockly.IFocusableTree {
+    nestedTrees: Blockly.IFocusableTree[];
+    idToNodeMap: {[key: string]: Blockly.IFocusableNode};
+    rootNode: Blockly.IFocusableNode;
+    fallbackNode: Blockly.IFocusableNode | null;
+
+    constructor(
+      rootElement: HTMLElement | SVGElement,
+      nestedTrees: Blockly.IFocusableTree[] = [],
+    ) {
       this.nestedTrees = nestedTrees;
       this.idToNodeMap = {};
       this.rootNode = this.addNode(rootElement);
       this.fallbackNode = null;
     }
 
-    addNode(element) {
+    addNode(element: HTMLElement | SVGElement) {
       const node = new FocusableNodeImpl(element, this);
       this.idToNodeMap[element.id] = node;
       return node;
     }
 
-    removeNode(node) {
+    removeNode(node: Blockly.IFocusableNode) {
       delete this.idToNodeMap[node.getFocusableElement().id];
     }
 
@@ -75,16 +90,21 @@ export function focusableTreeImplFactory() {
       return this.nestedTrees;
     }
 
-    lookUpFocusableNode(id) {
+    lookUpFocusableNode(id: string) {
       return this.idToNodeMap[id];
     }
 
     onTreeFocus() {}
 
     onTreeBlur() {}
+
+    getNavigator() {
+      return new Blockly.Navigator();
+    }
   }
 
   return FocusableTreeImpl;
 }
 
 export const FocusableTreeImpl = focusableTreeImplFactory();
+export type FocusableTreeImpl = InstanceType<typeof FocusableTreeImpl>;

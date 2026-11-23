@@ -6,7 +6,7 @@
 
 import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
-import {createTestBlock} from './test_helpers/block_definitions.js';
+import {createTestBlock} from './test_helpers/block_definitions.ts';
 import {
   assertFieldValue,
   runConstructorSuiteTests,

@@ -6,7 +6,7 @@
 
 import * as Blockly from '#core/blockly.js';
 import {assert} from 'chai';
-import {defineRowBlock} from './test_helpers/block_definitions.js';
+import {defineRowBlock} from './test_helpers/block_definitions.ts';
 import {
   sharedTestSetup,
   sharedTestTeardown,

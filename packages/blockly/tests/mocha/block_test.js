@@ -12,7 +12,7 @@ import {EndRowInput} from '#core/inputs/end_row_input.js';
 import {isCommentIcon} from '#core/interfaces/i_comment_icon.js';
 import {Size} from '#core/utils/size.js';
 import {assert} from 'chai';
-import {createRenderedBlock} from './test_helpers/block_definitions.js';
+import {createRenderedBlock} from './test_helpers/block_definitions.ts';
 import {
   createChangeListenerSpy,
   createMockEvent,

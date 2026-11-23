@@ -13,14 +13,14 @@ import {
   defineRowBlock,
   defineStackBlock,
   defineStatementBlock,
-} from './test_helpers/block_definitions.js';
+} from './test_helpers/block_definitions.ts';
 import {assertEventFired, assertEventNotFired} from './test_helpers/events.js';
 import {
   DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
   sharedTestTeardown,
 } from './test_helpers/setup_teardown.js';
-import {simulateClick} from './test_helpers/user_input.js';
+import {simulateClick} from './test_helpers/user_input.ts';
 
 suite('Trashcan', function () {
   let workspace: Blockly.WorkspaceSvg;

@@ -5,7 +5,7 @@
  */
 
 import {assert} from 'chai';
-import {createRenderedBlock} from './test_helpers/block_definitions.js';
+import {createRenderedBlock} from './test_helpers/block_definitions.ts';
 import {
   DEFAULT_INJECT_OPTIONS,
   sharedTestSetup,
