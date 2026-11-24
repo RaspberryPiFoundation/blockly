@@ -1815,6 +1815,15 @@ export class BlockSvg
     return this.isOwnDeletable() && this.isOwnMovable();
   }
 
+  /**
+   * Get whether this block is duplicatable or not.
+   *
+   * @returns True if duplicatable.
+   */
+  override isDuplicatable(): boolean {
+    return this.isCopyable() && super.isDuplicatable();
+  }
+
   /** Returns whether this block is movable or not. */
   override isMovable(): boolean {
     return this.dragStrategy.isMovable();
