@@ -861,14 +861,17 @@ export class Block {
   }
 
   /**
-   * Get whether is block is duplicatable or not. If duplicating this block and
-   * descendants will put this block over the workspace's capacity this block is
-   * not duplicatable. If duplicating this block and descendants will put any
-   * type over their maxInstances this block is not duplicatable.
+   * Get whether this block is duplicatable or not. If this block is not
+   * deletable or movable, or if duplicating this block and descendants will put
+   * this block over the workspace's capacity or any type over its maxInstances,
+   * this block is not duplicatable.
    *
    * @returns True if duplicatable.
    */
   isDuplicatable(): boolean {
+    if (!this.isOwnDeletable() || !this.isOwnMovable()) {
+      return false;
+    }
     if (!this.workspace.hasBlockLimits()) {
       return true;
     }

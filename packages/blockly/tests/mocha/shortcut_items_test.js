@@ -1880,6 +1880,17 @@ suite('Keyboard Shortcut Items', function () {
       assert.equal(this.workspace.getTopBlocks().length, 1);
     });
 
+    test('Does not duplicate non-copyable blocks', function () {
+      const block = this.workspace.newBlock('controls_if');
+      sinon.stub(block, 'isCopyable').returns(false);
+      Blockly.getFocusManager().focusNode(block);
+      assert.isFalse(block.isDuplicatable());
+      assert.equal(this.workspace.getTopBlocks().length, 1);
+      const event = createKeyDownEvent(Blockly.utils.KeyCodes.D);
+      this.workspace.getInjectionDiv().dispatchEvent(event);
+      assert.equal(this.workspace.getTopBlocks().length, 1);
+    });
+
     test('Does not duplicate workspace comments on a readonly workspace', function () {
       const comment = this.workspace.newComment();
       comment.setText('Hello');

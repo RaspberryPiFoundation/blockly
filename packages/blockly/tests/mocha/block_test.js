@@ -3153,4 +3153,18 @@ suite('Blocks', function () {
       }
     });
   });
+
+  suite('Duplication of non-copyable blocks', function () {
+    test('non-deletable block is not duplicatable', function () {
+      const block = this.workspace.newBlock('controls_if');
+      block.setDeletable(false);
+      assert.isFalse(block.isDuplicatable());
+    });
+
+    test('non-movable block is not duplicatable', function () {
+      const block = this.workspace.newBlock('controls_if');
+      block.setMovable(false);
+      assert.isFalse(block.isDuplicatable());
+    });
+  });
 });
