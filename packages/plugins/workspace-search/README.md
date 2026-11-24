@@ -22,12 +22,6 @@ const workspaceSearch = new WorkspaceSearch(workspace);
 workspaceSearch.init();
 ```
 
-### Script Tag
-
-```js
-<script src="./node_modules/@blockly/plugin-workspace-search/dist/index.js"></script>
-```
-
 To open workspace search use either command + f or control + f. To close the search bar, press Escape or click the 'x' in the top right corner. Escape focuses the current matching block, or the workspace if there is no match.
 
 ## API

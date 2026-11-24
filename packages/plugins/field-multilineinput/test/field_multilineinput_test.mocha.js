@@ -154,6 +154,10 @@ suite('FieldMultilineInput', function () {
       this.jsdomCleanup = jsdomGlobal(
         '<!DOCTYPE html><div id="blocklyDiv"></div>',
       );
+      this.getContextStub = sinon
+        .stub(window.HTMLCanvasElement.prototype, 'getContext')
+        .returns({measureText: () => ({width: 0})});
+
       // See https://github.com/RaspberryPiFoundation/blockly-samples/issues/2528.
       global.SVGElement = window.SVGElement;
       // Blockly's focus handling constructs FocusEvent, which jsdom exposes on

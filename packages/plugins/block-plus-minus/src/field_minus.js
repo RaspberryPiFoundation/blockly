@@ -7,7 +7,6 @@
 /**
  * @fileoverview A function that creates a minus button used for mutation.
  */
-'use strict';
 
 import * as Blockly from 'blockly/core';
 import {getExtraBlockState} from './serialization_helper.js';
