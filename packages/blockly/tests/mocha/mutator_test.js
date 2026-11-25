@@ -136,4 +136,46 @@ suite('Mutator', function () {
       assert.equal(label, 'Bubble');
     });
   });
+
+  suite('Disposing the block', function () {
+    setup(function () {
+      this.workspace = Blockly.inject('blocklyDiv', DEFAULT_INJECT_OPTIONS);
+      this.block = createRenderedBlock(this.workspace, 'controls_if');
+      this.icon = this.block.getIcon(Blockly.icons.MutatorIcon.TYPE);
+    });
+
+    teardown(function () {
+      sharedTestTeardown.call(this);
+    });
+
+    test('while the bubble is opening does not open it', async function () {
+      const opening = this.icon.setBubbleVisible(true);
+      this.block.dispose();
+      await opening;
+
+      assert.isFalse(this.icon.bubbleIsVisible());
+      assertEventNotFired(
+        this.eventsFireStub,
+        Blockly.Events.BubbleOpen,
+        {},
+        this.workspace.id,
+        this.block.id,
+      );
+    });
+
+    test('while the bubble is closing does not fire a close event', async function () {
+      await this.icon.setBubbleVisible(true);
+      const closing = this.icon.setBubbleVisible(false);
+      this.block.dispose();
+      await closing;
+
+      assertEventNotFired(
+        this.eventsFireStub,
+        Blockly.Events.BubbleOpen,
+        {isOpen: false},
+        this.workspace.id,
+        this.block.id,
+      );
+    });
+  });
 });

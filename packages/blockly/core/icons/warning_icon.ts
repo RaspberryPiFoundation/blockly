@@ -176,6 +176,7 @@ export class WarningIcon extends Icon implements IHasBubble {
     if (this.bubbleIsVisible() === visible) return;
 
     await renderManagement.finishQueuedRenders();
+    if (this.sourceBlock.isDeadOrDying()) return;
 
     if (visible) {
       this.textBubble = new TextBubble(
