@@ -6,7 +6,6 @@
 
 import {assert} from 'chai';
 import sinon from 'sinon';
-import jsdomGlobal from 'jsdom-global';
 import * as Blockly from 'blockly';
 import {testHelpers} from '@blockly/dev-tools';
 import {
@@ -29,11 +28,6 @@ import {ProcedureCreate} from '../src/events_procedure_create.js';
 
 suite('Procedures', function () {
   setup(function () {
-    this.jsdomCleanup = jsdomGlobal(
-      '<!DOCTYPE html><div id="blocklyDiv"></div>',
-      {pretendToBeVisual: true},
-    );
-
     this.sandbox = sinon.createSandbox();
     globalThis.clock = this.sandbox.useFakeTimers();
 
@@ -70,15 +64,6 @@ suite('Procedures', function () {
       },
     ]);
 
-    this.getContextStub = this.sandbox
-      .stub(window.HTMLCanvasElement.prototype, 'getContext')
-      .callsFake(() => {
-        return {
-          measureText: function () {
-            return {width: 0};
-          },
-        };
-      });
     this.findParentWsStub = this.sandbox
       .stub(Blockly.Workspace.prototype, 'getRootWorkspace')
       .callsFake(() => {
@@ -87,10 +72,10 @@ suite('Procedures', function () {
   });
 
   teardown(function () {
+    this.workspace.dispose();
     globalThis.clock.runAll();
     delete Blockly.Blocks['row_block'];
     this.sandbox.restore();
-    this.jsdomCleanup();
   });
 
   suite('updating data models', function () {

@@ -9,7 +9,6 @@
  * @author kozbial@google.com (Monica Kozbial)
  */
 
-import jsdomGlobal from 'jsdom-global';
 import * as Blockly from 'blockly';
 import {assert} from 'chai';
 import sinon from 'sinon';
@@ -103,25 +102,18 @@ suite('WorkspaceSearch', function () {
   });
 
   setup(function () {
-    this.jsdomCleanup = jsdomGlobal(
-      '<!DOCTYPE html><div id="blocklyDiv"></div>',
-    );
     this.clock = sinon.useFakeTimers();
     this.workspace = Blockly.inject('blocklyDiv', {
       media: 'media/',
     });
     this.workspaceSearch = new WorkspaceSearch(this.workspace);
-    // See https://github.com/RaspberryPiFoundation/blockly-samples/issues/2528 for context.
-    global.SVGElement = window.SVGElement;
-    global.requestAnimationFrame = (callback) => setTimeout(callback, 0);
   });
 
   teardown(function () {
     this.workspaceSearch.dispose();
     this.workspace.dispose();
     this.clock.runAll();
-    this.clock.restore();
-    this.jsdomCleanup();
+    sinon.restore();
   });
 
   suite('init()', function () {
@@ -299,7 +291,6 @@ suite('WorkspaceSearch', function () {
       delete Blockly.Blocks['test_block'];
       delete Blockly.Blocks['test_statement_block'];
       delete Blockly.Blocks['test_text'];
-      sinon.restore();
     });
 
     test('Match all blocks', function () {
@@ -442,7 +433,6 @@ suite('WorkspaceSearch', function () {
     teardown(function () {
       delete Blockly.Blocks['test_block'];
       delete Blockly.Blocks['test_statement_block'];
-      sinon.restore();
     });
 
     test('next() with unset current', function () {
@@ -502,7 +492,6 @@ suite('WorkspaceSearch', function () {
     teardown(function () {
       delete Blockly.Blocks['test_block'];
       delete Blockly.Blocks['test_statement_block'];
-      sinon.restore();
     });
 
     test('previous() with unset current', function () {

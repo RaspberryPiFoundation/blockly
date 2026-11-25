@@ -6,7 +6,6 @@
 
 import {assert} from 'chai';
 import sinon from 'sinon';
-import jsdomGlobal from 'jsdom-global';
 import * as Blockly from 'blockly';
 import {Minimap} from '../src/minimap.js';
 import {PositionedMinimap} from '../src/positioned_minimap.js';
@@ -262,7 +261,11 @@ suite('Positioning the minimap in the primary workspace', function () {
     const position = minimap.getBoundingRectangle();
 
     assert.equal(position.top, 20, 'LTR Vertical Start: Incorrect top');
-    assert.equal(position.left, 872, 'LTR Vertical Start: Incorrect left');
+    assert.equal(
+      position.left,
+      887 - Blockly.Scrollbar.scrollbarThickness,
+      'LTR Vertical Start: Incorrect left',
+    );
   });
 
   test('LTR Vertical End', function () {
@@ -302,7 +305,11 @@ suite('Positioning the minimap in the primary workspace', function () {
     const position = minimap.getBoundingRectangle();
 
     assert.equal(position.top, 55, 'LTR Horizontal Start: Incorrect top');
-    assert.equal(position.left, 765, 'LTR Horizontal Start: Incorrect left');
+    assert.equal(
+      position.left,
+      780 - Blockly.Scrollbar.scrollbarThickness,
+      'LTR Horizontal Start: Incorrect left',
+    );
   });
 
   test('LTR Horizontal End', function () {
@@ -323,10 +330,14 @@ suite('Positioning the minimap in the primary workspace', function () {
 
     assert.equal(
       Math.round(position.top),
-      832,
+      847 - Blockly.Scrollbar.scrollbarThickness,
       'LTR Horizontal End: Incorrect top',
     );
-    assert.equal(position.left, 765, 'LTR Horizontal End: Incorrect left');
+    assert.equal(
+      position.left,
+      780 - Blockly.Scrollbar.scrollbarThickness,
+      'LTR Horizontal End: Incorrect left',
+    );
   });
 
   test('LTR Horizontal Start (no scrollbar)', function () {
@@ -367,7 +378,11 @@ suite('Positioning the minimap in the primary workspace', function () {
     const position = minimap.getBoundingRectangle();
 
     assert.equal(position.top, 20, 'RTL Vertical Start: Incorrect top');
-    assert.equal(position.left, 35, 'RTL Vertical Start: Incorrect left');
+    assert.equal(
+      position.left,
+      20 + Blockly.Scrollbar.scrollbarThickness,
+      'RTL Vertical Start: Incorrect left',
+    );
   });
 
   test('RTL Vertical End', function () {
@@ -407,7 +422,11 @@ suite('Positioning the minimap in the primary workspace', function () {
     const position = minimap.getBoundingRectangle();
 
     assert.equal(position.top, 55, 'RTL Horizontal Start: Incorrect top');
-    assert.equal(position.left, 35, 'RTL Horizontal Start: Incorrect left');
+    assert.equal(
+      position.left,
+      20 + Blockly.Scrollbar.scrollbarThickness,
+      'RTL Horizontal Start: Incorrect left',
+    );
   });
 
   test('RTL Horizontal End', function () {
@@ -428,25 +447,20 @@ suite('Positioning the minimap in the primary workspace', function () {
 
     assert.equal(
       Math.round(position.top),
-      832,
+      847 - Blockly.Scrollbar.scrollbarThickness,
       'RTL Horizontal End: Incorrect top',
     );
-    assert.equal(position.left, 35, 'RTL Horizontal End: Incorrect left');
+    assert.equal(
+      position.left,
+      20 + Blockly.Scrollbar.scrollbarThickness,
+      'RTL Horizontal End: Incorrect left',
+    );
   });
 });
 
 suite('Mirroring events', function () {
   setup(function () {
-    this.jsdomCleanup = jsdomGlobal(
-      '<!DOCTYPE html><div id="blocklyDiv"></div>',
-    );
-    global.SVGElement = window.SVGElement;
-    window.HTMLCanvasElement.prototype.getContext = () => ({
-      measureText: () => ({width: ''}),
-    });
     this.clock = sinon.useFakeTimers();
-    window.requestAnimationFrame = (callback) => setTimeout(callback, 0);
-    window.cancelAnimationFrame = (id) => clearTimeout(id);
     this.workspace = Blockly.inject('blocklyDiv', {
       move: {scrollbars: true},
     });
@@ -459,7 +473,6 @@ suite('Mirroring events', function () {
     this.workspace.dispose();
     this.clock.runAll();
     sinon.restore();
-    this.jsdomCleanup();
   });
 
   test('Renaming a variable updates the minimap', function () {
@@ -468,7 +481,7 @@ suite('Mirroring events', function () {
     block.getField('VAR').setValue(variable.getId());
 
     this.workspace.getVariableMap().renameVariable(variable, 'b');
-    this.clock.tick(1);
+    this.clock.runAll();
 
     const minimapBlock = this.minimap.minimapWorkspace.getBlockById(block.id);
     assert.equal(
@@ -481,11 +494,6 @@ suite('Mirroring events', function () {
 
 suite('Keyboard navigation', function () {
   setup(function () {
-    this.jsdomCleanup = jsdomGlobal(
-      '<!DOCTYPE html><div id="blocklyDiv"></div>',
-    );
-    // jsdom does not implement SVGElement natively; expose the shim.
-    global.SVGElement = window.SVGElement;
     this.workspace = Blockly.inject('blocklyDiv', {
       media: 'media/',
       move: {scrollbars: true},
@@ -497,7 +505,6 @@ suite('Keyboard navigation', function () {
   teardown(function () {
     this.minimap.dispose();
     this.workspace.dispose();
-    this.jsdomCleanup();
   });
 
   test('minimap workspace is not registered with FocusManager after init()', function () {

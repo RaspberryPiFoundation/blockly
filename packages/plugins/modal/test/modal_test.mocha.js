@@ -12,15 +12,11 @@
 import {assert} from 'chai';
 import * as Blockly from 'blockly';
 import sinon from 'sinon';
-import jsdomGlobal from 'jsdom-global';
 
 import {Modal} from '../src/index.js';
 
 suite('Modal', function () {
   setup(function () {
-    this.jsdomCleanup = jsdomGlobal(
-      '<!DOCTYPE html><div id="blocklyDiv"></div>',
-    );
     this.workspace = Blockly.inject('blocklyDiv', {
       media: 'media/',
     });
@@ -28,7 +24,8 @@ suite('Modal', function () {
   });
 
   teardown(function () {
-    this.jsdomCleanup();
+    Blockly.WidgetDiv.hide();
+    this.workspace.dispose();
     sinon.restore();
   });
 
@@ -61,7 +58,7 @@ suite('Modal', function () {
     test('Events and button callback removed', function () {
       this.modal.init();
       const numEvents = this.modal.boundEvents_.length;
-      Blockly.browserEvents.unbind = sinon.fake();
+      sinon.replace(Blockly.browserEvents, 'unbind', sinon.fake());
       this.modal.dispose();
 
       assert.equal(document.querySelector('.blocklyModalOverlay'), null);

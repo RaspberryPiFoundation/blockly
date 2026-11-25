@@ -142,12 +142,13 @@ suite('Suggested blocks', function () {
       workspace.newBlock(blockType);
     }
 
-    // Force events to fire by running any timers scheduled for the next 10ms.
-    // Takes <1ms, so 10ms is conservative
-    clock.tick(10);
+    clock.runAll();
   };
 
   setup(function () {
+    // Control the timing of the event queue.
+    this.clock = sinon.useFakeTimers();
+
     // Create a workspace and integrate with the suggested blocks plugin
     this.workspace = new Blockly.Workspace();
     this.suggestor = new SuggestedBlocks.BlockSuggestor(
@@ -155,12 +156,13 @@ suite('Suggested blocks', function () {
     );
     this.workspace.addChangeListener(this.suggestor.eventListener);
     this.workspace.fireChangeListener({type: Blockly.Events.FINISHED_LOADING});
+  });
 
-    // Configure the Sinon library, which lets us control the timing of the
-    // unit tests.
-    if (!this.clock) {
-      this.clock = sinon.useFakeTimers();
-    }
+  teardown(function () {
+    this.workspace.dispose();
+    this.suggestor = null;
+    this.clock.runAll();
+    sinon.restore();
   });
 
   test('No blocks, shows label', function () {
@@ -234,10 +236,5 @@ suite('Suggested blocks', function () {
       this.suggestor.getMostUsed(),
       STANDARD_TEST_CASE.expectedFrequentBlocks,
     );
-  });
-
-  teardown(function () {
-    this.workspace.dispose();
-    this.suggestor = null;
   });
 });

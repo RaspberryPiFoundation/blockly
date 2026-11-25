@@ -32,16 +32,17 @@ const {
 
 suite('Procedure blocks', function () {
   setup(function () {
-    this.workspace = new Blockly.Workspace();
     this.clock = sinon.useFakeTimers();
+    this.workspace = new Blockly.Workspace();
   });
 
   teardown(function () {
     // We have to make sure the procedure call gets the change event before
     // we teardown. Otherwise we get a race condition where it tries to create
     // a new def.
-    this.clock.tick(100);
+    this.clock.runAll();
     this.workspace.dispose();
+    this.clock.runAll();
     sinon.restore();
   });
 

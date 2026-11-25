@@ -5,6 +5,8 @@
  */
 
 import fs from 'fs';
+import {assert} from 'chai';
+import sinon from 'sinon';
 import * as Blockly from 'blockly/core';
 import * as en from 'blockly/msg/en';
 import 'blockly/blocks';
@@ -15,7 +17,6 @@ import {phpGenerator} from 'blockly/php';
 import {pythonGenerator} from 'blockly/python';
 import {luaGenerator} from 'blockly/lua';
 import {installAllBlocks} from '../src/index.js';
-import {assert} from 'chai';
 
 const blockJson = {
   blocks: {
@@ -65,8 +66,14 @@ suite('Multiline Text Block Generators', function () {
     });
   });
   setup(function () {
+    this.clock = sinon.useFakeTimers();
     this.workspace = new Blockly.Workspace();
     Blockly.serialization.workspaces.load(blockJson, this.workspace);
+  });
+  teardown(function () {
+    this.workspace.dispose();
+    this.clock.runAll();
+    sinon.restore();
   });
   test('JavaScript', function () {
     const generated = javascriptGenerator.workspaceToCode(this.workspace);
@@ -87,8 +94,5 @@ suite('Multiline Text Block Generators', function () {
   test('PHP', function () {
     const generated = phpGenerator.workspaceToCode(this.workspace);
     checkResult('php', generated);
-  });
-  teardown(function () {
-    this.workspace.dispose();
   });
 });

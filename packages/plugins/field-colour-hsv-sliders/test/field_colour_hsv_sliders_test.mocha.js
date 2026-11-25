@@ -5,7 +5,6 @@
  */
 
 import {testHelpers} from '@blockly/dev-tools';
-import jsdomGlobal from 'jsdom-global';
 
 import {
   assertColourHsvSlidersField,
@@ -23,14 +22,7 @@ const {
 
 suite('FieldColourHsvSliders', function () {
   setup(function () {
-    this.jsdomCleanup = jsdomGlobal(
-      '<!DOCTYPE html><div id="blocklyDiv"></div>',
-    );
     this.field = new FieldColourHsvSliders();
-  });
-
-  teardown(function () {
-    this.jsdomCleanup();
   });
 
   /**

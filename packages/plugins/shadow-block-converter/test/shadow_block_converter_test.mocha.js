@@ -6,7 +6,6 @@
 
 import {assert} from 'chai';
 import sinon from 'sinon';
-import jsdomGlobal from 'jsdom-global';
 import * as Blockly from 'blockly';
 import {shadowBlockConversionChangeListener} from '../src/index.js';
 
@@ -33,27 +32,11 @@ suite('shadowBlockConversionChangeListener', function () {
   }
 
   setup(function () {
-    this.jsdomCleanup = jsdomGlobal(
-      '<!DOCTYPE html><div id="blocklyDiv"></div>',
-      {pretendToBeVisual: true},
-    );
-    // See https://github.com/RaspberryPiFoundation/blockly-samples/issues/2528 for context.
-    global.SVGElement = window.SVGElement;
-    global.FocusEvent = window.FocusEvent;
-
+    this.clock = sinon.useFakeTimers();
     this.workspace = Blockly.inject('blocklyDiv', {
       media: 'media/',
     });
     this.workspace.addChangeListener(shadowBlockConversionChangeListener);
-
-    // Prevent rendering, which does not work correctly in a headless jsdom
-    // environment.
-    this.renderEfficientlyStub = sinon
-      .stub(Blockly.BlockSvg.prototype, 'renderEfficiently')
-      .callsFake(() => {});
-
-    this.clock = sinon.useFakeTimers();
-    global.requestAnimationFrame = (callback) => setTimeout(callback, 0);
   });
 
   teardown(function () {
@@ -61,8 +44,6 @@ suite('shadowBlockConversionChangeListener', function () {
     // Finish any remaining queued events then dispose the sinon environment.
     this.clock.runAll();
     this.clock.restore();
-    this.renderEfficientlyStub.restore();
-    this.jsdomCleanup();
   });
 
   test('responds to field change', function () {
