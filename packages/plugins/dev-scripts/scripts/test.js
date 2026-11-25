@@ -25,6 +25,7 @@ import chalk from 'chalk';
 import Mocha from 'mocha';
 import webpack from 'webpack';
 import webpackConfig from '../config/webpack.config.js';
+import {mochaHooks} from '../config/node-setup.js';
 
 const appDirectory = realpathSync(process.cwd());
 const resolveApp = (relativePath) => resolve(appDirectory, relativePath);
@@ -82,6 +83,7 @@ webpack(config, (err, stats) => {
 
   // Instantiate a Mocha instance.
   const mocha = new Mocha(mochaConfig);
+  mocha.rootHooks(mochaHooks);
 
   // Run mocha for each built mocha .js file.
   const testOutputDir = 'build';
