@@ -324,6 +324,7 @@ suite('Keyboard-driven movement', function () {
       cancelMove(this.workspace);
       const newBounds = this.element.getBoundingRectangle();
       assert.deepEqual(newBounds, originalBounds);
+      assert.equal(Blockly.Events.getGroup(), '');
     });
   }
 
@@ -389,6 +390,7 @@ suite('Keyboard-driven movement', function () {
       oldBounds.left += 40;
       oldBounds.right += 40;
       assert.deepEqual(newBounds, oldBounds);
+      assert.equal(Blockly.Events.getGroup(), '');
     });
   }
 
@@ -567,6 +569,7 @@ suite('Keyboard-driven movement', function () {
       cancelMove(this.workspace);
       blocks = this.workspace.getTopBlocks();
       assert.equal(blocks.length, 1);
+      assert.equal(Blockly.Events.getGroup(), '');
     });
 
     suite('in unconstrained mode', function () {
