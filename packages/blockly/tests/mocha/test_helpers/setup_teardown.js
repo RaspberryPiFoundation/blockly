@@ -227,6 +227,14 @@ export function sharedTestTeardown(workspace = this.workspace) {
       );
     }
 
+    // Clear focus while the fake clock is still installed. While an element
+    // has focus, JSDom starts its animation frame interval on any DOM change,
+    // using whatever setInterval is current. If that happens after the
+    // restore below, later tests' animation frames end up on a real timer
+    // their fake clock cannot run, so their events arrive late.
+    document.activeElement?.blur?.();
+    this.clock.runAll();
+
     // Restore all stubbed methods.
     this.sharedSetupSandbox_.restore();
     sinon.restore();

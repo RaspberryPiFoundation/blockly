@@ -130,9 +130,6 @@ suite('FocusManager', function () {
     }
     this.allFocusableTrees = [];
     this.allFocusableNodes = [];
-
-    // Reset the current active element.
-    document.body.focus();
   });
 
   assert.includesClass = function (classList, className) {

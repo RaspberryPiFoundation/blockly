@@ -170,6 +170,7 @@ export class MutatorIcon extends Icon implements IHasBubble {
     if (this.bubbleIsVisible() === visible) return;
 
     await renderManagement.finishQueuedRenders();
+    if (this.sourceBlock.isDeadOrDying()) return;
 
     if (visible) {
       this.miniWorkspaceBubble = new MiniWorkspaceBubble(
