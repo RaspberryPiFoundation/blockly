@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jsdomGlobal from 'jsdom-global';
 import {assert} from 'chai';
 import sinon from 'sinon';
 import * as Blockly from 'blockly';
@@ -151,24 +150,7 @@ suite('FieldMultilineInput', function () {
     };
 
     setup(function () {
-      this.jsdomCleanup = jsdomGlobal(
-        '<!DOCTYPE html><div id="blocklyDiv"></div>',
-      );
-      this.getContextStub = sinon
-        .stub(window.HTMLCanvasElement.prototype, 'getContext')
-        .returns({measureText: () => ({width: 0})});
-
-      // See https://github.com/RaspberryPiFoundation/blockly-samples/issues/2528.
-      global.SVGElement = window.SVGElement;
-      // Blockly's focus handling constructs FocusEvent, which jsdom exposes on
-      // window but not as a global.
-      global.FocusEvent = window.FocusEvent;
-      // jsdom doesn't provide requestAnimationFrame/cancelAnimationFrame, which
-      // block rendering relies on. Route them through (faked) timers so they
-      // exist and can be flushed deterministically in teardown.
       this.clock = sinon.useFakeTimers();
-      window.requestAnimationFrame = (cb) => setTimeout(cb, 0);
-      window.cancelAnimationFrame = (id) => clearTimeout(id);
       this.workspace = Blockly.inject('blocklyDiv', {
         media: 'media/',
       });
@@ -208,7 +190,6 @@ suite('FieldMultilineInput', function () {
       this.workspace.dispose();
       this.clock.runAll();
       sinon.restore();
-      this.jsdomCleanup();
     });
 
     test('Enter calls super to commit the value', function () {
@@ -268,20 +249,23 @@ suite('FieldMultilineInput', function () {
 
   suite('Serialization', function () {
     setup(function () {
+      this.clock = sinon.useFakeTimers();
       this.workspace = new Blockly.Workspace();
-      Blockly.defineBlocksWithJsonArray([
-        {
-          type: 'row_block',
-          message0: '%1',
-          args0: [
-            {
-              type: 'input_value',
-              name: 'INPUT',
-            },
-          ],
-          output: null,
-        },
-      ]);
+      if (!Blockly.Blocks['row_block']) {
+        Blockly.defineBlocksWithJsonArray([
+          {
+            type: 'row_block',
+            message0: '%1',
+            args0: [
+              {
+                type: 'input_value',
+                name: 'INPUT',
+              },
+            ],
+            output: null,
+          },
+        ]);
+      }
 
       this.assertValue = (value) => {
         const block = this.workspace.newBlock('row_block');
@@ -294,6 +278,8 @@ suite('FieldMultilineInput', function () {
 
     teardown(function () {
       this.workspace.dispose();
+      this.clock.runAll();
+      sinon.restore();
     });
 
     test('Single line', function () {

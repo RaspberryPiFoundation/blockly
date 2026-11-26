@@ -5,6 +5,7 @@
  */
 
 import {assert} from 'chai';
+import sinon from 'sinon';
 import {testHelpers} from '@blockly/dev-tools';
 import * as Blockly from 'blockly';
 import {dartGenerator} from 'blockly/dart';
@@ -49,11 +50,14 @@ suite('If block', function () {
   }
 
   setup(function () {
+    this.clock = sinon.useFakeTimers();
     this.workspace = new Blockly.Workspace();
   });
 
   teardown(function () {
     this.workspace.dispose();
+    this.clock.runAll();
+    sinon.restore();
   });
 
   test('Creation', function () {

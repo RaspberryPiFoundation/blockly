@@ -1,6 +1,5 @@
 import {assert} from 'chai';
 import * as sinon from 'sinon';
-import jsdomGlobal from 'jsdom-global';
 import * as Blockly from 'blockly';
 import {ToolboxSearchCategory} from '../src/toolbox_search.js';
 import {BlockSearcher} from '../src/block_searcher.js';
@@ -30,12 +29,6 @@ suite('ToolboxSearchCategory', () => {
   }
 
   setup(function () {
-    this.jsdomCleanup = jsdomGlobal(
-      '<!DOCTYPE html><div id="blocklyDiv"></div>',
-    );
-    this.getContextStub = sinon
-      .stub(window.HTMLCanvasElement.prototype, 'getContext')
-      .returns({measureText: () => ({width: 0})});
     this.clock = sinon.useFakeTimers();
     this.workspace = Blockly.inject('blocklyDiv', {
       media: 'media/',
@@ -52,9 +45,6 @@ suite('ToolboxSearchCategory', () => {
         ],
       },
     });
-    // See https://github.com/RaspberryPiFoundation/blockly-samples/issues/2528.
-    global.SVGElement = window.SVGElement;
-    global.requestAnimationFrame = (callback) => setTimeout(callback, 0);
     this.searchCategory = this.workspace
       .getToolbox()
       .getToolboxItems()
@@ -80,7 +70,6 @@ suite('ToolboxSearchCategory', () => {
     this.workspace.dispose();
     this.clock.runAll();
     this.clock.restore();
-    this.jsdomCleanup();
   });
 
   test('shows matching blocks in the flyout', function () {

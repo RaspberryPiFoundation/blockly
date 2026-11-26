@@ -15,7 +15,6 @@ import {pythonGenerator} from 'blockly/python';
 import {luaGenerator} from 'blockly/lua';
 import {installAllBlocks} from '../src/index.js';
 import {assert} from 'chai';
-import jsdomGlobal from 'jsdom-global';
 
 const blockJson = {
   blocks: {
@@ -196,11 +195,11 @@ suite('Colour Block Generators', function () {
     });
   });
   setup(function () {
-    this.jsdomCleanup = jsdomGlobal(
-      '<!DOCTYPE html><div id="blocklyDiv"></div>',
-    );
     this.workspace = new Blockly.Workspace();
     Blockly.serialization.workspaces.load(blockJson, this.workspace);
+  });
+  teardown(function () {
+    this.workspace.dispose();
   });
   test('JavaScript', function () {
     const generated = javascriptGenerator.workspaceToCode(this.workspace);
@@ -221,9 +220,5 @@ suite('Colour Block Generators', function () {
   test('PHP', function () {
     const generated = phpGenerator.workspaceToCode(this.workspace);
     checkResult('php', generated);
-  });
-  teardown(function () {
-    this.jsdomCleanup();
-    this.workspace.dispose();
   });
 });

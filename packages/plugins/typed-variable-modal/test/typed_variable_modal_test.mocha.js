@@ -12,7 +12,6 @@
 import {assert} from 'chai';
 import * as Blockly from 'blockly';
 import sinon from 'sinon';
-import jsdomGlobal from 'jsdom-global';
 
 import {TypedVariableModal} from '../src/index.js';
 
@@ -60,9 +59,6 @@ suite('TypedVariableModal', function () {
   }
 
   setup(function () {
-    this.jsdomCleanup = jsdomGlobal(
-      '<!DOCTYPE html><div id="blocklyDiv"></div>',
-    );
     const types = [
       ['Penguin', 'PENGUIN'],
       ['Giraffe', 'GIRAFFE'],
@@ -76,7 +72,7 @@ suite('TypedVariableModal', function () {
   });
 
   teardown(function () {
-    this.jsdomCleanup();
+    this.workspace.dispose();
     sinon.restore();
   });
 
