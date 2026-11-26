@@ -125,6 +125,7 @@ export class Dragger implements IDragger {
     if (!pointerEvent) {
       // For keyboard events, we don't check for a drag target or delete area. Just commit the drag.
       this.draggable.endDrag(e, DragDisposition.COMMIT);
+      eventUtils.setGroup(false);
       if (isFocusableNode(this.draggable)) {
         // Ensure focusable nodes end drag with focus and selection.
         getFocusManager().focusNode(this.draggable);
@@ -178,11 +179,13 @@ export class Dragger implements IDragger {
   onDragRevert(e?: PointerEvent | KeyboardEvent) {
     if (this.revertShouldDelete && isDeletable(this.draggable)) {
       this.draggable.endDrag(e, DragDisposition.DELETE);
+      eventUtils.setGroup(false);
       this.draggable.dispose();
       return;
     }
 
     this.draggable.revertDrag();
+    eventUtils.setGroup(false);
     if (isFocusableNode(this.draggable)) {
       getFocusManager().focusNode(this.draggable);
     }
